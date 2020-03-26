@@ -134,7 +134,7 @@ fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsInters
     if (fuzzyEquals(num, 0.0) && fuzzyEquals(denom, 0.0)) { // segments are collinear
         val t0 = (q - p).dot(r) / r.dot(r)
         val t1 = t0 + s.dot(r) / r.dot(r)
-        if (Pair(t0, t1).intersects(0.0, 1.0)) { // segments are overlapping
+        if (DoubleInterval(t0, t1).intersects(DoubleInterval(0.0, 1.0))) { // segments are overlapping
             // we found out that segments are collinear and overlapping, but they may only share an endpoint,
             // in which case their intersection is a single point
             if ((fuzzyEquals(t0, 0.0) || fuzzyEquals(t0, 1.0)) && !t1.liesBetween(0.0, 1.0)) {

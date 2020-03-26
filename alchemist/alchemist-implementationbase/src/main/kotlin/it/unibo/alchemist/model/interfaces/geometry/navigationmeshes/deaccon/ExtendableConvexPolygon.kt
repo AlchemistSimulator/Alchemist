@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon
 
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
 import java.awt.Shape
 import java.awt.geom.Point2D
@@ -30,9 +31,15 @@ interface ExtendableConvexPolygon : MutableConvexPolygon {
      * least one edge advanced) or not (e.g. for the presence of obstacles).
      * The boundaries of the environment need to be specified as well, in
      * order to prevent the polygon from growing beyond them (a rectangular
-     * shaped environment is assumed, with two opposite points describing it).
-     * This method is able to cope with non axis-aligned convex polygonal
-     * obstacles as well.
+     * shaped environment is assumed, its origin, width and height are to
+     * be provided, width and height should be positive). This method is
+     * able to cope with non axis-aligned convex polygonal obstacles as well.
      */
-    fun extend(step: Double, obstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D): Boolean
+    fun extend(
+        step: Double,
+        obstacles: Collection<Shape>,
+        origin: Euclidean2DPosition,
+        width: Double,
+        height: Double
+    ): Boolean
 }

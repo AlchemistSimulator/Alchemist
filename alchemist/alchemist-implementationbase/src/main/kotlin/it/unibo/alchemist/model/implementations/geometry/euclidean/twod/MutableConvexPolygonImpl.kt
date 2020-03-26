@@ -50,24 +50,6 @@ open class MutableConvexPolygonImpl(
         }
     }
 
-    companion object {
-        /**
-         * Creates a MutableConvexPolygon from a java.awt.Shape.
-         * If the Polygon could not be created (e.g. because of the
-         * non-convexity of the given shape), an empty optional is
-         * returned.
-         * Each curved segment of the shape will be considered as
-         * a straight line.
-         */
-        fun fromShape(s: Shape): Optional<MutableConvexPolygon> {
-            return try {
-                Optional.of(MutableConvexPolygonImpl(s.vertices().toMutableList()))
-            } catch (e: IllegalArgumentException) {
-                Optional.empty()
-            }
-        }
-    }
-
     /*
      * An AwtEuclidean2DShape is immutable, thus composition is used
      * over inheritance.
@@ -84,8 +66,6 @@ open class MutableConvexPolygonImpl(
         get() = getShape().centroid
 
     override fun vertices(): List<Euclidean2DPosition> = vertices
-
-    override fun addVertex(x: Double, y: Double) = addVertex(vertices.size, x, y)
 
     override fun addVertex(index: Int, x: Double, y: Double): Boolean {
         vertices.add(index, Euclidean2DPosition(x, y))
@@ -149,9 +129,6 @@ open class MutableConvexPolygonImpl(
     }
 
     override fun contains(vector: Euclidean2DPosition) = getShape().contains(vector)
-
-    override fun containsOrLiesOnBoundary(vector: Euclidean2DPosition) =
-        contains(vector) || vertices.indices.map { getEdge(it) }.any { it.contains(vector) }
 
     /*
      * Delegates to java.awt.Area.
@@ -328,7 +305,9 @@ open class MutableConvexPolygonImpl(
      */
     private fun getShape(): AwtEuclidean2DShape {
         if (shape == null) {
-            // a Path2D is used to represent a Polygon in double precision
+            /*
+             * a Path2D is used to represent a Polygon in double precision
+             */
             val s = Path2D.Double()
             vertices.forEachIndexed { i, p ->
                 if (i == 0) {

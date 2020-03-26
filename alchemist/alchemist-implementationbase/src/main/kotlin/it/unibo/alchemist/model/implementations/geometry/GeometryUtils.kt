@@ -2,15 +2,11 @@ package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.PathIterator
-import java.awt.geom.Point2D
 import kotlin.math.atan2
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.math.pow
 import kotlin.math.acos
@@ -32,7 +28,9 @@ fun Shape.vertices(): List<Euclidean2DPosition> {
     val iterator = getPathIterator(null)
     while (!iterator.isDone) {
         when (iterator.currentSegment(coords)) {
-            PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> vertices.add(Euclidean2DPosition(coords[0], coords[1]))
+            PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> {
+                vertices.add(Euclidean2DPosition(coords[0], coords[1]))
+            }
         }
         iterator.next()
     }
@@ -71,18 +69,18 @@ fun zCross(v1: Euclidean2DPosition, v2: Euclidean2DPosition) = v1.x * v2.y - v1.
 fun Euclidean2DPosition.dot(v: Euclidean2DPosition) = x * v.x + y * v.y
 
 /**
- * Checks whether the given point is inside a rectangular region starting in
- * lowerBound and ending in upperBound (bounds are included).
+ * Checks whether the given edge is inside a rectangular region described by an origin
+ * point and width and height values (only positive).
  */
-fun isInBoundaries(p: Euclidean2DPosition, lowerBound: Point2D, upperBound: Point2D) =
-    p.x >= lowerBound.x && p.y >= lowerBound.y && p.x <= upperBound.x && p.y <= upperBound.y
+fun isInBoundaries(e: Euclidean2DSegment, origin: Euclidean2DPosition, width: Double, height: Double) =
+    isInBoundaries(e.first, origin, width, height) && isInBoundaries(e.second, origin, width, height)
 
 /**
- * Checks whether the given edge is inside a rectangular region starting in
- * lowerBound and ending in upperBound (bounds are included).
+ * Checks whether the given point is inside a rectangular region described by an origin
+ * point and width and height values (only positive).
  */
-fun isInBoundaries(e: Euclidean2DSegment, lowerBound: Point2D, upperBound: Point2D) =
-    isInBoundaries(e.first, lowerBound, upperBound) && isInBoundaries(e.second, lowerBound, upperBound)
+fun isInBoundaries(p: Euclidean2DPosition, origin: Euclidean2DPosition, width: Double, height: Double) =
+    p.x >= origin.x && p.y >= origin.y && p.x <= origin.x + width && p.y <= origin.y + height
 
 /**
  * Mutates an edge to a vector. In particular, the vector representing the
@@ -125,18 +123,6 @@ fun areCollinear(p1: Euclidean2DPosition, p2: Euclidean2DPosition, p3: Euclidean
         fuzzyEquals((m * p3.x + q), p3.y)
     }
 }
-
-/**
- * Checks if a value lies between two values (included) provided in any order.
- */
-fun Double.liesBetween(v1: Double, v2: Double) = this >= min(v1, v2) && this <= max(v1, v2)
-
-/**
- * Checks whether two intervals (inclusive) intersects.
- */
-fun Pair<Double, Double>.intersects(start: Double, end: Double) =
-    first.liesBetween(start, end) || second.liesBetween(start, end) ||
-        start.liesBetween(first, second) || end.liesBetween(first, second)
 
 /**
  * Finds the magnitude of a vector.
@@ -216,17 +202,6 @@ fun Euclidean2DSegment.closestPointTo(p: Euclidean2DPosition): Euclidean2DPositi
 }
 
 /**
- * Checks if the provided segment intersects with the polygon, boundary excluded.
- */
-fun ConvexPolygon.intersectsBoundaryExcluded(s: Euclidean2DSegment): Boolean =
-    vertices().indices
-        .map { intersection(getEdge(it), s) }
-        .filter { it.type == SegmentsIntersectionTypes.POINT }
-        .map { it.intersection.get() }
-        .distinct()
-        .size > 1
-
-/**
  * Finds the point on the line represented by the current segment, given
  * its x coordinate. Returns null if the point cannot be located.
  */
@@ -254,3 +229,25 @@ fun Euclidean2DSegment.findPointOnLineGivenY(y: Double): Euclidean2DPosition? {
     val q = first.y - m * first.x
     return Euclidean2DPosition((y - q) / m, y)
 }
+
+/**
+ * Computes the distance between the current segment and a given point
+ */
+fun Euclidean2DSegment.distanceTo(point: Euclidean2DPosition) = closestPointTo(point).getDistanceTo(point)
+
+/**
+ * Computes the (minimum) distance between two segments.
+ */
+fun Euclidean2DSegment.distanceTo(other: Euclidean2DSegment): Double =
+    mutableListOf(
+        distanceTo(other.first),
+        distanceTo(other.second),
+        other.distanceTo(first),
+        other.distanceTo(second)
+    ).min() ?: Double.POSITIVE_INFINITY
+
+/**
+ * Creates an [Euclidean2DSegment]. x2 defaults to x1 and y2 defaults to y1.
+ */
+fun createSegment(x1: Double, y1: Double, x2: Double = x1, y2: Double = y1) =
+    Pair(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))

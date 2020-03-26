@@ -27,10 +27,4 @@ interface ConvexPolygon : ConvexEuclidean2DShape, AwtShapeCompatible {
      * This method is "exact" (no bounding box are used).
      */
     fun intersects(other: Shape): Boolean
-
-    /**
-     * Checks whether the given vector is contained in the polygon or
-     * lies on its boundary.
-     */
-    fun containsOrLiesOnBoundary(vector: Euclidean2DPosition): Boolean
 }

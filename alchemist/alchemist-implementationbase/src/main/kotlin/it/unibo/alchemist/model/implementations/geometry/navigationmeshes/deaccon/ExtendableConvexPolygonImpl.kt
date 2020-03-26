@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.implementations.geometry.times
 import it.unibo.alchemist.model.implementations.geometry.toVector
 import it.unibo.alchemist.model.implementations.geometry.dot
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
+import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.containsOrLiesOnBoundary
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
@@ -34,7 +35,8 @@ open class ExtendableConvexPolygonImpl(
      * Caches the growth direction (expressed as a vector) of both of the
      * vertices of each edge. See [advanceEdge].
      */
-    private var growthDirections: MutableList<Pair<Euclidean2DPosition?, Euclidean2DPosition?>?> = MutableList(vertices.size) { null }
+    private var growthDirections: MutableList<Pair<Euclidean2DPosition?, Euclidean2DPosition?>?> =
+        MutableList(vertices.size) { null }
     private var normals: MutableList<Euclidean2DPosition?> = MutableList(vertices.size) { null }
 
     override fun addVertex(index: Int, x: Double, y: Double): Boolean {
@@ -143,14 +145,20 @@ open class ExtendableConvexPolygonImpl(
      * a vertex) and adjust the direction of growth in order for the new edge to follow the
      * side of the obstacle.
      */
-    override fun extend(step: Double, obstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D): Boolean {
+    override fun extend(
+        step: Double,
+        obstacles: Collection<Shape>,
+        origin: Euclidean2DPosition,
+        width: Double,
+        height: Double
+    ): Boolean {
         // val obs = obstacles.filter { it.vertices() != vertices }
         var extended = false
         var i = 0
         while (i < vertices.size) {
             if (canEdgeAdvance[i]) {
                 val hasAdvanced = advanceEdge(i, step)
-                if (hasAdvanced && isInBoundaries(getEdge(i), envStart, envEnd)) {
+                if (hasAdvanced && isInBoundaries(getEdge(i), origin, width, height)) {
                     val intersectedObs = obstacles.filter { intersects(it) }
                     // can be in the advanced case for at most 2 obstacle at a time
                     if (intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) }) {

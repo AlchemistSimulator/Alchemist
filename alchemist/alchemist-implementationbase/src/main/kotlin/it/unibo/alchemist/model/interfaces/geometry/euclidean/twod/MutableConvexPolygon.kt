@@ -6,16 +6,6 @@ package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 interface MutableConvexPolygon : ConvexPolygon {
 
     /**
-     * Adds a vertex to the polygon, linked to the (previous) last vertex.
-     *
-     * Note that it is responsibility of the user to provide vertices in
-     * the correct order. If the addition of the specified vertex would
-     * cause the violation of the convexity, false is returned and the
-     * vertex is not added.
-     */
-    fun addVertex(x: Double, y: Double): Boolean
-
-    /**
      * Adds a vertex in the specified position. See also [addVertex].
      */
     fun addVertex(index: Int, x: Double, y: Double): Boolean

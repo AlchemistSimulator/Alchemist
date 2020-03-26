@@ -1,0 +1,131 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.model.implementations.geometry
+
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
+import java.awt.geom.Point2D
+import java.lang.IllegalArgumentException
+import kotlin.math.max
+import kotlin.math.min
+
+/**
+ * Checks if a value lies between two values (included) provided in any order.
+ */
+fun Double.liesBetween(v1: Double, v2: Double) = this >= min(v1, v2) && this <= max(v1, v2)
+
+/**
+ * Defines an interval with double precision.
+ */
+class DoubleInterval(
+    endPoint1: Double,
+    endPoint2: Double
+) {
+    /**
+     */
+    val first: Double = min(endPoint1, endPoint2)
+    /**
+     */
+    val second: Double = max(endPoint1, endPoint2)
+}
+
+/**
+ * Checks whether the interval is contained in another given interval.
+ */
+fun DoubleInterval.isContained(other: DoubleInterval) = other.first <= first && other.second >= second
+
+/**
+ * Finds the intersection between two intervals. If the intervals do not
+ * intersect or share a single endpoint, null is returned.
+ */
+fun DoubleInterval.intersection(other: DoubleInterval): DoubleInterval? {
+    if (other.second < first || second < other.first) {
+        return null
+    }
+    return DoubleInterval(max(first, other.first), min(second, other.second))
+}
+
+/**
+ * Checks whether the interval intersects with the one given.
+ */
+fun DoubleInterval.intersects(other: DoubleInterval) = intersection(other) != null
+
+/**
+ * Subtracts a given interval from the current one.
+ */
+fun DoubleInterval.subtract(other: DoubleInterval): MutableList<DoubleInterval> {
+    if (isContained(other)) {
+        return mutableListOf()
+    }
+    if (!intersects(other)) {
+        return mutableListOf(this)
+    }
+    if (other.first <= first) {
+        return mutableListOf(DoubleInterval(other.second, second))
+    }
+    val res = DoubleInterval(first, other.first)
+    return if (other.second < second) {
+        mutableListOf(res, DoubleInterval(other.second, second))
+    } else {
+        mutableListOf(res)
+    }
+}
+
+/**
+ * Subtracts all the given intervals from the current one.
+ */
+fun DoubleInterval.subtractAll(intervals: Collection<DoubleInterval>): MutableList<DoubleInterval> {
+    val remaining = mutableListOf(this)
+    var i = 0
+    while (i < remaining.size) {
+        var curr = remaining[i]
+        for (interval in intervals) {
+            val subtraction = curr.subtract(interval)
+            if (subtraction.isEmpty()) {
+                remaining.removeAt(i)
+                i--
+                break
+            } else {
+                curr = subtraction.first()
+                remaining[i] = curr
+                subtraction.filter { it != curr }.forEach { remaining.add(it) }
+            }
+        }
+        i++
+    }
+    return remaining
+}
+
+/**
+ * Maps a segment to an interval, the parameter [xAxisDirection]
+ * indicates which pair of coords (x or y) should be extracted.
+ */
+fun Euclidean2DSegment.toInterval(xAxisDirection: Boolean = isXAxisAligned()) =
+    if (xAxisDirection) {
+        DoubleInterval(first.x, second.x)
+    } else {
+        DoubleInterval(first.y, second.y)
+    }
+
+/**
+ * Given a collection of points, finds the two extreme points in a
+ * given direction (i.e. min and max in such direction). Only axis
+ * aligned directions are supported now.
+ */
+fun Collection<Euclidean2DPosition>.findExtremePoints(xAxisDirection: Boolean): DoubleInterval {
+    val selector: (Euclidean2DPosition) -> Double = { if (xAxisDirection) it.x else it.y }
+    val min = minBy(selector)?.run(selector)
+    val max = maxBy(selector)?.run(selector)
+    return if (min == null || max == null) {
+        throw IllegalArgumentException("no point could be found")
+    } else {
+        DoubleInterval(min, max)
+    }
+}

@@ -35,14 +35,14 @@ dependencies {
         exclude(module = "findbugs")
     }
 
-    val javaFXVersion = "11"  
-    for (platform in listOf("linux", "mac", "win")) {  
-        api("org.openjfx:javafx-base:$javaFXVersion:$platform")  
-        api("org.openjfx:javafx-controls:$javaFXVersion:$platform")  
-        api("org.openjfx:javafx-fxml:$javaFXVersion:$platform")  
-        api("org.openjfx:javafx-graphics:$javaFXVersion:$platform")  
-        api("org.openjfx:javafx-media:$javaFXVersion:$platform")  
-        api("org.openjfx:javafx-swing:$javaFXVersion:$platform")  
+    val javaFXVersion = "11"
+    for (platform in listOf("linux", "mac", "win")) {
+        api("org.openjfx:javafx-base:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-controls:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-fxml:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-graphics:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-media:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-swing:$javaFXVersion:$platform")
     }
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))

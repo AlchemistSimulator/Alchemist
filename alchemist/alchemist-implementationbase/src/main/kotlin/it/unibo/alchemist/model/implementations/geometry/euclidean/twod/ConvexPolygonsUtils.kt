@@ -13,11 +13,13 @@ import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTyp
 import it.unibo.alchemist.model.implementations.geometry.contains
 import it.unibo.alchemist.model.implementations.geometry.distanceTo
 import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
 import java.awt.Shape
 import java.awt.geom.Point2D
 import java.lang.IllegalStateException
@@ -85,7 +87,23 @@ fun ConvexPolygon.edgeClosestTo(segment: Euclidean2DSegment): Euclidean2DSegment
     ) ?: throw IllegalStateException("no edge could be found")
 
 /**
+ * Advances the specified edge only if it remains inside the given region.
+ * See [ExtendableConvexPolygon.advanceEdge].
  */
-fun ConvexPolygon.advanceEdge(index: Int, step: Double, envStart: Point2D, envEnd: Point2D) {
-
+fun ExtendableConvexPolygon.advanceEdge(
+    index: Int,
+    step: Double,
+    origin: Euclidean2DPosition,
+    width: Double,
+    height: Double
+): Boolean {
+    val oldEdge = getEdge(index)
+    if (advanceEdge(index, step)) {
+        if (isInBoundaries(getEdge(index), origin, width, height)) {
+            return true
+        }
+        moveEdge(index, oldEdge)
+        return false
+    }
+    return false
 }

@@ -20,6 +20,11 @@ import org.junit.jupiter.api.Test
 import java.io.*
 import java.lang.reflect.Type
 
+/**
+ * A class that exposes functions for testing the serialization of serializable properties.
+ * Given a number of [T] instances, it will run a test for java serialization (by using
+ * ObjectOutputStream#writeObject) and a test for GSON serialization for every [T] instance.
+ */
 class PropertySerializationTester<T: Property<E>, E: Any>(
         private val gsonType: Type,
         private val toProperty: Any.() -> T,
@@ -31,6 +36,9 @@ class PropertySerializationTester<T: Property<E>, E: Any>(
         private val GSON = EffectSerializer.getGSON()
     }
 
+    /**
+     * Attempts to serialize with the standard java.io method.
+     */
     fun testJavaSerialization() {
         val file = create()
         properties.forEach { property ->
@@ -48,6 +56,9 @@ class PropertySerializationTester<T: Property<E>, E: Any>(
         }
     }
 
+    /**
+     * Attempts to serialize with GSON.
+     */
     fun testGsonSerialization() {
         val file = create()
         properties.forEach { property ->
@@ -73,6 +84,10 @@ class PropertySerializationTester<T: Property<E>, E: Any>(
     }
 }
 
+/**
+ * Abstract class that allows for testing of serializable properties by overriding the [tester] field.
+ * See [PropertySerializationTester].
+ */
 abstract class PropertySerializationTest {
 
     protected abstract val tester: PropertySerializationTester<*, *>

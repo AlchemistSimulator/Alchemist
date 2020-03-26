@@ -14,11 +14,11 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter.NAME
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyTypeAdapter.VALUE
-import javafx.beans.property.DoublePropertyBase
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.lang.reflect.Type
+import javafx.beans.property.DoublePropertyBase
 import kotlin.math.abs
 
 private const val LOWER_BOUND = "lower bound"

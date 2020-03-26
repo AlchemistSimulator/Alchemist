@@ -2,6 +2,7 @@ package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.Keybinds
+import java.util.ResourceBundle
 import javafx.beans.property.Property
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
@@ -9,7 +10,6 @@ import javafx.collections.ObservableList
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Priority
-import javafx.scene.layout.VBox
 import tornadofx.App
 import tornadofx.Controller
 import tornadofx.FX
@@ -39,7 +39,6 @@ import tornadofx.tableview
 import tornadofx.toProperty
 import tornadofx.vbox
 import tornadofx.vgrow
-import java.util.ResourceBundle
 
 /**
  * A class that describes the relation between a KeyCode and an Action

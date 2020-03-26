@@ -3,13 +3,12 @@ package it.unibo.alchemist.input
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import javafx.scene.input.KeyCode
-import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.util.Optional
+import javafx.scene.input.KeyCode
+import org.kaikikm.threadresloader.ResourceLoader
 
 /**
  * Actions which can be bound to a key on the keyboard

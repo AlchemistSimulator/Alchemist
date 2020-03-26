@@ -24,17 +24,17 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
-import javafx.application.Platform
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
-import javafx.scene.canvas.Canvas
-import javafx.scene.canvas.GraphicsContext
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import javafx.application.Platform
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.scene.canvas.Canvas
+import javafx.scene.canvas.GraphicsContext
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.

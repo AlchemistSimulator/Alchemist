@@ -12,23 +12,31 @@ package it.unibo.alchemist.boundary.gui.view.property
 import com.google.common.base.Charsets
 import com.google.gson.reflect.TypeToken
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer
-import it.unibo.alchemist.boundary.gui.view.properties.*
+import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory
+import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty
+import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty
+import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty
 import it.unibo.alchemist.test.TemporaryFile.create
+import java.io.FileReader
+import java.io.FileWriter
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.lang.reflect.Type
 import javafx.beans.property.Property
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.io.*
-import java.lang.reflect.Type
 
 /**
  * A class that exposes functions for testing the serialization of serializable properties.
  * Given a number of [T] instances, it will run a test for java serialization (by using
  * ObjectOutputStream#writeObject) and a test for GSON serialization for every [T] instance.
  */
-class PropertySerializationTester<T: Property<E>, E: Any>(
-        private val gsonType: Type,
-        private val toProperty: Any.() -> T,
-        vararg serializables: T
+class PropertySerializationTester<T : Property<E>, E : Any>(
+    private val gsonType: Type,
+    private val toProperty: Any.() -> T,
+    vararg serializables: T
 ) {
     private val properties: List<T> = serializables.asList()
 
@@ -103,7 +111,7 @@ abstract class PropertySerializationTest {
     }
 }
 
-class RangedDoublePropertySerializationTest: PropertySerializationTest() {
+class RangedDoublePropertySerializationTest : PropertySerializationTest() {
 
     companion object {
         private const val DOUBLE_PROPERTY = "Test double property name"
@@ -118,14 +126,14 @@ class RangedDoublePropertySerializationTest: PropertySerializationTest() {
 
     override val tester = PropertySerializationTester(
             object : TypeToken<RangedDoubleProperty>() {}.type,
-            { this as RangedDoubleProperty},
+            { this as RangedDoubleProperty },
             RangedDoubleProperty(DOUBLE_PROPERTY, DOUBLE_INITIAL_VALUE, DOUBLE_LOWER_BOUND, DOUBLE_UPPER_BOUND),
             PropertyFactory.getFXColorChannelProperty(DOUBLE_COLOR_NAME, DOUBLE_COLOR_INITIAL_VALUE),
             PropertyFactory.getPercentageRangedProperty(DOUBLE_PERCENT_NAME, DOUBLE_PERCENT_INITIAL_VALUE)
     )
 }
 
-class RangedIntegerPropertySerializationTest: PropertySerializationTest() {
+class RangedIntegerPropertySerializationTest : PropertySerializationTest() {
     companion object {
         private const val INTEGER_PROPERTY = "Test integer property name"
         private const val INTEGER_INITIAL_VALUE = 5
@@ -140,7 +148,7 @@ class RangedIntegerPropertySerializationTest: PropertySerializationTest() {
     )
 }
 
-class SerializableBooleanPropertySerializationTest: PropertySerializationTest() {
+class SerializableBooleanPropertySerializationTest : PropertySerializationTest() {
     companion object {
         private const val BOOLEAN_PROPERTY = "Test boolean property name"
     }
@@ -153,7 +161,7 @@ class SerializableBooleanPropertySerializationTest: PropertySerializationTest() 
     )
 }
 
-class SerializableEnumPropertySerializationTest: PropertySerializationTest() {
+class SerializableEnumPropertySerializationTest : PropertySerializationTest() {
     companion object {
         private const val ENUM_PROPERTY = "Test enum property name"
     }
@@ -171,7 +179,7 @@ class SerializableEnumPropertySerializationTest: PropertySerializationTest() {
     )
 }
 
-class SerializableStringPropertySerializationTest: PropertySerializationTest() {
+class SerializableStringPropertySerializationTest : PropertySerializationTest() {
     companion object {
         private const val STRING_PROPERTY = "Test string property name"
         private const val STRING_INITIAL_VALUE = "Test string property value"

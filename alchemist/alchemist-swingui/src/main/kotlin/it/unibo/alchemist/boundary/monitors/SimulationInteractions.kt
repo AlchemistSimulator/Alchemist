@@ -33,6 +33,9 @@ import it.unibo.alchemist.kotlin.plus
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
+import java.awt.Point
+import java.util.Timer
+import java.util.concurrent.Semaphore
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.MapChangeListener
@@ -45,9 +48,6 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
-import java.awt.Point
-import java.util.Timer
-import java.util.concurrent.Semaphore
 import kotlin.concurrent.fixedRateTimer
 import kotlin.math.abs
 import kotlin.math.max

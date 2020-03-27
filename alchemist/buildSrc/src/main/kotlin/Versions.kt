@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "9.1.0"
-
     const val com_eden_orchidplugin_gradle_plugin: String = "0.17.6" // available: "0.17.7"
 
     const val thread_inheritable_resource_loader: String = "0.3.2"

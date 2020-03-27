@@ -19,7 +19,7 @@ plugins {
     id("com.github.spotbugs")
     pmd
     checkstyle
-    id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
+    id("org.jlleitschuh.gradle.ktlint")
     `project-report`
     `build-dashboard`
     id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin

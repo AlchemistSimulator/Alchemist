@@ -83,14 +83,12 @@ object Libs {
     /**
      * https://www.graphhopper.com
      */
-    const val graphhopper_core: String = "com.graphhopper:graphhopper-core:" +
-            Versions.com_graphhopper
+    const val graphhopper_core: String = "com.graphhopper:graphhopper-core:_"
 
     /**
      * https://www.graphhopper.com
      */
-    const val graphhopper_reader_osm: String = "com.graphhopper:graphhopper-reader-osm:" +
-            Versions.com_graphhopper
+    const val graphhopper_reader_osm: String = "com.graphhopper:graphhopper-reader-osm:_"
 
     /**
      * https://www.scala-lang.org/

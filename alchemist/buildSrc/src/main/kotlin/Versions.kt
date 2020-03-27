@@ -8,8 +8,6 @@
  * YOU are responsible for updating manually the dependency version.
  */
 object Versions {
-    const val com_graphhopper: String = "0.12.0" // available: "0.13.0"
-
     const val org_scala_lang: String = "2.12.2" // available: "2.13.1"
 
     const val org_protelis: String = "13.1.0"

@@ -196,7 +196,7 @@ object Libs {
     /**
      * http://parboiled.org
      */
-    const val parboiled_java: String = "org.parboiled:parboiled-java:" + Versions.parboiled_java
+    const val parboiled_java: String = "org.parboiled:parboiled-java:_"
 
     /**
      * http://www.scalatest.org

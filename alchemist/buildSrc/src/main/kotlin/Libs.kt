@@ -90,26 +90,26 @@ object Libs {
      */
     const val graphhopper_reader_osm: String = "com.graphhopper:graphhopper-reader-osm:_"
 
+    const val org_scala_lang: String = "2.12.2" // available: "2.13.1"
     /**
      * https://www.scala-lang.org/
      */
-    const val scala_compiler: String = "org.scala-lang:scala-compiler:" + Versions.org_scala_lang
+    const val scala_compiler: String = "org.scala-lang:scala-compiler:$org_scala_lang"
 
     /**
      * https://www.scala-lang.org/
      */
-    const val scala_library: String = "org.scala-lang:scala-library:" + Versions.org_scala_lang
+    const val scala_library: String = "org.scala-lang:scala-library:$org_scala_lang"
 
     /**
      * http://www.protelis.org
      */
-    const val protelis_interpreter: String = "org.protelis:protelis-interpreter:" +
-            Versions.org_protelis
+    const val protelis_interpreter: String = "org.protelis:protelis-interpreter:_"
 
     /**
      * http://www.protelis.org
      */
-    const val protelis_lang: String = "org.protelis:protelis-lang:" + Versions.org_protelis
+    const val protelis_lang: String = "org.protelis:protelis-lang:_"
 
     /**
      * https://openjdk.java.net/projects/openjfx/

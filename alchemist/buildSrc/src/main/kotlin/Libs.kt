@@ -176,8 +176,7 @@ object Libs {
     /**
      * https://github.com/mapsforge/mapsforge
      */
-    const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:" +
-            Versions.mapsforge_map_awt
+    const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"
 
     /**
      * http://logback.qos.ch

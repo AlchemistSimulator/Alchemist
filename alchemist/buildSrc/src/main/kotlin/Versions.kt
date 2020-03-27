@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val mapsforge_map_awt: String = "0.11.0" // available: "0.12.0"
-
     const val miglayout_swing: String = "5.2"
 
     const val scafi_core_2_12: String = "0.3.2"

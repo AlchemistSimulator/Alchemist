@@ -186,7 +186,7 @@ object Libs {
     /**
      * http://www.miglayout.com/
      */
-    const val miglayout_swing: String = "com.miglayout:miglayout-swing:" + Versions.miglayout_swing
+    const val miglayout_swing: String = "com.miglayout:miglayout-swing:_"
 
     /**
      * https://scafi.github.io/

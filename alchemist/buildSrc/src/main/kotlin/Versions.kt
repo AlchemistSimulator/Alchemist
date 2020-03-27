@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val miglayout_swing: String = "5.2"
-
     const val scafi_core_2_12: String = "0.3.2"
 
     const val parboiled_java: String = "1.3.0" // available: "1.3.1"

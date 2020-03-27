@@ -26,7 +26,7 @@ plugins {
     id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
     signing
     `maven-publish`
-    id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
+    id("org.danilopianini.publish-on-central")
     id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
 }
 

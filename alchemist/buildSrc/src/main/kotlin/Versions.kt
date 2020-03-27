@@ -9,9 +9,6 @@
  */
 object Versions {
 
-    const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1"
-             // available: "0.2.3"
-
     const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String = "9.1.0"
 
     const val com_eden_orchidplugin_gradle_plugin: String = "0.17.6" // available: "0.17.7"

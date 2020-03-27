@@ -22,7 +22,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint")
     `project-report`
     `build-dashboard`
-    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
+    id("org.jetbrains.dokka")
     id("com.eden.orchidPlugin")
     signing
     `maven-publish`

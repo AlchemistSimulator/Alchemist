@@ -166,8 +166,7 @@ object Libs {
     /**
      * http://www.github.com/kotlintest/kotlintest
      */
-    const val kotlintest_runner_junit5: String = "io.kotlintest:kotlintest-runner-junit5:" +
-            Versions.kotlintest_runner_junit5
+    const val kotlintest_runner_junit5: String = "io.kotlintest:kotlintest-runner-junit5:_"
 
     /**
      * https://www.eclipse.org/emf

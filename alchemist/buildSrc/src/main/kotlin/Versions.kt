@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.4.2"
-
     const val org_eclipse_emf_ecore: String = "2.12.0" // available: "2.19.0"
 
     const val mapsforge_map_awt: String = "0.11.0" // available: "0.12.0"

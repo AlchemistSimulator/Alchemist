@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val org_antlr: String = "4.6" // available: "4.7.2"
-
     const val org_danilopianini_publish_on_central_gradle_plugin: String = "0.1.1"
              // available: "0.2.3"
 

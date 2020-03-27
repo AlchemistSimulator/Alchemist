@@ -144,12 +144,12 @@ object Libs {
     /**
      * http://www.antlr.org
      */
-    const val antlr4: String = "org.antlr:antlr4:" + Versions.org_antlr
+    const val antlr4: String = "org.antlr:antlr4:_"
 
     /**
      * http://www.antlr.org
      */
-    const val antlr4_runtime: String = "org.antlr:antlr4-runtime:" + Versions.org_antlr
+    const val antlr4_runtime: String = "org.antlr:antlr4-runtime:_"
 
     /**
      * https://travis-ci.org/DanySK/Thread-Inheritable-Resource-Loader-for-Java

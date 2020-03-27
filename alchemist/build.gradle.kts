@@ -23,7 +23,7 @@ plugins {
     `project-report`
     `build-dashboard`
     id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
-    id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
+    id("com.eden.orchidPlugin")
     signing
     `maven-publish`
     id("org.danilopianini.publish-on-central")

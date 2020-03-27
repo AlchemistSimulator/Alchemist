@@ -12,12 +12,16 @@ package it.unibo.alchemist.boundary.gui.effects;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.model.implementations.environments.ImageEnvironment;
+import it.unibo.alchemist.model.implementations.environments.ImageEnvironmentWithGraph;
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Obstacle2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
+import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph;
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData;
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon;
@@ -98,13 +102,18 @@ public class DrawNavigationMesh extends DrawOnce {
                         g.setColor(colorCache.brighter().brighter());
                         g.draw(r);
                     });
+            envGraph.destinations().forEach(destination -> {
+                final Point viewPoint = wormhole.getViewPoint((P) destination);
+                g.setColor(Color.GREEN);
+                g.fillOval(viewPoint.x, viewPoint.y, 10, 10);
+            });
             if (drawGraph) {
                 envGraph.nodes().forEach(r -> {
                     final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                     if (envGraph != null) {
                         envGraph.edgesFrom(r).forEach(e -> {
                             final Pair<Euclidean2DPosition, Euclidean2DPosition> c = e.getData();
-                            final Point viewP1 = wormhole.getViewPoint(env.makePosition(c.getFirst().getX(), c.getSecond().getY()));
+                            final Point viewP1 = wormhole.getViewPoint(env.makePosition(c.getFirst().getX(), c.getFirst().getY()));
                             final Point viewP2 = wormhole.getViewPoint(env.makePosition(c.getSecond().getX(), c.getSecond().getY()));
                             g.setColor(Color.GREEN);
                             g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
@@ -119,17 +128,21 @@ public class DrawNavigationMesh extends DrawOnce {
         if (toBeDrawn && !envStartX.equals("") && !envStartY.equals("") && !envEndX.equals("") && !envEndY.equals("")
                 && env instanceof Environment2DWithObstacles
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            final Double startX = Double.parseDouble(envStartX);
-            final Double startY = Double.parseDouble(envStartY);
-            final Double endX = Double.parseDouble(envEndX);
-            final Double endY = Double.parseDouble(envEndY);
-            envGraph = new Deaccon2D(Integer.parseInt(nSeeds)).generateEnvGraph(
-                    new Point2D.Double(startX, startY),
-                    Math.abs(endX - startX),
-                    Math.abs(endY - startY),
-                    ((Environment2DWithObstacles<?, T, Euclidean2DPosition>) env).getObstacles(),
-                    new ArrayList());
-            toBeDrawn = false;
+            if (env instanceof ImageEnvironmentWithGraph) {
+                envGraph = ((ImageEnvironmentWithGraph<T>) env).graph();
+            } else {
+                final Double startX = Double.parseDouble(envStartX);
+                final Double startY = Double.parseDouble(envStartY);
+                final Double endX = Double.parseDouble(envEndX);
+                final Double endY = Double.parseDouble(envEndY);
+                envGraph = new Deaccon2D(Integer.parseInt(nSeeds)).generateEnvGraph(
+                        new Point2D.Double(startX, startY),
+                        Math.abs(endX - startX),
+                        Math.abs(endY - startY),
+                        ((Environment2DWithObstacles<?, T, Euclidean2DPosition>) env).getObstacles(),
+                        new ArrayList());
+                toBeDrawn = false;
+            }
         }
     }
 

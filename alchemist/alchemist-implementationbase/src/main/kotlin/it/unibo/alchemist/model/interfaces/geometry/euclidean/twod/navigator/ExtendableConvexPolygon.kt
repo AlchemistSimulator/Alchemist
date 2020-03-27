@@ -8,8 +8,6 @@ import java.awt.geom.Point2D
 
 /**
  * A convex polygon capable of extending itself.
- *
- * This interface was explicitly designed for the [Deaccon2D] algorithm.
  */
 interface ExtendableConvexPolygon : MutableConvexPolygon {
 

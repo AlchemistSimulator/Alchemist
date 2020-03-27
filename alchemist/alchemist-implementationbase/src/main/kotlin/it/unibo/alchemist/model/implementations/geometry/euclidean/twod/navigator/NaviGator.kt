@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
+package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.createSegment
 import it.unibo.alchemist.model.implementations.geometry.intersection
@@ -15,12 +15,12 @@ import it.unibo.alchemist.model.implementations.geometry.isAxisAligned
 import it.unibo.alchemist.model.implementations.geometry.isXAxisAligned
 import it.unibo.alchemist.model.implementations.geometry.toInterval
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
-import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.advanceEdge
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.edgeClosestTo
 import it.unibo.alchemist.model.implementations.geometry.findExtremePoints
+import it.unibo.alchemist.model.implementations.graph.Euclidean2DNavigationGraph
+import it.unibo.alchemist.model.implementations.graph.Euclidean2DNavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.geometry.subtractAll
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.graph.Euclidean2DCrossing
@@ -29,37 +29,70 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSe
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
-import java.awt.geom.Point2D
 
 /**
+ * NaviGator (Navigation Graphs Generator) is an algorithm capable of generating an
+ * [Euclidean2DNavigationGraph] of a given environment with obstacles. The nodes of
+ * the produced graph are convex polygons representing the areas of the environment 
+ * traversable by agents (namely, walkable areas), whereas edges represent connections
+ * between them.
+ *
+ * NaviGator works with rectangular-shaped bidimensional environments with euclidean
+ * geometry and double precision coordinates. Note that this algorithm:
+ * - does not guarantee the coverage of 100% of the walkable area.
+ * - is only capable to deal with convex polygonal obstacles (concave ones can be
+ * decomposed into convex meshes, whereas for curves bounding boxes can be used).
+ * - is only capable to detect axis-aligned crossings.
+ * - the generation of a navigation graph can take a significant amount of time.
+ *
+ * Here's a brief description of how the algorithm operates:
+ * Firstly, a certain number of seeds is planted in the environment. Each seed is a
+ * square-shaped region that will grow maintaining a convex shape. Secondly, planted
+ * seeds are extended until possible (i.e. until they are in contact with an obstacle
+ * or another seed on each side). Finally, crossings are found between the grown seeds.
  */
-class Deaccon2DInt {
-
-    private val origin = Euclidean2DPosition(0.0, 0.0)
-
+class NaviGator {
+    
     /**
+     * Generates an [Euclidean2DNavigationGraph] of a given environment.
+     * 
+     * @param origin 
+     *              the origin of the environment, defaults to (0,0).
+     * @param width 
+     *              the width of the environment (only positive).
+     * @param height
+     *              the height of the environment (only positive).
+     * @param obstacles
+     *              the obstacles of the environment (only convex polygonal obstacles
+     *              are supported).
+     * @param rooms
+     *              a collection of positions where to plant initial seeds. In indoor
+     *              environments, these positions are usually located inside rooms
+     *              (and corridors), hence the name of the parameter.
+     * @param unity
+     *              the quantity considered to be a unit in the environment (defaults
+     *              to 1.0 because this algorithm works best with environments featuring
+     *              integer coordinates).
      */
-    fun generateEnvGraph(
-        width: Int,
-        height: Int,
-        obstacles: List<RectObstacle2D>,
-        rooms: List<Point2D>,
-        crossingWidth: Int,
-        destinations: List<Euclidean2DPosition>,
-        mapper: (Euclidean2DPosition) -> Euclidean2DPosition
+    fun generateNavigationGraph(
+        origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),
+        width: Double,
+        height: Double,
+        obstacles: Collection<Shape>,
+        rooms: Collection<Euclidean2DPosition>,
+        unity: Double = 1.0,
+        destinations: List<Euclidean2DPosition>
     ): Euclidean2DNavigationGraph {
         require(width > 0 && height > 0) { "width and height should be positive" }
         val seeds = rooms
-            .map { createSeed(it.x, it.y) }
+            .map { createSeed(it.x, it.y, unity) }
             .toMutableList()
-            .grow(width, height, obstacles)
-        val builder = Euclidean2DNavigationGraphBuilder()
-        seeds.forEach { builder.addNode(it.mapPolygon(mapper)) }
-        println(crossingWidth)
+            .grow(origin, width, height, obstacles, unity)
+        val builder =
+            Euclidean2DNavigationGraphBuilder()
+        seeds.forEach { builder.addNode(it) }
         seeds
-            .findCrossings2(obstacles, width, height)
-            //.findCrossings(crossingWidth.toDouble(), obstacles)
-            .map { it.mapCrossing(mapper) }
+            .findCrossings(origin, width, height, obstacles, unity)
             .filter {
                 !fuzzyEquals(it.data.first.getDistanceTo(it.data.second), 0.0)
             }
@@ -68,10 +101,11 @@ class Deaccon2DInt {
     }
 
     private fun MutableList<ExtendableConvexPolygon>.grow(
-        width: Int,
-        height: Int,
+        origin: Euclidean2DPosition,
+        width: Double,
+        height: Double,
         envObstacles: Collection<Shape>,
-        step: Double = 1.0
+        step: Double
     ): MutableList<ExtendableConvexPolygon> {
         removeIf { seed -> envObstacles.any { seed.intersects(it) } }
         val obstacles = envObstacles.toMutableList()
@@ -85,7 +119,7 @@ class Deaccon2DInt {
                  * thus it's removed and added back at the end
                  */
                 obstacles.removeAt(envObstacles.size + i)
-                val extended = seed.extend(step, obstacles, origin, width.toDouble(), height.toDouble())
+                val extended = seed.extend(step, obstacles, origin, width, height)
                 if (!growing) {
                     growing = extended
                 }
@@ -96,39 +130,11 @@ class Deaccon2DInt {
     }
 
     private fun MutableList<out ExtendableConvexPolygon>.findCrossings(
-        crossingWidth: Double,
-        envObstacles: Collection<Shape>
-    ): Collection<Euclidean2DCrossing> {
-        val crossings = mutableListOf<Euclidean2DCrossing>()
-        forEach { seed ->
-            seed.vertices().indices.forEach { i ->
-                val edge = seed.getEdge(i)
-                if (edge.isAxisAligned() && seed.advanceEdge(i, crossingWidth)) {
-                    val intersectedSeeds = filter {
-                        it != seed && it.intersects(seed.asAwtShape())
-                    }
-                    val intersectedObstacles = envObstacles.filter { seed.intersects(it) }
-                    /*
-                     * Moves the edge back to its previous position
-                     */
-                    seed.moveEdge(i, edge)
-                    intersectedSeeds.forEach { neighbor ->
-                        findCrossingsTo(neighbor, edge, intersectedObstacles)
-                            .forEach {
-                                crossings.add(GraphEdgeWithData(seed, neighbor, it))
-                            }
-                    }
-                }
-            }
-        }
-        return crossings
-    }
-
-    private fun MutableList<out ExtendableConvexPolygon>.findCrossings2(
-        //crossingWidth: Double,
-        envObstacles: Collection<Shape>,
-        width: Int,
-        height: Int
+        origin: Euclidean2DPosition,
+        width: Double,
+        height: Double,
+        obstacles: Collection<Shape>,
+        unity: Double
     ): Collection<Euclidean2DCrossing> {
         val crossings = mutableListOf<Euclidean2DCrossing>()
         forEach { seed ->
@@ -136,14 +142,14 @@ class Deaccon2DInt {
                 val edge = seed.getEdge(i)
                 if (edge.isAxisAligned()) {
                     while (none { it != seed && it.intersects(seed.asAwtShape()) }) {
-                        if (!seed.advanceEdge(i, 1.0, origin, width.toDouble(), height.toDouble())) {
+                        if (!seed.advanceEdge(i, unity, origin, width, height)) {
                             break
                         }
                     }
                     val intersectedSeeds = filter {
                         it != seed && it.intersects(seed.asAwtShape())
                     }
-                    val intersectedObstacles = envObstacles.filter { seed.intersects(it) }
+                    val intersectedObstacles = obstacles.filter { seed.intersects(it) }
                     /*
                      * Moves the edge back to its previous position
                      */
@@ -188,25 +194,11 @@ class Deaccon2DInt {
             } ?: return mutableListOf()
     }
 
-    private fun createSeed(x: Double, y: Double, side: Double = 1.0): ExtendableConvexPolygon =
+    private fun createSeed(x: Double, y: Double, side: Double): ExtendableConvexPolygon =
         ExtendableConvexPolygonImpl(
             mutableListOf(
                 Euclidean2DPosition(x, y),
                 Euclidean2DPosition(x + side, y),
                 Euclidean2DPosition(x + side, y + side),
-                Euclidean2DPosition(x, y + side)
-            )
-        )
-
-    private fun Euclidean2DCrossing.mapCrossing(
-        mapper: (Euclidean2DPosition) -> Euclidean2DPosition
-    ): Euclidean2DCrossing =
-        GraphEdgeWithData(
-            tail.mapPolygon(mapper),
-            head.mapPolygon(mapper),
-            Pair(mapper.invoke(data.first), mapper.invoke(data.second))
-        )
-
-    private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =
-        MutableConvexPolygonImpl(vertices().map(mapper).toMutableList())
+                Euclidean2DPosition(x, y + side)))
 }

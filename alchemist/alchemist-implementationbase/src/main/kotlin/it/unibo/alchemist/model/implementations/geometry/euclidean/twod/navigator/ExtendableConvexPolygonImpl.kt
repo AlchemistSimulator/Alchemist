@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.contains
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.Point2D
@@ -28,7 +28,8 @@ import java.awt.geom.Line2D
  */
 open class ExtendableConvexPolygonImpl(
     private val vertices: MutableList<Euclidean2DPosition>
-) : MutableConvexPolygonImpl(vertices), ExtendableConvexPolygon {
+) : MutableConvexPolygonImpl(vertices),
+    ExtendableConvexPolygon {
 
     private var canEdgeAdvance: MutableList<Boolean> = MutableList(vertices.size) { true }
     /*
@@ -92,7 +93,8 @@ open class ExtendableConvexPolygonImpl(
      * (resized to have magnitude equal to the step parameter). However, vertices
      * may sometimes need to advance in different directions, for instance in order
      * to follow an oblique edge of an obstacle. In such cases we want to guarantee
-     * that the advanced edge is always parallel to the old one. This may be non-
+     * that the advanced edge is always parallel to the old one (i.e. we want to
+     * make sure that the edge advance in its normal direction). This may not be
      * trivial when the vertices of a given edge e have different directions of
      * growth. In order to preserve the parallelism with the old edge, we need to
      * resize the two directions of growth so that their component in the direction
@@ -152,7 +154,6 @@ open class ExtendableConvexPolygonImpl(
         width: Double,
         height: Double
     ): Boolean {
-        // val obs = obstacles.filter { it.vertices() != vertices }
         var extended = false
         var i = 0
         while (i < vertices.size) {

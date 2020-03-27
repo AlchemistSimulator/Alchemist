@@ -201,7 +201,7 @@ object Libs {
     /**
      * http://www.scalatest.org
      */
-    const val scalatest_2_12: String = "org.scalatest:scalatest_2.12:" + Versions.scalatest_2_12
+    const val scalatest_2_12: String = "org.scalatest:scalatest_2.12:_"
 
     /**
      * https://commons.apache.org/proper/commons-codec/

@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val scalatest_2_12: String = "3.0.1" // available: "3.0.8"
-
     const val commons_codec: String = "1.13"
 
     const val commons_lang3: String = "3.9"

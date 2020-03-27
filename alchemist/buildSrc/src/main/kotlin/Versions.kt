@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val thread_inheritable_resource_loader: String = "0.3.2"
-
     const val org_jetbrains_dokka_gradle_plugin: String = "0.10.0"
 
     const val com_jfrog_bintray_gradle_plugin: String = "1.8.4"

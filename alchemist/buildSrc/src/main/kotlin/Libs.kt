@@ -155,8 +155,7 @@ object Libs {
      * https://travis-ci.org/DanySK/Thread-Inheritable-Resource-Loader-for-Java
      */
     const val thread_inheritable_resource_loader: String =
-            "org.danilopianini:thread-inheritable-resource-loader:" +
-            Versions.thread_inheritable_resource_loader
+            "org.danilopianini:thread-inheritable-resource-loader:_"
 
     /**
      * http://code.google.com/p/concurrentlinkedhashmap

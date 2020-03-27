@@ -53,7 +53,7 @@ object Versions {
 
     const val thread_inheritable_resource_loader: String = "0.3.2"
 
-    const val com_github_spotbugs_gradle_plugin: String = "1.6.9" // available: "2.0.1"
+    const val com_github_spotbugs_gradle_plugin: String = "4.0.4" // available: "2.0.1"
 
     const val org_jetbrains_dokka_gradle_plugin: String = "0.10.0"
 

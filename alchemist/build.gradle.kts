@@ -5,7 +5,6 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 plugins {
-    id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
     id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
     `java-library`
     kotlin("jvm") version Versions.org_jetbrains_kotlin
@@ -30,10 +28,8 @@ plugins {
     `maven-publish`
     id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
     id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
-    id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
 }
 
-apply(plugin = "com.gradle.build-scan")
 apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
@@ -105,19 +101,18 @@ allprojects {
     }
 
     spotbugs {
-        effort = "max"
-        reportLevel = "low"
-        isShowProgress = true
+        setEffort("max")
+        setReportLevel("low")
+        showProgress.set(true)
         val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
         if (excludeFile.exists()) {
-            excludeFilter = excludeFile
+            excludeFilter.set(excludeFile)
         }
     }
 
-    tasks.withType<SpotBugsTask> {
+    tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
         reports {
-            xml.isEnabled = false
-            html.isEnabled = true
+            create("html") { enabled = true }
         }
     }
 
@@ -432,9 +427,4 @@ tasks.register<Jar>("fatJar") {
         exclude("gradlew.bat")
     }
     with(tasks.jar.get() as CopySpec)
-}
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
 }

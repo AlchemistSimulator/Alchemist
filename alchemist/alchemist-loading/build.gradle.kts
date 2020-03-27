@@ -18,8 +18,7 @@ dependencies {
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(Libs.kotlin_scripting_jsr223_embeddable)
-//    runtimeOnly(Libs.kotlin_script_runtime)
-//    runtimeOnly("org.jetbrains.kotlin:kotlin-script-util:1.3.40")
+    runtimeOnly(Libs.scala_compiler)
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))

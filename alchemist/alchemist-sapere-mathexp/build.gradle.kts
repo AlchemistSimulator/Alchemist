@@ -13,9 +13,13 @@ dependencies {
 }
 
 spotbugs {
-    isIgnoreFailures = true
+    ignoreFailures.set(true)
 }
 
 pmd {
+    isIgnoreFailures = true
+}
+
+checkstyle {
     isIgnoreFailures = true
 }

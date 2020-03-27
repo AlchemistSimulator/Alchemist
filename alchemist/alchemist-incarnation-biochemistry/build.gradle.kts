@@ -63,5 +63,5 @@ tasks.withType<Pmd> {
 }
 
 spotbugs {
-    sourceSets = sourceSetsToCheck
+    onlyAnalyze.value(sourceSetsToCheck.map { it.toString() })
 }

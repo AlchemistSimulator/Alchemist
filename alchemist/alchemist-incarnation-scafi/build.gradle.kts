@@ -28,3 +28,7 @@ dependencies {
     testRuntimeOnly(Libs.pegdown) // This is deprecated and should be replaced
     testRuntimeOnly(Libs.parboiled_java) // Used to force a version compatible with modern ASM
 }
+
+tasks.withType<ScalaCompile> {
+    targetCompatibility = "1.8"
+}

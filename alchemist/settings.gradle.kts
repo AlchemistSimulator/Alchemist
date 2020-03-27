@@ -5,6 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
 
 include(
     "alchemist-cognitive-agents",
@@ -27,3 +28,21 @@ include(
     "alchemist-time"
 )
 rootProject.name = "alchemist"
+
+buildscript {
+    repositories { gradlePluginPortal() }
+    dependencies.classpath("de.fayard:dependencies:0.5.7")
+}
+
+bootstrapRefreshVersionsAndDependencies()
+
+plugins {
+    id("com.gradle.enterprise") version "3.2"
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+    }
+}

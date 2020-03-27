@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 plugins {
-    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+    id("org.danilopianini.git-sensitive-semantic-versioning")
     `java-library`
-    kotlin("jvm") version Versions.org_jetbrains_kotlin
+    kotlin("jvm")
     jacoco
-    id("com.github.spotbugs") version Versions.com_github_spotbugs_gradle_plugin
+    id("com.github.spotbugs")
     pmd
     checkstyle
     id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
@@ -68,8 +68,8 @@ allprojects {
             exclude(group = "commons-lang")
         }
         implementation(Libs.slf4j_api)
-        implementation(Libs.kotlin_stdlib)
-        implementation(Libs.kotlin_reflect)
+        implementation(kotlin("stdlib-jdk8"))
+        implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")

@@ -7,117 +7,78 @@ import kotlin.String
  *   `$ ./gradlew buildSrcVersions`
  */
 object Libs {
-    const val org_danilopianini_conrec: String = "org.danilopianini:conrec:" + Versions.org_danilopianini_conrec
+    const val org_danilopianini_conrec: String = "org.danilopianini:conrec:_"
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
-    const val orchideditorial: String = "io.github.javaeden.orchid:OrchidEditorial:" +
-            Versions.io_github_javaeden_orchid
+    const val orchideditorial: String = "io.github.javaeden.orchid:OrchidEditorial:_"
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
-    const val orchidgithub: String = "io.github.javaeden.orchid:OrchidGithub:" +
-            Versions.io_github_javaeden_orchid
+    const val orchidgithub: String = "io.github.javaeden.orchid:OrchidGithub:_"
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
-    const val orchidkotlindoc: String = "io.github.javaeden.orchid:OrchidKotlindoc:" +
-            Versions.io_github_javaeden_orchid
+    const val orchidkotlindoc: String = "io.github.javaeden.orchid:OrchidKotlindoc:_"
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
-    const val orchidplugindocs: String = "io.github.javaeden.orchid:OrchidPluginDocs:" +
-            Versions.io_github_javaeden_orchid
+    const val orchidplugindocs: String = "io.github.javaeden.orchid:OrchidPluginDocs:_"
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
-    const val orchidsearch: String = "io.github.javaeden.orchid:OrchidSearch:" +
-            Versions.io_github_javaeden_orchid
+    const val orchidsearch: String = "io.github.javaeden.orchid:OrchidSearch:_"
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
-    const val orchidsyntaxhighlighter: String =
-            "io.github.javaeden.orchid:OrchidSyntaxHighlighter:" +
-            Versions.io_github_javaeden_orchid
+    const val orchidsyntaxhighlighter: String = "io.github.javaeden.orchid:OrchidSyntaxHighlighter:_"
 
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
-    const val orchidwiki: String = "io.github.javaeden.orchid:OrchidWiki:" +
-            Versions.io_github_javaeden_orchid
+    const val orchidwiki: String = "io.github.javaeden.orchid:OrchidWiki:_"
 
+    const val kotlin_scripting_jsr223_embeddable: String = "org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:_"
     /**
-     * https://kotlinlang.org/
+     * http://ignite.apache.org
      */
-    const val kotlin_reflect: String = "org.jetbrains.kotlin:kotlin-reflect:" +
-            Versions.org_jetbrains_kotlin
-
-    /**
-     * https://kotlinlang.org/
-     */
-    const val kotlin_scripting_compiler_embeddable: String =
-            "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:" +
-            Versions.org_jetbrains_kotlin
-
-    /**
-     * https://kotlinlang.org/
-     */
-    const val kotlin_scripting_jsr223_embeddable: String =
-            "org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:" +
-            Versions.org_jetbrains_kotlin
-
-    /**
-     * https://kotlinlang.org/
-     */
-    const val kotlin_stdlib: String = "org.jetbrains.kotlin:kotlin-stdlib:" +
-            Versions.org_jetbrains_kotlin
+    const val ignite_core: String = "org.apache.ignite:ignite-core:_"
 
     /**
      * http://ignite.apache.org
      */
-    const val ignite_core: String = "org.apache.ignite:ignite-core:" + Versions.org_apache_ignite
+    const val ignite_indexing: String = "org.apache.ignite:ignite-indexing:_"
 
     /**
      * http://ignite.apache.org
      */
-    const val ignite_indexing: String = "org.apache.ignite:ignite-indexing:" +
-            Versions.org_apache_ignite
-
-    /**
-     * http://ignite.apache.org
-     */
-    const val ignite_spring: String = "org.apache.ignite:ignite-spring:" +
-            Versions.org_apache_ignite
+    const val ignite_spring: String = "org.apache.ignite:ignite-spring:_"
 
     /**
      * https://junit.org/junit5/
      */
-    const val junit_jupiter_api: String = "org.junit.jupiter:junit-jupiter-api:" +
-            Versions.org_junit_jupiter
+    const val junit_jupiter_api: String = "org.junit.jupiter:junit-jupiter-api:_"
 
     /**
      * https://junit.org/junit5/
      */
-    const val junit_jupiter_engine: String = "org.junit.jupiter:junit-jupiter-engine:" +
-            Versions.org_junit_jupiter
+    const val junit_jupiter_engine: String = "org.junit.jupiter:junit-jupiter-engine:_"
 
     /**
      * https://github.com/cb372/scalacache
      */
-    const val scalacache_core_2_12: String = "com.github.cb372:scalacache-core_2.12:" +
-            Versions.com_github_cb372
+    const val scalacache_core_2_12: String = "com.github.cb372:scalacache-core_2.12:_"
 
     /**
      * https://github.com/cb372/scalacache
      */
-    const val scalacache_guava_2_12: String = "com.github.cb372:scalacache-guava_2.12:" +
-            Versions.com_github_cb372
+    const val scalacache_guava_2_12: String = "com.github.cb372:scalacache-guava_2.12:_"
 
     /**
      * https://www.graphhopper.com
@@ -192,56 +153,12 @@ object Libs {
      */
     const val antlr4_runtime: String = "org.antlr:antlr4-runtime:" + Versions.org_antlr
 
-    const val org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin: String =
-            "org.danilopianini.git-sensitive-semantic-versioning:org.danilopianini.git-sensitive-semantic-versioning.gradle.plugin:" +
-            Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
-
-    const val org_danilopianini_publish_on_central_gradle_plugin: String =
-            "org.danilopianini.publish-on-central:org.danilopianini.publish-on-central.gradle.plugin:" +
-            Versions.org_danilopianini_publish_on_central_gradle_plugin
-
-    const val org_jlleitschuh_gradle_ktlint_gradle_plugin: String =
-            "org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin:" +
-            Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
-
-    const val com_github_maiflai_scalatest_gradle_plugin: String =
-            "com.github.maiflai.scalatest:com.github.maiflai.scalatest.gradle.plugin:" +
-            Versions.com_github_maiflai_scalatest_gradle_plugin
-
-    const val de_fayard_buildsrcversions_gradle_plugin: String =
-            "de.fayard.buildSrcVersions:de.fayard.buildSrcVersions.gradle.plugin:" +
-            Versions.de_fayard_buildsrcversions_gradle_plugin
-
-    const val org_jetbrains_kotlin_jvm_gradle_plugin: String =
-            "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:" +
-            Versions.org_jetbrains_kotlin_jvm_gradle_plugin
-
-    const val com_eden_orchidplugin_gradle_plugin: String =
-            "com.eden.orchidPlugin:com.eden.orchidPlugin.gradle.plugin:" +
-            Versions.com_eden_orchidplugin_gradle_plugin
-
-    const val com_gradle_build_scan_gradle_plugin: String =
-            "com.gradle.build-scan:com.gradle.build-scan.gradle.plugin:" +
-            Versions.com_gradle_build_scan_gradle_plugin
-
     /**
      * https://travis-ci.org/DanySK/Thread-Inheritable-Resource-Loader-for-Java
      */
     const val thread_inheritable_resource_loader: String =
             "org.danilopianini:thread-inheritable-resource-loader:" +
             Versions.thread_inheritable_resource_loader
-
-    const val com_github_spotbugs_gradle_plugin: String =
-            "com.github.spotbugs:com.github.spotbugs.gradle.plugin:" +
-            Versions.com_github_spotbugs_gradle_plugin
-
-    const val org_jetbrains_dokka_gradle_plugin: String =
-            "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:" +
-            Versions.org_jetbrains_dokka_gradle_plugin
-
-    const val com_jfrog_bintray_gradle_plugin: String =
-            "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin:" +
-            Versions.com_jfrog_bintray_gradle_plugin
 
     /**
      * http://code.google.com/p/concurrentlinkedhashmap
@@ -271,7 +188,7 @@ object Libs {
     /**
      * http://logback.qos.ch
      */
-    const val logback_classic: String = "ch.qos.logback:logback-classic:" + Versions.logback_classic
+    const val logback_classic: String = "ch.qos.logback:logback-classic:_"
 
     /**
      * http://www.miglayout.com/
@@ -307,7 +224,7 @@ object Libs {
     /**
      * http://commons.apache.org/proper/commons-math/
      */
-    const val commons_math3: String = "org.apache.commons:commons-math3:" + Versions.commons_math3
+    const val commons_math3: String = "org.apache.commons:commons-math3:_"
 
     /**
      * https://groovy-lang.org
@@ -342,7 +259,7 @@ object Libs {
     /**
      * https://github.com/JetBrains/java-annotations
      */
-    const val annotations: String = "org.jetbrains:annotations:" + Versions.annotations
+    const val annotations: String = "org.jetbrains:annotations:_"
 
     /**
      * https://github.com/DanySK/boilerplate
@@ -399,12 +316,12 @@ object Libs {
     /**
      * https://spotbugs.github.io/
      */
-    const val spotbugs: String = "com.github.spotbugs:spotbugs:" + Versions.spotbugs
+    const val spotbugs: String = "com.github.spotbugs:spotbugs:_"
 
     /**
      * https://github.com/DanySK/listset
      */
-    const val listset: String = "org.danilopianini:listset:" + Versions.listset
+    const val listset: String = "org.danilopianini:listset:_"
 
     /**
      * http://pegdown.org
@@ -415,11 +332,6 @@ object Libs {
      * http://trove4j.sf.net
      */
     const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
-
-    /**
-     * https://github.com/pinterest/ktlint
-     */
-    const val ktlint: String = "com.pinterest:ktlint:" + Versions.ktlint
 
     /**
      * https://github.com/google/guava

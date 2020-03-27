@@ -114,32 +114,32 @@ object Libs {
     /**
      * https://openjdk.java.net/projects/openjfx/
      */
-    const val javafx_base: String = "org.openjfx:javafx-base:" + Versions.org_openjfx
+    const val javafx_base: String = "org.openjfx:javafx-base:_"
 
     /**
      * https://openjdk.java.net/projects/openjfx/
      */
-    const val javafx_controls: String = "org.openjfx:javafx-controls:" + Versions.org_openjfx
+    const val javafx_controls: String = "org.openjfx:javafx-controls:_"
 
     /**
      * https://openjdk.java.net/projects/openjfx/
      */
-    const val javafx_fxml: String = "org.openjfx:javafx-fxml:" + Versions.org_openjfx
+    const val javafx_fxml: String = "org.openjfx:javafx-fxml:_"
 
     /**
      * https://openjdk.java.net/projects/openjfx/
      */
-    const val javafx_graphics: String = "org.openjfx:javafx-graphics:" + Versions.org_openjfx
+    const val javafx_graphics: String = "org.openjfx:javafx-graphics:_"
 
     /**
      * https://openjdk.java.net/projects/openjfx/
      */
-    const val javafx_media: String = "org.openjfx:javafx-media:" + Versions.org_openjfx
+    const val javafx_media: String = "org.openjfx:javafx-media:_"
 
     /**
      * https://openjdk.java.net/projects/openjfx/
      */
-    const val javafx_swing: String = "org.openjfx:javafx-swing:" + Versions.org_openjfx
+    const val javafx_swing: String = "org.openjfx:javafx-swing:_"
 
     /**
      * http://www.antlr.org

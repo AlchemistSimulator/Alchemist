@@ -171,8 +171,7 @@ object Libs {
     /**
      * https://www.eclipse.org/emf
      */
-    const val org_eclipse_emf_ecore: String = "org.eclipse.emf:org.eclipse.emf.ecore:" +
-            Versions.org_eclipse_emf_ecore
+    const val org_eclipse_emf_ecore: String = "org.eclipse.emf:org.eclipse.emf.ecore:_"
 
     /**
      * https://github.com/mapsforge/mapsforge

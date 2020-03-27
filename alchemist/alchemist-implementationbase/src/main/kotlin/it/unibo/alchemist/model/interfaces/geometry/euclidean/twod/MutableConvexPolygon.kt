@@ -39,16 +39,10 @@ interface MutableConvexPolygon : ConvexPolygon {
     fun moveVertex(index: Int, newX: Double, newY: Double): Boolean
 
     /**
-     * The index parameter specify which edge to get: edge i connects
-     * vertices i and i+1.
-     */
-    fun getEdge(index: Int): Euclidean2DEdge
-
-    /**
      * If the new coords would cause the lost of the convexity,
      * false is returned.
      */
-    fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean
+    fun moveEdge(index: Int, newEdge: Euclidean2DSegment): Boolean
 
     /**
      * Performs a union in-place with a collection of overlapping

@@ -85,9 +85,11 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
                 // interpolate such values
                 final double v = (v1 + v2 + v3 + v4) / 4;
                 // fill the cell with the color
-                final double newAlpha = map(v, getMinLayerValueDouble(), getMaxLayerValueDouble(), 0, getAlpha().getVal());
-                g.setColor(new Color(getRed().getVal(), getGreen().getVal(), getBlue().getVal(), (int) Math.ceil(newAlpha)));
-                g.fillRect(i1, j1, i2 - i1, j2 - j1);
+                if (v >= getMinLayerValueDouble()) {
+                    final double newAlpha = map(v, getMinLayerValueDouble(), getMaxLayerValueDouble(), 0, getAlpha().getVal());
+                    g.setColor(new Color(getRed().getVal(), getGreen().getVal(), getBlue().getVal(), (int) Math.ceil(newAlpha)));
+                    g.fillRect(i1, j1, i2 - i1, j2 - j1);
+                }
             }
         }
     }

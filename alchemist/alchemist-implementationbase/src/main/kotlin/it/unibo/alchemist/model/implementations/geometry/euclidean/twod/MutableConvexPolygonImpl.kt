@@ -1,21 +1,21 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
+import it.unibo.alchemist.model.implementations.geometry.contains
 import it.unibo.alchemist.model.implementations.geometry.isDegenerate
-import it.unibo.alchemist.model.implementations.geometry.vertices
-import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.zCross
 import it.unibo.alchemist.model.implementations.geometry.toVector
-import it.unibo.alchemist.model.implementations.geometry.contains
+import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.POINT
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.EMPTY
+import it.unibo.alchemist.model.implementations.geometry.areCollinear
+import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DEdge
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
-
 import java.awt.Shape
 import java.awt.geom.Area
 import java.awt.geom.Path2D
@@ -26,6 +26,10 @@ import java.util.Optional
  *
  * Each modification operation on this object has a time complexity of
  * O(n), where n is the number of vertices/edges.
+ *
+ * Degenerate edges (of length 0) and collinear points are allowed, but
+ * be aware that the majority of algorithms working on convex polygons
+ * requires no degeneration at all.
  */
 open class MutableConvexPolygonImpl(
     private val vertices: MutableList<Euclidean2DPosition>
@@ -33,6 +37,17 @@ open class MutableConvexPolygonImpl(
 
     init {
         require(isConvex()) { "Given vertices do not represent a convex polygon" }
+        /*
+         * Remove collinear vertices, this is the only time this operation is performed
+         */
+        var i = 0
+        while (i < vertices.size) {
+            if (areCollinear(vertices[circularPrev(i)], vertices[i], vertices[circularNext(i)])) {
+                vertices.removeAt(i)
+                i--
+            }
+            i++
+        }
     }
 
     companion object {
@@ -59,9 +74,14 @@ open class MutableConvexPolygonImpl(
      */
     private var shape: AwtEuclidean2DShape? = null
 
-    override val diameter: Double = getShape().diameter
+    override val diameter: Double
+        /*
+         * Custom getter allows re-computation of the value
+         */
+        get() = getShape().diameter
 
-    override val centroid: Euclidean2DPosition = getShape().centroid
+    override val centroid: Euclidean2DPosition
+        get() = getShape().centroid
 
     override fun vertices(): List<Euclidean2DPosition> = vertices
 
@@ -105,7 +125,7 @@ open class MutableConvexPolygonImpl(
 
     override fun getEdge(index: Int) = Pair(vertices[index], vertices[circularNext(index)])
 
-    override fun moveEdge(index: Int, newEdge: Euclidean2DEdge): Boolean {
+    override fun moveEdge(index: Int, newEdge: Euclidean2DSegment): Boolean {
         val oldEdge = getEdge(index)
         vertices[index] = newEdge.first
         vertices[circularNext(index)] = newEdge.second
@@ -218,7 +238,7 @@ open class MutableConvexPolygonImpl(
             return false
         }
         var e1 = getEdge(vertices.size - 1)
-        var e2: Euclidean2DEdge
+        var e2: Euclidean2DSegment
         var sense: Boolean? = null
         vertices.indices.forEach { i ->
             e2 = getEdge(i)

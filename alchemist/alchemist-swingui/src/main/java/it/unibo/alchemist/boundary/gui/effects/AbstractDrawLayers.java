@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Collection;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -39,7 +38,7 @@ import java.awt.Graphics2D;
  * In particular, it allows the user to specify a molecule, meaning that only the layer
  * containing such molecule will be drawn (otherwise the effect is applied to all layers)
  */
-public abstract class AbstractDrawLayers implements DrawLayers {
+public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers {
 
     /**
      */
@@ -70,39 +69,27 @@ public abstract class AbstractDrawLayers implements DrawLayers {
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Object molStringCached;
-    private transient Optional<Node> markerNode = Optional.empty();
-
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
+    @SuppressWarnings({"PMD.CompareObjectsWithEquals"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
-        // if marker node is no longer in the environment or it is no longer displayed, we need to change it
-        if (markerNode.isPresent()
-                && (!env.getNodes().contains(markerNode.get()) || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition((Node<T>) markerNode.get()))))) {
-            markerNode = Optional.empty();
+    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+        if (layerFilter && (molecule == null || molString != molStringCached)) {
+            molStringCached = molString;
+            env.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
         }
-        if (markerNode.isEmpty()) {
-            markerNode = Optional.of(n);
+        colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
+        g.setColor(colorCache);
+        final List<Layer<T, P>> toDraw = new ArrayList<>();
+        if (layerFilter && molecule != null && env.getLayer(molecule).isPresent()) {
+            toDraw.add(env.getLayer(molecule).get());
+        } else {
+            toDraw.addAll(env.getLayers());
         }
-        if (markerNode.get() == n) { // at this point markerNode.isPresent() is always true, so we directly get it
-            if (layerFilter && (molecule == null || molString != molStringCached)) {
-                molStringCached = molString;
-                env.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
-            }
-            colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-            g.setColor(colorCache);
-            final List<Layer<T, P>> toDraw = new ArrayList<>();
-            if (layerFilter && molecule != null && env.getLayer(molecule).isPresent()) {
-                toDraw.add(env.getLayer(molecule).get());
-            } else {
-                toDraw.addAll(env.getLayers());
-            }
-            if (!toDraw.isEmpty()) {
-                drawLayers(toDraw, env, g, wormhole);
-            }
+        if (!toDraw.isEmpty()) {
+            drawLayers(toDraw, env, g, wormhole);
         }
     }
 

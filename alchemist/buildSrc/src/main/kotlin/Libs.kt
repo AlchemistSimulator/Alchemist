@@ -161,8 +161,7 @@ object Libs {
      * http://code.google.com/p/concurrentlinkedhashmap
      */
     const val concurrentlinkedhashmap_lru: String =
-            "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:" +
-            Versions.concurrentlinkedhashmap_lru
+            "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:_"
 
     /**
      * http://www.github.com/kotlintest/kotlintest

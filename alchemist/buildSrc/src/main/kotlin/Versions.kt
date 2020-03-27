@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val concurrentlinkedhashmap_lru: String = "1.4.2"
-
     const val kotlintest_runner_junit5: String = "3.3.2" // available: "3.4.2"
 
     const val org_eclipse_emf_ecore: String = "2.12.0" // available: "2.19.0"

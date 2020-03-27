@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val scafi_core_2_12: String = "0.3.2"
-
     const val parboiled_java: String = "1.3.0" // available: "1.3.1"
 
     const val scalatest_2_12: String = "3.0.1" // available: "3.0.8"

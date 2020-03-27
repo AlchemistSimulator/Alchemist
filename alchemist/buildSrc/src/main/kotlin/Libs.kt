@@ -191,8 +191,7 @@ object Libs {
     /**
      * https://scafi.github.io/
      */
-    const val scafi_core_2_12: String = "it.unibo.apice.scafiteam:scafi-core_2.12:" +
-            Versions.scafi_core_2_12
+    const val scafi_core_2_12: String = "it.unibo.apice.scafiteam:scafi-core_2.12:_"
 
     /**
      * http://parboiled.org

@@ -231,7 +231,7 @@ fun Euclidean2DSegment.findPointOnLineGivenY(y: Double): Euclidean2DPosition? {
 }
 
 /**
- * Computes the distance between the current segment and a given point
+ * Computes the distance between the current segment and a given point.
  */
 fun Euclidean2DSegment.distanceTo(point: Euclidean2DPosition) = closestPointTo(point).getDistanceTo(point)
 

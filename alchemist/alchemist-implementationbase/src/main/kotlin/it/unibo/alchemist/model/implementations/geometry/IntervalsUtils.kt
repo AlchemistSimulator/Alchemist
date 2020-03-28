@@ -46,7 +46,7 @@ fun DoubleInterval.isContained(other: DoubleInterval) = other.first <= first && 
  * intersect or share a single endpoint, null is returned.
  */
 fun DoubleInterval.intersection(other: DoubleInterval): DoubleInterval? {
-    if (other.second < first || second < other.first) {
+    if (other.second <= first || second <= other.first) {
         return null
     }
     return DoubleInterval(max(first, other.first), min(second, other.second))
@@ -104,6 +104,16 @@ fun DoubleInterval.subtractAll(intervals: Collection<DoubleInterval>): MutableLi
 }
 
 /**
+ * Subtracts all the given intervals from the current one.
+ */
+fun DoubleInterval.subtractAll2(intervals: Collection<DoubleInterval>): Collection<DoubleInterval> {
+    if (intervals.isEmpty()) {
+        return mutableListOf(this)
+    }
+    return subtract(intervals.first()).flatMap { it.subtractAll(intervals.drop(1)) }
+}
+
+/**
  * Maps a segment to an interval, the parameter [xAxisDirection]
  * indicates which pair of coords (x or y) should be extracted.
  */
@@ -123,9 +133,6 @@ fun Collection<Euclidean2DPosition>.findExtremePoints(xAxisDirection: Boolean): 
     val selector: (Euclidean2DPosition) -> Double = { if (xAxisDirection) it.x else it.y }
     val min = minBy(selector)?.run(selector)
     val max = maxBy(selector)?.run(selector)
-    return if (min == null || max == null) {
-        throw IllegalArgumentException("no point could be found")
-    } else {
-        DoubleInterval(min, max)
-    }
+    require(min != null && max != null) { "no point could be found" }
+    return DoubleInterval(min, max)
 }

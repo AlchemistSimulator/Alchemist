@@ -5,9 +5,11 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * A graph used for navigation purposes. The nodes are [ConvexGeometricShape]s,
- * usually representing portions of an environment. Additionally, a navigation
- * graph can store some positions which are considered to be possible destinations.
+ * A graph used for navigation purposes. Nodes are [ConvexGeometricShape]s,
+ * usually representing portions of an environment which are traversable by
+ * agents (the advantage of such representation is that agents can freely
+ * walk around within a convex area, as it is guaranteed that no obstacle
+ * will be found).
  *
  * @param V the [Vector] type for the space.
  * @param A the transformations supported by the shapes in this environment.

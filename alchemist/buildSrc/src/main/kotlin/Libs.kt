@@ -288,7 +288,7 @@ object Libs {
     /**
      * https://github.com/codecentric/javafxsvg
      */
-    const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:" + Versions.javafxsvg
+    const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:_"
 
     /**
      * http://www.slf4j.org

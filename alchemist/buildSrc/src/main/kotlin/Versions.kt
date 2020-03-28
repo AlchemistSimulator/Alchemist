@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val caffeine: String = "2.8.0"
-
     const val pegdown: String = "1.6.0"
 
     const val trove4j: String = "3.0.3"

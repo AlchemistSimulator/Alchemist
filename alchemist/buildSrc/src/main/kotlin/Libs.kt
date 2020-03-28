@@ -303,7 +303,7 @@ object Libs {
     /**
      * https://github.com/ben-manes/caffeine
      */
-    const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:" + Versions.caffeine
+    const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:_"
 
     /**
      * https://spotbugs.github.io/

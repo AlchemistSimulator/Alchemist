@@ -9,24 +9,23 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
+import it.unibo.alchemist.model.implementations.geometry.DoubleInterval
 import it.unibo.alchemist.model.implementations.geometry.createSegment
 import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.isAxisAligned
 import it.unibo.alchemist.model.implementations.geometry.isXAxisAligned
 import it.unibo.alchemist.model.implementations.geometry.toInterval
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.advanceEdge
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.edgeClosestTo
+import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.closestEdgeTo
 import it.unibo.alchemist.model.implementations.geometry.findExtremePoints
+import it.unibo.alchemist.model.implementations.geometry.intersects
 import it.unibo.alchemist.model.implementations.graph.Euclidean2DNavigationGraph
 import it.unibo.alchemist.model.implementations.graph.Euclidean2DNavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.geometry.subtractAll
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.graph.Euclidean2DCrossing
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
-import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 
@@ -43,7 +42,7 @@ import java.awt.Shape
  * - is only capable to deal with convex polygonal obstacles (concave ones can be
  * decomposed into convex meshes, whereas for curves bounding boxes can be used).
  * - is only capable to detect axis-aligned crossings.
- * - the generation of a navigation graph can take a significant amount of time.
+ * - can take a significant amount of time to generate a navigation graph.
  *
  * Here's a brief description of how the algorithm operates:
  * Firstly, a certain number of seeds is planted in the environment. Each seed is a
@@ -72,7 +71,9 @@ class NaviGator {
      * @param unity
      *              the quantity considered to be a unit in the environment (defaults
      *              to 1.0 because this algorithm works best with environments featuring
-     *              integer coordinates).
+     *              integer coordinates). In the growing phase, each side of each seed
+     *              will be advanced of a quantity equal to unit iteratively, hence the
+     *              smaller this value is the slower the algorithm will be.
      */
     fun generateNavigationGraph(
         origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),
@@ -88,15 +89,25 @@ class NaviGator {
             .map { createSeed(it.x, it.y, unity) }
             .toMutableList()
             .grow(origin, width, height, obstacles, unity)
-        val builder =
-            Euclidean2DNavigationGraphBuilder()
+        val builder = Euclidean2DNavigationGraphBuilder()
         seeds.forEach { builder.addNode(it) }
-        seeds
-            .findCrossings(origin, width, height, obstacles, unity)
-            .filter {
-                !fuzzyEquals(it.data.first.getDistanceTo(it.data.second), 0.0)
+        /*
+        seeds.findCrossings(origin, width, height, obstacles, unity)
+            .filterNot {
+                fuzzyEquals(it.data.first.getDistanceTo(it.data.second), 0.0)
             }
             .forEach { builder.addEdge(it) }
+        */
+        seeds.flatMap { seed ->
+            seed.vertices().indices.flatMap { index ->
+                val oldEdge = seed.getEdge(index)
+                val crossings =
+                    seed.findCrossings(index, seeds, origin, width, height, obstacles, unity)
+                seed.moveEdge(index, oldEdge)
+                crossings
+            }
+        }.forEach { builder.addEdge(it) }
+
         return builder.build(destinations)
     }
 
@@ -129,69 +140,81 @@ class NaviGator {
         return this
     }
 
-    private fun MutableList<out ExtendableConvexPolygon>.findCrossings(
+    /*
+     * Advances the edge of the polygon specified by the index parameter,
+     * keeping track of every obstacle encountered, in order to detect
+     * every crossing
+     */
+    private fun ExtendableConvexPolygon.findCrossings(
+        index: Int,
+        seeds: Collection<ExtendableConvexPolygon>,
         origin: Euclidean2DPosition,
         width: Double,
         height: Double,
         obstacles: Collection<Shape>,
-        unity: Double
+        unity: Double,
+        oldEdge: Euclidean2DSegment = getEdge(index),
+        remaining: DoubleInterval = oldEdge.toInterval()
     ): Collection<Euclidean2DCrossing> {
-        val crossings = mutableListOf<Euclidean2DCrossing>()
-        forEach { seed ->
-            seed.vertices().indices.forEach { i ->
-                val edge = seed.getEdge(i)
-                if (edge.isAxisAligned()) {
-                    while (none { it != seed && it.intersects(seed.asAwtShape()) }) {
-                        if (!seed.advanceEdge(i, unity, origin, width, height)) {
-                            break
-                        }
-                    }
-                    val intersectedSeeds = filter {
-                        it != seed && it.intersects(seed.asAwtShape())
-                    }
-                    val intersectedObstacles = obstacles.filter { seed.intersects(it) }
+        if (fuzzyEquals(remaining.first, remaining.second)) {
+            return emptyList()
+        }
+        val polygonToInterval: (ExtendableConvexPolygon) -> DoubleInterval = {
+            it.closestEdgeTo(oldEdge).toInterval(oldEdge.isXAxisAligned())
+        }
+        val shapeToInterval: (Shape) -> DoubleInterval = {
+            it.vertices().findExtremePoints(oldEdge.isXAxisAligned())
+        }
+        val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
+            seeds.filter {
+                it != this && it.intersects(asAwtShape()) &&
                     /*
-                     * Moves the edge back to its previous position
+                     * A seed is considered intersected if it intersects with the polygon and,
+                     * in particular, with the remaining portion of the advancing edge.
+                     * Similarly for obstacles below.
                      */
-                    seed.moveEdge(i, edge)
-                    intersectedSeeds.forEach { neighbor ->
-                        findCrossingsTo(neighbor, edge, intersectedObstacles)
-                            .forEach {
-                                crossings.add(GraphEdgeWithData(seed, neighbor, it))
-                            }
-                    }
-                }
+                    polygonToInterval(it).intersects(remaining)
             }
         }
-        return crossings
-    }
-
-    private fun findCrossingsTo(
-        neighbor: ConvexPolygon,
-        advancedEdge: Euclidean2DSegment,
-        intersectedObstacles: Collection<Shape>
-    ): Collection<Euclidean2DSegment> {
-        val neighborEdge = neighbor
-            .edgeClosestTo(advancedEdge)
-            .toInterval(advancedEdge.isXAxisAligned())
-        advancedEdge.toInterval()
-            .intersection(neighborEdge)
-            ?.let { intersection ->
-                val remaining = intersection.subtractAll(
-                    /*
-                     * Maps each obstacle to the interval of space it is occluding.
-                     */
-                    intersectedObstacles.map {
-                        it.vertices().findExtremePoints(advancedEdge.isXAxisAligned())
-                    }
-                )
-                return remaining.map {
-                    if (advancedEdge.isXAxisAligned())
-                        createSegment(it.first, advancedEdge.first.y, x2 = it.second)
-                    else
-                        createSegment(advancedEdge.first.x, it.first, y2 = it.second)
-                }
-            } ?: return mutableListOf()
+        val intersectedObstacles: () -> List<Shape> = {
+            obstacles.filter {
+                intersects(it) && shapeToInterval(it).intersects(remaining)
+            }
+        }
+        while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
+            if (!advanceEdge(index, unity, origin, width, height)) {
+                /*
+                 * Out of the environment's boundaries.
+                 */
+                return emptyList()
+            }
+        }
+        /*
+         * The portions of edge remaining after considering the encountered obstacles.
+         */
+        val newRemaining = remaining.subtractAll(
+            intersectedObstacles().map { shapeToInterval(it) }
+        )
+        val neighborToIntervals = intersectedSeeds().map { neighbor ->
+            neighbor to newRemaining.mapNotNull { remaining ->
+                polygonToInterval(neighbor).intersection(remaining)
+            }
+        }
+        val crossings = neighborToIntervals.flatMap { (neighbor, intervals) ->
+            intervals.map {
+                val crossing = if (oldEdge.isXAxisAligned())
+                    createSegment(it.first, oldEdge.first.y, x2 = it.second)
+                else
+                    createSegment(oldEdge.first.x, it.first, y2 = it.second)
+                Euclidean2DCrossing(this, neighbor, crossing)
+            }
+        }
+        return crossings + newRemaining.flatMap {
+            it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
+        }.flatMap {
+            findCrossings(index, seeds, origin, width, height,
+                obstacles, unity, oldEdge = oldEdge, remaining = it)
+        }
     }
 
     private fun createSeed(x: Double, y: Double, side: Double): ExtendableConvexPolygon =

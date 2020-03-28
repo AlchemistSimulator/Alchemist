@@ -358,5 +358,5 @@ object Libs {
     /**
      * https://github.com/jenetics/jpx
      */
-    const val jpx: String = "io.jenetics:jpx:" + Versions.jpx
+    const val jpx: String = "io.jenetics:jpx:_"
 }

@@ -9,6 +9,4 @@
  */
 object Versions {
 
-    const val jpx: String = "1.5.3" // available: "1.6.0"
-
 }

@@ -261,7 +261,7 @@ object Libs {
     /**
      * http://commons.apache.org/proper/commons-cli/
      */
-    const val commons_cli: String = "commons-cli:commons-cli:" + Versions.commons_cli
+    const val commons_cli: String = "commons-cli:commons-cli:_"
 
     /**
      * https://github.com/DanySK/gson-extras

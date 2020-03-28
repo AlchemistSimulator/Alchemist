@@ -10,5 +10,5 @@ dependencies {
     api(Libs.listset)
     api(Libs.jool_java_8)
     api(Libs.commons_math3)
-    testCompile(Libs.kotlintest_runner_junit5)
+    testImplementation(Libs.kotlintest_runner_junit5)
 }

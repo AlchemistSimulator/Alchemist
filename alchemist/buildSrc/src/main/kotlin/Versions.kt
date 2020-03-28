@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val gson_extras: String = "0.2.1" // available: "0.2.2"
-
     const val jool_java_8: String = "0.9.14"
 
     const val classgraph: String = "4.8.47" // available: "4.8.52"

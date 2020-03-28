@@ -348,7 +348,7 @@ object Libs {
     /**
      * https://github.com/DanySK/jirf
      */
-    const val jirf: String = "org.danilopianini:jirf:" + Versions.jirf
+    const val jirf: String = "org.danilopianini:jirf:_"
 
     /**
      * https://github.com/uchuhimo/konf

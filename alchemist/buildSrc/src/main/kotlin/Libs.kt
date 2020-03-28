@@ -278,7 +278,7 @@ object Libs {
     /**
      * http://commons.apache.org/proper/commons-io/
      */
-    const val commons_io: String = "commons-io:commons-io:" + Versions.commons_io
+    const val commons_io: String = "commons-io:commons-io:_"
 
     /**
      * http://www.controlsfx.org/

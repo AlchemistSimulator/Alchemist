@@ -333,7 +333,7 @@ object Libs {
     /**
      * http://github.com/davidmoten/rtree
      */
-    const val rtree: String = "com.github.davidmoten:rtree:" + Versions.rtree
+    const val rtree: String = "com.github.davidmoten:rtree:_"
 
     /**
      * https://commons.apache.org/proper/commons-bcel

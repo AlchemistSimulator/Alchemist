@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val rtree: String = "0.8.7"
-
     const val bcel: String = "6.3.1" // available: "6.4.1"
 
     const val gson: String = "2.8.6"

@@ -4,7 +4,6 @@ import it.unibo.alchemist.model.implementations.actions.Seek
 import it.unibo.alchemist.model.implementations.actions.Seek2D
 import it.unibo.alchemist.model.implementations.geometry.closestPointTo
 import it.unibo.alchemist.model.implementations.geometry.intersectionLines
-import it.unibo.alchemist.model.implementations.geometry.intersectsBoundaryExcluded
 import it.unibo.alchemist.model.implementations.geometry.midPoint
 import it.unibo.alchemist.model.implementations.geometry.toVector
 import it.unibo.alchemist.model.implementations.geometry.resize
@@ -13,6 +12,7 @@ import it.unibo.alchemist.model.implementations.geometry.magnitude
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
 import it.unibo.alchemist.model.implementations.geometry.angleBetween
+import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.intersectsBoundaryExcluded
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph

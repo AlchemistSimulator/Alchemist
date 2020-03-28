@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val svgsalamander: String = "1.1.2"
-
     const val jgrapht_core: String = "1.3.1"
 
     const val simplelatlng: String = "1.3.1"

@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val simplelatlng: String = "1.3.1"
-
     const val boilerplate: String = "0.2.1"
 
     const val commons_cli: String = "1.4"

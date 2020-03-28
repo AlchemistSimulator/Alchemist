@@ -246,7 +246,7 @@ object Libs {
     /**
      * http://code.google.com/p/simplelatlng
      */
-    const val simplelatlng: String = "com.javadocmd:simplelatlng:" + Versions.simplelatlng
+    const val simplelatlng: String = "com.javadocmd:simplelatlng:_"
 
     /**
      * https://github.com/JetBrains/java-annotations

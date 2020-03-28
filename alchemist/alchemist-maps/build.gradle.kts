@@ -10,7 +10,6 @@ dependencies {
     api(project(":alchemist-interfaces"))
 
     implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-time"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.commons_codec)
@@ -31,5 +30,5 @@ dependencies {
 }
 
 tasks.withType<Test> {
-    maxHeapSize = "3300m"
+    maxHeapSize = "3500m"
 }

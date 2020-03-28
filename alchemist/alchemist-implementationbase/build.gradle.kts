@@ -11,7 +11,6 @@ dependencies {
     api(Libs.commons_math3)
     api(Libs.java_quadtree)
     api(Libs.guava)
-    implementation(project(":alchemist-time"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.classgraph)

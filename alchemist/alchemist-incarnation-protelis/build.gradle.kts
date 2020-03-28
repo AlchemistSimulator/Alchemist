@@ -20,7 +20,6 @@ dependencies {
         }
     }
     api(Libs.protelis_lang)
-    implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
     testImplementation(project(":alchemist-engine"))

@@ -21,7 +21,6 @@ dependencies {
     runtimeOnly(Libs.bcel)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
-    testImplementation(project(":alchemist-time"))
     testImplementation(Libs.kotlintest_runner_junit5)
 }
 

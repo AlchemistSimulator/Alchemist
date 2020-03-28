@@ -35,7 +35,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
      *            {@link RandomGenerator} used internally
      */
     public ExponentialTime(final double markovianRate, final RandomGenerator random) {
-        this(markovianRate, DoubleTime.ZERO_TIME, random);
+        this(markovianRate, Time.ZERO, random);
     }
 
     /**
@@ -65,7 +65,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
         } else if (oldPropensity != 0 && newpropensity != 0) {
             update(newpropensity, executed, curTime);
         } else if (oldPropensity != 0 && newpropensity == 0) {
-            setTau(DoubleTime.INFINITE_TIME);
+            setTau(Time.INFINITY);
         }
         oldPropensity = newpropensity;
     }
@@ -108,7 +108,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
      */
     @Override
     public ExponentialTime<T> clone(final Time currentTime) {
-        return new ExponentialTime<>(rate, DoubleTime.ZERO_TIME, rand);
+        return new ExponentialTime<>(rate, Time.ZERO, rand);
     }
 
     /**

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -25,7 +26,7 @@ object PimpMyAlchemist {
     def +(p: P) = position.plus(p)
   }
   /** Shortcut for DoubleTime.ZERO_TIME */
-  implicit val zeroTime = DoubleTime.ZERO_TIME
+  implicit val zeroTime = Time.ZERO
   implicit def time2Double(time: Time): Double = time.toDouble()
   implicit def double2Time(time: Double): Time = new DoubleTime(time)
   implicit def molecule2String(molecule: Molecule): String = molecule.toString

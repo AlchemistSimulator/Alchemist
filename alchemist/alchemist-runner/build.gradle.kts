@@ -13,7 +13,6 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-swingui"))
-    implementation(project(":alchemist-time"))
     implementation(Libs.commons_io)
     implementation(Libs.commons_lang3)
     implementation(Libs.guava)

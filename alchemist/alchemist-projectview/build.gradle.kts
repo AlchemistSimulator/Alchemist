@@ -18,7 +18,6 @@ dependencies {
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-runner"))
     implementation(project(":alchemist-swingui"))
-    implementation(project(":alchemist-time"))
     implementation(Libs.controlsfx)
     implementation(Libs.gson)
     implementation(Libs.javafxsvg)

@@ -18,5 +18,4 @@ dependencies {
     implementation(Libs.commons_io)
 
     testImplementation(project(":alchemist-incarnation-sapere"))
-    testImplementation(project(":alchemist-time"))
 }

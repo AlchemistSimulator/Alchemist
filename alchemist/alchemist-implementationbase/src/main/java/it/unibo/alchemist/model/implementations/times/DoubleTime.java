@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -20,18 +21,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  */
 public final class DoubleTime implements Time {
 
-    private static final long serialVersionUID = -6332407580176508417L;
-    /**
-     * Infinite time.
-     */
-    public static final DoubleTime INFINITE_TIME = new DoubleTime(Double.POSITIVE_INFINITY);
-    /**
-     * Time zero.
-     */
-    public static final DoubleTime ZERO_TIME = new DoubleTime(0d);
-    /**
-     * 
-     */
+    private static final long serialVersionUID = 1L;
     private final double t;
 
     /**
@@ -72,8 +62,7 @@ public final class DoubleTime implements Time {
         } else if (oinf) {
             return -1;
         }
-        final double od = o.toDouble();
-        return t > od ? 1 : t < od ? -1 : 0;
+        return Double.compare(toDouble(), o.toDouble());
     }
 
     @Override
@@ -99,7 +88,7 @@ public final class DoubleTime implements Time {
 
     @Override
     public int hashCode() {
-        return Double.valueOf(t).hashCode();
+        return Double.hashCode(t);
     }
 
     @Override

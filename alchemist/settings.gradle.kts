@@ -24,8 +24,7 @@ include(
     "alchemist-runner",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",
-    "alchemist-swingui",
-    "alchemist-time"
+    "alchemist-swingui"
 )
 rootProject.name = "alchemist"
 

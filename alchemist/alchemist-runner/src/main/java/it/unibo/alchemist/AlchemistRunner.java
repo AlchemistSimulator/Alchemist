@@ -331,7 +331,7 @@ public final class AlchemistRunner<T, P extends Position2D<P>> {
         private int closeOperation;
         private Optional<String> effectsFile = Optional.empty();
         private long endStep = Long.MAX_VALUE;
-        private Time endTime = DoubleTime.INFINITE_TIME;
+        private Time endTime = Time.INFINITY;
         private Optional<String> exportFileRoot = Optional.empty();
         private boolean headless;
         private int parallelism = Runtime.getRuntime().availableProcessors() + 1;

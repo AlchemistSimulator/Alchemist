@@ -14,7 +14,6 @@ dependencies {
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-smartcam"))
-    implementation(project(":alchemist-time"))
     implementation(project(":alchemist-cognitive-agents"))
     implementation(Libs.miglayout_swing)
     implementation(Libs.mapsforge_map_awt) {

@@ -16,7 +16,6 @@ dependencies {
     api(Libs.scafi_core_2_12)
 
     implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-time"))
     implementation(Libs.scalacache_core_2_12)
     implementation(Libs.scalacache_guava_2_12)
     implementation(Libs.scala_compiler) // TODO: try to remove and use implementationbase

@@ -236,7 +236,7 @@ object Libs {
     /**
      * https://github.com/blackears/svgSalamander
      */
-    const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:_"
+    const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:1.1.2"
 
     /**
      * http://www.jgrapht.org

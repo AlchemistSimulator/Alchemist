@@ -81,32 +81,7 @@ fun DoubleInterval.subtract(other: DoubleInterval): MutableList<DoubleInterval> 
 /**
  * Subtracts all the given intervals from the current one.
  */
-fun DoubleInterval.subtractAll(intervals: Collection<DoubleInterval>): MutableList<DoubleInterval> {
-    val remaining = mutableListOf(this)
-    var i = 0
-    while (i < remaining.size) {
-        var curr = remaining[i]
-        for (interval in intervals) {
-            val subtraction = curr.subtract(interval)
-            if (subtraction.isEmpty()) {
-                remaining.removeAt(i)
-                i--
-                break
-            } else {
-                curr = subtraction.first()
-                remaining[i] = curr
-                subtraction.filter { it != curr }.forEach { remaining.add(it) }
-            }
-        }
-        i++
-    }
-    return remaining
-}
-
-/**
- * Subtracts all the given intervals from the current one.
- */
-fun DoubleInterval.subtractAll2(intervals: Collection<DoubleInterval>): Collection<DoubleInterval> {
+fun DoubleInterval.subtractAll(intervals: Collection<DoubleInterval>): Collection<DoubleInterval> {
     if (intervals.isEmpty()) {
         return mutableListOf(this)
     }

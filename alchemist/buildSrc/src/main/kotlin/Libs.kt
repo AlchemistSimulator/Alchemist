@@ -241,7 +241,7 @@ object Libs {
     /**
      * http://www.jgrapht.org
      */
-    const val jgrapht_core: String = "org.jgrapht:jgrapht-core:" + Versions.jgrapht_core
+    const val jgrapht_core: String = "org.jgrapht:jgrapht-core:_"
 
     /**
      * http://code.google.com/p/simplelatlng

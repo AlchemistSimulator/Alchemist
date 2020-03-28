@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val jgrapht_core: String = "1.3.1"
-
     const val simplelatlng: String = "1.3.1"
 
     const val boilerplate: String = "0.2.1"

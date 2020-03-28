@@ -211,7 +211,7 @@ object Libs {
     /**
      * http://commons.apache.org/proper/commons-lang/
      */
-    const val commons_lang3: String = "org.apache.commons:commons-lang3:" + Versions.commons_lang3
+    const val commons_lang3: String = "org.apache.commons:commons-lang3:_"
 
     /**
      * http://commons.apache.org/proper/commons-math/

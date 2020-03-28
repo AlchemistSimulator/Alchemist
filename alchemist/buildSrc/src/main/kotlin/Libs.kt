@@ -328,7 +328,7 @@ object Libs {
     /**
      * https://github.com/google/guava
      */
-    const val guava: String = "com.google.guava:guava:" + Versions.guava
+    const val guava: String = "com.google.guava:guava:_"
 
     /**
      * http://github.com/davidmoten/rtree

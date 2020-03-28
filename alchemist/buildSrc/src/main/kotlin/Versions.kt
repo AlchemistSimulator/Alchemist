@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val gson: String = "2.8.6"
-
     const val jirf: String = "0.2.1"
 
     const val konf: String = "0.13.3" // available: "0.20.0"

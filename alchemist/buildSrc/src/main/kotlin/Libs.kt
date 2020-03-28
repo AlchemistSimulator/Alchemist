@@ -343,7 +343,7 @@ object Libs {
     /**
      * https://github.com/google/gson
      */
-    const val gson: String = "com.google.code.gson:gson:" + Versions.gson
+    const val gson: String = "com.google.code.gson:gson:_"
 
     /**
      * https://github.com/DanySK/jirf

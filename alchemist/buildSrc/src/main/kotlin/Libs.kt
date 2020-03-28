@@ -206,7 +206,7 @@ object Libs {
     /**
      * https://commons.apache.org/proper/commons-codec/
      */
-    const val commons_codec: String = "commons-codec:commons-codec:" + Versions.commons_codec
+    const val commons_codec: String = "commons-codec:commons-codec:_"
 
     /**
      * http://commons.apache.org/proper/commons-lang/

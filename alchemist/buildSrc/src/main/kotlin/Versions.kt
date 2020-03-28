@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val commons_codec: String = "1.13"
-
     const val commons_lang3: String = "3.9"
 
     const val groovy_jsr223: String = "2.5.8"

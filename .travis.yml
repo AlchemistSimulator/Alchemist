@@ -42,9 +42,8 @@ env:
   matrix:
     - *reference_jdk
     - JDK="adopt-openj9@1.11.0"
-    - JDK="adopt@1.12.0"
-    - JDK="adopt-openj9@1.12.0"
-#    - JDK="adopt@1.13.0"
+    - JDK="adopt@"
+    - JDK="adopt-openj9@"
 
 before_install:
   - travis_retry curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh

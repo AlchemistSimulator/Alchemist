@@ -306,13 +306,13 @@ dependencies {
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
     implementation(Libs.ignite_core)
-    orchidRuntime(Libs.orchideditorial)
-    orchidRuntime(Libs.orchidkotlindoc)
-    orchidRuntime(Libs.orchidplugindocs)
-    orchidRuntime(Libs.orchidsearch)
-    orchidRuntime(Libs.orchidsyntaxhighlighter)
-    orchidRuntime(Libs.orchidwiki)
-    orchidRuntime(Libs.orchidgithub)
+    orchidRuntimeOnly(Libs.orchideditorial)
+    orchidRuntimeOnly(Libs.orchidkotlindoc)
+    orchidRuntimeOnly(Libs.orchidplugindocs)
+    orchidRuntimeOnly(Libs.orchidsearch)
+    orchidRuntimeOnly(Libs.orchidsyntaxhighlighter)
+    orchidRuntimeOnly(Libs.orchidwiki)
+    orchidRuntimeOnly(Libs.orchidgithub)
 }
 
 tasks.withType<DokkaTask> {

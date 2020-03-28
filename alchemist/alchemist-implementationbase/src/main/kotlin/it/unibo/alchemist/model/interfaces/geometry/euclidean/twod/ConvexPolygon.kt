@@ -6,7 +6,7 @@ import java.awt.Shape
 
 /**
  * A convex polygon is a simple polygon (i.e. not self-intersecting and
- * with no holes) in which no line segment between two points on the boundary
+ * without holes) in which no line segment between two points on the boundary
  * ever goes outside the polygon.
  */
 interface ConvexPolygon : ConvexEuclidean2DShape, AwtShapeCompatible {
@@ -24,7 +24,6 @@ interface ConvexPolygon : ConvexEuclidean2DShape, AwtShapeCompatible {
 
     /**
      * Checks whether the given shape intersects with the polygon.
-     * This method is "exact" (no bounding box are used).
      */
-    fun intersects(other: Shape): Boolean
+    fun intersects(shape: Shape): Boolean
 }

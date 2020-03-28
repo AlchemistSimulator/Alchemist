@@ -338,7 +338,7 @@ object Libs {
     /**
      * https://commons.apache.org/proper/commons-bcel
      */
-    const val bcel: String = "org.apache.bcel:bcel:" + Versions.bcel
+    const val bcel: String = "org.apache.bcel:bcel:_"
 
     /**
      * https://github.com/google/gson

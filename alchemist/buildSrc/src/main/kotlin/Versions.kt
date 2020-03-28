@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val javalib_java7: String = "0.6.1"
-
     const val svgsalamander: String = "1.1.2"
 
     const val jgrapht_core: String = "1.3.1"

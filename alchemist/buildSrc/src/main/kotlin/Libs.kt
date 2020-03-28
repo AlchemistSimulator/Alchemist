@@ -231,7 +231,7 @@ object Libs {
     /**
      * https://github.com/DanySK/javalib-java7
      */
-    const val javalib_java7: String = "org.danilopianini:javalib-java7:" + Versions.javalib_java7
+    const val javalib_java7: String = "org.danilopianini:javalib-java7:_"
 
     /**
      * https://github.com/blackears/svgSalamander

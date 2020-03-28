@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val groovy_jsr223: String = "2.5.8"
-
     const val java_quadtree: String = "0.1.3"
 
     const val javalib_java7: String = "0.6.1"

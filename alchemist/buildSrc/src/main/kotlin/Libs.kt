@@ -221,7 +221,7 @@ object Libs {
     /**
      * https://groovy-lang.org
      */
-    const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:" + Versions.groovy_jsr223
+    const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:_"
 
     /**
      * https://github.com/DanySK/java-quadtree

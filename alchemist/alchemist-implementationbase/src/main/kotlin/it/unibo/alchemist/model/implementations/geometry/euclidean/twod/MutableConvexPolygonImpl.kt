@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.contains
 import it.unibo.alchemist.model.implementations.geometry.isDegenerate
 import it.unibo.alchemist.model.implementations.geometry.zCross
 import it.unibo.alchemist.model.implementations.geometry.toVector
@@ -8,9 +7,7 @@ import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.POINT
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.EMPTY
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
-import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
@@ -19,10 +16,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvex
 import java.awt.Shape
 import java.awt.geom.Area
 import java.awt.geom.Path2D
-import java.util.Optional
 
 /**
- * Implementation of a [MutableConvexPolygon].
+ * Implementation of [MutableConvexPolygon].
  *
  * Each modification operation on this object has a time complexity of
  * O(n), where n is the number of vertices/edges.
@@ -119,12 +115,15 @@ open class MutableConvexPolygonImpl(
 
     override fun intersects(other: Euclidean2DShape) = getShape().intersects(other)
 
-    /*
-     * Delegates to java.awt.Area.
+    /**
+     * This method is "exact" (no bounding box are used).
      */
-    override fun intersects(other: Shape): Boolean {
+    override fun intersects(shape: Shape): Boolean {
+        /*
+         * Delegates to java.awt.Area.
+         */
         val a = Area(asAwtShape())
-        a.intersect(Area(other))
+        a.intersect(Area(shape))
         return !a.isEmpty
     }
 
@@ -148,7 +147,7 @@ open class MutableConvexPolygonImpl(
     }
 
     override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) =
-        getShape().transformed(transformation) as GeometricShape<Euclidean2DPosition, Euclidean2DTransformation>
+        getShape().transformed(transformation) as Euclidean2DShape
 
     final override fun asAwtShape() = getShape().asAwtShape()
 
@@ -211,7 +210,7 @@ open class MutableConvexPolygonImpl(
         /*
          * We need to maintain at least 3 non degenerate edges to have a polygon.
          */
-        if (vertices.indices.filter { !getEdge(it).isDegenerate() }.size < 3) {
+        if (edges().filter { !it.isDegenerate() }.size < 3) {
             return false
         }
         var e1 = getEdge(vertices.size - 1)

@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
+package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.isDegenerate
 import it.unibo.alchemist.model.implementations.geometry.resize

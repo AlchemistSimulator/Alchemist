@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon
+package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

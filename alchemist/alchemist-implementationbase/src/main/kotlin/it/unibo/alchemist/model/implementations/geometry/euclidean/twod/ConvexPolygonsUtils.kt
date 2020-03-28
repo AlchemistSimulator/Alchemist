@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import java.awt.Shape
 import java.awt.geom.Point2D
 import java.lang.IllegalStateException
@@ -55,11 +55,6 @@ fun ConvexPolygon.containsOrLiesOnBoundary(vector: Euclidean2DPosition): Boolean
 
 /**
  * Adds a vertex to the polygon, linked to the (previous) last vertex.
- *
- * Note that it is responsibility of the user to provide vertices in
- * the correct order. If the addition of the specified vertex would
- * cause the violation of the convexity, false is returned and the
- * vertex is not added.
  */
 fun MutableConvexPolygon.addVertex(x: Double, y: Double): Boolean = addVertex(vertices().size, x, y)
 
@@ -77,7 +72,7 @@ fun ConvexPolygon.intersectsBoundaryExcluded(segment: Euclidean2DSegment): Boole
 /**
  * Finds the edge of the polygon closest to the provided segment.
  */
-fun ConvexPolygon.edgeClosestTo(segment: Euclidean2DSegment): Euclidean2DSegment =
+fun ConvexPolygon.closestEdgeTo(segment: Euclidean2DSegment): Euclidean2DSegment =
     edges().minWith(
         compareBy({
             it.distanceTo(segment)
@@ -103,7 +98,6 @@ fun ExtendableConvexPolygon.advanceEdge(
             return true
         }
         moveEdge(index, oldEdge)
-        return false
     }
     return false
 }

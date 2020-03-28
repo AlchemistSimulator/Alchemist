@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val slf4j_api: String = "1.8.0-beta2"
-
     const val snakeyaml: String = "1.25"
 
     const val caffeine: String = "2.8.0"

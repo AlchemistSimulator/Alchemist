@@ -268,7 +268,7 @@ object Libs {
      */
     const val gson_extras: String = "org.danilopianini:gson-extras:_"
 
-    const val jool_java_8: String = "org.jooq:jool-java-8:" + Versions.jool_java_8
+    const val jool_java_8: String = "org.jooq:jool-java-8:_"
 
     /**
      * https://github.com/classgraph/classgraph

@@ -323,7 +323,7 @@ object Libs {
     /**
      * http://trove4j.sf.net
      */
-    const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
+    const val trove4j: String = "net.sf.trove4j:trove4j:_"
 
     /**
      * https://github.com/google/guava

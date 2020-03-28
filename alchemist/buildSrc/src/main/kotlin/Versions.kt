@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val trove4j: String = "3.0.3"
-
     const val guava: String = "28.1-jre"
 
     const val rtree: String = "0.8.7"

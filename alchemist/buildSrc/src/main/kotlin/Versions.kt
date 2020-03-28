@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val classgraph: String = "4.8.47" // available: "4.8.52"
-
     const val commons_io: String = "2.6"
 
     const val controlsfx: String = "9.0.0" // available: "11.0.0"

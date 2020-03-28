@@ -273,7 +273,7 @@ object Libs {
     /**
      * https://github.com/classgraph/classgraph
      */
-    const val classgraph: String = "io.github.classgraph:classgraph:" + Versions.classgraph
+    const val classgraph: String = "io.github.classgraph:classgraph:_"
 
     /**
      * http://commons.apache.org/proper/commons-io/

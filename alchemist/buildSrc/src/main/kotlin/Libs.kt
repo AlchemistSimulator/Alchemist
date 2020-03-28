@@ -283,7 +283,7 @@ object Libs {
     /**
      * http://www.controlsfx.org/
      */
-    const val controlsfx: String = "org.controlsfx:controlsfx:" + Versions.controlsfx
+    const val controlsfx: String = "org.controlsfx:controlsfx:_"
 
     /**
      * https://github.com/codecentric/javafxsvg

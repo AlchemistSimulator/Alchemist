@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val controlsfx: String = "9.0.0" // available: "11.0.0"
-
     const val javafxsvg: String = "1.3.0"
 
     const val slf4j_api: String = "1.8.0-beta2"

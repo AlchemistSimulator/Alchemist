@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val snakeyaml: String = "1.25"
-
     const val caffeine: String = "2.8.0"
 
     const val pegdown: String = "1.6.0"

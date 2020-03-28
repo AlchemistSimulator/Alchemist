@@ -298,7 +298,7 @@ object Libs {
     /**
      * http://www.snakeyaml.org
      */
-    const val snakeyaml: String = "org.yaml:snakeyaml:" + Versions.snakeyaml
+    const val snakeyaml: String = "org.yaml:snakeyaml:_"
 
     /**
      * https://github.com/ben-manes/caffeine

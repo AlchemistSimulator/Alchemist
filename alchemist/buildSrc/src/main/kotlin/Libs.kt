@@ -353,7 +353,7 @@ object Libs {
     /**
      * https://github.com/uchuhimo/konf
      */
-    const val konf: String = "com.uchuhimo:konf:" + Versions.konf
+    const val konf: String = "com.uchuhimo:konf:_"
 
     /**
      * https://github.com/jenetics/jpx

@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val konf: String = "0.13.3" // available: "0.20.0"
-
     const val jpx: String = "1.5.3" // available: "1.6.0"
 
 }

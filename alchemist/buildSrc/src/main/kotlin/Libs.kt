@@ -226,7 +226,7 @@ object Libs {
     /**
      * https://github.com/DanySK/java-quadtree
      */
-    const val java_quadtree: String = "org.danilopianini:java-quadtree:" + Versions.java_quadtree
+    const val java_quadtree: String = "org.danilopianini:java-quadtree:_"
 
     /**
      * https://github.com/DanySK/javalib-java7

@@ -9,8 +9,6 @@
  */
 object Versions {
 
-    const val boilerplate: String = "0.2.1"
-
     const val commons_cli: String = "1.4"
 
     const val gson_extras: String = "0.2.1" // available: "0.2.2"

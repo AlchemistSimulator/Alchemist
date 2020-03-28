@@ -256,7 +256,7 @@ object Libs {
     /**
      * https://github.com/DanySK/boilerplate
      */
-    const val boilerplate: String = "org.danilopianini:boilerplate:" + Versions.boilerplate
+    const val boilerplate: String = "org.danilopianini:boilerplate:_"
 
     /**
      * http://commons.apache.org/proper/commons-cli/

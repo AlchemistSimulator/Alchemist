@@ -318,7 +318,7 @@ object Libs {
     /**
      * http://pegdown.org
      */
-    const val pegdown: String = "org.pegdown:pegdown:" + Versions.pegdown
+    const val pegdown: String = "org.pegdown:pegdown:_"
 
     /**
      * http://trove4j.sf.net

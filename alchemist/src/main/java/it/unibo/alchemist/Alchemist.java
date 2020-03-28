@@ -7,20 +7,11 @@
  */
 package it.unibo.alchemist;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import javax.swing.JFrame;
-
+import ch.qos.logback.classic.Level;
+import it.unibo.alchemist.AlchemistRunner.Builder;
+import it.unibo.alchemist.cli.CLIMaker;
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.YamlLoader;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -30,13 +21,21 @@ import org.apache.commons.cli.ParseException;
 import org.apache.ignite.startup.cmdline.CommandLineStartup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import it.unibo.alchemist.AlchemistRunner.Builder;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.cli.CLIMaker;
-import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
+import javax.swing.JFrame;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Starts Alchemist.
@@ -76,10 +75,12 @@ public final class Alchemist { // NOPMD MoreThanOneLogger
     /**
      * @param args
      *            the argument for the program
-     * @param <T>
-     *            concentration type
      */
-    public static <T> void main(final String[] args) {
+    public static void main(final String[] args) {
+        if (LoggerFactory.getILoggerFactory().getClass().equals(NOPLoggerFactory.class)) {
+            System.out.println("Alchemist could not load the output module (broken SLF4J depedencies?)"); // NOPMD
+            exitWith(ExitStatus.NO_LOGGER);
+        }
         final Options opts = CLIMaker.getOptions();
         final CommandLineParser parser = new DefaultParser();
         try {
@@ -91,7 +92,7 @@ public final class Alchemist { // NOPMD MoreThanOneLogger
             if (cmd.hasOption(HELP)) {
                 final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("java -jar alchemist-redist-{version}.jar", opts);
-                System.exit(0);
+                exitWith(ExitStatus.OK);
             }
             Optional<Loader> loader = Optional.empty();
             if (cmd.hasOption(YAML)) {
@@ -127,12 +128,12 @@ public final class Alchemist { // NOPMD MoreThanOneLogger
                         }
                         if (varsUnderRun == null) {
                             L.error("You must specify which variables you want the batch to run on.");
-                            System.exit(1);
+                            exitWith(ExitStatus.NO_VARIABLES);
                         }
                         final String[] vars = Optional.ofNullable(cmd.getOptionValues(VARIABLES)).orElse(new String[0]);
                         if (vars.length == 0) {
                             L.info("Alchemist is in batch mode, but no variable is available.");
-                            System.exit(2);
+                            exitWith(ExitStatus.NO_VARIABLES);
                         }
 
                         if (cmd.hasOption(DISTRIBUTED)) {
@@ -144,10 +145,22 @@ public final class Alchemist { // NOPMD MoreThanOneLogger
                     }
                 } catch (NumberFormatException e) {
                     L.error("A number was expected. " + e.getMessage());
-                    System.exit(1);
+                    exitWith(ExitStatus.NUMBER_FORMAT_ERROR);
                 }
             } else {
-                ProjectGUI.main();
+                try {
+                    final var projectGUI = Class.forName("it.unibo.alchemist.boundary.projectview.ProjectGUI");
+                    final Object noArguments = new String[]{};
+                    projectGUI.getMethod("main", String[].class).invoke(null, noArguments);
+                } catch (ClassNotFoundException e) {
+                    L.error("ProjectGUI not found in the classpath: make sure you include alchemist-projectview if you intend to use it.");
+                } catch (NoSuchMethodException e) {
+                    L.error("No main method in ProjectGUI: this is a bug in Alchemist, please report it.", e);
+                } catch (IllegalAccessException e) {
+                    L.error("No permission to launch ProjectGUI: it might be a bug in Alchemist, please report it.", e);
+                } catch (InvocationTargetException e) {
+                    L.error("ProjectGUI launcher broken: this is a bug in Alchemist, please report it.", e);
+                }
             }
         } catch (ParseException e) {
             L.error("Your command sequence could not be parsed.", e);
@@ -186,6 +199,17 @@ public final class Alchemist { // NOPMD MoreThanOneLogger
         final ch.qos.logback.classic.Logger root =
                 (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         root.setLevel(level);
+    }
+
+    public static void exitWith(final ExitStatus status) {
+        System.exit(status.ordinal());
+    }
+
+    private enum ExitStatus {
+        OK,
+        NO_LOGGER,
+        NUMBER_FORMAT_ERROR,
+        NO_VARIABLES
     }
 
 }

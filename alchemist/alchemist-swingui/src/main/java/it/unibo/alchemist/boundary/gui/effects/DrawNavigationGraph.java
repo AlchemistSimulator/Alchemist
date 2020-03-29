@@ -12,16 +12,11 @@ package it.unibo.alchemist.boundary.gui.effects;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
-import it.unibo.alchemist.model.implementations.environments.ImageEnvironment;
 import it.unibo.alchemist.model.implementations.environments.ImageEnvironmentWithGraph;
-import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Obstacle2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph;
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData;
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon;
@@ -36,21 +31,22 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Point;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 /**
- * Draws the navigation mesh of an environment, obtained using the Deaccon algorithm.
+ * Draws the navigation graph of an {@link ImageEnvironmentWithGraph}.
  */
-public class DrawNavigationMesh extends DrawOnce {
+public class DrawNavigationGraph extends DrawOnce {
 
     /**
+     *
      */
     protected static final int MAX_COLOUR_VALUE = 255;
     /**
+     *
      */
     protected static final int INITIAL_ALPHA_DIVIDER = 5;
     /**
+     *
      */
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
     private static final long serialVersionUID = 1L;
@@ -62,39 +58,26 @@ public class DrawNavigationMesh extends DrawOnce {
     private RangedInteger green = new RangedInteger(0, MAX_COLOUR_VALUE);
     @ExportForGUI(nameToExport = "B")
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
-    @ExportForGUI(nameToExport = "number of seeds")
-    private String nSeeds = "60";
-    @ExportForGUI(nameToExport = "env start x (south-west)")
-    private String envStartX = "0";
-    @ExportForGUI(nameToExport = "env start y (south-west)")
-    private String envStartY = "0";
-    @ExportForGUI(nameToExport = "env end x (north-east)")
-    private String envEndX = "300";
-    @ExportForGUI(nameToExport = "env end y (north-east)")
-    private String envEndY = "300";
-    @ExportForGUI(nameToExport = "to be drawn")
-    private boolean toBeDrawn;
-    @ExportForGUI(nameToExport = "draw underlying graph")
-    private boolean drawGraph;
     private Color colorCache = Color.BLUE;
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>> envGraph;
+    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>> graph;
+
     /**
      * @param g        graphics
      * @param n        node
      * @param env      environment
      * @param wormhole the wormhole used to map environment's coords to screen coords
-     * @param <T> concentration type
-     * @param <P> position type
+     * @param <T>      concentration type
+     * @param <P>      position type
      */
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
-        if (envGraph != null) {
+        if (graph != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-            envGraph.nodes().stream()
+            graph.nodes().stream()
                     .map(r -> mapEnvConvexPolygonToAwtShape(r, wormhole, env))
                     .forEach(r -> {
                         g.setColor(colorCache);
@@ -102,47 +85,29 @@ public class DrawNavigationMesh extends DrawOnce {
                         g.setColor(colorCache.brighter().brighter());
                         g.draw(r);
                     });
-            envGraph.destinations().forEach(destination -> {
+            graph.destinations().forEach(destination -> {
                 final Point viewPoint = wormhole.getViewPoint((P) destination);
                 g.setColor(Color.GREEN);
                 g.fillOval(viewPoint.x, viewPoint.y, 10, 10);
             });
-            if (drawGraph) {
-                envGraph.nodes().forEach(r -> {
-                    final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
-                    if (envGraph != null) {
-                        envGraph.edgesFrom(r).forEach(e -> {
-                            final Pair<Euclidean2DPosition, Euclidean2DPosition> c = e.getData();
-                            final Point viewP1 = wormhole.getViewPoint(env.makePosition(c.getFirst().getX(), c.getFirst().getY()));
-                            final Point viewP2 = wormhole.getViewPoint(env.makePosition(c.getSecond().getX(), c.getSecond().getY()));
-                            g.setColor(Color.GREEN);
-                            g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
-                            final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
-                            g.setColor(colorCache);
-                            g.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
-                        });
-                    }
-                });
-            }
+            graph.nodes().forEach(r -> {
+                final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
+                if (graph != null) {
+                    graph.edgesFrom(r).forEach(e -> {
+                        final Pair<Euclidean2DPosition, Euclidean2DPosition> c = e.getData();
+                        final Point viewP1 = wormhole.getViewPoint(env.makePosition(c.getFirst().getX(), c.getFirst().getY()));
+                        final Point viewP2 = wormhole.getViewPoint(env.makePosition(c.getSecond().getX(), c.getSecond().getY()));
+                        g.setColor(Color.GREEN);
+                        g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
+                        final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
+                        g.setColor(colorCache);
+                        g.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
+                    });
+                }
+            });
         }
-        if (toBeDrawn && !envStartX.equals("") && !envStartY.equals("") && !envEndX.equals("") && !envEndY.equals("")
-                && env instanceof Environment2DWithObstacles
-                && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            if (env instanceof ImageEnvironmentWithGraph) {
-                envGraph = ((ImageEnvironmentWithGraph<T>) env).graph();
-            } else {
-                final Double startX = Double.parseDouble(envStartX);
-                final Double startY = Double.parseDouble(envStartY);
-                final Double endX = Double.parseDouble(envEndX);
-                final Double endY = Double.parseDouble(envEndY);
-                envGraph = new Deaccon2D(Integer.parseInt(nSeeds)).generateEnvGraph(
-                        new Point2D.Double(startX, startY),
-                        Math.abs(endX - startX),
-                        Math.abs(endY - startY),
-                        ((Environment2DWithObstacles<?, T, Euclidean2DPosition>) env).getObstacles(),
-                        new ArrayList());
-                toBeDrawn = false;
-            }
+        if (env instanceof ImageEnvironmentWithGraph) {
+            graph = ((ImageEnvironmentWithGraph<T>) env).graph();
         }
     }
 
@@ -222,89 +187,5 @@ public class DrawNavigationMesh extends DrawOnce {
      */
     public void setBlue(final RangedInteger blue) {
         this.blue = blue;
-    }
-
-    /**
-     * @return the number of seeds
-     */
-    public String getnSeeds() {
-        return nSeeds;
-    }
-
-    /**
-     * @param nSeeds the number of seeds
-     */
-    public void setnSeeds(final String nSeeds) {
-        this.nSeeds = nSeeds;
-    }
-
-    /**
-     * @return env start x
-     */
-    public String getEnvStartX() {
-        return envStartX;
-    }
-
-    /**
-     * @param envStartX env start x
-     */
-    public void setEnvStartX(final String envStartX) {
-        this.envStartX = envStartX;
-    }
-
-    /**
-     * @return env start y
-     */
-    public String getEnvStartY() {
-        return envStartY;
-    }
-
-    /**
-     * @param envStartY env start y
-     */
-    public void setEnvStartY(final String envStartY) {
-        this.envStartY = envStartY;
-    }
-
-    /**
-     * @return env end x
-     */
-    public String getEnvEndX() {
-        return envEndX;
-    }
-
-    /**
-     * @param envEndX env end x
-     */
-    public void setEnvEndX(final String envEndX) {
-        this.envEndX = envEndX;
-    }
-
-    /**
-     * @return env end y
-     */
-    public String getEnvEndY() {
-        return envEndY;
-    }
-
-    /**
-     * @param envEndY env end y
-     */
-    public void setEnvEndY(final String envEndY) {
-        this.envEndY = envEndY;
-    }
-
-    /**
-     * @return if the underlying graph should be drawn
-     */
-    public boolean isDrawGraph() {
-        return drawGraph;
-    }
-
-    /**
-     * @param drawGraph if the underlying graph should be drawn
-     */
-    public void setDrawGraph(final boolean drawGraph) {
-        this.drawGraph = drawGraph;
     }
 }

@@ -21,7 +21,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSe
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import java.awt.Shape
-import java.awt.geom.Point2D
 import java.lang.IllegalStateException
 import java.util.Optional
 
@@ -47,16 +46,21 @@ fun fromShape(shape: Shape): Optional<MutableConvexPolygon> {
 fun ConvexPolygon.edges() = vertices().indices.map { getEdge(it) }
 
 /**
- * Checks whether the given vector is contained in the polygon or
- * lies on its boundary.
+ * Checks whether the polygon contains the given shape.
  */
-fun ConvexPolygon.containsOrLiesOnBoundary(vector: Euclidean2DPosition): Boolean =
+fun ConvexPolygon.contains(shape: Shape) = shape.vertices().all { contains(it) }
+
+/**
+ * Checks whether the given vector is contained in the polygon or lies on its boundary.
+ */
+fun ConvexPolygon.containsBoundaryIncluded(vector: Euclidean2DPosition) =
     contains(vector) || edges().any { it.contains(vector) }
 
 /**
- * Adds a vertex to the polygon, linked to the (previous) last vertex.
+ * Checks whether the given vector is contained in the polygon, boundary excluded.
  */
-fun MutableConvexPolygon.addVertex(x: Double, y: Double): Boolean = addVertex(vertices().size, x, y)
+fun ConvexPolygon.containsBoundaryExcluded(vector: Euclidean2DPosition): Boolean =
+    contains(vector) && edges().none { it.contains(vector) }
 
 /**
  * Checks if the provided segment intersects with the polygon, boundary excluded.

@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.geometry.times
 import it.unibo.alchemist.model.implementations.geometry.toVector
 import it.unibo.alchemist.model.implementations.geometry.dot
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.containsOrLiesOnBoundary
+import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.containsBoundaryIncluded
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
@@ -240,7 +240,7 @@ open class ExtendableConvexPolygonImpl(
      * growing edge and the step of growth should be provided as well.
      */
     private fun isAdvancedCase(obstacle: Shape, index: Int, step: Double) =
-        obstacle.vertices().none { containsOrLiesOnBoundary(it) } &&
+        obstacle.vertices().none { containsBoundaryIncluded(it) } &&
             vertices.filter { obstacle.contains(it.toPoint()) }.size == 1 &&
             !fuzzyEquals(findIntrudedEdge(obstacle, index, step).slope(), getEdge(index).slope())
 

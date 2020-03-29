@@ -59,7 +59,7 @@ NavigationGraph<V, A, N, E>.destinationsWithin(node: N): Collection<V> =
  * Checks whether the provided [node] contains any destination.
  */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
-NavigationGraph<V, A, N, E>.containsDestination(node: N): Boolean =
+NavigationGraph<V, A, N, E>.containsAnyDestination(node: N): Boolean =
     destinations().any { node.contains(it) }
 
 /**

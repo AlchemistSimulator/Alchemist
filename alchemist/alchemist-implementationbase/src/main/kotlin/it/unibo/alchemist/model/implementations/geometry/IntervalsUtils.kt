@@ -43,10 +43,10 @@ fun DoubleInterval.isContained(other: DoubleInterval) = other.first <= first && 
 
 /**
  * Finds the intersection between two intervals. If the intervals do not
- * intersect or share a single endpoint, null is returned.
+ * intersect, null is returned.
  */
 fun DoubleInterval.intersection(other: DoubleInterval): DoubleInterval? {
-    if (other.second <= first || second <= other.first) {
+    if (other.second < first || second < other.first) {
         return null
     }
     return DoubleInterval(max(first, other.first), min(second, other.second))
@@ -56,6 +56,23 @@ fun DoubleInterval.intersection(other: DoubleInterval): DoubleInterval? {
  * Checks whether the interval intersects with the one given.
  */
 fun DoubleInterval.intersects(other: DoubleInterval) = intersection(other) != null
+
+/**
+ * Finds the intersection between two intervals. If the intervals do not
+ * intersect or share a single endpoint, null is returned.
+ */
+fun DoubleInterval.intersectionEndpointsExcluded(other: DoubleInterval): DoubleInterval? {
+    if (other.second <= first || second <= other.first) {
+        return null
+    }
+    return DoubleInterval(max(first, other.first), min(second, other.second))
+}
+
+/**
+ * Checks whether the interval intersects with the one given, endpoints are exluded.
+ */
+fun DoubleInterval.intersectsEndpointsExcluded(other: DoubleInterval) =
+    intersectionEndpointsExcluded(other) != null
 
 /**
  * Subtracts a given interval from the current one.

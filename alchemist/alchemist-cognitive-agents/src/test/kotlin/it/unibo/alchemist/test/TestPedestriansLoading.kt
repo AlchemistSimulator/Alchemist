@@ -2,6 +2,7 @@ package it.unibo.alchemist.test
 
 import io.kotlintest.fail
 import io.kotlintest.specs.StringSpec
+import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 
@@ -32,13 +33,5 @@ class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
                 println("${it.id} -> ${it.membershipGroup}")
             } }
         )
-    }
-
-    "orienting homogeneous pedestrians loading" {
-        loadYamlSimulation<T, P>("orienting-homogeneous-pedestrians.yml").startSimulation()
-    }
-
-    "orienting cognitive pedestrians loading" {
-        loadYamlSimulation<T, P>("orienting-cognitive-pedestrians.yml").startSimulation()
     }
 })

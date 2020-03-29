@@ -2,17 +2,17 @@ package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexEuclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import java.awt.geom.Ellipse2D
 
 /**
- * Adapter of [java.awt.geom.Ellipse2D] to [ConvexEuclidean2DShape].
+ * Adapter of [java.awt.geom.Ellipse2D] to [Euclidean2DConvexShape].
  */
 class Ellipse(
     private val ellipse: Ellipse2D
-) : ConvexEuclidean2DShape, AwtShapeCompatible {
+) : Euclidean2DConvexShape, AwtShapeCompatible {
 
     private var euclideanShape = AwtEuclidean2DShape(ellipse)
 

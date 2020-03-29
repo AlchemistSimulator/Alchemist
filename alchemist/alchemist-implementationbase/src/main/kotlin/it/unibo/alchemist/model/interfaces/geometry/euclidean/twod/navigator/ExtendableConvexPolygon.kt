@@ -1,10 +1,8 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
 import java.awt.Shape
-import java.awt.geom.Point2D
 
 /**
  * A convex polygon capable of extending itself.

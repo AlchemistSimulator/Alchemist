@@ -9,7 +9,7 @@ import java.awt.Shape
  * without holes) in which no line segment between two points on the boundary
  * ever goes outside the polygon.
  */
-interface ConvexPolygon : ConvexEuclidean2DShape, AwtShapeCompatible {
+interface ConvexPolygon : Euclidean2DConvexShape, AwtShapeCompatible {
 
     /**
      * A list is used because vertices do have an order.

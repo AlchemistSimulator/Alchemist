@@ -48,7 +48,7 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      * the next allowed position (because, e.g., of physical obstacles) is
      * [2.5,3.5], the result must be a Position containing coordinates
      * [2.5,3.5].
-     * 
+     *
      * @param ox
      *            The current X position
      * @param oy
@@ -57,7 +57,7 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      *            The requested X position
      * @param ny
      *            The requested Y position
-     * 
+     *
      * @return the next allowed position, where the node can actually move. This
      *         position MUST be considered as a vector whose start point is in
      *         [ox, oy].

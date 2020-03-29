@@ -24,6 +24,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
 
     private static final long serialVersionUID = -5867654295577425307L;
     private final Environment<T, P> env;
+    private final Node<T> node;
     private final boolean isAbs;
 
     /**
@@ -53,6 +54,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     protected AbstractMoveNode(final Environment<T, P> environment, final Node<T> node, final boolean isAbsolute) {
         super(node);
         this.env = environment;
+        this.node = node;
         this.isAbs = isAbsolute;
         declareDependencyTo(Dependency.MOVEMENT);
     }
@@ -64,7 +66,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     @Override
     public void execute() {
         if (isAbs) {
-            env.moveNodeToPosition(getNode(), getNextPosition());
+            env.moveNodeToPosition(getNode(), env.getPosition(node).plus(getNextPosition()));
         } else {
             env.moveNode(getNode(), getNextPosition());
         }

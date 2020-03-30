@@ -114,6 +114,14 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
          */
         if (fuzzyGreaterEquals(starty, minY) && fuzzyGreaterEquals(maxY, starty) && fuzzyGreaterEquals(startx, minX) && fuzzyGreaterEquals(maxX, startx)) {
             final double[] res = { endx, endy };
+            final boolean startIsVertex = (fuzzyEquals(startx, minX) || fuzzyEquals(startx, maxX))
+                    && (fuzzyEquals(starty, minY) || fuzzyEquals(starty, maxY));
+            /*
+             * Allows axis-aligned movements from obstacle's vertices to points on its border.
+             */
+            if (startIsVertex && (fuzzyEquals(startx, endx) || fuzzyEquals(starty, endy))) {
+                return res;
+            }
             if (fuzzyEquals(startx, minX) && endx >= minX) {
                 /*
                  * Left border

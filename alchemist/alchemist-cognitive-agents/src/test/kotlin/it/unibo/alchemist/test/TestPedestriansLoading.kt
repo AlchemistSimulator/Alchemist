@@ -2,7 +2,6 @@ package it.unibo.alchemist.test
 
 import io.kotlintest.fail
 import io.kotlintest.specs.StringSpec
-import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 

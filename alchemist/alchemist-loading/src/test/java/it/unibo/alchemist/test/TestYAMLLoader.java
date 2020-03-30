@@ -189,13 +189,12 @@ public class TestYAMLLoader {
     }
 
     private static Triple<Integer, Integer, Integer> versionAsInts(final String version) {
-        System.out.println(version);
-        var regex = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?.*");
-        var matcher = regex.matcher(version);
+        final var regex = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?.*");
+        final var matcher = regex.matcher(version);
         matcher.find();
-        var major = intFromNullableString(matcher.group("major"));
-        var minor = intFromNullableString(matcher.group("minor"));
-        var patch = intFromNullableString(matcher.group("patch"));
+        final var major = intFromNullableString(matcher.group("major"));
+        final var minor = intFromNullableString(matcher.group("minor"));
+        final var patch = intFromNullableString(matcher.group("patch"));
         return new Triple<>(major, minor, patch);
     }
 
@@ -208,9 +207,9 @@ public class TestYAMLLoader {
         // CHECKSTYLE: MagicNumber OFF
         if (javaMajor >= 14) {
             final var scalaVersion = versionAsInts(scala.util.Properties.versionNumberString());
-            var major = scalaVersion.getFirst();
-            var minor = scalaVersion.getSecond();
-            var patch = scalaVersion.getThird();
+            final var major = scalaVersion.getFirst();
+            final var minor = scalaVersion.getSecond();
+            final var patch = scalaVersion.getThird();
             /*
              * Hit by https://github.com/scala/bug/issues/11754
              */

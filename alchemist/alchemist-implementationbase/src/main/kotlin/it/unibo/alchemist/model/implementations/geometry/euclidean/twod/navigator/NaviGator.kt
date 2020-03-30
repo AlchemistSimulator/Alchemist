@@ -34,7 +34,7 @@ import java.awt.Shape
 /**
  * NaviGator (Navigation Graphs Generator) is an algorithm capable of generating an
  * [Euclidean2DNavigationGraph] of a given environment with obstacles. The nodes of
- * the produced graph are convex polygons representing the areas of the environment 
+ * the produced graph are convex polygons representing the areas of the environment
  * traversable by agents (namely, walkable areas), whereas edges represent connections
  * between them.
  *

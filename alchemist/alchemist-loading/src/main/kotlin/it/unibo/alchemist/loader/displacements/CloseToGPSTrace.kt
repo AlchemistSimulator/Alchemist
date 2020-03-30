@@ -20,9 +20,9 @@ class CloseToGPSTrace<T> @JvmOverloads constructor(
     environment: Environment<T, GeoPosition>,
     nodeCount: Int,
     variance: Double,
-    private val from: Time = DoubleTime.ZERO_TIME,
+    private val from: Time = Time.ZERO,
     private val interval: Time = DoubleTime(1.0),
-    val to: Time = DoubleTime.INFINITE_TIME,
+    val to: Time = Time.INFINITY,
     gpsFilePath: String,
     normalizerClass: String,
     vararg normalizerArguments: Any

@@ -16,7 +16,6 @@ dependencies {
     api(Libs.scafi_core_2_12)
 
     implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-time"))
     implementation(Libs.scalacache_core_2_12)
     implementation(Libs.scalacache_guava_2_12)
     implementation(Libs.scala_compiler) // TODO: try to remove and use implementationbase
@@ -27,4 +26,8 @@ dependencies {
     testImplementation(Libs.scalatest_2_12)
     testRuntimeOnly(Libs.pegdown) // This is deprecated and should be replaced
     testRuntimeOnly(Libs.parboiled_java) // Used to force a version compatible with modern ASM
+}
+
+tasks.withType<ScalaCompile> {
+    targetCompatibility = "1.8"
 }

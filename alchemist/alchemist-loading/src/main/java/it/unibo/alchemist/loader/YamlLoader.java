@@ -810,7 +810,7 @@ public final class YamlLoader implements Loader {
                                 final List<?> parameters = rawParams.map(l -> (List<?>) l).orElse(emptyList());
                                 return factory.build((Class<T>) actualClass, parameters);
                             } else {
-                                throw new IllegalAlchemistYAMLException(type + "is not a subclass of " + clazz);
+                                throw new IllegalAlchemistYAMLException(type + " is not a subclass of " + clazz);
                             }
                         } catch (ClassNotFoundException e) {
                             throw new IllegalAlchemistYAMLException(type + " is not a valid Java class", e);

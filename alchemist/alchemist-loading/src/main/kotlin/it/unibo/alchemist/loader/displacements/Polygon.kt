@@ -90,7 +90,7 @@ open class Polygon<P : Position2D<out P>>(
      * the node number
      * @return the position of the node
      */
-    override tailrec fun indexToPosition(i: Int): P = bounds
+    final override tailrec fun indexToPosition(i: Int): P = bounds
         .run {
             val (x, y) = Pair(randomDouble(minX, maxX), randomDouble(minY, maxY))
             if (isOnMaps) {

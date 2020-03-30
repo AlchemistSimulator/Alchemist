@@ -5,7 +5,6 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-import com.github.spotbugs.SpotBugsTask
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -13,27 +12,24 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 plugins {
-    id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
-    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+    id("org.danilopianini.git-sensitive-semantic-versioning")
     `java-library`
-    kotlin("jvm") version Versions.org_jetbrains_kotlin
+    kotlin("jvm")
     jacoco
-    id("com.github.spotbugs") version Versions.com_github_spotbugs_gradle_plugin
+    id("com.github.spotbugs")
     pmd
     checkstyle
-    id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
+    id("org.jlleitschuh.gradle.ktlint")
     `project-report`
     `build-dashboard`
-    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
-    id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
+    id("org.jetbrains.dokka")
+    id("com.eden.orchidPlugin")
     signing
     `maven-publish`
-    id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
-    id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
-    id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
+    id("org.danilopianini.publish-on-central")
+    id("com.jfrog.bintray")
 }
 
-apply(plugin = "com.gradle.build-scan")
 apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
@@ -68,18 +64,18 @@ allprojects {
 
     dependencies {
         compileOnly(Libs.annotations)
-        compileOnly(Libs.spotbugs) {
-            exclude(group = "commons-lang")
-        }
+        compileOnly(Libs.spotbugs)
         implementation(Libs.slf4j_api)
-        implementation(Libs.kotlin_stdlib)
-        implementation(Libs.kotlin_reflect)
+        implementation(kotlin("stdlib-jdk8"))
+        implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
         testImplementation(Libs.junit_jupiter_api)
         testRuntimeOnly(Libs.junit_jupiter_engine)
+        testImplementation(Libs.kotest_runner_junit5)
+        testImplementation(Libs.kotest_assertions)
         runtimeOnly(Libs.logback_classic)
     }
 
@@ -105,19 +101,18 @@ allprojects {
     }
 
     spotbugs {
-        effort = "max"
-        reportLevel = "low"
-        isShowProgress = true
+        setEffort("max")
+        setReportLevel("low")
+        showProgress.set(true)
         val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
         if (excludeFile.exists()) {
-            excludeFilter = excludeFile
+            excludeFilter.set(excludeFile)
         }
     }
 
-    tasks.withType<SpotBugsTask> {
+    tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
         reports {
-            xml.isEnabled = false
-            html.isEnabled = true
+            create("html") { enabled = true }
         }
     }
 
@@ -306,18 +301,23 @@ repositories {
 }
 
 dependencies {
-    subprojects.forEach { api(it) }
+    api(project(":alchemist-engine"))
+    api(project(":alchemist-interfaces"))
+    api(project(":alchemist-loading"))
+//    implementation(project(":alchemist-swingui"))
+//    runtimeOnly(project(":alchemist-projectview"))
+    implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
-    implementation(Libs.ignite_core)
-    orchidRuntime(Libs.orchideditorial)
-    orchidRuntime(Libs.orchidkotlindoc)
-    orchidRuntime(Libs.orchidplugindocs)
-    orchidRuntime(Libs.orchidsearch)
-    orchidRuntime(Libs.orchidsyntaxhighlighter)
-    orchidRuntime(Libs.orchidwiki)
-    orchidRuntime(Libs.orchidgithub)
+    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+    orchidRuntimeOnly(Libs.orchideditorial)
+    orchidRuntimeOnly(Libs.orchidkotlindoc)
+    orchidRuntimeOnly(Libs.orchidplugindocs)
+    orchidRuntimeOnly(Libs.orchidsearch)
+    orchidRuntimeOnly(Libs.orchidsyntaxhighlighter)
+    orchidRuntimeOnly(Libs.orchidwiki)
+    orchidRuntimeOnly(Libs.orchidgithub)
 }
 
 tasks.withType<DokkaTask> {
@@ -406,35 +406,64 @@ val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
 }
 tasks.orchidClasses.orNull!!.dependsOn(orchidSeedConfiguration)
 
-tasks.register<Jar>("fatJar") {
-    dependsOn(subprojects.map { it.tasks.withType<Jar>() })
-    manifest {
-        attributes(mapOf(
-            "Implementation-Title" to "Alchemist",
-            "Implementation-Version" to rootProject.version,
-            "Main-Class" to "it.unibo.alchemist.Alchemist",
-            "Automatic-Module-Name" to "it.unibo.alchemist"
-        ))
-    }
-    archiveBaseName.set("${rootProject.name}-redist")
-    isZip64 = true
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
-        // remove all signature files
-        exclude("META-INF/")
-        exclude("ant_tasks/")
-        exclude("about_files/")
-        exclude("help/about/")
-        exclude("build")
-        exclude(".gradle")
-        exclude("build.gradle")
-        exclude("gradle")
-        exclude("gradlew")
-        exclude("gradlew.bat")
-    }
-    with(tasks.jar.get() as CopySpec)
+val incarnations = subprojects
+    .filter { it.name.contains("incarnation") }
+    .map { it.name.replace("alchemist-incarnation-", "") to listOf(rootProject, it) }
+    .toTypedArray()
+mapOf("all" to allprojects,
+    "minimal" to listOf(rootProject),
+    *incarnations
+).forEach { name, projectSet ->
+    fatJar(name, projectSet)
 }
 
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
+open class FatJar @javax.inject.Inject constructor() : org.gradle.jvm.tasks.Jar()
+
+fun fatJar(name: String, projects: Iterable<Project>): TaskProvider<FatJar> {
+    val testTask = tasks.register<Exec>("test${name.capitalize()}FatJar") {
+        doLast {
+            if (executionResult.get().exitValue != 0) {
+                logger.error(standardOutput.toString())
+            }
+        }
+    }
+    val jarTask = tasks.register<FatJar>("fatJarFor${name.capitalize()}") {
+        archiveBaseName.set("${rootProject.name}-$name")
+        dependsOn(projects.map { it.tasks.withType<Jar>() })
+        manifest {
+            attributes(mapOf(
+                "Implementation-Title" to "Alchemist",
+                "Implementation-Version" to rootProject.version,
+                "Main-Class" to "it.unibo.alchemist.Alchemist",
+                "Automatic-Module-Name" to "it.unibo.alchemist"
+            ))
+        }
+        isZip64 = true
+        val sources = projects.flatMap { project ->
+            project.configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
+        }.distinct()
+        from(sources) {
+            // remove all signature files
+            exclude("META-INF/")
+            exclude("ant_tasks/")
+            exclude("about_files/")
+            exclude("help/about/")
+            exclude("build")
+            exclude(".gradle")
+            exclude("build.gradle")
+            exclude("gradle")
+            exclude("gradlew")
+            exclude("gradlew.bat")
+        }
+        finalizedBy(testTask)
+        with(tasks.jar.get() as CopySpec)
+    }
+    testTask {
+        dependsOn(jarTask)
+        commandLine("true")
+    }
+    return jarTask
+}
+tasks.register<Task>("fatJar") {
+    dependsOn(rootProject.tasks.withType<FatJar>())
 }

@@ -18,5 +18,4 @@ dependencies {
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
-    testImplementation(Libs.kotlintest_runner_junit5)
 }

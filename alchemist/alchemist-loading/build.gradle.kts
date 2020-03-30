@@ -22,7 +22,6 @@ dependencies {
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
     testImplementation(Libs.gson)
-    testImplementation(Libs.kotlintest_runner_junit5)
 
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }

@@ -74,7 +74,8 @@ allprojects {
         }
         testImplementation(Libs.junit_jupiter_api)
         testRuntimeOnly(Libs.junit_jupiter_engine)
-        testImplementation(Libs.kotlintest_runner_junit5)
+        testImplementation(Libs.kotest_runner_junit5)
+        testImplementation(Libs.kotest_assertions)
         runtimeOnly(Libs.logback_classic)
     }
 

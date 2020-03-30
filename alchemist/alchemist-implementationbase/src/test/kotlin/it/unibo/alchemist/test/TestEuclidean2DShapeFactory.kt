@@ -27,14 +27,14 @@ class TestEuclidean2DShapeFactory : FreeSpec({
      *  the ! in front of the test name disables the test,
      *  it's currently disabled as to not prevent the build from succeeding
      */
-    "!Shape.intersect simmetry" - {
+    "!Shape.intersect symmetry" - {
         val firsts = factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE)
         val seconds = firsts.mapValues {
             // puts the other shapes in a corner to test "edge" cases
             it.value.transformed { origin(DEFAULT_SHAPE_SIZE * 2, DEFAULT_SHAPE_SIZE * 2) }
         }
         val names = firsts.keys.toList()
-        for (f in 0 until names.size) {
+        for (f in names.indices) {
             for (s in f until names.size) {
                 val first = checkNotNull(firsts[names[f]]) { "Could not find ${names[f]} shape" }
                 val second = checkNotNull(seconds[names[s]]) { "Could not find ${names[s]} shape" }

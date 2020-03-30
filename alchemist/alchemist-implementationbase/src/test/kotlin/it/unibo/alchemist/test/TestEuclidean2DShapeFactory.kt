@@ -20,11 +20,13 @@ private val fakeShape = object : Euclidean2DShape {
     override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) = this
 }
 
-// spotbugs reports: AbstractFreeSpec$FreeSpecScope stored into non-transient field TestIntersectionSymmetry
 @SuppressFBWarnings("SE_BAD_FIELD_STORE")
 class TestEuclidean2DShapeFactory : FreeSpec({
-    // the ! in front of the test name disables the test, it's currently disable as to not prevent the build from succeeding
-    // TODO: enable it once a proper implementation of euclidean geometry is provided
+    /*
+     * TODO: enable it once a proper implementation of euclidean geometry is provided
+     *  the ! in front of the test name disables the test,
+     *  it's currently disabled as to not prevent the build from succeeding
+     */
     "!Shape.intersect simmetry" - {
         val firsts = factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE)
         val seconds = firsts.mapValues {
@@ -56,7 +58,10 @@ class TestEuclidean2DShapeFactory : FreeSpec({
     "Multiple translations and complete rotations around the origin must preserve the centroid" - {
         factory.oneOfEachWithSize(DEFAULT_SHAPE_SIZE).forEach {
             it.key {
-                val angle = Math.PI / 4 // Note: 8 rotations are performed, so this test must hold true for asymmetric shapes.
+                /*
+                 * Note: 8 rotations are performed, so this test must hold true for asymmetric shapes.
+                 */
+                val angle = Math.PI / 4
                 val initialOrigin = Euclidean2DPosition(100.0, 100.0)
                 val shape = it.value.transformed { origin(initialOrigin) }
                 val rotated = shape.transformed { rotate(angle) }

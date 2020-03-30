@@ -14,9 +14,9 @@ dependencies {
             api("$library:$platform")
         }
     }
+    api(rootProject)
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))
-    implementation(project(":alchemist-runner"))
     implementation(project(":alchemist-swingui"))
     implementation(Libs.controlsfx)
     implementation(Libs.gson)

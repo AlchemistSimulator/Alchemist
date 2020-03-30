@@ -14,5 +14,4 @@ dependencies {
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-incarnation-protelis"))
-    testImplementation(Libs.kotlintest_runner_junit5)
 }

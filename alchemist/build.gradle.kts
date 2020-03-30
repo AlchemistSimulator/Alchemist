@@ -64,9 +64,7 @@ allprojects {
 
     dependencies {
         compileOnly(Libs.annotations)
-        compileOnly(Libs.spotbugs) {
-            exclude(group = "commons-lang")
-        }
+        compileOnly(Libs.spotbugs)
         implementation(Libs.slf4j_api)
         implementation(kotlin("stdlib-jdk8"))
         implementation(kotlin("reflect"))
@@ -76,6 +74,7 @@ allprojects {
         }
         testImplementation(Libs.junit_jupiter_api)
         testRuntimeOnly(Libs.junit_jupiter_engine)
+        testImplementation(Libs.kotlintest_runner_junit5)
         runtimeOnly(Libs.logback_classic)
     }
 
@@ -301,11 +300,16 @@ repositories {
 }
 
 dependencies {
-    subprojects.forEach { api(it) }
+    api(project(":alchemist-engine"))
+    api(project(":alchemist-interfaces"))
+    api(project(":alchemist-loading"))
+//    implementation(project(":alchemist-swingui"))
+//    runtimeOnly(project(":alchemist-projectview"))
+    implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
-    implementation(Libs.ignite_core)
+    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
     orchidRuntimeOnly(Libs.orchideditorial)
     orchidRuntimeOnly(Libs.orchidkotlindoc)
     orchidRuntimeOnly(Libs.orchidplugindocs)
@@ -401,30 +405,64 @@ val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
 }
 tasks.orchidClasses.orNull!!.dependsOn(orchidSeedConfiguration)
 
-tasks.register<Jar>("fatJar") {
-    dependsOn(subprojects.map { it.tasks.withType<Jar>() })
-    manifest {
-        attributes(mapOf(
-            "Implementation-Title" to "Alchemist",
-            "Implementation-Version" to rootProject.version,
-            "Main-Class" to "it.unibo.alchemist.Alchemist",
-            "Automatic-Module-Name" to "it.unibo.alchemist"
-        ))
+val incarnations = subprojects
+    .filter { it.name.contains("incarnation") }
+    .map { it.name.replace("alchemist-incarnation-", "") to listOf(rootProject, it) }
+    .toTypedArray()
+mapOf("all" to allprojects,
+    "minimal" to listOf(rootProject),
+    *incarnations
+).forEach { name, projectSet ->
+    fatJar(name, projectSet)
+}
+
+open class FatJar @javax.inject.Inject constructor() : org.gradle.jvm.tasks.Jar()
+
+fun fatJar(name: String, projects: Iterable<Project>): TaskProvider<FatJar> {
+    val testTask = tasks.register<Exec>("test${name.capitalize()}FatJar") {
+        doLast {
+            if (executionResult.get().exitValue != 0) {
+                logger.error(standardOutput.toString())
+            }
+        }
     }
-    archiveBaseName.set("${rootProject.name}-redist")
-    isZip64 = true
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
-        // remove all signature files
-        exclude("META-INF/")
-        exclude("ant_tasks/")
-        exclude("about_files/")
-        exclude("help/about/")
-        exclude("build")
-        exclude(".gradle")
-        exclude("build.gradle")
-        exclude("gradle")
-        exclude("gradlew")
-        exclude("gradlew.bat")
+    val jarTask = tasks.register<FatJar>("fatJarFor${name.capitalize()}") {
+        archiveBaseName.set("${rootProject.name}-$name")
+        dependsOn(projects.map { it.tasks.withType<Jar>() })
+        manifest {
+            attributes(mapOf(
+                "Implementation-Title" to "Alchemist",
+                "Implementation-Version" to rootProject.version,
+                "Main-Class" to "it.unibo.alchemist.Alchemist",
+                "Automatic-Module-Name" to "it.unibo.alchemist"
+            ))
+        }
+        isZip64 = true
+        val sources = projects.flatMap { project ->
+            project.configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
+        }.distinct()
+        from(sources) {
+            // remove all signature files
+            exclude("META-INF/")
+            exclude("ant_tasks/")
+            exclude("about_files/")
+            exclude("help/about/")
+            exclude("build")
+            exclude(".gradle")
+            exclude("build.gradle")
+            exclude("gradle")
+            exclude("gradlew")
+            exclude("gradlew.bat")
+        }
+        finalizedBy(testTask)
+        with(tasks.jar.get() as CopySpec)
     }
-    with(tasks.jar.get() as CopySpec)
+    testTask {
+        dependsOn(jarTask)
+        commandLine("true")
+    }
+    return jarTask
+}
+tasks.register<Task>("fatJar") {
+    dependsOn(rootProject.tasks.withType<FatJar>())
 }

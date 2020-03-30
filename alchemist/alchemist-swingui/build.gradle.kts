@@ -8,7 +8,7 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-
+    implementation(rootProject)
     implementation(project(":alchemist-engine"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))

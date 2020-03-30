@@ -20,8 +20,7 @@ include(
     "alchemist-interfaces",
     "alchemist-loading",
     "alchemist-maps",
-    "alchemist-projectview",
-    "alchemist-runner",
+//    "alchemist-projectview",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",
     "alchemist-swingui"

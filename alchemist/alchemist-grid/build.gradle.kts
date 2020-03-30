@@ -8,6 +8,7 @@
 
 dependencies {
     api(Libs.ignite_core)
+    implementation(rootProject)
     implementation(project(":alchemist-interfaces"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-implementationbase"))

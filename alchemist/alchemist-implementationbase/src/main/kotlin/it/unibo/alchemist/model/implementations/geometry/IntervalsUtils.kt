@@ -11,8 +11,6 @@ package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
-import java.awt.geom.Point2D
-import java.lang.IllegalArgumentException
 import kotlin.math.max
 import kotlin.math.min
 

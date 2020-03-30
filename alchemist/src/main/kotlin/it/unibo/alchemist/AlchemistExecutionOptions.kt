@@ -28,8 +28,19 @@ data class AlchemistExecutionOptions(
     val endTime: Double = defaultEndTime
 ) {
     companion object {
+        /**
+         * If no sampling interval is specified, this option value is used. Defaults to 1.0.
+         */
         const val defaultInterval = 1.0
+        /**
+         * If no specific number of parallel threads to use is specified, this value is used.
+         * Defaults to the number of logical cores detected by the JVM.
+         */
         val defaultParallelism = Runtime.getRuntime().availableProcessors()
+        /**
+         * Default final time to be used if no final time is specified.
+         * Defaults to [Double.POSITIVE_INFINITY].
+         */
         val defaultEndTime = Double.POSITIVE_INFINITY
     }
 }

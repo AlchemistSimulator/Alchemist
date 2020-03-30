@@ -86,7 +86,7 @@ before_install:
   - travis_retry source .install-jdk-travis.sh
 script:
   - cd "$TRAVIS_BUILD_DIR"/alchemist
-  - travis_retry ./gradlew clean test --scan --parallel
+  - travis_retry ./gradlew clean check --scan --parallel
 before_cache:
   - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
   - bash .clean_gradle_cache.sh
@@ -102,7 +102,7 @@ jobs:
       stage: test
   include:
     - stage: check
-      name: "Deep check on reference OS and JDK"
+      name: "Check on reference OS and JDK"
       os: *reference_os
       env:
         - *reference_jdk
@@ -113,7 +113,7 @@ jobs:
         create:
           name: linux-reference-build
           paths:
-            - "${TRAVIS_BUILD_DIR}/alchemist/build"
+            - "${TRAVIS_BUILD_DIR}/alchemist"
     - stage: deploy
       name: "Reports and deployment"
       if: repo = env(OFFICIAL_REPO_SLUG) AND type != pull_request

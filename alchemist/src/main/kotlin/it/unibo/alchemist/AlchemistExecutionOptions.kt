@@ -28,7 +28,7 @@ data class AlchemistExecutionOptions(
     val endTime: Double = defaultEndTime
 ) {
     companion object {
-        val defaultInterval = 1.0
+        const val defaultInterval = 1.0
         val defaultParallelism = Runtime.getRuntime().availableProcessors()
         val defaultEndTime = Double.POSITIVE_INFINITY
     }

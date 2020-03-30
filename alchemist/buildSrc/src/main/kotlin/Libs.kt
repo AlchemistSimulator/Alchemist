@@ -90,7 +90,7 @@ object Libs {
      */
     const val graphhopper_reader_osm: String = "com.graphhopper:graphhopper-reader-osm:_"
 
-    const val org_scala_lang: String = "2.13.1"
+    const val org_scala_lang: String = "2.12.2"
     /**
      * https://www.scala-lang.org/
      */

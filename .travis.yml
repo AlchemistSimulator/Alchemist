@@ -75,9 +75,10 @@ env:
     - OFFICIAL_REPO_SLUG="AlchemistSimulator/Alchemist"
   matrix:
     - *reference_jdk
-    - JDK="adopt-openj9@1.11.0"
+# OpenJ9 temporarily disabled due to: https://issues.apache.org/jira/browse/GROOVY-9493
+#    - JDK="adopt-openj9@1.11.0"
     - JDK="adopt@"
-    - JDK="adopt-openj9@"
+#    - JDK="adopt-openj9@"
 
 before_install:
   - travis_retry curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh

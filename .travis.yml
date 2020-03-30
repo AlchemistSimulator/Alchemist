@@ -1,9 +1,44 @@
+# SHARED VARIABLES
+
 _reference_jdk: &reference_jdk
   'JDK="adopt@1.11.0"'
 _reference_os: &reference_os
   'linux'
 _official_repo: &official_repo
   'AlchemistSimulator/Alchemist'
+
+_on_base: &on_base
+  os: *reference_os
+  repo: *official_repo
+  condition: $PUBLISH = "true"
+
+_on_tags: &on_tags
+  <<: *on_base
+  tags: true
+
+_on_develop: &on_develop
+  <<: *on_base
+  branch: develop
+
+_deploy: &deploy_base
+  skip_cleanup: true
+
+_deploy_on_surge: &deploy_on_surge
+  <<: *deploy_base
+  provider: surge
+
+_deploy_javadoc_on_surge: &deploy_javadoc_on_surge
+  <<: *deploy_base
+  <<: *deploy_on_surge
+  project: "./alchemist/build/docs/javadoc/"
+
+_deploy_reports_on_surge: &deploy_reports_on_surge
+  <<: *deploy_base
+  <<: *deploy_on_surge
+  project: "./alchemist/report"
+
+# BUILD CONFIGURATION
+
 language: bash
 
 git:
@@ -99,50 +134,24 @@ jobs:
       after_success:
         - travis_wait 30 ./gradlew publishAll --scan --parallel --stacktrace
       deploy:
-        - provider: releases
-          skip_cleanup: true
+        - <<: *deploy_base
+          provider: releases
           api_key:
             secure: NiA2CFiiUjreyOGzlA+vxCFT2a6dHZ44gdwA96jBrE3jNdUPXAxzvsaA9rNNxkvHPyADH0DPPZbJ517SdddSYViRcpjlple3dl5jCHxUoBtHBXvrzD2fAhslVejZ7LoxdY9v9K0xSIo3he/pmrtzcuIuPNFrj7LYmYkXeqQcLsxyCrPY+XBOuV6U+Hl5XDUVNqB+/J1qtZUWVg3B1AwGpp8roLKmLYreUfuNwwmF9hXWO8EbS4zIAKDnwf+E/44aiXiULyJ7CPWKEtPgxqJLo9Hi0lABr6I4WV4LzSVaOjA4FdTCVOtFpVzecni0J6+KH2AETTkWtWNt6Hguoa0hUbzD96u4p5eEx1xJzV/k+TRuNkoRMfdGT5Xm0b3N1OF1t/w0woD0NQx2qzqvpnJ7YiPwATfv1n9x8/qqmaCMP3iVDS/manNcyMg2d7ip84313wea/V2H3+mm2VDUsiKoE/Jk5y0Vh3uuSsQOmPd0i3LfpC0AiJCyC0TT3lg6fBRzgVgtC26+idWdw0dXSxaU+iYYJYpPcsAiVzr/bqfpkURe4IWHDcASMuUWKAnzrVtnvaDgKw60RboZFK3aUaECxDYZ9JThZERw2zYP9FX8eXld6y7dLJhEWxCAY7m/IaNemj7+uJ79TCVso43RCosSgBr+tvcF+LzOhaLAHvQ4iHM=
           file_glob: true
-          file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-redist*.jar"
-          on:
-            os: *reference_os
-            repo: *official_repo
-            tags: true
-            condition: $PUBLISH = "true"
-        - provider: surge
-          skip_cleanup: true
-          project: "./alchemist/build/docs/javadoc/"
+          file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-*.jar"
+          on: *on_tags
+        - <<: *deploy_javadoc_on_surge
           domain: alchemist-unstable-doc.surge.sh
-          on:
-            os: *reference_os
-            repo: *official_repo
-            branch: develop
-            condition: $PUBLISH = "true"
-        - provider: surge
-          skip_cleanup: true
-          project: "./alchemist/report"
+          on: *on_develop
+        - <<: *deploy_reports_on_surge
           domain: alchemist-unstable-reports.surge.sh
-          on:
-            os: *reference_os
-            repo: *official_repo
-            branch: develop
-            condition: $PUBLISH = "true"
-        - provider: surge
-          skip_cleanup: true
-          project: "./alchemist/build/docs/javadoc/"
+          on: *on_develop
+        - <<: *deploy_javadoc_on_surge
           domain: alchemist-doc.surge.sh
-          on:
-            os: *reference_os
-            repo: *official_repo
-            tags: true
-            condition: $PUBLISH = "true"
-        - provider: surge
-          skip_cleanup: true
-          project: "./alchemist/report"
+          on: *on_tags
+        - <<: *deploy_reports_on_surge
           domain: alchemist-reports.surge.sh
-          on:
-            os: *reference_os
-            repo: *official_repo
-            tags: true
-            condition: $PUBLISH = "true"
+          on: *on_tags
+
+

@@ -14,7 +14,7 @@ include(
     "alchemist-implementationbase",
     "alchemist-incarnation-protelis",
     "alchemist-incarnation-sapere",
-    "alchemist-incarnation-scafi",
+//    "alchemist-incarnation-scafi",
     "alchemist-incarnation-biochemistry",
     "alchemist-influence-sphere",
     "alchemist-interfaces",

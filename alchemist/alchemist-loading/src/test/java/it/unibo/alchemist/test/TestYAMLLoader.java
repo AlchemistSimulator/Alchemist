@@ -205,7 +205,7 @@ public class TestYAMLLoader {
 
     private static boolean isScalaAndJavaCombinationBugged() {
         final var javaMajor = versionAsInts(System.getProperty("java.version")).getFirst();
-        // CHECKSTYLE: MagicNumber ON
+        // CHECKSTYLE: MagicNumber OFF
         if (javaMajor >= 14) {
             final var scalaVersion = versionAsInts(scala.util.Properties.versionNumberString());
             var major = scalaVersion.getFirst();
@@ -215,7 +215,7 @@ public class TestYAMLLoader {
              * Hit by https://github.com/scala/bug/issues/11754
              */
             return major < 2 || major == 2 && minor < 13 || major == 2 && minor == 13 && patch < 2;
-            // CHECKSTYLE: MagicNumber OFF
+            // CHECKSTYLE: MagicNumber ON
         }
         return false;
     }

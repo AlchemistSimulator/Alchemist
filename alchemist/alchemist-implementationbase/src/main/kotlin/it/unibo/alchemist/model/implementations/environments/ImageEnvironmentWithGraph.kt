@@ -26,6 +26,11 @@ import java.io.File
 import javax.imageio.ImageIO
 
 /**
+ * An [ImageEnvironment] providing an [Euclidean2DNavigationGraph].
+ * The NaviGator algorithm is used to produce such graph (see [generateNavigationGraph]).
+ * The positions where to plant initial seeds should be specified directly in the image,
+ * marking each area of the environment with one or more pixels of a given color (defaults
+ * to blue).
  */
 class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     path: String,
@@ -51,15 +56,9 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
         val obstacles = super.findMarkedRegions(obstaclesColor, img)
         val rooms = super.findMarkedRegions(roomsColor, img)
             .map { Euclidean2DPosition(it.x, it.y) }
-        val mapper: (Euclidean2DPosition) -> Euclidean2DPosition =
-            { Euclidean2DPosition(it.x * zoom + dx, (img.height - it.y) * zoom + dy) }
         val destinations = mutableListOf<Euclidean2DPosition>()
         for (i in 0..destinationCoords.size - 2 step 2) {
-            destinations.add(
-                //mapper.invoke(
-                    Euclidean2DPosition(destinationCoords[i], destinationCoords[i + 1])
-                //)
-            )
+            destinations.add(Euclidean2DPosition(destinationCoords[i], destinationCoords[i + 1]))
         }
         generateNavigationGraph(
             width = img.width.toDouble(),
@@ -67,7 +66,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
             obstacles = obstacles,
             rooms = rooms,
             destinations = destinations
-        ).map(mapper)
+        ).map { Euclidean2DPosition(it.x * zoom + dx, (img.height - it.y) * zoom + dy) }
     }
 
     override fun graph() = navigationGraph

@@ -22,6 +22,7 @@ dependencies {
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
     testImplementation(Libs.gson)
+    testImplementation(Libs.scala_compiler)
 
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }

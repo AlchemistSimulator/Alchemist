@@ -82,6 +82,7 @@ object Alchemist {
             exitWith(ExitStatus.NO_LOGGER)
         }
         val opts = CLIMaker.getOptions()
+        fun printHelp() = HelpFormatter().printHelp("java -jar alchemist-redist-{version}.jar", opts)
         val parser: CommandLineParser = DefaultParser()
         try {
             val cmd = parser.parse(opts, args)
@@ -104,8 +105,7 @@ object Alchemist {
                 configuration = cmd.getOptionValue(YAML)
             )
             if (cmd.hasOption(HELP)) {
-                val formatter = HelpFormatter()
-                formatter.printHelp("java -jar alchemist-redist-{version}.jar", opts)
+                printHelp()
                 exitWith(ExitStatus.OK)
             }
             val (validLaunchers, invalidLaunchers) = launchers
@@ -125,12 +125,11 @@ object Alchemist {
                     }
                 }
             }
-            exitWith(ExitStatus.INVALID_CLI)
         } catch (e: ParseException) {
             L.error("Your command sequence could not be parsed.", e)
-            HelpFormatter().printHelp("java -jar alchemist-redist-{version}.jar", opts)
-            exitWith(ExitStatus.INVALID_CLI)
         }
+        printHelp()
+        exitWith(ExitStatus.INVALID_CLI)
     }
 
     private fun setVerbosity(cmd: CommandLine) {

@@ -24,6 +24,11 @@ import java.io.File
 import java.io.Serializable
 import kotlin.streams.toList
 
+/**
+ * A launcher stub for simulation execution.
+ * Takes care of creating a [Loader],
+ * and provides support functions for generating simulations and computing the possible parameters configurations.
+ */
 abstract class SimulationLauncher : Launcher {
 
     final override fun validate(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
@@ -79,7 +84,13 @@ abstract class SimulationLauncher : Launcher {
         return simulation
     }
 
+    /**
+     * Launches a simulation using the provided [loader] and option [parameters].
+     */
     abstract fun launch(loader: Loader, parameters: AlchemistExecutionOptions)
 
+    /**
+     * Allows subclasses to perform further checks before getting executed. Defaults to simply return [Validation.OK]
+     */
     open fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation = Validation.OK
 }

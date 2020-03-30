@@ -9,6 +9,7 @@ package it.unibo.alchemist
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
+import it.unibo.alchemist.Alchemist.hasNumeric
 import it.unibo.alchemist.cli.CLIMaker
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
@@ -63,13 +64,15 @@ object Alchemist {
         "qq" to Level.OFF
     )
 
-    private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? = getOptionValue(name)?.let {
-        val value = converter(it)
-        when {
-            value == null -> exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
-            else -> value
+    private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? =
+        getOptionValue(name)?.let {
+            val value = converter(it)
+            when {
+                value == null ->
+                    exitBecause("Not a valid ${T::class.simpleName}: $it", ExitStatus.NUMBER_FORMAT_ERROR)
+                else -> value
+            }
         }
-    }
 
     /**
      * @param args
@@ -87,23 +90,7 @@ object Alchemist {
         try {
             val cmd = parser.parse(opts, args)
             setVerbosity(cmd)
-            val options = AlchemistExecutionOptions(
-                server = cmd.getOptionValue(SERVER),
-                help = cmd.hasOption(HELP),
-                batch = cmd.hasOption(BATCH),
-                distributed = cmd.getOptionValue(DISTRIBUTED),
-                endTime = cmd.hasNumeric(TIME, String::toDoubleOrNull)
-                    ?: AlchemistExecutionOptions.defaultEndTime,
-                export = cmd.getOptionValue(EXPORT),
-                graphics = cmd.getOptionValue(GRAPHICS),
-                headless = cmd.hasOption(HEADLESS),
-                interval = cmd.hasNumeric(INTERVAL, String::toDoubleOrNull)
-                    ?: AlchemistExecutionOptions.defaultInterval,
-                parallelism = cmd.hasNumeric(PARALLELISM, String::toIntOrNull)
-                    ?: AlchemistExecutionOptions.defaultParallelism,
-                variables = cmd.getOptionValues(VARIABLES)?.toList() ?: emptyList(),
-                configuration = cmd.getOptionValue(YAML)
-            )
+            val options = cmd.toAlchemist
             if (cmd.hasOption(HELP)) {
                 printHelp()
                 exitWith(ExitStatus.OK)
@@ -161,6 +148,26 @@ object Alchemist {
         }
         exitWith(status)
     }
+
+    private val CommandLine.toAlchemist: AlchemistExecutionOptions
+        get() = AlchemistExecutionOptions(
+            server = getOptionValue(SERVER),
+            help = hasOption(HELP),
+            batch = hasOption(BATCH),
+            distributed = getOptionValue(DISTRIBUTED),
+            endTime = hasNumeric(TIME, kotlin.String::toDoubleOrNull)
+                ?: AlchemistExecutionOptions.defaultEndTime,
+            export = getOptionValue(EXPORT),
+            graphics = getOptionValue(GRAPHICS),
+            headless = hasOption(HEADLESS),
+            interval = hasNumeric(INTERVAL, kotlin.String::toDoubleOrNull)
+                ?: AlchemistExecutionOptions.defaultInterval,
+            parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
+                ?: AlchemistExecutionOptions.defaultParallelism,
+            variables = getOptionValues(VARIABLES)?.toList()
+                ?: kotlin.collections.emptyList(),
+            configuration = getOptionValue(YAML)
+        )
 
     private enum class ExitStatus {
         OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY

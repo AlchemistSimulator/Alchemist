@@ -43,6 +43,7 @@ language: bash
 
 git:
   depth: false
+  autocrlf: input
 
 os:
   - osx

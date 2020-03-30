@@ -133,7 +133,8 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
 
     /**
      * Given a start position (current), a desired target position (target), and a maximum walkable distance (maxWalk),
-     * this method computes the RELATIVE position reached by the moving node.
+     * this method computes the actual position reached by the moving node, in absolute or relative coordinates
+     * depending on the value of isAbsolute in the constructor.
      *
      * @param current the current position of the node
      * @param target the target that should be reached

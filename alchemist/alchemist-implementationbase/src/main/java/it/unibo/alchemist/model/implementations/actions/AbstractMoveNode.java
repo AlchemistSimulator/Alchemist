@@ -24,7 +24,6 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
 
     private static final long serialVersionUID = -5867654295577425307L;
     private final Environment<T, P> env;
-    private final Node<T> node;
     private final boolean isAbs;
 
     /**
@@ -54,7 +53,6 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     protected AbstractMoveNode(final Environment<T, P> environment, final Node<T> node, final boolean isAbsolute) {
         super(node);
         this.env = environment;
-        this.node = node;
         this.isAbs = isAbsolute;
         declareDependencyTo(Dependency.MOVEMENT);
     }
@@ -66,7 +64,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     @Override
     public void execute() {
         if (isAbs) {
-            env.moveNodeToPosition(getNode(), env.getPosition(node).plus(getNextPosition()));
+            env.moveNodeToPosition(getNode(), getNextPosition());
         } else {
             env.moveNode(getNode(), getNextPosition());
         }
@@ -92,8 +90,8 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     }
 
     /**
-     * @return The next position where to move, in relative coordinates with
-     *         respect to the current node position.
+     * @return The next position where to move, in absolute or relative coordinates depending on the
+     *         value of isAbsolute.
      */
     public abstract P getNextPosition();
 

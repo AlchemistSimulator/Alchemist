@@ -1,8 +1,8 @@
-reference_jdk: &reference_jdk
+_reference_jdk: &reference_jdk
   'JDK="adopt@1.11.0"'
-reference_os: &reference_os
+_reference_os: &reference_os
   'linux'
-official_repo: &official_repo
+_official_repo: &official_repo
   'AlchemistSimulator/Alchemist'
 language: bash
 

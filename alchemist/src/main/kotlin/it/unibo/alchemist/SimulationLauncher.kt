@@ -29,7 +29,7 @@ import kotlin.streams.toList
  * Takes care of creating a [Loader],
  * and provides support functions for generating simulations and computing the possible parameters configurations.
  */
-abstract class SimulationLauncher : Launcher {
+abstract class SimulationLauncher : AbstractLauncher() {
 
     final override fun validate(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {

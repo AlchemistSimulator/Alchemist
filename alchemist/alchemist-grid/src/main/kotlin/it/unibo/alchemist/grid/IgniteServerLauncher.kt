@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.grid
 
+import it.unibo.alchemist.AbstractLauncher
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.Launcher
 import it.unibo.alchemist.Validation
@@ -15,7 +16,7 @@ import it.unibo.alchemist.Validation.Invalid
 import it.unibo.alchemist.Validation.OK
 import org.apache.ignite.startup.cmdline.CommandLineStartup
 
-object IgniteServerLauncher : Launcher {
+object IgniteServerLauncher : AbstractLauncher() {
 
     override val name = "Alchemist grid computing server"
 

@@ -233,42 +233,49 @@ fun intersection(
     val b = 2 * (vector.x * (segment.first.x - center.x) + vector.y * (segment.first.y - center.y))
     val c = (segment.first.x - center.x).pow(2) + (segment.first.y - center.y).pow(2) - radius.pow(2)
     val det = b.pow(2) - 4 * a * c
-    if (fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0) {
-        return CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
-    } else if (fuzzyEquals(det, 0.0)) {
-        val t = -b / (2 * a)
-        return if (t.liesBetween(0.0, 1.0)) {
-            CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT,
-                Optional.of(
-                    Euclidean2DPosition(segment.first.x + t * vector.x, segment.first.y + t * vector.y)
-                )
-            )
-        } else {
+    return when {
+        fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0 ->
             CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
-        }
-    } else {
-        val t1 = (-b + sqrt(det)) / (2 * a)
-        val t2 = (-b - sqrt(det)) / (2 * a)
-        val p1 = if (t1.liesBetween(0.0, 1.0)) {
-            Optional.of(Euclidean2DPosition(segment.first.x + t1 * vector.x, segment.first.y + t1 * vector.y))
-        } else {
-            Optional.empty()
-        }
-        val p2 = if (t2.liesBetween(0.0, 1.0)) {
-            Optional.of(Euclidean2DPosition(segment.first.x + t2 * vector.x, segment.first.y + t2 * vector.y))
-        } else {
-            Optional.empty()
-        }
-        return when (mutableListOf(t1, t2).filter { it.liesBetween(0.0, 1.0) }.count()) {
-            0 -> CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
-            1 -> {
-                if (p2.isEmpty) {
-                    CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT, p1, p2)
-                } else {
-                    CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT, p2, p1)
-                }
+        fuzzyEquals(det, 0.0) -> {
+            val t = -b / (2 * a)
+            when {
+                t.liesBetween(0.0, 1.0) -> CircleSegmentIntersectionResult(
+                    CircleSegmentIntersectionType.POINT,
+                    Optional.of(
+                        Euclidean2DPosition(segment.first.x + t * vector.x, segment.first.y + t * vector.y)
+                    )
+                )
+                else -> CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
             }
-            else -> CircleSegmentIntersectionResult(CircleSegmentIntersectionType.PAIR, p1, p2)
+        }
+        else -> {
+            val t1 = (-b + sqrt(det)) / (2 * a)
+            val t2 = (-b - sqrt(det)) / (2 * a)
+            val p1 = if (t1.liesBetween(0.0, 1.0)) {
+                Optional.of(
+                    Euclidean2DPosition(segment.first.x + t1 * vector.x, segment.first.y + t1 * vector.y)
+                )
+            } else {
+                Optional.empty()
+            }
+            val p2 = if (t2.liesBetween(0.0, 1.0)) {
+                Optional.of(
+                    Euclidean2DPosition(segment.first.x + t2 * vector.x, segment.first.y + t2 * vector.y)
+                )
+            } else {
+                Optional.empty()
+            }
+            when (mutableListOf(t1, t2).filter { it.liesBetween(0.0, 1.0) }.count()) {
+                0 -> CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
+                1 -> {
+                    if (p2.isEmpty) {
+                        CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT, p1, p2)
+                    } else {
+                        CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT, p2, p1)
+                    }
+                }
+                else -> CircleSegmentIntersectionResult(CircleSegmentIntersectionType.PAIR, p1, p2)
+            }
         }
     }
 }

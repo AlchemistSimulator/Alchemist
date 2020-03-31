@@ -15,6 +15,13 @@ import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.RandomGenerator
 
+/**
+ * This [Displacement] displaces nodes in the proximity of a GPS trace.
+ * Given a time interval [from] some time [to] another,
+ * it creates a [TraceLoader], then uses the points in the interval to generate the sources for a
+ * Gaussian bivariate function and uses its probability density to deploy.
+ * Higher [variance] spreads nodes farther away from the trace with higher probability.
+ */
 class CloseToGPSTrace<T> @JvmOverloads constructor(
     randomGenerator: RandomGenerator,
     environment: Environment<T, GeoPosition>,

@@ -49,10 +49,11 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
 
     private val navigationGraph: Euclidean2DNavigationGraph by lazy {
         val resource = ResourceLoader.getResourceAsStream(path)
-        val img = if (resource == null)
+        val img = if (resource == null) {
             ImageIO.read(File(path))
-        else
+        } else {
             ImageIO.read(resource)
+        }
         val obstacles = super.findMarkedRegions(obstaclesColor, img)
         val rooms = super.findMarkedRegions(roomsColor, img)
             .map { Euclidean2DPosition(it.x, it.y) }

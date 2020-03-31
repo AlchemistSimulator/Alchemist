@@ -108,57 +108,86 @@ data class SegmentsIntersectionResult(
  * Finds the intersection point of two given segments (if exists). This method is
  * able to deal with degenerate edges (of length zero) and collinear segments.
  */
-fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsIntersectionResult {
-    if (s1.isDegenerate() && s2.isDegenerate()) {
-        return if (s1.first == s2.first) { // points coincide
-            SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s1.first))
-        } else {
-            SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
-        }
-    }
-    if (s1.isDegenerate() || s2.isDegenerate()) {
-        val degenerate = if (s1.isDegenerate()) s1 else s2
-        val other = if (degenerate == s1) s2 else s1
-        return if (other.contains(degenerate.first)) {
-            SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(degenerate.first))
-        } else {
-            SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
-        }
-    }
-    val p = s1.first
-    val r = s1.toVector()
-    val q = s2.first
-    val s = s2.toVector()
-    val denom = zCross(r, s)
-    val num = zCross((q - p), r)
-    if (fuzzyEquals(num, 0.0) && fuzzyEquals(denom, 0.0)) { // segments are collinear
-        val t0 = (q - p).dot(r) / r.dot(r)
-        val t1 = t0 + s.dot(r) / r.dot(r)
-        // segments are overlapping
-        if (DoubleInterval(t0, t1).intersects(DoubleInterval(0.0, 1.0))) {
-            // we found out that segments are collinear and overlapping, but they may only share an endpoint,
-            // in which case their intersection is a single point
-            if ((fuzzyEquals(t0, 0.0) || fuzzyEquals(t0, 1.0)) && !t1.liesBetween(0.0, 1.0)) {
-                return SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s2.first))
+fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsIntersectionResult =
+    when {
+        s1.isDegenerate() && s2.isDegenerate() -> {
+            when {
+                (s1.first == s2.first) ->
+                    /*
+                     * points coincide.
+                     */
+                    SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s1.first))
+                else -> SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
             }
-            if ((fuzzyEquals(t1, 0.0) || fuzzyEquals(t1, 1.0)) && !t0.liesBetween(0.0, 1.0)) {
-                return SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s2.second))
+        }
+        s1.isDegenerate() || s2.isDegenerate() -> {
+            val degenerate = if (s1.isDegenerate()) s1 else s2
+            val other = if (degenerate == s1) s2 else s1
+            when {
+                (other.contains(degenerate.first)) ->
+                    SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(degenerate.first))
+                else -> SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
             }
-            return SegmentsIntersectionResult(SegmentsIntersectionTypes.SEGMENT)
-        } else { // collinear but disjoint
-            return SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
+        }
+        else -> {
+            val p = s1.first
+            val r = s1.toVector()
+            val q = s2.first
+            val s = s2.toVector()
+            val denom = zCross(r, s)
+            val num = zCross((q - p), r)
+            when {
+                /*
+                 * Segments are collinear.
+                 */
+                fuzzyEquals(num, 0.0) && fuzzyEquals(denom, 0.0) -> {
+                    val t0 = (q - p).dot(r) / r.dot(r)
+                    val t1 = t0 + s.dot(r) / r.dot(r)
+                    when {
+                        /*
+                         * Segments are overlapping.
+                         */
+                        (DoubleInterval(t0, t1).intersects(DoubleInterval(0.0, 1.0))) -> {
+                            /*
+                             * Segments may only share an endpoint.
+                             */
+                            when {
+                                (fuzzyEquals(t0, 0.0) || fuzzyEquals(t0, 1.0))
+                                    && !t1.liesBetween(0.0, 1.0) ->
+                                    SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s2.first))
+                                (fuzzyEquals(t1, 0.0) || fuzzyEquals(t1, 1.0))
+                                    && !t0.liesBetween(0.0, 1.0) ->
+                                    SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s2.second))
+                                else -> SegmentsIntersectionResult(SegmentsIntersectionTypes.SEGMENT)
+                            }
+                        }
+                        /*
+                         * Collinear but disjoint.
+                         */
+                        else -> SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
+                    }
+                }
+                /*
+                 * Parallel.
+                 */
+                fuzzyEquals(denom, 0.0) && !fuzzyEquals(num, 0.0) ->
+                    SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
+                else -> {
+                    val t = zCross((q - p), s) / denom
+                    val u = zCross((q - p), r) / denom
+                    when {
+                        t.liesBetween(0.0, 1.0) && u.liesBetween(0.0, 1.0) ->
+                            SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT,
+                                Optional.of(p + r.times(t)))
+                        /*
+                         * Not parallel but not intersecting.
+                         */
+                        else -> SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
+                    }
+                }
+            }
         }
     }
-    if (fuzzyEquals(denom, 0.0) && !fuzzyEquals(num, 0.0)) { // parallel
-        return SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
-    }
-    val t = zCross((q - p), s) / denom
-    val u = zCross((q - p), r) / denom
-    if (t.liesBetween(0.0, 1.0) && u.liesBetween(0.0, 1.0)) {
-        return SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(p + r.times(t)))
-    }
-    return SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY) // not parallel but not intersecting
-}
 
 /**
  */

@@ -73,7 +73,7 @@ open class OrientingPedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>>(
                  * otherwise we just half its width and height.
                  */
                 if (isFinal) {
-                    val q = Euclidean2DPosition(frame.width * 0.2, frame.height * 0.2)
+                    val q = Euclidean2DPosition(frame.width * frameScale, frame.height * frameScale)
                     frame.setFrame(frame.x + q.x, frame.y + q.y, frame.width - 2 * q.x, frame.height - 2 * q.y)
                 } else {
                     frame.width /= 2
@@ -86,4 +86,8 @@ open class OrientingPedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>>(
     private fun ConvexPolygon.contains(s: Shape): Boolean = s.vertices().all { contains(it) }
 
     private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
+
+    companion object {
+        private const val frameScale = 0.2
+    }
 }

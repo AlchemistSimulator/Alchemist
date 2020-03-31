@@ -100,7 +100,7 @@ abstract class AbstractOrientingPedestrian<
         /*
          * At least one destination is provided if knowledge degree >= 0.1
          */
-        if (rooms.none { environmentGraph.containsDestination(it) } && knowledgeDegree >= 0.1) {
+        if (rooms.none { environmentGraph.containsDestination(it) } && knowledgeDegree >= minimumKnowledgeDegree) {
             environmentGraph.nodes()
                 .firstOrNull { environmentGraph.containsDestination(it) }
                 ?.let { rooms.add(it) }
@@ -134,4 +134,8 @@ abstract class AbstractOrientingPedestrian<
     protected abstract fun generateLandmarkWithin(region: M): N
 
     private fun <E> List<E>.takePercentage(percentage: Double) = subList(0, (percentage * size).toInt())
+
+    companion object {
+        private const val minimumKnowledgeDegree = 0.1
+    }
 }

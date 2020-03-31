@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 
-class Neighborhoods {
+class Neighborhoods private constructor() {
     companion object {
         /**
          * Creates a [SimpleNeighborhood].

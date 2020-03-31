@@ -170,7 +170,7 @@ open class OrientingBehavior2D<
                     second - first
                 } else {
                     first - second
-                }.resize(toVector().magnitude() * 0.2)
+                }.resize(toVector().magnitude() * wallRepulsionFactor)
                 return subdestination + correction
             }
             return subdestination
@@ -207,7 +207,11 @@ open class OrientingBehavior2D<
      * distance of the old nextPos from currPos. That is to say, the magnitude of the
      * pedestrian's movement isn't reduced.
      */
-    private fun adjustMovement(currPos: Euclidean2DPosition, nextPos: Euclidean2DPosition, currRoom: M): Euclidean2DPosition =
+    private fun adjustMovement(
+        currPos: Euclidean2DPosition,
+        nextPos: Euclidean2DPosition,
+        currRoom: M
+    ): Euclidean2DPosition =
         currRoom.vertices().indices
             .map { currRoom.getEdge(it) }
             .filter {
@@ -235,4 +239,8 @@ open class OrientingBehavior2D<
         with(bounds2D) {
             abs(width * height)
         }
+
+    companion object {
+        private const val wallRepulsionFactor = 0.2
+    }
 }

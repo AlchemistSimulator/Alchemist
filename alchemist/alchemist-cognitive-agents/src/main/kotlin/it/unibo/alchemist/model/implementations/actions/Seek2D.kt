@@ -21,7 +21,11 @@ open class Seek2D<T>(
     vararg coords: Double
 ) : Seek<T, Euclidean2DPosition>(env, reaction, pedestrian, *coords) {
 
-    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition {
+    override fun interpolatePositions(
+        current: Euclidean2DPosition,
+        target: Euclidean2DPosition,
+        maxWalk: Double
+    ): Euclidean2DPosition {
         val superPosition = current + super.interpolatePositions(current, target, maxWalk)
         return (current.surrounding(env, maxWalk) + superPosition)
             .map {

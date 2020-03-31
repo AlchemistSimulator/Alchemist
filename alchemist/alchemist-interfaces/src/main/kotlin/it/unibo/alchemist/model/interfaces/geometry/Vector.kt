@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.interfaces.geometry
 
 /**
- * A generic vector in a multidimensional space
+ * A generic vector in a multidimensional space.
  *
  * @param <S> self type to prevent vector operations between vectors of different spaces.
  */

@@ -3,7 +3,8 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 
 /**
- * A [it.unibo.alchemist.model.interfaces.Node] with a circle shape meant to be added to a [it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment].
+ * A [it.unibo.alchemist.model.interfaces.Node] with a circle shape meant to be added to a
+ * [it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment].
  */
 open class CircleNode<T>(
     env: EuclideanPhysics2DEnvironment<T>,

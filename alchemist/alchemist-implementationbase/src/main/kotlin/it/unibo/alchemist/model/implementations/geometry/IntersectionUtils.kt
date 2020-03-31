@@ -116,23 +116,14 @@ data class SegmentsIntersectionResult(
  * Finds the intersection point of two given segments (if exists). This method is
  * able to deal with degenerate edges (of length zero) and collinear segments.
  */
+@Suppress("ComplexMethod")
 fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsIntersectionResult =
     when {
-        s1.isDegenerate() && s2.isDegenerate() -> {
-            when {
-                (s1.first == s2.first) ->
-                    /*
-                     * points coincide.
-                     */
-                    SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(s1.first))
-                else -> SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
-            }
-        }
         s1.isDegenerate() || s2.isDegenerate() -> {
             val degenerate = if (s1.isDegenerate()) s1 else s2
             val other = if (degenerate == s1) s2 else s1
             when {
-                (other.contains(degenerate.first)) ->
+                other.contains(degenerate.first) ->
                     SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(degenerate.first))
                 else -> SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
             }
@@ -155,7 +146,7 @@ fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsInters
                         /*
                          * Segments are overlapping.
                          */
-                        (DoubleInterval(t0, t1).intersects(DoubleInterval(0.0, 1.0))) -> {
+                        DoubleInterval(t0, t1).intersects(DoubleInterval(0.0, 1.0)) -> {
                             /*
                              * Segments may only share an endpoint.
                              */

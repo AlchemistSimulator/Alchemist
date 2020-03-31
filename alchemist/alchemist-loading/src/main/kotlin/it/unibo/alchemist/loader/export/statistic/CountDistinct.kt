@@ -11,7 +11,7 @@ package it.unibo.alchemist.loader.export.statistic
 import org.apache.commons.math3.stat.descriptive.AbstractUnivariateStatistic
 
 /**
- * Counts the number of distinct entries
+ * Counts the number of distinct entries.
  */
 class CountDistinct : AbstractUnivariateStatistic() {
 

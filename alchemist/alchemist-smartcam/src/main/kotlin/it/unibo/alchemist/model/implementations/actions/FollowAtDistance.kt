@@ -43,10 +43,14 @@ class FollowAtDistance<T>(
             val currentPosition = env.getPosition(node)
             var destination = closestPositionToTargetAtDistance(env, currentPosition, targetPosition, distance)
             if (currentPosition != destination) { // avoid "bouncing"
-                val currentSpeed = min(speedStrategy.getNodeMovementLength(destination), currentPosition.getDistanceTo(destination))
+                val currentSpeed = min(
+                    speedStrategy.getNodeMovementLength(destination),
+                    currentPosition.getDistanceTo(destination)
+                )
                 val direction = destination - currentPosition
                 val angle = direction.asAngle()
-                destination = currentPosition + Euclidean2DPosition(currentSpeed * cos(angle), currentSpeed * sin(angle))
+                destination = currentPosition +
+                    Euclidean2DPosition(currentSpeed * cos(angle), currentSpeed * sin(angle))
                 env.moveNodeToPosition(node, destination)
             }
         }

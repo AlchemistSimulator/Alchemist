@@ -8,7 +8,8 @@ import kotlin.reflect.KClass
 
 /**
  * Steering strategy which gives a weight based on the type of steering action you are considering.
- * For each type, only the action with the target nearest to the current pedestrian position is taken into consideration.
+ * For each type,
+ * only the action with the target nearest to the current pedestrian position is taken into consideration.
  *
  * @param env
  *          the environment in which the pedestrian moves.

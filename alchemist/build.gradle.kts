@@ -423,7 +423,10 @@ fun fatJar(name: String, projects: Iterable<Project>): TaskProvider<FatJar> {
     val testTask = tasks.register<Exec>("test${name.capitalize()}FatJar") {
         doLast {
             if (executionResult.get().exitValue != 0) {
-                logger.error(standardOutput.toString())
+                throw IllegalStateException("FatJar for $name failed execution")
+            }
+            if (standardOutput.toString().contains("NOP")) {
+                throw IllegalStateException("FatJar for $name output:\n$standardOutput")
             }
         }
     }
@@ -460,7 +463,11 @@ fun fatJar(name: String, projects: Iterable<Project>): TaskProvider<FatJar> {
     }
     testTask {
         dependsOn(jarTask)
-        commandLine("true")
+        commandLine(
+            "java", "-jar",
+            "${rootProject.buildDir.absolutePath}/libs/${rootProject.name}-$name-$version.jar",
+            "--help"
+        )
     }
     return jarTask
 }

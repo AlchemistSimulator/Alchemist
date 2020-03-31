@@ -7,9 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist
+package it.unibo.alchemist.launch
 
 import com.google.common.collect.Lists
+import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
@@ -24,7 +25,12 @@ import java.io.File
 import java.io.Serializable
 import kotlin.streams.toList
 
-abstract class SimulationLauncher : Launcher {
+/**
+ * A launcher stub for simulation execution.
+ * Takes care of creating a [Loader],
+ * and provides support functions for generating simulations and computing the possible parameters configurations.
+ */
+abstract class SimulationLauncher : AbstractLauncher() {
 
     final override fun validate(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
@@ -79,7 +85,13 @@ abstract class SimulationLauncher : Launcher {
         return simulation
     }
 
+    /**
+     * Launches a simulation using the provided [loader] and option [parameters].
+     */
     abstract fun launch(loader: Loader, parameters: AlchemistExecutionOptions)
 
+    /**
+     * Allows subclasses to perform further checks before getting executed. Defaults to simply return [Validation.OK]
+     */
     open fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation = Validation.OK
 }

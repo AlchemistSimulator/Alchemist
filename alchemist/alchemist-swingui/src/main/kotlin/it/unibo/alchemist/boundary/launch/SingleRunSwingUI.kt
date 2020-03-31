@@ -7,17 +7,21 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.gui
+package it.unibo.alchemist.boundary.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.SimulationLauncher
-import it.unibo.alchemist.Validation.Invalid
-import it.unibo.alchemist.Validation.OK
+import it.unibo.alchemist.boundary.gui.SingleRunGUI
+import it.unibo.alchemist.launch.SimulationLauncher
+import it.unibo.alchemist.launch.Validation.Invalid
+import it.unibo.alchemist.launch.Validation.OK
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.model.interfaces.GeoPosition
 import java.awt.GraphicsEnvironment
 import javax.swing.JFrame
 
+/**
+ * Launches a Swing GUI meant to be used for a single simulation run.
+ */
 object SingleRunSwingUI : SimulationLauncher() {
     override val name = "Alchemist graphical simulation"
 

@@ -33,9 +33,10 @@ open class Weighted<T, P : Position<P>>(
             groupActions.calculatePosition() + steerActions.calculatePosition()
         }
 
-    override fun computeTarget(actions: List<SteeringAction<T, P>>): P = with(env.getPosition(pedestrian) ?: env.origin()) {
-        actions.map { it.target() }.minBy { it.getDistanceTo(this) } ?: this
-    }
+    override fun computeTarget(actions: List<SteeringAction<T, P>>): P =
+        with(env.getPosition(pedestrian) ?: env.origin()) {
+            actions.map { it.target() }.minBy { it.getDistanceTo(this) } ?: this
+        }
 
     private fun List<SteeringAction<T, P>>.calculatePosition(): P =
         if (size > 1) {

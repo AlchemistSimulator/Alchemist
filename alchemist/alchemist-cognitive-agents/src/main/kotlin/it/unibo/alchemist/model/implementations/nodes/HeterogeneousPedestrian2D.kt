@@ -50,8 +50,5 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
         senses += fieldOfView(env)
     }
 
-    /**
-     * {@inheritDoc}
-     */
     override fun getShape() = shape
 }

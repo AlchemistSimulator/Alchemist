@@ -15,7 +15,7 @@ interface Pedestrian2D<T> : Pedestrian<T> {
      * @param env
      *          the environment appointed to create the shape.
      */
-    fun shape(env: EuclideanPhysics2DEnvironment<T>): Euclidean2DShape = env.shapeFactory.circle(0.3)
+    fun shape(env: EuclideanPhysics2DEnvironment<T>): Euclidean2DShape = env.shapeFactory.circle(defaultRadius)
 
     /**
      * The field of view of a pedestrian in the Euclidean world.
@@ -24,5 +24,11 @@ interface Pedestrian2D<T> : Pedestrian<T> {
      *          the environment where the pedestrian is.
      */
     fun fieldOfView(env: EuclideanPhysics2DEnvironment<T>): FieldOfView2D<T> =
-        FieldOfView2D(env, this, 10.0, Math.PI / 180 * 80)
+        FieldOfView2D(env, this, defaultFieldOfViewDepth, defaultFieldOfViewAperture)
+
+    companion object {
+        const val defaultRadius = 0.3
+        const val defaultFieldOfViewAperture = Math.PI / 180 * 80
+        const val defaultFieldOfViewDepth = 10.0
+    }
 }

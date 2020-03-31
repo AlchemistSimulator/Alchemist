@@ -34,7 +34,11 @@ open class FlowFieldSteeringAction<T>(
     targetSelectionStrategy
 ) {
 
-    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
+    override fun interpolatePositions(
+        current: Euclidean2DPosition,
+        target: Euclidean2DPosition,
+        maxWalk: Double
+    ): Euclidean2DPosition =
         current.surrounding(env, maxWalk)
                 .filter { env.canNodeFitPosition(pedestrian, it) }
                 .toMutableList()

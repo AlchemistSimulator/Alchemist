@@ -64,13 +64,16 @@ class OrientingSteeringBehavior2D<
          * movement can still block the agent in some cases)
          */
         if (disturbingMovement.magnitude() > desiredMovement.magnitude()) {
-            desiredMovement = desiredMovement.resize(disturbingMovement.magnitude() * 1.2)
+            desiredMovement = desiredMovement.resize(disturbingMovement.magnitude() * movementMagnitudeFactor)
         }
         val movement = desiredMovement + disturbingMovement
         super.moveTowards(currPos + movement, currentRoom, targetDoor)
     }
 
-    private fun adjustDisturbingMovement(desiredMovement: Euclidean2DPosition, disturbingMovement: Euclidean2DPosition): Euclidean2DPosition {
+    private fun adjustDisturbingMovement(
+        desiredMovement: Euclidean2DPosition,
+        disturbingMovement: Euclidean2DPosition
+    ): Euclidean2DPosition {
         val n = desiredMovement.normal()
         val length = disturbingMovement.magnitude()
         val n1 = n.resize(length)
@@ -84,4 +87,11 @@ class OrientingSteeringBehavior2D<
 
     private fun steerActions(): List<SteeringAction<T, Euclidean2DPosition>> =
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
+
+    companion object {
+        /**
+         * Emprically selected multiplicative factor for enlarging magnitude on disturbing movements.
+         */
+        const val movementMagnitudeFactor: Double = 1.2
+    }
 }

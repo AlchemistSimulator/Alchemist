@@ -40,10 +40,10 @@ open class SteeringActionImpl<T, P : Position<P>> @JvmOverloads constructor(
         SteeringActionImpl(env, r!!, n as Pedestrian<T>, target, speed, routing)
 
     override fun interpolatePositions(current: P, target: P, maxWalk: Double): P = with(current.getDistanceTo(target)) {
-        if (this < maxWalk)
-            target
-        else
-            env.makePosition((target - current) / (this / maxWalk))
+        when {
+            this < maxWalk -> target
+            else -> env.makePosition((target - current) / (this / maxWalk))
+        }
     }
 
     override fun nextPosition(): P = nextPosition

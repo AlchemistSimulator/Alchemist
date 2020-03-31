@@ -1,8 +1,10 @@
 import io.kotlintest.matchers.string.shouldContain
+import io.kotlintest.matchers.string.shouldNotContain
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import it.unibo.alchemist.Alchemist
 import org.apache.commons.io.output.TeeOutputStream
+import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.security.Permission
@@ -57,7 +59,6 @@ fun runWithOptions(vararg commands: String, test: ProcessResult.() -> Unit) {
 
 class TestCLI : StringSpec({
     "help should get printed with --help" {
-//        val sysout = System.out
         runWithOptions("--help") {
             status shouldBe 0
             output shouldContain "batch"
@@ -74,5 +75,8 @@ class TestCLI : StringSpec({
         runWithOptions("-y", "simplesimulation.yml", "-b", "-var", "fiz,baz") {
             status shouldBe 0
         }
+    }
+    "logger should not be nop" {
+        LoggerFactory.getLogger(Alchemist::class.java).name shouldNotContain "NOP"
     }
 })

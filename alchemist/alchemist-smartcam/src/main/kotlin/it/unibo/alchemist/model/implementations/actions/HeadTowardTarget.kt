@@ -15,7 +15,8 @@ import kotlin.math.sin
 import org.apache.commons.math3.util.FastMath.toRadians
 
 /**
- * Reads the target's absolute coordinates from the [target] molecule contained in [node] and sets the [node]'s heading accordingly.
+ * Reads the target's absolute coordinates from the [target] molecule
+ * contained in [getNode] and sets the node's heading accordingly.
  */
 class HeadTowardTarget<T> @JvmOverloads constructor(
     node: Node<T>,

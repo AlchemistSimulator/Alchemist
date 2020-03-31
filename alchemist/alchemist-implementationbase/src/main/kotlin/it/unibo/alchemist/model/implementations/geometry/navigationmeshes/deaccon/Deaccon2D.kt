@@ -98,29 +98,29 @@ class Deaccon2D(
     companion object {
         /**
          * Represents the % of the environment area to cover with seeds
-         * in the initial seeding phase
+         * in the initial seeding phase.
          */
         const val AREA_TO_COVER = 0.5
         /**
          * The step of growth for the second phase will be computed as
-         * average distance between two seeds / this scale
+         * average distance between two seeds / this scale.
          */
         const val STEP_OF_GROWTH_SCALE = 50
         /**
          * The number of seeds generated during the active
-         * seeding is computed as nSeeds * this quantity
+         * seeding is computed as nSeeds * this quantity.
          */
         const val N_ACTIVE_SEEDS_SCALE = 10
         /**
          * The side of seeds generated during the active seeding will
          * be computed as the step of growth used during the second phase
-         * of the algorithm * this quantity
+         * of the algorithm * this quantity.
          */
         const val SIDE_ACTIVE_SEEDS_SCALE = 2
         /**
          * The step of growth used during the extension of active seeds is
          * computed as the step of growth used during the second phase
-         * of the algorithm * this quantity
+         * of the algorithm * this quantity.
          */
         const val STEP_OF_GROWTH_ACTIVE_SEEDS_SCALE = 1
     }
@@ -133,7 +133,12 @@ class Deaccon2D(
      * segment connecting two points will be considered as a straight line
      * between them.
      */
-    private fun generateNavigationMesh(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>): Collection<ConvexPolygon> =
+    private fun generateNavigationMesh(
+        envStart: Point2D,
+        envWidth: Double,
+        envHeight: Double,
+        envObstacles: Collection<Shape>
+    ): Collection<ConvexPolygon> =
         generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles).first
 
     /**
@@ -141,7 +146,14 @@ class Deaccon2D(
      * positions of seeds and their initial side. Note that active seeding
      * and cleaning phases won't be performed.
      */
-    private fun generateNavigationMesh(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double): Collection<ConvexPolygon> =
+    private fun generateNavigationMesh(
+        envStart: Point2D,
+        envWidth: Double,
+        envHeight: Double,
+        envObstacles: Collection<Shape>,
+        seedsPositions: Collection<Point2D>,
+        side: Double
+    ): Collection<ConvexPolygon> =
         generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles, seedsPositions, side).first
 
     /**
@@ -150,8 +162,18 @@ class Deaccon2D(
      * is that an environment's graph provides information regarding the connection
      * between convex polygons.
      */
-    fun generateEnvGraph(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, destinations: Collection<Euclidean2DPosition>): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
-        generateEnvGraph(generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles), destinations, envObstacles)
+    fun generateEnvGraph(
+        envStart: Point2D,
+        envWidth: Double,
+        envHeight: Double,
+        envObstacles: Collection<Shape>,
+        destinations: Collection<Euclidean2DPosition>
+    ): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
+        generateEnvGraph(
+            generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles),
+            destinations,
+            envObstacles
+        )
 
     /**
      * See [generateEnvGraph]. This method allow to specify the positions
@@ -161,17 +183,41 @@ class Deaccon2D(
      * connected (if no obstacle is between them). Note that active seeding and
      * cleaning phases won't be performed.
      */
-    fun generateEnvGraph(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double, destinations: Collection<Euclidean2DPosition>, crossingSide: Double? = null): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
-        generateEnvGraph(generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles, seedsPositions, side), destinations, envObstacles, crossingSide)
+    fun generateEnvGraph(
+        envStart: Point2D,
+        envWidth: Double,
+        envHeight: Double,
+        envObstacles: Collection<Shape>,
+        seedsPositions: Collection<Point2D>,
+        side: Double,
+        destinations: Collection<Euclidean2DPosition>,
+        crossingSide: Double? = null
+    ): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> =
+        generateEnvGraph(
+            generateNavigationMeshHelper(envStart, envWidth, envHeight, envObstacles, seedsPositions, side),
+            destinations,
+            envObstacles,
+            crossingSide
+        )
 
     /*
      * This is a basic algorithm for generating an environment's graph.
      * It requires no degenerate edge or collinear points in the walkable areas.
      */
-    private fun generateEnvGraph(navMesh: Pair<Collection<ExtendableConvexPolygon>, Double>, destinations: Collection<Euclidean2DPosition>, envObstacles: Collection<Shape>, crossingSide: Double? = null): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> {
+    private fun generateEnvGraph(
+        navMesh: Pair<Collection<ExtendableConvexPolygon>, Double>,
+        destinations: Collection<Euclidean2DPosition>,
+        envObstacles: Collection<Shape>,
+        crossingSide: Double? = null
+    ): NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing> {
         val walkableAreas = navMesh.first
         val step = crossingSide ?: navMesh.second
-        val builder = NavigationGraphBuilder<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing>(walkableAreas.size)
+        val builder = NavigationGraphBuilder<
+                Euclidean2DPosition,
+                Euclidean2DTransformation,
+                ConvexPolygon,
+                Euclidean2DCrossing
+            >(walkableAreas.size)
         walkableAreas.forEach { builder.addNode(it) }
         walkableAreas.forEachIndexed { areaIndex, area ->
             /*
@@ -199,9 +245,11 @@ class Deaccon2D(
                          * We consider only the basic case in which only one neighbor is found
                          * and the advanced edge is completely contained in it
                          */
-                        if (this.size == 1 && !builder.edgesFrom(area).map { it.head }.contains(first()) &&
-                            first().containsOrLiesOnBoundary(advancedEdge.first) &&
-                            first().containsOrLiesOnBoundary(advancedEdge.second)) {
+                        val oneNeighbor = this.size == 1
+                        fun thereIsAnEdge() = !builder.edgesFrom(area).map { it.head }.contains(first())
+                        fun onBoundary(point: Euclidean2DPosition) = first().containsOrLiesOnBoundary(point)
+                        fun Euclidean2DSegment.onBoundary() = onBoundary(first) && onBoundary(second)
+                        if (oneNeighbor && thereIsAnEdge() && advancedEdge.onBoundary()) {
                             val neighbor = first()
                             if (intersectingObstacles.isEmpty()) {
                                 builder.addEdge(area, neighbor, oldEdge)
@@ -318,7 +366,12 @@ class Deaccon2D(
      * This helper function generates a navigation mesh and returns the step of growth used,
      * which may be useful for various things (e.g. generating a graph from the nav mesh).
      */
-    private fun generateNavigationMeshHelper(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>): Pair<MutableList<ExtendableConvexPolygon>, Double> {
+    private fun generateNavigationMeshHelper(
+        envStart: Point2D,
+        envWidth: Double,
+        envHeight: Double,
+        envObstacles: Collection<Shape>
+    ): Pair<MutableList<ExtendableConvexPolygon>, Double> {
         require(envWidth > 0.0 && envHeight > 0.0) { "invalid environment" }
         val envEnd = Point2D.Double(envStart.x + envWidth, envStart.y + envHeight)
         /*
@@ -349,7 +402,14 @@ class Deaccon2D(
      * the step of growth used, but allows to specify the positions of initial seeds as well
      * as their initial side.
      */
-    private fun generateNavigationMeshHelper(envStart: Point2D, envWidth: Double, envHeight: Double, envObstacles: Collection<Shape>, seedsPositions: Collection<Point2D>, side: Double): Pair<MutableList<ExtendableConvexPolygon>, Double> {
+    private fun generateNavigationMeshHelper(
+        envStart: Point2D,
+        envWidth: Double,
+        envHeight: Double,
+        envObstacles: Collection<Shape>,
+        seedsPositions: Collection<Point2D>,
+        side: Double
+    ): Pair<MutableList<ExtendableConvexPolygon>, Double> {
         require(envWidth > 0.0 && envHeight > 0.0) { "invalid environment" }
         val envEnd = Point2D.Double(envStart.x + envWidth, envStart.y + envHeight)
         val stepOfGrowth = side / STEP_OF_GROWTH_SCALE
@@ -358,7 +418,14 @@ class Deaccon2D(
         return Pair(seeds, stepOfGrowth)
     }
 
-    private fun seedAndGrow(envStart: Point2D, envEnd: Point2D, obstacles: Collection<Shape>, nSeeds: Int, side: Double, stepOfGrowth: Double): MutableCollection<ExtendableConvexPolygon> {
+    private fun seedAndGrow(
+        envStart: Point2D,
+        envEnd: Point2D,
+        obstacles: Collection<Shape>,
+        nSeeds: Int,
+        side: Double,
+        stepOfGrowth: Double
+    ): MutableCollection<ExtendableConvexPolygon> {
         val (stepX, stepY) = computeSteps(envEnd.x - envStart.x, envEnd.y - envStart.y, nSeeds, side)
         val seeds = seedEnvironment(envStart, envEnd, side, stepX, stepY).toMutableList()
         growSeeds(seeds, obstacles, envStart, envEnd, stepOfGrowth)
@@ -375,7 +442,13 @@ class Deaccon2D(
      * parameters represent the distance at which seeds need to be placed on each
      * axis respectively.
      */
-    private fun seedEnvironment(envStart: Point2D, envEnd: Point2D, side: Double, stepX: Double, stepY: Double): MutableCollection<ExtendableConvexPolygon> {
+    private fun seedEnvironment(
+        envStart: Point2D,
+        envEnd: Point2D,
+        side: Double,
+        stepX: Double,
+        stepY: Double
+    ): MutableCollection<ExtendableConvexPolygon> {
         val seeds = mutableListOf<ExtendableConvexPolygon>()
         var x = envStart.x
         while (x <= envEnd.x - side) {
@@ -389,7 +462,13 @@ class Deaccon2D(
         return seeds
     }
 
-    private fun growSeeds(seeds: MutableCollection<ExtendableConvexPolygon>, envObstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D, step: Double) {
+    private fun growSeeds(
+        seeds: MutableCollection<ExtendableConvexPolygon>,
+        envObstacles: Collection<Shape>,
+        envStart: Point2D,
+        envEnd: Point2D,
+        step: Double
+    ) {
         seeds.removeIf { s -> envObstacles.any { s.intersects(it) } }
         val obstacles = envObstacles.toMutableList()
         obstacles.addAll(seeds.map { it.asAwtShape() })
@@ -422,7 +501,11 @@ class Deaccon2D(
      * Undoubtedly, there are better ways to do that. For the future, consider
      * using a convex hull.
      */
-    private fun combineAdjacentRegions(regions: MutableList<ExtendableConvexPolygon>, obstacles: Collection<Shape>, unit: Double) {
+    private fun combineAdjacentRegions(
+        regions: MutableList<ExtendableConvexPolygon>,
+        obstacles: Collection<Shape>,
+        unit: Double
+    ) {
         val incorporated = mutableListOf<ExtendableConvexPolygon>()
         var i = 0
         while (i < regions.size) {
@@ -483,30 +566,22 @@ class Deaccon2D(
      */
     private fun Pair<Double, Double>.subtract(i: Pair<Double, Double>): MutableList<Pair<Double, Double>> {
         val min = mutableListOf(first, second, i.first, i.second).min()!!
-        if (min < 0) {
-            /*
-             * If there are negative values just translate the two intervals
-             * in [0,N] and translate the results back in the original intervals.
-             */
-            return Pair(first + min, second + min)
-                .subtract(Pair(i.first + min, i.second + min))
-                .map { Pair(it.first - min, it.second - min) }
-                .toMutableList()
-        }
-        if (isContained(i)) {
-            return mutableListOf()
-        }
-        if (!intersects(i.first, i.second)) {
-            return mutableListOf(this)
-        }
-        if (i.first <= first) {
-            return mutableListOf(Pair(i.second, second))
-        }
-        val res = Pair(first, i.first)
-        return if (i.second < second) {
-            mutableListOf(res, Pair(i.second, second))
-        } else {
-            mutableListOf(res)
+        return when {
+            min < 0 -> {
+                /*
+                 * If there are negative values just translate the two intervals
+                 * in [0,N] and translate the results back in the original intervals.
+                 */
+                return Pair(first + min, second + min)
+                    .subtract(Pair(i.first + min, i.second + min))
+                    .map { Pair(it.first - min, it.second - min) }
+                    .toMutableList()
+            }
+            isContained(i) -> mutableListOf()
+            !intersects(i.first, i.second) -> mutableListOf(this)
+            i.first <= first -> mutableListOf(Pair(i.second, second))
+            i.second < second -> mutableListOf(Pair(first, i.first), Pair(i.second, second))
+            else -> mutableListOf(Pair(first, i.first))
         }
     }
 

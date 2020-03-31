@@ -17,6 +17,9 @@ import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import java.nio.file.Paths
 
+/**
+ * Launches a simulation set on a cluster of Alchemist nodes running in server mode.
+ */
 object DistributedExecution : SimulationLauncher() {
 
     override val name = "Alchemist execution on a grid system"

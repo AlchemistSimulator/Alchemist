@@ -21,6 +21,8 @@ import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 import org.jgrapht.graph.DefaultDirectedGraph
 
+private typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
+
 /**
  * This class offers an implementation of a dependency graph, namely a
  * data structure which can address in an efficient way the problem of
@@ -30,7 +32,6 @@ import org.jgrapht.graph.DefaultDirectedGraph
  *
  * @param <T>
  */
-typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Reaction<T>>()
     private val outGlobals = ArrayListSet<Reaction<T>>()

@@ -12,11 +12,17 @@ import kotlin.math.pow
 import kotlin.math.acos
 
 /**
- * Computes the angle with atan2(y, x)
+ * Computes the angle with atan2(y, x).
  *
  * @return atan2(y, x) (in radians)
  */
 fun Euclidean2DPosition.asAngle() = atan2(y, x)
+
+/**
+ * When using java.awt.geom.PathIterator to iterate over the boundary of a
+ * Shape, you need to pass an array of this size
+ */
+const val ARRAY_SIZE_FOR_PATH_ITERATOR = 6
 
 /**
  * Obtains the vertices of a polygonal shape. Any curved segment connecting
@@ -24,7 +30,7 @@ fun Euclidean2DPosition.asAngle() = atan2(y, x)
  */
 fun Shape.vertices(): List<Euclidean2DPosition> {
     val vertices = mutableListOf<Euclidean2DPosition>()
-    val coords = DoubleArray(6)
+    val coords = DoubleArray(ARRAY_SIZE_FOR_PATH_ITERATOR)
     val iterator = getPathIterator(null)
     while (!iterator.isDone) {
         when (iterator.currentSegment(coords)) {
@@ -168,66 +174,33 @@ fun Euclidean2DSegment.isYAxisAligned(): Boolean = fuzzyEquals(first.x, second.x
 fun Euclidean2DSegment.isAxisAligned(): Boolean = isXAxisAligned() || isYAxisAligned()
 
 /**
- * Finds the point of the segment which is closest to the provided position.
+ * Finds the other of the segment which is closest to the provided position.
  */
-fun Euclidean2DSegment.closestPointTo(p: Euclidean2DPosition): Euclidean2DPosition {
-    if (isDegenerate()) {
-        return first
-    }
-    if (contains(p)) {
-        return p
-    }
-    val m1 = slope()
-    val intersection = when {
-        m1.isInfinite() -> Euclidean2DPosition(first.x, p.y)
-        fuzzyEquals(m1, 0.0) -> Euclidean2DPosition(p.x, first.y)
+fun Euclidean2DSegment.closestPointTo(other: Euclidean2DPosition): Euclidean2DPosition {
+    return when {
+        isDegenerate() -> first
+        contains(other) -> other
         else -> {
-            val q1 = first.y - m1 * first.x
-            val m2 = -1 / m1
-            val q2 = p.y - m2 * p.x
-            val x = (q2 - q1) / (m1 - m2)
-            val y = m1 * x + q1
-            Euclidean2DPosition(x, y)
+            val m1 = slope()
+            val intersection = when {
+                m1.isInfinite() -> Euclidean2DPosition(first.x, other.y)
+                fuzzyEquals(m1, 0.0) -> Euclidean2DPosition(other.x, first.y)
+                else -> {
+                    val q1 = first.y - m1 * first.x
+                    val m2 = -1 / m1
+                    val q2 = other.y - m2 * other.x
+                    val x = (q2 - q1) / (m1 - m2)
+                    val y = m1 * x + q1
+                    Euclidean2DPosition(x, y)
+                }
+            }
+            when {
+                contains(intersection) -> intersection
+                (first - other).magnitude() < (second - other).magnitude() -> first
+                else -> second
+            }
         }
     }
-    return if (contains(intersection)) {
-        intersection
-    } else {
-        if ((first - p).magnitude() < (second - p).magnitude()) {
-            first
-        } else {
-            second
-        }
-    }
-}
-
-/**
- * Finds the point on the line represented by the current segment, given
- * its x coordinate. Returns null if the point cannot be located.
- */
-fun Euclidean2DSegment.findPointOnLineGivenX(x: Double): Euclidean2DPosition? {
-    val m = slope()
-    if (m.isInfinite()) {
-        return null
-    }
-    val q = first.y - m * first.x
-    return Euclidean2DPosition(x, m * x + q)
-}
-
-/**
- * Finds the point on the line represented by the current segment, given
- * its y coordinate. Returns null if the point cannot be located.
- */
-fun Euclidean2DSegment.findPointOnLineGivenY(y: Double): Euclidean2DPosition? {
-    val m = slope()
-    if (m.isInfinite()) {
-        return Euclidean2DPosition(first.x, y)
-    }
-    if (fuzzyEquals(m, 0.0)) {
-        return null
-    }
-    val q = first.y - m * first.x
-    return Euclidean2DPosition((y - q) / m, y)
 }
 
 /**

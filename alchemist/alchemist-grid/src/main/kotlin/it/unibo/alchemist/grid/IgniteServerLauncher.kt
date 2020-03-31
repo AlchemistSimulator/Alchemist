@@ -16,6 +16,9 @@ import it.unibo.alchemist.Validation.Invalid
 import it.unibo.alchemist.Validation.OK
 import org.apache.ignite.startup.cmdline.CommandLineStartup
 
+/**
+ * Launches a service waiting for simulations to be sent over the network.
+ */
 object IgniteServerLauncher : AbstractLauncher() {
 
     override val name = "Alchemist grid computing server"

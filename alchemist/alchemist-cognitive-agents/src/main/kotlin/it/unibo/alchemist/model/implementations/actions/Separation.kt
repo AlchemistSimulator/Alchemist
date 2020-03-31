@@ -37,12 +37,11 @@ class Separation<T>(
             .filterIsInstance<Pedestrian<T>>()
             .plusElement(pedestrian)
 
-    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
-        super.interpolatePositions(
-            target,
-            centroid(),
-            maxWalk
-        )
+    override fun interpolatePositions(
+        current: Euclidean2DPosition,
+        target: Euclidean2DPosition,
+        maxWalk: Double
+    ): Euclidean2DPosition = super.interpolatePositions(target, centroid(), maxWalk)
 
     private fun centroid(): Euclidean2DPosition = with(group()) {
         env.makePosition(map { env.getPosition(it) - currentPosition }.reduce { acc, pos -> acc + pos } / (-size))

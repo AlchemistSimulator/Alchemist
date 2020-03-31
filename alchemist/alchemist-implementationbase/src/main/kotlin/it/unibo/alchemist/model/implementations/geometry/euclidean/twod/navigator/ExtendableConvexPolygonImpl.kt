@@ -100,41 +100,40 @@ open class ExtendableConvexPolygonImpl(
      * resize the two directions of growth so that their component in the direction
      * normal to e is equal to step.
      */
-    override fun advanceEdge(index: Int, step: Double): Boolean {
-        if (step == 0.0) {
-            return true
-        }
-        val e = getEdge(index)
-        if (e.isDegenerate()) {
-            return false
-        }
-        if (normals[index] == null) {
-            normals[index] = e.computeNormal(index)
-        }
-        val n = normals[index]!!
-        val d = growthDirections[index]
-        if (d?.first == null || d.second == null) {
-            if (d == null) {
-                growthDirections[index] = Pair(n, n)
-            } else {
-                if (d.first == null) {
-                    growthDirections[index] = d.copy(first = n)
-                }
-                if (d.second == null) {
-                    growthDirections[index] = d.copy(second = n)
+    override fun advanceEdge(index: Int, step: Double): Boolean = true.takeIf { step == 0.0 }
+        ?: getEdge(index).let { edge ->
+            when {
+                edge.isDegenerate() -> false
+                else -> {
+                    if (normals[index] == null) {
+                        normals[index] = edge.computeNormal(index)
+                    }
+                    val n = normals[index]!!
+                    val d = growthDirections[index]
+                    if (d?.first == null || d.second == null) {
+                        if (d == null) {
+                            growthDirections[index] = Pair(n, n)
+                        } else {
+                            if (d.first == null) {
+                                growthDirections[index] = d.copy(first = n)
+                            }
+                            if (d.second == null) {
+                                growthDirections[index] = d.copy(second = n)
+                            }
+                        }
+                    }
+                    var d1 = growthDirections[index]!!.first!!
+                    var d2 = growthDirections[index]!!.second!!
+                    val l1 = findLength(d1, n, step)
+                    val l2 = findLength(d2, n, step)
+                    require(!l1.isInfinite() && !l2.isInfinite()) { "invalid growth direction" }
+                    d1 = d1.resize(l1)
+                    d2 = d2.resize(l2)
+                    // super method is used in order to avoid voiding useful cache
+                    super.moveEdge(index, Pair(edge.first + d1, edge.second + d2))
                 }
             }
         }
-        var d1 = growthDirections[index]!!.first!!
-        var d2 = growthDirections[index]!!.second!!
-        val l1 = findLength(d1, n, step)
-        val l2 = findLength(d2, n, step)
-        require(!l1.isInfinite() && !l2.isInfinite()) { "invalid growth direction" }
-        d1 = d1.resize(l1)
-        d2 = d2.resize(l2)
-        // super method is used in order to avoid voiding useful cache
-        return super.moveEdge(index, Pair(e.first + d1, e.second + d2))
-    }
 
     /*
      * The advancement of an edge is blocked if an obstacle is intersected, unless in a

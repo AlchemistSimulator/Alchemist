@@ -16,6 +16,11 @@ import org.apache.commons.math3.distribution.MultivariateNormalDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.Pair
 
+/**
+ * A generic [Displacement] that displaces a certain [nodeCount] of nodes in the proximity of a number of [sources].
+ * Higher [variance] implies higher dispersion.
+ * Subclasses must identify the [sources]
+ */
 abstract class AbstractCloseTo<T, P : Position<P>> constructor(
     protected val randomGenerator: RandomGenerator,
     protected val environment: Environment<T, P>,

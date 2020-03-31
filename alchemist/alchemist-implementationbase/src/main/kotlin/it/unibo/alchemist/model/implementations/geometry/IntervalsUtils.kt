@@ -75,23 +75,18 @@ fun DoubleInterval.intersectsEndpointsExcluded(other: DoubleInterval) =
 /**
  * Subtracts a given interval from the current one.
  */
-fun DoubleInterval.subtract(other: DoubleInterval): MutableList<DoubleInterval> {
-    if (isContained(other)) {
-        return mutableListOf()
+fun DoubleInterval.subtract(other: DoubleInterval): MutableList<DoubleInterval> =
+    when {
+        isContained(other) -> mutableListOf()
+        !intersects(other) -> mutableListOf(this)
+        other.isContained(this) ->
+            mutableListOf(DoubleInterval(first, other.first), DoubleInterval(other.second, second))
+        /*
+         * Remember that we know this.intersects(other)
+         */
+        other.first <= first -> mutableListOf(DoubleInterval(other.second, second))
+        else -> mutableListOf(DoubleInterval(first, other.first))
     }
-    if (!intersects(other)) {
-        return mutableListOf(this)
-    }
-    if (other.first <= first) {
-        return mutableListOf(DoubleInterval(other.second, second))
-    }
-    val res = DoubleInterval(first, other.first)
-    return if (other.second < second) {
-        mutableListOf(res, DoubleInterval(other.second, second))
-    } else {
-        mutableListOf(res)
-    }
-}
 
 /**
  * Subtracts all the given intervals from the current one.

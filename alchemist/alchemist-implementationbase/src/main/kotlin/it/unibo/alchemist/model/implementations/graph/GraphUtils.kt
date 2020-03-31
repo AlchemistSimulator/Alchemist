@@ -228,8 +228,9 @@ private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
             }
         }
     }
-    if (!builder.nodes().containsAll(nodes())) {
-        return primMinimumSpanningForest(weight, builder, nodes().first { !builder.nodes().contains(it) })
+    return when {
+        !builder.nodes().containsAll(nodes()) ->
+            primMinimumSpanningForest(weight, builder, nodes().first { !builder.nodes().contains(it) })
+        else -> builder
     }
-    return builder
 }

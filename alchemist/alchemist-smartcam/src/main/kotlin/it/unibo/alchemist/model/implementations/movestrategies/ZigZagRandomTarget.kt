@@ -17,7 +17,8 @@ import org.apache.commons.math3.random.RandomGenerator
  * [makePosition] must be able to create a 2D position given the X and Y coordinates in this order.
  * [rng] is the random number generator to use
  * [maxDistance] defines the maximum distance the object can move before a random change in direction is forced.
- * [minChangeInDirection] is the minimum change in the direction (in degrees) that must be made each time a new direction is chosen.
+ * [minChangeInDirection] is the minimum change in the direction (in degrees) that must be made each
+ * time a new direction is chosen.
  *
  * [T] is the type of the concentration of the node used in the secondary constructor.
  */
@@ -33,7 +34,13 @@ class ZigZagRandomTarget<T>(
      * [rng] is the random number generator to use
      * [maxDistance] defines the maximum distance the object can move before a random change in direction is forced.
      */
-    constructor(node: Node<T>, env: Environment<T, Euclidean2DPosition>, rng: RandomGenerator, maxDistance: Double, minChangeInDirection: Double = 0.0) :
+    constructor(
+        node: Node<T>,
+        env: Environment<T, Euclidean2DPosition>,
+        rng: RandomGenerator,
+        maxDistance: Double,
+        minChangeInDirection: Double = 0.0
+    ) :
         this({ env.getPosition(node) }, { x, y -> env.makePosition(x, y) }, rng, maxDistance, minChangeInDirection)
 
     init {
@@ -51,7 +58,8 @@ class ZigZagRandomTarget<T>(
         startPosition = currentPosition
     }
 
-    override fun shouldChangeTarget() = super.shouldChangeTarget() || getCurrentPosition().getDistanceTo(startPosition) >= maxDistance
+    override fun shouldChangeTarget() =
+        super.shouldChangeTarget() || getCurrentPosition().getDistanceTo(startPosition) >= maxDistance
 
     override fun chooseTarget() = with(changeDirection()) {
         val x = cos(this) * maxDistance

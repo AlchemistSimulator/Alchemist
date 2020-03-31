@@ -184,12 +184,12 @@ NavigationGraph<V, A, N, E>.primMinimumSpanningForest(
 private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
     weight: (E) -> Double,
     builder: GraphBuilder<N, E>,
-    source_: N? = null
+    sourceNode: N? = null
 ): GraphBuilder<N, E> {
     if (nodes().isEmpty()) {
         return builder
     }
-    val source = source_ ?: nodes().first()
+    val source = sourceNode ?: nodes().first()
     /*
      * Cheapest cost of a connection (an edge) to each node.
      */

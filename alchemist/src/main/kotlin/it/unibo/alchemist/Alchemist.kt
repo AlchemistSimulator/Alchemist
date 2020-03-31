@@ -66,7 +66,7 @@ object Alchemist {
         "qq" to Level.OFF
     )
     /**
-     * Set this to false for testing purposes
+     * Set this to false for testing purposes.
      */
     private var isNormalExecution = true
 
@@ -188,6 +188,9 @@ object Alchemist {
         OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY
     }
 
+    /**
+     * This exception is thrown in place of calling [System.exit] when the simulator is used in debug mode.
+     */
     data class AlchemistWouldHaveExitedException(
         val exitStatus: Int
     ) : RuntimeException("Alchemist would have exited with $exitStatus")

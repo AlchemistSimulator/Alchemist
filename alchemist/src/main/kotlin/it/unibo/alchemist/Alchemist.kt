@@ -180,7 +180,7 @@ object Alchemist {
             parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,
             variables = getOptionValues(VARIABLES)?.toList()
-                ?: kotlin.collections.emptyList(),
+                ?: emptyList(),
             configuration = getOptionValue(YAML)
         )
 
@@ -190,6 +190,7 @@ object Alchemist {
 
     /**
      * This exception is thrown in place of calling [System.exit] when the simulator is used in debug mode.
+     * The [exitStatus] returns the exit status the execution would have had.
      */
     data class AlchemistWouldHaveExitedException(
         val exitStatus: Int

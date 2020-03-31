@@ -1,3 +1,4 @@
+@Suppress("TooManyFunctions")
 package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

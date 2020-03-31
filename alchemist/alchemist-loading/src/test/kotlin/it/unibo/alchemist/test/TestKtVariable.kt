@@ -8,7 +8,7 @@
 
 package it.unibo.alchemist.test
 
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertEquals

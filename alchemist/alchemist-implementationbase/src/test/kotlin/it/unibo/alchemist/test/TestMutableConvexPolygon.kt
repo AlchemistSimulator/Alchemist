@@ -1,7 +1,7 @@
 package it.unibo.alchemist.test
 
-import io.kotlintest.shouldNotThrow
-import io.kotlintest.shouldThrow
+import io.kotest.assertions.throwables.shouldNotThrow
+import io.kotest.assertions.throwables.shouldThrow
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Assertions

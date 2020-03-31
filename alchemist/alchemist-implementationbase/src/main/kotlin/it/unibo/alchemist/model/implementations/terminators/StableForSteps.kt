@@ -73,7 +73,7 @@ class StableForSteps<T>(
 
     companion object {
         private fun <T> makeTable(size: Int): Table<Node<T>, Molecule, T> =
-            Tables.newCustomTable(Maps.newLinkedHashMapWithExpectedSize(size)) {
+            Tables.newCustomTable(Maps.newLinkedHashMapWithExpectedSize<Node<T>, Map<Molecule, T>>(size)) {
                 Maps.newLinkedHashMapWithExpectedSize(size)
             }
     }

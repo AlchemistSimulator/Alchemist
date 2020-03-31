@@ -1,13 +1,13 @@
-import io.kotlintest.matchers.string.shouldContain
-import io.kotlintest.matchers.string.shouldNotContain
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import it.unibo.alchemist.Alchemist
 import org.apache.commons.io.output.TeeOutputStream
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import java.security.Permission
 
 /*
  * Copyright (C) 2010-2020, Danilo Pianini and contributors
@@ -18,43 +18,19 @@ import java.security.Permission
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-data class CatchableExit(val status: Int) : SecurityException()
 data class ProcessResult(val status: Int, val output: String)
-
-fun runCatchingExit(test: () -> Unit): Throwable? {
-    val manager = System.getSecurityManager()
-    val securityManager: SecurityManager = object : SecurityManager() {
-        override fun checkPermission(permission: Permission) {
-            if (permission.name.startsWith("exitVM")) {
-                val exitStatus = Regex("""exitVM\.(\d+)""")
-                    .matchEntire(permission.name)
-                    ?.destructured
-                    ?.component1()
-                    ?.toInt()
-                throw exitStatus?.let { CatchableExit(it) }
-                    ?: IllegalStateException("Unparseable vm exit permission: ${permission.name}")
-            }
-        }
-    }
-    System.setSecurityManager(securityManager)
-    return runCatching(test).exceptionOrNull()
-        .also { System.setSecurityManager(manager) }
-}
 
 fun runWithOptions(vararg commands: String, test: ProcessResult.() -> Unit) {
     val sysout = System.out
     val bytes = ByteArrayOutputStream()
     val tee = TeeOutputStream(System.out, bytes)
     System.setOut(PrintStream(tee))
-    val exit = runCatchingExit {
+    Alchemist.enableTestMode()
+    val exit = shouldThrow<Alchemist.AlchemistWouldHaveExitedException> {
         Alchemist.main(commands.toList().toTypedArray())
     }
     System.setOut(sysout)
-    when {
-        exit is CatchableExit -> test(ProcessResult(exit.status, bytes.toString()))
-        exit is Throwable -> throw exit
-        else -> throw IllegalStateException("Execution did not end with an exit code.\n$bytes")
-    }
+    test(ProcessResult(exit.exitStatus, bytes.toString()))
 }
 
 class TestCLI : StringSpec({

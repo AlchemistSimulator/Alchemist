@@ -1,9 +1,9 @@
 package it.unibo.alchemist.test
 
-import io.kotlintest.TestCase
-import io.kotlintest.shouldBe
-import io.kotlintest.shouldNotBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.test.TestCase
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

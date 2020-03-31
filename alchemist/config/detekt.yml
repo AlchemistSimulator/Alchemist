@@ -1,0 +1,30 @@
+comments:
+  EndOfSentenceFormat:
+    active: true
+  UndocumentedPublicClass:
+    active: true
+  UndocumentedPublicFunction:
+    active: true
+# Temporarily disabled until https://github.com/arturbosch/detekt/issues/2562 is worked out.
+#  UndocumentedPublicProperty:
+#    active: true
+complexity:
+  NestedBlockDepth:
+    threshold: 5
+  LongParameterList:
+    active: false
+  TooManyFunctions:
+    ignoreDeprecated: true
+    ignorePrivate: true
+    ignoreOverridden: true
+naming:
+  MemberNameEqualsClassName:
+    active: false
+performance:
+  SpreadOperator:
+    active: false
+style:
+  MagicNumber:
+    ignoreNumbers: '-1,0,0.5,1,2,3,4,10'
+  ForbiddenComment:
+    allowedPatterns: 'TODO:'

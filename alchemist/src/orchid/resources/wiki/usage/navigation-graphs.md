@@ -20,7 +20,7 @@ The algorithm implemented in Alchemist is called NaviGator (Navigation Graphs ge
 
 ### Generating navigation graphs from images
 
-If your environment is codified as an image (such as the planimetry showed above), generating a navigation graph is straight-forward. All you have to do is mark the areas of the environment where to plant initial seeds in blue (RGB #0000FF). In the image below you can see the generation of the navigation graph showed on the top of the page. The rectangular blue regions in the original image inidicate where to plant initial seeds. These are then grown and crossings are found between them.
+If your environment is codified as an image (such as the planimetry showed above), generating a navigation graph is straight-forward. All you have to do is mark the areas of the environment where to plant initial seeds in blue (RGB #0000FF). In the image below you can see the generation of the navigation graph showed on the top of the page. The blue regions in the original image indicate where to plant initial seeds. These are then grown and crossings are found between them.
 
 ![alt text](../../assets/media/usage/navigation-graph-generation.jpeg)
 

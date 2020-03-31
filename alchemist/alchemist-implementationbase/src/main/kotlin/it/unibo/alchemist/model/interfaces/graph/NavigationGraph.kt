@@ -10,6 +10,9 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * agents (the advantage of such representation is that agents can freely
  * walk around within a convex area, as it is guaranteed that no obstacle
  * will be found).
+ * Additionally, a navigation graph can store a set of positions of interest
+ * that may be used during navigation (e.g. destinations in an evacuation
+ * scenario).
  *
  * @param V the [Vector] type for the space.
  * @param A the transformations supported by the shapes in this environment.

@@ -48,9 +48,10 @@ import java.awt.Shape
  *
  * Here's a brief description of how the algorithm operates:
  * Firstly, a certain number of seeds is planted in the environment. Each seed is a
- * square-shaped region that will grow maintaining a convex shape. Secondly, planted
- * seeds are extended until possible (i.e. until they are in contact with an obstacle
- * or another seed on each side). Finally, crossings are found between the grown seeds.
+ * square-shaped region of unitary side that will grow maintaining a convex shape.
+ * Secondly, planted seeds are extended until possible (i.e. until they are in contact
+ * with an obstacle or another seed on each side). Finally, crossings are found between
+ * the grown seeds.
  *
  * @param origin
  *              the origin of the environment, defaults to (0,0).
@@ -71,6 +72,10 @@ import java.awt.Shape
  *              integer coordinates). In the growing phase, each side of each seed
  *              will be advanced of a quantity equal to unity iteratively, hence the
  *              smaller this value is the slower the algorithm will be.
+ * @param destinations
+ *              a collection of positions of interest that will be stored in the
+ *              navigation graph and may be used during navigation (e.g. destinations
+ *              in an evacuation scenario).
  */
 fun generateNavigationGraph(
     origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),

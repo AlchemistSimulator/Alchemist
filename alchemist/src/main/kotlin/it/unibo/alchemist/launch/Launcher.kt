@@ -42,8 +42,7 @@ interface Launcher : (AlchemistExecutionOptions) -> Unit {
     /**
      * Actually gets the job done by performing the requested operations.
      */
-    fun launch(parameters: AlchemistExecutionOptions): Unit
-
+    fun launch(parameters: AlchemistExecutionOptions)
 }
 
 /**

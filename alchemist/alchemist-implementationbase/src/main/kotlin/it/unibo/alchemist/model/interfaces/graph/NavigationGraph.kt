@@ -19,7 +19,12 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param N the type of nodes.
  * @param E the type of edges.
  */
-interface NavigationGraph<V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>> : Graph<N, E> {
+interface NavigationGraph<
+    V : Vector<V>,
+    A : GeometricTransformation<V>,
+    N : ConvexGeometricShape<V, A>,
+    E : GraphEdge<N>
+> : Graph<N, E> {
 
     /**
      * A list of positions of interest (usually destinations).

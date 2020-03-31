@@ -31,7 +31,7 @@ class RandomRotate<T>(
      * Changes the heading of the node randomly.
      */
     override fun execute() {
-        val delta = Math.PI / 8 * (2 * rng.nextDouble() - 1)
+        val delta = PI_8 * (2 * rng.nextDouble() - 1)
         val originalAngle = env.getHeading(node).asAngle()
         env.setHeading(node, (originalAngle + delta).toDirection())
     }
@@ -46,4 +46,8 @@ class RandomRotate<T>(
 
     @SuppressFBWarnings("SA_LOCAL_SELF_ASSIGNMENT")
     private fun Double.toDirection() = Euclidean2DPosition(cos(this), sin(this))
+
+    companion object {
+        private const val PI_8 = Math.PI / 8
+    }
 }

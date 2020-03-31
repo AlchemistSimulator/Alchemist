@@ -133,17 +133,24 @@ open class MutableConvexPolygonImpl(
      * Delegates to java.awt.Area.
      */
     override fun union(polygons: Collection<ConvexPolygon>): Boolean {
-        if (polygons.any { !intersects(it.asAwtShape()) }) {
-            return false // polygons are not overlapping
+        return when {
+            /*
+             * Polygons are not overlapping.
+             */
+            polygons.any { !intersects(it.asAwtShape()) } -> false
+            else -> {
+                val union = Area(asAwtShape())
+                polygons.forEach { union.add(Area(it.asAwtShape())) }
+                val resultingPolygon = fromShape(union)
+                when {
+                    resultingPolygon.isPresent -> {
+                        mutateTo(resultingPolygon.get())
+                        true
+                    }
+                    else -> false
+                }
+            }
         }
-        val union = Area(asAwtShape())
-        polygons.forEach { union.add(Area(it.asAwtShape())) }
-        val resultingPolygon = fromShape(union)
-        if (resultingPolygon.isPresent) {
-            mutateTo(resultingPolygon.get())
-            return true
-        }
-        return false
     }
 
     override fun transformed(transformation: Euclidean2DTransformation.() -> Unit) =
@@ -207,39 +214,41 @@ open class MutableConvexPolygonImpl(
      * Checks if the polygon's boundary is convex. See [isConvex].
      */
     private fun isBoundaryConvex(): Boolean {
-        /*
-         * We need to maintain at least 3 non degenerate edges to have a polygon.
-         */
-        if (edges().filter { !it.isDegenerate() }.size < 3) {
-            return false
-        }
-        var e1 = getEdge(vertices.size - 1)
-        var e2: Euclidean2DSegment
-        var sense: Boolean? = null
-        vertices.indices.forEach { i ->
-            e2 = getEdge(i)
-            val z = zCross(e1.toVector(), e2.toVector())
+        return when {
             /*
-             * Cross product is 0 in the following cases:
-             * - one (or both) of the two edges is degenerate, so it's perfectly
-             * fine to skip it as it doesn't affect convexity.
-             * - the two edges are linearly dependent, i.e. either they have
-             * the same direction or opposite ones. In the former case it's
-             * fine to ignore the edge since it can't violate convexity,
-             * whereas the latter case means edges are overlapping (since they
-             * have opposite directions and are consecutive), which will be
-             * detected by a self-intersection test.
+             * We need to maintain at least 3 non degenerate edges to have a polygon.
              */
-            if (z != 0.0) {
-                if (sense == null) {
-                    sense = z > 0.0
-                } else if (sense != z > 0.0) {
-                    return false
+            edges().filter { !it.isDegenerate() }.size < 3 -> false
+            else -> {
+                var e1 = getEdge(vertices.size - 1)
+                var e2: Euclidean2DSegment
+                var sense: Boolean? = null
+                vertices.indices.forEach { i ->
+                    e2 = getEdge(i)
+                    val z = zCross(e1.toVector(), e2.toVector())
+                    /*
+                     * Cross product is 0 in the following cases:
+                     * - one (or both) of the two edges is degenerate, so it's perfectly
+                     * fine to skip it as it doesn't affect convexity.
+                     * - the two edges are linearly dependent, i.e. either they have
+                     * the same direction or opposite ones. In the former case it's
+                     * fine to ignore the edge since it can't violate convexity,
+                     * whereas the latter case means edges are overlapping (since they
+                     * have opposite directions and are consecutive), which will be
+                     * detected by a self-intersection test.
+                     */
+                    if (z != 0.0) {
+                        if (sense == null) {
+                            sense = z > 0.0
+                        } else if (sense != z > 0.0) {
+                            return false
+                        }
+                        e1 = e2
+                    }
                 }
-                e1 = e2
+                true
             }
         }
-        return true
     }
 
     /*
@@ -262,41 +271,45 @@ open class MutableConvexPolygonImpl(
      */
     private fun causeSelfIntersection(index: Int): Boolean {
         val curr = getEdge(index)
-        if (curr.isDegenerate()) {
-            return false
-        }
-        /*
-         * First previous edge not degenerate
-         */
-        var i = circularPrev(index)
-        while (getEdge(i).isDegenerate()) {
-            i = circularPrev(i)
-        }
-        val prevIndex = i
-        val prev = getEdge(i)
-        /*
-         * First next edge not degenerate
-         */
-        i = circularNext(index)
-        while (getEdge(i).isDegenerate()) {
-            i = circularNext(i)
-        }
-        val next = getEdge(i)
-        if (intersection(prev, curr).type != POINT || intersection(curr, next).type != POINT) {
-            return true
-        }
-        /*
-         * We check every edge between the first prev not
-         * degenerate and the first next not degenerate.
-         */
-        i = circularNext(i)
-        while (i != prevIndex) {
-            if (!getEdge(i).isDegenerate() && intersection(curr, getEdge(i)).type != EMPTY) {
-                return true
+        return when {
+            curr.isDegenerate() -> false
+            else -> {
+                /*
+                 * First previous edge not degenerate
+                 */
+                var i = circularPrev(index)
+                while (getEdge(i).isDegenerate()) {
+                    i = circularPrev(i)
+                }
+                val prevIndex = i
+                val prev = getEdge(i)
+                /*
+                 * First next edge not degenerate
+                 */
+                i = circularNext(index)
+                while (getEdge(i).isDegenerate()) {
+                    i = circularNext(i)
+                }
+                val next = getEdge(i)
+                when {
+                    intersection(prev, curr).type != POINT || intersection(curr, next).type != POINT -> true
+                    else -> {
+                        /*
+                         * We check every edge between the first prev not
+                         * degenerate and the first next not degenerate.
+                         */
+                        i = circularNext(i)
+                        while (i != prevIndex) {
+                            if (!getEdge(i).isDegenerate() && intersection(curr, getEdge(i)).type != EMPTY) {
+                                return true
+                            }
+                            i = circularNext(i)
+                        }
+                        false
+                    }
+                }
             }
-            i = circularNext(i)
         }
-        return false
     }
 
     /*

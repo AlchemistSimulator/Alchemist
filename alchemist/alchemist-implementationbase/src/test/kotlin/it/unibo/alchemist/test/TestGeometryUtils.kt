@@ -105,6 +105,14 @@ class TestGeometryUtils {
         s2 = Pair(Euclidean2DPosition(1.0, 2.0), Euclidean2DPosition(1.0, -6.0))
         i = intersection(s1, s2)
         Assertions.assertEquals(SegmentsIntersectionTypes.SEGMENT, i.type)
+        s1 = Euclidean2DPosition(1.0, 1.0) to Euclidean2DPosition(1.0, 1.0)
+        s2 = s1
+        i = intersection(s1, s2)
+        Assertions.assertEquals(SegmentsIntersectionTypes.POINT, i.type)
+        Assertions.assertEquals(Euclidean2DPosition(1.0, 1.0), i.intersection.get())
+        s2 = Euclidean2DPosition(1.0, 2.0) to Euclidean2DPosition(1.0, 2.0)
+        i = intersection(s1, s2)
+        Assertions.assertEquals(SegmentsIntersectionTypes.EMPTY, i.type)
     }
 
     @Test

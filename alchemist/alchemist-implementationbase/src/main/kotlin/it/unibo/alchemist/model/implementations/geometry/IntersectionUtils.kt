@@ -45,15 +45,9 @@ fun intersectionLines(l1: Euclidean2DSegment, l2: Euclidean2DSegment): LinesInte
     val m2 = l2.slope()
     val q2 = l2.first.y - m2 * l2.first.x
     return when {
-        m1.isInfinite() && m2.isInfinite() -> {
+        areParallel(m1, m2) -> {
             when {
-                fuzzyEquals(l1.first.x, l2.first.x) -> LinesIntersectionResult(LinesIntersectionType.LINE)
-                else -> LinesIntersectionResult(LinesIntersectionType.EMPTY)
-            }
-        }
-        !(m1.isInfinite() || m2.isInfinite()) && fuzzyEquals(m1, m2) -> {
-            when {
-                fuzzyEquals(q1, q2) -> LinesIntersectionResult(LinesIntersectionType.LINE)
+                coincide(m1, m2, q1, q2, l1.first.x, l2.first.x) -> LinesIntersectionResult(LinesIntersectionType.LINE)
                 else -> LinesIntersectionResult(LinesIntersectionType.EMPTY)
             }
         }
@@ -71,6 +65,18 @@ fun intersectionLines(l1: Euclidean2DSegment, l2: Euclidean2DSegment): LinesInte
         }
     }
 }
+
+/*
+ * Checks whether two PARALLEL lines coincide.
+ */
+private fun coincide(m1: Double, m2: Double, q1: Double, q2: Double, x1: Double, x2: Double) =
+    when {
+        m1.isInfinite() && m2.isInfinite() -> fuzzyEquals(x1, x2)
+        else -> fuzzyEquals(q1, q2)
+    }
+
+private fun areParallel(m1: Double, m2: Double) =
+    (m1.isInfinite() && m2.isInfinite()) || (m1.isFinite() && m2.isFinite() && fuzzyEquals(m1, m2))
 
 /**
  * In euclidean geometry, the intersection of two segments can be

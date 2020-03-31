@@ -22,5 +22,6 @@ open class Flee<T, P : Position<P>>(
     vararg coords: Double
 ) : Seek<T, P>(env, reaction, pedestrian, *coords) {
 
-    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P = super.interpolatePositions(target, current, maxWalk)
+    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
+        super.interpolatePositions(target, current, maxWalk)
 }

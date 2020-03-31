@@ -23,7 +23,7 @@ class See @JvmOverloads constructor(
      */
     val distance: Double,
     /**
-     * Angle in degrees of the field of view
+     * Angle in degrees of the field of view.
      */
     val angle: Double,
     private val outputMolecule: Molecule = SimpleMolecule("vision"),
@@ -36,7 +36,8 @@ class See @JvmOverloads constructor(
         node.setConcentration(outputMolecule, emptyList<Any>())
     }
 
-    override fun cloneAction(n: Node<Any>, r: Reaction<Any>) = See(n, env, distance, angle, outputMolecule, filterByMolecule)
+    override fun cloneAction(n: Node<Any>, r: Reaction<Any>) =
+        See(n, env, distance, angle, outputMolecule, filterByMolecule)
 
     override fun execute() {
         var seen = fieldOfView.influentialNodes()

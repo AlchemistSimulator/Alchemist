@@ -218,10 +218,11 @@ private fun ExtendableConvexPolygon.findCrossings(
                  * coordinate we ignored so far of the oldEdge.
                  */
                 intervals.map {
-                    val crossing = if (oldEdge.isXAxisAligned())
+                    val crossing = if (oldEdge.isXAxisAligned()) {
                         createSegment(it.first, oldEdge.first.y, x2 = it.second)
-                    else
+                    } else {
                         createSegment(oldEdge.first.x, it.first, y2 = it.second)
+                    }
                     Euclidean2DCrossing(this, neighbor, crossing)
                 }
             }

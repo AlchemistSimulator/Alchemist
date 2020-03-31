@@ -220,7 +220,11 @@ data class CircleSegmentIntersectionResult(
 /**
  * Finds the intersection between a circle and a segment.
  */
-fun intersection(segment: Euclidean2DSegment, center: Euclidean2DPosition, radius: Double): CircleSegmentIntersectionResult {
+fun intersection(
+    segment: Euclidean2DSegment,
+    center: Euclidean2DPosition,
+    radius: Double
+): CircleSegmentIntersectionResult {
     val vector = segment.toVector()
     /*
      * a, b and c are the terms of the 2nd grade equation of the intersection
@@ -235,7 +239,10 @@ fun intersection(segment: Euclidean2DSegment, center: Euclidean2DPosition, radiu
         val t = -b / (2 * a)
         return if (t.liesBetween(0.0, 1.0)) {
             CircleSegmentIntersectionResult(CircleSegmentIntersectionType.POINT,
-                Optional.of(Euclidean2DPosition(segment.first.x + t * vector.x, segment.first.y + t * vector.y)))
+                Optional.of(
+                    Euclidean2DPosition(segment.first.x + t * vector.x, segment.first.y + t * vector.y)
+                )
+            )
         } else {
             CircleSegmentIntersectionResult(CircleSegmentIntersectionType.EMPTY)
         }

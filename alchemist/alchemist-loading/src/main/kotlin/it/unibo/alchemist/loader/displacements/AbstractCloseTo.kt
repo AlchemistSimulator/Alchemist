@@ -33,7 +33,7 @@ abstract class AbstractCloseTo<T, P : Position<P>> constructor(
         require(variance >= 0) { "The node count must be positive or zero: $nodeCount" }
     }
 
-    var displacement: Collection<P>? = null
+    private var displacement: Collection<P>? = null
 
     protected open fun covarianceMatrix(dimensions: Int): Array<out DoubleArray> = Array(dimensions) { index ->
         DoubleArray(dimensions) { if (it == index) variance else 0.0 }

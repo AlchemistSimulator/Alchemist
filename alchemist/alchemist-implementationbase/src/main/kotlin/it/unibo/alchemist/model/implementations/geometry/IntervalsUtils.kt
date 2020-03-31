@@ -79,13 +79,9 @@ fun DoubleInterval.subtract(other: DoubleInterval): MutableList<DoubleInterval> 
     when {
         isContained(other) -> mutableListOf()
         !intersects(other) -> mutableListOf(this)
-        other.isContained(this) ->
-            mutableListOf(DoubleInterval(first, other.first), DoubleInterval(other.second, second))
-        /*
-         * Remember that we know this.intersects(other)
-         */
         other.first <= first -> mutableListOf(DoubleInterval(other.second, second))
-        else -> mutableListOf(DoubleInterval(first, other.first))
+        other.second >= second -> mutableListOf(DoubleInterval(first, other.first))
+        else -> mutableListOf(DoubleInterval(first, other.first), DoubleInterval(other.second, second))
     }
 
 /**

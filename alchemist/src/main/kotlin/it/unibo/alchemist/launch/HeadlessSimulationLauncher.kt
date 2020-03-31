@@ -7,8 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist
+package it.unibo.alchemist.launch
 
+import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

@@ -9,8 +9,9 @@ package it.unibo.alchemist
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
-import it.unibo.alchemist.Alchemist.hasNumeric
 import it.unibo.alchemist.cli.CLIMaker
+import it.unibo.alchemist.launch.Launcher
+import it.unibo.alchemist.launch.Validation
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.DefaultParser

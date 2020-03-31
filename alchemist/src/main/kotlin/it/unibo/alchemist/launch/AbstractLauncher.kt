@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist
+package it.unibo.alchemist.launch
 
 /**
  * Provides utility functions for [Launcher] implementors.
@@ -17,11 +17,13 @@ abstract class AbstractLauncher : Launcher {
     /**
      * Creates a [Validation.Invalid] expliciting what is the option this [Launcher] is incompatible with.
      */
-    protected fun incompatibleWith(option: String) = Validation.Invalid("$name is not compatible with $option")
+    protected fun incompatibleWith(option: String) =
+        Validation.Invalid("$name is not compatible with $option")
 
     /**
      * Creates a [Validation.Invalid] expliciting which option is required to run this [Launcher].
      */
-    protected fun requires(option: String) = Validation.Invalid("$name requires $option")
+    protected fun requires(option: String) =
+        Validation.Invalid("$name requires $option")
 
 }

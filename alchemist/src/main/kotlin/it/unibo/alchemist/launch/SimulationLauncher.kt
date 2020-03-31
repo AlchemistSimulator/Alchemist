@@ -7,9 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist
+package it.unibo.alchemist.launch
 
 import com.google.common.collect.Lists
+import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader

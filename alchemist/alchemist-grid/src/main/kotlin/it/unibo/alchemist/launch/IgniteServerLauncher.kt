@@ -6,14 +6,11 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.grid
+package it.unibo.alchemist.launch
 
-import it.unibo.alchemist.AbstractLauncher
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.Launcher
-import it.unibo.alchemist.Validation
-import it.unibo.alchemist.Validation.Invalid
-import it.unibo.alchemist.Validation.OK
+import it.unibo.alchemist.launch.Validation.Invalid
+import it.unibo.alchemist.launch.Validation.OK
 import org.apache.ignite.startup.cmdline.CommandLineStartup
 
 /**

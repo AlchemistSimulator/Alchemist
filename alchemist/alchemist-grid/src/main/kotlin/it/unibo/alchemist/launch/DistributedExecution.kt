@@ -6,11 +6,9 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.grid
+package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.SimulationLauncher
-import it.unibo.alchemist.Validation
 import it.unibo.alchemist.grid.cluster.ClusterImpl
 import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig
 import it.unibo.alchemist.grid.config.SimulationConfigImpl

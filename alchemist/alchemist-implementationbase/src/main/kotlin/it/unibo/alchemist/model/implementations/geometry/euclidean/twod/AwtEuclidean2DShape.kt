@@ -44,7 +44,7 @@ internal class AwtEuclidean2DShape(
              not checking for it results in paradoxes like shape.intersects(other) != other.intersects(shape).
              The asymmetry is tolerated in favour of a half-good implementation.
              */
-            is AwtEuclidean2DShape -> shape.intersects(other.shape.bounds2D) // || other.shape.intersects(shape.bounds2D)
+            is AwtEuclidean2DShape -> shape.intersects(other.shape.bounds2D) //|| other.shape.intersects(shape.bounds2D)
             is AdimensionalShape -> false
             else -> throw UnsupportedOperationException("AwtEuclidean2DShape only works with other AwtEuclidean2DShape")
         }

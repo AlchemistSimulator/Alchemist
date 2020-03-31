@@ -39,7 +39,7 @@ open class SteeringBehavior<T, P : Position<P>>(
 
     override fun getRate() = timeDistribution.rate
 
-    override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) {}
+    override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) = Unit
 
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }

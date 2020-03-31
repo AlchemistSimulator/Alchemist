@@ -44,30 +44,32 @@ fun intersectionLines(l1: Euclidean2DSegment, l2: Euclidean2DSegment): LinesInte
     val q1 = l1.first.y - m1 * l1.first.x
     val m2 = l2.slope()
     val q2 = l2.first.y - m2 * l2.first.x
-    if (m1.isInfinite() && m2.isInfinite()) {
-        return if (fuzzyEquals(l1.first.x, l2.first.x)) {
-            LinesIntersectionResult(LinesIntersectionType.LINE)
-        } else {
-            LinesIntersectionResult(LinesIntersectionType.EMPTY)
+    return when {
+        m1.isInfinite() && m2.isInfinite() -> {
+            when {
+                fuzzyEquals(l1.first.x, l2.first.x) -> LinesIntersectionResult(LinesIntersectionType.LINE)
+                else -> LinesIntersectionResult(LinesIntersectionType.EMPTY)
+            }
         }
-    }
-    if (!(m1.isInfinite() || m2.isInfinite()) && fuzzyEquals(m1, m2)) {
-        return if (fuzzyEquals(q1, q2)) {
-            LinesIntersectionResult(LinesIntersectionType.LINE)
-        } else {
-            LinesIntersectionResult(LinesIntersectionType.EMPTY)
+        !(m1.isInfinite() || m2.isInfinite()) && fuzzyEquals(m1, m2) -> {
+            when {
+                fuzzyEquals(q1, q2) -> LinesIntersectionResult(LinesIntersectionType.LINE)
+                else -> LinesIntersectionResult(LinesIntersectionType.EMPTY)
+            }
         }
-    }
-    val intersection = when {
-        m1.isInfinite() -> Euclidean2DPosition(l1.first.x, m2 * l1.first.x + q2)
-        m2.isInfinite() -> Euclidean2DPosition(l2.first.x, m1 * l2.first.x + q1)
         else -> {
-            val x = (q2 - q1) / (m1 - m2)
-            val y = m1 * x + q1
-            Euclidean2DPosition(x, y)
+            val intersection = when {
+                m1.isInfinite() -> Euclidean2DPosition(l1.first.x, m2 * l1.first.x + q2)
+                m2.isInfinite() -> Euclidean2DPosition(l2.first.x, m1 * l2.first.x + q1)
+                else -> {
+                    val x = (q2 - q1) / (m1 - m2)
+                    val y = m1 * x + q1
+                    Euclidean2DPosition(x, y)
+                }
+            }
+            LinesIntersectionResult(LinesIntersectionType.POINT, Optional.of(intersection))
         }
     }
-    return LinesIntersectionResult(LinesIntersectionType.POINT, Optional.of(intersection))
 }
 
 /**

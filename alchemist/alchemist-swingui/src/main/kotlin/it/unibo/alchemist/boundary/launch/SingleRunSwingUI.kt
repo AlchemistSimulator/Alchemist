@@ -19,6 +19,9 @@ import it.unibo.alchemist.model.interfaces.GeoPosition
 import java.awt.GraphicsEnvironment
 import javax.swing.JFrame
 
+/**
+ * Launches a Swing GUI meant to be used for a single simulation run.
+ */
 object SingleRunSwingUI : SimulationLauncher() {
     override val name = "Alchemist graphical simulation"
 

@@ -131,8 +131,7 @@ abstract class AbstractOrientingBehavior<
      * The edge (or better, crossing) the pedestrian is moving towards.
      */
     private lateinit var targetEdge: F
-    /*
-     */
+
     private enum class State {
         START,
         NEW_ROOM,
@@ -159,129 +158,131 @@ abstract class AbstractOrientingBehavior<
      */
     private var state: State = State.START
 
-    /**
-     */
-    override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) {}
+    override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) = Unit
 
-    /**
-     */
     override fun getRate(): Double = timeDistribution.rate
 
-    /**
-     */
-    override fun execute() {
-        var currPos = environment.getPosition(pedestrian)
-        when (state) {
-            State.START -> {
-                with(environmentGraph.nodeContaining(currPos)) {
-                    if (this != null) {
-                        state = State.NEW_ROOM
-                    }
-                    /*
-                     * If the pedestrian cannot locate itself inside any room (unusual
-                     * condition), it tries to reach the closest door/passage in order
-                     * to enter one. If this isn't possible, it simply won't move.
-                     */
-                    else {
-                        val closestDoor = environmentGraph.nodes()
-                            .flatMap { environmentGraph.edgesFrom(it) }
-                            .map { it to computeSubdestination(it) }
-                            .minBy { it.second.getDistanceTo(currPos) }
-                        if (closestDoor != null) {
-                            nextRoom = closestDoor.first.head
-                            subdestination = closestDoor.second
-                            targetEdge = closestDoor.first
-                            state = State.MOVING_TO_DOOR
-                        } else {
-                            state = State.ARRIVED
-                        }
-                    }
-                }
+    private fun onStart() {
+        val currentPosition = environment.myPosition
+        with(environmentGraph.nodeContaining(currentPosition)) {
+            if (this != null) {
+                state = State.NEW_ROOM
             }
-            State.NEW_ROOM -> {
-                currRoom = if (::nextRoom.isInitialized && nextRoom.contains(currPos)) {
-                    nextRoom
-                } else {
-                    environmentGraph.nodes().first { it.contains(currPos) }
-                }
-                pedestrian.registerVisit(currRoom)
-                with(environmentGraph.destinationsWithin(currRoom)) {
-                    if (isNotEmpty()) {
-                        route.clear()
-                        subdestination = first()
-                        state = State.MOVING_TO_FINAL
-                        return
-                    }
-                }
-                /*
-                 * If a sub-destination of the route is in sight, updates the route removing
-                 * all the sub-destination up to the one encountered.
-                 */
-                if (route.isNotEmpty() && route.any { currRoom.contains(it.centroid) }) {
-                    for (i in 0..route.indexOfFirst { currRoom.contains(it.centroid) }) {
-                        route.removeAt(0)
-                    }
-                }
-                val rankings = if (route.isNotEmpty()) {
-                    computeEdgeRankings(currRoom, route[0].centroid)
-                } else {
-                    null
-                }
-                /*
-                 * The pedestrian can see and assess all the edges outgoing from the current room
-                 */
-                val edge = environmentGraph.edgesFrom(currRoom)
-                    .minWith(
-                        compareBy({
-                            weight(it, rankings?.get(it))
-                        }, {
-                            /*
-                             * nearest door heuristic
-                             */
-                            computeSubdestination(it).getDistanceTo(currPos)
-                        })
-                    )
-                if (edge != null) {
-                    nextRoom = edge.head
-                    subdestination = computeSubdestination(edge)
-                    targetEdge = edge
+            /*
+             * If the pedestrian cannot locate itself inside any room (unusual
+             * condition), it tries to reach the closest door/passage in order
+             * to enter one. If this isn't possible, it simply won't move.
+             */
+            else {
+                val closestDoor = environmentGraph.nodes()
+                    .flatMap { environmentGraph.edgesFrom(it) }
+                    .map { it to computeSubdestination(it) }
+                    .minBy { it.second.getDistanceTo(currentPosition) }
+                if (closestDoor != null) {
+                    nextRoom = closestDoor.first.head
+                    subdestination = closestDoor.second
+                    targetEdge = closestDoor.first
                     state = State.MOVING_TO_DOOR
-                }
-                /*
-                 * Closed room, we can't move anywhere.
-                 */
-                else {
+                } else {
                     state = State.ARRIVED
                 }
             }
-            State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL -> {
-                moveTowards(subdestination, if (::currRoom.isInitialized) currRoom else null, targetEdge)
-                currPos = environment.getPosition(pedestrian)
-                if (environmentGraph.nodes().any { (!::currRoom.isInitialized || it != currRoom) && it.contains(currPos) }) {
-                    state = State.NEW_ROOM
-                } else if (state != State.CROSSING_DOOR) {
-                    val arrived = currPos.getDistanceTo(subdestination) <= minDistance
-                    if (state == State.MOVING_TO_DOOR) {
-                        if (arrived) {
-                            /*
-                             * This may cause some unrealistic deviations, a possible alternative
-                             * is to move the pedestrian in the same direction it moved so far.
-                             */
-                            subdestination = nextRoom.centroid
-                            state = State.CROSSING_DOOR
-                        } else {
-                            /*
-                             * Recomputes sub-destination
-                             */
-                            subdestination = computeSubdestination(targetEdge)
-                        }
-                    } else if (arrived) {
-                        state = State.ARRIVED
-                    }
-                }
-            }
-            State.ARRIVED -> {}
         }
+    }
+
+    private fun inNewRoom() {
+        val currentPosition = environment.myPosition
+        currRoom = if (::nextRoom.isInitialized && nextRoom.contains(currentPosition)) {
+            nextRoom
+        } else {
+            environmentGraph.nodes().first { it.contains(currentPosition) }
+        }
+        pedestrian.registerVisit(currRoom)
+        with(environmentGraph.destinationsWithin(currRoom)) {
+            if (isNotEmpty()) {
+                route.clear()
+                subdestination = first()
+                state = State.MOVING_TO_FINAL
+                return
+            }
+        }
+        /*
+         * If a sub-destination of the route is in sight, updates the route removing
+         * all the sub-destination up to the one encountered.
+         */
+        if (route.isNotEmpty() && route.any { currRoom.contains(it.centroid) }) {
+            for (i in 0..route.indexOfFirst { currRoom.contains(it.centroid) }) {
+                route.removeAt(0)
+            }
+        }
+        val rankings = if (route.isNotEmpty()) {
+            computeEdgeRankings(currRoom, route[0].centroid)
+        } else {
+            null
+        }
+        /*
+         * The pedestrian can see and assess all the edges outgoing from the current room
+         */
+        val edge = environmentGraph.edgesFrom(currRoom)
+            .minWith(
+                compareBy({
+                    weight(it, rankings?.get(it))
+                }, {
+                    /*
+                     * nearest door heuristic
+                     */
+                    computeSubdestination(it).getDistanceTo(currentPosition)
+                })
+            )
+        if (edge != null) {
+            nextRoom = edge.head
+            subdestination = computeSubdestination(edge)
+            targetEdge = edge
+            state = State.MOVING_TO_DOOR
+        }
+        /*
+         * Closed room, we can't move anywhere.
+         */
+        else {
+            state = State.ARRIVED
+        }
+    }
+
+    private fun moving() {
+        moveTowards(subdestination, if (::currRoom.isInitialized) currRoom else null, targetEdge)
+        val currentPosition = environment.myPosition
+        if (environmentGraph.nodes()
+                .any { (!::currRoom.isInitialized || it != currRoom) && it.contains(currentPosition) }) {
+            state = State.NEW_ROOM
+        } else if (state != State.CROSSING_DOOR) {
+            val arrived = currentPosition.getDistanceTo(subdestination) <= minDistance
+            if (state == State.MOVING_TO_DOOR) {
+                if (arrived) {
+                    /*
+                     * This may cause some unrealistic deviations, a possible alternative
+                     * is to move the pedestrian in the same direction it moved so far.
+                     */
+                    subdestination = nextRoom.centroid
+                    state = State.CROSSING_DOOR
+                } else {
+                    /*
+                     * Recomputes sub-destination
+                     */
+                    subdestination = computeSubdestination(targetEdge)
+                }
+            } else if (arrived) {
+                state = State.ARRIVED
+            }
+        }
+    }
+
+    private val Environment<T, P>.myPosition: P get() = getPosition(pedestrian)
+
+    override fun execute() = when (state) {
+        State.START -> onStart()
+        State.NEW_ROOM -> inNewRoom()
+        State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL -> moving()
+        State.ARRIVED -> {}
     }
 
     /**
@@ -347,7 +348,8 @@ abstract class AbstractOrientingBehavior<
      * Computes the factor for the weighting system taking into account final
      * destinations discovered while travelling.
      */
-    private fun finalDestinationFactor(edge: F) = if (environmentGraph.containsDestination(edge.head)) 0.1 else 1.0
+    private fun finalDestinationFactor(edge: F) =
+        if (environmentGraph.containsDestination(edge.head)) destinationWeight else 1.0
 
     /*
      * Computes the factor for the weighting system taking into account whereas
@@ -369,4 +371,8 @@ abstract class AbstractOrientingBehavior<
     private fun isImpasse(area: M): Boolean =
         pedestrian.volatileMemory.contains(area) &&
             environmentGraph.edgesFrom(area).map { it.head }.distinct().count() <= 1
+
+    companion object {
+        private const val destinationWeight = 0.1
+    }
 }

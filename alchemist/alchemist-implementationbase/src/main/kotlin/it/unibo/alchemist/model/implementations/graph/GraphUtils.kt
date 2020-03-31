@@ -89,65 +89,64 @@ data class Path<N>(
  * @param weight a function that weights each edge.
  */
 fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weight: (E) -> Double): Path<N>? {
-    if (nodes().isEmpty()) {
-        return null
-    }
-    if (from == to) {
-        return Path(mutableListOf(from), 0.0)
-    }
-    /*
-     * Distance from source to each node
-     */
-    val dist: HashMap<N, Double> = HashMap(nodes().size)
-    nodes().forEach {
-        dist[it] = Double.POSITIVE_INFINITY
-    }
-    dist[from] = 0.0
-    /*
-     * Predecessor of each node
-     */
-    val prev: HashMap<N, N> = HashMap(nodes().size)
-    val queue: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { dist[it] })
-    queue.add(from)
-    while (queue.isNotEmpty()) {
-        /*
-         * This is the node with min dist
-         */
-        val node = queue.poll()
-        edgesFrom(node).forEach { edge ->
-            val neighbor = edge.head
-            dist[node]?.let { distToNode ->
-                val distToNeighbor = distToNode + weight(edge)
-                dist[neighbor]?.let { prevDist ->
-                    if (distToNeighbor < prevDist) {
-                        /*
-                         * The element is removed (if present) and added back to
-                         * recompute its position in the heap since its dist changed
-                         */
-                        queue.remove(neighbor)
-                        dist[neighbor] = distToNeighbor
-                        prev[neighbor] = node
-                        queue.add(neighbor)
+    return when {
+        nodes().isEmpty() -> null
+        from == to -> Path(mutableListOf(from), 0.0)
+        else -> {
+            /*
+             * Distance from source to each node
+             */
+            val dist: HashMap<N, Double> = HashMap(nodes().size)
+            nodes().forEach {
+                dist[it] = Double.POSITIVE_INFINITY
+            }
+            dist[from] = 0.0
+            /*
+             * Predecessor of each node
+             */
+            val prev: HashMap<N, N> = HashMap(nodes().size)
+            val queue: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { dist[it] })
+            queue.add(from)
+            while (queue.isNotEmpty()) {
+                /*
+                 * This is the node with min dist
+                 */
+                val node = queue.poll()
+                edgesFrom(node).forEach { edge ->
+                    val neighbor = edge.head
+                    dist[node]?.let { distToNode ->
+                        val distToNeighbor = distToNode + weight(edge)
+                        dist[neighbor]?.let { prevDist ->
+                            if (distToNeighbor < prevDist) {
+                                /*
+                                 * The element is removed (if present) and added back to
+                                 * recompute its position in the heap since its dist changed
+                                 */
+                                queue.remove(neighbor)
+                                dist[neighbor] = distToNeighbor
+                                prev[neighbor] = node
+                                queue.add(neighbor)
+                            }
+                        }
                     }
                 }
             }
+            /*
+             * Backtracking
+             */
+            val path: MutableList<N> = mutableListOf(to)
+            var curr = to
+            while (prev[curr] != null) {
+                prev[curr]?.let {
+                    path.add(it)
+                    curr = it
+                }
+            }
+            when {
+                path.contains(from) -> Path(path.reversed(), dist[to] ?: Double.POSITIVE_INFINITY)
+                else -> null
+            }
         }
-    }
-    /*
-     * Backtracking
-     */
-    val path: MutableList<N> = mutableListOf(to)
-    var curr = to
-    while (prev[curr] != null) {
-        prev[curr]?.let {
-            path.add(it)
-            curr = it
-        }
-    }
-    return if (path.contains(from)) {
-        Path(path.reversed(), dist[to] ?: Double.POSITIVE_INFINITY)
-    } else {
-        null
     }
 }
 

@@ -24,6 +24,12 @@ enum class LinesIntersectionType {
 }
 
 /**
+ * Describes the result of the intersection between two lines in an euclidean space.
+ *
+ * @param type
+ *              the type of intersection.
+ * @param point
+ *              the intersection point (if present).
  */
 data class LinesIntersectionResult(
     /**
@@ -102,6 +108,12 @@ enum class SegmentsIntersectionTypes {
 }
 
 /**
+ * Describes the result of the intersection between two segments in an euclidean space.
+ *
+ * @param type
+ *              the type of intersection.
+ * @param point
+ *              the intersection point (if present).
  */
 data class SegmentsIntersectionResult(
     /**
@@ -109,7 +121,7 @@ data class SegmentsIntersectionResult(
     val type: SegmentsIntersectionTypes,
     /**
      */
-    val intersection: Optional<Euclidean2DPosition> = Optional.empty()
+    val point: Optional<Euclidean2DPosition> = Optional.empty()
 )
 
 /**
@@ -206,6 +218,14 @@ enum class CircleSegmentIntersectionType {
 }
 
 /**
+ * Describes the result of the intersection between a circle and a segment in an euclidean space.
+ *
+ * @param type
+ *              the type of intersection.
+ * @param point1
+ *              the first point of intersection (if present).
+ * @param point2
+ *              the second point of intersection (if present).
  */
 data class CircleSegmentIntersectionResult(
     /**

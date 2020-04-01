@@ -69,7 +69,7 @@ fun ConvexPolygon.intersectsBoundaryExcluded(segment: Euclidean2DSegment): Boole
     edges()
         .map { intersection(it, segment) }
         .filter { it.type == SegmentsIntersectionTypes.POINT }
-        .map { it.intersection.get() }
+        .map { it.point.get() }
         .distinct()
         .size > 1
 

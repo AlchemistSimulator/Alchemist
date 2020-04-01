@@ -294,8 +294,8 @@ open class ExtendableConvexPolygonImpl(
         val polygonEdge2 = getEdge(circularPrev(indexOfIntrudingV))
         val obstacleEdge = findIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = intersection(polygonEdge1, obstacleEdge).intersection.get()
-        val p2 = intersection(polygonEdge2, obstacleEdge).intersection.get()
+        val p1 = intersection(polygonEdge1, obstacleEdge).point.get()
+        val p2 = intersection(polygonEdge2, obstacleEdge).point.get()
         // a new edge is going to be added, its vertices will grow following the intruded
         // obstacleEdge. In order to do so, their growth directions will be modified to be
         // parallel to such edge, but in opposite senses.

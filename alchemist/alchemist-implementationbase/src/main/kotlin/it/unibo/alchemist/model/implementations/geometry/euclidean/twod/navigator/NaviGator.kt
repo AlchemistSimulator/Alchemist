@@ -162,81 +162,77 @@ private fun ExtendableConvexPolygon.findCrossings(
      * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
      */
     remaining: DoubleInterval = oldEdge.toInterval()
-): Collection<Euclidean2DCrossing> {
-    return when {
-        fuzzyEquals(remaining.first, remaining.second) -> emptyList()
-        else -> {
-            /*
-             * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
-             * the intersection with the advancing edge.
-             */
-            val polygonToInterval: (ExtendableConvexPolygon) -> DoubleInterval = {
-                it.closestEdgeTo(oldEdge).toInterval(oldEdge.isXAxisAligned())
-            }
-            val shapeToInterval: (Shape) -> DoubleInterval = {
-                it.vertices().findExtremePoints(oldEdge.isXAxisAligned())
-            }
-            val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
-                seeds.filter {
-                    it != this && it.intersects(asAwtShape()) &&
-                        /*
-                         * A seed is considered intersected if it intersects with the polygon
-                         * and, in particular, with the remaining portion of the advancing edge.
-                         * Similarly for obstacles below.
-                         */
-                        polygonToInterval(it).intersectsEndpointsExcluded(remaining)
-                }
-            }
-            val intersectedObstacles: () -> List<Shape> = {
-                obstacles.filter {
-                    intersects(it) && shapeToInterval(it).intersectsEndpointsExcluded(remaining)
-                }
-            }
-            while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
-                if (!advanceEdge(index, unity, origin, width, height)) {
+): Collection<Euclidean2DCrossing> =
+    emptyList<Euclidean2DCrossing>().takeIf { fuzzyEquals(remaining.first, remaining.second) } ?: let {
+        /*
+         * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
+         * the intersection with the advancing edge.
+         */
+        val polygonToInterval: (ExtendableConvexPolygon) -> DoubleInterval = {
+            it.closestEdgeTo(oldEdge).toInterval(oldEdge.isXAxisAligned())
+        }
+        val shapeToInterval: (Shape) -> DoubleInterval = {
+            it.vertices().findExtremePoints(oldEdge.isXAxisAligned())
+        }
+        val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
+            seeds.filter {
+                it != this && it.intersects(asAwtShape()) &&
                     /*
-                     * Edge is out of the environment's boundaries.
+                     * A seed is considered intersected if it intersects with the polygon
+                     * and, in particular, with the remaining portion of the advancing edge.
+                     * Similarly for obstacles below.
                      */
-                    return emptyList()
-                }
-            }
-            val newRemaining = remaining.subtractAll(
-                intersectedObstacles().map { shapeToInterval(it) }
-            )
-            val neighborToIntervals = intersectedSeeds().map { neighbor ->
-                /*
-                 * Maps each neighbor to a collection of intervals representing
-                 * the portions of the advancing edge leading to that neighbor.
-                 */
-                neighbor to newRemaining.mapNotNull { remaining ->
-                    polygonToInterval(neighbor).intersectionEndpointsExcluded(remaining)
-                }
-            }
-            val crossings = neighborToIntervals.flatMap { (neighbor, intervals) ->
-                /*
-                 * Intervals should be mapped to actual segments, considering the
-                 * coordinate we ignored so far of the oldEdge.
-                 */
-                intervals.map {
-                    val crossing = if (oldEdge.isXAxisAligned()) {
-                        createSegment(it.first, oldEdge.first.y, x2 = it.second)
-                    } else {
-                        createSegment(oldEdge.first.x, it.first, y2 = it.second)
-                    }
-                    Euclidean2DCrossing(this, neighbor, crossing)
-                }
-            }
-            crossings + newRemaining.flatMap {
-                /*
-                 * The portions of edge that became crossings won't be considered further.
-                 */
-                it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
-            }.flatMap {
-                findCrossings(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)
+                    polygonToInterval(it).intersectsEndpointsExcluded(remaining)
             }
         }
+        val intersectedObstacles: () -> List<Shape> = {
+            obstacles.filter {
+                intersects(it) && shapeToInterval(it).intersectsEndpointsExcluded(remaining)
+            }
+        }
+        while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
+            if (!advanceEdge(index, unity, origin, width, height)) {
+                /*
+                 * Edge is out of the environment's boundaries.
+                 */
+                return emptyList()
+            }
+        }
+        val newRemaining = remaining.subtractAll(
+            intersectedObstacles().map { shapeToInterval(it) }
+        )
+        val neighborToIntervals = intersectedSeeds().map { neighbor ->
+            /*
+             * Maps each neighbor to a collection of intervals representing
+             * the portions of the advancing edge leading to that neighbor.
+             */
+            neighbor to newRemaining.mapNotNull { remaining ->
+                polygonToInterval(neighbor).intersectionEndpointsExcluded(remaining)
+            }
+        }
+        val crossings = neighborToIntervals.flatMap { (neighbor, intervals) ->
+            /*
+             * Intervals should be mapped to actual segments, considering the
+             * coordinate we ignored so far of the oldEdge.
+             */
+            intervals.map {
+                val crossing = if (oldEdge.isXAxisAligned()) {
+                    createSegment(it.first, oldEdge.first.y, x2 = it.second)
+                } else {
+                    createSegment(oldEdge.first.x, it.first, y2 = it.second)
+                }
+                Euclidean2DCrossing(this, neighbor, crossing)
+            }
+        }
+        return crossings + newRemaining.flatMap {
+            /*
+             * The portions of edge that became crossings won't be considered further.
+             */
+            it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
+        }.flatMap {
+            findCrossings(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)
+        }
     }
-}
 
 private fun createSeed(x: Double, y: Double, side: Double): ExtendableConvexPolygon =
     ExtendableConvexPolygonImpl(

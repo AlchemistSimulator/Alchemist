@@ -20,6 +20,9 @@ import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
+/**
+ * Tests the [Graph] implementation.
+ */
 class TestGraphUtils {
 
     @Test

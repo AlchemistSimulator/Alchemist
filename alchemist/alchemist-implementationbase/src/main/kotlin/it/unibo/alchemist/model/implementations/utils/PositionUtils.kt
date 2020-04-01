@@ -9,18 +9,12 @@ import kotlin.math.sin
 /**
  * Create a position from an array of double representing the coordinates of the point.
  */
-@SuppressWarnings("ArrayPrimitive")
-/*
- * Reason: even if we take a DoubleArray we'll need to convert it to Array<Double> to
- * make it compatible with the varaarg Numbers input of the original makePosition method
- * (at least at the best of my knowledge).
- */
-fun <T, P : Position<P>> Environment<T, P>.makePosition(coords: Array<Double>): P = makePosition(*coords)
+fun <T, P : Position<P>> Environment<T, P>.makePosition(vararg coords: Double): P = makePosition(*coords)
 
 /**
  * Create a position corresponding to the origin of this environment.
  */
-fun <T, P : Position<P>> Environment<T, P>.origin(): P = makePosition((1..dimensions).map { 0.0 }.toTypedArray())
+fun <T, P : Position<P>> Environment<T, P>.origin(): P = makePosition(*DoubleArray(dimensions))
 
 /**
  * Multiply each coordinate of this position by a number.

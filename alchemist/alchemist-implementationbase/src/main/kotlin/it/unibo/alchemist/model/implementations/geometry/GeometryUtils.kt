@@ -17,7 +17,7 @@ fun Euclidean2DPosition.asAngle() = atan2(y, x)
 
 /**
  * When using java.awt.geom.PathIterator to iterate over the boundary of a
- * Shape, you need to pass an array of this size
+ * Shape, you need to pass an array of this size.
  */
 const val ARRAY_SIZE_FOR_PATH_ITERATOR = 6
 

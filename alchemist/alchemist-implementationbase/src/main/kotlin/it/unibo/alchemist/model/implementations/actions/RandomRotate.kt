@@ -22,7 +22,7 @@ class RandomRotate<T>(
 ) : AbstractAction<T>(node) {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
         RandomRotate(n, env, rng)
@@ -37,7 +37,7 @@ class RandomRotate<T>(
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     override fun getContext() = Context.LOCAL
 

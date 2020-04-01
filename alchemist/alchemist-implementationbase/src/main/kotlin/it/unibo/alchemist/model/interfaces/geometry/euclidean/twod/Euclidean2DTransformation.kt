@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPosition> {
 
     /**
-     * Counter clockwise rotation
+     * Counter clockwise rotation.
      *
      * @param angle the angle in radians
      */
@@ -26,7 +26,7 @@ interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPositio
         rotate(direction.asAngle())
 
     /**
-     * See [rotate]
+     * See [rotate].
      */
     fun origin(x: Double, y: Double) =
         origin(Euclidean2DPosition(x, y))

@@ -72,6 +72,9 @@ NavigationGraph<V, A, N, E>.nodeContaining(position: V): N? =
 
 /**
  * Models a path composed by a list of nodes and a weight.
+ *
+ * @param path the actual path.
+ * @param weight the weight of the path.
  */
 data class Path<N>(
     /**

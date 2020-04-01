@@ -27,8 +27,17 @@ interface Pedestrian2D<T> : Pedestrian<T> {
         FieldOfView2D(env, this, defaultFieldOfViewDepth, defaultFieldOfViewAperture)
 
     companion object {
+        /**
+         * Default radius of pedestrian's [shape].
+         */
         const val defaultRadius = 0.3
+        /**
+         * Default aperture of pedestrian's [fieldOfView].
+         */
         const val defaultFieldOfViewAperture = Math.PI / 180 * 80
+        /**
+         * Default depth of pedestrian's [fieldOfView].
+         */
         const val defaultFieldOfViewDepth = 10.0
     }
 }

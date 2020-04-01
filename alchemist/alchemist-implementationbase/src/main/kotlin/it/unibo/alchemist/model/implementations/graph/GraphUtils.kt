@@ -114,40 +114,40 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
                 val node = queue.poll()
                 edgesFrom(node).forEach { edge ->
                     val neighbor = edge.head
-                    dist[node]?.let { distToNode ->
-                        val distToNeighbor = distToNode + weight(edge)
-                        dist[neighbor]?.let { prevDist ->
-                            if (distToNeighbor < prevDist) {
-                                /*
-                                 * The element is removed (if present) and added back to
-                                 * recompute its position in the heap since its dist changed
-                                 */
-                                queue.remove(neighbor)
-                                dist[neighbor] = distToNeighbor
-                                prev[neighbor] = node
-                                queue.add(neighbor)
-                            }
-                        }
+                    val distToNode = dist[node] ?: Double.POSITIVE_INFINITY
+                    val distToNeighbor = distToNode + weight(edge)
+                    val prevDist = dist[neighbor] ?: Double.POSITIVE_INFINITY
+                    if (distToNeighbor < prevDist) {
+                        /*
+                         * The element is removed (if present) and added back to
+                         * recompute its position in the heap since its dist changed
+                         */
+                        queue.remove(neighbor)
+                        dist[neighbor] = distToNeighbor
+                        prev[neighbor] = node
+                        queue.add(neighbor)
                     }
                 }
             }
-            /*
-             * Backtracking
-             */
-            val path: MutableList<N> = mutableListOf(to)
-            var curr = to
-            while (prev[curr] != null) {
-                prev[curr]?.let {
-                    path.add(it)
-                    curr = it
-                }
-            }
+            val path = backtrack(to, prev)
             when {
                 path.contains(from) -> Path(path.reversed(), dist[to] ?: Double.POSITIVE_INFINITY)
                 else -> null
             }
         }
     }
+}
+
+private fun <N> backtrack(end: N, prev: HashMap<N, N>): List<N> {
+    val path: MutableList<N> = mutableListOf(end)
+    var curr = end
+    while (prev[curr] != null) {
+        prev[curr]?.let {
+            path.add(it)
+            curr = it
+        }
+    }
+    return path.reversed()
 }
 
 /**
@@ -181,6 +181,7 @@ NavigationGraph<V, A, N, E>.primMinimumSpanningForest(
 /*
  * Helper function to compute the MSF.
  */
+@Suppress("NestedBlockDepth")
 private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
     weight: (E) -> Double,
     builder: GraphBuilder<N, E>,
@@ -216,13 +217,12 @@ private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
                 val neighbor = edge.head
                 if (!builder.nodes().contains(neighbor)) {
                     val costToNeighbor = weight(edge)
-                    cost[neighbor]?.let { prevCost ->
-                        if (costToNeighbor < prevCost) {
-                            queue.remove(neighbor)
-                            cost[neighbor] = costToNeighbor
-                            prev[neighbor] = node
-                            queue.add(neighbor)
-                        }
+                    val prevCost = cost[neighbor] ?: Double.POSITIVE_INFINITY
+                    if (costToNeighbor < prevCost) {
+                        queue.remove(neighbor)
+                        cost[neighbor] = costToNeighbor
+                        prev[neighbor] = node
+                        queue.add(neighbor)
                     }
                 }
             }

@@ -40,7 +40,7 @@ interface PhysicsEnvironment<
     fun getHeading(node: Node<T>): S
 
     /**
-     * Sets the heading of a node
+     * Sets the heading of a node.
      *
      * @param node The node
      * @param direction The direction vector.

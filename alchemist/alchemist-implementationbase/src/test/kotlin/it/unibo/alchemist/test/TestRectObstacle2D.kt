@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.test
 
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import org.junit.jupiter.api.Assertions.assertTrue

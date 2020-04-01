@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.test
 
-import io.kotlintest.matchers.doubles.shouldBeExactly
-import io.kotlintest.shouldBe
+import io.kotest.matchers.doubles.shouldBeExactly
+import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.implementations.geometry.DoubleInterval
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.subtract

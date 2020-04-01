@@ -39,13 +39,16 @@ class Speed(age: Age, gender: Gender, rg: RandomGenerator) : Characteristic {
         private val config = Config { addSpec(SpeedSpec) }
                 .from.toml.resource(PARAMETERS_FILE)
 
-        val childMale = config[SpeedSpec.childMale]
-        val adultMale = config[SpeedSpec.adultMale]
-        val elderlyMale = config[SpeedSpec.elderlyMale]
-        val childFemale = config[SpeedSpec.childFemale]
-        val adultFemale = config[SpeedSpec.adultFemale]
-        val elderlyFemale = config[SpeedSpec.elderlyFemale]
+        private val childMale = config[SpeedSpec.childMale]
+        private val adultMale = config[SpeedSpec.adultMale]
+        private val elderlyMale = config[SpeedSpec.elderlyMale]
+        private val childFemale = config[SpeedSpec.childFemale]
+        private val adultFemale = config[SpeedSpec.adultFemale]
+        private val elderlyFemale = config[SpeedSpec.elderlyFemale]
+        /**
+         * Default speed.
+         */
         val default = config[SpeedSpec.default]
-        val variance = config[SpeedSpec.variance]
+        private val variance = config[SpeedSpec.variance]
     }
 }

@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.DoubleInterval
 import it.unibo.alchemist.model.implementations.geometry.isDegenerate
 import it.unibo.alchemist.model.implementations.geometry.zCross
 import it.unibo.alchemist.model.implementations.geometry.toVector

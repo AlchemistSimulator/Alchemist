@@ -14,11 +14,11 @@ import kotlin.math.abs
  */
 class Rectangular2DEnvironment<T>(
     /**
-     * The environment's width limits the positions of the nodes inside a rectangle [width * height] centered in (0,0)
+     * The environment's width limits the positions of the nodes inside a rectangle [width * height] centered in (0,0).
      */
     width: Double,
     /**
-     * The environment's height limits the positions of the nodes inside a rectangle [width * height] centered in (0,0)
+     * The environment's height limits the positions of the nodes inside a rectangle [width * height] centered in (0,0).
      */
     height: Double
 ) : Continuous2DEnvironment<T>(), HasBoundaries {

@@ -14,12 +14,12 @@ open class CircleNode<T>(
     private val shape = env.shapeFactory.circle(radius)
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     final override fun getShape() = shape
 
     /**
-     * Returns null because T is unknown
+     * Returns null because T is unknown.
      */
     override fun createT() = null
 }

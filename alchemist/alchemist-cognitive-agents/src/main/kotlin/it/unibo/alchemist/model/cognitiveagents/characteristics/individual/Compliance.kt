@@ -30,11 +30,11 @@ class Compliance(age: Age, gender: Gender) : Characteristic {
         private val config = Config { addSpec(ComplianceSpec) }
                 .from.toml.resource(PARAMETERS_FILE)
 
-        val childMale = config[ComplianceSpec.childMale]
-        val adultMale = config[ComplianceSpec.adultMale]
-        val elderlyMale = config[ComplianceSpec.elderlyMale]
-        val childFemale = config[ComplianceSpec.childFemale]
-        val adultFemale = config[ComplianceSpec.adultFemale]
-        val elderlyFemale = config[ComplianceSpec.elderlyFemale]
+        private val childMale = config[ComplianceSpec.childMale]
+        private val adultMale = config[ComplianceSpec.adultMale]
+        private val elderlyMale = config[ComplianceSpec.elderlyMale]
+        private val childFemale = config[ComplianceSpec.childFemale]
+        private val adultFemale = config[ComplianceSpec.adultFemale]
+        private val elderlyFemale = config[ComplianceSpec.elderlyFemale]
     }
 }

@@ -22,6 +22,7 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
      */
     abstract fun combinationFunction(): Double
 
+    @Suppress("UndocumentedPublicProperty")
     companion object {
         private val config = Config { addSpec(CognitiveSpec) }
             .from.toml.resource(PARAMETERS_FILE)

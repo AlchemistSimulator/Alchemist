@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class TestGraph {
+class TestGraphUtils {
 
     @Test
     fun testReachability() {

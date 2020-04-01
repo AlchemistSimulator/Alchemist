@@ -6,12 +6,12 @@ title: "Using Cognitive Pedestrians"
 
 Alchemist is capable of simulating the movement of pedestrians with sophisticated cognitive capabilities:
 
-![demo]({{ 'assets/media/usage/no-knowledge.gif'|asset }})
+![demo](../../assets/media/usage/no-knowledge.gif)
 
 The animation above shows an adult male with no previous knowledge of the environment trying to reach the destination marked green.
 
 ### Prerequisites
-This guide assumes you already know [the Alchemist metamodel](../simulator/metamodel.md), [how to write simulations in YAML](yaml.md) and [how to generate a navigation graph](navmeshes.md).
+This guide assumes you already know [the Alchemist metamodel](../simulator/metamodel.md), [how to write simulations in YAML](yaml.md) and [how to generate a navigation graph](navigation-graphs.md).
 
 ### Types of pedestrians
 The characteristics of the pedestrians loadable in a simulation can be chosen from three available types, 
@@ -195,61 +195,50 @@ displacements:
 
 ### Orienting abilities
 
-As showed in the animation on the top of the page, pedestrians can be equipped with orienting abilities and different knowledge degrees of the environment. The latter quantity indicates the level of knowledge of the pedestrian concerning the environment prior to the start of the simulation, thus it does not take into account the knowledge the pedestrian will gain during it. Of the above described types of pedestrians only homogeneous and cognitive pedestrians can be equipped with orienting abilities.
+As showed in the animation on the top of the page, pedestrians can be equipped with orienting abilities and different knowledge degrees of the environment. Of the types of pedestrians described above, only homogeneous and cognitive pedestrians can be equipped with orienting abilities.
 
 #### Homogeneous orienting pedestrians
 
-The only parameters you need to provide when instancing a homogeneous orienting pedestrian is its knowledge degree and a navigation graph of the environment:
+First of all, orienting pedestrians can only be placed in an `ImageEnvironmentWithGraph`, which is a type of environment providing a navigation graph (see [how to generate navigation graphs](navigation-graphs.md)). Additionally, in order for orienting pedestrians to be able to navigate the environment, you need to provide them with the orienting behavior. Such object is a _reaction_ that will exploit the spatial information available to a pedestrian in order to navigate the environment towards (or in search of) a destination. It will also register new information gained by the pedestrian during the simulation. Once you instanced the two objects described above, the only parameter you need to specify when declaring a homogeneous orienting pedestrian is its knowledge degree:
+
 ```yaml
-variables:
-  envGraph: &envGraph
-    formula: |
-      import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
-      import java.awt.geom.Point2D
-      import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-      Deaccon2D().generateEnvGraph(
-        Point2D.Double(0.0, 0.0), 
-        100.0, 
-        100.0, 
-        ImageEnvironment<Number>("path/to/myEnv.png").obstacles, 
-        mutableListOf(Euclidean2DPosition(50.0, 50.0))
-      )
-    language: kotlin
-
-displacements:
-  - in:
-      type: Point
-      parameters: [0, 0]
-    nodes:
-      type: OrientingHomogeneousPedestrian2D
-      parameters: [0.5, *envGraph]
-```
-The knowledge degree is a `Double` value in [0, 1] describing the percentage of the environment the pedestrian is familiar with. The navigation graph of the environment is a complex data structure which can be obtained using the `Deaccon2D` class, and can be instanced in the simulation file using the `variables` key. For more information refer to [how to generate a navigation graph](navmeshes.md) and [how to write simulations in YAML](yaml.md). Note that despite their name, the knowledge degree of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment.
-
-#### Cognitive orienting pedestrian
-
-Cognitive orienting pedestrians can be instanced providing knowledge degree and navigation graph of the environment before all the other parameters needed. Remember to provide them with cognitive behavior or their emotions won't evolve at all:
-```yaml
-variables:
-  envGraph: &envGraph
-    formula: |
-      import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
-      import java.awt.geom.Point2D
-      import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-      Deaccon2D().generateEnvGraph(
-        Point2D.Double(0.0, 0.0), 
-        100.0, 
-        100.0, 
-        ImageEnvironment<Number>("path/to/myEnv.png").obstacles, 
-        mutableListOf(Euclidean2DPosition(50.0, 50.0))
-      )
-    language: kotlin
+environment:
+  type: ImageEnvironmentWithGraph
+  parameters: [path/to/image.png, 1.0, 50, 50]
 
 reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
+    type: OrientingBehavior2D
+
+displacements:
+  - in:
+      type: Point
+      parameters: [15, 15]
+    nodes:
+      type: OrientingHomogeneousPedestrian2D
+      parameters: [0.5]
+    programs:
+      - *behavior
+```
+
+The knowledge degree is a `Double` value in [0,1] describing the percentage of the environment the pedestrian is familiar with prior to the start of the simulation (thus it does not take into account the knowledge the pedestrian will gain during it). Note that despite their name, the knowledge degree of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment.
+
+#### Cognitive orienting pedestrian
+
+Cognitive orienting pedestrians can be instanced providing their knowledge degree before all the other parameters needed. Remember to provide them with cognitive behavior as well or their emotions won't evolve at all:
+
+```yaml
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
     type: CognitiveBehavior
+  - time-distribution:
+        type: DiracComb
+        parameters: [1.0]
+    type: OrientingBehavior2D
 
 displacements:
   - in:
@@ -257,40 +246,12 @@ displacements:
       parameters: [0, 0]
     nodes:
       type: OrientingCognitivePedestrian2D
-      parameters: [0.5, *envGraph, "adult", "male"]
+      parameters: [0.5, "adult", "male"]
     programs:
       - *behavior
 ```
 
-#### Orienting behavior
-
-Similarly to cognitive pedestrians and the correspondent behavior, in order for orienting pedestrians to be able to navigate the environment, you need to provide them with the orienting behavior. Such object is a _reaction_ that will exploit the spatial information available to a pedestrian in order to navigate the environment towards (or in search of) a destination. It will also register new information gained by the pedestrian during the simulation.
-
-The only parameter you need to specify when declaring an orienting behavior is the navigation graph of the environment:
-```yaml
-variables:
-  envGraph: &envGraph
-    formula: |
-      import it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon.Deaccon2D
-      import java.awt.geom.Point2D
-      import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-      Deaccon2D().generateEnvGraph(
-        Point2D.Double(0.0, 0.0), 
-        100.0, 
-        100.0, 
-        ImageEnvironment<Number>("path/to/myEnv.png").obstacles, 
-        mutableListOf(Euclidean2DPosition(50.0, 50.0))
-      )
-    language: kotlin
-
-reactions: &behavior
-  - time-distribution:
-      type: DiracComb
-      parameters: [1.0]
-    type: OrientingBehavior2D
-    parameters: [*envGraph]
-```
-As you may have noted, no destination is specified. This is because the navigation graph provides a set of destinations itself, which will be used by the orienting behavior.
+As you may have noted, no destination is specified when instancing orienting pedestrians and the associated behavior. This is because the navigation graph provided by the environment contains a set of destinations that will be used by the orienting behavior. These can be specified in the constructor of `ImageEnvironmentWithGraph`, for more information see [how to generate navigation graphs](navigation-graphs.md).
 
 ### Evacuation Scenarios
 Pedestrians can be loaded in any kind of _Environment_ but it is recommended to use _PhysicsEnvironments_ since they

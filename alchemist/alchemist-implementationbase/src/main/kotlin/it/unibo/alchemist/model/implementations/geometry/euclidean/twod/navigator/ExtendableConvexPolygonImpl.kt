@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.geometry.navigationmeshes.deaccon
+package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.isDegenerate
 import it.unibo.alchemist.model.implementations.geometry.resize
@@ -13,21 +13,24 @@ import it.unibo.alchemist.model.implementations.geometry.times
 import it.unibo.alchemist.model.implementations.geometry.toVector
 import it.unibo.alchemist.model.implementations.geometry.dot
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
+import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.containsBoundaryIncluded
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.navigationmeshes.deaccon.ExtendableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.Point2D
 import java.awt.geom.Line2D
+import java.lang.IllegalStateException
 
 /**
  * Implementation of [ExtendableConvexPolygon].
  */
 open class ExtendableConvexPolygonImpl(
     private val vertices: MutableList<Euclidean2DPosition>
-) : MutableConvexPolygonImpl(vertices), ExtendableConvexPolygon {
+) : MutableConvexPolygonImpl(vertices),
+    ExtendableConvexPolygon {
 
     private var canEdgeAdvance: MutableList<Boolean> = MutableList(vertices.size) { true }
     /*
@@ -91,7 +94,8 @@ open class ExtendableConvexPolygonImpl(
      * (resized to have magnitude equal to the step parameter). However, vertices
      * may sometimes need to advance in different directions, for instance in order
      * to follow an oblique edge of an obstacle. In such cases we want to guarantee
-     * that the advanced edge is always parallel to the old one. This may be non-
+     * that the advanced edge is always parallel to the old one (i.e. we want to
+     * make sure that the edge advance in its normal direction). This may not be
      * trivial when the vertices of a given edge e have different directions of
      * growth. In order to preserve the parallelism with the old edge, we need to
      * resize the two directions of growth so that their component in the direction
@@ -105,25 +109,13 @@ open class ExtendableConvexPolygonImpl(
                     if (normals[index] == null) {
                         normals[index] = edge.computeNormal(index)
                     }
-                    val n = normals[index]!!
-                    val d = growthDirections[index]
-                    if (d?.first == null || d.second == null) {
-                        if (d == null) {
-                            growthDirections[index] = Pair(n, n)
-                        } else {
-                            if (d.first == null) {
-                                growthDirections[index] = d.copy(first = n)
-                            }
-                            if (d.second == null) {
-                                growthDirections[index] = d.copy(second = n)
-                            }
-                        }
-                    }
-                    var d1 = growthDirections[index]!!.first!!
-                    var d2 = growthDirections[index]!!.second!!
-                    val l1 = findLength(d1, n, step)
-                    val l2 = findLength(d2, n, step)
-                    require(!l1.isInfinite() && !l2.isInfinite()) { "invalid growth direction" }
+                    val normal = normals[index] ?: throw IllegalStateException("no normal vector found")
+                    recomputeGrowthDirection(index, normal)
+                    var d1 = growthDirections[index]?.first ?: throw IllegalStateException("no growth direction found")
+                    var d2 = growthDirections[index]?.second ?: throw IllegalStateException("no growth direction found")
+                    val l1 = findLength(d1, normal, step)
+                    val l2 = findLength(d2, normal, step)
+                    require(l1.isFinite() && l2.isFinite()) { "invalid growth direction" }
                     d1 = d1.resize(l1)
                     d2 = d2.resize(l2)
                     // super method is used in order to avoid voiding useful cache
@@ -143,30 +135,35 @@ open class ExtendableConvexPolygonImpl(
      * a vertex) and adjust the direction of growth in order for the new edge to follow the
      * side of the obstacle.
      */
-    override fun extend(step: Double, obstacles: Collection<Shape>, envStart: Point2D, envEnd: Point2D): Boolean {
-        // val obs = obstacles.filter { it.vertices() != vertices }
+    override fun extend(
+        step: Double,
+        obstacles: Collection<Shape>,
+        origin: Euclidean2DPosition,
+        width: Double,
+        height: Double
+    ): Boolean {
         var extended = false
-        var i = 0
-        while (i < vertices.size) {
-            if (canEdgeAdvance[i]) {
-                val hasAdvanced = advanceEdge(i, step)
-                if (hasAdvanced && isInBoundaries(getEdge(i), envStart, envEnd)) {
-                    val intersectedObs = obstacles.filter { intersects(it) }
-                    // can be in the advanced case for at most 2 obstacle at a time
-                    if (intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) }) {
-                        intersectedObs.forEach { adjustGrowth(it, i, step) }
-                        extended = true
-                        i++
-                        continue
-                    }
-                }
+        vertices.indices.filter { canEdgeAdvance[it] }.forEach { i ->
+            val hasAdvanced = advanceEdge(i, step)
+            val intersectedObs = obstacles.filter { intersects(it) }
+            /*
+             * Returns true if no obstacle is intersected or if we are in the advanced case.
+             */
+            val isAdvancedCase: () -> Boolean =
+                /*
+                 * Can be in the advanced case for at most 2 obstacles.
+                 */
+                { intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) } }
+            if (hasAdvanced && isInBoundaries(getEdge(i), origin, width, height) && isAdvancedCase()) {
+                intersectedObs.forEach { adjustGrowth(it, i, step) }
+                extended = true
+            } else {
                 if (hasAdvanced) {
                     advanceEdge(i, -step)
                 }
                 // set a flag in order to stop trying to extend this edge
                 canEdgeAdvance[i] = false
             }
-            i++
         }
         return extended
     }
@@ -204,6 +201,22 @@ open class ExtendableConvexPolygonImpl(
         }
     }
 
+    private fun recomputeGrowthDirection(index: Int, normal: Euclidean2DPosition) {
+        val growthDirection = growthDirections[index]
+        if (growthDirection?.first == null || growthDirection.second == null) {
+            if (growthDirection == null) {
+                growthDirections[index] = Pair(normal, normal)
+            } else {
+                if (growthDirection.first == null) {
+                    growthDirections[index] = growthDirection.copy(first = normal)
+                }
+                if (growthDirection.second == null) {
+                    growthDirections[index] = growthDirection.copy(second = normal)
+                }
+            }
+        }
+    }
+
     /*
      * Each vector has "two" normals: n and -n. This method is all about figuring
      * out which of the two is to be used to allow the polygon to extend.
@@ -231,7 +244,7 @@ open class ExtendableConvexPolygonImpl(
      * growing edge and the step of growth should be provided as well.
      */
     private fun isAdvancedCase(obstacle: Shape, index: Int, step: Double) =
-        obstacle.vertices().none { containsOrLiesOnBoundary(it) } &&
+        obstacle.vertices().none { containsBoundaryIncluded(it) } &&
             vertices.filter { obstacle.contains(it.toPoint()) }.size == 1 &&
             !fuzzyEquals(findIntrudedEdge(obstacle, index, step).slope(), getEdge(index).slope())
 
@@ -281,8 +294,8 @@ open class ExtendableConvexPolygonImpl(
         val polygonEdge2 = getEdge(circularPrev(indexOfIntrudingV))
         val obstacleEdge = findIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = intersection(polygonEdge1, obstacleEdge).intersection.get()
-        val p2 = intersection(polygonEdge2, obstacleEdge).intersection.get()
+        val p1 = intersection(polygonEdge1, obstacleEdge).point.get()
+        val p2 = intersection(polygonEdge2, obstacleEdge).point.get()
         // a new edge is going to be added, its vertices will grow following the intruded
         // obstacleEdge. In order to do so, their growth directions will be modified to be
         // parallel to such edge, but in opposite senses.

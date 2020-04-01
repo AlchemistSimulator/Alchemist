@@ -8,14 +8,13 @@ import it.unibo.alchemist.model.implementations.geometry.magnitude
 import it.unibo.alchemist.model.implementations.geometry.normal
 import it.unibo.alchemist.model.implementations.geometry.resize
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
-import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexEuclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
@@ -29,26 +28,25 @@ import kotlin.math.PI
  * of opposite forces). However, the resulting movements still present some shaking.
  *
  * @param T the concentration type.
- * @param M the type of nodes of the [environmentGraph].
- * @param F the type of edges of the [environmentGraph].
  * @param N the type of landmarks of the pedestrian's cognitive map.
  * @param E the type of edges of the pedestrian's cognitive map.
+ * @param M the type of nodes of the navigation graph provided by the environment.
+ * @param F the type of edges of the navigation graph provided by the environment.
  */
 class OrientingSteeringBehavior2D<
     T,
-    N : ConvexEuclidean2DShape,
+    N : Euclidean2DConvexShape,
     E : GraphEdge<N>,
     M : ConvexPolygon,
     F : GraphEdgeWithData<M, Euclidean2DSegment>
 > @JvmOverloads constructor(
-    environment: Environment<T, Euclidean2DPosition>,
+    environment: Euclidean2DEnvironmentWithGraph<*, T, M, F>,
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>,
-    environmentGraph: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, M, F>,
     private val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = DistanceWeighted(environment, pedestrian)
-) : OrientingBehavior2D<T, N, E, M, F>(environment, pedestrian, timeDistribution, environmentGraph) {
+) : OrientingBehavior2D<T, N, E, M, F>(environment, pedestrian, timeDistribution) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetEdge: F) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: F) {
         val currPos = environment.getPosition(pedestrian)
         var desiredMovement = Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).nextPosition
         var disturbingMovement = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition
@@ -69,7 +67,7 @@ class OrientingSteeringBehavior2D<
             desiredMovement = desiredMovement.resize(disturbingMovement.magnitude() * movementMagnitudeFactor)
         }
         val movement = desiredMovement + disturbingMovement
-        super.moveTowards(currPos + movement, currentRoom, targetEdge)
+        super.moveTowards(currPos + movement, currentRoom, targetDoor)
     }
 
     private fun adjustDisturbingMovement(

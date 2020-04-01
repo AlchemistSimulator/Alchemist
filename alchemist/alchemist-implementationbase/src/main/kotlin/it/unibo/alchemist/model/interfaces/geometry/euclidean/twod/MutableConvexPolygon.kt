@@ -1,46 +1,39 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
 /**
- * A mutable convex polygon.
+ * A mutable [ConvexPolygon].
  */
 interface MutableConvexPolygon : ConvexPolygon {
 
     /**
-     * Adds a vertex to the polygon, linked to the (previous) last vertex.
+     * Adds a vertex in the specified position.
      *
-     * Note that it is responsibility of the user to provide vertices in
-     * the correct order. If the addition of the specified vertex would
-     * cause the violation of the convexity, false is returned and the
-     * vertex is not added.
-     */
-    fun addVertex(x: Double, y: Double): Boolean
-
-    /**
-     * Adds a vertex in the specified position. See also [addVertex].
+     * If the operation would cause the violation of the convexity, false
+     * is returned and the operation is not performed.
      */
     fun addVertex(index: Int, x: Double, y: Double): Boolean
 
     /**
-     * Removes the vertex specified by the index parameter.
+     * Removes the specified vertex.
      *
-     * If the removal of such vertex would cause the violation of the
-     * convexity, false is returned and the vertex is not removed. Please
-     * be also aware that a polygon cannot have less than 3 vertices.
+     * If the operation would cause the violation of the convexity, false
+     * is returned and the operation is not performed.
      */
     fun removeVertex(index: Int): Boolean
 
     /**
-     * Move the specified vertex to the new absolute coordinates specified.
+     * Moves the specified vertex to the new absolute coordinates provided.
      *
-     * If the new position of the specified vertex would cause the
-     * violation of the convexity, false is returned and the operation
-     * is not performed.
+     * If the operation would cause the violation of the convexity, false
+     * is returned and the operation is not performed.
      */
     fun moveVertex(index: Int, newX: Double, newY: Double): Boolean
 
     /**
-     * If the new coords would cause the lost of the convexity,
-     * false is returned.
+     * Moves the specified edge to the new absolute coordinates provided.
+     *
+     * If the operation would cause the violation of the convexity, false
+     * is returned and the operation is not performed.
      */
     fun moveEdge(index: Int, newEdge: Euclidean2DSegment): Boolean
 

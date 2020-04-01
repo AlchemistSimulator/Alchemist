@@ -5,12 +5,13 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 
 /**
- * Defines the possible transformations for a [it.unibo.alchemist.model.interfaces.geometry.GeometricShape] in a bidimensional euclidean space.
+ * Defines the possible transformations for a [it.unibo.alchemist.model.interfaces.geometry.GeometricShape] in a
+ * bidimensional euclidean space.
  */
 interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPosition> {
 
     /**
-     * Counter clockwise rotation
+     * Counter clockwise rotation.
      *
      * @param angle the angle in radians
      */
@@ -25,7 +26,7 @@ interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPositio
         rotate(direction.asAngle())
 
     /**
-     * See [rotate]
+     * See [rotate].
      */
     fun origin(x: Double, y: Double) =
         origin(Euclidean2DPosition(x, y))

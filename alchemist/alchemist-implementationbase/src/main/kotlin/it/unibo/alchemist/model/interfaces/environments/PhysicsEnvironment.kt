@@ -19,7 +19,13 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param <A> geometric transformations used in this environment
  * @param <F> factory of shapes compatible with this environment
  */
-interface PhysicsEnvironment<T, P : Position<P>, S : Vector<S>, A : GeometricTransformation<S>, F : GeometricShapeFactory<S, A>> : Environment<T, P> {
+interface PhysicsEnvironment<
+    T,
+    P : Position<P>,
+    S : Vector<S>,
+    A : GeometricTransformation<S>,
+    F : GeometricShapeFactory<S, A>
+> : Environment<T, P> {
     /**
      * A factory of shapes compatible with this environment.
      */
@@ -34,7 +40,7 @@ interface PhysicsEnvironment<T, P : Position<P>, S : Vector<S>, A : GeometricTra
     fun getHeading(node: Node<T>): S
 
     /**
-     * Sets the heading of a node
+     * Sets the heading of a node.
      *
      * @param node The node
      * @param direction The direction vector.

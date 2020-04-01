@@ -35,6 +35,9 @@ interface BoundariesVisitor {
 
 /**
  * Describes rectangular [Boundaries] with the origin in (0,0).
+ *
+ * @param width width.
+ * @param height height.
  */
 class RectangularBoundaries(
     /**

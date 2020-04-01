@@ -71,6 +71,9 @@ class TestIntervalsUtils {
             .toDoubleArray() shouldBe expected
     }
 
+    /**
+     * tests subtractions on double intervals.
+     */
     @Test
     fun testSubtraction() {
         assertSubtractionIs(-1.0, 5.0, 2.0, 3.0, -1.0, 2.0, 3.0, 5.0)

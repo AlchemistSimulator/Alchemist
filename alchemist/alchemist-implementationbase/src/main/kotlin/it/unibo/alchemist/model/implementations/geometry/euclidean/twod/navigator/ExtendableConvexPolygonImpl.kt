@@ -22,6 +22,7 @@ import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.Point2D
 import java.awt.geom.Line2D
+import java.lang.IllegalStateException
 
 /**
  * Implementation of [ExtendableConvexPolygon].
@@ -108,25 +109,13 @@ open class ExtendableConvexPolygonImpl(
                     if (normals[index] == null) {
                         normals[index] = edge.computeNormal(index)
                     }
-                    val n = normals[index]!!
-                    val d = growthDirections[index]
-                    if (d?.first == null || d.second == null) {
-                        if (d == null) {
-                            growthDirections[index] = Pair(n, n)
-                        } else {
-                            if (d.first == null) {
-                                growthDirections[index] = d.copy(first = n)
-                            }
-                            if (d.second == null) {
-                                growthDirections[index] = d.copy(second = n)
-                            }
-                        }
-                    }
-                    var d1 = growthDirections[index]!!.first!!
-                    var d2 = growthDirections[index]!!.second!!
-                    val l1 = findLength(d1, n, step)
-                    val l2 = findLength(d2, n, step)
-                    require(!l1.isInfinite() && !l2.isInfinite()) { "invalid growth direction" }
+                    val normal = normals[index] ?: throw IllegalStateException("no normal vector found")
+                    recomputeGrowthDirection(index, normal)
+                    var d1 = growthDirections[index]?.first ?: throw IllegalStateException("no growth direction found")
+                    var d2 = growthDirections[index]?.second ?: throw IllegalStateException("no growth direction found")
+                    val l1 = findLength(d1, normal, step)
+                    val l2 = findLength(d2, normal, step)
+                    require(l1.isFinite() && l2.isFinite()) { "invalid growth direction" }
                     d1 = d1.resize(l1)
                     d2 = d2.resize(l2)
                     // super method is used in order to avoid voiding useful cache
@@ -209,6 +198,22 @@ open class ExtendableConvexPolygonImpl(
         if (!fuzzyEquals(old.slope(), new.slope()) && !(old.isDegenerate() || new.isDegenerate())) {
             growthDirections[index] = null
             normals[index] = null
+        }
+    }
+
+    private fun recomputeGrowthDirection(index: Int, normal: Euclidean2DPosition) {
+        val growthDirection = growthDirections[index]
+        if (growthDirection?.first == null || growthDirection.second == null) {
+            if (growthDirection == null) {
+                growthDirections[index] = Pair(normal, normal)
+            } else {
+                if (growthDirection.first == null) {
+                    growthDirections[index] = growthDirection.copy(first = normal)
+                }
+                if (growthDirection.second == null) {
+                    growthDirections[index] = growthDirection.copy(second = normal)
+                }
+            }
         }
     }
 

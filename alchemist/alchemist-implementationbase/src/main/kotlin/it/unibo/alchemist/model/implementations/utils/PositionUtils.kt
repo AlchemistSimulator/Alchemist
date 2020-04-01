@@ -7,7 +7,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Create a position from an array of double representing the coordinates of the point
+ * Create a position from an array of double representing the coordinates of the point.
  */
 @SuppressWarnings("ArrayPrimitive")
 /*
@@ -18,7 +18,7 @@ import kotlin.math.sin
 fun <T, P : Position<P>> Environment<T, P>.makePosition(coords: Array<Double>): P = makePosition(*coords)
 
 /**
- * Create a position corresponding to the origin of this environment
+ * Create a position corresponding to the origin of this environment.
  */
 fun <T, P : Position<P>> Environment<T, P>.origin(): P = makePosition((1..dimensions).map { 0.0 }.toTypedArray())
 

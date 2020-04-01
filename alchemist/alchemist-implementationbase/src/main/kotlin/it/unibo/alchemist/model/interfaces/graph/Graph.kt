@@ -7,9 +7,11 @@ package it.unibo.alchemist.model.interfaces.graph
  */
 open class GraphEdge<N>(
     /**
+     * The node this edge outgoes from.
      */
     val tail: N,
     /**
+     * The node this edge arrives to.
      */
     val head: N
 )
@@ -24,6 +26,7 @@ open class GraphEdgeWithData<N, D>(
     tail: N,
     head: N,
     /**
+     * The data this edge stores.
      */
     val data: D
 ) : GraphEdge<N>(tail, head)

@@ -154,27 +154,27 @@ open class ExtendableConvexPolygonImpl(
         height: Double
     ): Boolean {
         var extended = false
-        var i = 0
-        while (i < vertices.size) {
-            if (canEdgeAdvance[i]) {
-                val hasAdvanced = advanceEdge(i, step)
-                if (hasAdvanced && isInBoundaries(getEdge(i), origin, width, height)) {
-                    val intersectedObs = obstacles.filter { intersects(it) }
-                    // can be in the advanced case for at most 2 obstacle at a time
-                    if (intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) }) {
-                        intersectedObs.forEach { adjustGrowth(it, i, step) }
-                        extended = true
-                        i++
-                        continue
-                    }
-                }
+        vertices.indices.filter { canEdgeAdvance[it] }.forEach { i ->
+            val hasAdvanced = advanceEdge(i, step)
+            val intersectedObs = obstacles.filter { intersects(it) }
+            /*
+             * Returns true if no obstacle is intersected or if we are in the advanced case.
+             */
+            val isAdvancedCase: () -> Boolean =
+                /*
+                 * Can be in the advanced case for at most 2 obstacles.
+                 */
+                { intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) } }
+            if (hasAdvanced && isInBoundaries(getEdge(i), origin, width, height) && isAdvancedCase()) {
+                intersectedObs.forEach { adjustGrowth(it, i, step) }
+                extended = true
+            } else {
                 if (hasAdvanced) {
                     advanceEdge(i, -step)
                 }
                 // set a flag in order to stop trying to extend this edge
                 canEdgeAdvance[i] = false
             }
-            i++
         }
         return extended
     }

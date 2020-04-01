@@ -131,7 +131,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
             }
             val path = backtrack(to, prev)
             when {
-                path.contains(from) -> Path(path.reversed(), dist[to] ?: Double.POSITIVE_INFINITY)
+                path.contains(from) -> Path(path, dist[to] ?: Double.POSITIVE_INFINITY)
                 else -> null
             }
         }

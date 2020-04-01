@@ -5,6 +5,7 @@ import it.unibo.alchemist.model.interfaces.Time
 import java.util.function.Predicate
 
 /**
+ * @param endTime the end time.
  */
 class AfterTime(val endTime: Time) : Predicate<Environment<*, *>> {
 

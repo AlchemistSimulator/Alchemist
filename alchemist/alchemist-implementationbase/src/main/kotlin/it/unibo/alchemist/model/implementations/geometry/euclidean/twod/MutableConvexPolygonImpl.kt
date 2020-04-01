@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
+import it.unibo.alchemist.model.implementations.geometry.DoubleInterval
 import it.unibo.alchemist.model.implementations.geometry.isDegenerate
 import it.unibo.alchemist.model.implementations.geometry.zCross
 import it.unibo.alchemist.model.implementations.geometry.toVector
@@ -211,7 +212,7 @@ open class MutableConvexPolygonImpl(
         }
         var e1 = getEdge(vertices.size - 1)
         var sense: Boolean? = null
-        return edges().any { e2 ->
+        return edges().none { e2 ->
             val z = zCross(e1.toVector(), e2.toVector())
             var loseConvexity = false
             /*
@@ -283,7 +284,9 @@ open class MutableConvexPolygonImpl(
              * We check every edge between the first prev not
              * degenerate and the first next not degenerate.
              */
-            else -> (circularNext(i)..prevIndex)
+            else ->
+                generateSequence(circularNext(i)) { circularNext(it) }
+                    .takeWhile { it != prevIndex }
                     .map { getEdge(it) }
                     .filter { !it.isDegenerate() }
                     .any { intersection(curr, it).type != EMPTY }

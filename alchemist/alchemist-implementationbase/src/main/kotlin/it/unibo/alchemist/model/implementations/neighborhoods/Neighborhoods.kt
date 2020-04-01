@@ -11,6 +11,9 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 
+/**
+ * Contains utility functions for neighborhoods.
+ */
 class Neighborhoods private constructor() {
     companion object {
         /**

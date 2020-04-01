@@ -1,5 +1,5 @@
 
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ClosestN
 import it.unibo.alchemist.model.implementations.nodes.AbstractNode

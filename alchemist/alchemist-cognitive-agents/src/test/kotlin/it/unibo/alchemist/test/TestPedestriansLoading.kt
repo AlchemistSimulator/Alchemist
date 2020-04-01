@@ -1,7 +1,7 @@
 package it.unibo.alchemist.test
 
-import io.kotlintest.fail
-import io.kotlintest.specs.StringSpec
+import io.kotest.assertions.fail
+import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 

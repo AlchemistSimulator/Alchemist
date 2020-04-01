@@ -19,6 +19,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
+import java.lang.RuntimeException
 
 /**
  * Starts Alchemist.
@@ -64,6 +65,10 @@ object Alchemist {
         "q" to Level.ERROR,
         "qq" to Level.OFF
     )
+    /**
+     * Set this to false for testing purposes.
+     */
+    private var isNormalExecution = true
 
     private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? =
         getOptionValue(name)?.let {
@@ -120,6 +125,13 @@ object Alchemist {
         exitWith(ExitStatus.INVALID_CLI)
     }
 
+    /**
+     * Call this method to enable testing mode, preventing Alchemist from shutting down the JVM.
+     */
+    fun enableTestMode() {
+        isNormalExecution = false
+    }
+
     private fun setVerbosity(cmd: CommandLine) {
         val verbosity = logLevels.filterKeys { cmd.hasOption(it) }.values
         when {
@@ -138,8 +150,10 @@ object Alchemist {
     }
 
     private fun exitWith(status: ExitStatus): Nothing {
-        System.exit(status.ordinal)
-        throw IllegalStateException()
+        if (isNormalExecution) {
+            System.exit(status.ordinal)
+        }
+        throw AlchemistWouldHaveExitedException(status.ordinal)
     }
 
     private fun exitBecause(reason: String, status: ExitStatus, exception: Exception? = null): Nothing {
@@ -166,11 +180,19 @@ object Alchemist {
             parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,
             variables = getOptionValues(VARIABLES)?.toList()
-                ?: kotlin.collections.emptyList(),
+                ?: emptyList(),
             configuration = getOptionValue(YAML)
         )
 
     private enum class ExitStatus {
         OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY
     }
+
+    /**
+     * This exception is thrown in place of calling [System.exit] when the simulator is used in debug mode.
+     * The [exitStatus] returns the exit status the execution would have had.
+     */
+    data class AlchemistWouldHaveExitedException(
+        val exitStatus: Int
+    ) : RuntimeException("Alchemist would have exited with $exitStatus")
 }

@@ -1,7 +1,7 @@
 package it.unibo.alchemist.test
 
-import io.kotlintest.matchers.doubles.shouldBeLessThan
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 

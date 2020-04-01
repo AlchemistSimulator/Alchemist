@@ -61,6 +61,9 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
     }
 
     companion object {
+        /**
+         * The minumum value of any layer.
+         */
         const val minimumLayerValue = 0.1
     }
 }

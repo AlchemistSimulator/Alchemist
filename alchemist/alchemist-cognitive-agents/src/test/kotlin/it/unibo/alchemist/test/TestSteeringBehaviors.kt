@@ -1,9 +1,9 @@
 package it.unibo.alchemist.test
 
-import io.kotlintest.matchers.collections.shouldBeSortedWith
-import io.kotlintest.matchers.doubles.shouldBeGreaterThan
-import io.kotlintest.matchers.doubles.shouldBeLessThan
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldBeSortedWith
+import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian

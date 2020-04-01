@@ -27,10 +27,10 @@ fun RandomGenerator.position() = direction().let {
     Euclidean2DPosition(it.x * distance, it.y * distance)
 }
 
-@Suppress("MaxLineLength") // I think these are links for markdown.
 /**
- * [Fisher–Yates shuffle algorithm](https://www.worldcat.org/title/statistical-tables-for-biological-agricultural-and-medical-research/oclc/14222135)
- * using Apache random number generator. More information [on Wikipedia](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
+ * [Fisher–Yates shuffle algorithm](https://bit.ly/33Z3xFu)
+ * using Apache random number generator.
+ * More information [on Wikipedia](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
  *
  * @param rg
  *          the simulation {@link RandomGenerator}.

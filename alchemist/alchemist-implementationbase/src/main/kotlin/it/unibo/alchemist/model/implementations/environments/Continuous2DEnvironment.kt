@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSh
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 
 /**
- * Implementation of [EuclideanPhysics2DEnvironment]
+ * Implementation of [EuclideanPhysics2DEnvironment].
  */
 open class Continuous2DEnvironment<T> :
     Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
@@ -59,7 +59,7 @@ open class Continuous2DEnvironment<T> :
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) =
         super.nodeRemoved(node, neighborhood)
@@ -78,7 +78,7 @@ open class Continuous2DEnvironment<T> :
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
-     * limits
+     * limits.
      */
     override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =
         getNodesWithin(shapeFactory.requireCompatible(node.shape).transformed { origin(position) })

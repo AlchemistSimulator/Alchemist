@@ -162,8 +162,9 @@ private fun ExtendableConvexPolygon.findCrossings(
      * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
      */
     remaining: DoubleInterval = oldEdge.toInterval()
-): Collection<Euclidean2DCrossing> =
-    emptyList<Euclidean2DCrossing>().takeIf { fuzzyEquals(remaining.first, remaining.second) } ?: let {
+): Collection<Euclidean2DCrossing> = emptyList<Euclidean2DCrossing>()
+    .takeIf { fuzzyEquals(remaining.first, remaining.second) }
+    ?: let {
         /*
          * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
          * the intersection with the advancing edge.

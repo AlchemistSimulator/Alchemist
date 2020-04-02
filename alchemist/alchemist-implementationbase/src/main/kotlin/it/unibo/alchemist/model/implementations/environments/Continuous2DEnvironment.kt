@@ -3,16 +3,16 @@ package it.unibo.alchemist.model.implementations.environments
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 
 /**
- * Implementation of [EuclideanPhysics2DEnvironment].
+ * Implementation of [Physics2DEnvironment].
  */
 open class Continuous2DEnvironment<T> :
-    Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+    Abstract2DEnvironment<T, Euclidean2DPosition>(), Physics2DEnvironment<T> {
 
     companion object {
         @JvmStatic private val serialVersionUID: Long = 1L

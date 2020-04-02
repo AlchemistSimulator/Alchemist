@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.interfaces.graph.twod
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 
@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
  * to convex polygon b, the segment provided by c MUST belong to the boundary of a, but can
  * or cannot belong the boundary of b.
  */
-typealias Euclidean2DCrossing = GraphEdgeWithData<ConvexPolygon, Euclidean2DSegment>
+typealias Euclidean2DCrossing = GraphEdgeWithData<ConvexPolygon, Segment2D<Euclidean2DPosition>>
 
 /**
  * A navigation graph in an euclidean bidimensional environment, whose

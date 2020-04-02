@@ -1,7 +1,9 @@
 package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.util.Optional
 import kotlin.math.pow
@@ -44,11 +46,11 @@ data class LinesIntersectionResult(
  * Finds the intersection of two lines represented by two segments.
  * Such segments are required not to be degenerate (of length 0).
  */
-fun intersectionLines(l1: Euclidean2DSegment, l2: Euclidean2DSegment): LinesIntersectionResult {
-    require(!l1.isDegenerate() && !l2.isDegenerate()) { "degenerate lines" }
-    val m1 = l1.slope()
+fun intersectionLines(l1: Segment2D<*>, l2: Segment2D<*>): LinesIntersectionResult {
+    require(!l1.degenerate && !l2.degenerate) { "degenerate lines" }
+    val m1 = l1.slope
     val q1 = l1.first.y - m1 * l1.first.x
-    val m2 = l2.slope()
+    val m2 = l2.slope
     val q2 = l2.first.y - m2 * l2.first.x
     return when {
         areParallel(m1, m2) -> {
@@ -121,30 +123,30 @@ data class SegmentsIntersectionResult(
     val type: SegmentsIntersectionTypes,
     /**
      */
-    val point: Optional<Euclidean2DPosition> = Optional.empty()
+    val point: Optional<Vector2D<*>> = Optional.empty()
 )
 
 /**
  * Finds the intersection point of two given segments (if exists). This method is
  * able to deal with degenerate edges (of length zero) and collinear segments.
  */
-fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsIntersectionResult {
-    if (s1.isDegenerate() || s2.isDegenerate()) {
+fun <P : Vector2D<P>> intersection(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsIntersectionResult {
+    if (s1.degenerate || s2.degenerate) {
         return intersectionDegenerate(s1, s2)
     }
     val p = s1.first
     val r = s1.toVector()
     val q = s2.first
     val s = s2.toVector()
-    val denom = zCross(r, s)
-    val num = zCross((q - p), r)
+    val denominator = zCross(r, s)
+    val numerator = zCross((q - p), r)
     return when {
         /*
          * Segments are parallel.
          */
-        fuzzyEquals(denom, 0.0) -> {
+        fuzzyEquals(denominator, 0.0) -> {
             when {
-                !fuzzyEquals(num, 0.0) -> SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
+                !fuzzyEquals(numerator, 0.0) -> SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
                 /*
                  * Collinear.
                  */
@@ -156,8 +158,8 @@ fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsInters
             }
         }
         else -> {
-            val t = zCross((q - p), s) / denom
-            val u = zCross((q - p), r) / denom
+            val t = zCross((q - p), s) / denominator
+            val u = zCross((q - p), r) / denominator
             when {
                 t.liesBetween(0.0, 1.0) && u.liesBetween(0.0, 1.0) ->
                     SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(p + r.times(t)))
@@ -170,8 +172,8 @@ fun intersection(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsInters
     }
 }
 
-private fun intersectionDegenerate(s1: Euclidean2DSegment, s2: Euclidean2DSegment): SegmentsIntersectionResult {
-    val degenerate = s1.takeIf { it.isDegenerate() } ?: s2
+private fun <P : Vector2D<P>> intersectionDegenerate(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsIntersectionResult {
+    val degenerate = s1.takeIf { it.degenerate } ?: s2
     val other = s2.takeIf { degenerate == s1 } ?: s1
     if (other.contains(degenerate.first)) {
         return SegmentsIntersectionResult(SegmentsIntersectionTypes.POINT, Optional.of(degenerate.first))
@@ -179,7 +181,7 @@ private fun intersectionDegenerate(s1: Euclidean2DSegment, s2: Euclidean2DSegmen
     return SegmentsIntersectionResult(SegmentsIntersectionTypes.EMPTY)
 }
 
-private fun intersectionCollinear(s2: Euclidean2DSegment, t0: Double, t1: Double): SegmentsIntersectionResult {
+private fun intersectionCollinear(s2: Segment2D<*>, t0: Double, t1: Double): SegmentsIntersectionResult {
     return when {
         /*
          * Segments are overlapping.
@@ -243,8 +245,8 @@ data class CircleSegmentIntersectionResult(
  * Finds the intersection between a circle and a segment.
  */
 fun intersection(
-    segment: Euclidean2DSegment,
-    center: Euclidean2DPosition,
+    segment: Segment2D<*>,
+    center: Vector2D<*>,
     radius: Double
 ): CircleSegmentIntersectionResult {
     val vector = segment.toVector()

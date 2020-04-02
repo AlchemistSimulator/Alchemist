@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.smartcam.VisibleNodeImpl
 import java.lang.Math.toRadians
 
@@ -17,7 +17,7 @@ import java.lang.Math.toRadians
  */
 class See @JvmOverloads constructor(
     node: Node<Any>,
-    private val env: EuclideanPhysics2DEnvironment<Any>,
+    private val env: Physics2DEnvironment<Any>,
     /**
      * Distance of the field of view.
      */

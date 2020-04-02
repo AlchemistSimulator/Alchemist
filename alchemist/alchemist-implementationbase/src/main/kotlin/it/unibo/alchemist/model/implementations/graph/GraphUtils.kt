@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.implementations.graph
 
 import it.unibo.alchemist.model.implementations.graph.builder.GraphBuilder
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
-import it.unibo.alchemist.model.implementations.geometry.magnitude
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -160,7 +159,7 @@ private fun <N> backtrack(end: N, prev: HashMap<N, N>): List<N> {
  */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
 NavigationGraph<V, A, N, E>.dijkstraShortestPath(from: N, to: N): Path<N>? =
-    dijkstraShortestPath(from, to, { (it.tail.centroid - it.head.centroid).magnitude() })
+    dijkstraShortestPath(from, to, { (it.tail.centroid - it.head.centroid).magnitude })
 
 /**
  * Computes the minimum spanning forest of the graph using Prim's algorithm.
@@ -174,7 +173,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(weight: (E) -> D
  */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
 NavigationGraph<V, A, N, E>.primMinimumSpanningForest(
-    weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude() }
+    weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude }
 ): NavigationGraph<V, A, N, E> =
     with(NavigationGraphBuilder<V, A, N, E>(nodes().size)) {
         primMinimumSpanningForest(weight, this)

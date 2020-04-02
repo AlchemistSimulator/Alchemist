@@ -101,7 +101,7 @@ public class TestTargetWalker {
         /*
          * Should not be more than 10 meters afar the suggested start
          */
-        assertTrue(STARTPOSITION.getDistanceTo(start) < 10);
+        assertTrue(STARTPOSITION.distanceTo(start) < 10);
         run();
         /*
          * Node should not move at all
@@ -118,7 +118,7 @@ public class TestTargetWalker {
         /*
          * Should not be more than 10 meters afar the suggested start
          */
-        assertTrue(STARTPOSITION.getDistanceTo(start) < 10);
+        assertTrue(STARTPOSITION.distanceTo(start) < 10);
         node.setConcentration(TRACK, new LatLongPosition(ENDLAT, ENDLON));
         run();
         /*
@@ -136,7 +136,7 @@ public class TestTargetWalker {
         /*
          * Should not be more than 10 meters afar the suggested start
          */
-        assertTrue(STARTPOSITION.getDistanceTo(start) < 10);
+        assertTrue(STARTPOSITION.distanceTo(start) < 10);
         node.setConcentration(TRACK, Lists.newArrayList(ENDLAT, ENDLON));
         run();
         /*
@@ -155,7 +155,7 @@ public class TestTargetWalker {
         /*
          * Should not be more than 10 meters afar the suggested start
          */
-        assertTrue(STARTPOSITION.getDistanceTo(start) < 10);
+        assertTrue(STARTPOSITION.distanceTo(start) < 10);
         node.setConcentration(TRACK, Lists.newArrayList(Double.toString(ENDLAT), Double.toString(ENDLON)));
         run();
         /*
@@ -173,7 +173,7 @@ public class TestTargetWalker {
         /*
          * Should not be more than 10 meters afar the suggested start
          */
-        assertTrue(STARTPOSITION.getDistanceTo(start) < 10);
+        assertTrue(STARTPOSITION.distanceTo(start) < 10);
         node.setConcentration(TRACK, Lists.newArrayList(ENDLAT, ENDLON).toString());
         run();
         /*
@@ -191,7 +191,7 @@ public class TestTargetWalker {
         /*
          * Should not be more than 10 meters afar the suggested start
          */
-        assertTrue(STARTPOSITION.getDistanceTo(start) < 10);
+        assertTrue(STARTPOSITION.distanceTo(start) < 10);
         node.setConcentration(TRACK, ENDPOSITION.toString());
         run();
         /*
@@ -209,7 +209,7 @@ public class TestTargetWalker {
         /*
          * Should not be more than 10 meters afar the suggested start
          */
-        assertTrue(STARTPOSITION.getDistanceTo(start) < 10);
+        assertTrue(STARTPOSITION.distanceTo(start) < 10);
         node.setConcentration(TRACK, "<" + ENDLAT + " " + ENDLON + ">");
         run();
         /*
@@ -227,7 +227,7 @@ public class TestTargetWalker {
         /*
          * Should not be more than 10 meters afar the suggested start
          */
-        assertTrue(STARTPOSITION.getDistanceTo(start) < 10);
+        assertTrue(STARTPOSITION.distanceTo(start) < 10);
         node.setConcentration(TRACK, "sakldaskld" + ENDLAT + "fmekfjr" + ENDLON + "sdsad32d");
         run();
         /*

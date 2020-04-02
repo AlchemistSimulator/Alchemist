@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
@@ -31,10 +30,10 @@ abstract class AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
         target: Euclidean2DPosition,
         maxWalk: Double
     ): Euclidean2DPosition = with(target - current) {
-        if (getDistanceTo(current) < maxWalk) {
+        if (distanceTo(current) < maxWalk) {
             this
         } else {
-            val angle = this.asAngle()
+            val angle = this.asAngle
             environment.makePosition(maxWalk * cos(angle), maxWalk * sin(angle))
         }
     }

@@ -5,12 +5,11 @@ import io.kotest.core.test.TestCase
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.movestrategies.ZigZagRandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import org.apache.commons.math3.random.ISAACRandom
 import kotlin.math.cos
 import kotlin.math.sin
-import org.apache.commons.math3.random.ISAACRandom
 
 /**
  * This tests [ZigZagRandomTarget] and it's complicated because it takes in account both double comparison problems and
@@ -26,7 +25,13 @@ class TestZigZagRandomTarget : StringSpec() {
     override fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)
         currentPosition = Euclidean2DPosition(0.0, 0.0)
-        zigZag = ZigZagRandomTarget({ currentPosition }, { x, y -> Euclidean2DPosition(x, y) }, ISAACRandom(0), maxDistance, minChangeInDirection)
+        zigZag = ZigZagRandomTarget(
+            { currentPosition },
+            { x, y -> Euclidean2DPosition(x, y) },
+            ISAACRandom(0),
+            maxDistance,
+            minChangeInDirection
+        )
         initialDirectionAngle = angleTo(zigZag.target)
     }
 
@@ -51,12 +56,17 @@ class TestZigZagRandomTarget : StringSpec() {
     }
 
     private fun advance(distance: Double) {
-        currentPosition += Euclidean2DPosition(cos(initialDirectionAngle) * distance, sin(initialDirectionAngle) * distance)
+        currentPosition += Euclidean2DPosition(
+            cos(initialDirectionAngle) * distance,
+            sin(initialDirectionAngle) * distance
+        )
     }
 
-    private fun angleTo(target: Euclidean2DPosition) = (target - currentPosition).asAngle()
+    private fun angleTo(target: Euclidean2DPosition) = (target - currentPosition).asAngle
 
-    private fun shouldNotHaveChangedDirection() = angleTo(zigZag.target) shouldBe (initialDirectionAngle plusOrMinus minChangeInDirection / 2)
+    private fun shouldNotHaveChangedDirection() = angleTo(zigZag.target) shouldBe
+        (initialDirectionAngle plusOrMinus minChangeInDirection / 2)
 
-    private fun shouldHaveChangedDirection() = angleTo(zigZag.target) shouldNotBe (initialDirectionAngle plusOrMinus minChangeInDirection)
+    private fun shouldHaveChangedDirection() = angleTo(zigZag.target) shouldNotBe
+        (initialDirectionAngle plusOrMinus minChangeInDirection)
 }

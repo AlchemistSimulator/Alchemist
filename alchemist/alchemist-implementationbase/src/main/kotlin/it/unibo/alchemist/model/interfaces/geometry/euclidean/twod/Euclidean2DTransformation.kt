@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 
@@ -22,12 +21,10 @@ interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPositio
      *
      * @param direction the direction vector
      */
-    fun rotate(direction: Euclidean2DPosition) =
-        rotate(direction.asAngle())
+    fun rotate(direction: Euclidean2DPosition) = rotate(direction.asAngle)
 
     /**
-     * See [rotate].
+     * Changes origin.
      */
-    fun origin(x: Double, y: Double) =
-        origin(Euclidean2DPosition(x, y))
+    fun origin(x: Double, y: Double) = origin(Euclidean2DPosition(x, y))
 }

@@ -9,11 +9,5 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTr
  *
  * @param <T> nodes' concentration type
  */
-interface EuclideanPhysics2DEnvironment<T> :
-    PhysicsEnvironment<
-        T,
-        Euclidean2DPosition,
-        Euclidean2DPosition,
-        Euclidean2DTransformation,
-        Euclidean2DShapeFactory
-    >
+interface Physics2DEnvironment<T> :
+    PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>

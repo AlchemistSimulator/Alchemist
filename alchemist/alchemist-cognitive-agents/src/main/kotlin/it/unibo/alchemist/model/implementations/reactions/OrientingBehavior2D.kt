@@ -2,18 +2,9 @@ package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.Seek
 import it.unibo.alchemist.model.implementations.actions.Seek2D
-import it.unibo.alchemist.model.implementations.geometry.closestPointTo
-import it.unibo.alchemist.model.implementations.geometry.intersectionLines
-import it.unibo.alchemist.model.implementations.geometry.midPoint
-import it.unibo.alchemist.model.implementations.geometry.toVector
-import it.unibo.alchemist.model.implementations.geometry.resize
-import it.unibo.alchemist.model.implementations.geometry.contains
-import it.unibo.alchemist.model.implementations.geometry.magnitude
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
-import it.unibo.alchemist.model.implementations.geometry.angleBetween
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.edges
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.intersectsBoundaryExcluded
+import it.unibo.alchemist.model.implementations.geometry.intersectionLines
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.implementations.graph.builder.GraphBuilder
@@ -31,8 +22,8 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import java.awt.Shape
 import kotlin.math.PI
 import kotlin.math.abs
@@ -56,42 +47,37 @@ import kotlin.math.pow
  * @param M the type of nodes of the navigation graph provided by the environment.
  * @param F the type of edges of the navigation graph provided by the environment.
  */
-open class OrientingBehavior2D<
-    T,
-    N : Euclidean2DConvexShape,
-    E : GraphEdge<N>,
-    M : ConvexPolygon,
-    F : GraphEdgeWithData<M, Euclidean2DSegment>
->(
+open class OrientingBehavior2D<T, N, E, M, F>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, M, F>,
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>
-) : AbstractOrientingBehavior<
-        T,
-        Euclidean2DPosition,
-        Euclidean2DTransformation,
-        N,
-        E,
-        M,
-        F
-    >(environment, pedestrian, timeDistribution) {
+) : AbstractOrientingBehavior<T, Euclidean2DTransformation, N, E, M, F>(
+    environment,
+    pedestrian,
+    timeDistribution
+)
+where
+N : Euclidean2DConvexShape,
+E : GraphEdge<N>,
+M : ConvexPolygon,
+F : GraphEdgeWithData<M, Segment2D<Euclidean2DPosition>> {
 
     override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: F) {
         if (currentRoom == null) {
-            Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).execute()
+            Seek2D(environment, this, pedestrian, *target.coordinates).execute()
         } else {
             val currPos = environment.getPosition(pedestrian)
             /*
              * Sophisticated seek is used to find the desired movement of the pedestrian.
              */
             val desiredMovement =
-                Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).nextPosition
+                Seek2D(environment, this, pedestrian, *target.coordinates).nextPosition
             var nextPos = currPos + desiredMovement
             /*
              * If such movement leads outside the current room and not through the desired
              * door, it is corrected.
              */
-            if (!currentRoom.contains(nextPos) && !crosses(currPos to nextPos, targetDoor)) {
+            if (!currentRoom.contains(nextPos) && !crosses(Segment2D(currPos, nextPos), targetDoor)) {
                 nextPos = adjustMovement(currPos, nextPos, currentRoom)
             }
             /*
@@ -99,7 +85,7 @@ open class OrientingBehavior2D<
              * bring the pedestrian outside the current room crossing a door which is not the
              * target one and we don't want it.
              */
-            Seek(environment, this, pedestrian, *nextPos.cartesianCoordinates).execute()
+            Seek(environment, this, pedestrian, *nextPos.coordinates).execute()
         }
     }
 
@@ -114,7 +100,7 @@ open class OrientingBehavior2D<
         /*
          * Maps each edge's midpoint to the correspondent edge object
          */
-        val edges = environmentGraph.edgesFrom(currentRoom).map { it.data.midPoint() to it }
+        val edges = environmentGraph.edgesFrom(currentRoom).map { it.data.midPoint to it }
         currentRoom.edges()
             .forEach { side ->
                 /*
@@ -123,21 +109,21 @@ open class OrientingBehavior2D<
                  */
                 val doorCenters = edges.map { it.first }
                     .filter { side.contains(it) }
-                    .sortedBy { it.getDistanceTo(side.first) }
+                    .sortedBy { it.distanceTo(side.first) }
                     .toTypedArray()
                 mutableListOf(side.first, *doorCenters, side.second)
                     .zipWithNext()
                     .forEach { builder.addUndirectedEdge(it.first, it.second) }
             }
         builder.nodes().forEach {
-            if (it != destination && !currentRoom.intersectsBoundaryExcluded(Pair(it, destination))) {
+            if (it != destination && !currentRoom.intersectsBoundaryExcluded(Segment2D(it, destination))) {
                 builder.addEdge(it, destination)
             }
         }
         val graph = builder.build()
         val sorted = edges
             .sortedBy { (midPoint, _) ->
-                graph.dijkstraShortestPath(midPoint, destination, { e -> e.tail.getDistanceTo(e.head) })?.weight
+                graph.dijkstraShortestPath(midPoint, destination, { e -> e.tail.distanceTo(e.head) })?.weight
             }
             .map { it.second }
         return environmentGraph.edgesFrom(currentRoom).map { it to sorted.indexOf(it) + 1 }.toMap()
@@ -154,7 +140,7 @@ open class OrientingBehavior2D<
              * The ideal movement the pedestrian would perform connects its current
              * position to the centroid of the next room.
              */
-            val desiredMovement = environment.getPosition(pedestrian) to targetDoor.head.centroid
+            val desiredMovement = Segment2D(environment.getPosition(pedestrian), targetDoor.head.centroid)
             /*
              * The sub-destination is computed as the point belonging to the door which
              * is closest to the intersection of the lines defined by the desired
@@ -171,7 +157,7 @@ open class OrientingBehavior2D<
                     second - first
                 } else {
                     first - second
-                }.resize(toVector().magnitude() * wallRepulsionFactor)
+                }.resize(toVector().magnitude * wallRepulsionFactor)
                 return subdestination + correction
             }
             return subdestination
@@ -219,21 +205,21 @@ open class OrientingBehavior2D<
     ): Euclidean2DPosition =
         currRoom.edges()
             .filter {
-                intersection(currPos to nextPos, it).type == SegmentsIntersectionTypes.POINT
+                intersection(Segment2D(currPos, nextPos), it).type == SegmentsIntersectionTypes.POINT
             }
             .map {
-                intersection(it, currPos, nextPos.getDistanceTo(currPos))
+                intersection(it, currPos, nextPos.distanceTo(currPos))
             }
             .flatMap { mutableListOf(it.point1, it.point2) }
             .filter { it.isPresent }
             .map { it.get() }
             .filter { (it - currPos).angleBetween(nextPos - currPos) <= PI / 2 }
-            .minBy { it.getDistanceTo(nextPos) } ?: nextPos
+            .minBy { it.distanceTo(nextPos) } ?: nextPos
 
     /*
      * Checks whether the given segment intersects the given edge.
      */
-    private fun crosses(segment: Euclidean2DSegment, edge: F) =
+    private fun crosses(segment: Segment2D<Euclidean2DPosition>, edge: F) =
         intersection(segment, edge.data).type == SegmentsIntersectionTypes.POINT
 
     /*

@@ -67,7 +67,7 @@ public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPER
         }
         if (!targetPositions.isEmpty()) {
             final P pd = getPosition(targetPositions.get(targetPositions.size() - 1));
-            final double distance = getCurrentPosition().getDistanceTo(pd);
+            final double distance = getCurrentPosition().distanceTo(pd);
             final List<IExpression> l = MOLRESPONSE.allocateVar(getMatches());
             final IExpression d = l.remove(l.size() - 1);
             final double olddistance = (Double) d.getRootNodeData();

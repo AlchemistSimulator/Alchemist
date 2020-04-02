@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.SteeringAction
 
 /**
@@ -15,12 +15,12 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
  * @param pedestrian
  *          the owner of the steering action this strategy belongs to.
  */
-class Nearest<T, P : Position<P>>(
-    env: Environment<T, P>,
+class Nearest<T>(
+    env: Environment<T, Euclidean2DPosition>,
     pedestrian: Pedestrian<T>
-) : Filtered<T, P>(DistanceWeighted<T, P>(env, pedestrian), {
-    partition { it is GroupSteeringAction<T, P> }.let { (groupActions, steerActions) ->
-        mutableListOf<SteeringAction<T, P>>().apply {
+) : Filtered<T, Euclidean2DPosition>(DistanceWeighted(env, pedestrian), {
+    partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, steerActions) ->
+        mutableListOf<SteeringAction<T, Euclidean2DPosition>>().apply {
             groupActions.minBy { pedestrian.targetDistance(env, it) }?.let { add(it) }
             steerActions.minBy { pedestrian.targetDistance(env, it) }?.let { add(it) }
         }

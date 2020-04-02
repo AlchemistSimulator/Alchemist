@@ -10,24 +10,16 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.DoubleInterval
+import it.unibo.alchemist.model.implementations.geometry.DoubleInterval.Companion.findExtremePoints
+import it.unibo.alchemist.model.implementations.geometry.DoubleInterval.Companion.toInterval
 import it.unibo.alchemist.model.implementations.geometry.createSegment
-import it.unibo.alchemist.model.implementations.geometry.isXAxisAligned
-import it.unibo.alchemist.model.implementations.geometry.toInterval
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.advanceEdge
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.closestEdgeTo
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.edges
-import it.unibo.alchemist.model.implementations.geometry.findExtremePoints
-import it.unibo.alchemist.model.implementations.geometry.intersectionEndpointsExcluded
-import it.unibo.alchemist.model.implementations.geometry.intersectsEndpointsExcluded
-import it.unibo.alchemist.model.implementations.geometry.isAxisAligned
 import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DNavigationGraph
 import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DNavigationGraphBuilder
-import it.unibo.alchemist.model.implementations.geometry.subtractAll
 import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DCrossing
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 
@@ -95,7 +87,7 @@ fun generateNavigationGraph(
     seeds.forEach { builder.addNode(it) }
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
-            if (edge.isAxisAligned()) {
+            if (edge.isAxisAligned) {
                 val crossings =
                     seed.findCrossings(index, seeds, origin, width, height, obstacles, unity)
                 /*
@@ -156,7 +148,7 @@ private fun ExtendableConvexPolygon.findCrossings(
     /*
      * Original position of the edge being advanced.
      */
-    oldEdge: Euclidean2DSegment = getEdge(index),
+    oldEdge: Segment2D<Euclidean2DPosition> = getEdge(index),
     /*
      * Portion of the advancing edge not occluded by obstacles yet. Since the edge
      * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
@@ -170,10 +162,10 @@ private fun ExtendableConvexPolygon.findCrossings(
          * the intersection with the advancing edge.
          */
         val polygonToInterval: (ExtendableConvexPolygon) -> DoubleInterval = {
-            it.closestEdgeTo(oldEdge).toInterval(oldEdge.isXAxisAligned())
+            it.closestEdgeTo(oldEdge).toInterval(oldEdge.xAxisAligned)
         }
         val shapeToInterval: (Shape) -> DoubleInterval = {
-            it.vertices().findExtremePoints(oldEdge.isXAxisAligned())
+            it.vertices().findExtremePoints(oldEdge.xAxisAligned)
         }
         val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
             seeds.filter {
@@ -217,7 +209,7 @@ private fun ExtendableConvexPolygon.findCrossings(
              * coordinate we ignored so far of the oldEdge.
              */
             intervals.map {
-                val crossing = if (oldEdge.isXAxisAligned()) {
+                val crossing = if (oldEdge.xAxisAligned) {
                     createSegment(it.first, oldEdge.first.y, x2 = it.second)
                 } else {
                     createSegment(oldEdge.first.x, it.first, y2 = it.second)

@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.smartcam
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -29,7 +28,7 @@ internal fun offsetPositionAtDistance(
     source: Euclidean2DPosition,
     direction: Euclidean2DPosition,
     distance: Double
-) = with(direction.asAngle()) {
+) = with(direction.asAngle) {
     source + env.makePosition(cos(this) * distance, sin(this) * distance)
 }
 

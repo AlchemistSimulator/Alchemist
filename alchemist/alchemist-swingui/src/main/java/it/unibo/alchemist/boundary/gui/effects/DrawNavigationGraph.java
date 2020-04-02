@@ -14,22 +14,22 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
 import it.unibo.alchemist.model.implementations.environments.ImageEnvironmentWithGraph;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon;
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D;
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData;
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon;
-import kotlin.Pair;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Graphics2D;
 import java.awt.Color;
-import java.awt.Shape;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Shape;
 import java.awt.geom.Path2D;
 
 /**
@@ -61,7 +61,7 @@ public class DrawNavigationGraph extends DrawOnce {
     private Color colorCache = Color.BLUE;
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Pair<Euclidean2DPosition, Euclidean2DPosition>>> graph;
+    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, GraphEdgeWithData<ConvexPolygon, Segment2D<Euclidean2DPosition>>> graph;
 
     /**
      * @param g        graphics
@@ -94,7 +94,7 @@ public class DrawNavigationGraph extends DrawOnce {
                 final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                 if (graph != null) {
                     graph.edgesFrom(r).forEach(e -> {
-                        final Pair<Euclidean2DPosition, Euclidean2DPosition> c = e.getData();
+                        final Segment2D<Euclidean2DPosition> c = e.getData();
                         final Point viewP1 = wormhole.getViewPoint(env.makePosition(c.getFirst().getX(), c.getFirst().getY()));
                         final Point viewP2 = wormhole.getViewPoint(env.makePosition(c.getSecond().getX(), c.getSecond().getY()));
                         g.setColor(Color.GREEN);

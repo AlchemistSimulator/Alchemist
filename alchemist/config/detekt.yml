@@ -16,6 +16,7 @@ complexity:
     ignoreDeprecated: true
     ignorePrivate: true
     ignoreOverridden: true
+    thresholdInInterfaces: 20
 naming:
   MemberNameEqualsClassName:
     active: false

@@ -419,7 +419,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         public boolean execute(final int a, final List<? extends ILsaMolecule> mgnList) {
             if (!mgnList.isEmpty()) {
                 final P aPos = positionCache.get(a);
-                final double distNode = aPos.getDistanceTo(mypos);
+                final double distNode = aPos.distanceTo(mypos);
                 matches.put(LsaMolecule.SYN_O, new NumTreeNode(a));
                 matches.put(LsaMolecule.SYN_D, new NumTreeNode(distNode));
                 if (mapenvironment != null) {

@@ -98,7 +98,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         final Environment<T, P> env = getEnvironment();
         final Node<T> node = getNode();
         P curPos = env.getPosition(node);
-        if (curPos.getDistanceTo(end) <= maxWalk) {
+        if (curPos.distanceTo(end) <= maxWalk) {
             final P destination = end;
             end = target.getTarget();
             resetRoute();
@@ -113,7 +113,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         }
         do {
             final P target = route.getPoint(curStep);
-            final double toWalk = target.getDistanceTo(curPos);
+            final double toWalk = target.distanceTo(curPos);
             if (toWalk > maxWalk) {
                 /*
                  * I can arrive at most at maxWalk

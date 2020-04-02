@@ -1,5 +1,7 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+
 /**
  * A mutable [ConvexPolygon].
  */
@@ -35,7 +37,7 @@ interface MutableConvexPolygon : ConvexPolygon {
      * If the operation would cause the violation of the convexity, false
      * is returned and the operation is not performed.
      */
-    fun moveEdge(index: Int, newEdge: Euclidean2DSegment): Boolean
+    fun moveEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean
 
     /**
      * Performs a union in-place with a collection of overlapping

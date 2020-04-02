@@ -3,10 +3,6 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.implementations.actions.Combine
 import it.unibo.alchemist.model.implementations.actions.Seek2D
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.DistanceWeighted
-import it.unibo.alchemist.model.implementations.geometry.angleBetween
-import it.unibo.alchemist.model.implementations.geometry.magnitude
-import it.unibo.alchemist.model.implementations.geometry.normal
-import it.unibo.alchemist.model.implementations.geometry.resize
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
@@ -16,8 +12,8 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWi
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import kotlin.math.PI
 
@@ -38,7 +34,7 @@ class OrientingSteeringBehavior2D<
     N : Euclidean2DConvexShape,
     E : GraphEdge<N>,
     M : ConvexPolygon,
-    F : GraphEdgeWithData<M, Euclidean2DSegment>
+    F : GraphEdgeWithData<M, Segment2D<Euclidean2DPosition>>
 > @JvmOverloads constructor(
     environment: Euclidean2DEnvironmentWithGraph<*, T, M, F>,
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
@@ -48,7 +44,7 @@ class OrientingSteeringBehavior2D<
 
     override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: F) {
         val currPos = environment.getPosition(pedestrian)
-        var desiredMovement = Seek2D(environment, this, pedestrian, *target.cartesianCoordinates).nextPosition
+        var desiredMovement = Seek2D(environment, this, pedestrian, *target.coordinates).nextPosition
         var disturbingMovement = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition
         /*
          * When the angle between the desired movement and the movement deriving from
@@ -63,8 +59,8 @@ class OrientingSteeringBehavior2D<
          * (empirically, resizing it so as to have a magnitude equal to the one of the disturbing
          * movement can still block the agent in some cases)
          */
-        if (disturbingMovement.magnitude() > desiredMovement.magnitude()) {
-            desiredMovement = desiredMovement.resize(disturbingMovement.magnitude() * movementMagnitudeFactor)
+        if (disturbingMovement.magnitude > desiredMovement.magnitude) {
+            desiredMovement = desiredMovement.resize(disturbingMovement.magnitude * movementMagnitudeFactor)
         }
         val movement = desiredMovement + disturbingMovement
         super.moveTowards(currPos + movement, currentRoom, targetDoor)
@@ -75,10 +71,10 @@ class OrientingSteeringBehavior2D<
         disturbingMovement: Euclidean2DPosition
     ): Euclidean2DPosition {
         val n = desiredMovement.normal()
-        val length = disturbingMovement.magnitude()
+        val length = disturbingMovement.magnitude
         val n1 = n.resize(length)
         val n2 = n.resize(-length)
-        return if (n1.getDistanceTo(disturbingMovement) < n2.getDistanceTo(disturbingMovement)) {
+        return if (n1.distanceTo(disturbingMovement) < n2.distanceTo(disturbingMovement)) {
             n1
         } else {
             n2

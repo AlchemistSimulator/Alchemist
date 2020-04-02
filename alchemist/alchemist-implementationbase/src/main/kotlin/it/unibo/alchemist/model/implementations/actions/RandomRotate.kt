@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -17,7 +17,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 class RandomRotate<T>(
     node: Node<T>,
-    private val env: EuclideanPhysics2DEnvironment<T>,
+    private val env: Physics2DEnvironment<T>,
     private val rng: RandomGenerator
 ) : AbstractAction<T>(node) {
 

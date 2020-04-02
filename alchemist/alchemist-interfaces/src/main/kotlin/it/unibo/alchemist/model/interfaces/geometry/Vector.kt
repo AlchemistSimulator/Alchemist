@@ -1,5 +1,8 @@
 package it.unibo.alchemist.model.interfaces.geometry
 
+import kotlin.math.acos
+import kotlin.math.sqrt
+
 /**
  * A generic vector in a multidimensional space.
  *
@@ -13,6 +16,12 @@ interface Vector<S : Vector<S>> {
     val dimensions: Int
 
     /**
+     * Coordinates for a Cartesian space.
+     * Implementors must guarantee that internal state is not exposed.
+     */
+    val coordinates: DoubleArray
+
+    /**
      * The coordinate of this vector in the specified dimension relatively to the basis its space is described with.
      *
      * @param dim
@@ -20,7 +29,7 @@ interface Vector<S : Vector<S>> {
      *            could be the X-axis and 1 the Y-axis
      * @return the coordinate value
      */
-    fun getCoordinate(dim: Int): Double
+    operator fun get(dim: Int): Double
 
     /**
      * Support for sum.
@@ -35,4 +44,59 @@ interface Vector<S : Vector<S>> {
      * @return a vector containing the result
      */
     operator fun minus(other: S): S
+
+    /**
+     * Multiplication by a Double.
+     */
+    operator fun times(other: Double): S
+
+    /**
+     * Division by a Double.
+     */
+    @JvmDefault
+    operator fun div(other: Double): S = times(1 / other)
+
+    /**
+     * Finds the magnitude of a vector.
+     */
+    @JvmDefault
+    val magnitude get() = sqrt(coordinates.map { it * it }.sum())
+
+    /**
+     * Computes the dot product between two vectors.
+     */
+    @JvmDefault
+    fun dot(other: S): Double = coordinates
+        .zip(other.coordinates)
+        .map { (a, b) -> a * b }
+        .sum()
+
+    /**
+     * Computes the angle in radians between two vectors.
+     */
+    @JvmDefault
+    fun angleBetween(other: S): Double = acos(dot(other) / (magnitude * other.magnitude))
+
+    /**
+     * Computes the distance between two vectors, interpreted as points in an Euclidean space.
+     * throws [IllegalArgumentException] if vectors have different dimensions.
+     */
+    fun distanceTo(other: S): Double
+
+    /**
+     * Resizes the vector in order for it to have a length equal
+     * to the specified parameter. Its direction and verse are preserved.
+     */
+    @JvmDefault
+    fun resize(newLen: Double): S = normalized().times(newLen)
+
+    /**
+     * Normalizes the vector.
+     */
+    fun normalized(): S
+
+    /**
+     * Find the normal of a vector.
+     */
+    fun normal(): S
 }

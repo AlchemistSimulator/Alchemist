@@ -1,22 +1,15 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.isDegenerate
-import it.unibo.alchemist.model.implementations.geometry.resize
+import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
-import it.unibo.alchemist.model.implementations.geometry.slope
 import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.normalize
-import it.unibo.alchemist.model.implementations.geometry.normal
-import it.unibo.alchemist.model.implementations.geometry.zCross
-import it.unibo.alchemist.model.implementations.geometry.times
-import it.unibo.alchemist.model.implementations.geometry.toVector
-import it.unibo.alchemist.model.implementations.geometry.dot
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.containsBoundaryIncluded
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
@@ -30,7 +23,8 @@ import java.lang.IllegalStateException
 open class ExtendableConvexPolygonImpl(
     private val vertices: MutableList<Euclidean2DPosition>
 ) : MutableConvexPolygonImpl(vertices),
-    ExtendableConvexPolygon {
+    ExtendableConvexPolygon,
+    AwtShapeCompatible {
 
     private var canEdgeAdvance: MutableList<Boolean> = MutableList(vertices.size) { true }
     /*
@@ -71,7 +65,7 @@ open class ExtendableConvexPolygonImpl(
         return false
     }
 
-    override fun moveEdge(index: Int, newEdge: Euclidean2DSegment): Boolean {
+    override fun moveEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean {
         val modifiedEdges = mutableListOf(circularPrev(index), index, circularNext(index))
             .map { it to getEdge(it) }
         if (super.moveEdge(index, newEdge)) {
@@ -104,7 +98,7 @@ open class ExtendableConvexPolygonImpl(
     override fun advanceEdge(index: Int, step: Double): Boolean = true.takeIf { step == 0.0 }
         ?: getEdge(index).let { edge ->
             when {
-                edge.isDegenerate() -> false
+                edge.degenerate -> false
                 else -> {
                     if (normals[index] == null) {
                         normals[index] = edge.computeNormal(index)
@@ -119,7 +113,7 @@ open class ExtendableConvexPolygonImpl(
                     d1 = d1.resize(l1)
                     d2 = d2.resize(l2)
                     // super method is used in order to avoid voiding useful cache
-                    super.moveEdge(index, Pair(edge.first + d1, edge.second + d2))
+                    super.moveEdge(index, Segment2D(edge.first + d1, edge.second + d2))
                 }
             }
         }
@@ -192,10 +186,10 @@ open class ExtendableConvexPolygonImpl(
      * accepts the index of the modified edge and the old edge and applies
      * different policies to decide if each cache is to be voided.
      */
-    private fun voidCacheAt(index: Int, old: Euclidean2DSegment) {
+    private fun voidCacheAt(index: Int, old: Segment2D<*>) {
         val new = getEdge(index)
         canEdgeAdvance[index] = true
-        if (!fuzzyEquals(old.slope(), new.slope()) && !(old.isDegenerate() || new.isDegenerate())) {
+        if (!fuzzyEquals(old.slope, new.slope) && !(old.degenerate || new.degenerate)) {
             growthDirections[index] = null
             normals[index] = null
         }
@@ -221,12 +215,12 @@ open class ExtendableConvexPolygonImpl(
      * Each vector has "two" normals: n and -n. This method is all about figuring
      * out which of the two is to be used to allow the polygon to extend.
      */
-    private fun Euclidean2DSegment.computeNormal(index: Int): Euclidean2DPosition {
+    private fun Segment2D<Euclidean2DPosition>.computeNormal(index: Int): Euclidean2DPosition {
         val curr = toVector()
         val prev = getEdge(circularPrev(index)).toVector()
-        val n = curr.normal().normalize()
+        val n = curr.normal().normalized()
         if (zCross(curr, n) > 0.0 != zCross(curr, prev) > 0.0) {
-            return n.times(-1.0)
+            return n * -1.0
         }
         return n
     }
@@ -246,7 +240,7 @@ open class ExtendableConvexPolygonImpl(
     private fun isAdvancedCase(obstacle: Shape, index: Int, step: Double) =
         obstacle.vertices().none { containsBoundaryIncluded(it) } &&
             vertices.filter { obstacle.contains(it.toPoint()) }.size == 1 &&
-            !fuzzyEquals(findIntrudedEdge(obstacle, index, step).slope(), getEdge(index).slope())
+            !fuzzyEquals(findIntrudedEdge(obstacle, index, step).slope, getEdge(index).slope)
 
     /*
      * During the advancement of an edge, multiple edges of an obstacle may be
@@ -255,7 +249,7 @@ open class ExtendableConvexPolygonImpl(
      * advancement). The index of the growing edge and the step of growth should
      * be provided as well.
      */
-    private fun findIntrudedEdge(obstacle: Shape, index: Int, step: Double): Euclidean2DSegment {
+    private fun findIntrudedEdge(obstacle: Shape, index: Int, step: Double): Segment2D<Euclidean2DPosition> {
         var intrudingVertex = getEdge(index).first
         var d = growthDirections[index]!!.first!!
         if (!obstacle.contains(intrudingVertex.toPoint())) {
@@ -263,7 +257,7 @@ open class ExtendableConvexPolygonImpl(
             d = growthDirections[index]!!.second!!
         }
         // a segment going from the old position of the intruding vertex to the new one
-        val movementSegment = Pair(intrudingVertex, intrudingVertex - d.resize(step))
+        val movementSegment = Segment2D(intrudingVertex, intrudingVertex - d.resize(step))
         val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
         require(intrudedEdges.size == 1) { "vertex is not intruding" }
         return intrudedEdges.first()
@@ -272,17 +266,23 @@ open class ExtendableConvexPolygonImpl(
     /*
      * Finds the edges of the obstacle intersecting with the given edge of the polygon.
      */
-    private fun findIntersectingEdges(obstacle: Shape, e: Euclidean2DSegment) =
+    private fun findIntersectingEdges(obstacle: Shape, e: Segment2D<Euclidean2DPosition>) =
         obstacle.vertices().run {
-            mapIndexed { i, v -> Pair(v, this[(i + 1) % size]) }.filter { edgesIntersect(it, e) }
+            mapIndexed { i, v -> Segment2D(v, this[(i + 1) % size]) }
+                .filter { edgesIntersect(it, e) }
         }
 
     /*
      * Delegates the check to java.awt.geom.Line2D.
      */
-    private fun edgesIntersect(e1: Euclidean2DSegment, e2: Euclidean2DSegment) =
+    private fun edgesIntersect(e1: Segment2D<*>, e2: Segment2D<*>) =
         Line2D.Double(e1.first.toPoint(), e1.second.toPoint())
             .intersectsLine(e2.first.x, e2.first.y, e2.second.x, e2.second.y)
+
+    private val Vector2D<*>.toEuclidean get() = when (this) {
+        is Euclidean2DPosition -> this
+        else -> Euclidean2DPosition(x, y)
+    }
 
     /*
      * Adjusts the growth directions in the advanced case. See [extend].
@@ -292,21 +292,21 @@ open class ExtendableConvexPolygonImpl(
         // intersecting edges
         val polygonEdge1 = getEdge(indexOfIntrudingV)
         val polygonEdge2 = getEdge(circularPrev(indexOfIntrudingV))
-        val obstacleEdge = findIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
+        val obstacleEdge: Segment2D<Euclidean2DPosition> = findIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = intersection(polygonEdge1, obstacleEdge).point.get()
-        val p2 = intersection(polygonEdge2, obstacleEdge).point.get()
+        val p1 = intersection(polygonEdge1, obstacleEdge).point.get().toEuclidean
+        val p2 = intersection(polygonEdge2, obstacleEdge).point.get().toEuclidean
         // a new edge is going to be added, its vertices will grow following the intruded
         // obstacleEdge. In order to do so, their growth directions will be modified to be
         // parallel to such edge, but in opposite senses.
         val d1: Euclidean2DPosition
         val d2: Euclidean2DPosition
-        if (p1.getDistanceTo(obstacleEdge.first) < p2.getDistanceTo(obstacleEdge.first)) {
-            d1 = (obstacleEdge.first - p1).normalize()
-            d2 = (obstacleEdge.second - p2).normalize()
+        if (p1.distanceTo(obstacleEdge.first) < p2.distanceTo(obstacleEdge.first)) {
+            d1 = (obstacleEdge.first - p1).normalized()
+            d2 = (obstacleEdge.second - p2).normalized()
         } else {
-            d1 = (obstacleEdge.second - p1).normalize()
-            d2 = (obstacleEdge.first - p2).normalize()
+            d1 = (obstacleEdge.second - p1).normalized()
+            d2 = (obstacleEdge.first - p2).normalized()
         }
         // since we intruded an obstacle we need to step back anyway
         advanceEdge(indexOfAdvancingEdge, -step)
@@ -325,7 +325,7 @@ open class ExtendableConvexPolygonImpl(
         }
     }
 
-    private fun Euclidean2DPosition.toPoint() = Point2D.Double(x, y)
+    private fun Vector2D<*>.toPoint() = Point2D.Double(x, y)
 
     override fun equals(other: Any?) = super.equals(other)
 

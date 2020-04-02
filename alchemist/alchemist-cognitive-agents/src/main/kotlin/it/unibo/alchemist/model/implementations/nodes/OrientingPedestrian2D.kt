@@ -5,7 +5,6 @@ import it.unibo.alchemist.model.implementations.utils.nextDouble
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.Ellipse
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.contains
 import it.unibo.alchemist.model.implementations.graph.containsAnyDestination
 import it.unibo.alchemist.model.implementations.graph.destinationsWithin
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
@@ -41,14 +40,12 @@ open class OrientingPedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>>(
      */
     private val minSide: Double = 30.0,
     private val maxSide: Double = 60.0
-) : AbstractOrientingPedestrian<
-        T,
-        Euclidean2DPosition,
-        Euclidean2DTransformation,
-        Ellipse,
-        M,
-        F
-    >(knowledgeDegree, randomGenerator, environment, group), Pedestrian2D<T> {
+) : AbstractOrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, M, F>(
+    knowledgeDegree,
+    randomGenerator,
+    environment,
+    group
+), Pedestrian2D<T> {
 
     /*
      * Generates a random ellipse entirely contained in the given convex polygon.

@@ -18,7 +18,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
                 e.nodes
                     .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
                     .forEach { p ->
-                        e.getPosition(p).getDistanceTo(e.makePosition(*coords)) shouldBeLessThan tolerance
+                        e.getPosition(p).distanceTo(e.makePosition(*coords)) shouldBeLessThan tolerance
                     }
             },
             numSteps = numSteps

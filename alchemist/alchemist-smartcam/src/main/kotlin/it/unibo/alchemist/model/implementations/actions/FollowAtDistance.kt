@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.movestrategies.speed.GloballyConstantSpeed
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Context
@@ -45,10 +44,10 @@ class FollowAtDistance<T>(
             if (currentPosition != destination) { // avoid "bouncing"
                 val currentSpeed = min(
                     speedStrategy.getNodeMovementLength(destination),
-                    currentPosition.getDistanceTo(destination)
+                    currentPosition.distanceTo(destination)
                 )
                 val direction = destination - currentPosition
-                val angle = direction.asAngle()
+                val angle = direction.asAngle
                 destination = currentPosition +
                     Euclidean2DPosition(currentSpeed * cos(angle), currentSpeed * sin(angle))
                 env.moveNodeToPosition(node, destination)

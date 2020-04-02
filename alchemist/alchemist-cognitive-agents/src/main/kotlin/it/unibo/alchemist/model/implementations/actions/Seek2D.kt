@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
 
 /**
@@ -37,14 +37,14 @@ open class Seek2D<T>(
                 } else it
             }
             .filter {
-                if (env is EuclideanPhysics2DEnvironment) {
+                if (env is Physics2DEnvironment) {
                     /*
                      * Take into account other pedestrians
                      */
                     env.canNodeFitPosition(pedestrian, it)
                 } else true
             }
-            .minBy { it.getDistanceTo(super.target()) }?.minus(current)
+            .minBy { it.distanceTo(super.target()) }?.minus(current)
             ?: currentPosition
     }
 }

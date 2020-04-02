@@ -1,18 +1,17 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.isDegenerate
-import it.unibo.alchemist.model.implementations.geometry.zCross
-import it.unibo.alchemist.model.implementations.geometry.toVector
+import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.POINT
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.EMPTY
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DSegment
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import java.awt.Shape
 import java.awt.geom.Area
 import java.awt.geom.Path2D
@@ -29,7 +28,7 @@ import java.awt.geom.Path2D
  */
 open class MutableConvexPolygonImpl(
     private val vertices: MutableList<Euclidean2DPosition>
-) : MutableConvexPolygon {
+) : MutableConvexPolygon, AwtShapeCompatible {
 
     init {
         require(isConvex()) { "Given vertices do not represent a convex polygon" }
@@ -99,9 +98,9 @@ open class MutableConvexPolygonImpl(
         return false
     }
 
-    override fun getEdge(index: Int) = Pair(vertices[index], vertices[circularNext(index)])
+    override fun getEdge(index: Int) = Segment2D(vertices[index], vertices[circularNext(index)])
 
-    override fun moveEdge(index: Int, newEdge: Euclidean2DSegment): Boolean {
+    override fun moveEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean {
         val oldEdge = getEdge(index)
         vertices[index] = newEdge.first
         vertices[circularNext(index)] = newEdge.second
@@ -206,7 +205,7 @@ open class MutableConvexPolygonImpl(
      * Checks if the polygon's boundary is convex. See [isConvex].
      */
     private fun isBoundaryConvex(): Boolean {
-        if (edges().filter { !it.isDegenerate() }.size < 3) {
+        if (edges().filter { !it.degenerate }.size < 3) {
             return false
         }
         var e1 = getEdge(vertices.size - 1)
@@ -257,14 +256,14 @@ open class MutableConvexPolygonImpl(
      */
     private fun causeSelfIntersection(index: Int): Boolean {
         val curr = getEdge(index)
-        if (curr.isDegenerate()) {
+        if (curr.degenerate) {
             return false
         }
         /*
          * First previous edge not degenerate
          */
         var i = circularPrev(index)
-        while (getEdge(i).isDegenerate()) {
+        while (getEdge(i).degenerate) {
             i = circularPrev(i)
         }
         val prevIndex = i
@@ -273,7 +272,7 @@ open class MutableConvexPolygonImpl(
          * First next edge not degenerate
          */
         i = circularNext(index)
-        while (getEdge(i).isDegenerate()) {
+        while (getEdge(i).degenerate) {
             i = circularNext(i)
         }
         val next = getEdge(i)
@@ -287,7 +286,7 @@ open class MutableConvexPolygonImpl(
                 generateSequence(circularNext(i)) { circularNext(it) }
                     .takeWhile { it != prevIndex }
                     .map { getEdge(it) }
-                    .filter { !it.isDegenerate() }
+                    .filter { !it.degenerate }
                     .any { intersection(curr, it).type != EMPTY }
         }
     }

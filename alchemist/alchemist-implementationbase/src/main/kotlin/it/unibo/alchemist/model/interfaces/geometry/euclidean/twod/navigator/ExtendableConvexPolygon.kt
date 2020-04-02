@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator
 
+import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
 import java.awt.Shape
@@ -17,6 +18,27 @@ interface ExtendableConvexPolygon : MutableConvexPolygon {
      * caused the lost of the convexity).
      */
     fun advanceEdge(index: Int, step: Double): Boolean
+
+    /**
+     * Advances the specified edge only if it remains inside the given region.
+     * See [ExtendableConvexPolygon.advanceEdge].
+     */
+    fun advanceEdge(
+        index: Int,
+        step: Double,
+        origin: Euclidean2DPosition,
+        width: Double,
+        height: Double
+    ): Boolean {
+        val oldEdge = getEdge(index)
+        if (advanceEdge(index, step)) {
+            if (isInBoundaries(getEdge(index), origin, width, height)) {
+                return true
+            }
+            moveEdge(index, oldEdge)
+        }
+        return false
+    }
 
     /**
      * Tries to extend the polygon in each direction. Each edge is given

@@ -19,10 +19,10 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
         val endDistances = mutableMapOf<Node<T>, Double>()
         loadYamlSimulation<T, P>("seek.yml").startSimulation(
             initialized = { e -> e.nodes.forEach {
-                startDistances[it] = e.getPosition(it).getDistanceTo(e.origin())
+                startDistances[it] = e.getPosition(it).distanceTo(e.origin())
             } },
             finished = { e, _, _ -> e.nodes.forEach {
-                endDistances[it] = e.getPosition(it).getDistanceTo(e.origin())
+                endDistances[it] = e.getPosition(it).distanceTo(e.origin())
             } }
         ).nodes.forEach { startDistances[it]!! shouldBeGreaterThan endDistances[it]!! }
     }
@@ -32,10 +32,10 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
         val endDistances = mutableMapOf<Node<T>, Double>()
         loadYamlSimulation<T, P>("flee.yml").startSimulation(
             initialized = { e -> e.nodes.forEach {
-                startDistances[it] = e.getPosition(it).getDistanceTo(e.origin())
+                startDistances[it] = e.getPosition(it).distanceTo(e.origin())
             } },
             finished = { e, _, _ -> e.nodes.forEach {
-                endDistances[it] = e.getPosition(it).getDistanceTo(e.origin())
+                endDistances[it] = e.getPosition(it).distanceTo(e.origin())
             } }
         ).nodes.forEach { startDistances[it]!! shouldBeLessThan endDistances[it]!! }
     }
@@ -52,7 +52,7 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
                 list.asSequence()
                     .zipWithNext()
                     .filter { it.first != it.second }
-                    .map { it.first.getDistanceTo(it.second) }
+                    .map { it.first.distanceTo(it.second) }
                     .toList() shouldBeSortedWith {
                         d1: Double, d2: Double -> when {
                             abs(d2 - d1) < EPSILON -> 0
@@ -73,7 +73,7 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
                     .forEach {
                         for (nodePos in it.map { node -> e.getPosition(node) }) {
                             for (otherPos in (it.map { node -> e.getPosition(node) }.minusElement(nodePos))) {
-                                nodePos.getDistanceTo(otherPos) shouldBeLessThan 4.0
+                                nodePos.distanceTo(otherPos) shouldBeLessThan 4.0
                             }
                         }
                     }
@@ -87,7 +87,7 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ -> with(e.nodes.map { e.getPosition(it) }) {
                 for (nodePos in this) {
                     for (otherPos in (this.minusElement(nodePos))) {
-                        nodePos.getDistanceTo(otherPos) shouldBeGreaterThan 6.0
+                        nodePos.distanceTo(otherPos) shouldBeGreaterThan 6.0
                     }
                 }
             } },
@@ -98,7 +98,7 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
     "obstacle avoidance let nodes reach destinations behind obstacles" {
         loadYamlSimulation<T, P>("obstacle-avoidance.yml").startSimulation(
             finished = { e, _, _ -> e.nodes.forEach {
-                e.getPosition(it).getDistanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
+                e.getPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
             } },
             numSteps = 15000
         )

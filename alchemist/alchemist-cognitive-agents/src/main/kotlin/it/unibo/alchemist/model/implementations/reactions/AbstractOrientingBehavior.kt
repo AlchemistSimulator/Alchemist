@@ -5,16 +5,17 @@ import it.unibo.alchemist.model.implementations.actions.Seek
 import it.unibo.alchemist.model.implementations.graph.containsAnyDestination
 import it.unibo.alchemist.model.implementations.graph.destinationsWithin
 import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.implementations.graph.nodeContaining
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithGraph
+import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import kotlin.math.pow
 
@@ -37,25 +38,23 @@ import kotlin.math.pow
  * Since E is simply any subtype of GraphEdge<N>, this reaction assumes no extra information
  * is stored in the edges of the cognitive map.
  */
-abstract class AbstractOrientingBehavior<
-    T,
-    P,
-    A : GeometricTransformation<P>,
-    N : ConvexGeometricShape<P, A>,
-    E : GraphEdge<N>,
-    M : ConvexGeometricShape<P, A>,
-    F : GraphEdge<M>
->(
+abstract class AbstractOrientingBehavior<T, A, N, E, M, F>(
     /**
      * The environment the pedestrian is into.
      */
-    protected open val environment: Environment2DWithGraph<*, T, P, A, M, F>,
+    protected open val environment: Environment2DWithGraph<*, T, Euclidean2DPosition, A, M, F>,
     /**
      * The owner of this behavior.
      */
-    protected val pedestrian: OrientingPedestrian<T, P, A, N, E>,
+    protected val pedestrian: OrientingPedestrian<T, Euclidean2DPosition, A, N, E>,
     timeDistribution: TimeDistribution<T>
-) : AbstractReaction<T>(pedestrian, timeDistribution) where P : Position<P>, P : Vector<P> {
+) : AbstractReaction<T>(pedestrian, timeDistribution)
+    where
+        A : GeometricTransformation<Euclidean2DPosition>,
+        N : ConvexGeometricShape<Euclidean2DPosition, A>,
+        E : GraphEdge<N>,
+        M : ConvexGeometricShape<Euclidean2DPosition, A>,
+        F : GraphEdge<M> {
 
     /*
      * When navigating towards a sub-destination, such target will be considered
@@ -82,10 +81,10 @@ abstract class AbstractOrientingBehavior<
              * pedestrian current position as the crow flies.
              */
             val closerLandmarks = nodes()
-                .sortedBy { it.centroid.getDistanceTo(currPos) }
+                .sortedBy { it.centroid.distanceTo(currPos) }
             val closerDestinations = destinations()
                 .mapNotNull { nodeContaining(it) }
-                .sortedBy { it.centroid.getDistanceTo(currPos) }
+                .sortedBy { it.centroid.distanceTo(currPos) }
             /*
              * The pedestrian will look for a path leading from his closest
              * landmark to the closest destination possible.
@@ -118,7 +117,7 @@ abstract class AbstractOrientingBehavior<
      * The position the pedestrian is moving towards, no obstacle is placed
      * between the agent and this position.
      */
-    private lateinit var subdestination: P
+    private lateinit var subdestination: Euclidean2DPosition
     /*
      * The edge the pedestrian is moving towards.
      */
@@ -166,7 +165,7 @@ abstract class AbstractOrientingBehavior<
                 val closestDoor = environment.graph().nodes()
                     .flatMap { environment.graph().edgesFrom(it) }
                     .map { it to computeSubdestination(it) }
-                    .minBy { it.second.getDistanceTo(currentPosition) }
+                    .minBy { it.second.distanceTo(currentPosition) }
                 if (closestDoor != null) {
                     nextRoom = closestDoor.first.head
                     subdestination = closestDoor.second
@@ -220,7 +219,7 @@ abstract class AbstractOrientingBehavior<
                     /*
                      * nearest door heuristic
                      */
-                    computeSubdestination(it).getDistanceTo(currentPosition)
+                    computeSubdestination(it).distanceTo(currentPosition)
                 })
             )
         if (targetEdge != null) {
@@ -247,7 +246,7 @@ abstract class AbstractOrientingBehavior<
         if (inNewRoom) {
             state = State.NEW_ROOM
         } else if (state != State.CROSSING_DOOR) {
-            val arrived = currentPosition.getDistanceTo(subdestination) <= minDistance
+            val arrived = currentPosition.distanceTo(subdestination) <= minDistance
             if (state == State.MOVING_TO_DOOR) {
                 if (arrived) {
                     /*
@@ -268,7 +267,7 @@ abstract class AbstractOrientingBehavior<
         }
     }
 
-    private val Environment<T, P>.myPosition: P get() = getPosition(pedestrian)
+    private val Environment<T, Euclidean2DPosition>.myPosition: Euclidean2DPosition get() = getPosition(pedestrian)
 
     override fun execute() = when (state) {
         State.START -> onStart()
@@ -291,7 +290,7 @@ abstract class AbstractOrientingBehavior<
      * This method should implement an algorithm allowing the pedestrian to perform an educated
      * guess of which crossing to take in order to get closer to the provided destination.
      */
-    protected abstract fun computeEdgeRankings(currentRoom: M, destination: P): Map<F, Int>
+    protected abstract fun computeEdgeRankings(currentRoom: M, destination: Euclidean2DPosition): Map<F, Int>
 
     /**
      * Computes the next sub-destination the pedestrian will move towards, provided an edge he
@@ -303,14 +302,14 @@ abstract class AbstractOrientingBehavior<
      * its shape and location in the room boundary) to determine which point the pedestrian
      * shall point towards.
      */
-    protected abstract fun computeSubdestination(targetDoor: F): P
+    protected abstract fun computeSubdestination(targetDoor: F): Euclidean2DPosition
 
     /**
      * Moves the pedestrian towards a position which is guaranteed to be in sight (i.e. no
      * obstacle is placed between him and such position).
      */
-    protected open fun moveTowards(target: P, currentRoom: M?, targetDoor: F): Unit =
-        Seek(environment, this, pedestrian, *target.cartesianCoordinates).execute()
+    protected open fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: F): Unit =
+        Seek(environment, this, pedestrian, *target.coordinates).execute()
 
     /**
      * Assign a weight to a given edge. The one with minimum weight will be chosen and crossed.
@@ -349,7 +348,7 @@ abstract class AbstractOrientingBehavior<
     /*
      * Registers a visit in the given area in the pedestrian's volatile memory.
      */
-    private fun OrientingAgent<P, A, N, *>.registerVisit(area: M) {
+    private fun OrientingAgent<Euclidean2DPosition, A, N, *>.registerVisit(area: M) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
 

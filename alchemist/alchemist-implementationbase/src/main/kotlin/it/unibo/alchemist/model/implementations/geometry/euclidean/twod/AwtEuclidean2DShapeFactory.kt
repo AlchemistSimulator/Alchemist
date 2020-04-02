@@ -14,7 +14,8 @@ import org.apache.commons.math3.util.FastMath.toDegrees
 
 internal class AwtEuclidean2DShapeFactory(
     override val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)
-) : AbstractShapeFactory<Euclidean2DPosition, Euclidean2DTransformation>(), Euclidean2DShapeFactory {
+) : AbstractShapeFactory<Euclidean2DPosition, Euclidean2DTransformation>(),
+    Euclidean2DShapeFactory {
 
     @Suppress("UNCHECKED_CAST")
     override fun requireCompatible(

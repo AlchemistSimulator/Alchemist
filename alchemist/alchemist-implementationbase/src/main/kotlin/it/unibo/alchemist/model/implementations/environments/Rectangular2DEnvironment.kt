@@ -2,14 +2,14 @@ package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.HasBoundaries
 import it.unibo.alchemist.model.interfaces.environments.RectangularBoundaries
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import kotlin.math.abs
 
 /**
- * A bounded [EuclideanPhysics2DEnvironment], nodes cannot exist nor move outside the rectangular boundaries centered
+ * A bounded [Physics2DEnvironment], nodes cannot exist nor move outside the rectangular boundaries centered
  * in (0,0).
  */
 class Rectangular2DEnvironment<T>(

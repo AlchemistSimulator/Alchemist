@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import org.kaikikm.threadresloader.ResourceLoader
 import java.awt.Color
@@ -87,7 +88,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
         GraphEdgeWithData(
             tail.mapPolygon(mapper),
             head.mapPolygon(mapper),
-            Pair(mapper.invoke(data.first), mapper.invoke(data.second))
+            Segment2D(mapper.invoke(data.first), mapper.invoke(data.second))
         )
 
     private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =

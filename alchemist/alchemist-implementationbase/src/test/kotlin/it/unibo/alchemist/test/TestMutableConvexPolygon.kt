@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
@@ -95,13 +96,13 @@ class TestMutableConvexPolygon {
             Euclidean2DPosition(1.0, 1.0),
             Euclidean2DPosition(0.0, 1.0)
         ))
-        var newEdge = Pair(Euclidean2DPosition(1.5, -0.5), Euclidean2DPosition(1.5, 1.5))
+        var newEdge = Segment2D(Euclidean2DPosition(1.5, -0.5), Euclidean2DPosition(1.5, 1.5))
         Assertions.assertEquals(true, p.moveEdge(1, newEdge))
-        newEdge = Pair(Euclidean2DPosition(1.5, 1.5), Euclidean2DPosition(1.5, -0.5))
+        newEdge = Segment2D(Euclidean2DPosition(1.5, 1.5), Euclidean2DPosition(1.5, -0.5))
         Assertions.assertEquals(false, p.moveEdge(1, newEdge))
-        newEdge = Pair(Euclidean2DPosition(0.5, 0.3), Euclidean2DPosition(0.5, 0.6))
+        newEdge = Segment2D(Euclidean2DPosition(0.5, 0.3), Euclidean2DPosition(0.5, 0.6))
         Assertions.assertEquals(true, p.moveEdge(1, newEdge))
-        newEdge = Pair(Euclidean2DPosition(0.5, 0.3), Euclidean2DPosition(0.5, 0.6))
+        newEdge = Segment2D(Euclidean2DPosition(0.5, 0.3), Euclidean2DPosition(0.5, 0.6))
         Assertions.assertEquals(true, p.moveEdge(1, newEdge))
         p = MutableConvexPolygonImpl(mutableListOf(
             Euclidean2DPosition(0.0, 0.0),
@@ -111,7 +112,7 @@ class TestMutableConvexPolygon {
             Euclidean2DPosition(3.0, 3.0),
             Euclidean2DPosition(0.0, 3.0)
         ))
-        newEdge = Pair(Euclidean2DPosition(-0.5, 1.0), Euclidean2DPosition(-0.5, 2.0))
+        newEdge = Segment2D(Euclidean2DPosition(-0.5, 1.0), Euclidean2DPosition(-0.5, 2.0))
         Assertions.assertEquals(false, p.moveEdge(1, newEdge))
     }
 }

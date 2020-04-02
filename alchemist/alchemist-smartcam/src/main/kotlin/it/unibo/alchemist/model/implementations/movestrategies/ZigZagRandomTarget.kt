@@ -59,7 +59,7 @@ class ZigZagRandomTarget<T>(
     }
 
     override fun shouldChangeTarget() =
-        super.shouldChangeTarget() || getCurrentPosition().getDistanceTo(startPosition) >= maxDistance
+        super.shouldChangeTarget() || getCurrentPosition().distanceTo(startPosition) >= maxDistance
 
     override fun chooseTarget() = with(changeDirection()) {
         val x = cos(this) * maxDistance

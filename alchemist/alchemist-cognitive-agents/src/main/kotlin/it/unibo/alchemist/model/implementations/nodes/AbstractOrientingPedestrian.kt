@@ -12,10 +12,12 @@ import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
@@ -64,7 +66,7 @@ abstract class AbstractOrientingPedestrian<
      */
     private val minArea: Double = 10.0
 ) : OrientingPedestrian<T, P, A, N, GraphEdge<N>>,
-    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position<P>, P : Vector<P> {
+    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position2D<P>, P : Vector2D<P> {
 
     init {
         require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }
@@ -120,7 +122,7 @@ abstract class AbstractOrientingPedestrian<
                     rooms[landmarks.indexOf(edge.tail)],
                     rooms[landmarks.indexOf(edge.head)],
                     { 1.0 }
-                )?.weight ?: edge.tail.centroid.getDistanceTo(edge.head.centroid)
+                )?.weight ?: edge.tail.centroid.distanceTo(edge.head.centroid)
             }
     }
 

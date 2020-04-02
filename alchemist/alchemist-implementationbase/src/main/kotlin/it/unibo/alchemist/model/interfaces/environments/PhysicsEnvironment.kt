@@ -15,17 +15,14 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  *
  * @param <T> nodes concentration type
  * @param <P> positions type
- * @param <S> vectors type for the geometry used in this environment
  * @param <A> geometric transformations used in this environment
  * @param <F> factory of shapes compatible with this environment
  */
-interface PhysicsEnvironment<
-    T,
-    P : Position<P>,
-    S : Vector<S>,
-    A : GeometricTransformation<S>,
-    F : GeometricShapeFactory<S, A>
-> : Environment<T, P> {
+interface PhysicsEnvironment<T, P, A, F> : Environment<T, P>
+where P : Position<P>,
+      P : Vector<P>,
+      A : GeometricTransformation<P>,
+      F : GeometricShapeFactory<P, A> {
     /**
      * A factory of shapes compatible with this environment.
      */
@@ -37,7 +34,7 @@ interface PhysicsEnvironment<
      * @param node The node
      * @return The heading of the given node
      */
-    fun getHeading(node: Node<T>): S
+    fun getHeading(node: Node<T>): P
 
     /**
      * Sets the heading of a node.
@@ -45,7 +42,7 @@ interface PhysicsEnvironment<
      * @param node The node
      * @param direction The direction vector.
      */
-    fun setHeading(node: Node<T>, direction: S)
+    fun setHeading(node: Node<T>, direction: P)
 
     /**
      * Gets the shape of a node relatively to its position and heading in the environment.
@@ -53,7 +50,7 @@ interface PhysicsEnvironment<
      * @param node The node
      * @return Its shape
      */
-    fun getShape(node: Node<T>): GeometricShape<S, A>
+    fun getShape(node: Node<T>): GeometricShape<P, A>
 
     /**
      * Gets all nodes whose shape.intersect is true for the given shape.
@@ -61,7 +58,7 @@ interface PhysicsEnvironment<
      * @param shape the shape
      * @return the set of nodes colliding with the given shape
      */
-    fun getNodesWithin(shape: GeometricShape<S, A>): List<Node<T>>
+    fun getNodesWithin(shape: GeometricShape<P, A>): List<Node<T>>
 
     /**
      * Whether or not a node can be placed in a position.

@@ -27,7 +27,7 @@ class CloseToAlreadyDisplaced<T, P : Position<P>> (
         .map { environment.getPosition(it) }
         .map { when (it) {
                 is GeoPosition -> doubleArrayOf(it.latitude, it.longitude)
-                else -> it.cartesianCoordinates
+                else -> it.coordinates
             }
         }
 }

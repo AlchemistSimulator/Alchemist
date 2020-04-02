@@ -33,12 +33,4 @@ class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
             } }
         )
     }
-
-    "orienting homogeneous pedestrians loading" {
-        loadYamlSimulation<T, P>("orienting-homogeneous-pedestrians.yml").startSimulation()
-    }
-
-    "orienting cognitive pedestrians loading" {
-        loadYamlSimulation<T, P>("orienting-cognitive-pedestrians.yml").startSimulation()
-    }
 })

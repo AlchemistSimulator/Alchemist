@@ -1,8 +1,8 @@
 incarnation: protelis
 
 environment:
-  type: ImageEnvironment
-  parameters: [images/congestion-avoidance.png, 0.1]
+  type: ImageEnvironmentWithGraph
+  parameters: [images/congestion-avoidance.png, 0.1, 33, 33]
 
 positions:
   type: EuclideanPosition2D
@@ -14,23 +14,11 @@ seeds:
   scenario: 0
   simulation: 2
 
-variables:
-  envGraph: &envGraph
-    formula: |
-      import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-      it.unibo.alchemist.test.envGraphFromConf(
-        "congestion-avoidance.toml",
-        0.1,
-        mutableListOf(Euclidean2DPosition(12.0, 60.0))
-      )
-    language: kotlin
-
 reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
     type: OrientingBehavior2D
-    parameters: [*envGraph]
 
 displacements:
   - in:
@@ -38,7 +26,7 @@ displacements:
       parameters: [70, 50]
     nodes:
       type: OrientingHomogeneousPedestrian2D
-      parameters: [1.0, *envGraph]
+      parameters: [1.0]
     programs:
       - *behavior
   - in:

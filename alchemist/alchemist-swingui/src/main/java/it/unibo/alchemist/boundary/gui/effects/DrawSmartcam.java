@@ -7,8 +7,8 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment;
-import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible;
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment;
+import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
 import org.jooq.lambda.function.Consumer2;
 import org.slf4j.Logger;
@@ -36,8 +36,8 @@ public final class DrawSmartcam implements Effect {
         final Point viewPoint = wormhole.getViewPoint(environment.getPosition(node));
         final int x = viewPoint.x;
         final int y = viewPoint.y;
-        if (environment instanceof EuclideanPhysics2DEnvironment) {
-            @SuppressWarnings("unchecked") final EuclideanPhysics2DEnvironment<T> env = (EuclideanPhysics2DEnvironment<T>) environment;
+        if (environment instanceof Physics2DEnvironment) {
+            @SuppressWarnings("unchecked") final Physics2DEnvironment<T> env = (Physics2DEnvironment<T>) environment;
             drawShape(g, node, env, zoom, x, y);
             drawFieldOfView(g, node, env, zoom, x, y);
         } else {
@@ -50,7 +50,7 @@ public final class DrawSmartcam implements Effect {
         return Color.GREEN;
     }
 
-    private <T> void drawShape(final Graphics2D g, final Node<T> node, final EuclideanPhysics2DEnvironment<T> env, final double zoom, final int x, final int y) {
+    private <T> void drawShape(final Graphics2D g, final Node<T> node, final Physics2DEnvironment<T> env, final double zoom, final int x, final int y) {
         final GeometricShape geometricShape = node.getShape();
         if (geometricShape instanceof AwtShapeCompatible) {
             final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
@@ -66,7 +66,7 @@ public final class DrawSmartcam implements Effect {
         }
     }
 
-    private <T> void drawFieldOfView(final Graphics2D g, final Node<T> node, final EuclideanPhysics2DEnvironment<T> env, final double zoom, final int x, final int y) {
+    private <T> void drawFieldOfView(final Graphics2D g, final Node<T> node, final Physics2DEnvironment<T> env, final double zoom, final int x, final int y) {
         final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
         g.setColor(Color.BLUE);
         node.getReactions()
@@ -83,7 +83,7 @@ public final class DrawSmartcam implements Effect {
             });
     }
 
-    private <T> double getRotation(final Node<T> node, final EuclideanPhysics2DEnvironment<T> env) {
+    private <T> double getRotation(final Node<T> node, final Physics2DEnvironment<T> env) {
         final Euclidean2DPosition direction = env.getHeading(node);
         return Math.atan2(direction.getY(), direction.getX());
     }

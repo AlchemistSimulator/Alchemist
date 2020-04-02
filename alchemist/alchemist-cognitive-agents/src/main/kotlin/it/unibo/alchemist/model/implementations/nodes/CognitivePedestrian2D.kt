@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -24,7 +24,7 @@ import org.apache.commons.math3.random.RandomGenerator
  *          the molecule associated to danger in the environment.
  */
 class CognitivePedestrian2D<T> @JvmOverloads constructor(
-    env: EuclideanPhysics2DEnvironment<T>,
+    env: Physics2DEnvironment<T>,
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
@@ -33,7 +33,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
 ) : CognitivePedestrianImpl<T, Euclidean2DPosition>(env, rg, age, gender, danger, group), Pedestrian2D<T> {
 
     @JvmOverloads constructor(
-        env: EuclideanPhysics2DEnvironment<T>,
+        env: Physics2DEnvironment<T>,
         rg: RandomGenerator,
         age: String,
         gender: String,
@@ -42,7 +42,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     ) : this(env, rg, Age.fromString(age), Gender.fromString(gender), danger, group)
 
     @JvmOverloads constructor(
-        env: EuclideanPhysics2DEnvironment<T>,
+        env: Physics2DEnvironment<T>,
         rg: RandomGenerator,
         age: Int,
         gender: String,

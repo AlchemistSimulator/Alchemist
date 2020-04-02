@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.Nearest
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 
 /**
@@ -16,8 +16,8 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  * @param timeDistribution
  *          the time distribution according to this the reaction executes.
  */
-class PrioritySteering<T, P : Position<P>>(
-    env: Environment<T, P>,
+class PrioritySteering<T>(
+    env: Environment<T, Euclidean2DPosition>,
     pedestrian: Pedestrian<T>,
     timeDistribution: TimeDistribution<T>
-) : SteeringBehavior<T, P>(env, pedestrian, timeDistribution, Nearest(env, pedestrian))
+) : SteeringBehavior<T>(env, pedestrian, timeDistribution, Nearest(env, pedestrian))

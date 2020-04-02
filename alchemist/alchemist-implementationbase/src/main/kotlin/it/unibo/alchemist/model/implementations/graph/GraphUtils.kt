@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.implementations.graph
 
 import it.unibo.alchemist.model.implementations.graph.builder.GraphBuilder
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
-import it.unibo.alchemist.model.implementations.geometry.magnitude
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -59,7 +58,7 @@ NavigationGraph<V, A, N, E>.destinationsWithin(node: N): Collection<V> =
  * Checks whether the provided [node] contains any destination.
  */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
-NavigationGraph<V, A, N, E>.containsDestination(node: N): Boolean =
+NavigationGraph<V, A, N, E>.containsAnyDestination(node: N): Boolean =
     destinations().any { node.contains(it) }
 
 /**
@@ -72,6 +71,9 @@ NavigationGraph<V, A, N, E>.nodeContaining(position: V): N? =
 
 /**
  * Models a path composed by a list of nodes and a weight.
+ *
+ * @param path the actual path.
+ * @param weight the weight of the path.
  */
 data class Path<N>(
     /**
@@ -89,36 +91,34 @@ data class Path<N>(
  * @param weight a function that weights each edge.
  */
 fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weight: (E) -> Double): Path<N>? {
-    if (nodes().isEmpty()) {
-        return null
-    }
-    if (from == to) {
-        return Path(mutableListOf(from), 0.0)
-    }
-    /*
-     * Distance from source to each node
-     */
-    val dist: HashMap<N, Double> = HashMap(nodes().size)
-    nodes().forEach {
-        dist[it] = Double.POSITIVE_INFINITY
-    }
-    dist[from] = 0.0
-    /*
-     * Predecessor of each node
-     */
-    val prev: HashMap<N, N> = HashMap(nodes().size)
-    val queue: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { dist[it] })
-    queue.add(from)
-    while (queue.isNotEmpty()) {
-        /*
-         * This is the node with min dist
-         */
-        val node = queue.poll()
-        edgesFrom(node).forEach { edge ->
-            val neighbor = edge.head
-            dist[node]?.let { distToNode ->
-                val distToNeighbor = distToNode + weight(edge)
-                dist[neighbor]?.let { prevDist ->
+    return when {
+        nodes().isEmpty() -> null
+        from == to -> Path(mutableListOf(from), 0.0)
+        else -> {
+            /*
+             * Distance from source to each node
+             */
+            val dist: HashMap<N, Double> = HashMap(nodes().size)
+            nodes().forEach {
+                dist[it] = Double.POSITIVE_INFINITY
+            }
+            dist[from] = 0.0
+            /*
+             * Predecessor of each node
+             */
+            val prev: HashMap<N, N> = HashMap(nodes().size)
+            val queue: PriorityQueue<N> = PriorityQueue(nodes().size, compareBy { dist[it] })
+            queue.add(from)
+            while (queue.isNotEmpty()) {
+                /*
+                 * This is the node with min dist
+                 */
+                val node = queue.poll()
+                edgesFrom(node).forEach { edge ->
+                    val neighbor = edge.head
+                    val distToNode = dist[node] ?: Double.POSITIVE_INFINITY
+                    val distToNeighbor = distToNode + weight(edge)
+                    val prevDist = dist[neighbor] ?: Double.POSITIVE_INFINITY
                     if (distToNeighbor < prevDist) {
                         /*
                          * The element is removed (if present) and added back to
@@ -131,24 +131,25 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
                     }
                 }
             }
+            val path = backtrack(to, prev)
+            when {
+                path.contains(from) -> Path(path, dist[to] ?: Double.POSITIVE_INFINITY)
+                else -> null
+            }
         }
     }
-    /*
-     * Backtracking
-     */
-    val path: MutableList<N> = mutableListOf(to)
-    var curr = to
+}
+
+private fun <N> backtrack(end: N, prev: HashMap<N, N>): List<N> {
+    val path: MutableList<N> = mutableListOf(end)
+    var curr = end
     while (prev[curr] != null) {
         prev[curr]?.let {
             path.add(it)
             curr = it
         }
     }
-    return if (path.contains(from)) {
-        Path(path.reversed(), dist[to] ?: Double.POSITIVE_INFINITY)
-    } else {
-        null
-    }
+    return path.reversed()
 }
 
 /**
@@ -158,7 +159,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.dijkstraShortestPath(from: N, to: N, weigh
  */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
 NavigationGraph<V, A, N, E>.dijkstraShortestPath(from: N, to: N): Path<N>? =
-    dijkstraShortestPath(from, to, { (it.tail.centroid - it.head.centroid).magnitude() })
+    dijkstraShortestPath(from, to, { (it.tail.centroid - it.head.centroid).magnitude })
 
 /**
  * Computes the minimum spanning forest of the graph using Prim's algorithm.
@@ -172,7 +173,7 @@ fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(weight: (E) -> D
  */
 fun <V : Vector<V>, A : GeometricTransformation<V>, N : ConvexGeometricShape<V, A>, E : GraphEdge<N>>
 NavigationGraph<V, A, N, E>.primMinimumSpanningForest(
-    weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude() }
+    weight: (E) -> Double = { (it.tail.centroid - it.head.centroid).magnitude }
 ): NavigationGraph<V, A, N, E> =
     with(NavigationGraphBuilder<V, A, N, E>(nodes().size)) {
         primMinimumSpanningForest(weight, this)
@@ -182,15 +183,16 @@ NavigationGraph<V, A, N, E>.primMinimumSpanningForest(
 /*
  * Helper function to compute the MSF.
  */
+@Suppress("NestedBlockDepth")
 private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
     weight: (E) -> Double,
     builder: GraphBuilder<N, E>,
-    source_: N? = null
+    sourceNode: N? = null
 ): GraphBuilder<N, E> {
     if (nodes().isEmpty()) {
         return builder
     }
-    val source = source_ ?: nodes().first()
+    val source = sourceNode ?: nodes().first()
     /*
      * Cheapest cost of a connection (an edge) to each node.
      */
@@ -217,20 +219,20 @@ private fun <N, E : GraphEdge<N>> Graph<N, E>.primMinimumSpanningForest(
                 val neighbor = edge.head
                 if (!builder.nodes().contains(neighbor)) {
                     val costToNeighbor = weight(edge)
-                    cost[neighbor]?.let { prevCost ->
-                        if (costToNeighbor < prevCost) {
-                            queue.remove(neighbor)
-                            cost[neighbor] = costToNeighbor
-                            prev[neighbor] = node
-                            queue.add(neighbor)
-                        }
+                    val prevCost = cost[neighbor] ?: Double.POSITIVE_INFINITY
+                    if (costToNeighbor < prevCost) {
+                        queue.remove(neighbor)
+                        cost[neighbor] = costToNeighbor
+                        prev[neighbor] = node
+                        queue.add(neighbor)
                     }
                 }
             }
         }
     }
-    if (!builder.nodes().containsAll(nodes())) {
-        return primMinimumSpanningForest(weight, builder, nodes().first { !builder.nodes().contains(it) })
+    return when {
+        !builder.nodes().containsAll(nodes()) ->
+            primMinimumSpanningForest(weight, builder, nodes().first { !builder.nodes().contains(it) })
+        else -> builder
     }
-    return builder
 }

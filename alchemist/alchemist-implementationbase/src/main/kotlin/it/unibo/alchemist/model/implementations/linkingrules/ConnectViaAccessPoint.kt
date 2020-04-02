@@ -15,6 +15,9 @@ import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 
+/**
+ * @param accessPointId the id of the access point.
+ */
 class ConnectViaAccessPoint<T, P : Position<P>>(
     radius: Double,
     val accessPointId: Molecule

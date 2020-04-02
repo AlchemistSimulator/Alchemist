@@ -1,10 +1,10 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.Combine
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.Time
@@ -22,17 +22,18 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  * @param steerStrategy
  *          the logic according to the steering actions are combined.
  */
-open class SteeringBehavior<T, P : Position<P>>(
-    private val env: Environment<T, P>,
+open class SteeringBehavior<T>(
+    private val env: Environment<T, Euclidean2DPosition>,
     private val pedestrian: Pedestrian<T>,
     timeDistribution: TimeDistribution<T>,
-    val steerStrategy: SteeringStrategy<T, P>
+    val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) {
 
     /**
      * The list of only the steering actions between all the actions in this reaction.
      */
-    fun steerActions(): List<SteeringAction<T, P>> = actions.filterIsInstance<SteeringAction<T, P>>()
+    fun steerActions(): List<SteeringAction<T, Euclidean2DPosition>> =
+        actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) =
         SteeringBehavior(env, node as Pedestrian<T>, timeDistribution, steerStrategy)

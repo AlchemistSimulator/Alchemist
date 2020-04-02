@@ -3,39 +3,43 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.graph.builder.addEdge
 import it.unibo.alchemist.model.implementations.geometry.liesBetween
-import it.unibo.alchemist.model.implementations.graph.containsDestination
+import it.unibo.alchemist.model.implementations.graph.containsAnyDestination
 import it.unibo.alchemist.model.implementations.graph.destinationsWithin
 import it.unibo.alchemist.model.implementations.graph.isReachable
 import it.unibo.alchemist.model.implementations.graph.primMinimumSpanningForest
 import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
 import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * An abstract orienting pedestrian, defining an algorithm capable of generating
- * a [cognitiveMap], provided a [NavigationGraph] describing the environment.
- * The creation of landmarks is left to subclasses via factory method, see
- * [generateLandmarkWithin].
+ * An abstract [OrientingPedestrian].
+ * This class defines an algorithm capable of generating a pseudo-random [cognitiveMap]
+ * based on a [NavigationGraph] of the environment. The latter can be obtained from
+ * [Environment2DWithGraph]s, which is the only type of environment this pedestrian can
+ * be placed into. The creation of landmarks is left to subclasses via factory method.
  *
  * @param T the concentration type.
  * @param P the [Position] type and [Vector] type for the space this pedestrian is inside.
  * @param A the transformations supported by the shapes in this space.
  * @param N the type of landmarks in the pedestrian's [cognitiveMap].
- * @param M the type of nodes of the [environmentGraph].
- * @param F the type of edges of the [environmentGraph].
+ * @param M the type of nodes of the navigation graph provided by the environment.
+ * @param F the type of edges of the navigation graph provided by the environment.
  *
- * The algorithm produces a cognitive map whose edges are simple [GraphEdge]s, this means
- * no extra information regarding the connection of landmarks is stored in the cognitive map
- * (a part from the boolean information concerning the fact a connection is present of course).
+ * The edges of the produced cognitive map are plain [GraphEdge]s, which means no extra
+ * information regarding the connections between landmarks is stored a part from the boolean
+ * info concerning the fact that a connection exists. The path between two landmarks of the
+ * cognitive map could or could not be simple (i.e. representable as a single line segment).
  */
 abstract class AbstractOrientingPedestrian<
     T,
@@ -51,14 +55,9 @@ abstract class AbstractOrientingPedestrian<
      */
     protected val randomGenerator: RandomGenerator,
     /**
-     * A navigation graph describing the environment. Nodes are [ConvexGeometricShape]s
-     * that should represent the walkable areas of the environment (i.e. the areas that
-     * are freely traversable by agents). Edges represent connections between these
-     * areas. Additionally, a [NavigationGraph] can store some destinations which
-     * will be considered as possible final destinations by this pedestrian.
+     * The environment this pedestrian is into.
      */
-    protected val environmentGraph: NavigationGraph<P, A, M, F>,
-    environment: Environment<T, P>,
+    protected open val environment: Environment2DWithGraph<*, T, P, A, M, F>,
     group: PedestrianGroup<T>? = null,
     /*
      * When generating the cognitive map, the regions whose diameter is
@@ -67,7 +66,7 @@ abstract class AbstractOrientingPedestrian<
      */
     private val minArea: Double = 10.0
 ) : OrientingPedestrian<T, P, A, N, GraphEdge<N>>,
-    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position<P>, P : Vector<P> {
+    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position2D<P>, P : Vector2D<P> {
 
     init {
         require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }
@@ -88,26 +87,27 @@ abstract class AbstractOrientingPedestrian<
      */
     override val cognitiveMap: NavigationGraph<P, A, N, GraphEdge<N>> by lazy {
         val builder = NavigationGraphBuilder<P, A, N, GraphEdge<N>>()
+        val environmentGraph: NavigationGraph<P, A, M, F> = environment.graph()
         /*
          * The rooms in which landmarks will be placed.
          */
         val rooms = environmentGraph.nodes()
-            .filter { it.diameter > shape.diameter * minArea || environmentGraph.containsDestination(it) }
+            .filter { it.diameter > shape.diameter * minArea || environmentGraph.containsAnyDestination(it) }
             .shuffled(randomGenerator)
             .toList()
             .takePercentage(knowledgeDegree)
             .toMutableList()
         /*
-         * At least one destination is provided if knowledge degree >= 0.1
+         * At least one destination is provided if knowledge degree >= 0.1.
          */
-        if (rooms.none { environmentGraph.containsDestination(it) } && knowledgeDegree >= minimumKnowledgeDegree) {
+        if (rooms.none { environmentGraph.containsAnyDestination(it) } && knowledgeDegree >= minimumKnowledgeDegree) {
             environmentGraph.nodes()
-                .firstOrNull { environmentGraph.containsDestination(it) }
+                .firstOrNull { environmentGraph.containsAnyDestination(it) }
                 ?.let { rooms.add(it) }
         }
         val landmarks = rooms.map { generateLandmarkWithin(it) }
         /*
-         * Maps each landmark's index to the indices of the ones reachable from it
+         * Maps each landmark's index to the indices of the ones reachable from it.
          */
         val reachability = rooms.indices
             .map { i ->
@@ -122,14 +122,13 @@ abstract class AbstractOrientingPedestrian<
                     rooms[landmarks.indexOf(edge.tail)],
                     rooms[landmarks.indexOf(edge.head)],
                     { 1.0 }
-                )?.weight ?: edge.tail.centroid.getDistanceTo(edge.head.centroid)
+                )?.weight ?: edge.tail.centroid.distanceTo(edge.head.centroid)
             }
     }
 
     /**
-     * Generates a landmark entirely contained in the given region.
-     * If such region contains one or more destinations, the generated
-     * landmark must contain at least one of them.
+     * Generates a landmark entirely contained in the given region. If such region contains
+     * one or more destinations, the generated landmark must contain at least one of them.
      */
     protected abstract fun generateLandmarkWithin(region: M): N
 

@@ -27,7 +27,7 @@ class TestFeelsTransmission<T, P : Position<P>> : StringSpec({
     "social contagion makes nodes evacuate despite they haven't directly seen the danger" {
         loadYamlSimulation<T, P>("social-contagion.yml").startSimulation(
             finished = { e, _, _ -> e.nodes.forEach {
-                e.getPosition(it).getDistanceTo(e.makePosition(-50.0, 0.0)) shouldBeLessThan 10.0 }
+                e.getPosition(it).distanceTo(e.makePosition(-50.0, 0.0)) shouldBeLessThan 10.0 }
             }
         )
     }

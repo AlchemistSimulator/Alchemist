@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the logic according to the target position is determined from all the positions checked.
  */
 open class FlowFieldSteeringAction<T>(
-    private val env: EuclideanPhysics2DEnvironment<T>,
+    private val env: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
     private val pedestrian: Pedestrian2D<T>,
     private val targetMolecule: Molecule,

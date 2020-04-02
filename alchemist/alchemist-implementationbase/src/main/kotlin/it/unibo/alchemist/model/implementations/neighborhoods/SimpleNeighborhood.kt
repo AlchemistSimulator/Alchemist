@@ -69,7 +69,7 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
                     nodeReady = false
                     node
                 } else {
-                    throw IllegalStateException("No other elements.")
+                    throw NoSuchElementException("No other elements.")
                 }
             }
         }
@@ -98,7 +98,7 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
                         lookahead = updateLookAhead()
                         result
                     } else {
-                        throw IllegalStateException("No other elements.")
+                        throw NoSuchElementException("No other elements.")
                     }
             }
         })

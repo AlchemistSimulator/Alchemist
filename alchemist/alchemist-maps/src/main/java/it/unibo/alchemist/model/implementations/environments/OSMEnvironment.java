@@ -377,8 +377,8 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
          * Maximum x: maximum distance between the same longitudes Maximum y: maximum
          * distance between the same latitudes
          */
-        final double sizex = Math.max(minmin.getDistanceTo(minmax), maxmax.getDistanceTo(maxmin));
-        final double sizey = Math.max(minmin.getDistanceTo(maxmin), maxmax.getDistanceTo(minmax));
+        final double sizex = Math.max(minmin.distanceTo(minmax), maxmax.distanceTo(maxmin));
+        final double sizey = Math.max(minmin.distanceTo(maxmin), maxmax.distanceTo(minmax));
         return new double[] { sizex, sizey };
     }
 

@@ -116,7 +116,7 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 
 0. Windows user should perform an additional first step: before cloning the repository, make sure that the autocrlf feature of git is disabled, by issuing `git config --global core.autocrlf false`. If the step is not performed, git will automatically insert CRLF line endings, violating the project's Checkstyle rules (which are rather strict, and prevent the build from succeeding).
 0. Clone this repository in a folder of your preference using `git clone` appropriately
-0. Open IntellJ. If a project opens automatically, select "Close project". You should be on the welcome screen of IntelliJ idea, with an aspect similar to this image: ![IntelliJ Welcome Screen](https://www.jetbrains.com/help/img/idea/2018.2/ideaWelcomeScreen.png)
+0. Open IntellJ. If a project opens automatically, select "Close project". You should be on the welcome screen of IntelliJ idea.
 0. Select "Import Project"
 0. Navigate your file system and find the folder where you cloned the repository. **Do not select it**. Open the folder, and you should find a lowercase `alchemist` folder. That is the correct project folder, not the outermost `Alchemist` folder (created by `git` in case you cloned without specifying a different folder name). Once the correct folder has been selected, click <kbd>Ok</kbd>
 0. Select "Import Project from external model"
@@ -128,8 +128,8 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 0. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended. 
 0. **Important:** Alchemist requires java 11+, so make sure the 'Gradle JVM' option points to such a version (if you don't have a JDK 11+ installed make sure to get one).
 0. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
-  - *On Unix: * `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
-  - *On Windows: * `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
+  - On Unix: `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
+  - On Windows: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
 
 ### Developing the project
 Contributions to this project are welcome. Just some rules:

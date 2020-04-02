@@ -67,7 +67,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
                             throw new IllegalStateException("Illegal position type: " + dest.getClass() + " " + dest);
                         }
                     }
-                    return getDevicePosition().getDistanceTo(dest);
+                    return getDevicePosition().distanceTo(dest);
                 }
             });
     private final Environment<Object, P> env;
@@ -147,7 +147,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
 
     @Override
     public Tuple getCoordinates() {
-        return DatatypeFactory.createTuple((Object[]) ArrayUtils.toObject(getDevicePosition().getCartesianCoordinates()));
+        return DatatypeFactory.createTuple((Object[]) ArrayUtils.toObject(getDevicePosition().getCoordinates()));
     }
 
     @Override
@@ -230,7 +230,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
                     throw new IllegalStateException("Inconsistent position types");
                 }
             }
-            return getDevicePosition().getDistanceTo(p);
+            return getDevicePosition().distanceTo(p);
         });
     }
 

@@ -4,7 +4,8 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
- * Base class for [TargetSelectionStrategy] offering automatic target change on collision and utilities for initialization.
+ * Base class for [TargetSelectionStrategy] offering automatic target change
+ * on collision and utilities for initialization.
  * [getCurrentPosition] should return the current position of the object to move.
  * [P] is the position type to use.
  */
@@ -41,7 +42,8 @@ abstract class ChangeTargetOnCollision<P : Position<P>>(
 
     /**
      * Returns a boolean indicating whether it is time to change the target or not.
-     * By default if it hasn't moved (assuming it's because of an obstacle) or or it has reached the previous, then choose another one.
+     * By default if it hasn't moved (assuming it's because of an obstacle)
+     * or or it has reached the previous, then choose another one.
      */
     protected open fun shouldChangeTarget() = with(getCurrentPosition()) {
         equals(lastNodePosition) || equals(targetPosition)

@@ -80,7 +80,7 @@ develop: [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=AlchemistSimulator_Alchemist&metric=ncloc)](https://sonarcloud.io/dashboard?id=AlchemistSimulator_Alchemist)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/AlchemistSimulator/Alchemist)
 ![GitHub repo size](https://img.shields.io/github/repo-size/AlchemistSimulator/Alchemist)
-![Maven Central](https://img.shields.io/maven-central/v/org.danilopianini/upgradle)
+![Maven Central](https://img.shields.io/maven-central/v/it.unibo.alchemist/alchemist)
 ![GitHub contributors](https://img.shields.io/github/contributors/AlchemistSimulator/Alchemist)
 
 ##### Quality

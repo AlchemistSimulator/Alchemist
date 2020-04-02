@@ -93,9 +93,10 @@ allprojects {
         runtimeOnly(Libs.logback_classic)
     }
 
+    // COMPILE
+
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-//        options.compilerArgs = options.compilerArgs + listOf("-Werror", "-Xlint:unchecked")
     }
 
     tasks.withType<KotlinCompile> {
@@ -106,6 +107,8 @@ allprojects {
         }
     }
 
+    // TEST
+
     tasks.withType<Test> {
         testLogging {
             events("passed", "skipped", "failed", "standardError")
@@ -113,6 +116,14 @@ allprojects {
         }
         useJUnitPlatform()
     }
+
+    tasks.jacocoTestReport {
+        reports {
+            xml.isEnabled = true
+        }
+    }
+
+    // CODE QUALITY
 
     spotbugs {
         setEffort("max")
@@ -143,6 +154,8 @@ allprojects {
             html.enabled = true
         }
     }
+
+    // DOCUMENTATION
 
     tasks.withType<DokkaTask> {
         outputDirectory = "$buildDir/docs/javadoc"
@@ -327,8 +340,6 @@ dependencies {
     api(project(":alchemist-engine"))
     api(project(":alchemist-interfaces"))
     api(project(":alchemist-loading"))
-//    implementation(project(":alchemist-swingui"))
-//    runtimeOnly(project(":alchemist-projectview"))
     implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
@@ -342,6 +353,8 @@ dependencies {
     orchidRuntimeOnly(Libs.orchidwiki)
     orchidRuntimeOnly(Libs.orchidgithub)
 }
+
+// WEBSITE
 
 tasks.withType<DokkaTask> {
     subProjects = subprojects.map { it.name }.toList()
@@ -359,13 +372,15 @@ orchid {
     baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
     // Fetch the latest version of the website, if this one is more recent enable deploy
     val versionRegex = """.*Currently\s*(.+)\.\s*Created""".toRegex()
-    val matchedVersions: List<String> = try {
+    val matchedVersions: List<String> = runCatching {
         URL(baseUrl).openConnection().getInputStream().use { stream ->
             stream.bufferedReader().lineSequence()
-                .flatMap { line -> versionRegex.find(line)?.groupValues?.last()?.let { sequenceOf(it) } ?: emptySequence() }
+                .flatMap { line ->
+                    versionRegex.find(line)?.groupValues?.last()?.let { sequenceOf(it) } ?: emptySequence()
+                }
                 .toList()
         }
-    } catch (e: Exception) { emptyList() }
+    }.getOrDefault(emptyList())
     val shouldDeploy = matchedVersions
         .takeIf { it.size == 1 }
         ?.first()
@@ -439,6 +454,8 @@ mapOf("all" to allprojects,
 ).forEach { name, projectSet ->
     fatJar(name, projectSet)
 }
+
+// FAT JAR
 
 open class FatJar @javax.inject.Inject constructor() : org.gradle.jvm.tasks.Jar()
 

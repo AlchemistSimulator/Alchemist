@@ -6,4 +6,4 @@ import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 /**
  * A convex euclidean shape in a bidimensional environment.
  */
-typealias ConvexEuclidean2DShape = ConvexGeometricShape<Euclidean2DPosition, Euclidean2DTransformation>
+typealias Euclidean2DConvexShape = ConvexGeometricShape<Euclidean2DPosition, Euclidean2DTransformation>

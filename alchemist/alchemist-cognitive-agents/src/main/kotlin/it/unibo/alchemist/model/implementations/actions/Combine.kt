@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param steerStrategy
  *          the logic according to the steering actions are combined.
  */
-class Combine<T, P : Position<P>>(
+class Combine<T, P : AbstractEuclideanPosition<P>>(
     env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
@@ -32,6 +32,10 @@ class Combine<T, P : Position<P>>(
     pedestrian,
     TargetSelectionStrategy { steerStrategy.computeTarget(actions) }
 ) {
-    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
+    override fun interpolatePositions(
+        current: P,
+        target: P,
+        maxWalk: Double
+    ): P =
         steerStrategy.computeNextPosition(actions)
 }

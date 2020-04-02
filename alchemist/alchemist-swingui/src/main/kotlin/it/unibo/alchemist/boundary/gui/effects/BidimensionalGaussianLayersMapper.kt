@@ -29,16 +29,21 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
 
     private var minAndMaxToBeSet = true
 
-    override fun <T, P : Position2D<P>> prepare(effect: DrawLayersValues, toDraw: Collection<Layer<T, P>>, env: Environment<T, P>, g: Graphics2D, wormhole: IWormhole2D<P>) {
+    override fun <T, P : Position2D<P>> prepare(
+        effect: DrawLayersValues,
+        toDraw: Collection<Layer<T, P>>,
+        env: Environment<T, P>,
+        g: Graphics2D,
+        wormhole: IWormhole2D<P>
+    ) {
         if (minAndMaxToBeSet) {
-            val minLayerValue = 0.1
             val maxLayerValue = toDraw.stream()
                 .filter { l -> l is BidimensionalGaussianLayer }
                 .map { l -> l as BidimensionalGaussianLayer }
                 .map { l -> l.getValue(env.makePosition(l.centerX, l.centerY)) }
                 .max { d1, d2 -> java.lang.Double.compare(d1, d2) }
-                .orElse(minLayerValue)
-            effect.minLayerValue = minLayerValue.toString()
+                .orElse(minimumLayerValue)
+            effect.minLayerValue = minimumLayerValue.toString()
             effect.maxLayerValue = maxLayerValue.toString()
             minAndMaxToBeSet = false
         }
@@ -53,5 +58,12 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
             .filter { l -> l is BidimensionalGaussianLayer }
             .map { l -> l as BidimensionalGaussianLayer }
             .map { l -> Function { p: P -> l.getValue(p) } } // l::getValue
+    }
+
+    companion object {
+        /**
+         * The minumum value of any layer.
+         */
+        const val minimumLayerValue = 0.1
     }
 }

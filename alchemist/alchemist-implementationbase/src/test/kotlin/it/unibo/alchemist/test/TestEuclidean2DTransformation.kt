@@ -23,17 +23,17 @@ class TestEuclidean2DTransformation : FreeSpec({
                     shape = shape.transformed {
                         origin(0.0, 0.0)
                     }
-                    reference.getDistanceTo(shape.centroid) shouldBe 0.0
+                    reference.distanceTo(shape.centroid) shouldBe 0.0
                     shape = shape.transformed {
                         origin(0.0, 10.0)
                     }
-                    reference.getDistanceTo(shape.centroid) shouldBe 10.0
+                    reference.distanceTo(shape.centroid) shouldBe 10.0
                     shape = shape.transformed {
                         origin(10.0, 10.0)
                         origin(3.0, 3.0)
                         origin(6.0, 0.0)
                     }
-                    reference.getDistanceTo(shape.centroid) shouldBe 6.0
+                    reference.distanceTo(shape.centroid) shouldBe 6.0
                 }
             }
     }

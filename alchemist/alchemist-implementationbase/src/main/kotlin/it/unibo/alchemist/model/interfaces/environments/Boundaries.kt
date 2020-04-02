@@ -28,21 +28,24 @@ interface Boundaries {
  */
 interface BoundariesVisitor {
     /**
-     * [rectangularBoundaries] with origin in (0,0)
+     * [rectangularBoundaries] with origin in (0,0).
      */
     fun visit(rectangularBoundaries: RectangularBoundaries)
 }
 
 /**
  * Describes rectangular [Boundaries] with the origin in (0,0).
+ *
+ * @param width width.
+ * @param height height.
  */
 class RectangularBoundaries(
     /**
-     * Width
+     * Width.
      */
     val width: Double,
     /**
-     * Height
+     * Height.
      */
     val height: Double
 ) : Boundaries {

@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
 open class FollowFlowField(
-    env: EuclideanPhysics2DEnvironment<Number>,
+    env: Physics2DEnvironment<Number>,
     reaction: Reaction<Number>,
     pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule

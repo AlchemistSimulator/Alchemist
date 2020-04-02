@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.direction
 import it.unibo.alchemist.model.implementations.utils.origin
@@ -9,7 +8,7 @@ import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 import kotlin.math.cos
 import kotlin.math.sin
@@ -31,7 +30,7 @@ import org.apache.commons.math3.random.RandomGenerator
  *          the radius of the circle.
  */
 open class Wander<T>(
-    private val env: EuclideanPhysics2DEnvironment<T>,
+    private val env: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
     private val pedestrian: Pedestrian<T>,
     private val rg: RandomGenerator,
@@ -53,7 +52,7 @@ open class Wander<T>(
     override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
         super.interpolatePositions(
             env.origin(),
-            heading().asAngle()
+            heading().asAngle
                 .let { Euclidean2DPosition(offset * cos(it), offset * sin(it)) }
                 .let { it.surrounding(env, radius).shuffled(rg).first() },
             maxWalk

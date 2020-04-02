@@ -16,6 +16,9 @@ import it.unibo.alchemist.AlchemistExecutionOptions
  */
 interface Launcher : (AlchemistExecutionOptions) -> Unit {
 
+    /**
+     * Launcher name.
+     */
     val name: String
 
     /**

@@ -19,6 +19,7 @@ plugins {
     id("com.github.spotbugs")
     pmd
     checkstyle
+    id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
     `project-report`
     `build-dashboard`
@@ -41,6 +42,7 @@ allprojects {
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "checkstyle")
     apply(plugin = "pmd")
+    apply(plugin = "io.gitlab.arturbosch.detekt")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "project-report")
     apply(plugin = "build-dashboard")
@@ -59,10 +61,22 @@ allprojects {
             maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
         }
         mavenCentral()
-        maven(url = "https://dl.bintray.com/kotlin/dokka/")
+        maven {
+            url = uri("https://dl.bintray.com/kotlin/dokka")
+            content {
+                includeGroup("org.jetbrains.dokka")
+            }
+        }
+        maven {
+            url = uri("https://dl.bintray.com/kotlin/kotlinx.html/")
+            content {
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
     }
 
     dependencies {
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         compileOnly(Libs.annotations)
         compileOnly(Libs.spotbugs)
         implementation(Libs.slf4j_api)
@@ -119,6 +133,15 @@ allprojects {
     pmd {
         ruleSets = listOf()
         ruleSetConfig = resources.text.fromFile("${project.rootProject.projectDir}/config/pmd/pmd.xml")
+    }
+
+    detekt {
+        failFast = true
+        buildUponDefaultConfig = true
+        config = files("${rootProject.projectDir}/config/detekt.yml")
+        reports {
+            html.enabled = true
+        }
     }
 
     tasks.withType<DokkaTask> {

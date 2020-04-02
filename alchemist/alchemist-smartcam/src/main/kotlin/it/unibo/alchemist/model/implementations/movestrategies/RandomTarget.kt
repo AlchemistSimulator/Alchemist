@@ -25,8 +25,12 @@ class RandomTarget<T>(
     /**
      * Handy constructor for Alchemist where the object to move is a [node] in the [env].
      */
-    constructor(node: Node<T>, env: Environment<T, Euclidean2DPosition>, directionRng: RandomGenerator, distanceDistribution: RealDistribution) :
-        this({ env.getPosition(node) }, { x, y -> env.makePosition(x, y) }, directionRng, distanceDistribution)
+    constructor(
+        node: Node<T>,
+        env: Environment<T, Euclidean2DPosition>,
+        directionRng: RandomGenerator,
+        distanceDistribution: RealDistribution
+    ) : this({ env.getPosition(node) }, { x, y -> env.makePosition(x, y) }, directionRng, distanceDistribution)
 
     override fun chooseTarget() = with(directionRng.randomAngle()) {
         val distance = distanceDistribution.sample()

@@ -111,6 +111,7 @@ object Alchemist {
                     L.error("Unable to select an execution strategy among ${validLaunchers.map {it.second} }")
                 else -> {
                     L.error("No valid launchers for {}", options)
+                    L.error("Available launchers: {}", launchers.map { it.name })
                     invalidLaunchers.forEach { (validation, launcher) ->
                         if (validation is Validation.Invalid) {
                             L.error("{}: {}", launcher::class.java.simpleName, validation.reason)

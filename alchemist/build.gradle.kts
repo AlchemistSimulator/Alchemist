@@ -472,4 +472,3 @@ val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
     }
 }
 tasks.orchidClasses.orNull!!.dependsOn(orchidSeedConfiguration)
-

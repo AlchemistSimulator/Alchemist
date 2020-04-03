@@ -23,9 +23,17 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
 
     override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
-            graphics != null -> incompatibleWith("graphical execution")
-            distributed != null -> incompatibleWith("distributed execution")
-            else -> Validation.OK
+            graphics != null -> Validation.OK(Priority.Fallback("""
+                Graphical interface required but unavailable.
+                Import an Alchemist module with a graphical launcher, e.g. alchemist-swingui.
+                See: https://alchemistsimulator.github.io/wiki/usage/gui/
+                """.trimIndent()))
+            distributed != null -> Validation.OK(Priority.Fallback("""
+                Distributed execution required but unavailable.
+                Import an Alchemist module with a distributed executor, e.g. alchemist-grid.
+                See: https://alchemistsimulator.github.io/wiki/usage/grid/
+                """.trimIndent()))
+            else -> Validation.OK()
         }
     }
 

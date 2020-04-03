@@ -33,7 +33,7 @@ object IgniteServerLauncher : AbstractLauncher() {
             interval != AlchemistExecutionOptions.defaultInterval -> incompatibleWith("custom sampling intervals")
             parallelism != AlchemistExecutionOptions.defaultParallelism -> incompatibleWith("custom parallelism")
             endTime != AlchemistExecutionOptions.defaultEndTime -> incompatibleWith("simulation end time")
-            else -> OK
+            else -> OK()
         }
     }
 

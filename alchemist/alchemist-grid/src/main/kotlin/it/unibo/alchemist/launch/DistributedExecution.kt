@@ -28,9 +28,9 @@ object DistributedExecution : SimulationLauncher() {
         when {
             variables.isEmpty() -> Validation.Invalid("$name requires a variable set")
             distributed == null -> Validation.Invalid("No configuration file for distributed execution")
-            graphics != null -> incompatibleWith("graphic effects enabled")
+            graphics != null -> Validation.OK(Priority.Fallback("Distributed execution will ignore graphical settings"))
             parallelism != AlchemistExecutionOptions.defaultParallelism -> incompatibleWith("custom parallelism")
-            else -> Validation.OK
+            else -> Validation.OK()
         }
     }
 

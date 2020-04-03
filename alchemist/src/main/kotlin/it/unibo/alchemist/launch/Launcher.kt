@@ -9,6 +9,8 @@
 package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * An entity with a [name] that can take responsibility for performing an Alchemist run, given the current
@@ -34,6 +36,10 @@ interface Launcher : (AlchemistExecutionOptions) -> Unit {
     override fun invoke(parameters: AlchemistExecutionOptions) {
         val validation = validate(parameters)
         if (validation is Validation.OK) {
+            when (validation.priority) {
+                is Priority.High -> logger.warn("{} selected because ${validation.priority.reason}")
+                is Priority.Fallback -> logger.warn("{} selected because ${validation.priority.warning}")
+            }
             launch(parameters)
         } else {
             throw IllegalStateException(
@@ -46,6 +52,10 @@ interface Launcher : (AlchemistExecutionOptions) -> Unit {
      * Actually gets the job done by performing the requested operations.
      */
     fun launch(parameters: AlchemistExecutionOptions)
+
+    companion object {
+        protected val logger: Logger = LoggerFactory.getLogger(Launcher::class.java)
+    }
 }
 
 /**
@@ -53,12 +63,45 @@ interface Launcher : (AlchemistExecutionOptions) -> Unit {
  */
 sealed class Validation {
     /**
-     * The [Launcher] can run.
+     * The [Launcher] can run with some [priority].
      */
-    object OK : Validation()
+    data class OK(val priority: Priority = Priority.Normal) : Validation()
 
     /**
      * The [Launcher] can't run and provides a [reason].
      */
     data class Invalid(val reason: String) : Validation()
+}
+
+/**
+ * Defines the likelihood that the configuration is compatible with a [Launcher].
+ */
+sealed class Priority : Comparable<Priority> {
+
+    /**
+     * The loader overrides the behaviour of the loaders provided by default, for the same options.
+     * It must specify a [reason].
+     */
+    data class High(val reason: String) : Priority()
+
+    /**
+     * Default priority, to be returned when the requested options fit the expected configuration.
+     */
+    object Normal : Priority()
+
+    /**
+     * A low priority, indicating that the [Launcher] may run, but it will ignore some options,
+     * and other launchers will be preferred. It must emit a [warning].
+     */
+    data class Fallback(val warning: String) : Priority()
+
+    override fun compareTo(other: Priority): Int = when {
+        this::class == other::class -> 0
+        this is High -> 1
+        this is Fallback -> 0
+        else -> throw IllegalStateException("""
+            Comparison of $this and $other failed.
+            There is a bug in alchemist. Please open an issue with this stacktrace.
+        """.trimIndent())
+    }
 }

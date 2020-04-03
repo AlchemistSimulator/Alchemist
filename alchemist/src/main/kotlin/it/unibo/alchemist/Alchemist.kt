@@ -104,11 +104,23 @@ object Alchemist {
             val (validLaunchers, invalidLaunchers) = launchers
                 .map { it.validate(options) to it }
                 .partition { (validation, _) -> validation is Validation.OK }
+            val sortedLaunchers: List<Pair<Validation.OK, Launcher>> = validLaunchers
+                .map { (validation, launcher) ->
+                    validation as Validation.OK to launcher
+                }
+                .sortedByDescending { it.first.priority }
+            fun List<Pair<Validation.OK, Launcher>>.priorityOf(index: Int) = get(index).first.priority
+            fun Pair<Validation.OK, Launcher>.launch() = second(options).also { exitWith(ExitStatus.OK) }
             when {
-                validLaunchers.size == 1 -> validLaunchers.first().second(options)
-                    .also { exitWith(ExitStatus.OK) }
+                sortedLaunchers.size == 1 -> sortedLaunchers.first().launch()
                 validLaunchers.size > 1 ->
-                    L.error("Unable to select an execution strategy among ${validLaunchers.map {it.second} }")
+                    if (sortedLaunchers.priorityOf(0) > sortedLaunchers.priorityOf(1)) {
+                        sortedLaunchers.first().launch()
+                    } else {
+                        L.error("Unable to select an execution strategy among {} with options {}",
+                            sortedLaunchers.map { it.second }, options
+                        )
+                    }
                 else -> {
                     L.error("No valid launchers for {}", options)
                     L.error("Available launchers: {}", launchers.map { it.name })

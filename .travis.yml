@@ -142,7 +142,7 @@ jobs:
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
       after_success:
-        - travis_wait 30 ./gradlew publishAll --scan --parallel --stacktrace
+        - travis_wait 30 ./gradlew publishAll --scan --stacktrace
       deploy:
         - <<: *deploy_base
           provider: releases

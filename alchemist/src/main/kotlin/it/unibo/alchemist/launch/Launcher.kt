@@ -36,9 +36,10 @@ interface Launcher : (AlchemistExecutionOptions) -> Unit {
     override fun invoke(parameters: AlchemistExecutionOptions) {
         val validation = validate(parameters)
         if (validation is Validation.OK) {
-            when (validation.priority) {
-                is Priority.High -> logger.warn("{} selected because ${validation.priority.reason}")
-                is Priority.Fallback -> logger.warn("{} selected because ${validation.priority.warning}")
+            val priority = validation.priority
+            when (priority) {
+                is Priority.High -> logger.warn("{} selected because {}", this, priority.reason)
+                is Priority.Fallback -> logger.warn("{} selected because {}", this, priority.warning)
             }
             launch(parameters)
         } else {

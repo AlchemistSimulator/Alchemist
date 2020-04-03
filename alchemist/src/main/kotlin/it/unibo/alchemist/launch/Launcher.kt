@@ -99,10 +99,14 @@ sealed class Priority : Comparable<Priority> {
     override fun compareTo(other: Priority): Int = when {
         this::class == other::class -> 0
         this is High -> 1
-        this is Fallback -> 0
+        this is Fallback -> -1
+        other is High -> -1
+        other is Fallback -> 1
         else -> throw IllegalStateException("""
             Comparison of $this and $other failed.
             There is a bug in alchemist. Please open an issue with this stacktrace.
         """.trimIndent())
     }
+
+    override fun toString() = this::class.simpleName!!
 }

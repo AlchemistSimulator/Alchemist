@@ -25,4 +25,6 @@ abstract class AbstractLauncher : Launcher {
      */
     protected fun requires(option: String) =
         Validation.Invalid("$name requires $option")
+
+    override fun toString() = name
 }

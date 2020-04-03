@@ -11,6 +11,7 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import it.unibo.alchemist.cli.CLIMaker
 import it.unibo.alchemist.launch.Launcher
+import it.unibo.alchemist.launch.Priority
 import it.unibo.alchemist.launch.Validation
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
@@ -110,7 +111,13 @@ object Alchemist {
                 }
                 .sortedByDescending { it.first.priority }
             fun List<Pair<Validation.OK, Launcher>>.priorityOf(index: Int) = get(index).first.priority
-            fun Pair<Validation.OK, Launcher>.launch() = second(options).also { exitWith(ExitStatus.OK) }
+            fun Pair<Validation.OK, Launcher>.launch() {
+                if (first.priority !is Priority.Normal) {
+                    printLaunchers()
+                }
+                second(options)
+                exitWith(ExitStatus.OK)
+            }
             when {
                 sortedLaunchers.size == 1 -> sortedLaunchers.first().launch()
                 validLaunchers.size > 1 ->
@@ -118,11 +125,12 @@ object Alchemist {
                         sortedLaunchers.first().launch()
                     } else {
                         L.error("Unable to select an execution strategy among {} with options {}",
-                            sortedLaunchers.map { it.second }, options
+                            sortedLaunchers, options
                         )
                     }
                 else -> {
                     L.error("No valid launchers for {}", options)
+                    printLaunchers()
                     L.error("Available launchers: {}", launchers.map { it.name })
                     invalidLaunchers.forEach { (validation, launcher) ->
                         if (validation is Validation.Invalid) {
@@ -136,6 +144,10 @@ object Alchemist {
         }
         printHelp()
         exitWith(ExitStatus.INVALID_CLI)
+    }
+
+    private fun printLaunchers() {
+        L.error("Available launchers: {}", launchers.map { it.name })
     }
 
     /**

@@ -25,8 +25,8 @@ import static org.danilopianini.lang.MathUtils.fuzzyGreaterEquals;
 /**
  * This class implements a rectangular obstacle, whose sides are parallel to the
  * cartesian axis.
- * 
- * 
+ *
+ *
  */
 @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
 public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle2D<Euclidean2DPosition> {
@@ -41,7 +41,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
 
     /*
      * This code was built upon Alexander Hristov's, see:
-     * 
+     *
      * http://www.ahristov.com/tutorial/geometry-games/intersection-segments.html
      */
     private static double[] intersection(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4) {
@@ -86,9 +86,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
             /*
              * The starting point was on the border.
              */
-            return toPosition(onBorders);
+            return asVector(onBorders);
         }
-        final double[] intersection = nearestIntersection(startx, starty, endx, endy);
+        final double[] intersection = asArray(nearestIntersection(start, end));
         /*
          * Ensure the intersection is outside the boundaries. Force it to be.
          */
@@ -98,16 +98,23 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         }
         final double[] restricted = enforceBorders(intersection[0], intersection[1], intersection[0], intersection[1]);
         if (restricted == null) {
-            return toPosition(intersection);
+            return asVector(intersection);
         }
-        return toPosition(restricted);
+        return asVector(restricted);
     }
 
-    private static Euclidean2DPosition toPosition(final double[] coords) {
+    private static Euclidean2DPosition asVector(final double[] coords) {
         if (coords.length != 2) {
             throw new IllegalStateException("Array must have exactly two parameters");
         }
         return new Euclidean2DPosition(coords[0], coords[1]);
+    }
+
+    private static double[] asArray(final Euclidean2DPosition coords) {
+        if (coords.getDimensions() != 2) {
+            throw new IllegalStateException("Array must have exactly two parameters");
+        }
+        return new double[] { coords.getX(), coords.getY() };
     }
 
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
@@ -155,7 +162,11 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
 
     @Override
     @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-    public double[] nearestIntersection(final double startx, final double starty, final double endx, final double endy) {
+    public Euclidean2DPosition nearestIntersection(final Euclidean2DPosition start, final Euclidean2DPosition end) {
+        final double startx = start.getX();
+        final double starty = start.getY();
+        final double endx = end.getX();
+        final double endy = end.getY();
         final double nearx = closestTo(startx, maxX, minX);
         final double neary = closestTo(starty, maxY, minY);
         final double farx = nearx == maxX ? minX : maxX;
@@ -165,9 +176,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         final double d1 = MathArrays.distance(intersectionSide1, new double[] { startx, starty });
         final double d2 = MathArrays.distance(intersectionSide2, new double[] { startx, starty });
         if (d1 < d2) {
-            return intersectionSide1;
+            return asVector(intersectionSide1);
         }
-        return intersectionSide2;
+        return asVector(intersectionSide2);
     }
 
     /**

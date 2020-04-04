@@ -20,25 +20,16 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
 public interface Obstacle2D<V extends Vector2D<V>> extends Serializable, Shape, Obstacle<V> {
 
     /**
-     * @return the id for this obstacle
-     */
-    int getId();
-
-    /**
-     * Given a vector (represented as a starting point and an end point) and a
-     * rectangle, computes the intersection point between the vector and the
-     * rectangle nearest to the vector's starting point.
-     * 
-     * @param startx
-     *            start x coordinate of the vector
-     * @param starty
-     *            start y coordinate of the vector
-     * @param endx
-     *            end x coordinate of the vector
-     * @param endy
-     *            end y coordinate of the vector
+     * Given a vector (represented as a starting point and an end point), computes
+     * the intersection point between the vector and the obstacle nearest to the
+     * vector's starting point.
+     *
+     * @param start
+     *          starting point of the vector
+     * @param end
+     *          ending point of the vector
      * @return the intersection point between the vector and the rectangle
      *         nearest to the vector's starting point
      */
-    double[] nearestIntersection(double startx, double starty, double endx, double endy);
+    V nearestIntersection(V start, V end);
 }

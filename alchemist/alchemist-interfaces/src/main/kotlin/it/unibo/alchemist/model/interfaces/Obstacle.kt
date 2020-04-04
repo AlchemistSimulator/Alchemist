@@ -34,7 +34,7 @@ interface Obstacle<V : Vector<V>> {
      * @param end
      *          ending point of the vector
      * @return the intersection point between the vector and the obstacle nearest
-     * to the vector's starting point.
+     *         to the vector's starting point.
      */
     fun next(start: V, end: V): V
 }

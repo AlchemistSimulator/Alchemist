@@ -10,6 +10,7 @@ import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
 include(
     "alchemist-cognitive-agents",
     "alchemist-engine",
+    "alchemist-full",
     "alchemist-grid",
     "alchemist-implementationbase",
     "alchemist-incarnation-protelis",

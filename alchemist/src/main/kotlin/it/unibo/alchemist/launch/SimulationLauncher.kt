@@ -93,5 +93,5 @@ abstract class SimulationLauncher : AbstractLauncher() {
     /**
      * Allows subclasses to perform further checks before getting executed. Defaults to simply return [Validation.OK]
      */
-    open fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation = Validation.OK
+    abstract fun additionalValidation(currentOptions: AlchemistExecutionOptions): Validation
 }

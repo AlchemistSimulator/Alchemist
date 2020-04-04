@@ -7,11 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.launch
+package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.gui.SingleRunGUI
-import it.unibo.alchemist.launch.SimulationLauncher
 import it.unibo.alchemist.launch.Validation.Invalid
 import it.unibo.alchemist.launch.Validation.OK
 import it.unibo.alchemist.loader.Loader
@@ -34,7 +33,7 @@ object SingleRunSwingUI : SimulationLauncher() {
             GraphicsEnvironment.isHeadless() -> Invalid(
                 "The JVM graphic environment is marked as headless. Cannot show a graphical interface. "
             )
-            else -> OK
+            else -> OK()
         }
     }
 

@@ -114,7 +114,7 @@ jobs:
         - *reference_jdk
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - travis_retry ./gradlew clean check jacocoTestReport fatJar --scan --parallel
+        - travis_retry ./gradlew clean check jacocoTestReport shadowJar --scan --parallel
       after_success:
         - bash <(curl -s https://codecov.io/bash)
       workspaces:
@@ -138,18 +138,18 @@ jobs:
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
         - travis_retry ./gradlew dokka > >(egrep -v '(null:-1:-1)|(t find node by signature)') --scan
-        - travis_retry ./gradlew sign fatJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
+        - travis_retry ./gradlew sign shadowJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
       after_success:
-        - travis_wait 30 ./gradlew publishAll --scan --parallel --stacktrace
+        - travis_wait 30 ./gradlew publishAll --scan --stacktrace
       deploy:
         - <<: *deploy_base
           provider: releases
           api_key:
             secure: NiA2CFiiUjreyOGzlA+vxCFT2a6dHZ44gdwA96jBrE3jNdUPXAxzvsaA9rNNxkvHPyADH0DPPZbJ517SdddSYViRcpjlple3dl5jCHxUoBtHBXvrzD2fAhslVejZ7LoxdY9v9K0xSIo3he/pmrtzcuIuPNFrj7LYmYkXeqQcLsxyCrPY+XBOuV6U+Hl5XDUVNqB+/J1qtZUWVg3B1AwGpp8roLKmLYreUfuNwwmF9hXWO8EbS4zIAKDnwf+E/44aiXiULyJ7CPWKEtPgxqJLo9Hi0lABr6I4WV4LzSVaOjA4FdTCVOtFpVzecni0J6+KH2AETTkWtWNt6Hguoa0hUbzD96u4p5eEx1xJzV/k+TRuNkoRMfdGT5Xm0b3N1OF1t/w0woD0NQx2qzqvpnJ7YiPwATfv1n9x8/qqmaCMP3iVDS/manNcyMg2d7ip84313wea/V2H3+mm2VDUsiKoE/Jk5y0Vh3uuSsQOmPd0i3LfpC0AiJCyC0TT3lg6fBRzgVgtC26+idWdw0dXSxaU+iYYJYpPcsAiVzr/bqfpkURe4IWHDcASMuUWKAnzrVtnvaDgKw60RboZFK3aUaECxDYZ9JThZERw2zYP9FX8eXld6y7dLJhEWxCAY7m/IaNemj7+uJ79TCVso43RCosSgBr+tvcF+LzOhaLAHvQ4iHM=
           file_glob: true
-          file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-*.jar"
+          file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-*all.jar"
           on: *on_tags
         - <<: *deploy_javadoc_on_surge
           domain: alchemist-unstable-doc.surge.sh

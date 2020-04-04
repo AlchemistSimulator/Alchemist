@@ -10,31 +10,33 @@
 package it.unibo.alchemist.model.interfaces.environments
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles
+import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
+import it.unibo.alchemist.model.interfaces.Obstacle
 import it.unibo.alchemist.model.interfaces.Obstacle2D
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 
 /**
- * A bidimensional environment with obstacles providing a [NavigationGraph], i.e.
- * a graph whose nodes are convex shapes representing the areas of the environment
- * traversable by agents (namely, walkable areas), whereas edges represent connections
- * between them.
+ * An environment with obstacles providing a [NavigationGraph], i.e. a graph whose
+ * nodes are convex shapes representing the areas of the environment traversable
+ * by agents (namely, walkable areas), whereas edges represent connections between
+ * them.
  */
-interface Environment2DWithGraph<
-    W : Obstacle2D,
+interface EnvironmentWithGraph<
     T,
     P,
+    W : Obstacle<P>,
     A : GeometricTransformation<P>,
     N : ConvexGeometricShape<P, A>,
-    E : GraphEdge<N>
-> : Environment2DWithObstacles<W, T, P> where P : Position2D<out P>, P : Vector2D<P> {
+    E
+> : EnvironmentWithObstacles<T, P, W> where P : Position<P>, P : Vector<P> {
 
     /**
      * @returns the navigation graph.
@@ -43,21 +45,22 @@ interface Environment2DWithGraph<
 }
 
 /**
- * An euclidean [Environment2DWithGraph].
+ * An euclidean [EnvironmentWithGraph].
  */
 interface Euclidean2DEnvironmentWithGraph<
-    W : Obstacle2D,
     T,
+    W : Obstacle2D<Euclidean2DPosition>,
     N : Euclidean2DConvexShape,
-    E : GraphEdge<N>
-> : Environment2DWithGraph<W, T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
+    E
+> : EnvironmentWithGraph<T, Euclidean2DPosition, W, Euclidean2DTransformation, N, E>,
+    Euclidean2DEnvironmentWithObstacles<T, W>
 
 /**
- * An [Environment2DWithGraph] with physics.
+ * An [Euclidean2DEnvironmentWithGraph] with physics.
  */
 interface EuclideanPhysics2DEnvironmentWithGraph<
-    W : Obstacle2D,
     T,
+    W : Obstacle2D<Euclidean2DPosition>,
     N : Euclidean2DConvexShape,
-    E : GraphEdge<N>
-> : Euclidean2DEnvironmentWithGraph<W, T, N, E>, Physics2DEnvironment<T>
+    E
+> : Euclidean2DEnvironmentWithGraph<T, W, N, E>, EuclideanPhysics2DEnvironmentWithObstacles<T, W>

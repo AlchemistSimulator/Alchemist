@@ -86,9 +86,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
             /*
              * The starting point was on the border.
              */
-            return asVector(onBorders);
+            return new Euclidean2DPosition(onBorders);
         }
-        final double[] intersection = asArray(nearestIntersection(start, end));
+        final double[] intersection = nearestIntersection(start, end).getCoordinates();
         /*
          * Ensure the intersection is outside the boundaries. Force it to be.
          */
@@ -98,23 +98,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         }
         final double[] restricted = enforceBorders(intersection[0], intersection[1], intersection[0], intersection[1]);
         if (restricted == null) {
-            return asVector(intersection);
+            return new Euclidean2DPosition(intersection);
         }
-        return asVector(restricted);
-    }
-
-    private static Euclidean2DPosition asVector(final double[] coords) {
-        if (coords.length != 2) {
-            throw new IllegalStateException("Array must have exactly two parameters");
-        }
-        return new Euclidean2DPosition(coords[0], coords[1]);
-    }
-
-    private static double[] asArray(final Euclidean2DPosition coords) {
-        if (coords.getDimensions() != 2) {
-            throw new IllegalStateException("Array must have exactly two parameters");
-        }
-        return new double[] { coords.getX(), coords.getY() };
+        return new Euclidean2DPosition(restricted);
     }
 
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
@@ -176,9 +162,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         final double d1 = MathArrays.distance(intersectionSide1, new double[] { startx, starty });
         final double d2 = MathArrays.distance(intersectionSide2, new double[] { startx, starty });
         if (d1 < d2) {
-            return asVector(intersectionSide1);
+            return new Euclidean2DPosition(intersectionSide1);
         }
-        return asVector(intersectionSide2);
+        return new Euclidean2DPosition(intersectionSide2);
     }
 
     /**

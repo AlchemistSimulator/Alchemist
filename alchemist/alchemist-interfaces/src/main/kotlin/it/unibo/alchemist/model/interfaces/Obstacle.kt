@@ -9,15 +9,14 @@
 
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import java.io.Serializable
 
 /**
  * A generic obstacle.
  *
- * @param V the vector type for the space in which this obstacle is placed.
+ * @param P the position type for the space in which this obstacle is placed.
  */
-interface Obstacle<V : Vector<V>> : Serializable {
+interface Obstacle<P : Position<P>> : Serializable {
 
     /**
      * @return the id for this obstacle
@@ -37,5 +36,5 @@ interface Obstacle<V : Vector<V>> : Serializable {
      * @return the intersection point between the vector and the obstacle nearest
      *         to the vector's starting point.
      */
-    fun next(start: V, end: V): V
+    fun next(start: P, end: P): P
 }

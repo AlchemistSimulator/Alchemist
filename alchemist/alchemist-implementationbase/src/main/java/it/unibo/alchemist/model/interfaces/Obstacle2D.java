@@ -10,12 +10,12 @@ package it.unibo.alchemist.model.interfaces;
 
 import java.awt.Shape;
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-
 /**
  * An obstacle in a bidimensional space.
+ *
+ * @param <P> the position type for the space in which this obstacle is placed.
  */
-public interface Obstacle2D extends Obstacle<Euclidean2DPosition>, Shape {
+public interface Obstacle2D<P extends Position2D<P>> extends Obstacle<P>, Shape {
 
     /**
      * Given a vector (represented as a starting point and an end point), computes
@@ -29,5 +29,5 @@ public interface Obstacle2D extends Obstacle<Euclidean2DPosition>, Shape {
      * @return the intersection point between the vector and the rectangle
      *         nearest to the vector's starting point
      */
-    Euclidean2DPosition nearestIntersection(Euclidean2DPosition start, Euclidean2DPosition end);
+    P nearestIntersection(P start, P end);
 }

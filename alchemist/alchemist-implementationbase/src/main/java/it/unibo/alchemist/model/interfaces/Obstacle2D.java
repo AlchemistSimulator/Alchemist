@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,14 +10,12 @@ package it.unibo.alchemist.model.interfaces;
 
 import java.awt.Shape;
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 
 /**
  * An obstacle in a bidimensional space.
- *
- * @param <V> the position type for the space in which this obstacle is placed.
  */
-public interface Obstacle2D<V extends Vector2D<V>> extends Shape, Obstacle<V> {
+public interface Obstacle2D extends Obstacle<Euclidean2DPosition>, Shape {
 
     /**
      * Given a vector (represented as a starting point and an end point), computes
@@ -30,5 +29,5 @@ public interface Obstacle2D<V extends Vector2D<V>> extends Shape, Obstacle<V> {
      * @return the intersection point between the vector and the rectangle
      *         nearest to the vector's starting point
      */
-    V nearestIntersection(V start, V end);
+    Euclidean2DPosition nearestIntersection(Euclidean2DPosition start, Euclidean2DPosition end);
 }

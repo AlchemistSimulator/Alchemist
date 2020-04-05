@@ -29,7 +29,7 @@ import static org.danilopianini.lang.MathUtils.fuzzyGreaterEquals;
  *
  */
 @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
-public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle2D<Euclidean2DPosition> {
+public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle2D {
 
     /**
      * Relative precision value under which two double values are considered to

@@ -9,12 +9,10 @@ import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.graph.GraphEdge
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DCrossing
 import kotlin.math.PI
 
 /**
@@ -27,22 +25,15 @@ import kotlin.math.PI
  * @param N the type of landmarks of the pedestrian's cognitive map.
  * @param E the type of edges of the pedestrian's cognitive map.
  * @param M the type of nodes of the navigation graph provided by the environment.
- * @param F the type of edges of the navigation graph provided by the environment.
  */
-class OrientingSteeringBehavior2D<
-    T,
-    N : Euclidean2DConvexShape,
-    E : GraphEdge<N>,
-    M : ConvexPolygon,
-    F : GraphEdgeWithData<M, Segment2D<Euclidean2DPosition>>
-> @JvmOverloads constructor(
-    environment: Euclidean2DEnvironmentWithGraph<*, T, M, F>,
+class OrientingSteeringBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon> @JvmOverloads constructor(
+    environment: Euclidean2DEnvironmentWithGraph<*, T, M, Euclidean2DCrossing>,
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>,
     private val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = DistanceWeighted(environment, pedestrian)
-) : OrientingBehavior2D<T, N, E, M, F>(environment, pedestrian, timeDistribution) {
+) : OrientingBehavior2D<T, N, E, M>(environment, pedestrian, timeDistribution) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: F) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: Euclidean2DCrossing) {
         val currPos = environment.getPosition(pedestrian)
         var desiredMovement = Seek2D(environment, this, pedestrian, *target.coordinates).nextPosition
         var disturbingMovement = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition

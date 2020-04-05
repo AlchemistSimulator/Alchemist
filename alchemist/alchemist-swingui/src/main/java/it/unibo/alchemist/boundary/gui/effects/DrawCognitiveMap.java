@@ -17,12 +17,13 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
+import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,7 @@ public class DrawCognitiveMap extends DrawOnce {
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE);
     private Color colorCache = Color.RED;
     @Nullable
-    private transient NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, ?> cognitiveMap;
+    private transient NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap;
 
     /**
      * @param g        graphics
@@ -76,7 +77,7 @@ public class DrawCognitiveMap extends DrawOnce {
         super.apply(g, n, env, wormhole);
         final Integer markerNodeID = getMarkerNodeID();
         if (cognitiveMap == null && markerNodeID != null && env.getNodeByID(markerNodeID) instanceof OrientingPedestrian
-                && env instanceof Environment2DWithObstacles
+                && env instanceof Environment2DWithObstacles<?, ?, ?>
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
             cognitiveMap = ((OrientingPedestrian) env.getNodeByID(markerNodeID)).getCognitiveMap();
         }
@@ -90,7 +91,7 @@ public class DrawCognitiveMap extends DrawOnce {
         if (cognitiveMap != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             g.setColor(Color.RED);
-            cognitiveMap.nodes().stream()
+            cognitiveMap.vertexSet().stream()
                     .map(r -> mapEnvEllipseToAwtShape(r, wormhole, env))
                     .forEach(r -> {
                         g.setColor(colorCache);
@@ -98,11 +99,12 @@ public class DrawCognitiveMap extends DrawOnce {
                         g.setColor(colorCache.brighter().brighter());
                         g.draw(r);
                     });
-            cognitiveMap.nodes().forEach(r -> {
+            cognitiveMap.vertexSet().forEach(r -> {
                 final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                 if (cognitiveMap != null) {
-                    cognitiveMap.edgesFrom(r).forEach(e -> {
-                        final Point centroidTo = wormhole.getViewPoint(env.makePosition(e.getHead().getCentroid().getX(), e.getHead().getCentroid().getY()));
+                    cognitiveMap.outgoingEdgesOf(r).forEach(e -> {
+                        final Ellipse head = cognitiveMap.getEdgeTarget(e);
+                        final Point centroidTo = wormhole.getViewPoint(env.makePosition(head.getCentroid().getX(), head.getCentroid().getY()));
                         g.setColor(colorCache);
                         g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
                     });

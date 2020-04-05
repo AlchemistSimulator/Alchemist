@@ -11,16 +11,14 @@ package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator.generateNavigationGraph
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DNavigationGraph
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DNavigationGraphBuilder
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DCrossing
-import it.unibo.alchemist.model.implementations.graph.edges
+import it.unibo.alchemist.model.implementations.graph.DefaultEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DNavigationGraph
 import org.kaikikm.threadresloader.ResourceLoader
 import java.awt.Color
 import java.io.File
@@ -76,20 +74,21 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     private fun Euclidean2DNavigationGraph.map(
         mapper: (Euclidean2DPosition) -> Euclidean2DPosition
     ): Euclidean2DNavigationGraph {
-        val builder = Euclidean2DNavigationGraphBuilder()
-        nodes().forEach { builder.addNode(it.mapPolygon(mapper)) }
-        edges().forEach { builder.addEdge(it.mapCrossing(mapper)) }
-        return builder.build(destinations())
+        val defaultCrossing = Euclidean2DPosition(0.0, 0.0).let { Euclidean2DCrossing(it, it) }
+        val newGraph = DefaultEuclidean2DNavigationGraph(destinations(), defaultCrossing::class.java)
+        vertexSet().forEach { newGraph.addVertex(it.mapPolygon(mapper)) }
+        edgeSet().forEach {
+            val tail = getEdgeSource(it).mapPolygon(mapper)
+            val head = getEdgeTarget(it).mapPolygon(mapper)
+            newGraph.addEdge(tail, head, it.mapCrossing(mapper))
+        }
+        return newGraph
     }
 
     private fun Euclidean2DCrossing.mapCrossing(
         mapper: (Euclidean2DPosition) -> Euclidean2DPosition
     ): Euclidean2DCrossing =
-        GraphEdgeWithData(
-            tail.mapPolygon(mapper),
-            head.mapPolygon(mapper),
-            Segment2D(mapper.invoke(data.first), mapper.invoke(data.second))
-        )
+        Segment2D(mapper.invoke(first), mapper.invoke(second))
 
     private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =
         MutableConvexPolygonImpl(vertices().map(mapper).toMutableList())

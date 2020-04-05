@@ -15,11 +15,12 @@ import it.unibo.alchemist.model.implementations.geometry.DoubleInterval.Companio
 import it.unibo.alchemist.model.implementations.geometry.createSegment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DNavigationGraph
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DNavigationGraphBuilder
 import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.implementations.graph.DefaultEuclidean2DNavigationGraph
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DNavigationGraph
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 
@@ -83,8 +84,9 @@ fun generateNavigationGraph(
         .map { createSeed(it.x, it.y, unity) }
         .toMutableList()
         .grow(origin, width, height, obstacles, unity)
-    val builder = Euclidean2DNavigationGraphBuilder()
-    seeds.forEach { builder.addNode(it) }
+    val defaultCrossing = Euclidean2DPosition(0.0, 0.0).let { Euclidean2DCrossing(it, it) }
+    val graph = DefaultEuclidean2DNavigationGraph(destinations, defaultCrossing.javaClass)
+    seeds.forEach { graph.addVertex(it) }
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
             if (edge.isAxisAligned) {
@@ -97,8 +99,8 @@ fun generateNavigationGraph(
                 crossings
             } else emptyList()
         }.flatten()
-    }.forEach { builder.addEdge(it) }
-    return builder.build(destinations)
+    }.forEach { graph.addEdge(it.tail, it.head, it.crossing) }
+    return graph
 }
 
 private fun MutableList<ExtendableConvexPolygon>.grow(
@@ -154,7 +156,7 @@ private fun ExtendableConvexPolygon.findCrossings(
      * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
      */
     remaining: DoubleInterval = oldEdge.toInterval()
-): Collection<Euclidean2DCrossing> = emptyList<Euclidean2DCrossing>()
+): Collection<Connection> = emptyList<Connection>()
     .takeIf { fuzzyEquals(remaining.first, remaining.second) }
     ?: let {
         /*
@@ -214,7 +216,7 @@ private fun ExtendableConvexPolygon.findCrossings(
                 } else {
                     createSegment(oldEdge.first.x, it.first, y2 = it.second)
                 }
-                Euclidean2DCrossing(this, neighbor, crossing)
+                Connection(this, neighbor, crossing)
             }
         }
         return crossings + newRemaining.flatMap {
@@ -234,3 +236,5 @@ private fun createSeed(x: Double, y: Double, side: Double): ExtendableConvexPoly
             Euclidean2DPosition(x + side, y),
             Euclidean2DPosition(x + side, y + side),
             Euclidean2DPosition(x, y + side)))
+
+private data class Connection(val tail: ConvexPolygon, val head: ConvexPolygon, val crossing: Euclidean2DCrossing)

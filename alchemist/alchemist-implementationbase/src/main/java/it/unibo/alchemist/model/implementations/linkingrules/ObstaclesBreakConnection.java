@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 
 /**
  * Similar to {@link ConnectWithinDistance}, but if the environment has obstacles,
@@ -40,7 +39,7 @@ public final class ObstaclesBreakConnection<T, P extends Position<P>> extends Co
     @Override
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
         Neighborhood<T> normal = super.computeNeighborhood(center, env);
-        if (!normal.isEmpty() && env instanceof Environment2DWithObstacles) {
+        if (!normal.isEmpty() && env instanceof EnvironmentWithObstacles) {
             final P cp = env.getPosition(center);
             final EnvironmentWithObstacles<?, T, P> environment = (EnvironmentWithObstacles<?, T, P>) env;
             normal = Neighborhoods.make(env, center, StreamSupport.stream(normal.spliterator(), false)

@@ -6,12 +6,10 @@ import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.alg.connectivity.ConnectivityInspector

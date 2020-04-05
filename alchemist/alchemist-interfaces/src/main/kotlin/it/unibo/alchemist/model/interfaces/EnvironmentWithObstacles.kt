@@ -9,16 +9,14 @@
 
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector
-
 /**
  * An environment with obstacles.
  *
  * @param T the concentration type.
  * @param P the position and vector type for this environment.
- * @param W the types of obstacles.
+ * @param W the type of obstacles.
  */
-interface EnvironmentWithObstacles<T, P, W : Obstacle<P>> : Environment<T, P> where P : Position<P>, P : Vector<P> {
+interface EnvironmentWithObstacles<W : Obstacle<P>, T, P : Position<P>> : Environment<T, P> {
 
     /**
      * Adds an obstacle to this environment.
@@ -54,7 +52,7 @@ interface EnvironmentWithObstacles<T, P, W : Obstacle<P>> : Environment<T, P> wh
     fun getObstaclesInRange(center: P, range: Double): List<W>
 
     /**
-     * @return true if this environment has mobile obstacles obstacles, false if
+     * @return true if this environment has mobile obstacles, false if
      * the obstacles are static
      */
     fun hasMobileObstacles(): Boolean

@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @param <T>
  */
-public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements EuclideanPhysics2DEnvironmentWithObstacles<T, RectObstacle2D> {
+public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D, T> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
     private static final long serialVersionUID = 69931743897405107L;

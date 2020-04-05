@@ -12,27 +12,24 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle2D
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
  * An bidimensional [EnvironmentWithObstacles].
- *
- * Pragmatically, [P] could be restricted to Euclidean2DPosition, but
- * let's maintain as much generality as possible.
  */
-interface Environment2DWithObstacles<T, P, W : Obstacle2D<P>> : EnvironmentWithObstacles<T, P, W>
-    where P : Position2D<P>, P : Vector2D<P>
+interface Environment2DWithObstacles<W : Obstacle2D<P>, T, P : Position2D<P>> : EnvironmentWithObstacles<W, T, P>
 
 /**
  * An [Environment2DWithObstacles] using [Euclidean2DPosition]s.
  */
-interface Euclidean2DEnvironmentWithObstacles<T, W : Obstacle2D<Euclidean2DPosition>> :
-    Environment2DWithObstacles<T, Euclidean2DPosition, W>
+interface Euclidean2DEnvironmentWithObstacles<W : Obstacle2D<Euclidean2DPosition>, T> :
+    Environment2DWithObstacles<W, T, Euclidean2DPosition>
 
 /**
  * Euclidean physics environment with support for obstacles.
  */
-interface EuclideanPhysics2DEnvironmentWithObstacles<T, W : Obstacle2D<Euclidean2DPosition>> :
-    Physics2DEnvironment<T>,
-    Euclidean2DEnvironmentWithObstacles<T, W>
+interface EuclideanPhysics2DEnvironmentWithObstacles<W : Obstacle2D<Euclidean2DPosition>, T> :
+    Euclidean2DEnvironmentWithObstacles<W, T>,
+    Physics2DEnvironment<T>

@@ -12,6 +12,11 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle2D
 import it.unibo.alchemist.model.interfaces.Position2D
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
+import org.apache.commons.math3.util.DoubleArray
+
+
 
 /**
  * An bidimensional [EnvironmentWithObstacles].
@@ -28,6 +33,22 @@ interface Environment2DWithObstacles<W : Obstacle2D<P>, T, P : Position2D<P>> : 
      * @return the list of obstacles
      */
     fun getObstaclesInRange(center: P, range: Double): List<W>
+
+    /**
+     * Given a point and a range, retrieves all the obstacles within.
+     *
+     * @param centerx
+     *              the x coordinate of the center
+     * @param centery
+     *              the y coordinate of the center
+     * @param range
+     *              the range to scan
+     * @return the list of Obstacles
+     */
+    /*
+     * Maintained in order not to break older code.
+     */
+    fun getObstaclesInRange(centerx: Double, centery: Double, range: Double): List<W>
 
     /**
      * @return true if this environment has mobile obstacles, false if

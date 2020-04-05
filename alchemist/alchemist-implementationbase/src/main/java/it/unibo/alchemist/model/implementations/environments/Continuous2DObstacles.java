@@ -48,13 +48,16 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
         return rtree.entries().map(Entry::value).toList().toBlocking().single();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @NotNull
     @Override
-    public List<RectObstacle2D> getObstaclesInRange(@NotNull final Euclidean2DPosition center, final double range) {
-        return rtree.search(Geometries.circle(center.getX(), center.getY(), range)).map(Entry::value).toList().toBlocking().single();
+    public final List<RectObstacle2D> getObstaclesInRange(@NotNull final Euclidean2DPosition center, final double range) {
+        return getObstaclesInRange(center.getX(), center.getY(), range);
+    }
+
+    @NotNull
+    @Override
+    public final List<RectObstacle2D> getObstaclesInRange(final double centerx, final double centery, final double range) {
+        return rtree.search(Geometries.circle(centerx, centery, range)).map(Entry::value).toList().toBlocking().single();
     }
 
     /**

@@ -8,7 +8,6 @@
 package it.unibo.alchemist.model.interfaces;
 
 import java.awt.Shape;
-import java.io.Serializable;
 
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
 
@@ -17,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
  *
  * @param <V> the position type for the space in which this obstacle is placed.
  */
-public interface Obstacle2D<V extends Vector2D<V>> extends Serializable, Shape, Obstacle<V> {
+public interface Obstacle2D<V extends Vector2D<V>> extends Shape, Obstacle<V> {
 
     /**
      * Given a vector (represented as a starting point and an end point), computes

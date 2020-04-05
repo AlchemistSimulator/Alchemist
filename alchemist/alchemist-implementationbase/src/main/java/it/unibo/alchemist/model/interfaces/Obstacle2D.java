@@ -18,6 +18,21 @@ import java.awt.Shape;
 public interface Obstacle2D<P extends Position2D<P>> extends Obstacle<P>, Shape {
 
     /**
+     * Given a vector (starting point and end point) representing a requested
+     * move, this method computes a new end point, representing a cut version of
+     * the initial vector, modified in such a way that the end point is outside
+     * the obstacle.
+     *
+     * @param start
+     *          starting point of the vector
+     * @param end
+     *          ending point of the vector
+     * @return the intersection point between the vector and the obstacle nearest
+     *         to the vector's starting point.
+     */
+    P next(P start, P end);
+
+    /**
      * Given a vector (represented as a starting point and an end point), computes
      * the intersection point between the vector and the obstacle nearest to the
      * vector's starting point.

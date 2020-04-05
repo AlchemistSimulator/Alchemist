@@ -12,10 +12,11 @@ import java.util.stream.StreamSupport;
 
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
+import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 
 /**
  * Similar to {@link ConnectWithinDistance}, but if the environment has obstacles,
@@ -41,7 +42,7 @@ public final class ObstaclesBreakConnection<T, P extends Position<P>> extends Co
         Neighborhood<T> normal = super.computeNeighborhood(center, env);
         if (!normal.isEmpty() && env instanceof Environment2DWithObstacles) {
             final P cp = env.getPosition(center);
-            final Environment2DWithObstacles<?, T, P> environment = (Environment2DWithObstacles<?, T, P>) env;
+            final EnvironmentWithObstacles<?, T, P> environment = (EnvironmentWithObstacles<?, T, P>) env;
             normal = Neighborhoods.make(env, center, StreamSupport.stream(normal.spliterator(), false)
                     .filter(node -> !environment.intersectsObstacle(cp, environment.getPosition(node)))
                     .collect(Collectors.toList()));

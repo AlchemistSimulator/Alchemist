@@ -26,10 +26,10 @@ import java.util.List;
 
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 
 /**
  * Connects two nodes if, throwing a beam from one to the other, there exists at

@@ -9,27 +9,46 @@
 
 package it.unibo.alchemist.model.interfaces.environments
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle2D
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
  * An bidimensional [EnvironmentWithObstacles].
  */
-interface Environment2DWithObstacles<W : Obstacle2D<P>, T, P : Position2D<P>> : EnvironmentWithObstacles<W, T, P>
+interface Environment2DWithObstacles<W : Obstacle2D<P>, T, P : Position2D<P>> : EnvironmentWithObstacles<W, T, P> {
 
-/**
- * An [Environment2DWithObstacles] using [Euclidean2DPosition]s.
- */
-interface Euclidean2DEnvironmentWithObstacles<W : Obstacle2D<Euclidean2DPosition>, T> :
-    Environment2DWithObstacles<W, T, Euclidean2DPosition>
+    /**
+     * Given a point and a range, retrieves all the obstacles within.
+     *
+     * @param center
+     *              the center point
+     * @param range
+     *              the range to scan
+     * @return the list of obstacles
+     */
+    fun getObstaclesInRange(center: P, range: Double): List<W>
 
-/**
- * Euclidean physics environment with support for obstacles.
- */
-interface EuclideanPhysics2DEnvironmentWithObstacles<W : Obstacle2D<Euclidean2DPosition>, T> :
-    Euclidean2DEnvironmentWithObstacles<W, T>,
-    Physics2DEnvironment<T>
+    /**
+     * @return true if this environment has mobile obstacles, false if
+     * the obstacles are static
+     */
+    fun hasMobileObstacles(): Boolean
+
+    /**
+     * This method must calculate the ABSOLUTE next allowed position given the
+     * current position and the position in which the node wants to move. For
+     * example, if your node is in position [2,3], wants to move to [3,4] but
+     * the next allowed position (because, e.g., of physical obstacles) is
+     * [2.5,3.5], the result must be a Position containing coordinates
+     * [2.5,3.5].
+     *
+     * @param current
+     *              the current position
+     * @param desired
+     *              the desired position
+     * @return the next allowed position, where the node can actually move. This
+     * position MUST be considered as a vector whose start point is [current].
+     */
+    fun next(current: P, desired: P): P
+}

@@ -89,8 +89,7 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
         currentRoom.edges()
             .forEach { side ->
                 /*
-                 * The midpoints of the passages lying on the side
-                 * of the current room being considered
+                 * The midpoints of the crossings lying on the side being considered
                  */
                 val doorCenters = edges.map { it.first }
                     .filter { side.contains(it) }

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -31,9 +32,9 @@ class TestRectObstacle2D : StringSpec({
         nextx: Double,
         nexty: Double
     ) {
-        val next = obstacle.next(startx, starty, endx, endy)
-        assertTrue(fuzzyEquals(next.first, nextx))
-        assertTrue(fuzzyEquals(next.second, nexty))
+        val next = obstacle.next(Euclidean2DPosition(startx, starty), Euclidean2DPosition(endx, endy))
+        assertTrue(fuzzyEquals(next.x, nextx))
+        assertTrue(fuzzyEquals(next.y, nexty))
     }
 
     /*

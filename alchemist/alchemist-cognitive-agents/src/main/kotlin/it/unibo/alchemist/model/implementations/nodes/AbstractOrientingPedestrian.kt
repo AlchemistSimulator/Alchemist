@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.geometry.liesBetween
 import it.unibo.alchemist.model.implementations.graph.DefaultNavigationGraph
+import it.unibo.alchemist.model.implementations.graph.pathExists
 import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
@@ -83,7 +84,7 @@ abstract class AbstractOrientingPedestrian<
      * graph). We then produce a minimum spanning tree of the described graph.
      */
     override val cognitiveMap: NavigationGraph<P, A, N, DefaultEdge> by lazy {
-        val environmentGraph: NavigationGraph<P, A, M, F> = environment.graph()
+        val environmentGraph = environment.graph()
         /*
          * The rooms in which landmarks will be placed.
          */
@@ -105,31 +106,31 @@ abstract class AbstractOrientingPedestrian<
                 ?.let { rooms.add(it) }
         }
         /*
-         * landmarks[i] will contain the landmark generated in room[i].
+         * landmarks[i] will contain the landmark generated in rooms[i].
          */
         val landmarks = rooms.map { generateLandmarkWithin(it) }
-        val connectivityInspector = ConnectivityInspector(environmentGraph)
-        /*
-         * Maps each room's index to the indices of the ones reachable from it.
-         */
-        val reachability = rooms.indices.map { i ->
-                i to rooms.indices.filter { j ->
-                    i != j && connectivityInspector.pathExists(rooms[i], rooms[j])
-                }
-            }.toMap()
-        val destinationsProvided = rooms.flatMap { environmentGraph.destinationsWithin(it) }
-        val fullGraph = DefaultNavigationGraph<P, A, N, DefaultEdge>(destinationsProvided, DefaultEdge::class.java)
-        reachability.forEach { (i, reachable) ->
-            reachable.forEach { j -> fullGraph.addEdge(landmarks[i], landmarks[j]) }
+        val destinationsProvided = landmarks.flatMap { landmark ->
+            environmentGraph.destinations().filter { landmark.contains(it) }
         }
-        val envGraphUnitaryWeight = AsWeightedGraph(environmentGraph, { 1.0 }, false, false)
-        val dijkstra = DijkstraShortestPath(envGraphUnitaryWeight)
+        val fullGraph = DefaultNavigationGraph<P, A, N, DefaultEdge>(destinationsProvided, DefaultEdge::class.java)
+        landmarks.forEach { fullGraph.addVertex(it) }
+        rooms.indices.forEach { i ->
+            rooms.indices.forEach { j ->
+                if (i != j && environmentGraph.pathExists(rooms[i], rooms[j])) {
+                    fullGraph.addEdge(landmarks[i], landmarks[j])
+                }
+            }
+        }
+        /*
+         * The environment's graph is unweighted, but edges' weights defaults to 1.0
+         */
+        val dijkstra = DijkstraShortestPath(environmentGraph)
         val weightFunction: (DefaultEdge) -> Double = { edge ->
             val tail = fullGraph.getEdgeSource(edge)
             val head = fullGraph.getEdgeTarget(edge)
             /*
-             * The shortest path between two rooms in the env graph with edges of unitary weight
-             * is the number of rooms that need to be traversed to go from tail to head.
+             * The weight of the shortest path between two rooms (tail, head) is the number
+             * of rooms that need to be traversed to go from tail to head.
              */
             dijkstra.getPathWeight(rooms[landmarks.indexOf(tail)], rooms[landmarks.indexOf(head)])
         }

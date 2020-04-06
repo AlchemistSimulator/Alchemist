@@ -19,6 +19,11 @@ package it.unibo.alchemist.model.interfaces
 interface EnvironmentWithObstacles<W : Obstacle<P>, T, P : Position<P>> : Environment<T, P> {
 
     /**
+     * A list of all the obstacles in this environment.
+     */
+    val obstacles: List<W>
+
+    /**
      * Adds an obstacle to this environment.
      *
      * @param obstacle
@@ -34,11 +39,6 @@ interface EnvironmentWithObstacles<W : Obstacle<P>, T, P : Position<P>> : Enviro
      * @return true if the obstacle has actually been removed
      */
     fun removeObstacle(obstacle: W): Boolean
-
-    /**
-     * @return a list of all the obstacles in this environment.
-     */
-    fun getObstacles(): List<W>
 
     /**
      * Checks whether there is at least an obstacle intersecting the line connecting [start] and [end].

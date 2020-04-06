@@ -24,4 +24,3 @@ fun <V, E> Graph<V, E>.pathExists(source: V, sink: V) =
      * meaningfully.
      */
     DijkstraShortestPath.findPathBetween(this, source, sink) != null
-

@@ -12,11 +12,6 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle2D
 import it.unibo.alchemist.model.interfaces.Position2D
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model
-import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
-import org.apache.commons.math3.util.DoubleArray
-
-
 
 /**
  * An bidimensional [EnvironmentWithObstacles].

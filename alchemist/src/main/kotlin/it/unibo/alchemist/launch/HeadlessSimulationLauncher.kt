@@ -33,7 +33,8 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
                 Import an Alchemist module with a distributed executor, e.g. alchemist-grid.
                 See: https://alchemistsimulator.github.io/wiki/usage/grid/
                 """.trimIndent()))
-            else -> Validation.OK()
+            headless -> Validation.OK()
+            else -> Priority.Fallback("Headless mode not explicitly requested, but no graphic environment found")
         }
     }
 

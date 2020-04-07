@@ -15,7 +15,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 /**
  * Checks whether a path exists between source and sink.
  */
-fun <V, E> Graph<V, E>.pathExists(source: V, sink: V) =
+fun <V, E> Graph<V, E>.pathExists(source: V, sink: V): Boolean =
     /*
      * [DijkstraShortestPath] is used instead of [org.jgrapht.alg.connectivity.ConnectivityInspector.pathExists],
      * because, in case of directed graph, the latter checks whether the given vertices lay in the same weakly

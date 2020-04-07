@@ -15,6 +15,7 @@ import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Executes simulations locally in a headless environment.
@@ -59,6 +60,8 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
             .filter { it.isPresent }
             .map { it.get() }
             .firstOrNull()
+            executor.shutdown()
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
         if (exception != null) {
             throw exception
         }

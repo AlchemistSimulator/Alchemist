@@ -1,0 +1,10 @@
+module org:protelis:tutorial:distanceTo
+
+let maxGrad = POSITIVE_INFINITY
+rep (d <- maxGrad) {
+	mux (env.has("source")) {
+		0
+	} else {
+		foldMin(maxGrad, nbr(d) + self.nbrRange())
+	}
+}

@@ -34,7 +34,9 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
                 See: https://alchemistsimulator.github.io/wiki/usage/grid/
                 """.trimIndent()))
             headless -> Validation.OK()
-            else -> Priority.Fallback("Headless mode not explicitly requested, but no graphic environment found")
+            else -> Validation.OK(Priority.Fallback(
+                "Headless mode not explicitly requested, but no graphic environment found")
+            )
         }
     }
 

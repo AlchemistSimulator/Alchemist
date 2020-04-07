@@ -44,5 +44,6 @@ object SingleRunSwingUI : SimulationLauncher() {
             parameters.graphics == null -> SingleRunGUI.make(simulation, JFrame.EXIT_ON_CLOSE)
             else -> SingleRunGUI.make(simulation, parameters.graphics, JFrame.EXIT_ON_CLOSE)
         }
+        simulation.run()
     }
 }

@@ -104,7 +104,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
         if (l.isEmpty()) {
             return new Euclidean2DPosition(nx, ny);
         }
-        Pair<Double, Double> shortest = null;
+        Euclidean2DPosition shortest = null;
         double fx = nx;
         double fy = ny;
         double fxCache = Double.NaN;
@@ -113,13 +113,13 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
             fxCache = fx;
             fyCache = fy;
             for (int i = 0; i < l.size(); i++) {
-                shortest = asPair(l.get(i).next(new Euclidean2DPosition(ox, oy), new Euclidean2DPosition(fx, fy)));
+                shortest = l.get(i).next(new Euclidean2DPosition(ox, oy), new Euclidean2DPosition(fx, fy));
                 /*
                  * If one of the dimensions is limited, such limit must be
                  * retained!
                  */
-                final double sfx = shortest.getFirst();
-                final double sfy = shortest.getSecond();
+                final double sfx = shortest.getX();
+                final double sfy = shortest.getY();
                 if (sfx != fx || fy != sfy) {
                     /*
                      * This obstacle has contributed already
@@ -131,11 +131,7 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
                 }
             }
         }
-        return makePosition(shortest.getFirst(), shortest.getSecond());
-    }
-
-    private static Pair<Double, Double> asPair(final Euclidean2DPosition coords) {
-        return new Pair<>(coords.getX(), coords.getY());
+        return makePosition(shortest.getX(), shortest.getY());
     }
 
     private List<RectObstacle2D> query(final double ox, final double oy, final double nx, final double ny, final double tolerance) {

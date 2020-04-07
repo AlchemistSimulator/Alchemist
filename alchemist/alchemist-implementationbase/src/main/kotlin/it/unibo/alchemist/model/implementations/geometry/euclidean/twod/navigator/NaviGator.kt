@@ -17,9 +17,8 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.graph.DefaultEuclidean2DNavigationGraph
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DNavigationGraph
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
@@ -84,22 +83,21 @@ fun generateNavigationGraph(
         .map { createSeed(it.x, it.y, unity) }
         .toMutableList()
         .grow(origin, width, height, obstacles, unity)
-    val defaultCrossing = Euclidean2DPosition(0.0, 0.0).let { Euclidean2DCrossing(it, it) }
-    val graph = DefaultEuclidean2DNavigationGraph(destinations, defaultCrossing.javaClass)
+    val graph = DefaultEuclidean2DNavigationGraph(destinations, Euclidean2DPassage::class.java)
     seeds.forEach { graph.addVertex(it) }
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
             if (edge.isAxisAligned) {
-                val crossings =
-                    seed.findCrossings(index, seeds, origin, width, height, obstacles, unity)
+                val passages =
+                    seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
                 /*
                  * Moves the edge back to its previous position as findCrossings modified it.
                  */
                 seed.moveEdge(index, edge)
-                crossings
+                passages
             } else emptyList()
         }.flatten()
-    }.forEach { graph.addEdge(it.tail, it.head, it.crossing) }
+    }.forEach { graph.addEdge(it.tail, it.head, it) }
     return graph
 }
 
@@ -133,13 +131,13 @@ private fun MutableList<ExtendableConvexPolygon>.grow(
 }
 
 /*
- * Finds the crossings on the side of the polygon specified by the index parameter.
+ * Finds the passages on the side of the polygon specified by the index parameter.
  * The specified side should be axis-aligned. This method is recursive and modifies
  * the specified edge.
  * In brief, this method advances the specified edge, keeping track of the portions
- * of it not occluded by obstacles yet, until every crossing has been detected.
+ * of it not occluded by obstacles yet, until every passage has been detected.
  */
-private fun ExtendableConvexPolygon.findCrossings(
+private fun ExtendableConvexPolygon.findPassages(
     index: Int,
     seeds: Collection<ExtendableConvexPolygon>,
     origin: Euclidean2DPosition,
@@ -156,7 +154,7 @@ private fun ExtendableConvexPolygon.findCrossings(
      * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
      */
     remaining: DoubleInterval = oldEdge.toInterval()
-): Collection<Connection> = emptyList<Connection>()
+): Collection<Euclidean2DPassage> = emptyList<Euclidean2DPassage>()
     .takeIf { fuzzyEquals(remaining.first, remaining.second) }
     ?: let {
         /*
@@ -205,27 +203,27 @@ private fun ExtendableConvexPolygon.findCrossings(
                 polygonToInterval(neighbor).intersectionEndpointsExcluded(remaining)
             }
         }
-        val crossings = neighborToIntervals.flatMap { (neighbor, intervals) ->
+        val passages = neighborToIntervals.flatMap { (neighbor, intervals) ->
             /*
              * Intervals should be mapped to actual segments, considering the
              * coordinate we ignored so far of the oldEdge.
              */
             intervals.map {
-                val crossing = if (oldEdge.xAxisAligned) {
+                val passageShape = if (oldEdge.xAxisAligned) {
                     createSegment(it.first, oldEdge.first.y, x2 = it.second)
                 } else {
                     createSegment(oldEdge.first.x, it.first, y2 = it.second)
                 }
-                Connection(this, neighbor, crossing)
+                Euclidean2DPassage(this, neighbor, passageShape)
             }
         }
-        return crossings + newRemaining.flatMap {
+        return passages + newRemaining.flatMap {
             /*
-             * The portions of edge that became crossings won't be considered further.
+             * The portions of edge that became passages won't be considered further.
              */
             it.subtractAll(neighborToIntervals.flatMap { (_, intervals) -> intervals })
         }.flatMap {
-            findCrossings(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)
+            findPassages(index, seeds, origin, width, height, obstacles, unity, oldEdge, it)
         }
     }
 
@@ -236,5 +234,3 @@ private fun createSeed(x: Double, y: Double, side: Double): ExtendableConvexPoly
             Euclidean2DPosition(x + side, y),
             Euclidean2DPosition(x + side, y + side),
             Euclidean2DPosition(x, y + side)))
-
-private data class Connection(val tail: ConvexPolygon, val head: ConvexPolygon, val crossing: Euclidean2DCrossing)

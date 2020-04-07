@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DNavigationGraph
 import org.jgrapht.graph.DefaultDirectedGraph
@@ -42,4 +42,4 @@ class DefaultNavigationGraph<
  * Default implementation of [Euclidean2DNavigationGraph].
  */
 typealias DefaultEuclidean2DNavigationGraph =
-    DefaultNavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DCrossing>
+    DefaultNavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>

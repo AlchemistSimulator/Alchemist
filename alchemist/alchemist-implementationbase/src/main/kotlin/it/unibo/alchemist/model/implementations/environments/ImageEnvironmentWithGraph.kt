@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DNavigationGraph
 import org.kaikikm.threadresloader.ResourceLoader
 import java.awt.Color
@@ -40,7 +40,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     obstaclesColor: Int = Color.BLACK.rgb,
     roomsColor: Int = Color.BLUE.rgb
 ) : ImageEnvironment<T>(obstaclesColor, path, zoom, dx, dy),
-    EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D, T, ConvexPolygon, Euclidean2DCrossing> {
+    EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D, T, ConvexPolygon, Euclidean2DPassage> {
 
     init {
         require(destinationCoords.size % 2 == 0) { "missing coordinates" }
@@ -74,20 +74,20 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     private fun Euclidean2DNavigationGraph.map(
         mapper: (Euclidean2DPosition) -> Euclidean2DPosition
     ): Euclidean2DNavigationGraph {
-        val defaultCrossing = Euclidean2DPosition(0.0, 0.0).let { Euclidean2DCrossing(it, it) }
-        val newGraph = DefaultEuclidean2DNavigationGraph(destinations(), defaultCrossing::class.java)
+        val newGraph = DefaultEuclidean2DNavigationGraph(destinations(), Euclidean2DPassage::class.java)
         vertexSet().forEach { newGraph.addVertex(it.mapPolygon(mapper)) }
         edgeSet().forEach {
-            val tail = getEdgeSource(it).mapPolygon(mapper)
-            val head = getEdgeTarget(it).mapPolygon(mapper)
-            newGraph.addEdge(tail, head, it.mapCrossing(mapper))
+            val mappedTail = it.tail.mapPolygon(mapper)
+            val mappedHead = it.head.mapPolygon(mapper)
+            val mappedShape = it.passageShape.mapSegment(mapper)
+            newGraph.addEdge(mappedTail, mappedHead, Euclidean2DPassage(mappedTail, mappedHead, mappedShape))
         }
         return newGraph
     }
 
-    private fun Euclidean2DCrossing.mapCrossing(
+    private fun Segment2D<Euclidean2DPosition>.mapSegment(
         mapper: (Euclidean2DPosition) -> Euclidean2DPosition
-    ): Euclidean2DCrossing =
+    ): Segment2D<Euclidean2DPosition> =
         Segment2D(mapper.invoke(first), mapper.invoke(second))
 
     private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =

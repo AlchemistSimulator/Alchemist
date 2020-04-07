@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon;
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D;
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage;
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
@@ -60,7 +60,7 @@ public class DrawNavigationGraph extends DrawOnce {
     private Color colorCache = Color.BLUE;
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, Segment2D<Euclidean2DPosition>> graph;
+    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, Euclidean2DPassage> graph;
 
     /**
      * @param g        graphics
@@ -93,8 +93,8 @@ public class DrawNavigationGraph extends DrawOnce {
                 final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                 if (graph != null) {
                     graph.outgoingEdgesOf(r).forEach(e -> {
-                        final Point viewP1 = wormhole.getViewPoint(env.makePosition(e.getFirst().getX(), e.getFirst().getY()));
-                        final Point viewP2 = wormhole.getViewPoint(env.makePosition(e.getSecond().getX(), e.getSecond().getY()));
+                        final Point viewP1 = wormhole.getViewPoint(env.makePosition(e.getPassageShape().getFirst().getX(), e.getPassageShape().getFirst().getY()));
+                        final Point viewP2 = wormhole.getViewPoint(env.makePosition(e.getPassageShape().getSecond().getX(), e.getPassageShape().getSecond().getY()));
                         g.setColor(Color.GREEN);
                         g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
                         final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);

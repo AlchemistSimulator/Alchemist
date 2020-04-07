@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DCo
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph
@@ -29,7 +29,7 @@ import kotlin.math.pow
 /**
  * An [AbstractOrientingBehavior] in an euclidean bidimensional space.
  * This class accepts an [Euclidean2DEnvironmentWithGraph] whose graph features
- * [ConvexPolygon]al nodes (or any subclass of it) and [Euclidean2DCrossing]s
+ * [ConvexPolygon]al nodes (or any subclass of it) and [Euclidean2DPassage]s
  * as edges.
  *
  * @param T the concentration type.
@@ -38,16 +38,16 @@ import kotlin.math.pow
  * @param M the type of nodes of the navigation graph provided by the environment.
  */
 open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
-    override val environment: Euclidean2DEnvironmentWithGraph<*, T, M, Euclidean2DCrossing>,
+    override val environment: Euclidean2DEnvironmentWithGraph<*, T, M, Euclidean2DPassage>,
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>
-) : AbstractOrientingBehavior<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, Euclidean2DCrossing>(
+) : AbstractOrientingBehavior<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, Euclidean2DPassage>(
     environment,
     pedestrian,
     timeDistribution
 ) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: Euclidean2DCrossing) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: Euclidean2DPassage) {
         if (currentRoom == null) {
             Seek2D(environment, this, pedestrian, *target.coordinates).execute()
         } else {
@@ -79,13 +79,14 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
      * destination, then we compute the shortest paths between each midpoint and the final
      * destination and rank each edge consequently.
      */
-    override fun computeEdgeRankings(currentRoom: M, destination: Euclidean2DPosition): Map<Euclidean2DCrossing, Int> {
-        val graph = DefaultUndirectedWeightedGraph<Euclidean2DPosition, DefaultEdge>(DefaultEdge::class.java)
+    override fun computeEdgeRankings(currentRoom: M, destination: Euclidean2DPosition): Map<Euclidean2DPassage, Int> {
         val environmentGraph = environment.graph()
+        val graph = DefaultUndirectedWeightedGraph<Euclidean2DPosition, DefaultEdge>(DefaultEdge::class.java)
         /*
          * Maps each edge's midpoint to the correspondent edge object
          */
-        val edges = environmentGraph.outgoingEdgesOf(currentRoom).map { it.midPoint to it }
+        val edges = environmentGraph.outgoingEdgesOf(currentRoom).map { it.passageShape.midPoint to it }
+        (currentRoom.vertices() + edges.map { it.first } + destination).forEach { graph.addVertex(it) }
         currentRoom.edges()
             .forEach { side ->
                 /*
@@ -122,8 +123,8 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
      * boundary of the current room. This method finds the point of such segment
      * which is more convenient to cross.
      */
-    override fun computeSubdestination(targetDoor: Euclidean2DCrossing): Euclidean2DPosition {
-        with(targetDoor) {
+    override fun computeSubdestination(targetDoor: Euclidean2DPassage): Euclidean2DPosition {
+        with(targetDoor.passageShape) {
             val nextRoom = environment.graph().getEdgeTarget(targetDoor)
             /*
              * The ideal movement the pedestrian would perform connects its current
@@ -156,7 +157,7 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
     /**
      * The [congestionFactor] is added.
      */
-    public override fun weight(edge: Euclidean2DCrossing, rank: Int?) =
+    public override fun weight(edge: Euclidean2DPassage, rank: Int?) =
         super.weight(edge, rank) * congestionFactor(environment.graph().getEdgeTarget(edge))
 
     /*
@@ -176,10 +177,10 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
     @Suppress("UNCHECKED_CAST")
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?): Reaction<T> {
         require(n as? OrientingPedestrian<
-            T, Euclidean2DPosition, Euclidean2DTransformation, M, Euclidean2DCrossing> != null) {
+            T, Euclidean2DPosition, Euclidean2DTransformation, M, Euclidean2DPassage> != null) {
             "node not compatible, required: " + pedestrian.javaClass + ", found: " + n?.javaClass
         }
-        n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, Euclidean2DCrossing>
+        n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, Euclidean2DPassage>
         return OrientingBehavior2D(environment, n, timeDistribution)
     }
 
@@ -210,8 +211,8 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
     /*
      * Checks whether the given segment intersects the given edge.
      */
-    private fun crosses(segment: Segment2D<Euclidean2DPosition>, edge: Euclidean2DCrossing) =
-        intersection(segment, edge).type == SegmentsIntersectionTypes.POINT
+    private fun crosses(segment: Segment2D<Euclidean2DPosition>, edge: Euclidean2DPassage) =
+        intersection(segment, edge.passageShape).type == SegmentsIntersectionTypes.POINT
 
     /*
      * A rough estimation of the area of a shape.

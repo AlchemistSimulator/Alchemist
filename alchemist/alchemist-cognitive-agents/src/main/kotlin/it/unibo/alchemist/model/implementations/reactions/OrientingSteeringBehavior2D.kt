@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWi
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DCrossing
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import kotlin.math.PI
 
 /**
@@ -27,13 +27,13 @@ import kotlin.math.PI
  * @param M the type of nodes of the navigation graph provided by the environment.
  */
 class OrientingSteeringBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon> @JvmOverloads constructor(
-    environment: Euclidean2DEnvironmentWithGraph<*, T, M, Euclidean2DCrossing>,
+    environment: Euclidean2DEnvironmentWithGraph<*, T, M, Euclidean2DPassage>,
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>,
     private val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = DistanceWeighted(environment, pedestrian)
 ) : OrientingBehavior2D<T, N, E, M>(environment, pedestrian, timeDistribution) {
 
-    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: Euclidean2DCrossing) {
+    override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: Euclidean2DPassage) {
         val currPos = environment.getPosition(pedestrian)
         var desiredMovement = Seek2D(environment, this, pedestrian, *target.coordinates).nextPosition
         var disturbingMovement = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition

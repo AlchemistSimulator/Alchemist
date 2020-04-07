@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
+import org.jgrapht.Graph
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
 import org.jgrapht.graph.AsWeightedGraph
@@ -112,7 +113,7 @@ abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
         landmarks.forEach { fullGraph.addVertex(it) }
         rooms.indices.forEach { i ->
             rooms.indices.forEach { j ->
-                if (i != j && environmentGraph.pathExists(rooms[i], rooms[j])) {
+                if (i != j && environmentGraph.pathExists<M>(rooms[i], rooms[j])) {
                     fullGraph.addEdge(landmarks[i], landmarks[j])
                 }
             }

@@ -88,8 +88,7 @@ fun generateNavigationGraph(
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
             if (edge.isAxisAligned) {
-                val passages =
-                    seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
+                val passages = seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
                 /*
                  * Moves the edge back to its previous position as findCrossings modified it.
                  */

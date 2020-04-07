@@ -9,16 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.environments
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle
-import it.unibo.alchemist.model.interfaces.Obstacle2D
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 
 /**
@@ -28,38 +24,14 @@ import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
  * them. To make it easier, think that in an indoor environment, nodes should
  * represent rooms and corridors, whereas edges should represent doors and passages.
  */
-interface EnvironmentWithGraph<
+interface EnvironmentWithGraph<W, T, P, A, N, E> : EnvironmentWithObstacles<W, T, P> where
     W : Obstacle<P>,
-    T,
-    P,
+    P : Position<P>, P : Vector<P>,
     A : GeometricTransformation<P>,
-    N : ConvexGeometricShape<P, A>,
-    E
-> : EnvironmentWithObstacles<W, T, P> where P : Position<P>, P : Vector<P> {
+    N : ConvexGeometricShape<P, A> {
 
     /**
      * @returns the navigation graph.
      */
     fun graph(): NavigationGraph<P, A, N, E>
 }
-
-/**
- * An euclidean [EnvironmentWithGraph].
- */
-interface Euclidean2DEnvironmentWithGraph<
-    W : Obstacle2D<Euclidean2DPosition>,
-    T,
-    N : Euclidean2DConvexShape,
-    E
-> : EnvironmentWithGraph<W, T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
-    Euclidean2DEnvironmentWithObstacles<W, T>
-
-/**
- * An [Euclidean2DEnvironmentWithGraph] with physics.
- */
-interface EuclideanPhysics2DEnvironmentWithGraph<
-    W : Obstacle2D<Euclidean2DPosition>,
-    T,
-    N : Euclidean2DConvexShape,
-    E
-> : Euclidean2DEnvironmentWithGraph<W, T, N, E>, EuclideanPhysics2DEnvironmentWithObstacles<W, T>

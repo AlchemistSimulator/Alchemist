@@ -1,4 +1,3 @@
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -26,11 +25,16 @@ fun runWithOptions(vararg commands: String, test: ProcessResult.() -> Unit) {
     val tee = TeeOutputStream(System.out, bytes)
     System.setOut(PrintStream(tee))
     Alchemist.enableTestMode()
-    val exit = shouldThrow<Alchemist.AlchemistWouldHaveExitedException> {
+    val exit = runCatching {
         Alchemist.main(commands.toList().toTypedArray())
+    }.exceptionOrNull()
+    val exitStatus = when {
+        exit == null -> 0
+        exit is Alchemist.AlchemistWouldHaveExitedException -> exit.exitStatus
+        else -> throw IllegalStateException(exit)
     }
     System.setOut(sysout)
-    test(ProcessResult(exit.exitStatus, bytes.toString()))
+    test(ProcessResult(exitStatus, bytes.toString()))
 }
 
 class TestCLI : StringSpec({

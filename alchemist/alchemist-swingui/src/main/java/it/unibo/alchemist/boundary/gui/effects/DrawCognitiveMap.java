@@ -60,7 +60,7 @@ public class DrawCognitiveMap extends DrawOnce {
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE);
     private Color colorCache = Color.RED;
     @Nullable
-    private transient NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap;
+    private transient NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap = null;
 
     /**
      * @param g        graphics

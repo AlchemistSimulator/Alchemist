@@ -33,6 +33,7 @@ object SingleRunSwingUI : SimulationLauncher() {
             GraphicsEnvironment.isHeadless() -> Invalid(
                 "The JVM graphic environment is marked as headless. Cannot show a graphical interface. "
             )
+            graphics != null -> Priority.High("Graphical effects requested, priority shifts up")
             else -> OK()
         }
     }

@@ -60,7 +60,8 @@ public class DrawNavigationGraph extends DrawOnce {
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
     private Color colorCache = Color.BLUE;
     @Nullable
-    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, Euclidean2DPassage> graph = null;
+    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
+    private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, Euclidean2DPassage> graph;
 
     /**
      * @param g        graphics
@@ -105,7 +106,7 @@ public class DrawNavigationGraph extends DrawOnce {
                 }
             });
         }
-        if (env instanceof ImageEnvironmentWithGraph) {
+        if (graph == null && env instanceof ImageEnvironmentWithGraph) {
             graph = ((ImageEnvironmentWithGraph<T>) env).graph();
         }
     }

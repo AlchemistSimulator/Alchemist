@@ -7,7 +7,9 @@
  */
 
 dependencies {
+    runtimeOnly(rootProject)
     rootProject.subprojects.filterNot { it == project }.forEach {
         runtimeOnly(it)
     }
+    testImplementation(rootProject)
 }

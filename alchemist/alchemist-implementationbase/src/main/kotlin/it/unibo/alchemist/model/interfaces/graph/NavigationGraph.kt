@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
  * Additionally, a navigation graph can store a set of positions of interest
  * that may be used during navigation (e.g. destinations in an evacuation
  * scenario).
- * Note that implementations of this graph should guarantee predictable
+ * Note that implementations of this graph must guarantee predictable
  * ordering for the collections they maintain, as reproducibility is a key
  * feature of Alchemist.
  * Be also aware that, by contract, the [org.jgrapht.Graph] interface does

@@ -87,18 +87,18 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
              * landmark to the closest destination possible.
              */
             val dijkstra = DijkstraShortestPath(this)
-            closerDestinations.map { d ->
-                closerLandmarks.mapNotNull {
+            closerDestinations.map { destination ->
+                closerLandmarks.mapNotNull { landmark ->
                     /*
                      * At present the cognitive map is a MST, so there's a single
                      * path between each pair of nodes. In the future, things may
                      * change and there could be more than one shortest path between
                      * two nodes. In this case, it may be preferable to choose a
                      * shortest path with the maximum number of edges possible. The
-                     * reason is that such a path contains more detailed information
+                     * reason is that such path contains more detailed information
                      * regarding the route to follow.
                      */
-                    l -> dijkstra.getPath(l, d)?.vertexList
+                    dijkstra.getPath(landmark, destination)?.vertexList
                 }.first()
             }.firstOrNull()?.toMutableList() ?: mutableListOf()
         }

@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator.generateNavigationGraph
-import it.unibo.alchemist.model.implementations.graph.DefaultEuclidean2DNavigationGraph
+import it.unibo.alchemist.model.implementations.graph.DirectedEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
@@ -74,7 +74,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     private fun Euclidean2DNavigationGraph.map(
         mapper: (Euclidean2DPosition) -> Euclidean2DPosition
     ): Euclidean2DNavigationGraph {
-        val newGraph = DefaultEuclidean2DNavigationGraph(destinations(), Euclidean2DPassage::class.java)
+        val newGraph = DirectedEuclidean2DNavigationGraph(destinations(), Euclidean2DPassage::class.java)
         vertexSet().forEach { newGraph.addVertex(it.mapPolygon(mapper)) }
         edgeSet().forEach {
             val mappedTail = it.tail.mapPolygon(mapper)

@@ -1,7 +1,8 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.geometry.liesBetween
-import it.unibo.alchemist.model.implementations.graph.DefaultNavigationGraph
+import it.unibo.alchemist.model.implementations.graph.DirectedNavigationGraph
+import it.unibo.alchemist.model.implementations.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.graph.pathExists
 import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
@@ -111,7 +112,7 @@ abstract class AbstractOrientingPedestrian<
         val destinationsProvided = landmarks.flatMap { landmark ->
             environmentGraph.destinations().filter { landmark.contains(it) }
         }
-        val fullGraph = DefaultNavigationGraph<P, A, N, DefaultEdge>(destinationsProvided, DefaultEdge::class.java)
+        val fullGraph = UndirectedNavigationGraph<P, A, N, DefaultEdge>(destinationsProvided, DefaultEdge::class.java)
         landmarks.forEach { fullGraph.addVertex(it) }
         rooms.indices.forEach { i ->
             rooms.indices.forEach { j ->
@@ -133,9 +134,7 @@ abstract class AbstractOrientingPedestrian<
              */
             dijkstra.getPathWeight(rooms[landmarks.indexOf(tail)], rooms[landmarks.indexOf(head)])
         }
-        val fullGraphWeighted = AsUndirectedGraph(
-            AsWeightedGraph(fullGraph, weightFunction, false, false)
-        )
+        val fullGraphWeighted = AsWeightedGraph(fullGraph, weightFunction, false, false)
         /*
          * Only the edges in the spanning tree are maintained.
          */

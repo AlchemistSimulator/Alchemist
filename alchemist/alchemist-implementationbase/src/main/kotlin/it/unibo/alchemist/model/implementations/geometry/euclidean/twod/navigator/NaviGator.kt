@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.implementations.geometry.createSegment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.vertices
-import it.unibo.alchemist.model.implementations.graph.DefaultEuclidean2DNavigationGraph
+import it.unibo.alchemist.model.implementations.graph.DirectedEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DNavigationGraph
@@ -83,7 +83,7 @@ fun generateNavigationGraph(
         .map { createSeed(it.x, it.y, unity) }
         .toMutableList()
         .grow(origin, width, height, obstacles, unity)
-    val graph = DefaultEuclidean2DNavigationGraph(destinations, Euclidean2DPassage::class.java)
+    val graph = DirectedEuclidean2DNavigationGraph(destinations, Euclidean2DPassage::class.java)
     seeds.forEach { graph.addVertex(it) }
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->

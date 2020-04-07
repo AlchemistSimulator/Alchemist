@@ -20,4 +20,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTr
 interface Euclidean2DEnvironmentWithGraph<W, T, N, E> :
     EnvironmentWithGraph<W, T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     Euclidean2DEnvironmentWithObstacles<W, T>
-    where W : Obstacle2D<Euclidean2DPosition>, N : Euclidean2DConvexShape
+    where
+        W : Obstacle2D<Euclidean2DPosition>,
+        N : Euclidean2DConvexShape

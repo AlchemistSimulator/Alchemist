@@ -17,5 +17,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DCo
  * An [Euclidean2DEnvironmentWithGraph] with physics.
  */
 interface EuclideanPhysics2DEnvironmentWithGraph<W, T, N, E> :
-    Euclidean2DEnvironmentWithGraph<W, T, N, E>, EuclideanPhysics2DEnvironmentWithObstacles<W, T>
-    where W : Obstacle2D<Euclidean2DPosition>, N : Euclidean2DConvexShape
+    Euclidean2DEnvironmentWithGraph<W, T, N, E>,
+    EuclideanPhysics2DEnvironmentWithObstacles<W, T>
+    where
+        W : Obstacle2D<Euclidean2DPosition>,
+        N : Euclidean2DConvexShape

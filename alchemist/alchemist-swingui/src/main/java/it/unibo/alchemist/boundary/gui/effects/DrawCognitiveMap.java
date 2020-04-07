@@ -77,7 +77,7 @@ public class DrawCognitiveMap extends DrawOnce {
         super.apply(g, n, env, wormhole);
         final Integer markerNodeID = getMarkerNodeID();
         if (cognitiveMap == null && markerNodeID != null && env.getNodeByID(markerNodeID) instanceof OrientingPedestrian
-                && env instanceof Environment2DWithObstacles<?, ?, ?>
+                && env instanceof Environment2DWithObstacles
                 && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
             cognitiveMap = ((OrientingPedestrian) env.getNodeByID(markerNodeID)).getCognitiveMap();
         }
@@ -103,10 +103,12 @@ public class DrawCognitiveMap extends DrawOnce {
                 final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                 if (cognitiveMap != null) {
                     cognitiveMap.outgoingEdgesOf(r).forEach(e -> {
-                        final Ellipse head = cognitiveMap.getEdgeTarget(e);
-                        final Point centroidTo = wormhole.getViewPoint(env.makePosition(head.getCentroid().getX(), head.getCentroid().getY()));
-                        g.setColor(colorCache);
-                        g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
+                        if (cognitiveMap != null) {
+                            final Euclidean2DPosition head = cognitiveMap.getEdgeTarget(e).getCentroid();
+                            final Point centroidTo = wormhole.getViewPoint(env.makePosition(head.getX(), head.getY()));
+                            g.setColor(colorCache);
+                            g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
+                        }
                     });
                 }
             });

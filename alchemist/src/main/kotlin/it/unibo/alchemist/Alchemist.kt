@@ -116,7 +116,6 @@ object Alchemist {
                     printLaunchers()
                 }
                 second(options)
-                exitWith(ExitStatus.OK)
             }
             when {
                 sortedLaunchers.size == 1 -> sortedLaunchers.first().launch()
@@ -127,6 +126,7 @@ object Alchemist {
                         L.error("Unable to select an execution strategy among {} with options {}",
                             sortedLaunchers, options
                         )
+                        exitWith(ExitStatus.INVALID_CLI)
                     }
                 else -> {
                     L.error("No valid launchers for {}", options)
@@ -137,13 +137,14 @@ object Alchemist {
                             L.error("{}: {}", launcher::class.java.simpleName, validation.reason)
                         }
                     }
+                    exitWith(ExitStatus.INVALID_CLI)
                 }
             }
         } catch (e: ParseException) {
             L.error("Your command sequence could not be parsed.", e)
+            printHelp()
+            exitWith(ExitStatus.INVALID_CLI)
         }
-        printHelp()
-        exitWith(ExitStatus.INVALID_CLI)
     }
 
     private fun printLaunchers() {

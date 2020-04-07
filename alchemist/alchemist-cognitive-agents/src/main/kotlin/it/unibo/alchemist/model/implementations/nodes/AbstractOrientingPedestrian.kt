@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.geometry.liesBetween
-import it.unibo.alchemist.model.implementations.graph.DirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.graph.pathExists
 import it.unibo.alchemist.model.implementations.utils.shuffled
@@ -16,7 +15,6 @@ import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
-import org.jgrapht.graph.AsUndirectedGraph
 import org.jgrapht.graph.AsWeightedGraph
 import org.jgrapht.graph.DefaultEdge
 

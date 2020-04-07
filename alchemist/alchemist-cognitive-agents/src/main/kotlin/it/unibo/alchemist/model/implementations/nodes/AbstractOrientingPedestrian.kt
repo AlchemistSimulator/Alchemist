@@ -37,14 +37,7 @@ import org.jgrapht.graph.DefaultEdge
  * info concerning the fact that a connection exists. The path between two landmarks of the
  * cognitive map could or could not be simple (i.e. representable as a single line segment).
  */
-abstract class AbstractOrientingPedestrian<
-    T,
-    P,
-    A : GeometricTransformation<P>,
-    N : ConvexGeometricShape<P, A>,
-    M : ConvexGeometricShape<P, A>,
-    F
->(
+abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
     final override val knowledgeDegree: Double,
     /**
      * The random generator to use in order to preserve reproducibility.
@@ -62,7 +55,12 @@ abstract class AbstractOrientingPedestrian<
      */
     private val minArea: Double = 10.0
 ) : OrientingPedestrian<T, P, A, N, DefaultEdge>,
-    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position<P>, P : Vector<P> {
+    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group)
+    where
+        P : Position<P>, P : Vector<P>,
+        A : GeometricTransformation<P>,
+        N : ConvexGeometricShape<P, A>,
+        M : ConvexGeometricShape<P, A> {
 
     init {
         require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }

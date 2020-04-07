@@ -12,6 +12,9 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.Alchemist
 
+/**
+ * Tests the execution of the Alchemist main. It triggers a VM exit and must get launched in its own JVM.
+ */
 class TestLaunchViaMain : StringSpec({
     "A simple simulation should be executable in headless mode" {
         Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-t", "2"))

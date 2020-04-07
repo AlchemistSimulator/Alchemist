@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import com.github.davidmoten.rtree.Entry;
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles;
-import org.apache.commons.math3.util.Pair;
 
 import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;

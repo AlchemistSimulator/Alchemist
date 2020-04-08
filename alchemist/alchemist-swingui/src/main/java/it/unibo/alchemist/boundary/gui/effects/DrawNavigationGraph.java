@@ -75,6 +75,9 @@ public class DrawNavigationGraph extends DrawOnce {
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+        if (graph == null && env instanceof ImageEnvironmentWithGraph) {
+            graph = ((ImageEnvironmentWithGraph<T>) env).graph();
+        }
         if (graph != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             graph.vertexSet().stream()
@@ -105,9 +108,6 @@ public class DrawNavigationGraph extends DrawOnce {
                     });
                 }
             });
-        }
-        if (graph == null && env instanceof ImageEnvironmentWithGraph) {
-            graph = ((ImageEnvironmentWithGraph<T>) env).graph();
         }
     }
 

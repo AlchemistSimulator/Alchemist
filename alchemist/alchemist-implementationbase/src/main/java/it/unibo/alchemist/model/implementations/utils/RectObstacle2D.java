@@ -8,8 +8,8 @@
 package it.unibo.alchemist.model.implementations.utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathArrays;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +26,10 @@ import static org.danilopianini.lang.MathUtils.fuzzyGreaterEquals;
  * This class implements a rectangular obstacle, whose sides are parallel to the
  * cartesian axis.
  *
- *
+ * @param <V>
  */
 @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
-public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle2D<Euclidean2DPosition> {
+public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Double implements Obstacle2D<V> {
 
     /**
      * Relative precision value under which two double values are considered to
@@ -76,7 +76,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
 
     @NotNull
     @Override
-    public Euclidean2DPosition next(@NotNull final Euclidean2DPosition start, @NotNull final Euclidean2DPosition end) {
+    public V next(@NotNull final V start, @NotNull final V end) {
         final double startx = start.getX();
         final double starty = start.getY();
         final double endx = end.getX();
@@ -86,7 +86,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
             /*
              * The starting point was on the border.
              */
-            return new Euclidean2DPosition(onBorders);
+            return start.newFrom(onBorders[0], onBorders[1]);
         }
         final double[] intersection = nearestIntersection(start, end).getCoordinates();
         /*
@@ -98,9 +98,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         }
         final double[] restricted = enforceBorders(intersection[0], intersection[1], intersection[0], intersection[1]);
         if (restricted == null) {
-            return new Euclidean2DPosition(intersection);
+            return start.newFrom(intersection[0], intersection[1]);
         }
-        return new Euclidean2DPosition(restricted);
+        return start.newFrom(restricted[0], restricted[1]);
     }
 
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
@@ -148,7 +148,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
 
     @Override
     @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-    public Euclidean2DPosition nearestIntersection(final Euclidean2DPosition start, final Euclidean2DPosition end) {
+    public V nearestIntersection(final V start, final V end) {
         final double startx = start.getX();
         final double starty = start.getY();
         final double endx = end.getX();
@@ -162,9 +162,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         final double d1 = MathArrays.distance(intersectionSide1, new double[] { startx, starty });
         final double d2 = MathArrays.distance(intersectionSide2, new double[] { startx, starty });
         if (d1 < d2) {
-            return new Euclidean2DPosition(intersectionSide1);
+            return start.newFrom(intersectionSide1[0], intersectionSide1[1]);
         }
-        return new Euclidean2DPosition(intersectionSide2);
+        return start.newFrom(intersectionSide2[0], intersectionSide2[1]);
     }
 
     /**

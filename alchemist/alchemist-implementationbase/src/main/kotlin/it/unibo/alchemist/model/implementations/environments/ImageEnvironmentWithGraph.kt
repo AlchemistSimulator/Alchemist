@@ -40,8 +40,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     obstaclesColor: Int = Color.BLACK.rgb,
     roomsColor: Int = Color.BLUE.rgb
 ) : ImageEnvironment<T>(obstaclesColor, path, zoom, dx, dy),
-    EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D, T, ConvexPolygon, Euclidean2DPassage> {
-
+    EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D<Euclidean2DPosition>, T, ConvexPolygon, Euclidean2DPassage> {
     init {
         require(destinationCoords.size % 2 == 0) { "missing coordinates" }
     }

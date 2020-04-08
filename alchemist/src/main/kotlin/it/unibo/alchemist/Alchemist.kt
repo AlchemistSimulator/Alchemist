@@ -20,7 +20,6 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
-import java.lang.RuntimeException
 
 /**
  * Starts Alchemist.
@@ -148,7 +147,7 @@ object Alchemist {
     }
 
     private fun printLaunchers() {
-        L.error("Available launchers: {}", launchers.map { it.name })
+        L.warn("Available launchers: {}", launchers.map { it.name })
     }
 
     /**

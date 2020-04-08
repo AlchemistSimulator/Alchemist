@@ -28,18 +28,17 @@ import java.util.function.Supplier
  * lifetime of the object.
  * Further information available [here](https://jgrapht.org/guide/VertexAndEdgeTypes).
  */
-open class BaseNavigationGraph<
-    V : Vector<V>,
-    A : GeometricTransformation<V>,
-    N : ConvexGeometricShape<V, A>,
-    E
->(
+open class BaseNavigationGraph<V, A, N, E>(
     private val destinations: List<V>,
     vertexSupplier: Supplier<N>?,
     edgeSupplier: Supplier<E>?,
     graphType: GraphType
 ) : NavigationGraph<V, A, N, E>,
-    AbstractBaseGraph<N, E>(vertexSupplier, edgeSupplier, graphType) {
+    AbstractBaseGraph<N, E>(vertexSupplier, edgeSupplier, graphType)
+    where
+        V : Vector<V>,
+        A : GeometricTransformation<V>,
+        N : ConvexGeometricShape<V, A> {
 
     /*
      * Allows to rapidly create a directed or undirected unweighted graph without
@@ -66,30 +65,28 @@ open class BaseNavigationGraph<
  * same pair of vertices and without self-loops (i.e. edges connecting a node to
  * itself).
  */
-class DirectedNavigationGraph<
-    V : Vector<V>,
-    A : GeometricTransformation<V>,
-    N : ConvexGeometricShape<V, A>,
-    E
->(
+class DirectedNavigationGraph<V, A, N, E>(
     destinations: List<V>,
     edgeClass: Class<out E>
 ) : BaseNavigationGraph<V, A, N, E>(destinations, edgeClass, true)
+    where
+        V : Vector<V>,
+        A : GeometricTransformation<V>,
+        N : ConvexGeometricShape<V, A>
 
 /**
  * An undirected unweighted [NavigationGraph], allowing multiple edges between the
  * same pair of vertices and without self-loops (i.e. edges connecting a node to
  * itself).
  */
-class UndirectedNavigationGraph<
-    V : Vector<V>,
-    A : GeometricTransformation<V>,
-    N : ConvexGeometricShape<V, A>,
-    E
->(
+class UndirectedNavigationGraph<V, A, N, E>(
     destinations: List<V>,
     edgeClass: Class<out E>
 ) : BaseNavigationGraph<V, A, N, E>(destinations, edgeClass, false)
+    where
+        V : Vector<V>,
+        A : GeometricTransformation<V>,
+        N : ConvexGeometricShape<V, A>
 
 /**
  * A directed [Euclidean2DNavigationGraph].

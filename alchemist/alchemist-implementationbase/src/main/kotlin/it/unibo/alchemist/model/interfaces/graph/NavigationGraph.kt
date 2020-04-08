@@ -80,7 +80,7 @@ data class Euclidean2DPassage(
  * overhead (as these maintain the nodes they connect, when this information is already stored
  * in the navigation graph), but allows to have duplicate edges in opposite directions, which
  * means a node n1 can be connected to another node n2 through a passage whose shape is equal
- * to the one of the passage connecting n2 to n1. The two passages would not result equals
+ * to the one of the passage connecting n2 to n1. The two passages would not result equal
  * because their tail and head would be swapped. On the contrary, if edges were plain segments,
  * the graph would not have allowed to have two edges so that e1.equal(e2).
  */

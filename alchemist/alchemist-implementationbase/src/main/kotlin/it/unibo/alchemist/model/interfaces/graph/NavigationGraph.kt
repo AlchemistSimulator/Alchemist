@@ -64,7 +64,7 @@ interface NavigationGraph<
  * [passageShape] is a [Segment2D] modeling the shape of the passage between the two areas:
  * an agent could cross any point of it to move from the first area to the second one. To
  * make it easier, think of the following: in an indoor environment, the segment should
- * represent the shape of the door between two rooms. Additionally, given a crossing c
+ * represent the shape of the door between two rooms. Additionally, given a passage p
  * connecting area a to area b, the segment MUST belong to the boundary of a, but can or
  * cannot belong the boundary of b.
  */
@@ -78,7 +78,7 @@ data class Euclidean2DPassage(
  * A [NavigationGraph] in an euclidean bidimensional space, whose nodes are [ConvexPolygon]s
  * and edges are [Euclidean2DPassage]s. Using [Euclidean2DPassage]s as edges leads to some
  * overhead (as these maintain the nodes they connect, when this information is already stored
- * in the navigation graph), but allows to have duplicate edges in opposite direction, which
+ * in the navigation graph), but allows to have duplicate edges in opposite directions, which
  * means a node n1 can be connected to another node n2 through a passage whose shape is equal
  * to the one of the passage connecting n2 to n1. The two passages would not result equals
  * because their tail and head would be swapped. On the contrary, if edges were plain segments,

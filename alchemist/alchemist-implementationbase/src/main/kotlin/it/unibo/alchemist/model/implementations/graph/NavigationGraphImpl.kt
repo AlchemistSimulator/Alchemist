@@ -16,9 +16,12 @@ import org.jgrapht.util.SupplierUtil
 import java.util.function.Supplier
 
 /**
- * An abstract [NavigationGraph], deriving from [AbstractBaseGraph].
- * Note that vertices and edges are used as keys inside [AbstractBaseGraph],
- * so when choosing their types, you must follow these rules:
+ * An implementation of [NavigationGraph], deriving from [AbstractBaseGraph].
+ * The user can specify the [GraphType] so as to obtain a custom graph (e.g. weighted or not,
+ * directed or undirected, etc). [AbstractBaseGraph] guarantees deterministic ordering for
+ * the collection it maintains, as stated in its API.
+ * Note that vertices and edges are used as keys inside [AbstractBaseGraph], so when choosing
+ * their types, you must follow these rules:
  * - You must follow the contract defined in java.lang.Object for both equals and hashCode.
  * - In particular, if you override either equals or hashCode, you must override them both.
  * - Your implementation for hashCode must produce a value which does not change over the

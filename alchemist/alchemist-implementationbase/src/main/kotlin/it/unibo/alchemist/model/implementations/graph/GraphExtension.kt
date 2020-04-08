@@ -13,14 +13,12 @@ import org.jgrapht.Graph
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 
 /**
- * Checks whether a path exists between source and sink.
+ * Checks whether a path exists between [source] and [sink].
+ * [DijkstraShortestPath] is used instead of [org.jgrapht.alg.connectivity.ConnectivityInspector.pathExists],
+ * because, in case of directed graph, the latter checks whether the given vertices lay in the same weakly
+ * connected component, which is not the desired behavior.
+ * As unweighted graphs have a default edge weight of 1.0, shortest path algorithms can always be applied
+ * meaningfully.
  */
 fun <V> Graph<V, *>.pathExists(source: V, sink: V): Boolean =
-    /*
-     * [DijkstraShortestPath] is used instead of [org.jgrapht.alg.connectivity.ConnectivityInspector.pathExists],
-     * because, in case of directed graph, the latter checks whether the given vertices lay in the same weakly
-     * connected component, which is not the desired behavior.
-     * As unweighted graphs have a default edge weight of 1.0, shortest path algorithms can always be applied
-     * meaningfully.
-     */
     DijkstraShortestPath.findPathBetween(this, source, sink) != null

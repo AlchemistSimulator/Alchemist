@@ -13,6 +13,7 @@ import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import java.awt.GraphicsEnvironment
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -24,6 +25,7 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
 
     override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
+            headless || GraphicsEnvironment.isHeadless() -> Validation.OK()
             graphics != null -> Validation.OK(Priority.Fallback("""
                 Graphical interface required but unavailable.
                 Import an Alchemist module with a graphical launcher, e.g. alchemist-swingui.
@@ -34,7 +36,6 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
                 Import an Alchemist module with a distributed executor, e.g. alchemist-grid.
                 See: https://alchemistsimulator.github.io/wiki/usage/grid/
                 """.trimIndent()))
-            headless -> Validation.OK()
             else -> Validation.OK(Priority.Fallback(
                 "Headless mode not explicitly requested, but no graphic environment found")
             )

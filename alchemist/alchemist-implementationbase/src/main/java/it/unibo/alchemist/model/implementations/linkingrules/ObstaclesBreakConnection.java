@@ -16,6 +16,7 @@ import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.geometry.Vector;
 
 /**
  * Similar to {@link ConnectWithinDistance}, but if the environment has obstacles,
@@ -24,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * @param <P> position type
  * @param <T>
  */
-public final class ObstaclesBreakConnection<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
+public final class ObstaclesBreakConnection<T, P extends Position<P> & Vector<P>> extends ConnectWithinDistance<T, P> {
 
     private static final long serialVersionUID = -3279202906910960340L;
 
@@ -42,6 +43,7 @@ public final class ObstaclesBreakConnection<T, P extends Position<P>> extends Co
         if (!normal.isEmpty() && env instanceof EnvironmentWithObstacles) {
             final P cp = env.getPosition(center);
             final EnvironmentWithObstacles<?, T, P> environment = (EnvironmentWithObstacles<?, T, P>) env;
+            environment.intersectsObstacle(environment.getPosition(center), environment.getPosition(center));
             normal = Neighborhoods.make(env, center, StreamSupport.stream(normal.spliterator(), false)
                     .filter(node -> !environment.intersectsObstacle(cp, environment.getPosition(node)))
                     .collect(Collectors.toList()));

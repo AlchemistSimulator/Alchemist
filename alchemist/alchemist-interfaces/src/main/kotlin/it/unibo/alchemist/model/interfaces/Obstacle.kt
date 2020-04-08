@@ -9,14 +9,15 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 import java.io.Serializable
 
 /**
- * A generic obstacle.
+ * A generic obstacle in a vector space.
  *
- * @param P the position type for the space in which this obstacle is placed.
+ * @param V the vector type for the space in which this obstacle is placed.
  */
-interface Obstacle<P : Position<P>> : Serializable {
+interface Obstacle<V : Vector<V>> : Serializable {
 
     /**
      * The id for this obstacle.

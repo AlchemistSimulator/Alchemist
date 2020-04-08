@@ -12,11 +12,15 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle2D
 import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
  * A bidimensional [EnvironmentWithObstacles].
  */
-interface Environment2DWithObstacles<W : Obstacle2D<P>, T, P : Position2D<P>> : EnvironmentWithObstacles<W, T, P> {
+interface Environment2DWithObstacles<W, T, P> : EnvironmentWithObstacles<W, T, P> where
+    W : Obstacle2D<P>,
+    P : Position2D<P>,
+    P : Vector2D<P> {
 
     /**
      * Given a point and a range, retrieves all the obstacles within.

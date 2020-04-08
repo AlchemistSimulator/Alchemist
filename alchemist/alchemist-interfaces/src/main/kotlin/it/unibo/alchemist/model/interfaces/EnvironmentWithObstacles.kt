@@ -9,14 +9,19 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.interfaces.geometry.Vector
+
 /**
- * An environment with obstacles.
+ * An environment with [Obstacle]s.
  *
  * @param W the type of obstacles.
  * @param T the concentration type.
- * @param P the position type for this environment.
+ * @param P the position and vector type for this environment.
  */
-interface EnvironmentWithObstacles<W : Obstacle<P>, T, P : Position<P>> : Environment<T, P> {
+interface EnvironmentWithObstacles<W, T, P> : Environment<T, P> where
+    W : Obstacle<P>,
+    P : Position<P>,
+    P : Vector<P> {
 
     /**
      * A list of all the obstacles in this environment.

@@ -8,14 +8,16 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
+
 import java.awt.Shape;
 
 /**
- * An obstacle in a bidimensional space.
+ * An {@link Obstacle} in a bidimensional space.
  *
- * @param <P> the position type for the space in which this obstacle is placed.
+ * @param <V> the vector type for the space in which this obstacle is placed.
  */
-public interface Obstacle2D<P extends Position2D<P>> extends Obstacle<P>, Shape {
+public interface Obstacle2D<V extends Vector2D<V>> extends Obstacle<V>, Shape {
 
     /**
      * Given a vector (starting point and end point) representing a requested
@@ -30,7 +32,7 @@ public interface Obstacle2D<P extends Position2D<P>> extends Obstacle<P>, Shape 
      * @return the intersection point between the vector and the obstacle nearest
      *         to the vector's starting point.
      */
-    P next(P start, P end);
+    V next(V start, V end);
 
     /**
      * Given a vector (represented as a starting point and an end point), computes
@@ -44,5 +46,5 @@ public interface Obstacle2D<P extends Position2D<P>> extends Obstacle<P>, Shape 
      * @return the intersection point between the vector and the rectangle
      *         nearest to the vector's starting point
      */
-    P nearestIntersection(P start, P end);
+    V nearestIntersection(V start, V end);
 }

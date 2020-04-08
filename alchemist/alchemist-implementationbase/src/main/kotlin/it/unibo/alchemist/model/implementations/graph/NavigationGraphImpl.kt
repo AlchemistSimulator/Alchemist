@@ -19,7 +19,7 @@ import java.util.function.Supplier
  * An implementation of [NavigationGraph], deriving from [AbstractBaseGraph].
  * The user can specify the [GraphType] so as to obtain a custom graph (e.g. weighted or not,
  * directed or undirected, etc). [AbstractBaseGraph] guarantees deterministic ordering for
- * the collection it maintains, as stated in its API.
+ * the collection it maintains, as stated in its api documentation.
  * Note that vertices and edges are used as keys inside [AbstractBaseGraph], so when choosing
  * their types, you must follow these rules:
  * - You must follow the contract defined in java.lang.Object for both equals and hashCode.

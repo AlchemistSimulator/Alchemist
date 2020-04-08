@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Obstacle2D
 import it.unibo.alchemist.model.interfaces.Position2D
 
 /**
- * An bidimensional [EnvironmentWithObstacles].
+ * A bidimensional [EnvironmentWithObstacles].
  */
 interface Environment2DWithObstacles<W : Obstacle2D<P>, T, P : Position2D<P>> : EnvironmentWithObstacles<W, T, P> {
 

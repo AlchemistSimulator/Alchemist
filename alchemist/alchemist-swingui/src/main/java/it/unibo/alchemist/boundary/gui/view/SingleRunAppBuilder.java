@@ -20,7 +20,7 @@ import javafx.stage.Stage;
  * @param <P> the position type
  */
 public class SingleRunAppBuilder<T, P extends Position2D<P>> {
-    private static final String DEFAULT_EFFECTS = "/it/unibo/alchemist/gui/effects/json/DefaultEffects.json";
+    private static final String DEFAULT_EFFECTS = "it/unibo/alchemist/gui/effects/json/DefaultEffects.json";
     private final Simulation<T, P> simulation;
     private final Collection<EffectGroup<P>> effectGroups;
     private volatile boolean shouldUseDefaultEffects;

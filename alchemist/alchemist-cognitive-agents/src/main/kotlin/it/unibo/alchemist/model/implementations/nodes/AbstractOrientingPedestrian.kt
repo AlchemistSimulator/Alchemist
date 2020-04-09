@@ -1,32 +1,28 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.graph.builder.NavigationGraphBuilder
-import it.unibo.alchemist.model.implementations.graph.builder.addEdge
 import it.unibo.alchemist.model.implementations.geometry.liesBetween
-import it.unibo.alchemist.model.implementations.graph.containsAnyDestination
-import it.unibo.alchemist.model.implementations.graph.destinationsWithin
-import it.unibo.alchemist.model.implementations.graph.isReachable
-import it.unibo.alchemist.model.implementations.graph.primMinimumSpanningForest
-import it.unibo.alchemist.model.implementations.graph.dijkstraShortestPath
+import it.unibo.alchemist.model.implementations.graph.UndirectedNavigationGraph
+import it.unibo.alchemist.model.implementations.graph.pathExists
 import it.unibo.alchemist.model.implementations.utils.shuffled
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.environments.Environment2DWithGraph
+import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath
+import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
+import org.jgrapht.graph.AsWeightedGraph
+import org.jgrapht.graph.DefaultEdge
 
 /**
  * An abstract [OrientingPedestrian].
  * This class defines an algorithm capable of generating a pseudo-random [cognitiveMap]
  * based on a [NavigationGraph] of the environment. The latter can be obtained from
- * [Environment2DWithGraph]s, which is the only type of environment this pedestrian can
+ * [EnvironmentWithGraph]s, which is the only type of environment this pedestrian can
  * be placed into. The creation of landmarks is left to subclasses via factory method.
  *
  * @param T the concentration type.
@@ -36,19 +32,12 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param M the type of nodes of the navigation graph provided by the environment.
  * @param F the type of edges of the navigation graph provided by the environment.
  *
- * The edges of the produced cognitive map are plain [GraphEdge]s, which means no extra
+ * The edges of the produced cognitive map are plain [DefaultEdge]s, which means no extra
  * information regarding the connections between landmarks is stored a part from the boolean
  * info concerning the fact that a connection exists. The path between two landmarks of the
  * cognitive map could or could not be simple (i.e. representable as a single line segment).
  */
-abstract class AbstractOrientingPedestrian<
-    T,
-    P,
-    A : GeometricTransformation<P>,
-    N : ConvexGeometricShape<P, A>,
-    M : ConvexGeometricShape<P, A>,
-    F : GraphEdge<M>
->(
+abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
     final override val knowledgeDegree: Double,
     /**
      * The random generator to use in order to preserve reproducibility.
@@ -57,7 +46,7 @@ abstract class AbstractOrientingPedestrian<
     /**
      * The environment this pedestrian is into.
      */
-    protected open val environment: Environment2DWithGraph<*, T, P, A, M, F>,
+    protected open val environment: EnvironmentWithGraph<*, T, P, A, M, F>,
     group: PedestrianGroup<T>? = null,
     /*
      * When generating the cognitive map, the regions whose diameter is
@@ -65,8 +54,13 @@ abstract class AbstractOrientingPedestrian<
      * and no landmark will be generated inside them.
      */
     private val minArea: Double = 10.0
-) : OrientingPedestrian<T, P, A, N, GraphEdge<N>>,
-    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group) where P : Position2D<P>, P : Vector2D<P> {
+) : OrientingPedestrian<T, P, A, N, DefaultEdge>,
+    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group)
+    where
+        P : Position<P>, P : Vector<P>,
+        A : GeometricTransformation<P>,
+        N : ConvexGeometricShape<P, A>,
+        M : ConvexGeometricShape<P, A> {
 
     init {
         require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }
@@ -85,14 +79,15 @@ abstract class AbstractOrientingPedestrian<
      * and number of areas to be traversed can be obtained from the environment's
      * graph). We then produce a minimum spanning tree of the described graph.
      */
-    override val cognitiveMap: NavigationGraph<P, A, N, GraphEdge<N>> by lazy {
-        val builder = NavigationGraphBuilder<P, A, N, GraphEdge<N>>()
-        val environmentGraph: NavigationGraph<P, A, M, F> = environment.graph()
+    override val cognitiveMap: NavigationGraph<P, A, N, DefaultEdge> by lazy {
+        val environmentGraph = environment.graph()
         /*
          * The rooms in which landmarks will be placed.
          */
-        val rooms = environmentGraph.nodes()
-            .filter { it.diameter > shape.diameter * minArea || environmentGraph.containsAnyDestination(it) }
+        val rooms = environmentGraph.vertexSet()
+            .filter {
+                it.diameter > shape.diameter * minArea || environmentGraph.containsAnyDestination(it)
+            }
             .shuffled(randomGenerator)
             .toList()
             .takePercentage(knowledgeDegree)
@@ -100,30 +95,49 @@ abstract class AbstractOrientingPedestrian<
         /*
          * At least one destination is provided if knowledge degree >= 0.1.
          */
-        if (rooms.none { environmentGraph.containsAnyDestination(it) } && knowledgeDegree >= minimumKnowledgeDegree) {
-            environmentGraph.nodes()
+        if (rooms.none { environmentGraph.containsAnyDestination(it) } && knowledgeDegree >= minimumKnowledge) {
+            environmentGraph.vertexSet()
+                .shuffled(randomGenerator)
                 .firstOrNull { environmentGraph.containsAnyDestination(it) }
                 ?.let { rooms.add(it) }
         }
-        val landmarks = rooms.map { generateLandmarkWithin(it) }
         /*
-         * Maps each landmark's index to the indices of the ones reachable from it.
+         * landmarks[i] will contain the landmark generated in rooms[i].
          */
-        val reachability = rooms.indices
-            .map { i ->
-                i to rooms.indices.filter { j -> i != j && environmentGraph.isReachable(rooms[i], rooms[j]) }
-            }.toMap()
-        reachability.forEach {
-            it.value.forEach { i -> builder.addEdge(landmarks[it.key], landmarks[i]) }
+        val landmarks = rooms.map { generateLandmarkWithin(it) }
+        val destinationsProvided = landmarks.flatMap { landmark ->
+            environmentGraph.destinations().filter { landmark.contains(it) }
         }
-        builder.build(rooms.flatMap { environmentGraph.destinationsWithin(it) })
-            .primMinimumSpanningForest { edge ->
-                environmentGraph.dijkstraShortestPath(
-                    rooms[landmarks.indexOf(edge.tail)],
-                    rooms[landmarks.indexOf(edge.head)],
-                    { 1.0 }
-                )?.weight ?: edge.tail.centroid.distanceTo(edge.head.centroid)
+        val fullGraph = UndirectedNavigationGraph<P, A, N, DefaultEdge>(destinationsProvided, DefaultEdge::class.java)
+        landmarks.forEach { fullGraph.addVertex(it) }
+        rooms.indices.forEach { i ->
+            rooms.indices.forEach { j ->
+                if (i != j && environmentGraph.pathExists<M>(rooms[i], rooms[j])) {
+                    fullGraph.addEdge(landmarks[i], landmarks[j])
+                }
             }
+        }
+        /*
+         * The environment's graph is unweighted, but edges' weights defaults to 1.0
+         */
+        val dijkstra = DijkstraShortestPath(environmentGraph)
+        val weightFunction: (DefaultEdge) -> Double = { edge ->
+            val tail = fullGraph.getEdgeSource(edge)
+            val head = fullGraph.getEdgeTarget(edge)
+            /*
+             * The weight of the shortest path between two rooms (tail, head) is the number
+             * of rooms that need to be traversed to go from tail to head.
+             */
+            dijkstra.getPathWeight(rooms[landmarks.indexOf(tail)], rooms[landmarks.indexOf(head)])
+        }
+        val fullGraphWeighted = AsWeightedGraph(fullGraph, weightFunction, false, false)
+        /*
+         * Only the edges in the spanning tree are maintained.
+         */
+        fullGraph.removeAllEdges(
+            fullGraph.edgeSet() - PrimMinimumSpanningTree(fullGraphWeighted).spanningTree.edges
+        )
+        fullGraph
     }
 
     /**
@@ -135,6 +149,6 @@ abstract class AbstractOrientingPedestrian<
     private fun <E> List<E>.takePercentage(percentage: Double) = subList(0, (percentage * size).toInt())
 
     companion object {
-        private const val minimumKnowledgeDegree = 0.1
+        private const val minimumKnowledge = 0.1
     }
 }

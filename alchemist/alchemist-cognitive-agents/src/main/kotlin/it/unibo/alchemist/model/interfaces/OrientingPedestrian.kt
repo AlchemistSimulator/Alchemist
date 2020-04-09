@@ -4,7 +4,6 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.Orient
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 
 /**
  * A pedestrian capable of orienting itself.
@@ -20,5 +19,5 @@ interface OrientingPedestrian<
     V : Vector<V>,
     A : GeometricTransformation<V>,
     N : ConvexGeometricShape<V, A>,
-    E : GraphEdge<N>
+    E
 > : Pedestrian<T>, OrientingAgent<V, A, N, E>

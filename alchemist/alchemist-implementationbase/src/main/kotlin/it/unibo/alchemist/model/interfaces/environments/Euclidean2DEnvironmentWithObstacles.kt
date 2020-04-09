@@ -13,9 +13,8 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Obstacle2D
 
 /**
- * Euclidean physics environment with support for obstacles.
+ * An [Environment2DWithObstacles] using [Euclidean2DPosition]s.
  */
-interface EuclideanPhysics2DEnvironmentWithObstacles<W, T> :
-    Euclidean2DEnvironmentWithObstacles<W, T>,
-    Physics2DEnvironment<T>
+interface Euclidean2DEnvironmentWithObstacles<W, T> :
+    Environment2DWithObstacles<W, T, Euclidean2DPosition>
     where W : Obstacle2D<Euclidean2DPosition>

@@ -18,4 +18,5 @@ dependencies {
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
+    implementation(Libs.jgrapht_core)
 }

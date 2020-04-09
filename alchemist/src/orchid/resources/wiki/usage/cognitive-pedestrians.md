@@ -6,7 +6,7 @@ title: "Using Cognitive Pedestrians"
 
 Alchemist is capable of simulating the movement of pedestrians with sophisticated cognitive capabilities:
 
-![demo](../../assets/media/usage/no-knowledge.gif)
+![demo]({{ 'assets/media/usage/no-knowledge.gif'|asset }})
 
 The animation above shows an adult male with no previous knowledge of the environment trying to reach the destination marked green.
 

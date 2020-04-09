@@ -3,7 +3,6 @@ package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
 
 /**
@@ -14,12 +13,10 @@ import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
  * @param N the type of landmarks. See [cognitiveMap].
  * @param E the type of edges of the [cognitiveMap].
  */
-interface OrientingAgent<
+interface OrientingAgent<V, A, N, E> where
     V : Vector<V>,
     A : GeometricTransformation<V>,
-    N : ConvexGeometricShape<V, A>,
-    E : GraphEdge<N>
-> {
+    N : ConvexGeometricShape<V, A> {
 
     /**
      * The knowledge degree of the agent concerning the environment. It's

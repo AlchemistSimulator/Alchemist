@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 
 import com.uchuhimo.konf.Config
+import com.uchuhimo.konf.source.toml
 import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
 import it.unibo.alchemist.model.cognitiveagents.characteristics.utils.logistic
 import it.unibo.alchemist.model.cognitiveagents.characteristics.utils.advancedLogistic

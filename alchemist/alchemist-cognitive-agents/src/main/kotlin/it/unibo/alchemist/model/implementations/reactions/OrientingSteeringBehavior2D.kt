@@ -33,28 +33,34 @@ class OrientingSteeringBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPo
     private val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = DistanceWeighted(environment, pedestrian)
 ) : OrientingBehavior2D<T, N, E, M>(environment, pedestrian, timeDistribution) {
 
+    private var previous: Euclidean2DPosition? = null
+
     override fun moveTowards(target: Euclidean2DPosition, currentRoom: M?, targetDoor: Euclidean2DPassage) {
         val currPos = environment.getPosition(pedestrian)
-        var desiredMovement = Seek2D(environment, this, pedestrian, *target.coordinates).nextPosition
-        var disturbingMovement = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition
+        var desired = Seek2D(environment, this, pedestrian, *target.coordinates).nextPosition
+        var disturbing = Combine(environment, this, pedestrian, steerActions(), steerStrategy).nextPosition
         /*
          * When the angle between the desired movement and the movement deriving from
          * other disturbing forces is > 90 degrees, we adjust the disturbing movement
          * so as to have an angle of 90 degrees.
          */
-        if (desiredMovement.angleBetween(disturbingMovement) > PI / 2) {
-            disturbingMovement = adjustDisturbingMovement(desiredMovement, disturbingMovement)
+        if (desired.angleBetween(disturbing) > PI / 2) {
+            disturbing = adjustDisturbingMovement(desired, disturbing)
         }
         /*
          * We also resize the desired movement to have a magnitude > of the disturbing movement
          * (empirically, resizing it so as to have a magnitude equal to the one of the disturbing
          * movement can still block the agent in some cases)
          */
-        if (disturbingMovement.magnitude > desiredMovement.magnitude) {
-            desiredMovement = desiredMovement.resize(disturbingMovement.magnitude * movementMagnitudeFactor)
+        if (disturbing.magnitude > desired.magnitude) {
+            desired = desired.resize(disturbing.magnitude * movementMagnitudeFactor)
         }
-        val movement = desiredMovement + disturbingMovement
-        super.moveTowards(currPos + movement, currentRoom, targetDoor)
+        var resulting = desired + disturbing
+        previous?.let {
+            resulting = it.times(alpha) + resulting.times(1 - alpha)
+        }
+        previous = resulting
+        super.moveTowards(currPos + resulting, currentRoom, targetDoor)
     }
 
     private fun adjustDisturbingMovement(
@@ -80,5 +86,6 @@ class OrientingSteeringBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPo
          * Emprically selected multiplicative factor for enlarging magnitude on disturbing movements.
          */
         const val movementMagnitudeFactor: Double = 1.2
+        private const val alpha = 0.8
     }
 }

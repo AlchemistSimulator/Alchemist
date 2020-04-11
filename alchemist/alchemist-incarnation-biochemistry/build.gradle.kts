@@ -18,7 +18,7 @@ dependencies {
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)
     runtimeOnly(Libs.antlr4_runtime)
-    runtimeOnly(Libs.bcel)
+    runtimeOnly("org.apache.bcel:bcel:_")
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
 }

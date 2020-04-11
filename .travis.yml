@@ -57,7 +57,8 @@ addons:
 stages:
   - check
   - test
-  - deploy
+  - name: deploy
+    if: type != pull_request AND repo = AlchemistSimulator/Alchemist
 
 env:
   global:
@@ -122,7 +123,6 @@ jobs:
             - "${TRAVIS_BUILD_DIR}/alchemist"
     - stage: deploy
       name: "Reports and deployment"
-      if: AND type != pull_request AND repo = AlchemistSimulator/Alchemist
       os: *reference_os
       workspaces:
         use:

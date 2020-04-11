@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.geometry.liesBetween
 import it.unibo.alchemist.model.implementations.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.graph.pathExists
 import it.unibo.alchemist.model.implementations.utils.shuffled
@@ -63,7 +62,7 @@ abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
         M : ConvexGeometricShape<P, A> {
 
     init {
-        require(knowledgeDegree.liesBetween(0.0, 1.0)) { "knowledge degree must be in [0,1]" }
+        require(knowledgeDegree in 0.0..1.0) { "knowledge degree must be in [0,1]" }
     }
 
     override val volatileMemory: MutableMap<in ConvexGeometricShape<P, A>, Int> = HashMap()

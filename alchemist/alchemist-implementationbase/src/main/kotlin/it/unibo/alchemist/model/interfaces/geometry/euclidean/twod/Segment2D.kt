@@ -1,7 +1,9 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
+import it.unibo.alchemist.model.implementations.geometry.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.geometry.liesBetween
+import it.unibo.alchemist.model.implementations.geometry.linesIntersection
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import org.danilopianini.lang.MathUtils
@@ -27,71 +29,69 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     val isAxisAligned: Boolean get() = xAxisAligned || yAxisAligned
 
     /**
-     * Mutates an edge to a vector. In particular, the vector representing the
-     * movement from the first point to the second point of the edge.
+     * @returns the vector representing the movement from [first] to [second].
      */
     fun toVector() = second - first
 
     /**
-     * Computes the slope of the line passing through a couple of points.
-     * If the points coincide NaN is the result.
+     * Computes the slope of the segment. If the two points coincide (i.e. the segment
+     * [isDegenerate]), [Double.NaN] is the result.
      */
     val slope: Double get() = toVector().run { y / x }
 
     /**
-     * An edge is degenerate if its points coincide (and its length is zero).
+     * Computes the intercept of the line passing through [first] and [second].
      */
-    val degenerate: Boolean get() = first == second
+    val intercept: Double get() = first.y - slope * first.x
 
     /**
-     * Checks whether the segment (represented by a pair of positions)
-     * contains the given point.
+     * Checks if its points coincide (and its length is zero).
      */
-    fun contains(other: P) =
-        areCollinear(first, second, other) &&
-        other.x.liesBetween(first.x, second.x) &&
-        other.y.liesBetween(first.y, second.y)
+    val isDegenerate: Boolean get() = first == second
 
     /**
-     * Computes the medium point of the current segment.
+     * Checks whether the segment contains the given point.
+     */
+    fun contains(point: P) =
+        areCollinear(first, second, point) &&
+        point.x.liesBetween(first.x, second.x) &&
+        point.y.liesBetween(first.y, second.y)
+
+    /**
+     * Computes the medium point of the segment.
      */
     val midPoint get() = Euclidean2DPosition((first.x + second.x) / 2, (first.y + second.y) / 2)
 
     /**
-     * Finds the other of the segment which is closest to the provided position.
+     * Finds the point of the segment which is closest to the provided position.
      */
-    fun closestPointTo(other: P): P {
-        return when {
-            degenerate -> first
-            contains(other) -> other
+    fun closestPointTo(point: P): P =
+        when {
+            isDegenerate -> first
+            contains(point) -> point
             else -> {
-                val m1 = slope
-                val intersection: P = when {
-                    m1.isInfinite() -> first.newFrom(first.x, other.y)
-                    MathUtils.fuzzyEquals(m1, 0.0) -> first.newFrom(other.x, first.y)
-                    else -> {
-                        val q1 = first.y - m1 * first.x
-                        val m2 = -1 / m1
-                        val q2 = other.y - m2 * other.x
-                        val x = (q2 - q1) / (m1 - m2)
-                        val y = m1 * x + q1
-                        first.newFrom(x, y)
+                /*
+                 * Intersection between the line defined by the segment and the line
+                 * perpendicular to the segment passing through the given point.
+                 */
+                val intersection = linesIntersection(this, Segment2D(point, point + toVector().normal()))
+                    .let {
+                        require(it.type == LinesIntersectionType.POINT && it.point.isPresent) { "internal error" }
+                        it.point.get()
                     }
-                }
                 when {
                     contains(intersection) -> intersection
-                    (first - other).magnitude < (second - other).magnitude -> first
+                    first.distanceTo(intersection) < second.distanceTo(intersection) -> first
                     else -> second
                 }
             }
         }
-    }
 
     private fun Vector2D<*>.toEuclidean2D(): Euclidean2DPosition =
         if (this is Euclidean2DPosition) this else Euclidean2DPosition(first.x, first.y)
 
     /**
-     * Computes the distance between the current segment and a given point.
+     * Computes the distance between the segment and a given point.
      */
     fun distanceTo(point: P) = closestPointTo(point).distanceTo(point)
 

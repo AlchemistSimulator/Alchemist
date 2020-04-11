@@ -2,8 +2,8 @@ package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.POINT
-import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes.EMPTY
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType.POINT
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType.EMPTY
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
@@ -205,7 +205,7 @@ open class MutableConvexPolygonImpl(
      * Checks if the polygon's boundary is convex. See [isConvex].
      */
     private fun isBoundaryConvex(): Boolean {
-        if (edges().filter { !it.degenerate }.size < 3) {
+        if (edges().filter { !it.isDegenerate }.size < 3) {
             return false
         }
         var e1 = getEdge(vertices.size - 1)
@@ -256,14 +256,14 @@ open class MutableConvexPolygonImpl(
      */
     private fun causeSelfIntersection(index: Int): Boolean {
         val curr = getEdge(index)
-        if (curr.degenerate) {
+        if (curr.isDegenerate) {
             return false
         }
         /*
          * First previous edge not degenerate
          */
         var i = circularPrev(index)
-        while (getEdge(i).degenerate) {
+        while (getEdge(i).isDegenerate) {
             i = circularPrev(i)
         }
         val prevIndex = i
@@ -272,7 +272,7 @@ open class MutableConvexPolygonImpl(
          * First next edge not degenerate
          */
         i = circularNext(index)
-        while (getEdge(i).degenerate) {
+        while (getEdge(i).isDegenerate) {
             i = circularNext(i)
         }
         val next = getEdge(i)
@@ -286,7 +286,7 @@ open class MutableConvexPolygonImpl(
                 generateSequence(circularNext(i)) { circularNext(it) }
                     .takeWhile { it != prevIndex }
                     .map { getEdge(it) }
-                    .filter { !it.degenerate }
+                    .filter { !it.isDegenerate }
                     .any { intersection(curr, it).type != EMPTY }
         }
     }

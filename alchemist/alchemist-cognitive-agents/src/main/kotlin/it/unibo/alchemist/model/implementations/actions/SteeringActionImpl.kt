@@ -43,6 +43,9 @@ open class SteeringActionImpl<T, P : AbstractEuclideanPosition<P>> @JvmOverloads
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
         SteeringActionImpl(env, r, n as Pedestrian<T>, target, speed, routing)
 
+    /**
+     * Next RELATIVE position.
+     */
     override fun interpolatePositions(
         current: P,
         target: P,

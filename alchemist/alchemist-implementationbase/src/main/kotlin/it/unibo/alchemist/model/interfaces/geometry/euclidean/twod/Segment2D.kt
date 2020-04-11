@@ -16,17 +16,17 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * Checks whether the segment is aligned to the x axis.
      */
-    val xAxisAligned: Boolean by lazy { MathUtils.fuzzyEquals(first.y, second.y) }
+    val xAxisAligned: Boolean get() = MathUtils.fuzzyEquals(first.y, second.y)
 
     /**
      * Checks whether the segment is aligned to the y axis.
      */
-    val yAxisAligned: Boolean by lazy { MathUtils.fuzzyEquals(first.x, second.x) }
+    val yAxisAligned: Boolean get() = MathUtils.fuzzyEquals(first.x, second.x)
 
     /**
      * Checks whether the segment is axis-aligned.
      */
-    val isAxisAligned: Boolean by lazy { xAxisAligned || yAxisAligned }
+    val isAxisAligned: Boolean get() = xAxisAligned || yAxisAligned
 
     /**
      * @returns the vector representing the movement from [first] to [second].
@@ -37,17 +37,17 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      * Computes the slope of the segment. If the two points coincide (i.e. the segment
      * [isDegenerate]), [Double.NaN] is the result.
      */
-    val slope: Double by lazy { toVector().run { y / x } }
+    val slope: Double get() = toVector().run { y / x }
 
     /**
      * Computes the intercept of the line passing through [first] and [second].
      */
-    val intercept: Double by lazy { first.y - slope * first.x }
+    val intercept: Double get() = first.y - slope * first.x
 
     /**
      * Checks if its points coincide (and its length is zero).
      */
-    val isDegenerate: Boolean by lazy { first == second }
+    val isDegenerate: Boolean get() = first == second
 
     /**
      * Checks whether the segment contains the given point.
@@ -60,12 +60,10 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * Computes the medium point of the segment.
      */
-    val midPoint by lazy { Euclidean2DPosition((first.x + second.x) / 2, (first.y + second.y) / 2) }
+    val midPoint get() = Euclidean2DPosition((first.x + second.x) / 2, (first.y + second.y) / 2)
 
     /**
      * Finds the point of the segment which is closest to the provided position.
-     *
-     * TODO = use linesIntersection
      */
     fun closestPointTo(point: P): P =
         when {

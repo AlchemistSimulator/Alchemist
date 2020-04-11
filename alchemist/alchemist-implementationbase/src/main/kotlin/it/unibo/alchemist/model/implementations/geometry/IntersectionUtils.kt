@@ -269,7 +269,7 @@ fun <P : Vector2D<P>> intersection(
 }
 
 private fun <P : Vector2D<P>> intersectionPoint(segment: Segment2D<P>, vector: Vector2D<P>, t: Double): Optional<P> =
-    Optional.empty<P>().takeUnless { t.fuzzyLiesBetween(0.0, 1.0) } ?: run {
+    Optional.empty<P>().takeUnless { t in 0.0..1.0 || fuzzyEquals(t, 0.0) || fuzzyEquals(t, 1.0) } ?: run {
         val x = segment.first.x + t * vector.x
         val y = segment.first.y + t * vector.y
         Optional.of(segment.first.newFrom(x, y))

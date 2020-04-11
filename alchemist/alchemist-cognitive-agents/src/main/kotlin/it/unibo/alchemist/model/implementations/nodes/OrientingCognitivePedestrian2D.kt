@@ -11,9 +11,9 @@ import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import org.apache.commons.math3.random.RandomGenerator
+import org.jgrapht.graph.DefaultEdge
 
 /**
  * A cognitive [OrientingPedestrian] in an [EuclideanPhysics2DEnvironmentWithGraph].
@@ -22,7 +22,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param M the type of nodes of the navigation graph provided by the environment.
  * @param F the type of edges of the navigation graph provided by the environment.
  */
-class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>> @JvmOverloads constructor(
+class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads constructor(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
@@ -31,7 +31,7 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>> @Jv
     override val gender: Gender,
     danger: Molecule? = null
 ) : OrientingPedestrian2D<T, M, F>(knowledgeDegree, randomGenerator, environment, group),
-    OrientingCognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, GraphEdge<Ellipse>> {
+    OrientingCognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, DefaultEdge> {
 
     /**
      * Allows to specify age and gender with a string.

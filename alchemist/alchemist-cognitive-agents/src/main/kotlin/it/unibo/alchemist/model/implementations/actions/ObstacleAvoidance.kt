@@ -2,9 +2,9 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.SteeringBehavior
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle2D
 import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param proximityRange
  *          the distance at which an obstacle is perceived by the pedestrian.
  */
-class ObstacleAvoidance<W : Obstacle2D, T>(
+class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     private val env: Environment2DWithObstacles<W, T, Euclidean2DPosition>,
     reaction: SteeringBehavior<T>,
     pedestrian: Pedestrian<T>,
@@ -41,9 +41,7 @@ class ObstacleAvoidance<W : Obstacle2D, T>(
             env.getObstaclesInRange(current.x, current.y, proximityRange)
                 .asSequence()
                 .map { obstacle: W ->
-                    with(obstacle.nearestIntersection(current.x, current.y, target.x, target.y)) {
-                        env.makePosition(this[0], this[1]) to obstacle.bounds2D
-                    }
+                    obstacle.nearestIntersection(current, target) to obstacle.bounds2D
                 }
                 .minBy { (intersection, _) -> current.distanceTo(intersection) }
                 ?.let { (intersection, bound) -> intersection to env.makePosition(bound.centerX, bound.centerY) }

@@ -33,7 +33,7 @@ open class Seek2D<T>(
                     /*
                      * Take into account obstacles
                      */
-                    env.next(current.x, current.y, it.x, it.y)
+                    env.next(current, it)
                 } else it
             }
             .filter {

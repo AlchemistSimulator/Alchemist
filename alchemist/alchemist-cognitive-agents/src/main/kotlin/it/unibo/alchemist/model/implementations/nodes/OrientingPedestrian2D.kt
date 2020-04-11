@@ -5,12 +5,9 @@ import it.unibo.alchemist.model.implementations.utils.nextDouble
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.Ellipse
-import it.unibo.alchemist.model.implementations.graph.containsAnyDestination
-import it.unibo.alchemist.model.implementations.graph.destinationsWithin
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.graph.GraphEdge
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Ellipse2D
@@ -29,7 +26,7 @@ import java.awt.geom.Rectangle2D
  * @param M the type of nodes of the navigation graph provided by the environment.
  * @param F the type of edges of the navigation graph provided by the environment.
  */
-open class OrientingPedestrian2D<T, M : ConvexPolygon, F : GraphEdge<M>>(
+open class OrientingPedestrian2D<T, M : ConvexPolygon, F>(
     knowledgeDegree: Double,
     randomGenerator: RandomGenerator,
     environment: Euclidean2DEnvironmentWithGraph<*, T, M, F>,

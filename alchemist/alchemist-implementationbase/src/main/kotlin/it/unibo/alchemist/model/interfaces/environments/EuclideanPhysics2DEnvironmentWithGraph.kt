@@ -11,11 +11,14 @@ package it.unibo.alchemist.model.interfaces.environments
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Obstacle2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 
 /**
- * Euclidean physics environment with support for obstacles.
+ * An [Euclidean2DEnvironmentWithGraph] with physics.
  */
-interface EuclideanPhysics2DEnvironmentWithObstacles<W, T> :
-    Euclidean2DEnvironmentWithObstacles<W, T>,
-    Physics2DEnvironment<T>
-    where W : Obstacle2D<Euclidean2DPosition>
+interface EuclideanPhysics2DEnvironmentWithGraph<W, T, N, E> :
+    Euclidean2DEnvironmentWithGraph<W, T, N, E>,
+    EuclideanPhysics2DEnvironmentWithObstacles<W, T>
+    where
+        W : Obstacle2D<Euclidean2DPosition>,
+        N : Euclidean2DConvexShape

@@ -11,16 +11,14 @@ package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.MutableConvexPolygonImpl
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator.generateNavigationGraph
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DNavigationGraph
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DNavigationGraphBuilder
-import it.unibo.alchemist.model.interfaces.graph.twod.Euclidean2DCrossing
-import it.unibo.alchemist.model.implementations.graph.edges
+import it.unibo.alchemist.model.implementations.graph.DirectedEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.graph.GraphEdgeWithData
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.graph.Euclidean2DNavigationGraph
 import org.kaikikm.threadresloader.ResourceLoader
 import java.awt.Color
 import java.io.File
@@ -42,8 +40,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     obstaclesColor: Int = Color.BLACK.rgb,
     roomsColor: Int = Color.BLUE.rgb
 ) : ImageEnvironment<T>(obstaclesColor, path, zoom, dx, dy),
-    EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D, T, ConvexPolygon, Euclidean2DCrossing> {
-
+    EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D<Euclidean2DPosition>, T, ConvexPolygon, Euclidean2DPassage> {
     init {
         require(destinationCoords.size % 2 == 0) { "missing coordinates" }
     }
@@ -76,20 +73,21 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     private fun Euclidean2DNavigationGraph.map(
         mapper: (Euclidean2DPosition) -> Euclidean2DPosition
     ): Euclidean2DNavigationGraph {
-        val builder = Euclidean2DNavigationGraphBuilder()
-        nodes().forEach { builder.addNode(it.mapPolygon(mapper)) }
-        edges().forEach { builder.addEdge(it.mapCrossing(mapper)) }
-        return builder.build(destinations())
+        val newGraph = DirectedEuclidean2DNavigationGraph(destinations(), Euclidean2DPassage::class.java)
+        vertexSet().forEach { newGraph.addVertex(it.mapPolygon(mapper)) }
+        edgeSet().forEach {
+            val mappedTail = it.tail.mapPolygon(mapper)
+            val mappedHead = it.head.mapPolygon(mapper)
+            val mappedShape = it.passageShape.mapSegment(mapper)
+            newGraph.addEdge(mappedTail, mappedHead, Euclidean2DPassage(mappedTail, mappedHead, mappedShape))
+        }
+        return newGraph
     }
 
-    private fun Euclidean2DCrossing.mapCrossing(
+    private fun Segment2D<Euclidean2DPosition>.mapSegment(
         mapper: (Euclidean2DPosition) -> Euclidean2DPosition
-    ): Euclidean2DCrossing =
-        GraphEdgeWithData(
-            tail.mapPolygon(mapper),
-            head.mapPolygon(mapper),
-            Segment2D(mapper.invoke(data.first), mapper.invoke(data.second))
-        )
+    ): Segment2D<Euclidean2DPosition> =
+        Segment2D(mapper.invoke(first), mapper.invoke(second))
 
     private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =
         MutableConvexPolygonImpl(vertices().map(mapper).toMutableList())

@@ -13,19 +13,19 @@ plugins {
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    api(Libs.scafi_core_2_12)
+    api("it.unibo.apice.scafiteam:scafi-core_2.13:_")
 
     implementation(project(":alchemist-implementationbase"))
-    implementation(Libs.scalacache_core_2_12)
-    implementation(Libs.scalacache_guava_2_12)
-    implementation(Libs.scala_compiler) // TODO: try to remove and use implementationbase
-    implementation(Libs.scala_library)
+    implementation("com.github.cb372:scalacache-core_2.13:_")
+    implementation("com.github.cb372:scalacache-guava_2.13:_")
+    implementation("org.scala-lang:scala-compiler:2.13.1")
+    implementation("org.scala-lang:scala-library:2.13.1")
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
-    testImplementation(Libs.scalatest_2_12)
-    testRuntimeOnly(Libs.pegdown) // This is deprecated and should be replaced
-    testRuntimeOnly(Libs.parboiled_java) // Used to force a version compatible with modern ASM
+    testImplementation("org.scalatest:scalatest_2.13:_")
+    testRuntimeOnly("org.pegdown:pegdown:_") // This is deprecated and should be replaced
+    testRuntimeOnly("org.parboiled:parboiled-java:_") // Used to force a version compatible with modern ASM
 }
 
 tasks.withType<ScalaCompile> {

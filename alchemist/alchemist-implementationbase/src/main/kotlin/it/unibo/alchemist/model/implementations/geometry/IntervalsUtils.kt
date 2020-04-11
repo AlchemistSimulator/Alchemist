@@ -15,9 +15,9 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Checks if a value lies between two values (included) provided in any order.
+ * Checks if a double value lies between two values (included) provided in any order.
  */
-fun Double.liesBetween(v1: Double, v2: Double) = this >= min(v1, v2) && this <= max(v1, v2)
+fun Double.liesBetween(v1: Double, v2: Double) = this in min(v1, v2)..max(v1, v2)
 
 /**
  * Defines an interval with double precision.

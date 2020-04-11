@@ -3,8 +3,8 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.implementations.actions.Seek
 import it.unibo.alchemist.model.implementations.actions.Seek2D
 import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
-import it.unibo.alchemist.model.implementations.geometry.intersectionLines
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.linesIntersection
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian
@@ -136,7 +136,7 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
              * is closest to the intersection of the lines defined by the desired
              * movement and the crossing itself.
              */
-            val subdestination = closestPointTo(intersectionLines(this, desiredMovement).point.get())
+            val subdestination = closestPointTo(linesIntersection(this, desiredMovement).point.get())
             /*
              * If the sub-destination is an end point of the crossing, we move it slightly
              * away from such end point to avoid behaviors in which the pedestrian always
@@ -197,7 +197,7 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
     ): Euclidean2DPosition =
         currRoom.edges()
             .filter {
-                intersection(Segment2D(currPos, nextPos), it).type == SegmentsIntersectionTypes.POINT
+                intersection(Segment2D(currPos, nextPos), it).type == SegmentsIntersectionType.POINT
             }
             .map {
                 intersection(it, currPos, nextPos.distanceTo(currPos))
@@ -212,7 +212,7 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
      * Checks whether the given segment intersects the given edge.
      */
     private fun crosses(segment: Segment2D<Euclidean2DPosition>, edge: Euclidean2DPassage) =
-        intersection(segment, edge.passageShape).type == SegmentsIntersectionTypes.POINT
+        intersection(segment, edge.passageShape).type == SegmentsIntersectionType.POINT
 
     /*
      * A rough estimation of the area of a shape.

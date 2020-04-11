@@ -24,6 +24,8 @@ dependencies {
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation("org.scalatest:scalatest_2.13:_")
+    testImplementation("org.scalatestplus:scalatestplus-junit_2.13:_")
+    testRuntimeOnly("com.vladsch.flexmark:flexmark-all:_")
     testRuntimeOnly("org.pegdown:pegdown:_") // This is deprecated and should be replaced
     testRuntimeOnly("org.parboiled:parboiled-java:_") // Used to force a version compatible with modern ASM
 }

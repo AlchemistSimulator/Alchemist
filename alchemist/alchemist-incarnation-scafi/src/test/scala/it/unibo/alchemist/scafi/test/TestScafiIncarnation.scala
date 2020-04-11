@@ -25,12 +25,13 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.MersenneTwister
 
 import org.junit.jupiter.api.extension.ExtendWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatestplus.junit.JUnitRunner
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.funsuite.AnyFunSuite
 
 // TODO: run with JUnit 5
 // @ExtendWith(classOf[JUnitRunner])
-class TestScafiIncarnation extends FunSuite with Matchers {
+class TestScafiIncarnation extends AnyFunSuite with Matchers {
   private val INC = new ScafiIncarnation[Any, Euclidean2DPosition]
 
   /**
@@ -52,7 +53,7 @@ class TestScafiIncarnation extends FunSuite with Matchers {
     assertTrue(generic.isInstanceOf[Event[_]])
   }
 
-  private def testIsScafiProgram(program: Reaction[Any]) {
+  private def testIsScafiProgram(program: Reaction[Any]): Unit = {
     assertNotNull(program)
     assertTrue(program.isInstanceOf[Event[_]])
     assertTrue(program.getConditions.isEmpty)

@@ -98,7 +98,7 @@ open class ExtendableConvexPolygonImpl(
     override fun advanceEdge(index: Int, step: Double): Boolean = true.takeIf { step == 0.0 }
         ?: getEdge(index).let { edge ->
             when {
-                edge.degenerate -> false
+                edge.isDegenerate -> false
                 else -> {
                     if (normals[index] == null) {
                         normals[index] = edge.computeNormal(index)
@@ -189,7 +189,7 @@ open class ExtendableConvexPolygonImpl(
     private fun voidCacheAt(index: Int, old: Segment2D<*>) {
         val new = getEdge(index)
         canEdgeAdvance[index] = true
-        if (!fuzzyEquals(old.slope, new.slope) && !(old.degenerate || new.degenerate)) {
+        if (!fuzzyEquals(old.slope, new.slope) && !(old.isDegenerate || new.isDegenerate)) {
             growthDirections[index] = null
             normals[index] = null
         }

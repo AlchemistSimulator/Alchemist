@@ -131,7 +131,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     completed = true
   }
 
-  def sendExport(id: ID, export: NBRData[P]) { nbrData += id -> export }
+  def sendExport(id: ID, export: NBRData[P]): Unit = { nbrData += id -> export }
 
   def getExport(id: ID): Option[NBRData[P]] = nbrData.get(id)
 

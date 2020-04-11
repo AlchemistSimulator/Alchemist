@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionTypes
+import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -57,7 +57,7 @@ interface ConvexPolygon : Euclidean2DConvexShape, AwtShapeCompatible {
      */
     fun intersectsBoundaryExcluded(segment: Segment2D<Euclidean2DPosition>): Boolean = edges()
         .map { intersection(it, segment) }
-        .filter { it.type == SegmentsIntersectionTypes.POINT }
+        .filter { it.type == SegmentsIntersectionType.POINT }
         .map { it.point.get() }
         .distinct()
         .size > 1

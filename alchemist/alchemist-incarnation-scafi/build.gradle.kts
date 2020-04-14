@@ -31,3 +31,17 @@ dependencies {
 tasks.withType<ScalaCompile> {
     targetCompatibility = "1.8"
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Roberto Casadei")
+                    email.set("roby.casadei@unibo.it")
+                    url.set("https://www.unibo.it/sitoweb/roby.casadei")
+                }
+            }
+        }
+    }
+}

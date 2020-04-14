@@ -31,3 +31,24 @@ tasks.withType<Test> {
     useJUnitPlatform()
     maxHeapSize = "1500m"
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            contributors {
+                contributor {
+                    name.set("Matteo Magnani")
+                    email.set("matteo.magnani18@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Andrea Placuzzi")
+                    email.set("andrea.placuzzi@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Franco Pradelli")
+                    email.set("franco.pradelli@studio.unibo.it")
+                }
+            }
+        }
+    }
+}

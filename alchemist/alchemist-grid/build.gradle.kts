@@ -20,3 +20,16 @@ dependencies {
 
     testImplementation(project(":alchemist-incarnation-sapere"))
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Matteo Magnani")
+                    email.set("matteo.magnani18@studio.unibo.it")
+                }
+            }
+        }
+    }
+}

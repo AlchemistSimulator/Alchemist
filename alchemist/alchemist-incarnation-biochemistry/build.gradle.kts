@@ -63,3 +63,31 @@ tasks.withType<Pmd> {
 spotbugs {
     onlyAnalyze.value(sourceSetsToCheck.map { it.toString() })
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Luca Giuliani")
+                    email.set("luca.giuliani10@studio.unibo.it")
+                }
+                developer {
+                    name.set("Gabriele Graffieti")
+                    email.set("gabriele.graffieti@studio.unibo.it")
+                }
+                developer {
+                    name.set("Franco Pradelli")
+                    email.set("franco.pradelli@studio.unibo.it")
+                }
+            }
+            contributors {
+                contributor {
+                    name.set("Sara Montagna")
+                    email.set("sara.montagna@unibo.it")
+                    url.set("http://saramontagna.apice.unibo.it/")
+                }
+            }
+        }
+    }
+}

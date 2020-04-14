@@ -31,3 +31,16 @@ dependencies {
 spotbugs {
     ignoreFailures.set(true)
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Elisa Casadio")
+                    email.set("elisa.casadio7@studio.unibo.it")
+                }
+            }
+        }
+    }
+}

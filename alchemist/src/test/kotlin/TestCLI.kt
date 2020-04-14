@@ -57,6 +57,6 @@ class TestCLI : StringSpec({
         }
     }
     "logger should not be nop" {
-        LoggerFactory.getLogger(Alchemist::class.java).name shouldNotContain "NOP"
+        LoggerFactory.getLogger(Alchemist::class.java)::class.java.name shouldNotContain "NOP"
     }
 })

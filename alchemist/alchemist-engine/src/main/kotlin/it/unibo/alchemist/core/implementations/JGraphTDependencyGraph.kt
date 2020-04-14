@@ -35,7 +35,7 @@ private typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Reaction<T>>()
     private val outGlobals = ArrayListSet<Reaction<T>>()
-    private val graph: DefaultDirectedGraph<Reaction<T>, Edge<T>> = DefaultDirectedGraph(null)
+    private val graph: DefaultDirectedGraph<Reaction<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
 
     override fun createDependencies(newReaction: Reaction<T>) {
         val allReactions = graph.vertexSet()

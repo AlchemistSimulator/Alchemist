@@ -101,10 +101,6 @@ jobs:
     - os: *reference_os
       env: *reference_jdk
       stage: test
-      # TODO: Re-enable windows build when the following issue is resolved:
-      # https://github.com/gradle/gradle/issues/12681
-    - os: windows
-      env: JDK="adopt@"
   include:
     - stage: check
       name: "Check on reference OS and JDK"

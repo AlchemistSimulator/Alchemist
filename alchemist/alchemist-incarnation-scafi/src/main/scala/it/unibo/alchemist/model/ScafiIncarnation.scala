@@ -178,10 +178,9 @@ object ScafiIncarnationUtils {
 
 object CachedInterpreter {
 
-  import com.google.common.cache.CacheBuilder
-  import com.google.common.cache.{Cache => GCache}
-  import scalacache.{ Cache, Entry, CacheConfig }
+  import com.google.common.cache.{CacheBuilder, Cache => GCache}
   import scalacache.guava.GuavaCache
+  import scalacache.{Cache, Entry}
   private val underlyingGuavaCache: GCache[String, Entry[Any]] = CacheBuilder.newBuilder()
     .maximumSize(1000L)
     .build[String, Entry[Any]]
@@ -195,7 +194,6 @@ object CachedInterpreter {
   def apply[A <: AnyRef](str: String, doCacheValue: Boolean = true): A =
     if(doCacheValue) {
       import scalacache.modes.sync._ // Synchronous mode
-      // implicit val cache: Cache[A] = scalaCache
       scalacache.caching("//VAL"+str)(None)(ScalaInterpreter[Any](str))
     }.asInstanceOf[A] else {
       ScalaInterpreter(str)

@@ -68,16 +68,6 @@ object Libs {
     const val junit_jupiter_engine: String = "org.junit.jupiter:junit-jupiter-engine:_"
 
     /**
-     * https://github.com/cb372/scalacache
-     */
-    const val scalacache_core_2_12: String = "com.github.cb372:scalacache-core_2.12:_"
-
-    /**
-     * https://github.com/cb372/scalacache
-     */
-    const val scalacache_guava_2_12: String = "com.github.cb372:scalacache-guava_2.12:_"
-
-    /**
      * https://www.graphhopper.com
      */
     const val graphhopper_core: String = "com.graphhopper:graphhopper-core:_"
@@ -86,17 +76,6 @@ object Libs {
      * https://www.graphhopper.com
      */
     const val graphhopper_reader_osm: String = "com.graphhopper:graphhopper-reader-osm:_"
-
-    const val org_scala_lang: String = "2.12.2"
-    /**
-     * https://www.scala-lang.org/
-     */
-    const val scala_compiler: String = "org.scala-lang:scala-compiler:$org_scala_lang"
-
-    /**
-     * https://www.scala-lang.org/
-     */
-    const val scala_library: String = "org.scala-lang:scala-library:$org_scala_lang"
 
     /**
      * http://www.protelis.org
@@ -167,11 +146,6 @@ object Libs {
     const val kotest_assertions: String = "io.kotest:kotest-assertions-core-jvm:_"
 
     /**
-     * https://www.eclipse.org/emf
-     */
-    const val org_eclipse_emf_ecore: String = "org.eclipse.emf:org.eclipse.emf.ecore:_"
-
-    /**
      * https://github.com/mapsforge/mapsforge
      */
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"
@@ -190,11 +164,6 @@ object Libs {
      * https://scafi.github.io/
      */
     const val scafi_core_2_12: String = "it.unibo.apice.scafiteam:scafi-core_2.12:_"
-
-    /**
-     * http://parboiled.org
-     */
-    const val parboiled_java: String = "org.parboiled:parboiled-java:_"
 
     /**
      * http://www.scalatest.org
@@ -312,11 +281,6 @@ object Libs {
      * https://github.com/DanySK/listset
      */
     const val listset: String = "org.danilopianini:listset:_"
-
-    /**
-     * http://pegdown.org
-     */
-    const val pegdown: String = "org.pegdown:pegdown:_"
 
     /**
      * http://trove4j.sf.net

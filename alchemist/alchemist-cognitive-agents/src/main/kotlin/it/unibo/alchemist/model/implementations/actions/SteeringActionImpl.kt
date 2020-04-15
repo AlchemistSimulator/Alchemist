@@ -6,13 +6,13 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
- * Generic implementation of an action adhering the SteeringAction interface.
+ * Generic implementation of an action adhering the [SteeringActionWithTargetImpl] interface.
  *
  * @param env
  *          the environment inside which the pedestrian moves.
@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param routing
  *          the routing strategy.
  */
-open class SteeringActionImpl<T, P : AbstractEuclideanPosition<P>> @JvmOverloads constructor(
+open class SteeringActionWithTargetImpl<T, P : AbstractEuclideanPosition<P>> @JvmOverloads constructor(
     private val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
@@ -38,23 +38,21 @@ open class SteeringActionImpl<T, P : AbstractEuclideanPosition<P>> @JvmOverloads
     routing,
     target,
     speed
-), SteeringAction<T, P> {
+), SteeringActionWithTarget<T, P> {
 
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        SteeringActionImpl(env, r, n as Pedestrian<T>, target, speed, routing)
+        SteeringActionWithTargetImpl(env, r, n as Pedestrian<T>, target, speed, routing)
 
     /**
-     * Next RELATIVE position.
+     * Next relative position.
      */
     override fun interpolatePositions(
         current: P,
         target: P,
         maxWalk: Double
-    ): P = current.distanceTo(target).let { distance ->
-        when {
-            distance < maxWalk -> target
-            else -> (target - current) / (distance / maxWalk)
-        }
+    ): P = when {
+        current.distanceTo(target) <= maxWalk -> target - current
+        else -> (target - current).resize(maxWalk)
     }
 
     override fun nextPosition(): P = nextPosition

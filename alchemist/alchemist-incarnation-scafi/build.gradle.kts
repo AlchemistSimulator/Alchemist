@@ -25,7 +25,7 @@ dependencies {
     testImplementation(project(":alchemist-loading"))
     testImplementation("org.scalatest:scalatest_2.13:_")
     testImplementation("org.scalatestplus:scalatestplus-junit_2.13:_")
-    testRuntimeOnly("com.vladsch.flexmark:flexmark-all:_")
+    testRuntimeOnly("com.vladsch.flexmark:flexmark-profile-pegdown:_")
 }
 
 tasks.withType<ScalaCompile> {

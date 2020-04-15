@@ -8,7 +8,7 @@
 
 plugins {
     scala
-    id("com.github.maiflai.scalatest") version "0.25"
+    id("com.github.maiflai.scalatest")
 }
 
 dependencies {
@@ -26,8 +26,6 @@ dependencies {
     testImplementation("org.scalatest:scalatest_2.13:_")
     testImplementation("org.scalatestplus:scalatestplus-junit_2.13:_")
     testRuntimeOnly("com.vladsch.flexmark:flexmark-all:_")
-    testRuntimeOnly("org.pegdown:pegdown:_") // This is deprecated and should be replaced
-    testRuntimeOnly("org.parboiled:parboiled-java:_") // Used to force a version compatible with modern ASM
 }
 
 tasks.withType<ScalaCompile> {

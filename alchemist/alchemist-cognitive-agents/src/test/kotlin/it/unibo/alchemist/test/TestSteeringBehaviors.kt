@@ -100,7 +100,7 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ -> e.nodes.forEach {
                 e.getPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
             } },
-            numSteps = 15000
+            numSteps = 22000
         )
     }
 })

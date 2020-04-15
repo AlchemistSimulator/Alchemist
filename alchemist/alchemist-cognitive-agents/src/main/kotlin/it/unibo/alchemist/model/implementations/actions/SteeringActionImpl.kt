@@ -1,61 +1,51 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
-import it.unibo.alchemist.model.implementations.routes.PolygonalChain
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
-import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.interfaces.SteeringAction
 
 /**
- * Generic implementation of an action adhering the [SteeringActionWithTargetImpl] interface.
- *
- * @param env
- *          the environment inside which the pedestrian moves.
- * @param pedestrian
- *          the owner of this action.
- * @param target
- *          the strategy used to compute the next target.
- * @param speed
- *          the speed selection strategy.
- * @param routing
- *          the routing strategy.
+ * An abstract [SteeringAction], deriving from [AbstractMoveNode].
  */
-open class SteeringActionWithTargetImpl<T, P : AbstractEuclideanPosition<P>> @JvmOverloads constructor(
-    private val env: Environment<T, P>,
-    reaction: Reaction<T>,
-    pedestrian: Pedestrian<T>,
-    private val target: TargetSelectionStrategy<P>,
-    private val speed: SpeedSelectionStrategy<P> = SpeedSelectionStrategy { pedestrian.speed() / reaction.rate },
-    private val routing: RoutingStrategy<P> = RoutingStrategy { p1, p2 -> PolygonalChain(p1, p2) }
-) : AbstractConfigurableMoveNode<T, P>(
-    env,
-    pedestrian,
-    routing,
-    target,
-    speed
-), SteeringActionWithTarget<T, P> {
-
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        SteeringActionWithTargetImpl(env, r, n as Pedestrian<T>, target, speed, routing)
+abstract class SteeringActionImpl<T, P : AbstractEuclideanPosition<P>>(
+    env: Environment<T, P>,
+    /**
+     * The reaction in which this action is executed.
+     */
+    protected open val reaction: Reaction<T>,
+    /**
+     * The owner of this action.
+     */
+    protected open val pedestrian: Pedestrian<T>
+) : AbstractMoveNode<T, P>(env, pedestrian), SteeringAction<T, P> {
 
     /**
      * Next relative position.
      */
-    override fun interpolatePositions(
-        current: P,
-        target: P,
-        maxWalk: Double
-    ): P = when {
-        current.distanceTo(target) <= maxWalk -> target - current
-        else -> (target - current).resize(maxWalk)
+    override fun getNextPosition(): P = nextPosition()
+
+    /**
+     * The maximum distance the pedestrian can walk, this is a length.
+     */
+    protected fun maxWalk(): Double = pedestrian.speed() / reaction.rate
+
+    /**
+     * Resize the position so as to have magnitude equal to maxWalk only
+     * if its magnitude was greater than such quantity.
+     */
+    protected fun P.resizeToMaxWalkIfGreater(): P = when {
+        magnitude <= maxWalk() -> this
+        else -> resize(maxWalk())
     }
-
-    override fun nextPosition(): P = nextPosition
-
-    override fun target(): P = target.target
 }

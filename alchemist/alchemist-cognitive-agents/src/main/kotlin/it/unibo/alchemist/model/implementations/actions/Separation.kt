@@ -1,13 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.origin
-import it.unibo.alchemist.model.interfaces.GroupSteeringAction
+import it.unibo.alchemist.model.interfaces.Action
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
  * Move the agent away from the pedestrians near to him.
@@ -20,29 +19,19 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the owner of this action.
  */
 class Separation<T>(
-    private val env: Physics2DEnvironment<T>,
+    override val env: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    private val pedestrian: Pedestrian2D<T>
-) : SteeringActionImpl<T, Euclidean2DPosition>(
-    env,
-    reaction,
-    pedestrian,
-    TargetSelectionStrategy { env.origin() }
-), GroupSteeringAction<T, Euclidean2DPosition> {
+    override val pedestrian: Pedestrian2D<T>
+) : AbstractGroupSteeringAction<T, Euclidean2DPosition>(env, reaction, pedestrian) {
+
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
+        Separation(env, r, n as Pedestrian2D<T>)
+
+    override fun nextPosition(): Euclidean2DPosition =
+        (currentPosition - centroid()).resizeToMaxWalkIfGreater()
 
     override fun group(): List<Pedestrian<T>> = pedestrian.fieldOfView(env)
             .influentialNodes()
             .filterIsInstance<Pedestrian<T>>()
             .plusElement(pedestrian)
-
-    override fun interpolatePositions(
-        current: Euclidean2DPosition,
-        target: Euclidean2DPosition,
-        maxWalk: Double
-    ): Euclidean2DPosition = super.interpolatePositions(target, centroid(), maxWalk)
-
-    private fun centroid(): Euclidean2DPosition = with(group()) {
-        map { env.getPosition(it) - currentPosition }
-            .reduce { acc, pos -> acc + pos } / (-size.toDouble())
-    }
 }

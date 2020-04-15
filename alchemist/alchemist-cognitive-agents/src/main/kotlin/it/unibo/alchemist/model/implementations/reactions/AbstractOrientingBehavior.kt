@@ -108,7 +108,8 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
      */
     private lateinit var currRoom: M
     /*
-     * The room (or walkable area) the pedestrian is heading to.
+     * The room (or walkable area) the pedestrian is heading to, it is
+     * connected to the current room.
      */
     private lateinit var nextRoom: M
     /*
@@ -150,8 +151,8 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
 
     private fun onStart() {
         val currentPosition = environment.myPosition
-        with(environment.graph().nodeContaining(currentPosition)) {
-            if (this != null) {
+        environment.graph().nodeContaining(currentPosition).let { room ->
+            if (room != null) {
                 state = State.NEW_ROOM
             }
             /*
@@ -160,33 +161,41 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
              * to enter one. If this isn't possible, it simply won't move.
              */
             else {
-                val closestDoor = environment.graph().edgeSet()
-                    .map { it to computeSubdestination(it) }
-                    .minBy { it.second.distanceTo(currentPosition) }
-                if (closestDoor != null) {
-                    nextRoom = environment.graph().getEdgeTarget(closestDoor.first)
-                    subdestination = closestDoor.second
-                    targetDoor = closestDoor.first
-                    state = State.MOVING_TO_DOOR
-                } else {
-                    state = State.ARRIVED
-                }
+                moveToClosestDoor(environment.graph().edgeSet(), ifNull = { state = State.ARRIVED })
             }
         }
     }
 
     private fun inNewRoom() {
         val currentPosition = environment.myPosition
-        currRoom = if (::nextRoom.isInitialized && nextRoom.contains(currentPosition)) {
-            nextRoom
-        } else {
-            environment.graph().vertexSet().first { it.contains(currentPosition) }
+        val newRoom = environment.graph().vertexSet().first { it.contains(currentPosition) }
+        when {
+            ::nextRoom.isInitialized -> {
+                if (nextRoom.contains(currentPosition)) {
+                    currRoom = nextRoom
+                } else {
+                    /*
+                     * We should have reached nextRoom, but we are in a different room (newRoom),
+                     * in such case we return back to the previous room (stored in currRoom), so
+                     * as to correctly follow our route.
+                     * In the future, something more sophisticated could be done (e.g. recomputing
+                     * the route).
+                     */
+                    val prevRoom = currRoom
+                    currRoom = newRoom
+                    val doorsLeadingBack = environment.graph().outgoingEdgesOf(currRoom)
+                        .filter { environment.graph().getEdgeTarget(it) == prevRoom }
+                    moveToClosestDoor(doorsLeadingBack)
+                    return
+                }
+            }
+            else -> currRoom = newRoom
         }
         pedestrian.registerVisit(currRoom)
-        with(environment.graph().destinationsWithin(currRoom)) {
-            if (isNotEmpty()) {
+        environment.graph().destinationsWithin(currRoom).let { destinationsInSight ->
+            if (destinationsInSight.isNotEmpty()) {
                 route.clear()
-                subdestination = first()
+                subdestination = destinationsInSight.first()
                 state = State.MOVING_TO_FINAL
                 return
             }
@@ -202,9 +211,7 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
         }
         val rankings = if (route.isNotEmpty()) {
             computeEdgeRankings(currRoom, route[0].centroid)
-        } else {
-            null
-        }
+        } else null
         /*
          * The pedestrian can see all the edges outgoing from the current room.
          */
@@ -363,6 +370,24 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
     private fun isImpasse(area: M): Boolean =
         pedestrian.volatileMemory.contains(area) &&
             environment.graph().outgoingEdgesOf(area).distinct().count() <= 1
+
+    /*
+     * Picks the closest door among the provided ones and sets all the state
+     * variables so as to move to the selected door.
+     * ifNull is called if no door could be found, defaults to nothing.
+     */
+    private fun moveToClosestDoor(doors: Collection<F>, ifNull: () -> Unit = {}) {
+        val currentPosition = environment.getPosition(pedestrian)
+        val closestDoor = doors
+            .map { it to computeSubdestination(it) }
+            .minBy { it.second.distanceTo(currentPosition) }
+        if (closestDoor != null) {
+            nextRoom = environment.graph().getEdgeTarget(closestDoor.first)
+            subdestination = closestDoor.second
+            targetDoor = closestDoor.first
+            state = State.MOVING_TO_DOOR
+        } else ifNull.invoke()
+    }
 
     companion object {
         private const val destinationWeight = 0.1

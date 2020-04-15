@@ -1,12 +1,13 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
+import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
  * Combination of multiple steering actions.
@@ -21,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the logic according to the steering actions are combined.
  */
 class Combine<T, P : AbstractEuclideanPosition<P>>(
-    env: Environment<T, P>,
+    private val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
     private val actions: List<SteeringAction<T, P>>,
@@ -29,13 +30,10 @@ class Combine<T, P : AbstractEuclideanPosition<P>>(
 ) : SteeringActionImpl<T, P>(
     env,
     reaction,
-    pedestrian,
-    TargetSelectionStrategy { steerStrategy.computeTarget(actions) }
+    pedestrian
 ) {
-    override fun interpolatePositions(
-        current: P,
-        target: P,
-        maxWalk: Double
-    ): P =
-        steerStrategy.computeNextPosition(actions)
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
+        Combine(env, r, n as Pedestrian<T>, actions, steerStrategy)
+
+    override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).resizeToMaxWalkIfGreater()
 }

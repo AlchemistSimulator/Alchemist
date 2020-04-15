@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 
 /**
@@ -31,9 +32,17 @@ open class Weighted<T>(
             groupActions.calculatePosition() + steerActions.calculatePosition()
         }
 
+    /**
+     * The overall target is computed as follows: only [SteeringActionWithTarget] are considered,
+     * and we pick the action whose target is closest to the current position of the pedestrian,
+     * which will be considered the overall target.
+     */
     override fun computeTarget(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
         with(env.getPosition(pedestrian) ?: env.origin()) {
-            actions.map { it.target() }.minBy { it.distanceTo(this) } ?: this
+            actions
+                .filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
+                .map { it.target() }
+                .minBy { it.distanceTo(this) } ?: this
         }
 
     private fun List<SteeringAction<T, Euclidean2DPosition>>.calculatePosition(): Euclidean2DPosition =

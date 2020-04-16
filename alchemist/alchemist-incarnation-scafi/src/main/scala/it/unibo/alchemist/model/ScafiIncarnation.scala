@@ -22,6 +22,7 @@ import org.apache.commons.math3.random.RandomGenerator
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.jdk.CollectionConverters._
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
@@ -113,7 +114,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String): Reaction[T] = {
-    import scala.collection.JavaConverters._
     val isSend = "send".equalsIgnoreCase(param)
     val result: Reaction[T] =
       if (isSend) {
@@ -152,8 +152,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 object ScafiIncarnationUtils {
   import it.unibo.alchemist.model.interfaces.Action
 
-  import collection.JavaConverters._
-
   def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for(reaction: Reaction[T] <- node.getReactions().asScala;
         action: Action[T] <- reaction.getActions().asScala; if klass.isInstance(action))
@@ -178,10 +176,9 @@ object ScafiIncarnationUtils {
 
 object CachedInterpreter {
 
-  import com.google.common.cache.CacheBuilder
-  import com.google.common.cache.{Cache => GCache}
-  import scalacache.{ Cache, Entry, CacheConfig }
+  import com.google.common.cache.{CacheBuilder, Cache => GCache}
   import scalacache.guava.GuavaCache
+  import scalacache.{Cache, Entry}
   private val underlyingGuavaCache: GCache[String, Entry[Any]] = CacheBuilder.newBuilder()
     .maximumSize(1000L)
     .build[String, Entry[Any]]
@@ -195,7 +192,6 @@ object CachedInterpreter {
   def apply[A <: AnyRef](str: String, doCacheValue: Boolean = true): A =
     if(doCacheValue) {
       import scalacache.modes.sync._ // Synchronous mode
-      // implicit val cache: Cache[A] = scalaCache
       scalacache.caching("//VAL"+str)(None)(ScalaInterpreter[Any](str))
     }.asInstanceOf[A] else {
       ScalaInterpreter(str)

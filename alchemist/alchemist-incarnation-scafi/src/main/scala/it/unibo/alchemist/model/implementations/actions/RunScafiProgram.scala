@@ -77,7 +77,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     new RunScafiProgram(environment, n, r, rng, programName, retentionTime)
   }
 
-  override def execute() {
+  override def execute(): Unit = {
     import scala.jdk.CollectionConverters._
     implicit def euclideanToPoint(p: P): Point3D = p.getDimensions match {
       case 1 => Point3D(p.getCoordinate(0), 0, 0)
@@ -118,7 +118,6 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
       NBR_ALCHEMIST_LAG -> nbrData.view.mapValues[Double](currentTime - _.executionTime),
       NBR_ALCHEMIST_DELAY -> nbrData.view.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
     )
-    // val nbrRange = nbrData.mapValues { _.position }.toMap
     val exports: Iterable[(ID,EXPORT)] = nbrData.view.mapValues { _.export }.toIterable
     val ctx = new ContextImpl(node.getId, exports, localSensors, Map.empty){
       override def nbrSense[T](nsns: NSNS)(nbr: ID): Option[T] =

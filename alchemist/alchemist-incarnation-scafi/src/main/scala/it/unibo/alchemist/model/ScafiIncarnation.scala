@@ -22,6 +22,7 @@ import org.apache.commons.math3.random.RandomGenerator
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.jdk.CollectionConverters._
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
@@ -113,7 +114,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String): Reaction[T] = {
-    import scala.collection.JavaConverters._
     val isSend = "send".equalsIgnoreCase(param)
     val result: Reaction[T] =
       if (isSend) {
@@ -151,8 +151,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
 object ScafiIncarnationUtils {
   import it.unibo.alchemist.model.interfaces.Action
-
-  import collection.JavaConverters._
 
   def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for(reaction: Reaction[T] <- node.getReactions().asScala;

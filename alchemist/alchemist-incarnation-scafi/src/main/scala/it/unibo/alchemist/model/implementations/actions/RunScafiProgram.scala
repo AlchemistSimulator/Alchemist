@@ -77,7 +77,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     new RunScafiProgram(environment, n, r, rng, programName, retentionTime)
   }
 
-  override def execute() {
+  override def execute(): Unit = {
     import scala.jdk.CollectionConverters._
     implicit def euclideanToPoint(p: P): Point3D = p.getDimensions match {
       case 1 => Point3D(p.getCoordinate(0), 0, 0)

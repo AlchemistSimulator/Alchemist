@@ -44,7 +44,7 @@ open class FollowFlowField(
                  * direction which connects the current position to the center.
                  */
                 val center = env.makePosition(layer.centerX, layer.centerY)
-                this.add(currentPosition + (center - currentPosition).resize(maxWalk()))
+                this.add(currentPosition + (center - currentPosition).resized(maxWalk()))
             }
         }
         .discardUnsuitablePositions()

@@ -39,7 +39,7 @@ class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
             }
             .minBy { (intersection, _) -> currentPosition.distanceTo(intersection) }
             ?.let { (intersection, bound) -> intersection to env.makePosition(bound.centerX, bound.centerY) }
-            ?.let { (intersection, center) -> (intersection - center).resizeToMaxWalkIfGreater() }
+            ?.let { (intersection, center) -> (intersection - center).resizedToMaxWalkIfGreater() }
             /*
              * Otherwise we just don't apply any repulsion force.
              */

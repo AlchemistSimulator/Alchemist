@@ -53,7 +53,7 @@ class OrientingSteeringBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPo
          * movement can still block the agent in some cases)
          */
         if (disturbing.magnitude > desired.magnitude) {
-            desired = desired.resize(disturbing.magnitude * movementMagnitudeFactor)
+            desired = desired.resized(disturbing.magnitude * movementMagnitudeFactor)
         }
         var resulting = desired + disturbing
         previous?.let {
@@ -69,8 +69,8 @@ class OrientingSteeringBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPo
     ): Euclidean2DPosition {
         val n = desiredMovement.normal()
         val length = disturbingMovement.magnitude
-        val n1 = n.resize(length)
-        val n2 = n.resize(-length)
+        val n1 = n.resized(length)
+        val n2 = n.resized(-length)
         return if (n1.distanceTo(disturbingMovement) < n2.distanceTo(disturbingMovement)) {
             n1
         } else {

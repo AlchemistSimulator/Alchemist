@@ -35,5 +35,5 @@ open class Flee<T, P : AbstractEuclideanPosition<P>>(
      * We don't want to resizeToMaxWalkIfGreater, we want to flee from danger as
      * much as we can (i.e. maxWalk).
      */
-    override fun nextPosition(): P = (currentPosition - danger).resize(maxWalk())
+    override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk())
 }

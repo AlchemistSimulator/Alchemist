@@ -44,7 +44,7 @@ open class AvoidFlowField(
                  * direction which connects the current position to the center.
                  */
                 val center = env.makePosition(layer.centerX, layer.centerY)
-                this.add(currentPosition + (currentPosition - center).resize(maxWalk()))
+                this.add(currentPosition + (currentPosition - center).resized(maxWalk()))
             }
         }
         .discardUnsuitablePositions()

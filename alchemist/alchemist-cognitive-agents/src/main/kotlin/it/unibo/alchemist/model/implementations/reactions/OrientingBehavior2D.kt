@@ -147,7 +147,7 @@ open class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolyg
                     second - first
                 } else {
                     first - second
-                }.resize(toVector().magnitude * wallRepulsionFactor)
+                }.resized(toVector().magnitude * wallRepulsionFactor)
                 return subdestination + correction
             }
             return subdestination

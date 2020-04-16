@@ -35,5 +35,5 @@ class Combine<T, P : AbstractEuclideanPosition<P>>(
     override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
         Combine(env, r, n as Pedestrian<T>, actions, steerStrategy)
 
-    override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).resizeToMaxWalkIfGreater()
+    override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).resizedToMaxWalkIfGreater()
 }

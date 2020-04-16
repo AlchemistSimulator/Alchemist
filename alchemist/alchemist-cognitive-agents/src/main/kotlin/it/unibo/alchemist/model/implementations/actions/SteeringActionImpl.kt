@@ -41,11 +41,12 @@ abstract class SteeringActionImpl<T, P : AbstractEuclideanPosition<P>>(
     protected fun maxWalk(): Double = pedestrian.speed() / reaction.rate
 
     /**
-     * Resize the position so as to have magnitude equal to maxWalk only
-     * if its magnitude was greater than such quantity.
+     * If the magnitude of the vector is greater than [maxWalk], a resized version with
+     * magnitude equal to such quantity is returned. Otherwise, the original vector is
+     * returned.
      */
-    protected fun P.resizeToMaxWalkIfGreater(): P = when {
+    protected fun P.resizedToMaxWalkIfGreater(): P = when {
         magnitude <= maxWalk() -> this
-        else -> resize(maxWalk())
+        else -> resized(maxWalk())
     }
 }

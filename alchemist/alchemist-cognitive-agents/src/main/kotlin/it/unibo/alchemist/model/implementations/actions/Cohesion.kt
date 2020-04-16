@@ -26,7 +26,7 @@ class Cohesion<T, P : AbstractEuclideanPosition<P>>(
     override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
         Cohesion(env, r, n as Pedestrian<T>)
 
-    override fun nextPosition(): P = (centroid() - currentPosition).resizeToMaxWalkIfGreater()
+    override fun nextPosition(): P = (centroid() - currentPosition).resizedToMaxWalkIfGreater()
 
     override fun group(): List<Pedestrian<T>> = pedestrian.membershipGroup.members
 }

@@ -52,7 +52,7 @@ open class SteeringActionWithTargetImpl<T, P : AbstractEuclideanPosition<P>> @Jv
         maxWalk: Double
     ): P = when {
         current.distanceTo(target) <= maxWalk -> target - current
-        else -> (target - current).resize(maxWalk)
+        else -> (target - current).resized(maxWalk)
     }
 
     override fun nextPosition(): P = nextPosition

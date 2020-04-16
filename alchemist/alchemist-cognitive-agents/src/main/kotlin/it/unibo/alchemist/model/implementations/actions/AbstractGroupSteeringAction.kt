@@ -31,6 +31,6 @@ abstract class AbstractGroupSteeringAction<T, P : AbstractEuclideanPosition<P>>(
      * Computes the centroid of the [group] in ABSOLUTE coordinates.
      */
     protected fun centroid(): P = with(group()) {
-        map { env.getPosition(it) }.reduce { acc, pos -> acc + pos } / (size.toDouble())
+        map { env.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
     }
 }

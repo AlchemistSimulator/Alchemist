@@ -163,7 +163,7 @@ open class Orienting<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
             .filterIsInstance<Pedestrian<T>>()
             .filter { room.contains(environment.getPosition(it)) }
             .count()
-            .let { (pedestrian.shape.diameter.pow(2) * it / room.asAwtShape().area()) + 1 }
+            .let { pedestrian.shape.diameter.pow(2) * it / room.asAwtShape().area() + 1 }
 
     /*
      * A rough estimation of the area of a shape.

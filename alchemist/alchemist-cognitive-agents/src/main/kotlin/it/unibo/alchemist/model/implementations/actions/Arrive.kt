@@ -42,7 +42,7 @@ open class Arrive<T, P>(
         target -> with(env.getPosition(pedestrian).distanceTo(target)) {
             when {
                 this < arrivalTolerance -> 0.0
-                this < decelerationRadius -> (Speed.default * this / decelerationRadius) / reaction.rate
+                this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
                 else -> pedestrian.speed() / reaction.rate
             }
         }

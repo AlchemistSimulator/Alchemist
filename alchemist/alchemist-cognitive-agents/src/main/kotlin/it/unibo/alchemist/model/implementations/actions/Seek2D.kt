@@ -21,7 +21,7 @@ open class Seek2D<T>(
     vararg coords: Double
 ) : Seek<T, Euclidean2DPosition>(env, reaction, pedestrian, *coords) {
 
-    override fun interpolatePositions(
+    public override fun interpolatePositions(
         current: Euclidean2DPosition,
         target: Euclidean2DPosition,
         maxWalk: Double

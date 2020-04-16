@@ -9,16 +9,17 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * An abstract [SteeringAction], deriving from [AbstractMoveNode].
  */
-abstract class SteeringActionImpl<T, P : AbstractEuclideanPosition<P>>(
+abstract class SteeringActionImpl<T, P>(
     env: Environment<T, P>,
     /**
      * The reaction in which this action is executed.
@@ -28,7 +29,14 @@ abstract class SteeringActionImpl<T, P : AbstractEuclideanPosition<P>>(
      * The owner of this action.
      */
     protected open val pedestrian: Pedestrian<T>
-) : AbstractMoveNode<T, P>(env, pedestrian), SteeringAction<T, P> {
+) : AbstractMoveNode<T, P>(env, pedestrian), SteeringAction<T, P>
+    /*
+     * Keeping bounds as much general as we can (instead of using AbstractEuclideanPosition),
+     * so as to allow [AbstractOrienting] to derive from this class.
+     */
+    where
+        P : Position<P>,
+        P : Vector<P> {
 
     /**
      * Next relative position.

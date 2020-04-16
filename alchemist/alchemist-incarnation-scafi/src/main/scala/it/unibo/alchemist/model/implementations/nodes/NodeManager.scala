@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Node}
 
 trait NodeManager {
-  def put[T](molecule: String, concentration: T)
+  def put[T](molecule: String, concentration: T): Unit
   def get[T](molecule: String): T
   def has(molecule: String): Boolean
   def remove(molecule: String): Unit

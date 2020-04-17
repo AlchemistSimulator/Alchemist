@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.OrientingAgent
+import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -160,7 +161,7 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
              * condition), it tries to reach the closest door/passage in order
              * to enter one. If this isn't possible, it simply won't move.
              */
-            else -> moveToClosestDoor(ifNoDoorCanBeFound = { state = State.ARRIVED })
+            else -> moveToClosestDoor(noDoorAction = { state = State.ARRIVED })
         }
     }
 
@@ -291,7 +292,7 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
             /*
              * The pedestrian doesn't want to move at all.
              */
-            else -> currentPosition - currentPosition
+            else -> environment.origin()
         }
     }
 
@@ -389,11 +390,11 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
     /*
      * Picks the closest door among the provided ones (defaults to all doors)
      * and sets all the state variables so as to move to the selected door.
-     * ifNoDoorCanBeFound is called if no door could be found, defaults to nothing.
+     * noDoorAction is called if no door could be found, defaults to nothing.
      */
     private fun moveToClosestDoor(
         doors: Collection<F> = environment.graph().edgeSet(),
-        ifNoDoorCanBeFound: () -> Unit = {}
+        noDoorAction: () -> Unit = {}
     ) {
         val closestDoor = doors
             .map { it to crossingPoint(it) }
@@ -403,7 +404,9 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
             subdestination = closestDoor.second
             targetDoor = closestDoor.first
             state = State.MOVING_TO_DOOR
-        } else ifNoDoorCanBeFound.invoke()
+        } else {
+            noDoorAction.invoke()
+        }
     }
 
     companion object {

@@ -51,7 +51,7 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
      * The owner of this behavior.
      */
     final override val pedestrian: OrientingPedestrian<T, P, A, N, E>
-) : SteeringActionImpl<T, P>(environment, reaction, pedestrian)
+) : AbstractSteeringAction<T, P>(environment, reaction, pedestrian)
     where
         P : Position<P>, P : Vector<P>,
         A : GeometricTransformation<P>,

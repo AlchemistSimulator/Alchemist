@@ -27,7 +27,7 @@ class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     override val reaction: SteeringBehavior<T>,
     pedestrian: Pedestrian<T>,
     private val proximityRange: Double
-) : SteeringActionImpl<T, Euclidean2DPosition>(env, reaction, pedestrian) {
+) : AbstractSteeringAction<T, Euclidean2DPosition>(env, reaction, pedestrian) {
 
     override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
         ObstacleAvoidance(env, r as SteeringBehavior<T>, n as Pedestrian<T>, proximityRange)

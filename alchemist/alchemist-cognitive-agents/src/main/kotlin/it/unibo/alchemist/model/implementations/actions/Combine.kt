@@ -27,7 +27,7 @@ class Combine<T, P : AbstractEuclideanPosition<P>>(
     pedestrian: Pedestrian<T>,
     private val actions: List<SteeringAction<T, P>>,
     private val steerStrategy: SteeringStrategy<T, P>
-) : SteeringActionImpl<T, P>(
+) : AbstractSteeringAction<T, P>(
     env,
     reaction,
     pedestrian

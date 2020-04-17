@@ -25,7 +25,7 @@ abstract class AbstractGroupSteeringAction<T, P : AbstractEuclideanPosition<P>>(
     protected open val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>
-) : GroupSteeringAction<T, P>, SteeringActionImpl<T, P>(env, reaction, pedestrian) {
+) : GroupSteeringAction<T, P>, AbstractSteeringAction<T, P>(env, reaction, pedestrian) {
 
     /**
      * Computes the centroid of the [group] in ABSOLUTE coordinates.

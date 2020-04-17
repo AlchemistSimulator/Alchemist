@@ -28,7 +28,7 @@ abstract class FlowFieldSteeringAction(
     reaction: Reaction<Number>,
     pedestrian: Pedestrian2D<Number>,
     protected val targetMolecule: Molecule
-) : SteeringActionImpl<Number, Euclidean2DPosition>(env, reaction, pedestrian) {
+) : AbstractSteeringAction<Number, Euclidean2DPosition>(env, reaction, pedestrian) {
 
     override fun nextPosition(): Euclidean2DPosition = env.getLayer(targetMolecule)
         .orElseThrow { IllegalStateException("no layer containing $targetMolecule could be found") }

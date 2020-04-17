@@ -168,28 +168,27 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
         val newRoom = environment.graph().nodeContaining(currentPosition)
             ?: throw IllegalStateException("pedestrian is not inside a room")
         pedestrian.registerVisit(newRoom)
-        when {
-            ::nextRoom.isInitialized -> {
-                if (nextRoom.contains(currentPosition)) {
-                    currRoom = nextRoom
-                }
-                /*
-                 * We should have reached nextRoom, but we are in a different room (newRoom),
-                 * in such case we return back to the previous room (stored in currRoom), so
-                 * as to correctly follow our route.
-                 * In the future, something more sophisticated could be done (e.g. recomputing
-                 * the route).
-                 */
-                else {
-                    val prevRoom = currRoom
-                    currRoom = newRoom
-                    val doorsLeadingBack = environment.graph().outgoingEdgesOf(currRoom)
-                        .filter { environment.graph().getEdgeTarget(it) == prevRoom }
-                    moveToClosestDoor(doors = doorsLeadingBack)
-                    return
-                }
+        if (::nextRoom.isInitialized) {
+            if (nextRoom.contains(currentPosition)) {
+                currRoom = nextRoom
             }
-            else -> currRoom = newRoom
+            /*
+             * We should have reached nextRoom, but we are in a different room (newRoom),
+             * in such case we return back to the previous room (stored in currRoom), so
+             * as to correctly follow our route.
+             * In the future, something more sophisticated could be done (e.g. recomputing
+             * the route).
+             */
+            else {
+                val prevRoom = currRoom
+                currRoom = newRoom
+                val doorsLeadingBack = environment.graph().outgoingEdgesOf(currRoom)
+                    .filter { environment.graph().getEdgeTarget(it) == prevRoom }
+                moveToClosestDoor(doors = doorsLeadingBack)
+                return
+            }
+        } else {
+            currRoom = newRoom
         }
         environment.graph().destinationsWithin(currRoom).let { destinationsInSight ->
             if (destinationsInSight.isNotEmpty()) {

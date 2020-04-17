@@ -53,7 +53,7 @@ abstract class FlowFieldSteeringAction(
     /**
      * Discard the positions the node can't fit.
      */
-    protected fun MutableList<Euclidean2DPosition>.discardUnsuitablePositions(): List<Euclidean2DPosition> =
+    protected fun List<Euclidean2DPosition>.discardUnsuitablePositions(): List<Euclidean2DPosition> =
         map {
             if (env is EuclideanPhysics2DEnvironmentWithObstacles<*, Number>) {
                 /*

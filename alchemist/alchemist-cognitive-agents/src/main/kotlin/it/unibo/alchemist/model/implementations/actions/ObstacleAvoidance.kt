@@ -2,6 +2,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.SteeringBehavior
+import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Obstacle2D
@@ -43,7 +44,7 @@ class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
             /*
              * Otherwise we just don't apply any repulsion force.
              */
-            ?: env.makePosition(0.0, 0.0)
+            ?: env.origin()
     }
 
     /*

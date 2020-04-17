@@ -67,6 +67,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
   import RunScafiProgram.NBRData
   val program = ResourceLoader.classForName(programName).getDeclaredConstructor().newInstance().asInstanceOf[CONTEXT => EXPORT]
   val programNameMolecule = new SimpleMolecule(programName)
+  lazy val nodeManager = new SimpleNodeManager(node)
   private var nbrData: Map[ID, NBRData[P]] = Map()
   private var completed = false
   declareDependencyTo(Dependency.EVERY_MOLECULE)
@@ -87,7 +88,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     val position: P = environment.getPosition(node)
     val currentTime = reaction.getTau
     if(!nbrData.contains(node.getId)) {
-      nbrData += node.getId -> new NBRData(factory.emptyExport(), environment.getPosition(node), Double.NaN)
+      nbrData += node.getId -> NBRData(factory.emptyExport(), position, Double.NaN)
     }
     nbrData = nbrData.filter { case (id,data) => id==node.getId || data.executionTime >= currentTime - retentionTime }
     val deltaTime = currentTime.minus(nbrData.get(node.getId).map( _.executionTime).getOrElse(Double.NaN))
@@ -99,7 +100,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
         LSNS_POSITION -> position,
         LSNS_TIMESTAMP -> currentTime.toLong,
         LSNS_TIME -> LocalDateTime.MIN.plusSeconds(currentTime.toDouble.toInt),
-        LSNS_ALCHEMIST_NODE_MANAGER -> new SimpleNodeManager(node),
+        LSNS_ALCHEMIST_NODE_MANAGER -> nodeManager,
         LSNS_ALCHEMIST_DELTA_TIME -> deltaTime,
         LSNS_ALCHEMIST_ENVIRONMENT -> environment,
         LSNS_ALCHEMIST_RANDOM -> rng,

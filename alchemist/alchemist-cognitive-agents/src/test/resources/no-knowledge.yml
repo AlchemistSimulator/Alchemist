@@ -18,7 +18,7 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [0.25]
-    type: OrientingBehavior2D
+    type: OrientingReaction
 
 displacements:
   - in:

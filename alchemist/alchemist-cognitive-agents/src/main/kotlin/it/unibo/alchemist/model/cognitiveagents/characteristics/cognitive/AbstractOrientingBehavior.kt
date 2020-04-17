@@ -7,10 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.actions
+package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.OrientingAgent
-import it.unibo.alchemist.model.implementations.utils.origin
+import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -23,7 +22,14 @@ import java.lang.IllegalStateException
 import kotlin.math.pow
 
 /**
- * An action representing the orienting behavior of an [OrientingPedestrian].
+ * The orienting behavior of an [OrientingPedestrian].
+ * This is a finite state machine, whose only public method is [update]. As stated in its
+ * documentation, [update] doesn't move the pedestrian, but only refreshes the internal
+ * state of this behavior.
+ * The client should move the pedestrian using the [desiredPosition] value, the reason is
+ * that this class is meant to be extended or used via composition to obtain implementations
+ * of the orienting behavior deriving from different entities of the Alchemist meta-model,
+ * such as [Action] or [Reaction].
  * This class obtains a route from the pedestrian's cognitive map and exploits that and the
  * other spatial information available to navigate the environment towards (or in search of)
  * a destination.
@@ -38,21 +44,19 @@ import kotlin.math.pow
  * @param M the type of nodes of the navigation graph provided by the [environment].
  * @param F the type of edges of the navigation graph provided by the [environment].
  *
- * Since E is simply Any?, this reaction assumes no extra information is stored in the edges
+ * Since E is simply Any?, this behavior assumes no extra information is stored in the edges
  * of the cognitive map.
  */
-abstract class AbstractOrienting<T, P, A, N, E, M, F>(
+abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
     /**
      * The environment the pedestrian is into.
      */
     protected open val environment: EnvironmentWithGraph<*, T, P, A, M, F>,
-    reaction: Reaction<T>,
     /**
      * The owner of this behavior.
      */
-    final override val pedestrian: OrientingPedestrian<T, P, A, N, E>
-) : AbstractSteeringAction<T, P>(environment, reaction, pedestrian)
-    where
+    protected val pedestrian: OrientingPedestrian<T, P, A, N, E>
+) where
         P : Position<P>, P : Vector<P>,
         A : GeometricTransformation<P>,
         N : ConvexGeometricShape<P, A>,
@@ -75,6 +79,8 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
      * future, something better could be done.
      */
     private val minDistance = pedestrian.shape.diameter
+
+    private val currentPosition: P get() = environment.getPosition(pedestrian)
 
     /*
      * Route to a possible destination obtained from the cognitive map.
@@ -102,7 +108,7 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
                      * path between each pair of nodes. In the future, things may
                      * change and there could be more than one shortest path between
                      * two nodes. In this case, it may be preferable to choose a
-                     * shortest path with the maximum number of edges possible. The
+                     * shortest path with the maximum number of nodes possible. The
                      * reason is that such path contains more detailed information
                      * regarding the route to follow.
                      */
@@ -116,17 +122,17 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
      */
     private lateinit var currRoom: M
     /*
-     * The room (or walkable area) the pedestrian is heading to, it is
-     * connected to the current room.
+     * The room (or walkable area) the pedestrian is heading to, it is connected to the
+     * current room.
      */
     private lateinit var nextRoom: M
     /*
-     * The position the pedestrian is moving towards, no obstacle is placed
-     * between the agent and this position.
+     * The position the pedestrian is moving towards, which is guaranteed to be in sight
+     * (i.e., no obstacle is placed between the agent and this position).
      */
     private lateinit var subdestination: P
     /*
-     * The edge the pedestrian is moving towards.
+     * The passage the pedestrian is moving towards.
      */
     private lateinit var targetDoor: F
 
@@ -135,8 +141,8 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
         NEW_ROOM,
         /*
          * There is one unusual case in which the pedestrian cannot locate itself
-         * inside any room of the environment's graph, and decides to try to reach
-         * the closest crossing possible. In such case, the state will be MOVING_TO
+         * inside any room of the environment's graph, thus it tries to reach the
+         * the closest passage possible. In such case, the state will be MOVING_TO
          * _DOOR, but the [currRoom] variable won't be initialised yet.
          */
         MOVING_TO_DOOR,
@@ -153,16 +159,22 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
     }
     private var state: State = State.START
 
-    private fun onStart() {
-        when {
-            environment.graph().nodeContaining(currentPosition) != null -> state = State.NEW_ROOM
-            /*
-             * If the pedestrian cannot locate itself inside any room (unusual
-             * condition), it tries to reach the closest door/passage in order
-             * to enter one. If this isn't possible, it simply won't move.
-             */
-            else -> moveToClosestDoor(noDoorAction = { state = State.ARRIVED })
-        }
+    /**
+     * The position the pedestrian wants to reach, in absolute coordinates.
+     */
+    val desiredPosition: P get() = when (state) {
+        State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL -> subdestination
+        else -> currentPosition
+    }
+
+    private fun onStart(): Unit = when {
+        environment.graph().nodeContaining(currentPosition) != null -> state = State.NEW_ROOM
+        /*
+         * If the pedestrian cannot locate itself inside any room (unusual
+         * condition), it tries to reach the closest door/passage in order
+         * to enter one. If this isn't possible, it simply won't move.
+         */
+        else -> moveToClosestDoor(noDoorAction = { state = State.ARRIVED })
     }
 
     /*
@@ -173,12 +185,11 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
     private fun moveToClosestDoor(
         doors: Collection<F> = environment.graph().edgeSet(),
         noDoorAction: () -> Unit = {}
-    ) {
-        doors.map { it to crossingPoint(it) }
-            .minBy { it.second.distanceTo(currentPosition) }
-            ?.let { (closestDoor, crossingPoint) -> moveToDoor(closestDoor, crossingPoint) }
-            ?: noDoorAction.invoke()
-    }
+    ): Unit = doors
+        .map { it to crossingPoint(it) }
+        .minBy { it.second.distanceTo(currentPosition) }
+        ?.let { (closestDoor, crossingPoint) -> moveToDoor(closestDoor, crossingPoint) }
+        ?: noDoorAction.invoke()
 
     /*
      * Sets all the state variables so as to move to the selected door.
@@ -293,36 +304,17 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
         }
     }
 
-    /*
+    /**
      * The orienting behavior is organised as a finite state machine, this method
-     * updates the internal state of this action but does not move the pedestrian.
+     * updates the internal state of the behavior but does not move the pedestrian.
      * If the position of the pedestrian didn't change since the last call, this
      * method has no effect.
      */
-    private fun update() = when (state) {
+    fun update() = when (state) {
         State.START -> onStart()
         State.NEW_ROOM -> inNewRoom()
         State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL -> moving()
         State.ARRIVED -> {}
-    }
-
-    /**
-     * @returns the next position the pedestrians wants to reach.
-     */
-    override fun nextPosition(): P {
-        /*
-         * We perform an update so as to have the latest information possible, if the
-         * position of the pedestrian is always the same this will have no effect.
-         */
-        update()
-        return when (state) {
-            State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL ->
-                interpolatePositions(currentPosition, subdestination)
-            /*
-             * The pedestrian doesn't want to move at all.
-             */
-            else -> environment.origin()
-        }
     }
 
     /**
@@ -355,25 +347,17 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
     protected abstract fun crossingPoint(targetDoor: F): P
 
     /**
-     * Given a current position, a target position and a maximum walkable distance, this method computes
-     * the actual position reached by the pedestrian in relative coordinates with respect to [current].
-     */
-    protected open fun interpolatePositions(current: P, target: P, maxWalk: Double = maxWalk()): P =
-        (target - current).resizedToMaxWalkIfGreater()
-
-    /**
      * Assigns a weight to a given edge. The one with minimum weight will be chosen and crossed.
      * @param rank is the rank given to the edge when assessing its suitability to reach the
      * next sub-destination. See [cognitiveMapFactor].
      */
-    protected open fun weight(edge: F, rank: Int?): Double {
+    protected open fun weight(edge: F, rank: Int?): Double =
         /*
          * The endpoints of a directed edge are called (tail, head)
          */
-        val head = environment.graph().getEdgeTarget(edge)
-        return volatileMemoryFactor(head) * cognitiveMapFactor(rank) *
-            finalDestinationFactor(head) * impasseFactor(head)
-    }
+        environment.graph().getEdgeTarget(edge).let { head ->
+            volatileMemoryFactor(head) * cognitiveMapFactor(rank) * finalDestinationFactor(head) * impasseFactor(head)
+        }
 
     /*
      * This factor takes into account the information stored in the pedestrian's

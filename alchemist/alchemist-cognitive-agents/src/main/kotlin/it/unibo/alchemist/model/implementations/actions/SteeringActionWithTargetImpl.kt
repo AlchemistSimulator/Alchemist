@@ -1,18 +1,19 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
- * Generic implementation of an action adhering the [SteeringActionWithTargetImpl] interface.
+ * Implementation of a generic [SteeringActionWithTarget] in a vector space.
  *
  * @param env
  *          the environment inside which the pedestrian moves.
@@ -25,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param routing
  *          the routing strategy.
  */
-open class SteeringActionWithTargetImpl<T, P : AbstractEuclideanPosition<P>> @JvmOverloads constructor(
+open class SteeringActionWithTargetImpl<T, P> @JvmOverloads constructor(
     private val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
@@ -38,7 +39,7 @@ open class SteeringActionWithTargetImpl<T, P : AbstractEuclideanPosition<P>> @Jv
     routing,
     target,
     speed
-), SteeringActionWithTarget<T, P> {
+), SteeringActionWithTarget<T, P> where P : Position<P>, P : Vector<P> {
 
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
         SteeringActionWithTargetImpl(env, r, n as Pedestrian<T>, target, speed, routing)

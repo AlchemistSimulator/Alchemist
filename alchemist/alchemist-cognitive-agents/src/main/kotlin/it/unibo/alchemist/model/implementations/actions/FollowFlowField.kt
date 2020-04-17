@@ -1,14 +1,15 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Action
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
  * Move the pedestrian towards positions of the environment with a high concentration of the target molecule.
@@ -22,20 +23,21 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
-open class FollowFlowField(
-    env: Physics2DEnvironment<Number>,
+open class FollowFlowField<P>(
+    env: Environment<Number, P>,
     reaction: Reaction<Number>,
     pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule
-) : FlowFieldSteeringAction(env, reaction, pedestrian, targetMolecule) {
+) : FlowFieldSteeringAction<P>(env, reaction, pedestrian, targetMolecule)
+    where
+        P : Position2D<P>,
+        P : Vector2D<P> {
 
     override fun cloneAction(n: Node<Number>, r: Reaction<Number>): Action<Number> =
         FollowFlowField(env, r, n as Pedestrian2D<Number>, targetMolecule)
 
-    override fun List<Euclidean2DPosition>.selectPosition(
-        layer: Layer<Number, Euclidean2DPosition>,
-        currentConcentration: Double
-    ): Euclidean2DPosition = toMutableList()
+    override fun List<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P = this
+        .toMutableList()
         .apply {
             if (layer is BidimensionalGaussianLayer<*>) {
                 /*
@@ -47,7 +49,7 @@ open class FollowFlowField(
                 this.add(currentPosition + (center - currentPosition).resized(maxWalk()))
             }
         }
-        .discardUnsuitablePositions()
+        .discardUnsuitablePositions(env, pedestrian)
         .map { it to layer.concentrationIn(it) }
         .filter { it.second > currentConcentration }
         .maxBy { it.second }?.first ?: currentPosition

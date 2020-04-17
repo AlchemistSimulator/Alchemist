@@ -23,16 +23,14 @@ fun <T, P> List<P>.discardUnsuitablePositions(
     environment: Environment<T, P>,
     pedestrian: Node<T>
 ): List<P> where P : Position<P>, P : Vector<P> =
-    map {
-        if (environment is EnvironmentWithObstacles<*, T, P>) {
-            /*
-             * Take into account obstacles
-             */
-            environment.next(environment.getPosition(pedestrian), it)
-        } else {
-            it
-        }
-    }
+    map { if (environment is EnvironmentWithObstacles<*, T, P>) {
+        /*
+         * Take into account obstacles
+         */
+        environment.next(environment.getPosition(pedestrian), it)
+    } else {
+        it
+    } }
     .filter {
         /*
          * Take into account other pedestrians.

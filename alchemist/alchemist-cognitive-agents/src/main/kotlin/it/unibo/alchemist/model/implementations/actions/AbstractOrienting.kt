@@ -207,23 +207,19 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
                 route.removeAt(0)
             }
         }
-        val rankings = if (route.isNotEmpty()) {
+        val rankings = route.takeIf { it.isNotEmpty() }?.let {
             computeEdgeRankings(currRoom, route[0].centroid)
-        } else null
+        }
         /*
          * The pedestrian can see all the edges outgoing from the current room.
          */
         val minEdge = environment.graph().outgoingEdgesOf(currRoom)
-            .minWith(
-                compareBy({
-                    weight(it, rankings?.get(it))
-                }, {
-                    /*
-                     * nearest door heuristic
-                     */
-                    crossingPoint(it).distanceTo(currentPosition)
-                })
-            )
+            .minWith(compareBy({ weight(it, rankings?.get(it)) }, {
+                /*
+                 * nearest door heuristic
+                 */
+                crossingPoint(it).distanceTo(currentPosition)
+            }))
         if (minEdge != null) {
             nextRoom = environment.graph().getEdgeTarget(minEdge)
             subdestination = crossingPoint(minEdge)

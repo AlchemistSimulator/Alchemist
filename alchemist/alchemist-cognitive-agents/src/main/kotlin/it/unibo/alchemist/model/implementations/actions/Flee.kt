@@ -24,7 +24,7 @@ open class Flee<T, P : AbstractEuclideanPosition<P>>(
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
     vararg coords: Double
-) : SteeringActionImpl<T, P>(env, reaction, pedestrian) {
+) : AbstractSteeringAction<T, P>(env, reaction, pedestrian) {
 
     private val danger: P = env.makePosition(*coords.toTypedArray())
 

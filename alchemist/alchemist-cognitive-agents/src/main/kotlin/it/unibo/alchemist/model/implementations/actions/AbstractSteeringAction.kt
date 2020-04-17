@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * An abstract [SteeringAction], deriving from [AbstractMoveNode].
  */
-abstract class SteeringActionImpl<T, P>(
+abstract class AbstractSteeringAction<T, P>(
     env: Environment<T, P>,
     /**
      * The reaction in which this action is executed.

@@ -17,7 +17,8 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * An abstract [SteeringAction], deriving from [AbstractMoveNode].
+ * A [SteeringAction] in a vector space. The definition of [nextPosition] is left to
+ * subclasses.
  */
 abstract class AbstractSteeringAction<T, P>(
     env: Environment<T, P>,
@@ -30,10 +31,6 @@ abstract class AbstractSteeringAction<T, P>(
      */
     protected open val pedestrian: Pedestrian<T>
 ) : AbstractMoveNode<T, P>(env, pedestrian), SteeringAction<T, P>
-    /*
-     * Keeping bounds as much general as we can (instead of using AbstractEuclideanPosition),
-     * so as to allow [AbstractOrienting] to derive from this class.
-     */
     where
         P : Position<P>,
         P : Vector<P> {

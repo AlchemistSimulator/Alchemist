@@ -1,11 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * Move the agent towards the other members of his group.
@@ -17,11 +18,14 @@ import it.unibo.alchemist.model.interfaces.Reaction
  * @param pedestrian
  *          the owner of this action.
  */
-class Cohesion<T, P : AbstractEuclideanPosition<P>>(
+class Cohesion<T, P>(
     env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>
-) : AbstractGroupSteeringAction<T, P>(env, reaction, pedestrian) {
+) : AbstractGroupSteeringAction<T, P>(env, reaction, pedestrian)
+    where
+        P : Position<P>,
+        P : Vector<P> {
 
     override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
         Cohesion(env, r, n as Pedestrian<T>)

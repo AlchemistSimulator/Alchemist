@@ -44,7 +44,15 @@ import kotlin.math.pow
 open class Orienting<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, M, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
+    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
+    /**
+     * When computing the [crossingPoint] of a door (or passage), i.e. the point which
+     * is more convenient to cross, it may happen this is one of the endpoints of the
+     * segment describing the passage. In such case, to avoid unnatural movements where
+     * the agent is too close to walls, we move the crossing point away from the endpoint
+     * of a quantity equal to this factor * the width of the passage.
+     */
+    val wallRepulsionFactor: Double = 0.3
 ) : AbstractOrienting<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, Euclidean2DPassage>(
     environment,
     reaction,
@@ -172,8 +180,4 @@ open class Orienting<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
         with(bounds2D) {
             abs(width * height)
         }
-
-    companion object {
-        private const val wallRepulsionFactor = 0.3
-    }
 }

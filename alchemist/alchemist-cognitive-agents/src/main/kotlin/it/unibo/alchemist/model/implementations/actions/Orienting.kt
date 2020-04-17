@@ -52,7 +52,7 @@ open class Orienting<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
      * the agent is too close to walls, we move the crossing point away from the endpoint
      * of a quantity equal to this factor * the width of the passage.
      */
-    val wallRepulsionFactor: Double = 0.3
+    private val wallRepulsionFactor: Double = 0.3
 ) : AbstractOrienting<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, Euclidean2DPassage>(
     environment,
     reaction,

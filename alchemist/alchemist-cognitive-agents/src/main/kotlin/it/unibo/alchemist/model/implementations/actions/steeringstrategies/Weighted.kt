@@ -42,7 +42,8 @@ open class Weighted<T>(
             actions
                 .filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
                 .map { it.target() }
-                .minBy { it.distanceTo(this) } ?: this
+                .minBy { it.distanceTo(this) }
+                ?: this
         }
 
     private fun List<SteeringAction<T, Euclidean2DPosition>>.calculatePosition(): Euclidean2DPosition =

@@ -165,6 +165,31 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
         }
     }
 
+    /*
+     * Picks the closest door among the provided ones (defaults to all doors)
+     * and sets all the state variables so as to move to the selected door.
+     * noDoorAction is called if no door could be found, defaults to nothing.
+     */
+    private fun moveToClosestDoor(
+        doors: Collection<F> = environment.graph().edgeSet(),
+        noDoorAction: () -> Unit = {}
+    ) {
+        doors.map { it to crossingPoint(it) }
+            .minBy { it.second.distanceTo(currentPosition) }
+            ?.let { (closestDoor, crossingPoint) -> moveToDoor(closestDoor, crossingPoint) }
+            ?: noDoorAction.invoke()
+    }
+
+    /*
+     * Sets all the state variables so as to move to the selected door.
+     */
+    private fun moveToDoor(door: F, crossingPoint: P = crossingPoint(door)) {
+        nextRoom = environment.graph().getEdgeTarget(door)
+        subdestination = crossingPoint
+        targetDoor = door
+        state = State.MOVING_TO_DOOR
+    }
+
     private fun inNewRoom() {
         val newRoom = environment.graph().nodeContaining(currentPosition)
             ?: throw IllegalStateException("pedestrian is not inside a room")
@@ -199,33 +224,17 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
                 return
             }
         }
-        /*
-         * If a sub-destination of the route is in sight, updates the route removing
-         * all the sub-destination up to the one encountered.
-         */
-        if (route.isNotEmpty() && route.any { currRoom.contains(it.centroid) }) {
-            for (i in 0..route.indexOfLast { currRoom.contains(it.centroid) }) {
-                route.removeAt(0)
-            }
-        }
-        val rankings = route.takeIf { it.isNotEmpty() }?.let {
-            computeEdgeRankings(currRoom, route[0].centroid)
-        }
-        /*
-         * The pedestrian can see all the edges outgoing from the current room.
-         */
-        val minEdge = environment.graph().outgoingEdgesOf(currRoom)
+        updateRoute()
+        val rankings = computeRankingsOrNull()
+        val bestDoor = doorsInSight()
             .minWith(compareBy({ weight(it, rankings?.get(it)) }, {
                 /*
                  * nearest door heuristic
                  */
                 crossingPoint(it).distanceTo(currentPosition)
             }))
-        if (minEdge != null) {
-            nextRoom = environment.graph().getEdgeTarget(minEdge)
-            subdestination = crossingPoint(minEdge)
-            targetDoor = minEdge
-            state = State.MOVING_TO_DOOR
+        if (bestDoor != null) {
+            moveToDoor(bestDoor)
         }
         /*
          * Closed room, we can't move anywhere.
@@ -234,6 +243,26 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
             state = State.ARRIVED
         }
     }
+
+    /*
+     * If a sub-destination of the route is in sight, updates the route removing
+     * all the sub-destination up to the one encountered.
+     */
+    private fun updateRoute() {
+        if (route.isNotEmpty() && route.any { currRoom.contains(it.centroid) }) {
+            for (i in 0..route.indexOfLast { currRoom.contains(it.centroid) }) {
+                route.removeAt(0)
+            }
+        }
+    }
+
+    private fun computeRankingsOrNull(): Map<F, Int>? =
+        route.takeIf { it.isNotEmpty() }?.let { computeEdgeRankings(currRoom, route[0].centroid) }
+
+    /*
+     * The pedestrian can see all the edges outgoing from the current room.
+     */
+    private fun doorsInSight(): Collection<F> = environment.graph().outgoingEdgesOf(currRoom)
 
     private fun moving() {
         val inNewRoom = environment.graph().vertexSet()
@@ -386,28 +415,6 @@ abstract class AbstractOrienting<T, P, A, N, E, M, F>(
     private fun isImpasse(area: M): Boolean =
         pedestrian.volatileMemory.contains(area) &&
             environment.graph().outgoingEdgesOf(area).distinct().count() <= 1
-
-    /*
-     * Picks the closest door among the provided ones (defaults to all doors)
-     * and sets all the state variables so as to move to the selected door.
-     * noDoorAction is called if no door could be found, defaults to nothing.
-     */
-    private fun moveToClosestDoor(
-        doors: Collection<F> = environment.graph().edgeSet(),
-        noDoorAction: () -> Unit = {}
-    ) {
-        val closestDoor = doors
-            .map { it to crossingPoint(it) }
-            .minBy { it.second.distanceTo(currentPosition) }
-        if (closestDoor != null) {
-            nextRoom = environment.graph().getEdgeTarget(closestDoor.first)
-            subdestination = closestDoor.second
-            targetDoor = closestDoor.first
-            state = State.MOVING_TO_DOOR
-        } else {
-            noDoorAction.invoke()
-        }
-    }
 
     companion object {
         private const val finalDestinationWeight = 0.1

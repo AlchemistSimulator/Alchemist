@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 /**
  * A [Reaction] representing the [OrientingBehavior] of a pedestrian.
  */
-class OrientingReaction<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
+class OrientingBehavior2D<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
     private val environment: Euclidean2DEnvironmentWithGraph<*, T, M, Euclidean2DPassage>,
     private val pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
     timeDistribution: TimeDistribution<T>
@@ -44,7 +44,7 @@ class OrientingReaction<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
             "node not compatible, required: " + pedestrian.javaClass + ", found: " + n.javaClass
         }
         n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, M, Euclidean2DPassage>
-        return OrientingReaction(environment, n, timeDistribution)
+        return OrientingBehavior2D(environment, n, timeDistribution)
     }
 
     override fun getRate(): Double = timeDistribution.rate

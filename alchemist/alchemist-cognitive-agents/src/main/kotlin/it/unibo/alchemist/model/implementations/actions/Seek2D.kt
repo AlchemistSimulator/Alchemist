@@ -26,6 +26,7 @@ open class Seek2D<T, P>(
     public override fun interpolatePositions(current: P, target: P, maxWalk: Double): P {
         val superPosition = current + super.interpolatePositions(current, target, maxWalk)
         return (current.surrounding(env, maxWalk) + superPosition)
+            .asSequence()
             .discardUnsuitablePositions(env, pedestrian)
             .minBy { it.distanceTo(super.target()) }?.minus(current)
             ?: currentPosition

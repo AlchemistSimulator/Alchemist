@@ -19,11 +19,11 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * Discards the positions the pedestrian can't fit.
  */
-fun <T, P> List<P>.discardUnsuitablePositions(
+fun <T, P> Sequence<P>.discardUnsuitablePositions(
     environment: Environment<T, P>,
     pedestrian: Node<T>
-): List<P> where P : Position<P>, P : Vector<P> =
-    map { if (environment is EnvironmentWithObstacles<*, T, P>) {
+): Sequence<P> where P : Position<P>, P : Vector<P> = this
+    .map { if (environment is EnvironmentWithObstacles<*, T, P>) {
         /*
          * Take into account obstacles
          */

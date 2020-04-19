@@ -36,9 +36,8 @@ open class AvoidFlowField<P>(
     override fun cloneAction(n: Node<Number>, r: Reaction<Number>): Action<Number> =
         AvoidFlowField(env, r, n as Pedestrian2D<Number>, targetMolecule)
 
-    override fun List<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P = this
-        .toMutableList()
-        .apply {
+    override fun Sequence<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P = this
+        .let {
             if (layer is BidimensionalGaussianLayer<*>) {
                 /*
                  * If the layer is Gaussian (i.e. has a center), probably the most suitable
@@ -46,7 +45,9 @@ open class AvoidFlowField<P>(
                  * direction which connects the current position to the center.
                  */
                 val center = env.makePosition(layer.centerX, layer.centerY)
-                this.add(currentPosition + (currentPosition - center).resized(maxWalk()))
+                it + (currentPosition + (currentPosition - center).resized(maxWalk()))
+            } else {
+                it
             }
         }
         .discardUnsuitablePositions(env, pedestrian)

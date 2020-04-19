@@ -37,6 +37,7 @@ abstract class FlowFieldSteeringAction<P>(
         .orElseThrow { IllegalStateException("no layer containing $targetMolecule could be found") }
         .let { layer ->
             currentPosition.surrounding(env, maxWalk())
+                .asSequence()
                 /*
                  * Next relative position.
                  */
@@ -48,7 +49,7 @@ abstract class FlowFieldSteeringAction<P>(
      * of the pedestrian.
      * This function contains the policy concerning how to select the most desirable position.
      */
-    abstract fun List<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P
+    abstract fun Sequence<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P
 
     protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
         getValue(position).toDouble()

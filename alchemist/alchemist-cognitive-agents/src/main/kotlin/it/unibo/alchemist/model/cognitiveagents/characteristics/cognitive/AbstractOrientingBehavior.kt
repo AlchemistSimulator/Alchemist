@@ -167,38 +167,15 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
         else -> currentPosition
     }
 
-    private fun onStart(): Unit = when {
-        environment.graph().nodeContaining(currentPosition) != null -> state = State.NEW_ROOM
-        /*
-         * If the pedestrian cannot locate itself inside any room (unusual
-         * condition), it tries to reach the closest door/passage in order
-         * to enter one. If this isn't possible, it simply won't move.
-         */
-        else -> moveToClosestDoor(noDoorAction = { state = State.ARRIVED })
-    }
-
-    /*
-     * Picks the closest door among the provided ones (defaults to all doors)
-     * and sets all the state variables so as to move to the selected door.
-     * noDoorAction is called if no door could be found, defaults to nothing.
-     */
-    private fun moveToClosestDoor(
-        doors: Collection<F> = environment.graph().edgeSet(),
-        noDoorAction: () -> Unit = {}
-    ): Unit = doors
-        .map { it to crossingPoint(it) }
-        .minBy { it.second.distanceTo(currentPosition) }
-        ?.let { (closestDoor, crossingPoint) -> moveToDoor(closestDoor, crossingPoint) }
-        ?: noDoorAction.invoke()
-
-    /*
-     * Sets all the state variables so as to move to the selected door.
-     */
-    private fun moveToDoor(door: F, crossingPoint: P = crossingPoint(door)) {
-        nextRoom = environment.graph().getEdgeTarget(door)
-        subdestination = crossingPoint
-        targetDoor = door
-        state = State.MOVING_TO_DOOR
+    private fun onStart() {
+        state = when {
+            environment.graph().nodeContaining(currentPosition) != null -> State.NEW_ROOM
+            /*
+             * If the pedestrian cannot locate itself inside any room (unusual
+             * condition), it simply won't move.
+             */
+            else -> State.ARRIVED
+        }
     }
 
     private fun inNewRoom() {
@@ -219,8 +196,7 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
             else {
                 val prevRoom = currRoom
                 currRoom = newRoom
-                val doorsLeadingBack = environment.graph().outgoingEdgesOf(currRoom)
-                    .filter { environment.graph().getEdgeTarget(it) == prevRoom }
+                val doorsLeadingBack = doorsInSight().filter { it.head == prevRoom }
                 moveToClosestDoor(doors = doorsLeadingBack)
                 return
             }
@@ -238,12 +214,20 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
         updateRoute()
         val rankings = computeRankingsOrNull()
         val bestDoor = doorsInSight()
-            .minWith(compareBy({ weight(it, rankings?.get(it)) }, {
+            .partition { environment.graph().containsAnyDestination(it.head) }
+            .let { (exits, otherDoors) ->
                 /*
-                 * nearest door heuristic
+                 * If we discover any exit along the way, we just take it. In case of multiple
+                 * exits, we use [weightExit].
                  */
-                crossingPoint(it).distanceTo(currentPosition)
-            }))
+                exits.minBy { weightExit(it) }
+                    ?: otherDoors.minWith(compareBy({ weight(it, rankings?.get(it)) }, {
+                        /*
+                         * nearest door heuristic
+                         */
+                        crossingPoint(it).distanceTo(currentPosition)
+                    }))
+            }
         if (bestDoor != null) {
             moveToDoor(bestDoor)
         }
@@ -253,6 +237,30 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
         else {
             state = State.ARRIVED
         }
+    }
+
+    /*
+     * Picks the closest door among the provided ones (defaults to all doors)
+     * and sets all the state variables so as to move to the selected door.
+     * noDoorAction is called if no door could be found, defaults to nothing.
+     */
+    private fun moveToClosestDoor(
+        doors: Collection<F> = environment.graph().edgeSet(),
+        noDoorAction: () -> Unit = {}
+    ): Unit = doors
+        .map { it to crossingPoint(it) }
+        .minBy { it.second.distanceTo(currentPosition) }
+        ?.let { (closestDoor, crossingPoint) -> moveToDoor(closestDoor, crossingPoint) }
+        ?: noDoorAction()
+
+    /*
+     * Sets all the state variables so as to move to the selected door.
+     */
+    private fun moveToDoor(door: F, crossingPoint: P = crossingPoint(door)) {
+        nextRoom = door.head
+        subdestination = crossingPoint
+        targetDoor = door
+        state = State.MOVING_TO_DOOR
     }
 
     /*
@@ -334,7 +342,7 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
     protected abstract fun computeEdgeRankings(currentRoom: M, destination: P): Map<F, Int>
 
     /**
-     * Provided a passage (or door) the pedestrian wants to cross, this method computes the exact
+     * Provided a passage (or door) the pedestrian may want to cross, this method computes the exact
      * point the pedestrian will move towards in order to cross such passage.
      * The provided passage belongs to the room the agent is into (i.e. it is in sight of the agent),
      * the returned position must be in sight of him as well, which means no obstacle should be placed
@@ -344,7 +352,7 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
      * its shape and location on the room's boundary) to determine which point the pedestrian
      * shall point towards.
      */
-    protected abstract fun crossingPoint(targetDoor: F): P
+    protected abstract fun crossingPoint(door: F): P
 
     /**
      * Assigns a weight to a given edge. The one with minimum weight will be chosen and crossed.
@@ -352,12 +360,17 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
      * next sub-destination. See [cognitiveMapFactor].
      */
     protected open fun weight(edge: F, rank: Int?): Double =
-        /*
-         * The endpoints of a directed edge are called (tail, head)
-         */
-        environment.graph().getEdgeTarget(edge).let { head ->
-            volatileMemoryFactor(head) * cognitiveMapFactor(rank) * finalDestinationFactor(head) * impasseFactor(head)
+        edge.head.let { head ->
+            volatileMemoryFactor(head) * cognitiveMapFactor(rank) * impasseFactor(head)
         }
+
+    /**
+     * Assigns a weight to an edge which leads to a room containing a destination (i.e. an exit).
+     * When weighting exits, we may want to take into account different factors (for instance,
+     * we don't care about the [cognitiveMapFactor] or the [volatileMemoryFactor]).
+     * By default, we only consider the distance of the exit.
+     */
+    protected open fun weightExit(exit: F): Double = crossingPoint(exit).distanceTo(currentPosition)
 
     /*
      * This factor takes into account the information stored in the pedestrian's
@@ -373,12 +386,6 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
      * If rank is null, this factor is 1 for every edge.
      */
     private fun cognitiveMapFactor(rank: Int?) = 1.0 - (rank?.let { 0.5.pow(it) } ?: 0.0)
-
-    /*
-     * This factor takes into account any final destination discovered along the way.
-     */
-    private fun finalDestinationFactor(head: M) =
-        if (environment.graph().containsAnyDestination(head)) finalDestinationWeight else 1.0
 
     /*
      * This factor takes into account whereas the assessed edge leads to an impasse or not.
@@ -400,7 +407,8 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
         pedestrian.volatileMemory.contains(area) &&
             environment.graph().outgoingEdgesOf(area).distinct().count() <= 1
 
-    companion object {
-        private const val finalDestinationWeight = 0.1
-    }
+    /*
+     * The target (or head) of a directed edge of the environment's graph.
+     */
+    private val F.head: M get() = environment.graph().getEdgeTarget(this)
 }

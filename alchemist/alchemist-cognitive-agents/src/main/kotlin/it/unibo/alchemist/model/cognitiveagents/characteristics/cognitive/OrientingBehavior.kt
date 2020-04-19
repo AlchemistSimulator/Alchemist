@@ -99,16 +99,18 @@ open class OrientingBehavior<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon
      * boundary of the current room. This method finds the point of such segment
      * which is more convenient to cross.
      */
-    override fun crossingPoint(targetDoor: Euclidean2DPassage): Euclidean2DPosition {
-        with(targetDoor.passageShape) {
-            val nextRoom = environment.graph().getEdgeTarget(targetDoor)
-            val idealMovement = Segment2D(environment.getPosition(pedestrian), nextRoom.centroid)
+    override fun crossingPoint(door: Euclidean2DPassage): Euclidean2DPosition {
+        with(door.passageShape) {
+            val idealMovement = Segment2D(environment.getPosition(pedestrian), door.head.centroid)
             /*
              * The crossing point is computed as the point belonging to the door which
              * is closest to the intersection of the lines defined by the ideal movement
              * and the passage itself.
              */
-            val crossingPoint = closestPointTo(linesIntersection(this, idealMovement).point.get())
+            val crossingPoint = closestPointTo(
+                linesIntersection(this, idealMovement).point
+                    .orElseThrow { IllegalStateException("impossible movement") }
+            )
             if (crossingPoint == first || crossingPoint == second) {
                 val correctionVector = (second - first).takeIf { crossingPoint == first } ?: (first - second)
                 return crossingPoint + correctionVector.resized(toVector().magnitude * wallRepulsionFactor)
@@ -121,14 +123,20 @@ open class OrientingBehavior<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon
      * The [congestionFactor] is added.
      */
     public override fun weight(edge: Euclidean2DPassage, rank: Int?) =
-        super.weight(edge, rank) * congestionFactor(environment.graph().getEdgeTarget(edge))
+        super.weight(edge, rank) * congestionFactor(edge.head)
+
+    /**
+     * The [congestionFactor] is added.
+     */
+    override fun weightExit(exit: Euclidean2DPassage): Double =
+        super.weightExit(exit) * congestionFactor(environment.graph().getEdgeTarget(exit))
 
     /*
      * This factor takes into account the congestion of the room the edge being weighted
      * leads to. It assumes the pedestrian can asses the level of congestion of such room
      * even if he's not located inside it.
      */
-    private fun congestionFactor(room: M): Double = environment.nodes
+    private fun congestionFactor(room: ConvexPolygon): Double = environment.nodes
         .filterIsInstance<Pedestrian<T>>()
         .filter { room.contains(environment.getPosition(it)) }
         .count()

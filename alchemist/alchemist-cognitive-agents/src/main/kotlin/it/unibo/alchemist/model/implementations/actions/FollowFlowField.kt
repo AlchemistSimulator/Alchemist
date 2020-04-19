@@ -36,17 +36,18 @@ open class FollowFlowField<P>(
     override fun cloneAction(n: Node<Number>, r: Reaction<Number>): Action<Number> =
         FollowFlowField(env, r, n as Pedestrian2D<Number>, targetMolecule)
 
-    override fun List<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P = this
-        .toMutableList()
-        .apply {
+    override fun Sequence<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P = this
+        .let {
             if (layer is BidimensionalGaussianLayer<*>) {
                 /*
                  * If the layer is Gaussian (i.e. has a center), probably the most suitable
-                 * position is the one obtained by moving away from the center along the
+                 * position is the one obtained by moving towards the center along the
                  * direction which connects the current position to the center.
                  */
                 val center = env.makePosition(layer.centerX, layer.centerY)
-                this.add(currentPosition + (center - currentPosition).resized(maxWalk()))
+                it + (currentPosition + (center - currentPosition).resized(maxWalk()))
+            } else {
+                it
             }
         }
         .discardUnsuitablePositions(env, pedestrian)

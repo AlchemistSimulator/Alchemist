@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
 import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Layer
@@ -53,4 +54,10 @@ abstract class FlowFieldSteeringAction<P>(
 
     protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
         getValue(position).toDouble()
+
+    /**
+     * @returns the center of the layer or null if there's no center.
+     */
+    protected fun Layer<*, P>.center(): P? =
+        (this as? BidimensionalGaussianLayer)?.let { env.makePosition(it.centerX, it.centerY) }
 }

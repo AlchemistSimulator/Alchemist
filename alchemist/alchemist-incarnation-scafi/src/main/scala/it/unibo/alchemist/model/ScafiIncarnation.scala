@@ -22,6 +22,7 @@ import org.apache.commons.math3.random.RandomGenerator
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.jdk.CollectionConverters._
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
@@ -53,7 +54,8 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     val scafiNode = node.asInstanceOf[ScafiNode[T,P]]
     if(param=="send") {
       val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
-      val spList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node) -- alreadyDone
+      val spList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node)
+      spList --= alreadyDone
       if (spList.isEmpty) {
         throw new IllegalStateException("There is no program requiring a " + classOf[SendScafiMessage[T,P]].getSimpleName + " action")
       }
@@ -90,7 +92,8 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     val alreadyDone = ScafiIncarnationUtils
       .inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
       .collect { case x: RunScafiProgram[T,P] => x }
-    val spList = ScafiIncarnationUtils.allScafiProgramsFor(node) -- alreadyDone
+    val spList: mutable.Buffer[RunScafiProgram[T,P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
+    spList --= alreadyDone
     if (spList.isEmpty) {
       throw new IllegalStateException("There is no program requiring a " +
         classOf[ScafiComputationalRoundComplete[_]].getSimpleName + " condition")
@@ -111,7 +114,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String): Reaction[T] = {
-    import scala.collection.JavaConverters._
     val isSend = "send".equalsIgnoreCase(param)
     val result: Reaction[T] =
       if (isSend) {
@@ -150,8 +152,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 object ScafiIncarnationUtils {
   import it.unibo.alchemist.model.interfaces.Action
 
-  import collection.JavaConverters._
-
   def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for(reaction: Reaction[T] <- node.getReactions().asScala;
         action: Action[T] <- reaction.getActions().asScala; if klass.isInstance(action))
@@ -176,13 +176,13 @@ object ScafiIncarnationUtils {
 
 object CachedInterpreter {
 
-  import com.google.common.cache.CacheBuilder
+  import com.google.common.cache.{CacheBuilder, Cache => GCache}
   import scalacache.guava.GuavaCache
-  import scalacache.{ScalaCache, _}
-  private val underlyingGuavaCache = CacheBuilder.newBuilder()
+  import scalacache.{Cache, Entry}
+  private val underlyingGuavaCache: GCache[String, Entry[Any]] = CacheBuilder.newBuilder()
     .maximumSize(1000L)
-    .build[String, Object]
-  private implicit val scalaCache = ScalaCache(GuavaCache(underlyingGuavaCache))
+    .build[String, Entry[Any]]
+  private implicit val scalaCache: Cache[Any] = GuavaCache(underlyingGuavaCache:GCache[String,Entry[Any]])
 
   /**
    * Evaluates str using Scala reflection.
@@ -191,8 +191,9 @@ object CachedInterpreter {
    */
   def apply[A <: AnyRef](str: String, doCacheValue: Boolean = true): A =
     if(doCacheValue) {
-      sync.caching("//VAL"+str)(ScalaInterpreter[A](str))
-    } else {
+      import scalacache.modes.sync._ // Synchronous mode
+      scalacache.caching("//VAL"+str)(None)(ScalaInterpreter[Any](str))
+    }.asInstanceOf[A] else {
       ScalaInterpreter(str)
     }
 }

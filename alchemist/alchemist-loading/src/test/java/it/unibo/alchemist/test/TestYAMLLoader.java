@@ -203,20 +203,18 @@ public class TestYAMLLoader {
     }
 
     private static boolean isScalaAndJavaCombinationBugged() {
-        final var javaMajor = versionAsInts(System.getProperty("java.version")).getFirst();
         // CHECKSTYLE: MagicNumber OFF
-        if (javaMajor >= 14) {
-            final var scalaVersion = versionAsInts(scala.util.Properties.versionNumberString());
-            final var major = scalaVersion.getFirst();
-            final var minor = scalaVersion.getSecond();
-            final var patch = scalaVersion.getThird();
-            /*
-             * Hit by https://github.com/scala/bug/issues/11754
-             */
-            return major < 2 || major == 2 && minor < 13 || major == 2 && minor == 13 && patch < 2;
-            // CHECKSTYLE: MagicNumber ON
-        }
-        return false;
+        final var scalaVersion = versionAsInts(scala.util.Properties.versionNumberString());
+        final var major = scalaVersion.getFirst();
+        final var minor = scalaVersion.getSecond();
+        final var patch = scalaVersion.getThird();
+        /*
+         * Versions older than Scala 2.13.2 must not run the test.
+         * Hit by https://github.com/scala/bug/issues/11754
+         */
+        return major < 2
+            || major == 2 && minor < 13
+            || major == 2 && minor == 13 && patch < 2;
     }
 
 }

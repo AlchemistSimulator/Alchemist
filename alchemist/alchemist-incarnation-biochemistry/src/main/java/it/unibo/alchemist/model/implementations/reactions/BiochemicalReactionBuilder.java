@@ -42,7 +42,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.antlr.v4.runtime.ANTLRErrorListener;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
@@ -50,6 +50,7 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
@@ -62,6 +63,7 @@ import java.util.BitSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class implements a builder for chemical reactions.
@@ -96,13 +98,13 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
      */
     public Reaction<Double> build()  {
         checkReaction();
-        final BiochemistrydslLexer lexer = new BiochemistrydslLexer(new ANTLRInputStream(reactionString));
+        final BiochemistrydslLexer lexer = new BiochemistrydslLexer(CharStreams.fromString(reactionString));
         final BiochemistrydslParser parser = new BiochemistrydslParser(new CommonTokenStream(lexer));
         parser.removeErrorListeners();
         parser.addErrorListener(new BiochemistryParseErrorListener(reactionString));
         final ParseTree tree = parser.reaction();
         final BiochemistryDSLVisitor<P> eval = new BiochemistryDSLVisitor<>(rand, incarnation, time, node, env);
-        return eval.visit(tree);
+        return Objects.requireNonNull(eval.visit(tree), "Unable to visit/parse " + reactionString);
     }
 
     private void checkReaction() {
@@ -406,6 +408,11 @@ public class BiochemicalReactionBuilder<P extends Position<P>> {
             } else {
                 throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
             }
+        }
+
+        @Override
+        public Reaction<Double> visitTerminal(final TerminalNode node) {
+            return reaction;
         }
 
         private static Biomolecule createBiomolecule(final BiomoleculeContext ctx) {

@@ -586,9 +586,11 @@ public final class YamlLoader implements Loader {
                                     new BuilderConfiguration<>(
                                             ImmutableMap.of(REACTION, CharSequence.class),
                                             ImmutableMap.of(TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class),
-                                            factory, m -> incarnation.createReaction(simRng, env, node, td, m.get(REACTION).toString())),
+                                            factory,
+                                            m -> Objects.requireNonNull(incarnation.createReaction(simRng, env, node, td, m.get(REACTION).toString()), () ->
+                                                    incarnation + " created a null reaction for " + REACTION + ": " + m.get(REACTION))),
                                     factory);
-                            final Reaction<T> reaction = reactionBuilder.build(program);
+                            final Reaction<T> reaction = Objects.requireNonNull(reactionBuilder.build(program));
                             factory.registerSingleton(Reaction.class, reaction);
                             /*
                              * Actions and conditions

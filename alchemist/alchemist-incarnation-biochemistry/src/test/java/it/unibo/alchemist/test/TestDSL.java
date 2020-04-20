@@ -7,13 +7,12 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
-import java.util.BitSet;
-
-import org.antlr.v4.runtime.ANTLRErrorListener;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
+import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser;
+import it.unibo.alchemist.exceptions.BiochemistryParseException;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
@@ -22,9 +21,9 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.junit.jupiter.api.Test;
 
-import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
-import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser;
-import it.unibo.alchemist.exceptions.BiochemistryParseException;
+import java.util.BitSet;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for domain specific language of the incarnation.
@@ -32,12 +31,12 @@ import it.unibo.alchemist.exceptions.BiochemistryParseException;
 public class TestDSL {
 
     private static BiochemistrydslParser getParser(final String reaction) {
-        final ANTLRInputStream in = new ANTLRInputStream(reaction);
+        final CharStream in = CharStreams.fromString(reaction);
         final BiochemistrydslLexer lexer = new BiochemistrydslLexer(in);
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final BiochemistrydslParser parser = new BiochemistrydslParser(tokens);
         parser.removeErrorListeners(); // default error listener log on the console and not throwing any error
-        parser.addErrorListener(new ANTLRErrorListener() {
+        parser.addErrorListener(new BaseErrorListener() {
             @Override
             public void syntaxError(final Recognizer<?, ?> recognizer,
                     final Object offendingSymbol, 
@@ -48,12 +47,12 @@ public class TestDSL {
                 throw new BiochemistryParseException("Error in " + reaction + "\n" + msg);
             }
             @Override
-            public void reportAmbiguity(final Parser recognizer, 
-                    final DFA dfa, 
+            public void reportAmbiguity(final Parser recognizer,
+                    final DFA dfa,
                     final int startIndex,
                     final int stopIndex,
                     final boolean exact,
-                    final BitSet ambigAlts, 
+                    final BitSet ambigAlts,
                     final ATNConfigSet configs) {
                 throw new BiochemistryParseException("report ambiguity");
             }
@@ -69,7 +68,7 @@ public class TestDSL {
 
             @Override
             public void reportContextSensitivity(final Parser recognizer,
-                    final DFA dfa, 
+                    final DFA dfa,
                     final int startIndex,
                     final int stopIndex,
                     final int prediction,
@@ -80,21 +79,12 @@ public class TestDSL {
         return parser;
     }
 
-    private void testValidReaction(final String reaction) {
-        try {
-            getParser(reaction).reaction();
-        } catch (BiochemistryParseException e) {
-            fail();
-        }
+    private BiochemistrydslParser.ReactionContext testValidReaction(final String reaction) {
+        return getParser(reaction).reaction();
     }
 
     private void testInvalidReaction(final String reaction) {
-        try {
-            getParser(reaction).reaction();
-            fail();
-        } catch (BiochemistryParseException e) {
-            assertFalse(e.getMessage().isEmpty());
-        }
+        assertThrows(BiochemistryParseException.class, () -> testValidReaction(reaction));
     }
 
     /**
@@ -124,6 +114,7 @@ public class TestDSL {
         testValidReaction("[MolA in env]+[MolB + 3MolC in cell] --> [MolD]");
         testValidReaction("[MolA] + [MolB + 3MolC in neighbor] --> [4 MolD in env]");
         testValidReaction("[MolA + MolB] --> [2 MolC]");
+        testValidReaction("[] --> [BrownianMove(10)]");
         testValidReaction("[3 MolA in cell] + [2 MolB in env] --> [MyCustomAction()]");
         testValidReaction("[3 MolA in cell] + [2 MolB in env] --> [MyCustomAction(1, 2, 3)]");
         testValidReaction("[3 MolA in cell] + [2 MolB in env] --> [MyCustomAction(a, bb, ccc, 1, 2)]");
@@ -136,7 +127,6 @@ public class TestDSL {
         testValidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction()");
         testValidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction(1, 2, 3)");
         testValidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction(a, bb, ccc)");
-        testValidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction1(), MyCustomReaction2(1.2, qwerty)");
         testValidReaction("[3 MolA + 2.5 MolB] + [ MolC + 1.1 MolD in cell ] + [MolE in env] + "
                 + "[MolF+2 MolG in env] --> [3 MolH in neighbor] + "
                 + "[2 MolI + 4.8 MolL in cell] + [MyCustomAction1() + MyCustomAction2(1.2, abcde, 5)] "
@@ -202,6 +192,7 @@ public class TestDSL {
         testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition() if MyCustomCondition2()"); // duplicate if
         testInvalidReaction("[MolA] --> [MolB] reaction type MyCustomReaction"); // custom reactions must have brackets (MyCustomReaction())
         testInvalidReaction("[MolA] --> [MolB] reaction MyCustomReaction()"); // reaction instead reaction type
+        testInvalidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction1(), MyCustomReaction2(1.2, qwerty)"); // Multiple reaction types
         //junctions
         testInvalidReaction("[Junction A-B] --> [MolA in env]"); // Junction instead of junction
         testInvalidReaction("[junction AB] --> [MolB]"); // correct syntax for junction is biomolecule(:biomolecule)*-biomolecule(:biomolecule)*

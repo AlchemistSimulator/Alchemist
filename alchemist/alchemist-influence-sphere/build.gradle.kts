@@ -11,3 +11,20 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     testImplementation(project(":alchemist-cognitive-agents"))
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Diego Mazzieri")
+                    email.set("diego.mazzieri@studio.unibo.it")
+                }
+                developer {
+                    name.set("Federico Pettinari")
+                    email.set("federico.pettinari2@studio.unibo.it")
+                }
+            }
+        }
+    }
+}

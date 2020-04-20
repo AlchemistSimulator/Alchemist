@@ -17,3 +17,24 @@ dependencies {
     testImplementation(project(":alchemist-loading"))
     testImplementation(Libs.commons_io)
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Danilo Pianini")
+                    email.set("danilo.pianini@unibo.it")
+                    url.set("http://www.danilopianini.org")
+                }
+            }
+            contributors {
+                contributor {
+                    name.set("Jacob Beal")
+                    email.set("jakebeal@bbn.com")
+                    url.set("http://web.mit.edu/jakebeal/www/")
+                }
+            }
+        }
+    }
+}

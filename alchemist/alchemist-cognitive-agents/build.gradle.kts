@@ -16,3 +16,20 @@ dependencies {
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-incarnation-protelis"))
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Diego Mazzieri")
+                    email.set("diego.mazzieri@studio.unibo.it")
+                }
+                developer {
+                    name.set("Lorenzo Paganelli")
+                    email.set("lorenzo.paganelli3@studio.unibo.it")
+                }
+            }
+        }
+    }
+}

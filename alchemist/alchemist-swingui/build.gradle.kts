@@ -42,3 +42,30 @@ configurations.all {
         }
     }
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Giovanni Ciatto")
+                    email.set("giovanni.ciatto@unibo.it")
+                }
+                developer {
+                    name.set("Lorenzo Paganelli")
+                    email.set("lorenzo.paganelli3@studio.unibo.it")
+                }
+            }
+            contributors {
+                contributor {
+                    name.set("Matteo Francia")
+                    email.set("m.francia@unibo.it")
+                }
+                contributor {
+                    name.set("Federico Pettinari")
+                    email.set("federico.pettinari2@studio.unibo.it")
+                }
+            }
+        }
+    }
+}

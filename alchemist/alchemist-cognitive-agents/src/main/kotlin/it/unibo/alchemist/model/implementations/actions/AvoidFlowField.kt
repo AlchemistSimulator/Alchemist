@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Layer
@@ -38,17 +37,14 @@ open class AvoidFlowField<P>(
 
     override fun Sequence<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P = this
         .let {
-            if (layer is BidimensionalGaussianLayer<*>) {
+            layer.center()?.let { center ->
                 /*
-                 * If the layer is Gaussian (i.e. has a center), probably the most suitable
-                 * position is the one obtained by moving away from the center along the
+                 * If the layer has a center, probably the most suitable position
+                 * is the one obtained by moving away from the center along the
                  * direction which connects the current position to the center.
                  */
-                val center = env.makePosition(layer.centerX, layer.centerY)
                 it + (currentPosition + (currentPosition - center).resized(maxWalk()))
-            } else {
-                it
-            }
+            } ?: it
         }
         .discardUnsuitablePositions(env, pedestrian)
         .map { it to layer.concentrationIn(it) }

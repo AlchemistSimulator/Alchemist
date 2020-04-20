@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import jiconfont.icons.GoogleMaterialDesignIcons;
+import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconFontFX;
 import org.jetbrains.annotations.Nullable;
 

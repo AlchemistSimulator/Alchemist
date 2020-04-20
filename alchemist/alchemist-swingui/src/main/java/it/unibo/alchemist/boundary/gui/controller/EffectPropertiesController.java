@@ -51,7 +51,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import jiconfont.icons.GoogleMaterialDesignIcons;
+import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
 
 /**
  * This class models a JavaFX controller for EffectProperties.fxml.

@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 import static it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer.DEFAULT_EXTENSION;
 import static it.unibo.alchemist.boundary.gui.utility.FXResourceLoader.getWhiteIcon;
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
-import static jiconfont.icons.GoogleMaterialDesignIcons.ADD;
-import static jiconfont.icons.GoogleMaterialDesignIcons.FOLDER_OPEN;
-import static jiconfont.icons.GoogleMaterialDesignIcons.SAVE;
+import static jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons.ADD;
+import static jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons.FOLDER_OPEN;
+import static jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons.SAVE;
 
 /**
  * This class models a JavaFX controller for EffectsGroupBar.fxml.

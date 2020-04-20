@@ -27,5 +27,22 @@ fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
 fun makePoint(x: Number, y: Number) = Point(x.toInt(), y.toInt())
 operator fun Point.plus(p: Point): Point = Point(x + p.x, y + p.y)
 operator fun Point.minus(p: Point): Point = Point(x - p.x, y - p.y)
-operator fun Time.plus(other: Double): Time = plus(DoubleTime(other))
-operator fun Time.minus(other: Double): Time = minus(DoubleTime(other))
+
+/**
+ * Plus operator for [Time].
+ */
+operator fun Time.plus(other: Double): Time = plus(
+    DoubleTime(
+        other
+    )
+)
+
+/**
+ * Minus operator for [Time].
+ */
+operator fun Time.minus(other: Double): Time = minus(
+    DoubleTime(
+        other
+    )
+)
+

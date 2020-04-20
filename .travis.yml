@@ -1,25 +1,65 @@
-reference_jdk: &reference_jdk
+# SHARED VARIABLES
+
+_reference_jdk: &reference_jdk
   'JDK="adopt@1.11.0"'
-reference_os: &reference_os
+_reference_os: &reference_os
   'linux'
-official_repo: &official_repo
+_official_repo: &official_repo
   'AlchemistSimulator/Alchemist'
+
+_on_base: &on_base
+  os: *reference_os
+  repo: *official_repo
+  condition: $PUBLISH = "true"
+
+_on_tags: &on_tags
+  <<: *on_base
+  tags: true
+
+_on_develop: &on_develop
+  <<: *on_base
+  branch: develop
+
+_deploy: &deploy_base
+  skip_cleanup: true
+
+_deploy_on_surge: &deploy_on_surge
+  <<: *deploy_base
+  provider: surge
+
+_deploy_javadoc_on_surge: &deploy_javadoc_on_surge
+  <<: *deploy_base
+  <<: *deploy_on_surge
+  project: "./alchemist/build/docs/javadoc/"
+
+_deploy_reports_on_surge: &deploy_reports_on_surge
+  <<: *deploy_base
+  <<: *deploy_on_surge
+  project: "./alchemist/report"
+
+# BUILD CONFIGURATION
+
 language: bash
+
 git:
   depth: false
+  autocrlf: input
+
 os:
   - osx
   - windows
   - *reference_os
-dist: xenial
+
 addons:
   apt:
     packages:
     - graphviz
+
 stages:
   - check
   - test
   - deploy
+
 env:
   global:
     - secure: "OMDTeFBKjw0acBlmqh4+FZ5nnt/Aj2pF705Tta0qm3Sf61S+k1u503Dzt+nDs+/yY19HyyDFUj3+56a88IssEjd3xUVzPOz7kCW0p/lcqbAQ8jIATmoWpoMM9cOI4Xv9h+JJxOqLR54ODR0MGo/BVa51w93jsdpDnrlLNOoNf08r1bfA2Hifh/iKD/YzMyGqFI+vxvED7HhbDNG48chsr3QSGxsizXDtEZK+u0JZ6/CR2rHZTQzD6bkv3N2Vbq/4tc4pZVdH7zMXWRkrGunhHchwmgEwz90iJeo4fEeMBiWpchWg7Huxr2LUisdRKjzNqf+UjV5DljtK/RDbzyjC8vIAllD2hsmPJW1EfTOrIfIVgT2CoRrKKGIp/Dk5LkOTePMCXloe+M7gYipEWreAXeGYotAOdnxW1IoxhM3Dsbb4yxd6h1h2bFXToj0bzIEMySgivYJ0n0PhvuwWb/KUf2vt8r+ULdWvPVjgqQUDv38fgnqyfMmgMDfABlGpSxQWT2gy5VAinpgQzfNrVeOkDxxGDBLa4vOMy/yQm/bnXJyyUA0NAv5xQBCZhsDqjTOwzKWGFWkdrN0e91JjF7+bvkKnH1JQhz8yuLdLASm5LEj5nZbCZeDu4jbZhags1pkmNxwlPJjWfpzeXiiXwMdAkIn1RrkMefHPfJ5hq+G3y9I="
@@ -34,32 +74,54 @@ env:
     - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
     - PUBLISH="false"
     - OFFICIAL_REPO_SLUG="AlchemistSimulator/Alchemist"
-    - NO_WIN_DEFENDER=$(curl "${GRAVIS}.disable-windows-defender.sh" --output .no-defender.sh && source .no-defender.sh)
   matrix:
     - *reference_jdk
-    - JDK="adopt-openj9@1.11.0"
-    - JDK="adopt@1.12.0"
-    - JDK="adopt-openj9@1.12.0"
-#    - JDK="adopt@1.13.0"
-matrix:
+# OpenJ9 temporarily disabled due to: https://issues.apache.org/jira/browse/GROOVY-9493
+#    - JDK="adopt-openj9@1.11.0"
+    - JDK="adopt@"
+#    - JDK="adopt-openj9@"
+
+before_install:
+  - travis_retry curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
+  - travis_retry source .install-jdk-travis.sh
+script:
+  - cd "$TRAVIS_BUILD_DIR"/alchemist
+  - travis_retry ./gradlew clean check --scan --parallel -Dorg.gradle.daemon=true
+after_script:
+  - ./gradlew --stop
+before_cache:
+  - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
+  - bash .clean_gradle_cache.sh
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+jobs:
   exclude:
     - os: *reference_os
       env: *reference_jdk
-jobs:
+      stage: test
+      # TODO: Re-enable windows build when the following issue is resolved:
+      # https://github.com/gradle/gradle/issues/12681
+    - os: windows
+      env: JDK="adopt@"
   include:
     - stage: check
-      name: "Deep check on reference OS and JDK"
+      name: "Check on reference OS and JDK"
       os: *reference_os
       env:
         - *reference_jdk
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - ./gradlew clean check fatJar --scan --parallel
+        - travis_retry ./gradlew clean check jacocoTestReport shadowJar --scan --parallel
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
       workspaces:
         create:
           name: linux-reference-build
           paths:
-            - "${TRAVIS_BUILD_DIR}/alchemist/build"
+            - "${TRAVIS_BUILD_DIR}/alchemist"
     - stage: deploy
       name: "Reports and deployment"
       if: repo = env(OFFICIAL_REPO_SLUG) AND type != pull_request
@@ -75,70 +137,31 @@ jobs:
         - bash prepare_environment.sh
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - ./gradlew dokka > >(egrep -v '(null:-1:-1)|(t find node by signature)') --scan
-        - ./gradlew sign fatJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
+        - travis_retry ./gradlew dokka > >(egrep -v '(null:-1:-1)|(t find node by signature)') --scan
+        - travis_retry ./gradlew sign shadowJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
       after_success:
-        - travis_wait 30 ./gradlew publishAll --scan --parallel --stacktrace
-before_install:
-  - curl "${GRAVIS}.install-jdk-travis.sh" --output .install-jdk-travis.sh
-  - source .install-jdk-travis.sh
-script:
-  - cd "$TRAVIS_BUILD_DIR"/alchemist
-  - ./gradlew test --scan --parallel
-before_cache:
-  - curl "${GRAVIS}.clean_gradle_cache.sh" --output .clean_gradle_cache.sh
-  - bash .clean_gradle_cache.sh
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-deploy:
-  - provider: releases
-    skip_cleanup: true
-    api_key:
-      secure: NiA2CFiiUjreyOGzlA+vxCFT2a6dHZ44gdwA96jBrE3jNdUPXAxzvsaA9rNNxkvHPyADH0DPPZbJ517SdddSYViRcpjlple3dl5jCHxUoBtHBXvrzD2fAhslVejZ7LoxdY9v9K0xSIo3he/pmrtzcuIuPNFrj7LYmYkXeqQcLsxyCrPY+XBOuV6U+Hl5XDUVNqB+/J1qtZUWVg3B1AwGpp8roLKmLYreUfuNwwmF9hXWO8EbS4zIAKDnwf+E/44aiXiULyJ7CPWKEtPgxqJLo9Hi0lABr6I4WV4LzSVaOjA4FdTCVOtFpVzecni0J6+KH2AETTkWtWNt6Hguoa0hUbzD96u4p5eEx1xJzV/k+TRuNkoRMfdGT5Xm0b3N1OF1t/w0woD0NQx2qzqvpnJ7YiPwATfv1n9x8/qqmaCMP3iVDS/manNcyMg2d7ip84313wea/V2H3+mm2VDUsiKoE/Jk5y0Vh3uuSsQOmPd0i3LfpC0AiJCyC0TT3lg6fBRzgVgtC26+idWdw0dXSxaU+iYYJYpPcsAiVzr/bqfpkURe4IWHDcASMuUWKAnzrVtnvaDgKw60RboZFK3aUaECxDYZ9JThZERw2zYP9FX8eXld6y7dLJhEWxCAY7m/IaNemj7+uJ79TCVso43RCosSgBr+tvcF+LzOhaLAHvQ4iHM=
-    file_glob: true
-    file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-redist*.jar"
-    on:
-      os: *reference_os
-      repo: *official_repo
-      tags: true
-      condition: $PUBLISH = "true"
-  - provider: surge
-    skip_cleanup: true
-    project: "./alchemist/build/docs/javadoc/"
-    domain: alchemist-unstable-doc.surge.sh
-    on:
-      os: *reference_os
-      repo: *official_repo
-      branch: develop
-      condition: $PUBLISH = "true"
-  - provider: surge
-    skip_cleanup: true
-    project: "./alchemist/report"
-    domain: alchemist-unstable-reports.surge.sh
-    on:
-      os: *reference_os
-      repo: *official_repo
-      branch: develop
-      condition: $PUBLISH = "true"
-  - provider: surge
-    skip_cleanup: true
-    project: "./alchemist/build/docs/javadoc/"
-    domain: alchemist-doc.surge.sh
-    on:
-      os: *reference_os
-      repo: *official_repo
-      tags: true
-      condition: $PUBLISH = "true"
-  - provider: surge
-    skip_cleanup: true
-    project: "./alchemist/report"
-    domain: alchemist-reports.surge.sh
-    on:
-      os: *reference_os
-      repo: *official_repo
-      tags: true
-      condition: $PUBLISH = "true"
+        - travis_wait 30 ./gradlew publishAll --scan --stacktrace
+      deploy:
+        - <<: *deploy_base
+          provider: releases
+          api_key:
+            secure: NiA2CFiiUjreyOGzlA+vxCFT2a6dHZ44gdwA96jBrE3jNdUPXAxzvsaA9rNNxkvHPyADH0DPPZbJ517SdddSYViRcpjlple3dl5jCHxUoBtHBXvrzD2fAhslVejZ7LoxdY9v9K0xSIo3he/pmrtzcuIuPNFrj7LYmYkXeqQcLsxyCrPY+XBOuV6U+Hl5XDUVNqB+/J1qtZUWVg3B1AwGpp8roLKmLYreUfuNwwmF9hXWO8EbS4zIAKDnwf+E/44aiXiULyJ7CPWKEtPgxqJLo9Hi0lABr6I4WV4LzSVaOjA4FdTCVOtFpVzecni0J6+KH2AETTkWtWNt6Hguoa0hUbzD96u4p5eEx1xJzV/k+TRuNkoRMfdGT5Xm0b3N1OF1t/w0woD0NQx2qzqvpnJ7YiPwATfv1n9x8/qqmaCMP3iVDS/manNcyMg2d7ip84313wea/V2H3+mm2VDUsiKoE/Jk5y0Vh3uuSsQOmPd0i3LfpC0AiJCyC0TT3lg6fBRzgVgtC26+idWdw0dXSxaU+iYYJYpPcsAiVzr/bqfpkURe4IWHDcASMuUWKAnzrVtnvaDgKw60RboZFK3aUaECxDYZ9JThZERw2zYP9FX8eXld6y7dLJhEWxCAY7m/IaNemj7+uJ79TCVso43RCosSgBr+tvcF+LzOhaLAHvQ4iHM=
+          file_glob: true
+          file: "${HOME}/build/${TRAVIS_REPO_SLUG}/alchemist/build/libs/alchemist-*all.jar"
+          on: *on_tags
+        - <<: *deploy_javadoc_on_surge
+          domain: alchemist-unstable-doc.surge.sh
+          on: *on_develop
+        - <<: *deploy_reports_on_surge
+          domain: alchemist-unstable-reports.surge.sh
+          on: *on_develop
+        - <<: *deploy_javadoc_on_surge
+          domain: alchemist-doc.surge.sh
+          on: *on_tags
+        - <<: *deploy_reports_on_surge
+          domain: alchemist-reports.surge.sh
+          on: *on_tags
+
+

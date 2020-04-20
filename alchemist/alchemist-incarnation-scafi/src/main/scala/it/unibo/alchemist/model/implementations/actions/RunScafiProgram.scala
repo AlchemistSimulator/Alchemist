@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.Environment
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.scala.PimpMyAlchemist._
 import org.apache.commons.math3.util.FastMath
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import ScafiIncarnationForAlchemist.ContextImpl
@@ -26,6 +25,7 @@ import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.scafi.space.Point3D
 import org.kaikikm.threadresloader.ResourceLoader
+import it.unibo.alchemist.scala.PimpMyAlchemist._
 
 import scala.concurrent.duration.FiniteDuration
 

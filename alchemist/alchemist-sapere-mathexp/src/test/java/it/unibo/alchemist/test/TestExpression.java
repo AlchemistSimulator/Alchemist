@@ -9,32 +9,32 @@ package it.unibo.alchemist.test;
 
 // CHECKSTYLE:OFF
 
+import it.unibo.alchemist.expressions.implementations.Expression;
+import it.unibo.alchemist.expressions.implementations.Type;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import it.unibo.alchemist.expressions.implementations.Expression;
-import it.unibo.alchemist.expressions.implementations.Type;
-
-import org.junit.jupiter.api.Test;
 
 
 /**
  */
 public class TestExpression {
 
-    private static final String[] VAR = new String[]{
+    private static final String[] VAR = {
             "A", "ASD", "Asd"
     };
-    private static final String[] CONST = new String[]{
+    private static final String[] CONST = {
             "a", "asd", "dsd123"
     };
-    private static final String[] OPERATOR = new String[]{
+    private static final String[] OPERATOR = {
             "1+2", "((1+9)*(3-4))/5", "L add L2", "L del L2"
     };
-    private static final String[] LIST = new String[]{
+    private static final String[] LIST = {
             "[a;b;c;]", "[1;2;3;]", "[A;b;1;]"
     };
-    private static final String[] COMPARATOR = new String[]{
+    private static final String[] COMPARATOR = {
             "def: A < 10", "def: A <= 10", "def: A = 10", "def: A >= 10", "def: A != 10"
     };
 

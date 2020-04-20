@@ -27,7 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
-import jiconfont.icons.GoogleMaterialDesignIcons;
+import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
 import org.jetbrains.annotations.Nullable;
 
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;

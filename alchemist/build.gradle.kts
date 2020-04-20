@@ -5,40 +5,35 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-import com.github.spotbugs.SpotBugsTask
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import java.net.URL
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-/*
- * don't ignore checkers failures
- * recheck all dependencies
- */
+import java.net.URL
 
 plugins {
-    id("de.fayard.buildSrcVersions") version Versions.de_fayard_buildsrcversions_gradle_plugin
-    id("org.danilopianini.git-sensitive-semantic-versioning") version Versions.org_danilopianini_git_sensitive_semantic_versioning_gradle_plugin
+    id("org.danilopianini.git-sensitive-semantic-versioning")
     `java-library`
-    kotlin("jvm") version Versions.org_jetbrains_kotlin
+    kotlin("jvm")
     jacoco
-    id("com.github.spotbugs") version Versions.com_github_spotbugs_gradle_plugin
+    id("com.github.spotbugs")
     pmd
     checkstyle
-    id("org.jlleitschuh.gradle.ktlint") version Versions.org_jlleitschuh_gradle_ktlint_gradle_plugin
+    id("io.gitlab.arturbosch.detekt")
+    id("org.jlleitschuh.gradle.ktlint")
     `project-report`
     `build-dashboard`
-    id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka_gradle_plugin
-    id("com.eden.orchidPlugin") version Versions.com_eden_orchidplugin_gradle_plugin
+    id("org.jetbrains.dokka")
+    id("com.eden.orchidPlugin")
     signing
     `maven-publish`
-    id("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
-    id("com.jfrog.bintray") version Versions.com_jfrog_bintray_gradle_plugin
-    id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
+    id("org.danilopianini.publish-on-central")
+    id("com.jfrog.bintray")
+    id("com.dorongold.task-tree")
+    id("com.github.johnrengelman.shadow")
 }
 
-apply(plugin = "com.gradle.build-scan")
 apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
@@ -50,6 +45,7 @@ allprojects {
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "checkstyle")
     apply(plugin = "pmd")
+    apply(plugin = "io.gitlab.arturbosch.detekt")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "project-report")
     apply(plugin = "build-dashboard")
@@ -58,37 +54,57 @@ allprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "org.danilopianini.publish-on-central")
     apply(plugin = "com.jfrog.bintray")
+    apply(plugin = "com.dorongold.task-tree")
+    apply(plugin = "com.github.johnrengelman.shadow")
 
     gitSemVer {
         version = computeGitSemVer()
     }
 
     repositories {
+        listOf("", "-eu", "-asia").forEach {
+            maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
+        }
         mavenCentral()
-        maven(url = "https://dl.bintray.com/kotlin/dokka/")
+        maven {
+            url = uri("https://dl.bintray.com/kotlin/dokka")
+            content {
+                includeGroup("org.jetbrains.dokka")
+            }
+        }
+        maven {
+            url = uri("https://dl.bintray.com/kotlin/kotlinx.html/")
+            content {
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
+
+        // for tornadofx 2.0.0 snapshot release
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     dependencies {
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         compileOnly(Libs.annotations)
-        compileOnly(Libs.spotbugs) {
-            exclude(group = "commons-lang")
-        }
+        compileOnly(Libs.spotbugs)
         implementation(Libs.slf4j_api)
-        implementation(Libs.kotlin_stdlib)
-        implementation(Libs.kotlin_reflect)
+        implementation(kotlin("stdlib-jdk8"))
+        implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
         testImplementation(Libs.junit_jupiter_api)
         testRuntimeOnly(Libs.junit_jupiter_engine)
+        testImplementation(Libs.kotest_runner_junit5)
+        testImplementation(Libs.kotest_assertions)
         runtimeOnly(Libs.logback_classic)
     }
 
+    // COMPILE
+
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
-//        options.compilerArgs = options.compilerArgs + listOf("-Werror", "-Xlint:unchecked")
     }
 
     tasks.withType<KotlinCompile> {
@@ -99,6 +115,8 @@ allprojects {
         }
     }
 
+    // TEST
+
     tasks.withType<Test> {
         testLogging {
             events("passed", "skipped", "failed", "standardError")
@@ -107,20 +125,27 @@ allprojects {
         useJUnitPlatform()
     }
 
-    spotbugs {
-        effort = "max"
-        reportLevel = "low"
-        isShowProgress = true
-        val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
-        if (excludeFile.exists()) {
-            excludeFilter = excludeFile
+    tasks.jacocoTestReport {
+        reports {
+            xml.isEnabled = true
         }
     }
 
-    tasks.withType<SpotBugsTask> {
+    // CODE QUALITY
+
+    spotbugs {
+        setEffort("max")
+        setReportLevel("low")
+        showProgress.set(true)
+        val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
+        if (excludeFile.exists()) {
+            excludeFilter.set(excludeFile)
+        }
+    }
+
+    tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
         reports {
-            xml.setEnabled(false)
-            html.setEnabled(true)
+            create("html") { enabled = true }
         }
     }
 
@@ -128,6 +153,17 @@ allprojects {
         ruleSets = listOf()
         ruleSetConfig = resources.text.fromFile("${project.rootProject.projectDir}/config/pmd/pmd.xml")
     }
+
+    detekt {
+        failFast = true
+        buildUponDefaultConfig = true
+        config = files("${rootProject.projectDir}/config/detekt.yml")
+        reports {
+            html.enabled = true
+        }
+    }
+
+    // DOCUMENTATION
 
     tasks.withType<DokkaTask> {
         outputDirectory = "$buildDir/docs/javadoc"
@@ -185,6 +221,10 @@ allprojects {
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/")
                     }
                     contributor {
+                        name.set("Luca Giuliani")
+                        email.set("luca.giuliani10@studio.unibo.it")
+                    }
+                    contributor {
                         name.set("Gabriele Graffieti")
                         email.set("gabriele.graffieti@studio.unibo.it")
                     }
@@ -197,13 +237,17 @@ allprojects {
                         email.set("niccolo.maltoni@studio.unibo.it")
                     }
                     contributor {
-                        name.set("Vuksa Mihajlovic")
-                        email.set("vuksa.mihajlovic@studio.unibo.it")
+                        name.set("Diego Mazzieri")
+                        email.set("diego.mazzieri@studio.unibo.it")
                     }
                     contributor {
                         name.set("Luca Mella")
                         email.set("luca.mella@studio.unibo.it")
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/")
+                    }
+                    contributor {
+                        name.set("Vuksa Mihajlovic")
+                        email.set("vuksa.mihajlovic@studio.unibo.it")
                     }
                     contributor {
                         name.set("Sara Montagna")
@@ -214,6 +258,14 @@ allprojects {
                         name.set("Luca Nenni")
                         email.set("luca.nenni@studio.unibo.it")
                         url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/")
+                    }
+                    contributor {
+                        name.set("Lorenzo Paganelli")
+                        email.set("lorenzo.paganelli3@studio.unibo.it")
+                    }
+                    contributor {
+                        name.set("Federico Pettinari")
+                        email.set("federico.pettinari2@studio.unibo.it")
                     }
                     contributor {
                         name.set("Andrea Placuzzi")
@@ -277,6 +329,30 @@ allprojects {
             hasKey && hasUser
         }
     }
+
+    // Shadow Jar
+    tasks.withType<ShadowJar> {
+        manifest {
+            attributes(mapOf(
+                "Implementation-Title" to "Alchemist",
+                "Implementation-Version" to rootProject.version,
+                "Main-Class" to "it.unibo.alchemist.Alchemist",
+                "Automatic-Module-Name" to "it.unibo.alchemist"
+            ))
+        }
+        exclude("META-INF/")
+        exclude("ant_tasks/")
+        exclude("about_files/")
+        exclude("help/about/")
+        exclude("build")
+        exclude(".gradle")
+        exclude("build.gradle")
+        exclude("gradle")
+        exclude("gradlew")
+        exclude("gradlew.bat")
+        isZip64 = true
+        destinationDirectory.set(file("${rootProject.buildDir}/libs"))
+    }
 }
 
 evaluationDependsOnChildren()
@@ -293,19 +369,24 @@ repositories {
 }
 
 dependencies {
-    subprojects.forEach { api(it) }
+    api(project(":alchemist-engine"))
+    api(project(":alchemist-interfaces"))
+    api(project(":alchemist-loading"))
+    implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
-    implementation(Libs.ignite_core)
-    orchidRuntime(Libs.orchideditorial)
-    orchidRuntime(Libs.orchidkotlindoc)
-    orchidRuntime(Libs.orchidplugindocs)
-    orchidRuntime(Libs.orchidsearch)
-    orchidRuntime(Libs.orchidsyntaxhighlighter)
-    orchidRuntime(Libs.orchidwiki)
-    orchidRuntime(Libs.orchidgithub)
+    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+    orchidRuntimeOnly(Libs.orchideditorial)
+    orchidRuntimeOnly(Libs.orchidkotlindoc)
+    orchidRuntimeOnly(Libs.orchidplugindocs)
+    orchidRuntimeOnly(Libs.orchidsearch)
+    orchidRuntimeOnly(Libs.orchidsyntaxhighlighter)
+    orchidRuntimeOnly(Libs.orchidwiki)
+    orchidRuntimeOnly(Libs.orchidgithub)
 }
+
+// WEBSITE
 
 tasks.withType<DokkaTask> {
     subProjects = subprojects.map { it.name }.toList()
@@ -323,13 +404,15 @@ orchid {
     baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
     // Fetch the latest version of the website, if this one is more recent enable deploy
     val versionRegex = """.*Currently\s*(.+)\.\s*Created""".toRegex()
-    val matchedVersions: List<String> = try {
+    val matchedVersions: List<String> = runCatching {
         URL(baseUrl).openConnection().getInputStream().use { stream ->
             stream.bufferedReader().lineSequence()
-                .flatMap { line -> versionRegex.find(line)?.groupValues?.last()?.let { sequenceOf(it) } ?: emptySequence() }
+                .flatMap { line ->
+                    versionRegex.find(line)?.groupValues?.last()?.let { sequenceOf(it) } ?: emptySequence()
+                }
                 .toList()
         }
-    } catch (e: Exception) { emptyList() }
+    }.getOrDefault(emptyList())
     val shouldDeploy = matchedVersions
         .takeIf { it.size == 1 }
         ?.first()
@@ -392,36 +475,3 @@ val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
     }
 }
 tasks.orchidClasses.orNull!!.dependsOn(orchidSeedConfiguration)
-
-tasks.register<Jar>("fatJar") {
-    dependsOn(subprojects.map { it.tasks.withType<Jar>() })
-    manifest {
-        attributes(mapOf(
-            "Implementation-Title" to "Alchemist",
-            "Implementation-Version" to rootProject.version,
-            "Main-Class" to "it.unibo.alchemist.Alchemist",
-            "Automatic-Module-Name" to "it.unibo.alchemist"
-        ))
-    }
-    archiveBaseName.set("${rootProject.name}-redist")
-    isZip64 = true
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
-        // remove all signature files
-        exclude("META-INF/")
-        exclude("ant_tasks/")
-        exclude("about_files/")
-        exclude("help/about/")
-        exclude("build")
-        exclude(".gradle")
-        exclude("build.gradle")
-        exclude("gradle")
-        exclude("gradlew")
-        exclude("gradlew.bat")
-    }
-    with(tasks.jar.get() as CopySpec)
-}
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
-}

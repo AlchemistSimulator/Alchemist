@@ -20,7 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import jiconfont.icons.GoogleMaterialDesignIcons;
+import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
 import org.jetbrains.annotations.Nullable;
 

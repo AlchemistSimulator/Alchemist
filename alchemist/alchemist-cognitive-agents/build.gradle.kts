@@ -8,12 +8,10 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-time"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-influence-sphere"))
     implementation(Libs.konf)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-incarnation-protelis"))
-    testImplementation(Libs.kotlintest_runner_junit5)
 }

@@ -8,13 +8,13 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-
+    implementation(rootProject)
     implementation(project(":alchemist-engine"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-smartcam"))
-    implementation(project(":alchemist-time"))
+    implementation(project(":alchemist-cognitive-agents"))
     implementation(Libs.miglayout_swing)
     implementation(Libs.mapsforge_map_awt) {
         exclude(group = "com.github.blackears", module = "svgSalamander")
@@ -34,6 +34,7 @@ dependencies {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
     }
+    implementation(Libs.org_danilopianini_conrec)
 
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {

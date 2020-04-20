@@ -6,35 +6,16 @@
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 
-plugins {
-    scala
-}
-
 dependencies {
     api(project(":alchemist-interfaces"))
     api(Libs.commons_math3)
     api(Libs.java_quadtree)
     api(Libs.guava)
-    implementation(project(":alchemist-time"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.classgraph)
     implementation(Libs.commons_lang3)
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
-    implementation(Libs.scala_compiler)
-    implementation(Libs.scala_library)
     implementation(Libs.trove4j)
-    testImplementation(Libs.kotlintest_runner_junit5)
-}
-
-configurations {
-    apiElements {
-        val compileScala = tasks.compileScala.get()
-        outgoing.variants["classes"].artifact(mapOf(
-                "file" to compileScala.destinationDir,
-                "type" to ArtifactTypeDefinition.JVM_CLASS_DIRECTORY,
-                "builtBy" to compileScala)
-        )
-    }
 }

@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -15,7 +15,7 @@ import org.apache.commons.math3.random.RandomGenerator
  *          the simulation {@link RandomGenerator}.
  */
 class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
-    env: EuclideanPhysics2DEnvironment<T>,
+    env: Physics2DEnvironment<T>,
     rg: RandomGenerator,
     group: PedestrianGroup<T>? = null
 ) : HomogeneousPedestrianImpl<T, Euclidean2DPosition>(env, rg, group), Pedestrian2D<T> {
@@ -26,8 +26,5 @@ class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
         senses += fieldOfView(env)
     }
 
-    /**
-     * {@inheritDoc}
-     */
     override fun getShape() = shape
 }

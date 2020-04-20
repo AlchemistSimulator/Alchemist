@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 
 /**
@@ -15,12 +15,13 @@ import it.unibo.alchemist.model.interfaces.Reaction
  * @param coords
  *          the coordinates of the position the pedestrian moves away.
  */
-open class Flee<T, P : Position<P>>(
+open class Flee<T, P : AbstractEuclideanPosition<P>>(
     env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
     vararg coords: Double
 ) : Seek<T, P>(env, reaction, pedestrian, *coords) {
 
-    override fun getDestination(current: P, target: P, maxWalk: Double): P = super.getDestination(target, current, maxWalk)
+    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
+        super.interpolatePositions(target, current, maxWalk)
 }

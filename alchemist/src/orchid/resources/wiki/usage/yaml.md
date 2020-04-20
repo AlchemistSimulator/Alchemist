@@ -152,9 +152,12 @@ The difference is that variables of the latter kind can always be computed given
 ### Free variables
 
 Free variables define a set of values and a default.
-The value set is used to define the batch matrix, i.e., if the variable is selected for a batch, all its value are
-included in the cartesian product that determines which simulations are to be executed.
-If the simulation is not executed as batch, then the default value is used
+Their main scope is enabling Alchemist to run a set of simulations with different parameters (values of variables)
+without the need to duplicate the simulation code.
+When used in this mode (called "batch mode"),
+Alchemist by default produces the cartesian product of all the variables values' selected for the batch,
+and runs a simulation for each combination.
+If the simulation is not executed as batch, then the default value is used.
 
 #### Linear variables
 
@@ -230,7 +233,8 @@ variables:
 
 The system is [JSR-233](http://archive.fo/PGdk8)-compatible, as such, every language with a valid JSR-233 implementation could be used.
 The only requirement for the language to be available is the availability in the runtime classpath of a JSR-233 compatible version of the desired language.
-If Alchemist is being used (as recommended) in conjunction with Gradle, and you want to embed your favorite JSR-233 compatible scripting language, you should have a dependency declaration similar to:
+If Alchemist is being used (as recommended) in conjunction with Gradle,
+and you want to embed your favorite JSR-233 compatible scripting language, you should have a dependency declaration similar to:
 
 ```kotlin
 dependencies {
@@ -288,16 +292,6 @@ variables:
     language: kotlin
 ```
 If the string begins with a `|`, its contents preserve newlines, thus allowing for multiline scripts of arbitrary complexity.
-
-#### Known issues
-
-Alchemist exploit JSR-233's variable binding system to let the scripts use variables defined elsewhere.
-Not all languages support this system properly.
-In particular, Kotlin does not (yet) support variable injection and requires a workaround.
-In order for a script to access a variable named `myVar`, the programmer should write instead `bindings["myVar"]`.
-The issue is being tracked as [KT-15125](https://youtrack.jetbrains.com/issue/KT-15125).
-Once it gets solved (if ever), and as soon as Alchemist incorporates the version of Kotlin including the fix,
-the workaround will no longer be necessary.
 
 ### Using variables
 
@@ -464,8 +458,46 @@ displacements:
 
 ### Customizing the nodes content
 
-It is possible to set the content of the nodes inside a given region. Only the nodes inside the {{ anchor('Rectangle') }} area contain
-the `source` and `randomSensor` molecules (global variables).
+It is possible to set the content of the nodes in a deployment.
+Node contents are defined in terms of molecules and their corresponding concentration.
+As such, they depend on the specific incarnation in use.
+
+In the following example, we inject in all the nodes of a {{ anchor('Grid') }} deployment a molecule called `foo`  with
+concentration `1`.
+As stated before, it would only make sense if the incarnation supports integer concentrations and it's able to produce
+a valid molecule from the `"foo"` String.
+
+```yaml
+displacements:
+  - in:
+      type: Grid
+      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+    contents:
+      - molecule: foo
+        concentration: 1
+```
+
+Multiple contents can be listed, e.g.,
+if we want to also have a molecule named `bar` with value `0` along with `foo`,
+we can just add another entry to the list:
+
+```yaml
+displacements:
+  - in:
+      type: Grid
+      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+    contents:
+      - molecule: foo
+        concentration: 1
+      - molecule: bar
+        concentration: 0
+```
+
+Molecules can be injected selectively inside a given {{ anchor('Shape') }}.
+To do so, you can a filter with the `in keyword`.
+In the following example, only the nodes inside the {{ anchor('Rectangle') }} area contain
+the `source` molecule.
+
 ```yaml
 displacements:
   - in:
@@ -477,17 +509,12 @@ displacements:
           parameters: [-6, -6, 2, 2]
         molecule: source
         concentration: true
-      - molecule: randomSensor
-        concentration: >
-          import java.lang.Math.random
-          random() * pi
 ```
 
 ## Writing behaviors (Reactions)
 
-TODO!
-
 Nodes can be programmed using reactions.
+Reaction are usually highly dependent on the specific incarnation.
 
 ```yaml
 # Variable representing the program to be executed
@@ -520,7 +547,7 @@ pools:
           parameters: [...] #
 ```
 
-## Writing layers
+## Layers
 
 It is possible to define overlays (layers) of data that can be sensed everywhere in the environment.
 Layers can be used to model physical properties, such as pollution, light, temperature, and so on.
@@ -540,4 +567,53 @@ layers:
   - type: BidimensionalGaussianLayer
     molecule: bar
     parameters: [0.0, 0.0, 5.0, 10.0]
+```
+
+## Terminating the simulation if a condition is met
+
+Alchemist supports the possibility to write termination conditions for any simulation.
+Termination conditions are checked after every event, and, if met, cause the immediate termination of a simulation.
+Termination conditions are expected to be found in the {{ anchor('it.unibo.alchemist.model.implementations.terminators') }} package.
+
+To load them, use the `terminators` keyword.
+Multiple terminators are allowed, the first terminator matching causes the termination of the simulation (they are in and).
+
+Here is an example:
+```yaml
+terminate:
+  # Defines a new terminator which every 100 simulation steps for the environment to remain equal for the 10 subsequent
+  # simulation steps. If no change is detected, then the simulation is intended as concluded.
+  - type: StableForSteps
+    parameters: [100, 10]
+```
+
+### Terminating the simulation after some time
+
+One of the simplest terminators availables allows for declaring a simulation completed when a certain simulated time is reached.
+In the following example, it is used in conjunction with a number of variables, showing how it's possible to use such
+variables to produce batches of simulations terminating at different times.
+
+```yaml
+variables:
+  stabilizationTime:
+    type: ArbitraryVariable
+    parameters: [10, [0, 1, 10, 100, 1000]]
+  simulationEnd: &simulationEnd
+    formula: 150 + stabilizationTime
+terminate:
+  - type: AfterTime
+    parameters: [*simulationEnd]
+```
+
+### Terminating the simulation if the environment is not changing
+
+A terminator is provided for terminating when a simulation is "stable" (nothing changes in terms of positions and nodes' content).
+The class implementing it is {{ anchor('StableForSteps') }}.
+The following code snippet exemplifies its usage:
+```yaml
+terminate:
+  # Defines a new terminator which every 100 simulation steps for the environment to remain equal for the 10 subsequent
+  # simulation steps. If no change is detected, then the simulation is intended as concluded.
+  - type: StableForSteps
+    parameters: [100, 10]
 ```

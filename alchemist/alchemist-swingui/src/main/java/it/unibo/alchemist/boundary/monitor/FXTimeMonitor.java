@@ -22,7 +22,7 @@ public class FXTimeMonitor<T, P extends Position<? extends P>> extends NumericLa
      * Default constructor.
      */
     public FXTimeMonitor() {
-        super(DoubleTime.ZERO_TIME, "Time: ");
+        super(new DoubleTime(0d), "Time: ");
     }
 
     /**

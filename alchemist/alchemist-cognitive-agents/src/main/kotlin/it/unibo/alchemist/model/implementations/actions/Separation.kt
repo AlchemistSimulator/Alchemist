@@ -1,14 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.div
-import it.unibo.alchemist.model.implementations.utils.makePosition
 import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -22,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the owner of this action.
  */
 class Separation<T>(
-    private val env: EuclideanPhysics2DEnvironment<T>,
+    private val env: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
     private val pedestrian: Pedestrian2D<T>
 ) : SteeringActionImpl<T, Euclidean2DPosition>(
@@ -37,14 +35,14 @@ class Separation<T>(
             .filterIsInstance<Pedestrian<T>>()
             .plusElement(pedestrian)
 
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double): Euclidean2DPosition =
-        super.getDestination(
-            target,
-            centroid(),
-            maxWalk
-        )
+    override fun interpolatePositions(
+        current: Euclidean2DPosition,
+        target: Euclidean2DPosition,
+        maxWalk: Double
+    ): Euclidean2DPosition = super.interpolatePositions(target, centroid(), maxWalk)
 
     private fun centroid(): Euclidean2DPosition = with(group()) {
-        env.makePosition(map { env.getPosition(it) - currentPosition }.reduce { acc, pos -> acc + pos } / (-size))
+        map { env.getPosition(it) - currentPosition }
+            .reduce { acc, pos -> acc + pos } / (-size.toDouble())
     }
 }

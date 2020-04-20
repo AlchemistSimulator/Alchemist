@@ -73,11 +73,11 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
         this.getPane().setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 // Drawer size is modified every time it's opened
-                if (effectDrawer.isHidden() || effectDrawer.isHiding()) {
+                if (effectDrawer.isClosing() || effectDrawer.isClosed()) {
                     effectDrawer.setDefaultDrawerSize(stack.getWidth());
                 }
                 this.stack.toggle(effectDrawer);
-                if (effectDrawer.isShown() || effectDrawer.isShowing()) {
+                if (effectDrawer.isOpened() || effectDrawer.isOpening()) {
                     this.stack.setContent(new JFXDrawer());
                 }
             }

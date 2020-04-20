@@ -65,7 +65,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
                 }
 
                 // Drawer size is modified every time it's opened
-                if (propertiesDrawer.isHidden() || propertiesDrawer.isHiding()) {
+                if (propertiesDrawer.isClosed() || propertiesDrawer.isClosing()) {
                     propertiesDrawer.setDefaultDrawerSize(stack.getWidth());
                 }
                 this.stack.toggle(propertiesDrawer);

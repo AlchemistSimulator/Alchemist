@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
+import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import java.awt.Shape
@@ -19,7 +19,7 @@ internal class AwtEuclidean2DShape(
 
     override val diameter: Double by lazy {
         val rect = shape.bounds2D
-        Euclidean2DPosition(rect.minX, rect.minY).getDistanceTo(Euclidean2DPosition(rect.maxX, rect.maxY))
+        Euclidean2DPosition(rect.minX, rect.minY).distanceTo(Euclidean2DPosition(rect.maxX, rect.maxY))
     }
 
     override val centroid: Euclidean2DPosition by lazy {
@@ -44,7 +44,8 @@ internal class AwtEuclidean2DShape(
              not checking for it results in paradoxes like shape.intersects(other) != other.intersects(shape).
              The asymmetry is tolerated in favour of a half-good implementation.
              */
-            is AwtEuclidean2DShape -> shape.intersects(other.shape.bounds2D) // || other.shape.intersects(shape.bounds2D)
+            is AwtEuclidean2DShape -> shape.intersects(other.shape.bounds2D)
+                // || other.shape.intersects(shape.bounds2D)
             is AdimensionalShape -> false
             else -> throw UnsupportedOperationException("AwtEuclidean2DShape only works with other AwtEuclidean2DShape")
         }

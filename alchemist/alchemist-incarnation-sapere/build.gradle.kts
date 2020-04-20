@@ -12,13 +12,12 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-sapere-mathexp"))
-    implementation(project(":alchemist-time"))
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
 }
 
 spotbugs {
-    isIgnoreFailures = true
+    ignoreFailures.set(true)
 }
 
 pmd {

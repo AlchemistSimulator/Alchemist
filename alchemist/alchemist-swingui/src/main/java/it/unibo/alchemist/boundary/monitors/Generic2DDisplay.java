@@ -379,7 +379,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         g.setColor(Color.GREEN);
         if (effectStack != null) {
             effectStack.forEach(effect -> onView.forEach((node, point) ->
-                effect.apply(g, node, currentEnv, wormhole.getZoom(), point.x, point.y)));
+                effect.apply(g, node, currentEnv, wormhole)));
         }
         if (isCloserNodeMarked()) {
             final Optional<Map.Entry<Node<T>, Point>> closest = onView.entrySet().parallelStream()

@@ -9,7 +9,6 @@
 dependencies {
     api(project(":alchemist-implementationbase"))
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
     implementation(Libs.guava)
@@ -18,13 +17,12 @@ dependencies {
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(Libs.kotlin_scripting_jsr223_embeddable)
-//    runtimeOnly(Libs.kotlin_script_runtime)
-//    runtimeOnly("org.jetbrains.kotlin:kotlin-script-util:1.3.40")
+    runtimeOnly(Libs.scala_compiler)
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
     testImplementation(Libs.gson)
-    testImplementation(Libs.kotlintest_runner_junit5)
+    testImplementation(Libs.scala_compiler)
 
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }

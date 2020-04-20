@@ -10,8 +10,8 @@ package it.unibo.alchemist.test
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.loader.displacements.Polygon
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment

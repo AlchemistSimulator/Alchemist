@@ -8,12 +8,12 @@
 package it.unibo.alchemist.test
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import io.kotlintest.Matcher
-import io.kotlintest.Result
-import io.kotlintest.TestCase
-import io.kotlintest.matchers.collections.shouldContainExactly
-import io.kotlintest.shouldHave
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.test.TestCase
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldHave
 import it.unibo.alchemist.model.BiochemistryIncarnation
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor
@@ -102,14 +102,14 @@ private data class Container(
 private val Container.expectedPropensity: Matcher<Container>
     get() = object : Matcher<Container> {
         @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-        override fun test(value: Container): Result {
+        override fun test(value: Container): MatcherResult {
             val expectedPropensity = when (condition) {
                 is NeighborhoodPresent -> node.neighborhoodPresentPropensity
                 is JunctionPresentInCell -> node.junctionPresentPropensity
                 is BiomolPresentInNeighbor -> node.biomoleculeInNeighborPropensity
                 else -> throw IllegalStateException("Unknown neighbor condition")
             }
-            return Result(
+            return MatcherResult(
                 expectedPropensity == propensity,
                 "node $node should have propensity $expectedPropensity for condition $condition but it has $propensity",
                 "node $node should not have propensity $expectedPropensity for condition $condition but it has"

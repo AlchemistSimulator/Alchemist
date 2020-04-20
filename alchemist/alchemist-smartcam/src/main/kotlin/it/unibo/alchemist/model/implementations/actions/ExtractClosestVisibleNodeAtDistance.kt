@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.VisibleNode
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.smartcam.offsetPositionAtDistance
 import kotlin.math.min
 
@@ -20,7 +20,7 @@ import kotlin.math.min
  */
 class ExtractClosestVisibleNodeAtDistance(
     node: Node<Any>,
-    private val env: EuclideanPhysics2DEnvironment<Any>,
+    private val env: Physics2DEnvironment<Any>,
     private val distance: Double,
     private val visionMolecule: Molecule,
     private val targetMolecule: Molecule
@@ -45,7 +45,7 @@ class ExtractClosestVisibleNodeAtDistance(
                 @Suppress("UNCHECKED_CAST") val nodes = visibleNodes as List<VisibleNode<*, Euclidean2DPosition>>
                 val myPosition = offsetPositionAtDistance(env, env.getPosition(node), env.getHeading(node), distance)
                 nodes.map { it.position }
-                    .reduce { n1, n2 -> minBy(n1, n2) { it.getDistanceTo(myPosition) } }
+                    .reduce { n1, n2 -> minBy(n1, n2) { it.distanceTo(myPosition) } }
                     .also { node.setConcentration(targetMolecule, it) }
             }
         }

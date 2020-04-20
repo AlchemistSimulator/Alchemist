@@ -1,10 +1,9 @@
 package it.unibo.alchemist.test
 
-import io.kotlintest.TestCase
-import io.kotlintest.shouldBe
-import io.kotlintest.shouldNotBe
-import io.kotlintest.specs.StringSpec
-import it.unibo.alchemist.model.implementations.geometry.asAngle
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.test.TestCase
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import kotlin.math.abs
@@ -100,27 +99,27 @@ class TestRandomTarget : StringSpec() {
 
     init {
         "Should change distance according to the distribution" {
-            val target = randomTarget.target.getDistanceTo(currentPosition)
-            randomTarget.target.getDistanceTo(currentPosition) shouldBe target
-            randomTarget.target.getDistanceTo(currentPosition) shouldBe target
+            val target = randomTarget.target.distanceTo(currentPosition)
+            randomTarget.target.distanceTo(currentPosition) shouldBe target
+            randomTarget.target.distanceTo(currentPosition) shouldBe target
             distanceDistribution.value = 2.0
-            val newTarget = randomTarget.target.getDistanceTo(currentPosition)
-            randomTarget.target.getDistanceTo(currentPosition) shouldNotBe target
-            randomTarget.target.getDistanceTo(currentPosition) shouldBe newTarget
+            val newTarget = randomTarget.target.distanceTo(currentPosition)
+            randomTarget.target.distanceTo(currentPosition) shouldNotBe target
+            randomTarget.target.distanceTo(currentPosition) shouldBe newTarget
             directionGenerator.value = 1.0
-            randomTarget.target.getDistanceTo(currentPosition) shouldBe newTarget
+            randomTarget.target.distanceTo(currentPosition) shouldBe newTarget
         }
 
         "Should change direction according to the generator" {
-            val target = randomTarget.target.asAngle()
-            randomTarget.target.asAngle() shouldBe target
-            randomTarget.target.asAngle() shouldBe target
+            val target = randomTarget.target.asAngle
+            randomTarget.target.asAngle shouldBe target
+            randomTarget.target.asAngle shouldBe target
             directionGenerator.value = 1.0
-            val newTarget = randomTarget.target.asAngle()
-            randomTarget.target.asAngle() shouldNotBe target
-            randomTarget.target.asAngle() shouldBe newTarget
+            val newTarget = randomTarget.target.asAngle
+            randomTarget.target.asAngle shouldNotBe target
+            randomTarget.target.asAngle shouldBe newTarget
             distanceDistribution.value = 2.0
-            randomTarget.target.asAngle() shouldBe newTarget
+            randomTarget.target.asAngle shouldBe newTarget
         }
     }
 }

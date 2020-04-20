@@ -42,6 +42,7 @@ import javafx.collections.MapChangeListener
 import javafx.collections.ObservableMap
 import javafx.event.Event
 import javafx.scene.canvas.Canvas
+import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
@@ -126,8 +127,8 @@ class InteractionManager<T, P : Position2D<P>>(
     /**
      * Invokes a given command on the simulation.
      */
-    private val invokeOnSimulation: (Simulation<*, *>.() -> Unit) -> Unit
-        get() = environment?.simulation?.let { { exec: Simulation<*, *>.() -> Unit -> it.schedule { exec.invoke(it) } } }
+    private val invokeOnSimulation: (Simulation<T, P>.() -> Unit) -> Unit
+        get() = environment?.simulation?.let { { exec: Simulation<T, P>.() -> Unit -> it.schedule { exec.invoke(it) } } }
             ?: throw IllegalStateException("Uninitialized environment or simulation")
 
     init {
@@ -218,8 +219,8 @@ class InteractionManager<T, P : Position2D<P>>(
         Keybinds[ActionFromKey.ONE_STEP].ifPresent {
             keyboard[ActionOnKey.PRESSED with it] = {
                 invokeOnSimulation {
-                    if (getStatus() == Status.PAUSED) {
-                        goToStep(getStep() + 1)
+                    if (status == Status.PAUSED) {
+                        goToStep(step + 1)
                     }
                 }
             }
@@ -270,11 +271,11 @@ class InteractionManager<T, P : Position2D<P>>(
         }
 
         selection.addListener(MapChangeListener {
-            feedback += Interaction.HIGHLIGHTED to selection.map { paintHighlight(it.value, Colors.alreadySelected) }
+            feedback = feedback + (Interaction.HIGHLIGHTED to selection.map { paintHighlight(it.value, Colors.alreadySelected) })
             repaint()
         })
         selectionCandidates.addListener(MapChangeListener {
-            feedback += Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it.value, Colors.selecting) }
+            feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it.value, Colors.selecting) })
             repaint()
         })
     }
@@ -326,9 +327,9 @@ class InteractionManager<T, P : Position2D<P>>(
      * Called while a select gesture is in progress and the selection is changing.
      */
     private fun onSelecting(event: MouseEvent) {
-        selectionHelper.let {
-            it.update(makePoint(event.x, event.y))
-            feedback += Interaction.SELECTION_BOX to listOf(selector.createDrawCommand(it.rectangle, Colors.selectionBox))
+        selectionHelper.let { helper: SelectionHelper<T, P> ->
+            helper.update(makePoint(event.x, event.y))
+            feedback = feedback + (Interaction.SELECTION_BOX to listOf(selector.createDrawCommand(helper.rectangle, Colors.selectionBox)))
             addNodesToSelectionCandidates()
             repaint()
         }
@@ -339,22 +340,22 @@ class InteractionManager<T, P : Position2D<P>>(
      * Called when a select gesture finishes.
      */
     private fun onSelected(event: MouseEvent) {
-        if (Keybinds[ActionFromKey.MODIFIER_CONTROL].filter { keyboard.isHeld(it).not() }.isPresent) {
+        if (Keybinds[ActionFromKey.MODIFIER_CONTROL].filter { key: KeyCode -> keyboard.isHeld(key).not() }.isPresent) {
             selection.clear()
         }
-        selectionHelper.clickSelection(nodes, wormhole)?.let {
-            if (it.first in selection) {
-                selection -= it.first
+        selectionHelper.clickSelection(nodes, wormhole)?.let { clickedNode: Pair<Node<T>, P> ->
+            if (clickedNode.first in selection) {
+                selection -= clickedNode.first
             } else {
-                selection[it.first] = it.second
+                selection[clickedNode.first] = clickedNode.second
             }
         }
-        selectionHelper.boxSelection(nodes, wormhole).let { selection
-            selection.forEach {
-                if (it.key in selection) {
-                    selection -= it.key
+        selectionHelper.boxSelection(nodes, wormhole).let { boxedNodes: Map<Node<T>, P> ->
+            boxedNodes.forEach { node: Map.Entry<Node<T>, P> ->
+                if (node.key in selection) {
+                    selection -= node.key
                 } else {
-                    selection[it.key] = it.value
+                    selection[node.key] = node.value
                 }
             }
         }
@@ -362,7 +363,7 @@ class InteractionManager<T, P : Position2D<P>>(
         selectionHelper.close()
         selectionCandidates.clear()
         selectionCandidatesMutex.release()
-        feedback += Interaction.SELECTION_BOX to emptyList()
+        feedback = feedback + (Interaction.SELECTION_BOX to emptyList())
         repaint()
         event.consume()
     }
@@ -372,8 +373,8 @@ class InteractionManager<T, P : Position2D<P>>(
      */
     private fun onSelectCanceled(event: MouseEvent) {
         selectionHelper.close()
-        feedback += Interaction.SELECTION_BOX to emptyList()
-        feedback += Interaction.HIGHLIGHT_CANDIDATE to emptyList()
+        feedback = feedback + (Interaction.SELECTION_BOX to emptyList())
+        feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to emptyList())
         repaint()
         event.consume()
     }
@@ -470,7 +471,7 @@ class InteractionManager<T, P : Position2D<P>>(
 }
 
 /**
- * Cardinal and intercardinal directions.
+ * Cardinal and intercardinal directions indicating a movement.
  * @param x the X-value. Grows positively towards the "right".
  * @param y the Y-value. Grows positively upwards.
  */
@@ -485,7 +486,7 @@ enum class Direction2D(val x: Int, val y: Int) {
     SOUTHWEST(-1, -1),
     NORTHWEST(-1, 1);
 
-    private fun flip(xFlip: Boolean, yFlip: Boolean): Direction2D =
+    private fun flip(xFlip: Boolean = true, yFlip: Boolean = true): Direction2D =
         Direction2D.values().find {
             it.x == (if (xFlip) -x else x) && it.y == (if (yFlip) -y else y)
         } ?: Direction2D.NONE
@@ -494,19 +495,19 @@ enum class Direction2D(val x: Int, val y: Int) {
      * Flips the direction horizontally and vertically
      */
     val flipped: Direction2D
-        get() = flip(true, true)
+        get() = flip()
 
     /**
      * Flips the direction's X-values
      */
     val flippedX: Direction2D
-        get() = flip(true, false)
+        get() = flip(yFlip = false)
 
     /**
      * Flips the direction's Y-values
      */
     val flippedY: Direction2D
-        get() = flip(false, true)
+        get() = flip(xFlip = false)
 
     private fun Int.limited(): Int = min(1, max(this, -1))
 
@@ -701,7 +702,7 @@ class SelectionHelper<T, P : Position2D<P>> {
         wormhole: BidimensionalWormhole<P>
     ): Pair<Node<T>, P>? =
         selectionPoint?.let { point ->
-            nodes.minBy { (nodes[it.key]!!).getDistanceTo(wormhole.getEnvPoint(point)) }?.let {
+            nodes.minBy { (nodes[it.key]!!).distanceTo(wormhole.getEnvPoint(point)) }?.let {
                 Pair(it.key, it.value)
             }
         }

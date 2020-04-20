@@ -7,8 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.Objects;
-
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -16,6 +14,8 @@ import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
+
+import java.util.Objects;
 
 /**
  * An abstract class that factorizes code for multiple different movements. With
@@ -98,7 +98,7 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         final Environment<T, P> env = getEnvironment();
         final Node<T> node = getNode();
         P curPos = env.getPosition(node);
-        if (curPos.getDistanceTo(end) <= maxWalk) {
+        if (curPos.distanceTo(end) <= maxWalk) {
             final P destination = end;
             end = target.getTarget();
             resetRoute();
@@ -109,16 +109,16 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         }
         if (route.size() < 1) {
             resetRoute();
-            return getDestination(curPos, end, maxWalk);
+            return interpolatePositions(curPos, end, maxWalk);
         }
         do {
             final P target = route.getPoint(curStep);
-            final double toWalk = target.getDistanceTo(curPos);
+            final double toWalk = target.distanceTo(curPos);
             if (toWalk > maxWalk) {
                 /*
                  * I can arrive at most at maxWalk
                  */
-                return getDestination(curPos, target, maxWalk);
+                return interpolatePositions(curPos, target, maxWalk);
             }
             curStep++;
             maxWalk -= toWalk;
@@ -128,16 +128,20 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
          * I've followed the whole route
          */
         resetRoute();
-        return getDestination(curPos, end, maxWalk);
+        return interpolatePositions(curPos, end, maxWalk);
     }
 
     /**
+     * Given a start position (current), a desired target position (target), and a maximum walkable distance (maxWalk),
+     * this method computes the actual position reached by the moving node, in absolute or relative coordinates
+     * depending on the value of isAbsolute in the constructor.
+     *
      * @param current the current position of the node
      * @param target the target that should be reached
      * @param maxWalk how far the node can move
      * @return the position that the node reaches
      */
-    protected abstract P getDestination(P current, P target, double maxWalk);
+    protected abstract P interpolatePositions(P current, P target, double maxWalk);
 
     /**
      * @return the current target

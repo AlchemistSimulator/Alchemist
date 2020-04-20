@@ -85,7 +85,7 @@ public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements C
 
     @Override
     public final void addPolarization(final P v) {
-        final double[] tempCor = this.polarizationVersor.plus(v).getCartesianCoordinates();
+        final double[] tempCor = this.polarizationVersor.plus(v).getCoordinates();
         final double module = FastMath.sqrt(FastMath.pow(tempCor[0], 2) + FastMath.pow(tempCor[1], 2));
         this.polarizationVersor = module == 0 
                 ? environment.makePosition(0, 0) 

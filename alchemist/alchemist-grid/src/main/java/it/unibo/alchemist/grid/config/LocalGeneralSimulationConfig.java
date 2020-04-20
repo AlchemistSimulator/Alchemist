@@ -7,6 +7,10 @@
  */
 package it.unibo.alchemist.grid.config;
 
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.model.interfaces.Time;
+import org.kaikikm.threadresloader.ResourceLoader;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -15,11 +19,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import org.kaikikm.threadresloader.ResourceLoader;
-
-import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * Local {@link GeneralSimulationConfig} that contains all information in local memory.
@@ -58,7 +57,10 @@ public final class LocalGeneralSimulationConfig extends LightInfoGeneralSimulati
         }
     }
 
-    @Override
+    public LocalGeneralSimulationConfig(final Loader loader, final Time endTime) {
+        this(loader, Long.MAX_VALUE, endTime);
+    }
+        @Override
     public Map<String, byte[]> getDependencies() {
         return this.dependencies;
     }

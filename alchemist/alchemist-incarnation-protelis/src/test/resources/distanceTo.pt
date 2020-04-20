@@ -6,7 +6,7 @@ def myPosition() {
 }
 
 def nbrRange() {
-    nbr(myPosition()).getDistanceTo(myPosition())
+    nbr(myPosition()).distanceTo(myPosition())
 }
 
 def distanceTo(source) {

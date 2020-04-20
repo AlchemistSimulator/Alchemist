@@ -24,7 +24,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import jiconfont.icons.GoogleMaterialDesignIcons;
+import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
@@ -173,7 +173,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
         effectGroupsDrawer.setOverLayVisible(false);
         effectGroupsDrawer.setResizableOnDrag(false);
         effectsButton.setOnAction(e -> {
-            if (effectGroupsDrawer.isShown() || effectGroupsDrawer.isShowing()) {
+            if (effectGroupsDrawer.isOpened() || effectGroupsDrawer.isOpening()) {
                 this.drawerStack.setContent(new JFXDrawer());
                 this.drawerStack.toggle(effectGroupsDrawer, false);
                 this.drawerStack.setMouseTransparent(true);

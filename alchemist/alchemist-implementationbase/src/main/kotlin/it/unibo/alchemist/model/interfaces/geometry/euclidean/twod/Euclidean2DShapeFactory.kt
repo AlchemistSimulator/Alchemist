@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 
 /**

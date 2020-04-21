@@ -36,7 +36,7 @@ open class Wander<T>(
     private val rg: RandomGenerator,
     private val offset: Double,
     private val radius: Double
-) : SteeringActionImpl<T, Euclidean2DPosition>(
+) : SteeringActionWithTargetImpl<T, Euclidean2DPosition>(
     env,
     reaction,
     pedestrian,

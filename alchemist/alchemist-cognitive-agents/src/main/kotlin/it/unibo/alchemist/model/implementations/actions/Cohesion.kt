@@ -1,12 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
-import it.unibo.alchemist.model.implementations.utils.origin
+import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GroupSteeringAction
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * Move the agent towards the other members of his group.
@@ -18,26 +18,19 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param pedestrian
  *          the owner of this action.
  */
-class Cohesion<T, P : AbstractEuclideanPosition<P>>(
-    private val env: Environment<T, P>,
+class Cohesion<T, P>(
+    env: Environment<T, P>,
     reaction: Reaction<T>,
-    private val pedestrian: Pedestrian<T>
-) : SteeringActionImpl<T, P>(
-    env,
-    reaction,
-    pedestrian,
-    TargetSelectionStrategy { env.origin() }
-), GroupSteeringAction<T, P> {
+    pedestrian: Pedestrian<T>
+) : AbstractGroupSteeringAction<T, P>(env, reaction, pedestrian)
+    where
+        P : Position<P>,
+        P : Vector<P> {
+
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
+        Cohesion(env, r, n as Pedestrian<T>)
+
+    override fun nextPosition(): P = (centroid() - currentPosition).resizedToMaxWalkIfGreater()
 
     override fun group(): List<Pedestrian<T>> = pedestrian.membershipGroup.members
-
-    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P = super.interpolatePositions(
-        target,
-        centroid() - current,
-        maxWalk
-    )
-
-    private fun centroid(): P = with(group()) {
-        map { env.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
-    }
 }

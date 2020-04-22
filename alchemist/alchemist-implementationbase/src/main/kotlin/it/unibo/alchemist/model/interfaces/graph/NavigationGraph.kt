@@ -64,9 +64,13 @@ interface NavigationGraph<
  * [passageShape] is a [Segment2D] modeling the shape of the passage between the two areas:
  * an agent could cross any point of it to move from the first area to the second one. To
  * make it easier, think of the following: in an indoor environment, the segment should
- * represent the shape of the door between two rooms. Additionally, given a passage p
- * connecting area a to area b, the segment MUST belong to the boundary of a, but can or
- * cannot belong the boundary of b.
+ * represent the shape of the door between two rooms. Additionally, [passageShape] must
+ * belong to the boundary of [tail], but can or cannot belong the boundary of [head].
+ * This allows two polygons to be connected even when not exactly adjacent, but introduces
+ * navigation issues as agents may not know which direction to take when crossing a passage.
+ * For this reason, [passageShape] must guarantee that [head] is reachable by throwing a
+ * ray from any point of the segment in its normal direction. This provides agents with a
+ * direction to follow when crossing [Euclidean2DPassage]s.
  */
 data class Euclidean2DPassage(
     val tail: ConvexPolygon,

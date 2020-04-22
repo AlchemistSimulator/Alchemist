@@ -41,6 +41,9 @@ enum class BasicMouseTriggerAction : MouseTriggerAction {
 
 /**
  * A [MouseTriggerAction] related to mouse button presses.
+ *
+ * @param type the type of the action performed with the mouse
+ * @param button the button related to the action performed
  */
 data class MouseButtonTriggerAction(val type: ActionOnMouse, val button: MouseButton) : MouseTriggerAction
 

@@ -87,7 +87,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      *
      * @throws IllegalArgumentException if the step is not bigger than 0
      */
@@ -204,13 +204,16 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      */
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", "False positive")
     private fun update(environment: Environment<T, P>, time: Time) {
-//            environment.simulation.schedule{ environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8)) }
+//            environment.simulation.schedule {
+//                environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8))
+//            }
         if (Thread.holdsLock(environment)) {
             time.toDouble()
             interactions.environment = environment
             /*
-             * TODO: Future optimization -- Let the simulation (or the environment, probably both) expose the last moment
-             * at which a change in position occurred. This way, we don't need to constantly regenerate the position map.
+             * TODO: Future optimization -- Let the simulation (or the environment, probably both)
+             * expose the last moment at which a change in position occurred. This way, we don't
+             * need to constantly regenerate the position map.
              */
             interactions.nodes = environment.nodes.associate { Pair(it, environment.getPosition(it)) }
             val graphicsContext = this.graphicsContext2D

@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test
 class TestHashes {
 
     @Test
-    fun testMurmur3_32(): Unit = testAlgorithm({ e -> hashMurmur3_32(e) }, Hashing.murmur3_32())
+    fun testMurmur3_32(): Unit = testAlgorithm({ e -> hashMurmur332(e) }, Hashing.murmur3_32())
 
     private fun testAlgorithm(hash: (Any) -> Int, hashFunction: HashFunction) {
         testSingleElements(hash, hashFunction)

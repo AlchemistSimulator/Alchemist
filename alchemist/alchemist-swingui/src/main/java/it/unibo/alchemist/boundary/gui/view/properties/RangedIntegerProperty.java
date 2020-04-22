@@ -13,7 +13,7 @@ import com.google.gson.JsonSerializationContext;
 
 import javafx.beans.property.IntegerPropertyBase;
 
-import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur332;
 
 /**
  * This {@link javafx.beans.property.IntegerProperty} is designed to have a range for the wrapped
@@ -326,7 +326,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
      */
     @Override
     public int hashCode() {
-        return hashMurmur3_32(getLowerBound(), getUpperBound(), getValue(), getName());
+        return hashMurmur332(getLowerBound(), getUpperBound(), getValue(), getName());
     }
 
     /**

@@ -22,12 +22,12 @@ private val MURMUR3_32 = Hashing.murmur3_32()
  *
  * @param data the data to hash
  */
-fun <T : Any> hashMurmur3_32(vararg data: T): Int = hash(MURMUR3_32.newHasher(), *data)
+fun <T : Any?> hashMurmur332(vararg data: T): Int = hash(MURMUR3_32.newHasher(), *data)
 
-private fun <T : Any> hash(hasher: Hasher, vararg data: T): Int =
+private fun <T : Any?> hash(hasher: Hasher, vararg data: T): Int =
     data.forEach { hasher.put(it) }.run { hasher.hash().asInt() }
-
-private fun <T : Any> Hasher.put(item: T) {
+@Suppress("ComplexMethod")
+private fun <T : Any?> Hasher.put(item: T) {
     when (item) {
         is Long -> putLong(item)
         is Int -> putInt(item)
@@ -38,18 +38,13 @@ private fun <T : Any> Hasher.put(item: T) {
         is Char -> putChar(item)
         is Boolean -> putBoolean(item)
         is String -> putString(item, Charsets.UTF_16)
-        is Iterable<*> -> item.forEach { if (it != null) put(it) }
-        is Sequence<*> -> item.forEach { if (it != null) put(it) }
-        is Map<*, *> -> {
-            item.entries.forEach { (key, value) ->
-                if (value != null) {
-                    if (key != null) {
-                        put(key)
-                    }
-                    put(value)
-                }
-            }
+        is Pair<*, *> -> {
+            put(item.first)
+            put(item.second)
         }
+        is Iterable<*> -> item.forEach { put(it) }
+        is Sequence<*> -> item.forEach { put(it) }
+        is Map<*, *> -> put(item.entries)
         else -> putInt(item.hashCode())
     }
 }

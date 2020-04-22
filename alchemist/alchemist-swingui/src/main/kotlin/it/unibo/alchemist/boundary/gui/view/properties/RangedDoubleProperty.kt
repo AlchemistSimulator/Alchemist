@@ -41,17 +41,30 @@ class RangedDoubleProperty @JvmOverloads constructor(
     upperBound: Double = Double.MAX_VALUE
 ) : DoublePropertyBase(initialValue), Serializable {
 
+    /**
+     * The lower bound value of the property.
+     */
     var lowerBound: Double = lowerBound
         private set
+
+    /**
+     * The upper bound value of the property.
+     */
     var upperBound: Double = upperBound
         private set
 
+    /**
+     * {@inheritDoc}.
+     */
     override fun set(newValue: Double) = when {
         newValue < lowerBound -> throw IllegalArgumentException("Provided value is bigger than the upper bound")
         newValue > upperBound -> throw IllegalArgumentException("Provided value is smaller than the lower bound")
         else -> super.set(newValue)
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     override fun setValue(v: Number) {
         set(v.toDouble())
     }
@@ -139,8 +152,11 @@ class RangedDoubleProperty @JvmOverloads constructor(
          */
         @JvmStatic fun getTypeAdapter(): PropertyTypeAdapter<RangedDoubleProperty> {
             return object : PropertyTypeAdapter<RangedDoubleProperty> {
-
-                override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): RangedDoubleProperty {
+                override fun deserialize(
+                    json: JsonElement,
+                    typeOfT: Type,
+                    context: JsonDeserializationContext
+                ): RangedDoubleProperty {
                     val jObj = json as JsonObject
                     return RangedDoubleProperty(
                             jObj.get(NAME).asString,
@@ -149,7 +165,11 @@ class RangedDoubleProperty @JvmOverloads constructor(
                             jObj.get(UPPER_BOUND).asDouble)
                 }
 
-                override fun serialize(src: RangedDoubleProperty, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+                override fun serialize(
+                    src: RangedDoubleProperty,
+                    typeOfSrc: Type,
+                    context: JsonSerializationContext
+                ): JsonElement {
                     val jObj = JsonObject()
                     jObj.addProperty(NAME, src.name)
                     jObj.addProperty(VALUE, src.value)

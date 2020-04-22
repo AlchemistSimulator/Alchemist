@@ -128,7 +128,8 @@ class InteractionManager<T, P : Position2D<P>>(
      * Invokes a given command on the simulation.
      */
     private val invokeOnSimulation: (Simulation<T, P>.() -> Unit) -> Unit
-        get() = environment?.simulation?.let { { exec: Simulation<T, P>.() -> Unit -> it.schedule { exec.invoke(it) } } }
+        get() =
+            environment?.simulation?.let { { exec: Simulation<T, P>.() -> Unit -> it.schedule { exec.invoke(it) } } }
             ?: throw IllegalStateException("Uninitialized environment or simulation")
 
     init {
@@ -147,8 +148,8 @@ class InteractionManager<T, P : Position2D<P>>(
             isMouseTransparent = true
         }
 
-        highlighter.graphicsContext2D.globalAlpha = 0.5
-        selector.graphicsContext2D.globalAlpha = 0.4
+        highlighter.graphicsContext2D.globalAlpha = Alphas.highlight
+        selector.graphicsContext2D.globalAlpha = Alphas.selection
 
         // delete
         val deleteNodes = { _: KeyEvent ->
@@ -271,11 +272,15 @@ class InteractionManager<T, P : Position2D<P>>(
         }
 
         selection.addListener(MapChangeListener {
-            feedback = feedback + (Interaction.HIGHLIGHTED to selection.map { paintHighlight(it.value, Colors.alreadySelected) })
+            selection.map { paintHighlight(it.value, Colors.alreadySelected) }.let { highlighters ->
+                feedback = feedback + (Interaction.HIGHLIGHTED to highlighters)
+            }
             repaint()
         })
         selectionCandidates.addListener(MapChangeListener {
-            feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it.value, Colors.selecting) })
+            selectionCandidates.map { paintHighlight(it.value, Colors.selecting) }.let { highlighters ->
+                feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters)
+            }
             repaint()
         })
     }
@@ -329,7 +334,9 @@ class InteractionManager<T, P : Position2D<P>>(
     private fun onSelecting(event: MouseEvent) {
         selectionHelper.let { helper: SelectionHelper<T, P> ->
             helper.update(makePoint(event.x, event.y))
-            feedback = feedback + (Interaction.SELECTION_BOX to listOf(selector.createDrawCommand(helper.rectangle, Colors.selectionBox)))
+            listOf(selector.createDrawCommand(helper.rectangle, Colors.selectionBox)).let { drawCommands ->
+                feedback = feedback + (Interaction.SELECTION_BOX to drawCommands)
+            }
             addNodesToSelectionCandidates()
             repaint()
         }
@@ -363,7 +370,8 @@ class InteractionManager<T, P : Position2D<P>>(
         selectionHelper.close()
         selectionCandidates.clear()
         selectionCandidatesMutex.release()
-        feedback = feedback + (Interaction.SELECTION_BOX to emptyList())
+        feedback = feedback - Interaction.SELECTION_BOX
+//        feedback += Interaction.SELECTION_BOX to emptyList<() -> Unit>()
         repaint()
         event.consume()
     }
@@ -373,8 +381,10 @@ class InteractionManager<T, P : Position2D<P>>(
      */
     private fun onSelectCanceled(event: MouseEvent) {
         selectionHelper.close()
-        feedback = feedback + (Interaction.SELECTION_BOX to emptyList())
-        feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to emptyList())
+        feedback = feedback - Interaction.SELECTION_BOX
+        feedback = feedback - Interaction.HIGHLIGHT_CANDIDATE
+//        feedback += Interaction.SELECTION_BOX to emptyList<() -> Unit>()
+//        feedback += Interaction.HIGHLIGHT_CANDIDATE to emptyList<() -> Unit>()
         repaint()
         event.consume()
     }
@@ -388,7 +398,10 @@ class InteractionManager<T, P : Position2D<P>>(
         highlighter.graphicsContext2D.let { graphics ->
             graphics.fill = paint
             wormhole.getViewPoint(position).let {
-                graphics.fillOval(it.x - highlightSize / 2, it.y - highlightSize / 2, highlightSize, highlightSize)
+                graphics.fillOval(
+                    it.x - highlightSize / 2,
+                    it.y - highlightSize / 2, highlightSize, highlightSize
+                )
             }
         }
     }
@@ -450,7 +463,7 @@ class InteractionManager<T, P : Position2D<P>>(
         private const val ZOOM_SCALE = 40.0
     }
 
-    private class Colors {
+    private class Colors private constructor() {
         companion object {
             /**
              * The colour of the highlights for the already selected nodes.
@@ -466,6 +479,13 @@ class InteractionManager<T, P : Position2D<P>>(
             val selectionBox = "#8e99f3".color()
 
             private fun String.color(): Paint = Color.valueOf(this)
+        }
+    }
+
+    private class Alphas private constructor() {
+        companion object {
+            const val highlight = 0.5
+            const val selection = 0.4
         }
     }
 }
@@ -492,19 +512,19 @@ enum class Direction2D(val x: Int, val y: Int) {
         } ?: Direction2D.NONE
 
     /**
-     * Flips the direction horizontally and vertically
+     * Flips the direction horizontally and vertically.
      */
     val flipped: Direction2D
         get() = flip()
 
     /**
-     * Flips the direction's X-values
+     * Flips the direction's X-values.
      */
     val flippedX: Direction2D
         get() = flip(yFlip = false)
 
     /**
-     * Flips the direction's Y-values
+     * Flips the direction's Y-values.
      */
     val flippedY: Direction2D
         get() = flip(xFlip = false)
@@ -695,7 +715,7 @@ class SelectionHelper<T, P : Position2D<P>> {
     }
 
     /**
-     * Retrieves the element selected by clicking. If selection was not done by clicking, null
+     * Retrieves the element selected by clicking. If selection was not done by clicking, null.
      */
     fun clickSelection(
         nodes: Map<Node<T>, P>,
@@ -708,7 +728,7 @@ class SelectionHelper<T, P : Position2D<P>> {
         }
 
     /**
-     * Retrieves the elements selected by box selection, thus possibly empty
+     * Retrieves the elements selected by box selection, thus possibly empty.
      */
     fun boxSelection(
         nodes: Map<Node<T>, P>,

@@ -11,7 +11,7 @@ import javafx.scene.input.KeyCode
 import org.kaikikm.threadresloader.ResourceLoader
 
 /**
- * Actions which can be bound to a key on the keyboard
+ * Actions which can be bound to a key on the keyboard.
  */
 enum class ActionFromKey {
     MODIFIER_CONTROL,
@@ -30,10 +30,11 @@ enum class ActionFromKey {
 /**
  * Reads and writes a configuration of key bindings to a JSON file.
  */
-class Keybinds {
+class Keybinds private constructor() {
     companion object {
         private val filesystemPath = "${System.getProperty("user.home")}${File.separator}.alchemist${File.separator}"
-        private val classpathPath = "it${File.separator}unibo${File.separator}alchemist${File.separator}gui${File.separator}"
+        private val classpathPath =
+            "it${File.separator}unibo${File.separator}alchemist${File.separator}gui${File.separator}"
         private const val filename: String = "keybinds.json"
         private val typeToken: TypeToken<Map<ActionFromKey, KeyCode>> =
             object : TypeToken<Map<ActionFromKey, KeyCode>>() {}
@@ -52,7 +53,7 @@ class Keybinds {
         /**
          * Associate an action with a set of keys.
          */
-        operator fun set(action: ActionFromKey, key: KeyCode) { config += action to key }
+        operator fun set(action: ActionFromKey, key: KeyCode) { config = config + (action to key) }
 
         /**
          * Write the binds to the file system.
@@ -60,11 +61,13 @@ class Keybinds {
          */
         @Throws(IOException::class)
         fun save() {
-            File("$filesystemPath$filename").let {
-                if ((!it.parentFile.exists() && !it.parentFile.mkdirs()) || (!it.exists() && !it.createNewFile())) {
+            File("$filesystemPath$filename").apply {
+                val parentOK = parentFile.exists() || parentFile.mkdirs()
+                val fileIsAvailable = parentOK && (exists() || createNewFile())
+                if (!fileIsAvailable) {
                     throw IOException("Failed to create keybind configuration file")
                 }
-                FileWriter(it.path, DEFAULT_CHARSET).use { w -> w.write(gson.toJson(config)) }
+                FileWriter(path, DEFAULT_CHARSET).use { w -> w.write(gson.toJson(config)) }
             }
         }
 

@@ -4,7 +4,7 @@ import java.awt.Component;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 
-import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur332;
 
 /**
  * Adapter class that adapts the AWT {@link Component} class to a generic View Type for usage in {@link it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D}.
@@ -75,6 +75,6 @@ public class ComponentViewType implements ViewType {
      */
     @Override
     public int hashCode() {
-        return hashMurmur3_32(getWidth(), getHeight());
+        return hashMurmur332(getWidth(), getHeight());
     }
 }

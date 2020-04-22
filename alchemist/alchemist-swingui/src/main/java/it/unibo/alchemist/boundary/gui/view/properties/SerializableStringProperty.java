@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import javafx.beans.property.StringPropertyBase;
 
-import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur332;
 
 /**
  * {@link javafx.beans.property.SimpleStringProperty} that implements also {@link Serializable}.
@@ -167,7 +167,7 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
      */
     @Override
     public int hashCode() {
-        return hashMurmur3_32(getValue(), getName());
+        return hashMurmur332(getValue(), getName());
     }
 
     /**

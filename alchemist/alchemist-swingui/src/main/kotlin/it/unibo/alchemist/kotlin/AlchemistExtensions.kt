@@ -24,8 +24,26 @@ import java.awt.Point
  */
 fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
     sequenceOf(this) + extractor(this).flatMap { it.unfold(extractor) }
+
+/**
+ * Creates a [Point].
+ *
+ * @param x the x coordinate.
+ * @param y the y coordinate.
+ */
 fun makePoint(x: Number, y: Number) = Point(x.toInt(), y.toInt())
+
+/**
+ * Sums [this] and the given [Point].
+ *
+ * @param p the other point.
+ */
 operator fun Point.plus(p: Point): Point = Point(x + p.x, y + p.y)
+/**
+ * Subtracts [this] and the given [Point].
+ *
+ * @param p the other point.
+ */
 operator fun Point.minus(p: Point): Point = Point(x - p.x, y - p.y)
 
 /**
@@ -45,4 +63,3 @@ operator fun Time.minus(other: Double): Time = minus(
         other
     )
 )
-

@@ -21,7 +21,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur3_32;
+import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur332;
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} dot for each
@@ -220,7 +220,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
      */
     @Override
     public int hashCode() {
-        return hashMurmur3_32(getColor(), getName(), getSize(), isVisible());
+        return hashMurmur332(getColor(), getName(), getSize(), isVisible());
     }
 
     /**

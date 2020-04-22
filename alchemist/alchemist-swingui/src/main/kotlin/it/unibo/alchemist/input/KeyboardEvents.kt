@@ -19,9 +19,20 @@ enum class ActionOnKey {
     PRESSED,
     RELEASED;
 
+    /**
+     * Returns a [KeyboardTriggerAction] initialized with this [ActionOnKey] and the given [KeyCode].
+     *
+     * @param [key] the [KeyCode] used to initialize the [KeyboardTriggerAction].
+     */
     infix fun with(key: KeyCode): KeyboardTriggerAction = KeyboardTriggerAction(this, key)
 }
 
+/**
+ * The keyboard-related [TriggerAction].
+ *
+ * @param [type] the action performed with the key.
+ * @param [key] the on which the action is performed.
+ */
 data class KeyboardTriggerAction(val type: ActionOnKey, val key: KeyCode) : TriggerAction
 
 /**
@@ -45,7 +56,7 @@ abstract class KeyboardEventDispatcher : PersistentEventDispatcher<KeyboardTrigg
 }
 
 /**
- * A basic implementation of [KeyboardEventDispatcher]
+ * A basic implementation of [KeyboardEventDispatcher].
  */
 open class SimpleKeyboardEventDispatcher : KeyboardEventDispatcher() {
 

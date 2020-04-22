@@ -4,6 +4,7 @@ import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 
 /**
  * An agent capable of orienting itself inside an environment.
@@ -19,8 +20,11 @@ interface OrientingAgent<V, A, N, E> where
     N : ConvexGeometricShape<V, A> {
 
     /**
-     * The knowledge degree of the agent concerning the environment. It's
-     * a percentage value in [0, 1].
+     * The knowledge degree of the agent concerning the environment, it's a Double
+     * value in [0, 1] describing the percentage of the environment the pedestrian
+     * is familiar with prior to the start of the simulation (thus it does not take
+     * into account the knowledge the pedestrian will gain during it, namely the
+     * [volatileMemory]).
      */
     val knowledgeDegree: Double
 
@@ -38,4 +42,11 @@ interface OrientingAgent<V, A, N, E> where
      * visits.
      */
     val volatileMemory: MutableMap<in ConvexGeometricShape<V, A>, Int>
+
+    /**
+     * Registers a visit to the provided [area] in the pedestrian's volatile memory.
+     */
+    fun <M : ConvexGeometricShape<V, A>> registerVisit(area: M) {
+        volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
+    }
 }

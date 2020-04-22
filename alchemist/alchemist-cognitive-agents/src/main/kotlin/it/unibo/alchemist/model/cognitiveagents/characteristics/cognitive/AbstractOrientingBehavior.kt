@@ -23,6 +23,9 @@ import kotlin.math.pow
 
 /**
  * The orienting behavior of an [OrientingPedestrian].
+ * This class obtains a route from the pedestrian's cognitive map and exploits that and the
+ * other spatial information available to navigate the environment towards (or in search of)
+ * a destination.
  * This is a finite state machine, whose only public method is [update]. As stated in its
  * documentation, [update] doesn't move the pedestrian, but only refreshes the internal
  * state of this behavior.
@@ -30,9 +33,6 @@ import kotlin.math.pow
  * that this class is meant to be extended or used via composition to obtain implementations
  * of the orienting behavior deriving from different entities of the Alchemist meta-model,
  * such as [Action] or [Reaction].
- * This class obtains a route from the pedestrian's cognitive map and exploits that and the
- * other spatial information available to navigate the environment towards (or in search of)
- * a destination.
  * Two tasks are left to the derived classes via template method, see [computeEdgeRankings]
  * and [crossingPoint].
  *
@@ -83,14 +83,10 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
     private val currentPosition: P get() = environment.getPosition(pedestrian)
 
     /*
-     * Route to a possible destination obtained from the cognitive map.
+     * Route to a destination obtained from the cognitive map (can be empty).
      */
     private val route: MutableList<N> by lazy {
         with(pedestrian.cognitiveMap) {
-            /*
-             * Landmarks and destinations are sorted by the distance from the
-             * pedestrian current position as the crow flies.
-             */
             val closerLandmarks = vertexSet()
                 .sortedBy { it.centroid.distanceTo(currentPosition) }
             val closerDestinations = destinations()
@@ -108,8 +104,8 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
                      * path between each pair of nodes. In the future, things may
                      * change and there could be more than one shortest path between
                      * two nodes. In this case, it may be preferable to choose a
-                     * shortest path with the maximum number of nodes possible. The
-                     * reason is that such path contains more detailed information
+                     * shortest path with the maximum number of nodes. The reason
+                     * is that such path contains more detailed information
                      * regarding the route to follow.
                      */
                     dijkstra.getPath(landmark, destination)?.vertexList
@@ -128,30 +124,23 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
     private lateinit var nextRoom: M
     /*
      * The position the pedestrian is moving towards, which is guaranteed to be in sight
-     * (i.e., no obstacle is placed between the agent and this position).
+     * (i.e. no obstacle is placed between the agent and this position).
      */
     private lateinit var subdestination: P
     /*
-     * The passage the pedestrian is moving towards.
+     * The passage the pedestrian wants to cross.
      */
     private lateinit var targetDoor: F
 
     private enum class State {
         START,
         NEW_ROOM,
-        /*
-         * There is one unusual case in which the pedestrian cannot locate itself
-         * inside any room of the environment's graph, thus it tries to reach the
-         * the closest passage possible. In such case, the state will be MOVING_TO
-         * _DOOR, but the [currRoom] variable won't be initialised yet.
-         */
         MOVING_TO_DOOR,
         /*
-         * Adjacent rooms are not guaranteed to be exactly geometrically adjacent,
-         * there can be some distance between them. Consequently, the pedestrian could
-         * find itself in a situation in which it is crossing a door but cannot locate
-         * itself inside any room. Such case is identified by CROSSING_DOOR: in this case,
-         * the pedestrian just proceeds towards the center of the room it wants to reach.
+         * Connected rooms are not guaranteed to be exactly adjacent, there can be some
+         * distance between them. Consequently, when crossing a door it may happen that
+         * the pedestrian cannot locate itself inside any room. Such case is identified
+         * by CROSSING_DOOR.
          */
         CROSSING_DOOR,
         MOVING_TO_FINAL,
@@ -167,12 +156,16 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
         else -> currentPosition
     }
 
+    /**
+     * @returns a boolean indicating whether the pedestrian is crossing a door (or passage).
+     */
+    val isCrossingAPassage: Boolean get() = state == State.CROSSING_DOOR
+
     private fun onStart() {
         state = when {
             environment.graph().nodeContaining(currentPosition) != null -> State.NEW_ROOM
             /*
-             * If the pedestrian cannot locate itself inside any room (unusual
-             * condition), it simply won't move.
+             * If the pedestrian cannot locate itself inside any room on start, it simply won't move.
              */
             else -> State.ARRIVED
         }
@@ -240,12 +233,12 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
     }
 
     /*
-     * Picks the closest door among the provided ones (defaults to all doors)
-     * and sets all the state variables so as to move to the selected door.
+     * Picks the closest door among the provided ones and sets all the state
+     * variables so as to move to the selected door.
      * noDoorAction is called if no door could be found, defaults to nothing.
      */
     private fun moveToClosestDoor(
-        doors: Collection<F> = environment.graph().edgeSet(),
+        doors: Collection<F>,
         noDoorAction: () -> Unit = {}
     ): Unit = doors
         .map { it to crossingPoint(it) }
@@ -264,16 +257,13 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
     }
 
     /*
-     * If a sub-destination of the route is in sight, updates the route removing
-     * all the sub-destination up to the one encountered.
+     * If an element of the route is in sight, updates the route removing all the
+     * elements up to the one encountered.
      */
-    private fun updateRoute() {
-        if (route.isNotEmpty() && route.any { currRoom.contains(it.centroid) }) {
-            for (i in 0..route.indexOfLast { currRoom.contains(it.centroid) }) {
-                route.removeAt(0)
-            }
+    private fun updateRoute() =
+        repeat(route.indexOfLast { currRoom.contains(it.centroid) } + 1) {
+            route.removeAt(0)
         }
-    }
 
     private fun computeRankingsOrNull(): Map<F, Int>? =
         route.takeIf { it.isNotEmpty() }?.let { computeEdgeRankings(currRoom, route[0].centroid) }
@@ -285,9 +275,7 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
 
     private fun moving() {
         val inNewRoom = environment.graph().vertexSet()
-            .any {
-                (!::currRoom.isInitialized || it != currRoom) && it.contains(currentPosition)
-            }
+            .any { it != currRoom && it.contains(currentPosition) }
         if (inNewRoom) {
             state = State.NEW_ROOM
         } else if (state != State.CROSSING_DOOR) {
@@ -339,14 +327,12 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
      * This method should implement an algorithm allowing the pedestrian to perform an educated
      * guess of which crossing to take in order to get closer to the provided destination.
      */
-    protected abstract fun computeEdgeRankings(currentRoom: M, destination: P): Map<F, Int>
+    protected abstract fun computeEdgeRankings(room: M, destination: P): Map<F, Int>
 
     /**
      * Provided a passage (or door) the pedestrian may want to cross, this method computes the exact
-     * point the pedestrian will move towards in order to cross such passage.
-     * The provided passage belongs to the room the agent is into (i.e. it is in sight of the agent),
-     * the returned position must be in sight of him as well, which means no obstacle should be placed
-     * between such point and his current position.
+     * point the pedestrian will move towards in order to cross such passage. The provided passage
+     * belongs to the room the agent is into (i.e. it is in sight of the agent).
      *
      * This method is mainly about exploiting the extra data stored in the passage (for instance
      * its shape and location on the room's boundary) to determine which point the pedestrian
@@ -391,13 +377,6 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
      * This factor takes into account whereas the assessed edge leads to an impasse or not.
      */
     private fun impasseFactor(head: M) = if (isImpasse(head)) 10.0 else 1.0
-
-    /*
-     * Registers a visit in the given area in the pedestrian's volatile memory.
-     */
-    private fun OrientingAgent<P, A, N, *>.registerVisit(area: M) {
-        volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
-    }
 
     /*
      * Checks if the pedestrian KNOWS that the given area is an impasse

@@ -208,10 +208,9 @@ private fun ExtendableConvexPolygon.findPassages(
              * coordinate we ignored so far of the oldEdge.
              */
             intervals.map {
-                val passageShape = if (oldEdge.xAxisAligned) {
-                    createSegment(it.first, oldEdge.first.y, x2 = it.second)
-                } else {
-                    createSegment(oldEdge.first.x, it.first, y2 = it.second)
+                val passageShape = when {
+                    oldEdge.xAxisAligned -> createSegment(it.first, oldEdge.first.y, x2 = it.second)
+                    else -> createSegment(oldEdge.first.x, it.first, y2 = it.second)
                 }
                 Euclidean2DPassage(this, neighbor, passageShape)
             }

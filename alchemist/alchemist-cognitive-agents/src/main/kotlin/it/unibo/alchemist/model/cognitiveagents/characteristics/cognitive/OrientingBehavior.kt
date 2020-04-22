@@ -58,15 +58,15 @@ open class OrientingBehavior<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon
      * destination, then we compute the shortest paths between each midpoint and the final
      * destination and rank each edge consequently.
      */
-    override fun computeEdgeRankings(currentRoom: M, destination: Euclidean2DPosition): Map<Euclidean2DPassage, Int> {
+    override fun computeEdgeRankings(room: M, destination: Euclidean2DPosition): Map<Euclidean2DPassage, Int> {
         val environmentGraph = environment.graph()
         val graph = DefaultUndirectedWeightedGraph<Euclidean2DPosition, DefaultEdge>(DefaultEdge::class.java)
         /*
          * Maps each edge's midpoint to the correspondent edge object
          */
-        val edges = environmentGraph.outgoingEdgesOf(currentRoom).map { it.passageShape.midPoint to it }
-        (currentRoom.vertices() + edges.map { it.first } + destination).forEach { graph.addVertex(it) }
-        currentRoom.edges().forEach { side ->
+        val edges = environmentGraph.outgoingEdgesOf(room).map { it.passageShape.midPoint to it }
+        (room.vertices() + edges.map { it.first } + destination).forEach { graph.addVertex(it) }
+        room.edges().forEach { side ->
             /*
              * The midpoints of the crossings lying on the side being considered
              */
@@ -82,7 +82,7 @@ open class OrientingBehavior<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon
                 }
         }
         graph.vertexSet().forEach {
-            if (it != destination && !currentRoom.intersectsBoundaryExcluded(Segment2D(it, destination))) {
+            if (it != destination && !room.intersectsBoundaryExcluded(Segment2D(it, destination))) {
                 graph.addEdge(it, destination)
                 graph.setEdgeWeight(it, destination, it.distanceTo(destination))
             }
@@ -91,7 +91,7 @@ open class OrientingBehavior<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon
         val sorted = edges
             .sortedBy { (midPoint, _) -> dijkstra.getPath(midPoint, destination)?.weight }
             .map { it.second }
-        return environmentGraph.outgoingEdgesOf(currentRoom).map { it to sorted.indexOf(it) + 1 }.toMap()
+        return environmentGraph.outgoingEdgesOf(room).map { it to sorted.indexOf(it) + 1 }.toMap()
     }
 
     /*

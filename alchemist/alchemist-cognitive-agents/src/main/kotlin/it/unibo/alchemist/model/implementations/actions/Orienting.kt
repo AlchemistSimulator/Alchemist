@@ -36,7 +36,10 @@ open class Orienting<T, N : Euclidean2DConvexShape, E, M : ConvexPolygon>(
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
 ) : AbstractSteeringAction<T, Euclidean2DPosition>(environment, reaction, pedestrian) {
 
-    private val behavior: OrientingBehavior<T, N, E, M> = OrientingBehavior(environment, pedestrian)
+    /**
+     * The actual [OrientingBehavior].
+     */
+    val behavior: OrientingBehavior<T, N, E, M> = OrientingBehavior(environment, pedestrian)
 
     @Suppress("UNCHECKED_CAST")
     override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> {

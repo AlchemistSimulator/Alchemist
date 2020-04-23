@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
 import java.awt.Shape
 import java.lang.IllegalStateException
+import kotlin.math.min
 
 /**
  * A convex polygon is a simple polygon (i.e. not self-intersecting and
@@ -69,7 +70,8 @@ interface ConvexPolygon : Euclidean2DConvexShape, AwtShapeCompatible {
         compareBy({
             it.distanceTo(segment)
         }, {
-            segment.distanceTo(it.first) + segment.distanceTo(it.second)
+            min(segment.distanceTo(it.first) + segment.distanceTo(it.second),
+                it.distanceTo(segment.first) + it.distanceTo(segment.second))
         })
     ) ?: throw IllegalStateException("no edge could be found")
 }

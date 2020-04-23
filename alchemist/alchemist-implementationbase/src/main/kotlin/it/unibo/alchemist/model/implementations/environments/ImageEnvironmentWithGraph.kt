@@ -41,11 +41,11 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     roomsColor: Int = Color.BLUE.rgb
 ) : ImageEnvironment<T>(obstaclesColor, path, zoom, dx, dy),
     EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D<Euclidean2DPosition>, T, ConvexPolygon, Euclidean2DPassage> {
+
+    private val navigationGraph: Euclidean2DNavigationGraph
+
     init {
         require(destinationCoords.size % 2 == 0) { "missing coordinates" }
-    }
-
-    private val navigationGraph: Euclidean2DNavigationGraph by lazy {
         val resource = ResourceLoader.getResourceAsStream(path)
         val img = if (resource == null) {
             ImageIO.read(File(path))
@@ -59,7 +59,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
         for (i in 0..destinationCoords.size - 2 step 2) {
             destinations.add(Euclidean2DPosition(destinationCoords[i], destinationCoords[i + 1]))
         }
-        generateNavigationGraph(
+        navigationGraph = generateNavigationGraph(
             width = img.width.toDouble(),
             height = img.height.toDouble(),
             obstacles = obstacles,

@@ -43,7 +43,7 @@ abstract class AbstractSteeringAction<T, P>(
     /**
      * The maximum distance the pedestrian can walk, this is a length.
      */
-    protected fun maxWalk(): Double = pedestrian.speed() / reaction.rate
+    fun maxWalk(): Double = pedestrian.speed() / reaction.rate
 
     /**
      * If the magnitude of the vector is greater than [maxWalk], a resized version with

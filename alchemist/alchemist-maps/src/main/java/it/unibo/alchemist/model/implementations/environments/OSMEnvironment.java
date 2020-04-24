@@ -7,9 +7,8 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.hash.Hashing;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
@@ -32,8 +31,6 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.danilopianini.util.Hashes;
-import org.danilopianini.util.concurrent.FastReadWriteLock;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.Unchecked;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
@@ -54,7 +51,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -105,9 +101,11 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     private static final String PERSISTENTPATH = System.getProperty("user.home") + SLASH + ".alchemist";
     private static final String MAPNAME = "map";
     private static final Semaphore LOCK_FILE = new Semaphore(1);
+    private static final LoadingCache<String, Map<Vehicle, GraphHopperAPI>> KNOWN_MAPS = Caffeine.newBuilder()
+            .softValues()
+            .build(OSMEnvironment::initNavigators);
     private final String mapResource;
     private final boolean forceStreets, onlyStreet;
-    private transient FastReadWriteLock mapLock;
     private transient Map<Vehicle, GraphHopperAPI> navigators;
     private transient LoadingCache<CacheEntry, Route<GeoPosition>> routecache;
     private boolean benchmarking;
@@ -218,10 +216,10 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         onlyStreet = onlyOnStreets;
         mapResource = file;
         this.approximation = approximation;
-        initAll(file);
+        navigators = KNOWN_MAPS.get(mapResource);
     }
 
-    private boolean directoryIsReadOnly(final String dir) {
+    private static boolean directoryIsReadOnly(final String dir) {
         return !new File(dir).canWrite();
     }
 
@@ -243,44 +241,33 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     @Override
     public Route<GeoPosition> computeRoute(final GeoPosition p1, final GeoPosition p2, final Vehicle vehicle) {
         if (routecache == null) {
-            final CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
+            final Caffeine<Object, Object> builder = Caffeine.newBuilder();
             if (benchmarking) {
                 builder.recordStats();
             }
             routecache = builder
                 .expireAfterAccess(10, TimeUnit.SECONDS)
-                .build(new CacheLoader<CacheEntry, Route<GeoPosition>>() {
-                    @Override
-                    public Route<GeoPosition> load(@NotNull final CacheEntry key) {
-                        final Vehicle vehicle = Objects.requireNonNull(key).v;
-                        final GeoPosition p1 = key.start;
-                        final GeoPosition p2 = key.end;
-                        final GHRequest req = new GHRequest(p1.getLatitude(), p1.getLongitude(), p2.getLatitude(), p2.getLongitude())
-                                .setAlgorithm(DEFAULT_ALGORITHM)
-                                .setVehicle(vehicle.toString())
-                                .setWeighting(ROUTING_STRATEGY);
-                        mapLock.read();
-                        final GraphHopperAPI gh = navigators.get(vehicle);
-                        mapLock.release();
-                        if (gh != null) {
-                            final GHResponse resp = gh.route(req);
-                            if (resp.getErrors().isEmpty()) {
-                                return new GraphHopperRoute(resp);
-                            } else {
-                                return new PolygonalChain<>(p1, p2);
-                            }
+                .build(key -> {
+                    final Vehicle vehicle1 = Objects.requireNonNull(key).v;
+                    final GeoPosition p11 = key.start;
+                    final GeoPosition p21 = key.end;
+                    final GHRequest req = new GHRequest(p11.getLatitude(), p11.getLongitude(), p21.getLatitude(), p21.getLongitude())
+                            .setAlgorithm(DEFAULT_ALGORITHM)
+                            .setVehicle(vehicle1.toString())
+                            .setWeighting(ROUTING_STRATEGY);
+                    final GraphHopperAPI gh = navigators.get(vehicle1);
+                    if (gh != null) {
+                        final GHResponse resp = gh.route(req);
+                        if (resp.getErrors().isEmpty()) {
+                            return new GraphHopperRoute(resp);
+                        } else {
+                            return new PolygonalChain<>(p11, p21);
                         }
-                        throw new IllegalStateException("Something went wrong while evaluating a route.");
                     }
+                    throw new IllegalStateException("Something went wrong while evaluating a route.");
                 });
         }
-        try {
-            return routecache.get(new CacheEntry(vehicle, p1, p2));
-        } catch (ExecutionException e) {
-            L.error("", e);
-            throw new IllegalStateException("The navigator was unable to compute a route from " + p1 + " to " + p2
-                    + " using the navigator " + vehicle + ". This is most likely a bug", e);
-        }
+        return routecache.get(new CacheEntry(vehicle, p1, p2));
     }
 
     @Override
@@ -345,9 +332,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
 
     private Optional<GeoPosition> getNearestStreetPoint(final GeoPosition position) {
         assert position != null;
-        mapLock.read();
         final GraphHopperAPI gh = navigators.get(Vehicle.BIKE);
-        mapLock.release();
         final QueryResult qr = ((GraphHopper) gh).getLocationIndex()
                 .findClosest(position.getLatitude(), position.getLongitude(), EdgeFilter.ALL_EDGES);
         if (qr.isValid()) {
@@ -383,15 +368,15 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     }
 
     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE")
-    private void initAll(final String fileName) throws IOException {
+    private static EnumMap<Vehicle, GraphHopperAPI> initNavigators(final String fileName) throws IOException {
         Objects.requireNonNull(fileName, "define the file with the map: " + fileName);
         final Optional<URL> file = Optional.of(new File(fileName))
                 .filter(File::exists)
                 .map(File::toURI)
                 .map(Unchecked.function(URI::toURL));
         final URL resource = Optional.ofNullable(ResourceLoader.getResource(fileName))
-            .orElseGet(Unchecked.supplier(() ->
-                file.orElseThrow(() -> new FileNotFoundException("No file or resource with name " + fileName))));
+                .orElseGet(Unchecked.supplier(() ->
+                        file.orElseThrow(() -> new FileNotFoundException("No file or resource with name " + fileName))));
         final String dir = initDir(resource).intern();
         final File workdir = new File(dir);
         mkdirsIfNeeded(workdir);
@@ -407,17 +392,14 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         } finally {
             LOCK_FILE.release();
         }
-        navigators = new EnumMap<>(Vehicle.class);
-        mapLock = new FastReadWriteLock();
+        final EnumMap<Vehicle, GraphHopperAPI> navigators = new EnumMap<>(Vehicle.class);
         final Optional<Exception> error = Arrays.stream(Vehicle.values()).parallel().<Optional<Exception>>map(v -> {
             try {
                 final String internalWorkdir = workdir + SLASH + v;
                 final File iwdf = new File(internalWorkdir);
                 if (mkdirsIfNeeded(iwdf)) {
                     final GraphHopperAPI gh = initNavigationSystem(mapFile, internalWorkdir, v);
-                    mapLock.write();
                     navigators.put(v, gh);
-                    mapLock.release();
                 }
                 return Optional.empty();
             } catch (Exception e) { // NOPMD AvoidCatchingGenericException
@@ -427,9 +409,10 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         if (error.isPresent()) {
             throw new IllegalStateException("A error occurred during initialization.", error.get());
         }
+        return navigators;
     }
 
-    private String initDir(final URL mapfile) throws IOException {
+    private static String initDir(final URL mapfile) throws IOException {
         final String code = Hex.encodeHexString(Hashing.sha256().hashBytes(IOUtils.toByteArray(mapfile.openStream())).asBytes());
         final String append = SLASH + code;
         final String[] prefixes = { PERSISTENTPATH, System.getProperty("java.io.tmpdir"),
@@ -471,7 +454,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
 
     private void readObject(final ObjectInputStream s) throws IOException, ClassNotFoundException {
         s.defaultReadObject();
-        initAll(mapResource);
+        navigators = KNOWN_MAPS.get(mapResource);
     }
 
     private static synchronized GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) {

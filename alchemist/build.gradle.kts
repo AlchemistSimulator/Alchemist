@@ -62,20 +62,20 @@ allprojects {
     }
 
     repositories {
+        // Prefer Google mirrors, they're more stable
         listOf("", "-eu", "-asia").forEach {
             maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
         }
         mavenCentral()
-        maven {
-            url = uri("https://dl.bintray.com/kotlin/dokka")
-            content {
-                includeGroup("org.jetbrains.dokka")
-            }
-        }
-        maven {
-            url = uri("https://dl.bintray.com/kotlin/kotlinx.html/")
-            content {
-                includeGroup("org.jetbrains.kotlinx")
+        // Stuff on bintray, build-only dependencies allowed
+        mapOf(
+            "kotlin/dokka" to setOf("org.jetbrains.dokka"),
+            "kotlin/kotlinx.html" to setOf("org.jetbrains.kotlinx"),
+            "arturbosch/code-analysis" to setOf("io.gitlab.arturbosch.detekt")
+        ).forEach { (uriPart, groups) ->
+            maven {
+                url = uri("https://dl.bintray.com/$uriPart")
+                content { groups.forEach { includeGroup(it) } }
             }
         }
     }

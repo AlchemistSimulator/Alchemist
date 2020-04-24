@@ -6,12 +6,8 @@ package it.unibo.alchemist.model.interfaces
 interface SteeringAction<T, P : Position<P>> : Action<T> {
 
     /**
-     * The position the owner of this action moves to when it is executed.
+     * The position the owner of this action moves to when it is executed,
+     * in relative coordinates with respect to its current position.
      */
     fun nextPosition(): P
-
-    /**
-     * The position the owner of this action moves towards.
-     */
-    fun target(): P
 }

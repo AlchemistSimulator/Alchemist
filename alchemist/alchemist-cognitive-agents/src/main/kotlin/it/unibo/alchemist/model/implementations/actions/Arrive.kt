@@ -1,11 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
-import it.unibo.alchemist.model.implementations.positions.AbstractEuclideanPosition
 import it.unibo.alchemist.model.implementations.utils.makePosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
@@ -15,6 +16,8 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *
  * @param env
  *          the environment inside which the pedestrian moves.
+ * @param reaction
+ *          the reaction which executes this action.
  * @param pedestrian
  *          the owner of this action.
  * @param decelerationRadius
@@ -31,7 +34,7 @@ open class Arrive<T, P>(
     decelerationRadius: Double,
     arrivalTolerance: Double,
     vararg coords: Double
-) : SteeringActionImpl<T, P>(
+) : SteeringActionWithTargetImpl<T, P>(
     env,
     reaction,
     pedestrian,
@@ -40,9 +43,9 @@ open class Arrive<T, P>(
         target -> with(env.getPosition(pedestrian).distanceTo(target)) {
             when {
                 this < arrivalTolerance -> 0.0
-                this < decelerationRadius -> Speed.default * this / decelerationRadius
-                else -> pedestrian.speed()
+                this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
+                else -> pedestrian.speed() / reaction.rate
             }
         }
     }
-) where P : AbstractEuclideanPosition<P>
+) where P : Position<P>, P : Vector<P>

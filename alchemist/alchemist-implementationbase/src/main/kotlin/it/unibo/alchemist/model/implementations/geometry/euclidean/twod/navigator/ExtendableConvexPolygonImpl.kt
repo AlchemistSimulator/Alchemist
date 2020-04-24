@@ -110,8 +110,8 @@ open class ExtendableConvexPolygonImpl(
                     val l1 = findLength(d1, normal, step)
                     val l2 = findLength(d2, normal, step)
                     require(l1.isFinite() && l2.isFinite()) { "invalid growth direction" }
-                    d1 = d1.resize(l1)
-                    d2 = d2.resize(l2)
+                    d1 = d1.resized(l1)
+                    d2 = d2.resized(l2)
                     // super method is used in order to avoid voiding useful cache
                     super.moveEdge(index, Segment2D(edge.first + d1, edge.second + d2))
                 }
@@ -257,7 +257,7 @@ open class ExtendableConvexPolygonImpl(
             d = growthDirections[index]!!.second!!
         }
         // a segment going from the old position of the intruding vertex to the new one
-        val movementSegment = Segment2D(intrudingVertex, intrudingVertex - d.resize(step))
+        val movementSegment = Segment2D(intrudingVertex, intrudingVertex - d.resized(step))
         val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
         require(intrudedEdges.size == 1) { "vertex is not intruding" }
         return intrudedEdges.first()

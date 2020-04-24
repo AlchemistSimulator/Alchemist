@@ -10,6 +10,7 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
@@ -18,6 +19,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 class TestRectObstacle2D : StringSpec({
 
     val obstacle = RectObstacle2D<Euclidean2DPosition>(2.0, 2.0, 4.0, 4.0)
+
+    fun coords(x: Double, y: Double): Euclidean2DPosition = Euclidean2DPosition(x, y)
 
     /*
      * Given a vector (startx, starty) -> (endx, endy), this method asserts that the
@@ -32,7 +35,7 @@ class TestRectObstacle2D : StringSpec({
         nextx: Double,
         nexty: Double
     ) {
-        val next = obstacle.next(Euclidean2DPosition(startx, starty), Euclidean2DPosition(endx, endy))
+        val next = obstacle.next(coords(startx, starty), coords(endx, endy))
         assertTrue(fuzzyEquals(next.x, nextx))
         assertTrue(fuzzyEquals(next.y, nexty))
     }
@@ -93,5 +96,11 @@ class TestRectObstacle2D : StringSpec({
          */
         vectorShouldNotBeCut(2.0, 6.0, 4.0, 6.0)
         vectorShouldNotBeCut(2.0, 6.0, 2.0, 4.0)
+    }
+
+    "nearestIntersection() should return the original end point when there's no intersection at all" {
+        coords(2.0, 5.0).let { end ->
+            obstacle.nearestIntersection(coords(1.0, 2.0), end) shouldBe end
+        }
     }
 })

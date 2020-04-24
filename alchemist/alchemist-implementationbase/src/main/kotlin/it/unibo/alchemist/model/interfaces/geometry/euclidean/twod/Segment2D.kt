@@ -2,8 +2,8 @@ package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
 import it.unibo.alchemist.model.implementations.geometry.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
-import it.unibo.alchemist.model.implementations.geometry.liesBetween
 import it.unibo.alchemist.model.implementations.geometry.linesIntersection
+import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import org.danilopianini.lang.MathUtils
@@ -55,8 +55,8 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      */
     fun contains(point: P) =
         areCollinear(first, second, point) &&
-        point.x.liesBetween(first.x, second.x) &&
-        point.y.liesBetween(first.y, second.y)
+        point.x in rangeFromUnordered(first.x, second.x) &&
+        point.y in rangeFromUnordered(first.y, second.y)
 
     /**
      * Computes the medium point of the segment.
@@ -106,4 +106,16 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
             other.distanceTo(first),
             other.distanceTo(second)
         ).min() ?: Double.POSITIVE_INFINITY
+
+    /**
+     * Maps the segment a [ClosedRange], this is done by extracting either the X coordinates or
+     * the Y coordinates of the two endpoints of the segment. [getXCoords] indicates which pair
+     * of coordinates should be extracted.
+     * This can be useful e.g. to represent portions of axis-aligned segments without creating
+     * new ones.
+     */
+    fun toRange(getXCoords: Boolean = this.xAxisAligned): ClosedRange<Double> = when {
+        getXCoords -> rangeFromUnordered(first.x, second.x)
+        else -> rangeFromUnordered(first.y, second.y)
+    }
 }

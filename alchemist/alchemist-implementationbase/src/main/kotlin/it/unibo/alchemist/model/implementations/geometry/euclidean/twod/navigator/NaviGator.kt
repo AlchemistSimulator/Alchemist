@@ -9,10 +9,11 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.DoubleInterval
-import it.unibo.alchemist.model.implementations.geometry.DoubleInterval.Companion.findExtremePoints
-import it.unibo.alchemist.model.implementations.geometry.DoubleInterval.Companion.toInterval
 import it.unibo.alchemist.model.implementations.geometry.createSegment
+import it.unibo.alchemist.model.implementations.geometry.findExtremeCoords
+import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExcluded
+import it.unibo.alchemist.model.implementations.geometry.subtractAll
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.vertices
@@ -152,19 +153,19 @@ private fun ExtendableConvexPolygon.findPassages(
      * Portion of the advancing edge not occluded by obstacles yet. Since the edge
      * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
      */
-    remaining: DoubleInterval = oldEdge.toInterval()
+    remaining: ClosedRange<Double> = oldEdge.toRange()
 ): Collection<Euclidean2DPassage> = emptyList<Euclidean2DPassage>()
-    .takeIf { fuzzyEquals(remaining.first, remaining.second) }
+    .takeIf { fuzzyEquals(remaining.start, remaining.endInclusive) }
     ?: let {
         /*
          * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
          * the intersection with the advancing edge.
          */
-        val polygonToInterval: (ExtendableConvexPolygon) -> DoubleInterval = {
-            it.closestEdgeTo(oldEdge).toInterval(oldEdge.xAxisAligned)
+        val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
+            it.closestEdgeTo(oldEdge).toRange(oldEdge.xAxisAligned)
         }
-        val shapeToInterval: (Shape) -> DoubleInterval = {
-            it.vertices().findExtremePoints(oldEdge.xAxisAligned)
+        val shapeToInterval: (Shape) -> ClosedRange<Double> = {
+            it.vertices().findExtremeCoords(oldEdge.xAxisAligned)
         }
         val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
             seeds.filter {
@@ -174,12 +175,12 @@ private fun ExtendableConvexPolygon.findPassages(
                      * and, in particular, with the remaining portion of the advancing edge.
                      * Similarly for obstacles below.
                      */
-                    polygonToInterval(it).intersectsEndpointsExcluded(remaining)
+                    polygonToInterval(it).intersectsBoundsExcluded(remaining)
             }
         }
         val intersectedObstacles: () -> List<Shape> = {
             obstacles.filter {
-                intersects(it) && shapeToInterval(it).intersectsEndpointsExcluded(remaining)
+                intersects(it) && shapeToInterval(it).intersectsBoundsExcluded(remaining)
             }
         }
         while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
@@ -199,7 +200,7 @@ private fun ExtendableConvexPolygon.findPassages(
              * the portions of the advancing edge leading to that neighbor.
              */
             neighbor to newRemaining.mapNotNull { remaining ->
-                polygonToInterval(neighbor).intersectionEndpointsExcluded(remaining)
+                polygonToInterval(neighbor).intersection(remaining)
             }
         }
         val passages = neighborToIntervals.flatMap { (neighbor, intervals) ->
@@ -209,8 +210,8 @@ private fun ExtendableConvexPolygon.findPassages(
              */
             intervals.map {
                 val passageShape = when {
-                    oldEdge.xAxisAligned -> createSegment(it.first, oldEdge.first.y, x2 = it.second)
-                    else -> createSegment(oldEdge.first.x, it.first, y2 = it.second)
+                    oldEdge.xAxisAligned -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
+                    else -> createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
                 }
                 Euclidean2DPassage(this, neighbor, passageShape)
             }

@@ -20,7 +20,7 @@ import java.lang.IllegalArgumentException
 fun Double.map(min: Double, max: Double, newMin: Double, newMax: Double): Double = when {
     this !in min..max -> throw IllegalArgumentException("$this is not in [$min, $max]")
     fuzzyGreaterEquals(min, max) || fuzzyGreaterEquals(newMin, newMax) ->
-        throw IllegalArgumentException("either [$min, $max] or [$newMin, $newMax] is empty")
+        throw IllegalArgumentException("either [$min, $max] and/or [$newMin, $newMax] is empty")
     else -> (this - min) / (max - min) * (newMax - newMin) + newMin
 }
 

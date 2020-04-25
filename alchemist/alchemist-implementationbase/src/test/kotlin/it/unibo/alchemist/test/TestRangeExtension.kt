@@ -85,6 +85,10 @@ class TestRangeExtension : StringSpec({
         (-1..5).intersectsBoundsExcluded(-5..5) shouldBe true
     }
 
+    /**
+     * Asserts that the collection contains exactly the [expected] elements. Instead of using
+     * equality check between ranges (i.e. == operator), [ClosedRange.coincide] is used.
+     */
     fun <T : Comparable<T>> List<ClosedRange<T>>.shouldContainRanges(vararg expected: ClosedRange<T>) {
         expected.toMutableList().let { expectedRanges ->
             this.forEach { actualRange ->

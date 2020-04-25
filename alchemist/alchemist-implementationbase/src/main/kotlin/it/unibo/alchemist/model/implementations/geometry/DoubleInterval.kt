@@ -27,11 +27,23 @@ class DoubleInterval(
     endPoint2: Double
 ) {
     /**
+     * Smallest value in the interval.
      */
     val first: Double = min(endPoint1, endPoint2)
     /**
+     * Largest value in the interval.
      */
     val second: Double = max(endPoint1, endPoint2)
+
+    /**
+     * Same as [first], for destructuring declarations.
+     */
+    operator fun component1() = first
+
+    /**
+     * Same as [second], for destructuring declarations.
+     */
+    operator fun component2() = second
 
     /**
      * Checks whether the interval is contained in another given interval.

@@ -38,7 +38,7 @@ abstract class ChangeTargetOnCollision<P : Position<P>>(
      * Utility to initialize lazyinit variables dependent on the environment.
      * It is guaranteed to be called before [shouldChangeTarget] and [chooseTarget].
      */
-    protected open fun initializePositions(currentPosition: P) { }
+    protected open fun initializePositions(currentPosition: P) = Unit
 
     /**
      * Returns a boolean indicating whether it is time to change the target or not.

@@ -58,7 +58,6 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
 
     def alchemistTimestamp = sense[it.unibo.alchemist.model.interfaces.Time](LSNS_ALCHEMIST_TIMESTAMP)
 
-    //def nextRandom: Double = sense[RandomGenerator](LSNS_RANDOM).nextDouble()
     def alchemistRandomGen = sense[RandomGenerator](LSNS_ALCHEMIST_RANDOM)
     lazy val randomGen: Random = new AlchemistRandomWrapper(alchemistRandomGen)
     override def randomGenerator(): Random = randomGen

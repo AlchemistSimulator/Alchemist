@@ -1,6 +1,8 @@
 package it.unibo.alchemist.boundary.gui.utility;
 
 import java.io.IOException;
+import java.net.URL;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -14,7 +16,7 @@ import org.kaikikm.threadresloader.ResourceLoader;
  * Utility class for loading resources related to layout.
  */
 public final class FXResourceLoader {
-    private static final String XML_RESOURCE_PATH = "/it/unibo/alchemist/gui/view/";
+    private static final String XML_RESOURCE_PATH = "it/unibo/alchemist/gui/view/";
     private static final String LAYOUT_EXTENSION = ".fxml";
     private static final String STYLE_EXTENSION = ".css";
 

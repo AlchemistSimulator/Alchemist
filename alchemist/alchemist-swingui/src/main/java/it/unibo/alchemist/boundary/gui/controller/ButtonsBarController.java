@@ -58,7 +58,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     private JFXButton effectsButton; // Value injected by FXMLLoader
     @FXML
     @Nullable
-    private JFXSlider framerate; // Value injected by FXMLLoader
+    private JFXSlider framerateSlider; // Value injected by FXMLLoader
     @FXML
     @Nullable
     private JFXButton controlType; // Value injected by FXMLLoader
@@ -155,7 +155,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
         Objects.requireNonNull(controlPane, FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT));
         Objects.requireNonNull(controlBar, FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT));
         Objects.requireNonNull(effectsButton, FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT));
-        Objects.requireNonNull(framerate, FXResourceLoader.getInjectionErrorMessage("speedSlider", BUTTONS_BAR_LAYOUT));
+        Objects.requireNonNull(framerateSlider, FXResourceLoader.getInjectionErrorMessage("framerateSlider", BUTTONS_BAR_LAYOUT));
         Objects.requireNonNull(controlType, FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT));
         Objects.requireNonNull(drawerStack, FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT));
 

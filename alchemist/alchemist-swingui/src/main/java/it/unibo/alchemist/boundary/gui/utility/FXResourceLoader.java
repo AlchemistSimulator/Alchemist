@@ -1,8 +1,6 @@
 package it.unibo.alchemist.boundary.gui.utility;
 
 import java.io.IOException;
-import java.net.URL;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;

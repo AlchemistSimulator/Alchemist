@@ -322,7 +322,7 @@ abstract class AbstractOrientingBehavior<T, P, A, N, E, M, F>(
         State.START -> onStart()
         State.NEW_ROOM -> inNewRoom()
         State.MOVING_TO_DOOR, State.CROSSING_DOOR, State.MOVING_TO_FINAL -> moving()
-        State.ARRIVED -> {}
+        State.ARRIVED -> Unit
     }
 
     /**

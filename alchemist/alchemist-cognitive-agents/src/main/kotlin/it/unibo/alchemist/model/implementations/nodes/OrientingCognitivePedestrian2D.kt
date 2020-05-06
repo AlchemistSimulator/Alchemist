@@ -88,8 +88,6 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
 
     override val compliance = cognitive.compliance
 
-    /**
-     */
     override fun getShape() = shape
 
     override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>) = cognitive.probabilityOfHelping(toHelp)

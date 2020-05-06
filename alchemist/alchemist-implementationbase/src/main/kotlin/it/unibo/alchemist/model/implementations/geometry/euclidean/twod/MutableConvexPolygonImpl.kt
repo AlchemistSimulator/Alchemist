@@ -37,7 +37,7 @@ open class MutableConvexPolygonImpl(
          */
         var i = 0
         while (i < vertices.size) {
-            if (areCollinear(vertices[circularPrev(i)], vertices[i], vertices[circularNext(i)])) {
+            if (areCollinear(vertices[circularPrevious(i)], vertices[i], vertices[circularNext(i)])) {
                 vertices.removeAt(i)
                 i--
             }
@@ -68,7 +68,7 @@ open class MutableConvexPolygonImpl(
          * Only the modified/new edges are passed, which vary depending
          * on the operation performed (addition/removal of a vertex/edge).
          */
-        if (isConvex(circularPrev(index), index)) {
+        if (isConvex(circularPrevious(index), index)) {
             shape = null
             return true
         }
@@ -79,7 +79,7 @@ open class MutableConvexPolygonImpl(
     override fun removeVertex(index: Int): Boolean {
         val oldV = vertices[index]
         vertices.removeAt(index)
-        if (isConvex(circularPrev(index))) {
+        if (isConvex(circularPrevious(index))) {
             shape = null
             return true
         }
@@ -90,7 +90,7 @@ open class MutableConvexPolygonImpl(
     override fun moveVertex(index: Int, newX: Double, newY: Double): Boolean {
         val oldV = vertices[index]
         vertices[index] = Euclidean2DPosition(newX, newY)
-        if (isConvex(circularPrev(index), index)) {
+        if (isConvex(circularPrevious(index), index)) {
             shape = null
             return true
         }
@@ -104,7 +104,7 @@ open class MutableConvexPolygonImpl(
         val oldEdge = getEdge(index)
         vertices[index] = newEdge.first
         vertices[circularNext(index)] = newEdge.second
-        if (isConvex(circularPrev(index), index, circularNext(index))) {
+        if (isConvex(circularPrevious(index), index, circularNext(index))) {
             shape = null
             return true
         }
@@ -149,13 +149,9 @@ open class MutableConvexPolygonImpl(
 
     final override fun asAwtShape() = getShape().asAwtShape()
 
-    /**
-     */
     override fun equals(other: Any?) =
         other != null && (this === other || (other is MutableConvexPolygonImpl && vertices == other.vertices))
 
-    /**
-     */
     override fun hashCode() = vertices.hashCode()
 
     /**
@@ -176,12 +172,16 @@ open class MutableConvexPolygonImpl(
     }
 
     /**
+     * Finds the previous index givend the provided index,
+     * restarting from the end if necessary.
      */
-    protected fun circularPrev(index: Int) = (index - 1 + vertices.size) % vertices.size
+    protected fun circularPrevious(index: Int): Int = (index - 1 + vertices.size) % vertices.size
 
     /**
+     * Finds the next index givend the provided index,
+     * restarting from the beginning if necessary.
      */
-    protected fun circularNext(index: Int) = (index + 1) % vertices.size
+    protected fun circularNext(index: Int): Int = (index + 1) % vertices.size
 
     /*
      * In order to be convex, a polygon must first be simple (not self-
@@ -262,9 +262,9 @@ open class MutableConvexPolygonImpl(
         /*
          * First previous edge not degenerate
          */
-        var i = circularPrev(index)
+        var i = circularPrevious(index)
         while (getEdge(i).isDegenerate) {
-            i = circularPrev(i)
+            i = circularPrevious(i)
         }
         val prevIndex = i
         val prev = getEdge(i)

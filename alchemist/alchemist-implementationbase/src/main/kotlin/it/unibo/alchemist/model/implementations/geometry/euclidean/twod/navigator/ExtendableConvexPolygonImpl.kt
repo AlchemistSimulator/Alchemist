@@ -36,27 +36,27 @@ open class ExtendableConvexPolygonImpl(
     private var normals: MutableList<Euclidean2DPosition?> = MutableList(vertices.size) { null }
 
     override fun addVertex(index: Int, x: Double, y: Double): Boolean {
-        val oldEdge = getEdge(circularPrev(index))
+        val oldEdge = getEdge(circularPrevious(index))
         if (super.addVertex(index, x, y)) {
             addCacheAt(index)
-            voidCacheAt(circularPrev(index), oldEdge)
+            voidCacheAt(circularPrevious(index), oldEdge)
             return true
         }
         return false
     }
 
     override fun removeVertex(index: Int): Boolean {
-        val oldEdge = getEdge(circularPrev(index))
+        val oldEdge = getEdge(circularPrevious(index))
         if (super.removeVertex(index)) {
             removeCacheAt(index)
-            voidCacheAt(circularPrev(index), oldEdge)
+            voidCacheAt(circularPrevious(index), oldEdge)
             return true
         }
         return false
     }
 
     override fun moveVertex(index: Int, newX: Double, newY: Double): Boolean {
-        val modifiedEdges = mutableListOf(circularPrev(index), index)
+        val modifiedEdges = mutableListOf(circularPrevious(index), index)
             .map { it to getEdge(it) }
         if (super.moveVertex(index, newX, newY)) {
             modifiedEdges.forEach { voidCacheAt(it.first, it.second) }
@@ -66,7 +66,7 @@ open class ExtendableConvexPolygonImpl(
     }
 
     override fun moveEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean {
-        val modifiedEdges = mutableListOf(circularPrev(index), index, circularNext(index))
+        val modifiedEdges = mutableListOf(circularPrevious(index), index, circularNext(index))
             .map { it to getEdge(it) }
         if (super.moveEdge(index, newEdge)) {
             modifiedEdges.forEach { voidCacheAt(it.first, it.second) }
@@ -110,8 +110,8 @@ open class ExtendableConvexPolygonImpl(
                     val l1 = findLength(d1, normal, step)
                     val l2 = findLength(d2, normal, step)
                     require(l1.isFinite() && l2.isFinite()) { "invalid growth direction" }
-                    d1 = d1.resize(l1)
-                    d2 = d2.resize(l2)
+                    d1 = d1.resized(l1)
+                    d2 = d2.resized(l2)
                     // super method is used in order to avoid voiding useful cache
                     super.moveEdge(index, Segment2D(edge.first + d1, edge.second + d2))
                 }
@@ -217,7 +217,7 @@ open class ExtendableConvexPolygonImpl(
      */
     private fun Segment2D<Euclidean2DPosition>.computeNormal(index: Int): Euclidean2DPosition {
         val curr = toVector()
-        val prev = getEdge(circularPrev(index)).toVector()
+        val prev = getEdge(circularPrevious(index)).toVector()
         val n = curr.normal().normalized()
         if (zCross(curr, n) > 0.0 != zCross(curr, prev) > 0.0) {
             return n * -1.0
@@ -257,7 +257,7 @@ open class ExtendableConvexPolygonImpl(
             d = growthDirections[index]!!.second!!
         }
         // a segment going from the old position of the intruding vertex to the new one
-        val movementSegment = Segment2D(intrudingVertex, intrudingVertex - d.resize(step))
+        val movementSegment = Segment2D(intrudingVertex, intrudingVertex - d.resized(step))
         val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
         require(intrudedEdges.size == 1) { "vertex is not intruding" }
         return intrudedEdges.first()
@@ -291,7 +291,7 @@ open class ExtendableConvexPolygonImpl(
         val indexOfIntrudingV = vertices.indexOfFirst { obstacle.contains(it.toPoint()) }
         // intersecting edges
         val polygonEdge1 = getEdge(indexOfIntrudingV)
-        val polygonEdge2 = getEdge(circularPrev(indexOfIntrudingV))
+        val polygonEdge2 = getEdge(circularPrevious(indexOfIntrudingV))
         val obstacleEdge: Segment2D<Euclidean2DPosition> = findIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
         val p1 = intersection(polygonEdge1, obstacleEdge).point.get().toEuclidean
@@ -313,7 +313,7 @@ open class ExtendableConvexPolygonImpl(
         modifyGrowthDirection(indexOfIntrudingV, d1, true)
         addVertex(indexOfIntrudingV, vertices[indexOfIntrudingV].x, vertices[indexOfIntrudingV].y)
         canEdgeAdvance[indexOfIntrudingV] = false
-        modifyGrowthDirection(circularPrev(indexOfIntrudingV), d2, false)
+        modifyGrowthDirection(circularPrevious(indexOfIntrudingV), d2, false)
     }
 
     private fun modifyGrowthDirection(i: Int, newD: Euclidean2DPosition, first: Boolean) {

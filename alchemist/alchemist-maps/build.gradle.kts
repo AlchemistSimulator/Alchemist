@@ -27,10 +27,6 @@ dependencies {
     implementation(Libs.trove4j)
 }
 
-tasks.withType<Test> {
-    maxHeapSize = "3500m"
-}
-
 publishing.publications {
     withType<MavenPublication> {
         pom {

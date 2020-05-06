@@ -37,7 +37,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      * Computes the slope of the segment. If the two points coincide (i.e. the segment
      * [isDegenerate]), [Double.NaN] is the result.
      */
-    val slope: Double get() = toVector().run { y / x }
+    val slope: Double get() = Double.NaN.takeIf { isDegenerate } ?: toVector().run { y / x }
 
     /**
      * Computes the intercept of the line passing through [first] and [second].
@@ -47,7 +47,8 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * Checks if its points coincide (and its length is zero).
      */
-    val isDegenerate: Boolean get() = first == second
+    val isDegenerate: Boolean get() =
+        MathUtils.fuzzyEquals(first.x, second.x) && MathUtils.fuzzyEquals(first.y, second.y)
 
     /**
      * Checks whether the segment contains the given point.

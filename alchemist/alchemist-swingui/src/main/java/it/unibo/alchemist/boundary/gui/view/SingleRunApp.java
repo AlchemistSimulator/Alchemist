@@ -221,8 +221,9 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
             final Scene scene = new Scene(rootLayout);
             optDisplayMonitor.ifPresent(dm -> {
-                dm.widthProperty().bind(main.widthProperty());
-                dm.heightProperty().bind(main.heightProperty());
+                // not necessary if the monitor is a region instead of a canvas
+//                dm.widthProperty().bind(main.widthProperty());
+//                dm.heightProperty().bind(main.heightProperty());
                 dm.widthProperty().addListener((observable, oldValue, newValue) -> {
                     if (!Objects.equals(oldValue, newValue)) {
                         dm.repaint();
@@ -233,7 +234,6 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                         dm.repaint();
                     }
                 });
-                main.getChildren().addAll(dm.getInteractionCanvases());
                 main.getChildren().add(dm);
                 initKeybindings(scene, dm.getKeyboardListener());
             });

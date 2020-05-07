@@ -35,6 +35,8 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.layout.Pane
+import tornadofx.add
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -53,7 +55,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
  * @param steps the number of steps
  * @see .setStep
  */
-@JvmOverloads constructor(steps: Int = DEFAULT_NUMBER_OF_STEPS) : Canvas(), FXOutputMonitor<T, P> {
+@JvmOverloads constructor(steps: Int = DEFAULT_NUMBER_OF_STEPS) : Pane(), FXOutputMonitor<T, P> {
 
     private val effectStack: ObservableList<EffectGroup<P>> = FXCollections.observableArrayList()
     private val mutex = Semaphore(1)
@@ -65,13 +67,18 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     private var viewStatus = DEFAULT_VIEW_STATUS
     protected lateinit var wormhole: BidimensionalWormhole<P>
         private set
-    private val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
+    protected val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
+    private val canvas = Canvas()
 
     init {
         firstTime = true
         setStep(steps)
-        style = "-fx-background-color: #FFF;"
-        isMouseTransparent = true
+        canvas.style = "-fx-background-color: #FFF;"
+        canvas.isMouseTransparent = true
+        canvas.widthProperty().bind(widthProperty())
+        canvas.heightProperty().bind(heightProperty())
+        children.add(canvas)
+        children.addAll(interactions.canvases)
     }
 
     override fun getViewStatus(): FXOutputMonitor.ViewStatus {
@@ -132,7 +139,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      * @return a function of what to do to draw the background
      * @see .repaint
      */
-    protected fun drawBackground(graphicsContext: GraphicsContext, environment: Environment<T, P>): () -> Unit {
+    protected open fun drawBackground(graphicsContext: GraphicsContext, environment: Environment<T, P>): () -> Unit {
         // TODO environment.dimensions is called to avoid the warning, because -werror registers it as an error
         environment.dimensions
         return { graphicsContext.clearRect(0.0, 0.0, width, height) }
@@ -154,8 +161,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         this.effectStack.clear()
         this.effectStack.addAll(effects)
     }
-
-    override fun getInteractionCanvases(): List<Canvas> = interactions.canvases
 
     override fun getKeyboardListener(): KeyboardActionListener = interactions.keyboardListener
 
@@ -216,7 +221,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
              * need to constantly regenerate the position map.
              */
             interactions.nodes = environment.nodes.associate { Pair(it, environment.getPosition(it)) }
-            val graphicsContext = this.graphicsContext2D
+            val graphicsContext = canvas.graphicsContext2D
             val background = Stream.of(drawBackground(graphicsContext, environment))
             val effects = effects
                 .stream()

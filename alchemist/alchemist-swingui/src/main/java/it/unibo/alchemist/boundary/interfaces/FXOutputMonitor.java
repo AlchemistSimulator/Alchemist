@@ -114,12 +114,6 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     }
 
     /**
-     * Returns a list of canvases used for interacting with the user.
-     * @return the list
-     */
-    List<Canvas> getInteractionCanvases();
-
-    /**
      * Returns the keyboard listener associated with this monitor.
      * @return the listener
      */

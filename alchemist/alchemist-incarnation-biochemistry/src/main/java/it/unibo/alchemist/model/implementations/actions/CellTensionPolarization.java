@@ -7,21 +7,20 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.AlchemistUtil;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import org.apache.commons.math3.util.FastMath;
-import org.danilopianini.lang.MathUtils;
-
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.util.FastMath;
+import org.danilopianini.lang.MathUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @param <P>
@@ -53,7 +52,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     @Override
     public void execute() {
         // get node position as array
-        final double[] nodePos = env.getPosition(getNode()).getCartesianCoordinates();
+        final double[] nodePos = env.getPosition(getNode()).getCoordinates();
         // initializing resulting versor
         final double[] resVersor = new double[nodePos.length];
         // declaring a variable for the node where this action is set, to have faster access
@@ -83,7 +82,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 })
                 .map(n -> {
                     // position of node n as array
-                    final double[] nPos =  env.getPosition(n).getCartesianCoordinates();
+                    final double[] nPos =  env.getPosition(n).getCoordinates();
                     // max radius of n
                     final double localNodeMaxRadius;
                     // min radius of n
@@ -110,7 +109,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                         intensity = (maxRadiusSum - env.getDistanceBetweenNodes(n, thisNode)) / (maxRadiusSum - localNodeMinRadius - nodeMinRadius);
                     }
                     if (intensity != 0) {
-                        double[] propensityVect = new double[]{nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
+                        double[] propensityVect = {nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
                         final double module = FastMath.sqrt(FastMath.pow(propensityVect[0], 2) + FastMath.pow(propensityVect[1], 2));
                         if (module == 0) {
                             return env.makePosition(0, 0);

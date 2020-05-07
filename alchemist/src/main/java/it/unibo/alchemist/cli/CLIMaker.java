@@ -11,30 +11,29 @@ import com.google.common.math.DoubleMath;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.ArrayUtils;
+import org.kaikikm.threadresloader.ResourceLoader;
 
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.stream.Collectors;
-
-import static java.util.ResourceBundle.getBundle;
 
 /**
  * This support class generates a CLI interface backed by a property file.
  */
 public final class CLIMaker {
-    private static final ResourceBundle SYNTAX;
+    private static final Properties SYNTAX;
     private static final Options OPTIONS = new Options();
     static {
-        ResourceBundle syntax;
+        final String base = CLIMaker.class.getPackage().getName().replace('.', '/');
+        final Properties syntax = new Properties();
         try {
-            syntax = getBundle(CLIMaker.class.getPackage().getName() + ".CLI");
-        } catch (MissingResourceException e) {
-            syntax = getBundle(CLIMaker.class.getPackage().getName() + ".CLI", Locale.US);
+            syntax.load(ResourceLoader.getResourceAsStream(base + "/CLI.properties"));
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
         }
         SYNTAX = syntax;
         SYNTAX.keySet().stream()
-            .map(key -> ArrayUtils.add(key.split("_"), SYNTAX.getString(key)))
+            .map(key -> ArrayUtils.add(key.toString().split("_"), SYNTAX.get(key).toString()))
             .collect(Collectors.groupingBy(a -> a[0]))
             .entrySet().stream()
             .map(entry -> {

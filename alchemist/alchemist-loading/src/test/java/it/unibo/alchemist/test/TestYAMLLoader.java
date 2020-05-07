@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.test.util.TestNode;
+import kotlin.Triple;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
@@ -28,7 +29,9 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -144,9 +147,11 @@ public class TestYAMLLoader {
      */
     @Test
     public void testScalaVar() {
-        final Environment<Object, ?> env = testNoVar("synthetic/scalavar.yml");
-        assertNotNull(env);
-        assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
+        if (!isScalaAndJavaCombinationBugged()) {
+            final Environment<Object, ?> env = testNoVar("synthetic/scalavar.yml");
+            assertNotNull(env);
+            assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
+        }
     }
 
     /**
@@ -165,7 +170,7 @@ public class TestYAMLLoader {
     private static <T, P extends Position<P>> Environment<T, P> testLoading(final InputStream resource, final Map<String, Double> vars) {
         assertNotNull(resource, "Missing test resource " + resource);
         final Environment<T, P> env = new YamlLoader(resource).getWith(vars);
-        final Simulation<T, P> sim = new Engine<>(env, 10000);
+        final Simulation<T, P> sim = new Engine<>(env, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
@@ -181,6 +186,35 @@ public class TestYAMLLoader {
 
     private static <T> Environment<T, ?> testNoVar(final String resource) {
         return testLoading(ResourceLoader.getResourceAsStream(resource), Collections.emptyMap());
+    }
+
+    private static Triple<Integer, Integer, Integer> versionAsInts(final String version) {
+        final var regex = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+)(\\.(?<patch>\\d+))?)?.*");
+        final var matcher = regex.matcher(version);
+        matcher.find();
+        final var major = intFromNullableString(matcher.group("major"));
+        final var minor = intFromNullableString(matcher.group("minor"));
+        final var patch = intFromNullableString(matcher.group("patch"));
+        return new Triple<>(major, minor, patch);
+    }
+
+    private static int intFromNullableString(final String number) {
+        return Optional.ofNullable(number).map(Integer::parseInt).orElse(0);
+    }
+
+    private static boolean isScalaAndJavaCombinationBugged() {
+        // CHECKSTYLE: MagicNumber OFF
+        final var scalaVersion = versionAsInts(scala.util.Properties.versionNumberString());
+        final var major = scalaVersion.getFirst();
+        final var minor = scalaVersion.getSecond();
+        final var patch = scalaVersion.getThird();
+        /*
+         * Versions older than Scala 2.13.2 must not run the test.
+         * Hit by https://github.com/scala/bug/issues/11754
+         */
+        return major < 2
+            || major == 2 && minor < 13
+            || major == 2 && minor == 13 && patch < 2;
     }
 
 }

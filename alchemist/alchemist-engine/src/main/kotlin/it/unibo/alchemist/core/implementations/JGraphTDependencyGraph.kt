@@ -10,17 +10,18 @@
  */
 package it.unibo.alchemist.core.implementations
 
-import org.danilopianini.util.ArrayListSet
-import org.jgrapht.graph.DefaultDirectedGraph
-
 import it.unibo.alchemist.core.interfaces.DependencyGraph
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
+import java.lang.IllegalArgumentException
+import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
-import java.lang.IllegalArgumentException
+import org.jgrapht.graph.DefaultDirectedGraph
+
+private typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 
 /**
  * This class offers an implementation of a dependency graph, namely a
@@ -31,11 +32,10 @@ import java.lang.IllegalArgumentException
  *
  * @param <T>
  */
-typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Reaction<T>>()
     private val outGlobals = ArrayListSet<Reaction<T>>()
-    private val graph: DefaultDirectedGraph<Reaction<T>, Edge<T>> = DefaultDirectedGraph(null)
+    private val graph: DefaultDirectedGraph<Reaction<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
 
     override fun createDependencies(newReaction: Reaction<T>) {
         val allReactions = graph.vertexSet()

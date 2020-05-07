@@ -50,7 +50,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
                     .map(a -> (RunProtelisProgram<?>) a)
                     .collect(Collectors.toList());
             if (possibleRefs.size() == 1) {
-                return new SendToNeighbor((ProtelisNode) n, reaction, possibleRefs.get(0));
+                return new SendToNeighbor((ProtelisNode<?>) n, reaction, possibleRefs.get(0));
             }
             throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
         }

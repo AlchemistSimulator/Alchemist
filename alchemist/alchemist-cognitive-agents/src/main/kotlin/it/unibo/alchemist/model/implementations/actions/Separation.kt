@@ -1,10 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.utils.div
-import it.unibo.alchemist.model.implementations.utils.makePosition
-import it.unibo.alchemist.model.implementations.utils.origin
-import it.unibo.alchemist.model.interfaces.*
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Action
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 
 /**
  * Move the agent away from the pedestrians near to him.
@@ -16,27 +18,20 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param pedestrian
  *          the owner of this action.
  */
-class Separation<T, P : Position<P>>(
-    private val env: Environment<T, P>,
+class Separation<T>(
+    override val env: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    private val pedestrian: Pedestrian<T>
-) : SteeringActionImpl<T, P>(
-    env,
-    reaction,
-    pedestrian,
-    TargetSelectionStrategy { env.origin() }
-), GroupSteering<T, P> {
+    override val pedestrian: Pedestrian2D<T>
+) : AbstractGroupSteeringAction<T, Euclidean2DPosition>(env, reaction, pedestrian) {
 
-    override fun group(): List<Pedestrian<T>> = pedestrian.influencialPeople().plusElement(pedestrian)
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
+        Separation(env, r, n as Pedestrian2D<T>)
 
-    override fun getDestination(current: P, target: P, maxWalk: Double): P = super.getDestination(
-        target,
-        centroid(),
-        maxWalk
-    )
+    override fun nextPosition(): Euclidean2DPosition =
+        (currentPosition - centroid()).resizedToMaxWalkIfGreater()
 
-    private fun centroid(): P = with(group()) {
-        val currentPosition = env.getPosition(pedestrian)
-        env.makePosition(map { env.getPosition(it) - currentPosition }.reduce { acc, pos -> acc + pos } / (-size))
-    }
+    override fun group(): List<Pedestrian<T>> = pedestrian.fieldOfView(env)
+            .influentialNodes()
+            .filterIsInstance<Pedestrian<T>>()
+            .plusElement(pedestrian)
 }

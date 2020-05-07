@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SuppressWarnings("ALL")
 public class TestEnvironmentNodes {
 
-    private static final double PRECISION = 0.000000000001;
+    private static final double PRECISION = 1e-12;
     private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
 
     /**
@@ -66,7 +66,7 @@ public class TestEnvironmentNodes {
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         env.addNode(cellNode, new Euclidean2DPosition(0, 0));
         env.addNode(envNode, new Euclidean2DPosition(0, 1));
-        final Simulation<?, ?> sim = new Engine<>(env, 10000);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();
         assertEquals(envNode.getConcentration(a), 1000, PRECISION);
@@ -89,7 +89,7 @@ public class TestEnvironmentNodes {
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         env.addNode(envNode1, new Euclidean2DPosition(0, 0));
         env.addNode(envNode2, new Euclidean2DPosition(0, 1));
-        final Simulation<?, ?> sim = new Engine<>(env, 10000);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();
         assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
@@ -118,7 +118,7 @@ public class TestEnvironmentNodes {
         env.addNode(envNode3, new Euclidean2DPosition(1, 0));
         env.addNode(envNode4, new Euclidean2DPosition(-1, 0));
         env.addNode(envNode5, new Euclidean2DPosition(0, -1));
-        final Simulation<?, ?> sim = new Engine<>(env, 10000);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();
         assertTrue(envNode2.getConcentration(a) != 0 
@@ -151,7 +151,7 @@ public class TestEnvironmentNodes {
         env.addNode(envNode3, new Euclidean2DPosition(1, 0));
         env.addNode(envNode4, new Euclidean2DPosition(-1, 0));
         env.addNode(envNode5, new Euclidean2DPosition(0, -1));
-        final Simulation<?, ?> sim = new Engine<>(env, 10000);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();
         assertTrue(envNode2.getConcentration(a) != 0 
@@ -192,7 +192,7 @@ public class TestEnvironmentNodes {
         env.addNode(envNode2, pos2);
         env.addNode(envNode3, pos3);
         env.addNode(envNode4, pos4);
-        final Simulation<?, ?> sim = new Engine<>(env, 10000);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();
         assertNotEquals(0.0, envNode3.getConcentration(a));
@@ -215,7 +215,7 @@ public class TestEnvironmentNodes {
         cellNode.setConcentration(a, 1000.0);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         env.addNode(cellNode, new Euclidean2DPosition(0, 0));
-        final Simulation<?, ?> sim = new Engine<>(env, 10000);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();
         assertEquals(cellNode.getConcentration(a), 1000, PRECISION);
@@ -251,8 +251,8 @@ public class TestEnvironmentNodes {
                 .parallel()
                 .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
                 .min((n1, n2) -> Double.compare(
-                        env.getPosition(n1).getDistanceTo(env.getPosition(center)), 
-                        env.getPosition(n2).getDistanceTo(env.getPosition(center))
+                        env.getPosition(n1).distanceTo(env.getPosition(center)),
+                        env.getPosition(n2).distanceTo(env.getPosition(center))
                         ))
                 .get().getConcentration(new Biomolecule("A"));
         assertEquals(conAInNearest, 1000, PRECISION);
@@ -376,7 +376,7 @@ public class TestEnvironmentNodes {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);
-        final Simulation<?, ?> sim = new Engine<>(env, 10000);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();
         return env;

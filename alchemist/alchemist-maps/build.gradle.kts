@@ -10,7 +10,6 @@ dependencies {
     api(project(":alchemist-interfaces"))
 
     implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-time"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.commons_codec)
@@ -26,10 +25,24 @@ dependencies {
     implementation(Libs.jpx)
     implementation(Libs.simplelatlng)
     implementation(Libs.trove4j)
-
-    testImplementation(Libs.kotlintest_runner_junit5)
 }
 
-tasks.withType<Test> {
-    maxHeapSize = "3300m"
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Andrea Placuzzi")
+                    email.set("andrea.placuzzi@studio.unibo.it")
+                }
+            }
+            contributors {
+                contributor {
+                    name.set("Giacomo Scaparrotti")
+                    email.set("giacomo.scaparrotti@studio.unibo.it")
+                    url.set("https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569")
+                }
+            }
+        }
+    }
 }

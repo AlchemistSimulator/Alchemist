@@ -25,6 +25,12 @@
 		<exclude name="PositionLiteralsFirstInComparisons" />
 		<exclude name="UseVarargs" />
 	</rule>
+	<rule ref="category/java/bestpractices.xml/AvoidReassigningLoopVariables">
+		<properties>
+			<property name="foreachReassign" value="deny" />
+			<property name="forReassign" value="allow" />
+		</properties>
+	</rule>
 	<rule ref="category/java/codestyle.xml">
 		<exclude name="AbstractNaming" />
 		<exclude name="AtLeastOneConstructor" />
@@ -32,6 +38,7 @@
 		<exclude name="AvoidPrefixingMethodParameters" />
 		<exclude name="AvoidUsingNativeCode" />
 		<exclude name="CallSuperInConstructor" />
+		<exclude name="CommentDefaultAccessModifier" />
 		<exclude name="ConfusingTernary" />
 		<exclude name="EmptyMethodInAbstractClassShouldBeAbstract" />
 		<exclude name="LongVariable" />
@@ -82,6 +89,7 @@
 		<exclude name="AvoidFieldNameMatchingMethodName" />
         <exclude name="AvoidLiteralsInIfCondition" />
         <exclude name="BeanMembersShouldSerialize" />
+		<exclude name="CloseResource" />
         <exclude name="DataflowAnomalyAnalysis" />
 		<exclude name="DoNotCallSystemExit" />
         <exclude name="MissingBreakInSwitch" />

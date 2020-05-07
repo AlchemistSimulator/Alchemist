@@ -10,5 +10,40 @@ dependencies {
     api(Libs.listset)
     api(Libs.jool_java_8)
     api(Libs.commons_math3)
-    testCompile(Libs.kotlintest_runner_junit5)
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            contributors {
+                contributor {
+                    name.set("Sara Montagna")
+                    email.set("sara.montagna@unibo.it")
+                    url.set("http://saramontagna.apice.unibo.it/")
+                }
+                contributor {
+                    name.set("Lorenzo Paganelli")
+                    email.set("lorenzo.paganelli3@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Federico Pettinari")
+                    email.set("federico.pettinari2@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Franco Pradelli")
+                    email.set("franco.pradelli@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Giacomo Pronti")
+                    email.set("giacomo.pronti@studio.unibo.it")
+                    url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/")
+                }
+                contributor {
+                    name.set("Giacomo Scaparrotti")
+                    email.set("giacomo.scaparrotti@studio.unibo.it")
+                    url.set("https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569")
+                }
+            }
+        }
+    }
 }

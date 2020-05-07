@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.test
 
-import io.kotlintest.Matcher
-import io.kotlintest.Result
-import io.kotlintest.TestCase
-import io.kotlintest.matchers.collections.shouldContain
-import io.kotlintest.shouldBe
-import io.kotlintest.shouldHave
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.test.TestCase
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldHave
 import it.unibo.alchemist.model.BiochemistryIncarnation
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
@@ -24,8 +24,8 @@ import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTim
 import it.unibo.alchemist.model.interfaces.CellNode
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
-import org.apache.commons.math3.random.MersenneTwister
 import kotlin.properties.Delegates
+import org.apache.commons.math3.random.MersenneTwister
 
 private const val DIRECT_REACTION = "[token] --> [token in neighbor]"
 private const val INVERSE_REACTION = "[token in neighbor] --> [token]"
@@ -95,9 +95,9 @@ private val Int.actions: Matcher<Reaction<Double>>
 
 private fun <T> Int.sizeMatcher(collectionName: String, collection: (Reaction<Double>) -> List<T>) =
     object : Matcher<Reaction<Double>> {
-        override fun test(value: Reaction<Double>): Result {
+        override fun test(value: Reaction<Double>): MatcherResult {
             val actualSize = collection.invoke(value).size
-            return Result(
+            return MatcherResult(
                 actualSize == this@sizeMatcher,
                 "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize",
                 "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has"

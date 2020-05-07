@@ -8,13 +8,9 @@
 package it.unibo.alchemist.grid.config;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * {@link SimulationConfig} implementation.
@@ -31,9 +27,8 @@ public final class SimulationConfigImpl implements SimulationConfig {
      * 
      * @param variables Simulation's initialization variables
      */
-    public SimulationConfigImpl(final List<Entry<String, ? extends Serializable>> variables) {
-        this.variables = Objects.requireNonNull(variables).stream()
-                .collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue));
+    public SimulationConfigImpl(final Map<String, ? extends Serializable> variables) {
+        this.variables = Objects.requireNonNull(variables);
     }
 
     @Override

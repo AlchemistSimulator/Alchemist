@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.kotlintest.DslKt.fail;
+import static io.kotest.assertions.FailKt.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
+@SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
 public class TestBioRect2DEnvironmentNoOverlap {
 
     /**

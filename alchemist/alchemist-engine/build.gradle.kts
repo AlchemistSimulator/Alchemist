@@ -8,10 +8,31 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-time"))
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
     implementation(Libs.jgrapht_core)
 
     testImplementation(project(":alchemist-implementationbase"))
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            contributors {
+                contributor {
+                    name.set("Andrea Placuzzi")
+                    email.set("andrea.placuzzi@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Franco Pradelli")
+                    email.set("franco.pradelli@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Giacomo Scaparrotti")
+                    email.set("giacomo.scaparrotti@studio.unibo.it")
+                    url.set("https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569")
+                }
+            }
+        }
+    }
 }

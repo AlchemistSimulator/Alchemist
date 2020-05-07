@@ -18,5 +18,6 @@ open class Filtered<T, P : Position<P>>(
     private val filter: List<SteeringAction<T, P>>.() -> List<SteeringAction<T, P>>
 ) : SteeringStrategy<T, P> by steerStrategy {
 
-    override fun computeNextPosition(actions: List<SteeringAction<T, P>>) = steerStrategy.computeNextPosition(actions.filter())
+    override fun computeNextPosition(actions: List<SteeringAction<T, P>>) =
+        steerStrategy.computeNextPosition(actions.filter())
 }

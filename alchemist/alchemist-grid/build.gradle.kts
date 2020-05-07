@@ -8,6 +8,7 @@
 
 dependencies {
     api(Libs.ignite_core)
+    implementation(rootProject)
     implementation(project(":alchemist-interfaces"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-implementationbase"))
@@ -18,5 +19,17 @@ dependencies {
     implementation(Libs.commons_io)
 
     testImplementation(project(":alchemist-incarnation-sapere"))
-    testImplementation(project(":alchemist-time"))
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Matteo Magnani")
+                    email.set("matteo.magnani18@studio.unibo.it")
+                }
+            }
+        }
+    }
 }

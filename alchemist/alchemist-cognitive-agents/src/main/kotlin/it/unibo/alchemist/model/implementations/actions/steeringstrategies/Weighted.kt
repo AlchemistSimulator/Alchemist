@@ -1,9 +1,13 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
-import it.unibo.alchemist.model.implementations.utils.makePosition
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.origin
-import it.unibo.alchemist.model.implementations.utils.times
-import it.unibo.alchemist.model.interfaces.*
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GroupSteeringAction
+import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
+import it.unibo.alchemist.model.interfaces.SteeringStrategy
 
 /**
  * Steering logic where each steering action is associated to a weight
@@ -17,26 +21,36 @@ import it.unibo.alchemist.model.interfaces.*
  *          lambda to associate each steering action a numerical value representing
  *          its relevance in the position computation.
  */
-open class Weighted<T, P : Position<P>>(
-    private val env: Environment<T, P>,
+open class Weighted<T>(
+    private val env: Environment<T, Euclidean2DPosition>,
     private val pedestrian: Pedestrian<T>,
-    private val weight: SteeringAction<T, P>.() -> Double
-) : SteeringStrategy<T, P> {
+    private val weight: SteeringAction<T, Euclidean2DPosition>.() -> Double
+) : SteeringStrategy<T, Euclidean2DPosition> {
 
-    override fun computeNextPosition(actions: List<SteeringAction<T, P>>): P =
-        actions.partition { it is GroupSteering<T, P> }.let { (groupActions, steerActions) ->
+    override fun computeNextPosition(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
+        actions.partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, steerActions) ->
             groupActions.calculatePosition() + steerActions.calculatePosition()
         }
 
-    override fun computeTarget(actions: List<SteeringAction<T, P>>): P = with(env.getPosition(pedestrian)) {
-        actions.map { it.target() }.minBy { it.getDistanceTo(this) } ?: this
-    }
+    /**
+     * The overall target is computed as follows: only [SteeringActionWithTarget] are considered,
+     * and we pick the action whose target is closest to the current position of the pedestrian,
+     * which will be considered the overall target.
+     */
+    override fun computeTarget(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
+        with(env.getPosition(pedestrian) ?: env.origin()) {
+            actions
+                .filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
+                .map { it.target() }
+                .minBy { it.distanceTo(this) }
+                ?: this
+        }
 
-    private fun List<SteeringAction<T, P>>.calculatePosition(): P =
+    private fun List<SteeringAction<T, Euclidean2DPosition>>.calculatePosition(): Euclidean2DPosition =
         if (size > 1) {
             map { it.nextPosition() to it.weight() }.run {
                 val totalWeight = map { it.second }.sum()
-                map { env.makePosition(it.first * (it.second / totalWeight)) }.reduce { acc, pos -> acc + pos }
+                map { it.first * (it.second / totalWeight) }.reduce { acc, pos -> acc + pos }
             }
         } else firstOrNull()?.nextPosition() ?: env.origin()
 }

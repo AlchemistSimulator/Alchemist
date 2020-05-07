@@ -23,19 +23,21 @@ import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
+import scala.math.Ordering.Double.TotalOrdering
 
-import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
+import scala.jdk.CollectionConverters._
 
 @SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
-class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
+class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
   
   test("Basic test"){
     testNoVar("/plain_vanilla.yml")
   }
   test("Gradient"){
     val env = testNoVar[Any]("/test_gradient.yml")
-    env.getNodes.asScala.foreach(node => {
+    env.getNodes.iterator().asScala.foreach(node => {
       val contents = node.getContents.asScala
       contents(new SimpleMolecule("it.unibo.alchemist.scafi.test.ScafiGradientProgram")).asInstanceOf[Double] should (be >= 0.0 and be <= 100.0)
     })
@@ -43,7 +45,7 @@ class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
 
   test("Environment"){
     val env = testNoVar[Any]("/test_env.yml")
-    env.getNodes.asScala.foreach(node => {
+    env.getNodes.iterator().asScala.foreach(node => {
       val contents = node.getContents.asScala
       def inputMolecule = contents(new SimpleMolecule("number")).asInstanceOf[Int]
       def outputMolecule = contents(new SimpleMolecule("number2")).asInstanceOf[Int]
@@ -62,7 +64,7 @@ class TestInSimulator[P <: Position[P]] extends FunSuite with Matchers {
   }
 
   private def testLoading[T](resource: String, vars: Map[String, java.lang.Double], maxSteps: Long = 1000): Environment[T, P] = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     val res: InputStream = classOf[TestInSimulator[P]].getResourceAsStream(resource)
     res shouldNot be(null)
     val env: Environment[T, P] = new YamlLoader(res).getWith(vars.asJava)

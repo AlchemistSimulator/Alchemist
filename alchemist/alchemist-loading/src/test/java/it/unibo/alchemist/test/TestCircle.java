@@ -39,7 +39,7 @@ public class TestCircle {
         assertFalse(check(-1, -1));
         final double border = Math.sin(Math.PI / 4);
         final double inBorder = Math.nextDown(border);
-        final double outBorder = border + 0.00001;
+        final double outBorder = border + 1e-5;
         assertTrue(check(inBorder, inBorder));
         assertTrue(check(-inBorder, inBorder));
         assertTrue(check(inBorder, -inBorder));

@@ -13,14 +13,18 @@ import java.io.InputStream
 import java.net.URL
 import java.util.regex.Pattern
 
+/**
+ * An utility class providing support for loading arbitrary subclasses available in the classpath.
+ */
 object ClassPathScanner {
 
-    private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph().apply {
-        if (inPackage != null) {
-            whitelistPackages(inPackage)
-            blacklistPackages("org.gradle")
+    private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph()
+        .apply {
+            if (inPackage != null) {
+                whitelistPackages(inPackage)
+                blacklistPackages("org.gradle")
+            }
         }
-    }
 
     /**
      * This function loads all subtypes of the provided Java class that can be discovered on the current classpath.
@@ -31,16 +35,19 @@ object ClassPathScanner {
     @JvmStatic
     @JvmOverloads
     @Suppress("UNCHECKED_CAST")
-    fun <T> subTypesOf(superClass: Class<T>, inPackage: String? = null): List<Class<out T>> = classGraphForPackage(inPackage)
-        .enableClassInfo().scan().let { scanResult ->
+    fun <T> subTypesOf(superClass: Class<T>, inPackage: String? = null): List<Class<out T>> =
+        classGraphForPackage(inPackage).enableClassInfo().scan().let { scanResult ->
             if (superClass.isInterface) {
                 scanResult.getClassesImplementing(superClass.name)
             } else {
                 scanResult.getSubclasses(superClass.name)
-            }.filter { it -> !it.isAbstract }
+            }.filter { !it.isAbstract }
             .loadClasses()
-            .map { it -> it as Class<out T> }
+            .map { it as Class<out T> }
         }
+
+    inline fun <reified T> subTypesOf(inPackage: String? = null): List<Class<out T>> =
+        subTypesOf(T::class.java, inPackage)
 
     /**
      * This function returns a list of all the resources in a certain (optional) package matching a regular expression.

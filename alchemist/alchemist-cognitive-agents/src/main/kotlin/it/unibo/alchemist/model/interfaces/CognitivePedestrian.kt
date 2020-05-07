@@ -1,24 +1,8 @@
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.CognitiveCharacteristic
+import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.CognitiveAgent
 
 /**
  * An heterogeneous pedestrian with cognitive capabilities too.
  */
-interface CognitivePedestrian<T> : HeterogeneousPedestrian<T> {
-
-    /**
-     * Value between 0 and 1 representing the current belief of the situation dangerousness for this pedestrian.
-     */
-    fun dangerBelief(): Double
-
-    /**
-     * Value between 0 and 1 representing the level of fear of this pedestrian.
-     */
-    fun fear(): Double
-
-    /**
-     * The list of all the cognitive characteristics of this pedestrian.
-     */
-    fun cognitiveCharacteristics(): List<CognitiveCharacteristic>
-}
+interface CognitivePedestrian<T> : HeterogeneousPedestrian<T>, CognitiveAgent

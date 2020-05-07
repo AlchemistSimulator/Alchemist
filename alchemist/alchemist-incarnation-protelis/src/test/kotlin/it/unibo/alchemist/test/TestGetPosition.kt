@@ -20,12 +20,12 @@ import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTim
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
+import java.util.Optional
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.protelis.lang.datatype.DatatypeFactory
-import java.util.Optional
 
 class TestGetPosition {
     private val env: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment()
@@ -46,8 +46,8 @@ class TestGetPosition {
     fun testGetPosition() {
         val sim: Simulation<Any, Euclidean2DPosition> = Engine(env, 100)
         sim.addOutputMonitor(object : OutputMonitor<Any, Euclidean2DPosition> {
-            override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) { }
-            override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) { }
+            override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) = Unit
+            override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) = Unit
             override fun stepDone(env: Environment<Any, Euclidean2DPosition>?, r: Reaction<Any>?, time: Time?, step: Long) {
                 if (step > 0) {
                     Assertions.assertEquals(

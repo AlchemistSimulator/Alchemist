@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.boundary.gui.effects;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  */
 public final class EffectFactory {
@@ -26,13 +28,14 @@ public final class EffectFactory {
      * @return a new effect
      */
     public static Effect buildEffect(final Class<? extends Effect> effect) {
-        if (DrawShape.class.isAssignableFrom(effect)) {
-            return buildDefaultEffect();
+        try {
+            return effect.getConstructor().newInstance();
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalArgumentException("The effect must have a parameterless constructor " + effect.getSimpleName(), e);
         }
-        return buildDefaultEffect();
     }
 
     private EffectFactory() {
-    };
+    }
 
 }

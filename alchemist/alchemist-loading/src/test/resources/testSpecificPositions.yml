@@ -1,0 +1,13 @@
+incarnation: sapere
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+
+displacements:
+  - in:
+      type: SpecificPositions
+      parameters: [[1,2],[3,4]]
+    nodes:
+      type: CircleNode
+      parameters: [1]

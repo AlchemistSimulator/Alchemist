@@ -10,12 +10,17 @@ package it.unibo.alchemist.loader.displacements
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import java.util.stream.Stream
 import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.Pair
-import java.util.stream.Stream
 
+/**
+ * A generic [Displacement] that displaces a certain [nodeCount] of nodes in the proximity of a number of [sources].
+ * Higher [variance] implies higher dispersion.
+ * Subclasses must identify the [sources]
+ */
 abstract class AbstractCloseTo<T, P : Position<P>> constructor(
     protected val randomGenerator: RandomGenerator,
     protected val environment: Environment<T, P>,
@@ -28,7 +33,7 @@ abstract class AbstractCloseTo<T, P : Position<P>> constructor(
         require(variance >= 0) { "The node count must be positive or zero: $nodeCount" }
     }
 
-    var displacement: Collection<P>? = null
+    private var displacement: Collection<P>? = null
 
     protected open fun covarianceMatrix(dimensions: Int): Array<out DoubleArray> = Array(dimensions) { index ->
         DoubleArray(dimensions) { if (it == index) variance else 0.0 }

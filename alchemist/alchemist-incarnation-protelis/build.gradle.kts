@@ -9,21 +9,32 @@
 dependencies {
     api(project(":alchemist-interfaces"))
     api(project(":alchemist-implementationbase"))
-    api(Libs.protelis_interpreter) {
-        /*
-         * TODO: once Protelis fixes its dependency issues, remove this one.
-         * Check with:
-         * ./gradlew dependencyInsight --dependency org.eclipse.emf:org.eclipse.emf.ecore --configuration runtimeClasspath
-         */
-        implementation(Libs.org_eclipse_emf_ecore) {
-            isForce = true
-        }
-    }
+    api(Libs.protelis_interpreter)
     api(Libs.protelis_lang)
-    implementation(project(":alchemist-time"))
     implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(Libs.commons_io)
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Danilo Pianini")
+                    email.set("danilo.pianini@unibo.it")
+                    url.set("http://www.danilopianini.org")
+                }
+            }
+            contributors {
+                contributor {
+                    name.set("Jacob Beal")
+                    email.set("jakebeal@bbn.com")
+                    url.set("http://web.mit.edu/jakebeal/www/")
+                }
+            }
+        }
+    }
 }

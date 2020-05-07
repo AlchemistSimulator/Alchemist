@@ -1,15 +1,18 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.*
+import it.unibo.alchemist.model.implementations.utils.direction
+import it.unibo.alchemist.model.implementations.utils.origin
+import it.unibo.alchemist.model.implementations.utils.position
+import it.unibo.alchemist.model.implementations.utils.shuffled
+import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
-import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.cos
 import kotlin.math.sin
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Give the impression of a random walk through the environment targeting an ever changing pseudo-randomly point
@@ -27,13 +30,13 @@ import kotlin.math.sin
  *          the radius of the circle.
  */
 open class Wander<T>(
-    private val env: EuclideanPhysics2DEnvironment<T>,
+    private val env: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
     private val pedestrian: Pedestrian<T>,
     private val rg: RandomGenerator,
     private val offset: Double,
     private val radius: Double
-) : SteeringActionImpl<T, Euclidean2DPosition>(
+) : SteeringActionWithTargetImpl<T, Euclidean2DPosition>(
     env,
     reaction,
     pedestrian,
@@ -46,10 +49,10 @@ open class Wander<T>(
         }
     }
 
-    override fun getDestination(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
-        super.getDestination(
+    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
+        super.interpolatePositions(
             env.origin(),
-            heading().asAngle()
+            heading().asAngle
                 .let { Euclidean2DPosition(offset * cos(it), offset * sin(it)) }
                 .let { it.surrounding(env, radius).shuffled(rg).first() },
             maxWalk

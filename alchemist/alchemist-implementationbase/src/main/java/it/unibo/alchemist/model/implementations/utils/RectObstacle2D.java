@@ -7,29 +7,29 @@
  */
 package it.unibo.alchemist.model.implementations.utils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.interfaces.Obstacle2D;
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
+import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.MathArrays;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.geom.Rectangle2D;
+
 import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.min;
 import static org.danilopianini.lang.MathUtils.closestTo;
 import static org.danilopianini.lang.MathUtils.fuzzyEquals;
 import static org.danilopianini.lang.MathUtils.fuzzyGreaterEquals;
 
-import java.awt.geom.Rectangle2D;
-
-import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.util.MathArrays;
-import org.apache.commons.math3.util.Pair;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Obstacle2D;
-
 /**
  * This class implements a rectangular obstacle, whose sides are parallel to the
  * cartesian axis.
- * 
- * 
+ *
+ * @param <V>
  */
 @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
-public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle2D {
+public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Double implements Obstacle2D<V> {
 
     /**
      * Relative precision value under which two double values are considered to
@@ -41,7 +41,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
 
     /*
      * This code was built upon Alexander Hristov's, see:
-     * 
+     *
      * http://www.ahristov.com/tutorial/geometry-games/intersection-segments.html
      */
     private static double[] intersection(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4) {
@@ -74,18 +74,21 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         return !fuzzyGreaterEquals(intersection, min) || !fuzzyGreaterEquals(max, intersection);
     }
 
+    @NotNull
     @Override
-    public Pair<java.lang.Double, java.lang.Double> next(// NOPMD: fully qualified name is necessary
-            final double startx, final double starty,
-            final double endx, final double endy) {
+    public V next(@NotNull final V start, @NotNull final V end) {
+        final double startx = start.getX();
+        final double starty = start.getY();
+        final double endx = end.getX();
+        final double endy = end.getY();
         final double[] onBorders = enforceBorders(startx, starty, endx, endy);
         if (onBorders != null) {
             /*
              * The starting point was on the border.
              */
-            return asPair(onBorders);
+            return start.newFrom(onBorders[0], onBorders[1]);
         }
-        final double[] intersection = nearestIntersection(startx, starty, endx, endy);
+        final double[] intersection = nearestIntersection(start, end).getCoordinates();
         /*
          * Ensure the intersection is outside the boundaries. Force it to be.
          */
@@ -95,16 +98,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         }
         final double[] restricted = enforceBorders(intersection[0], intersection[1], intersection[0], intersection[1]);
         if (restricted == null) {
-            return asPair(intersection);
+            return start.newFrom(intersection[0], intersection[1]);
         }
-        return asPair(restricted);
-    }
-
-    private static Pair<java.lang.Double, java.lang.Double> asPair(final double[] coords) { // NOPMD: fully qualified name is necessary
-        if (coords.length != 2) {
-            throw new IllegalStateException("Array must have exactly two parameters");
-        }
-        return new Pair<>(coords[0], coords[1]);
+        return start.newFrom(restricted[0], restricted[1]);
     }
 
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
@@ -114,7 +110,15 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
          * accordingly
          */
         if (fuzzyGreaterEquals(starty, minY) && fuzzyGreaterEquals(maxY, starty) && fuzzyGreaterEquals(startx, minX) && fuzzyGreaterEquals(maxX, startx)) {
-            final double[] res = new double[] { endx, endy };
+            final double[] res = { endx, endy };
+            final boolean startIsVertex = (fuzzyEquals(startx, minX) || fuzzyEquals(startx, maxX))
+                    && (fuzzyEquals(starty, minY) || fuzzyEquals(starty, maxY));
+            /*
+             * Allows axis-aligned movements from obstacle's vertices to points on its border.
+             */
+            if (startIsVertex && (fuzzyEquals(startx, endx) || fuzzyEquals(starty, endy))) {
+                return res;
+            }
             if (fuzzyEquals(startx, minX) && endx >= minX) {
                 /*
                  * Left border
@@ -144,7 +148,11 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
 
     @Override
     @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
-    public double[] nearestIntersection(final double startx, final double starty, final double endx, final double endy) {
+    public V nearestIntersection(final V start, final V end) {
+        final double startx = start.getX();
+        final double starty = start.getY();
+        final double endx = end.getX();
+        final double endy = end.getY();
         final double nearx = closestTo(startx, maxX, minX);
         final double neary = closestTo(starty, maxY, minY);
         final double farx = nearx == maxX ? minX : maxX;
@@ -154,9 +162,9 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
         final double d1 = MathArrays.distance(intersectionSide1, new double[] { startx, starty });
         final double d2 = MathArrays.distance(intersectionSide2, new double[] { startx, starty });
         if (d1 < d2) {
-            return intersectionSide1;
+            return start.newFrom(intersectionSide1[0], intersectionSide1[1]);
         }
-        return intersectionSide2;
+        return start.newFrom(intersectionSide2[0], intersectionSide2[1]);
     }
 
     /**
@@ -172,7 +180,7 @@ public final class RectObstacle2D extends Rectangle2D.Double implements Obstacle
      *            the rectangle height. Can be negative.
      */
     public RectObstacle2D(final double x, final double y, final double w, final double h) {
-        super(x, y, w, h);
+        super(min(x, x + w), min(y, y + h), Math.abs(w), Math.abs(h));
         minX = min(x, x + w);
         minY = min(y, y + h);
         maxX = max(x, x + w);

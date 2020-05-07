@@ -1,0 +1,42 @@
+incarnation: protelis
+
+variables:
+  target: &target
+    formula: "\"target\""
+
+environment:
+  type: Continuous2DEnvironment
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: *target
+    parameters: [-100.0, -100.0, 2.0, 10.0]
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: PrioritySteering
+    actions:
+      - type: FollowFlowField
+        parameters: [*target]
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [100, 0, 0, 100]
+    nodes:
+      type: HeterogeneousPedestrian2D
+      parameters: ["adult", "male"]
+    programs:
+      - *behavior

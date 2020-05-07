@@ -14,7 +14,6 @@ import it.unibo.alchemist.core.interfaces.DependencyGraph;
 import it.unibo.alchemist.core.interfaces.Scheduler;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -64,7 +63,6 @@ import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
 public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
     private static final Logger L = LoggerFactory.getLogger(Engine.class);
-    private static final double NANOS_TO_SEC = 1000000000.0;
     private final Lock statusLock = new ReentrantLock();
     private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
             .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
@@ -79,7 +77,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private final long finalStep;
     private volatile Status status = Status.INIT;
     private Optional<Throwable> error = Optional.empty();
-    private Time currentTime = DoubleTime.ZERO_TIME;
+    private Time currentTime = Time.ZERO;
     private long currentStep;
     private Thread myThread;
 
@@ -96,7 +94,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      *            the maximum number of steps to do
      */
     public Engine(final Environment<T, P> e, final long maxSteps) {
-        this(e, maxSteps, new DoubleTime(Double.POSITIVE_INFINITY));
+        this(e, maxSteps, Time.INFINITY);
     }
 
     /**
@@ -380,7 +378,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             finalizeConstructor();
             status = Status.READY;
             final long currentThread = Thread.currentThread().getId();
-            final long startExecutionTime = System.nanoTime();
             L.trace("Thread {} started running.", currentThread);
             monitorLock.read();
             for (final OutputMonitor<T, P> m : monitors) {
@@ -407,7 +404,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 L.error("The simulation engine crashed.", e);
             } finally {
                 status = TERMINATED;
-                L.trace("Thread {} execution time: {}", currentThread, (System.nanoTime() - startExecutionTime) / NANOS_TO_SEC);
                 commands.clear();
                 monitorLock.read();
                 for (final OutputMonitor<T, P> m : monitors) {

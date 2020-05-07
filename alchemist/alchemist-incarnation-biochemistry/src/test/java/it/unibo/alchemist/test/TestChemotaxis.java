@@ -7,14 +7,6 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
@@ -29,6 +21,13 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 
@@ -40,7 +39,7 @@ public class TestChemotaxis {
     private static final double CONCENTRATION3 = 1;
     private static final String CHEMIOTACTIC_POLARIZATION_REACTION = "[] --> [ChemotacticPolarization(A, up)]";
     private static final int EXPECTED_NODES = 5;
-    private static final double PRECISION = 0.000000000000001;
+    private static final double PRECISION = 1e-15;
     private static final String CELL_MOVE_REACTION = "[] --> [CellMove(false, 1)]";
     private Environment<Double, Euclidean2DPosition> env;
     private CellNode<Euclidean2DPosition> cellNode1;

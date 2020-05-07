@@ -14,7 +14,6 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -37,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @param <P> position type
  */
 @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
+@SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
 public class TestNodeCloning<P extends Position<P>> {
 
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");
@@ -60,7 +60,7 @@ public class TestNodeCloning<P extends Position<P>> {
     }
 
     private void makeNode(final double x, final double y, final boolean enabled, final boolean source) {
-        final Node<Object> node1 = env.getNodeByID(0).cloneNode(DoubleTime.ZERO_TIME);
+        final Node<Object> node1 = env.getNodeByID(0).cloneNode(Time.ZERO);
         node1.setConcentration(SOURCEMOL, source);
         node1.setConcentration(ENABLEDMOL, enabled);
         env.addNode(node1, env.makePosition(x, y));
@@ -88,7 +88,7 @@ public class TestNodeCloning<P extends Position<P>> {
         // 2(S) -- 1 -- 0 -- 3
         final Function<Integer, Node<Object>> nid = i -> env.getNodeByID(i);
         final BiFunction<Integer, Integer, Double> dist = (a, b) -> env.getDistanceBetweenNodes(nid.apply(a), nid.apply(b));
-        sim.addOutputMonitor(new OutputMonitor<Object, P>() {
+        sim.addOutputMonitor(new OutputMonitor<>() {
             private static final long serialVersionUID = 1L;
             @Override
             public void stepDone(final Environment<Object, P> env, final Reaction<Object> r, final Time time, final long step) {

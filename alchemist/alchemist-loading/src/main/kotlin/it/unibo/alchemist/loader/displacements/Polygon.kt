@@ -11,13 +11,13 @@ package it.unibo.alchemist.loader.displacements
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Position2D
-import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Area
 import java.awt.geom.Path2D
 import java.awt.geom.Rectangle2D
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Alias for using pairs as bidimensional points
+ * Alias for using pairs as bidimensional points.
  */
 typealias Point2D = Pair<Number, Number>
 
@@ -26,7 +26,8 @@ typealias Point2D = Pair<Number, Number>
  *
  * @param nodes the count of nodes that need to get displaced inside the polygon
  *
- * @param pointsInput the points of the polygon. The class does not check for "malformed" polygons (e.g. with intersections).
+ * @param pointsInput the points of the polygon.
+ * The class does not check for "malformed" polygons (e.g. with intersections).
  * If the provided points do not represent a valid polygon in bidimensional space, the behaviour of this class is
  * undefined. There polygon is closed automatically (there is no need to pass the first point also as last element).
  *
@@ -55,7 +56,7 @@ open class Polygon<P : Position2D<out P>>(
     }
 
     /**
-     * The polygon in which positions are generated
+     * The polygon in which positions are generated.
      */
     protected val polygon: Area = Area(Path2D.Double().apply {
         moveTo(points.first().toPosition)
@@ -66,11 +67,11 @@ open class Polygon<P : Position2D<out P>>(
     })
 
     /**
-     * The rectangular bounds of the polygon
+     * The rectangular bounds of the polygon.
      */
     protected val bounds: Rectangle2D
     /**
-     * True if this environment works with [GeoPosition]
+     * True if this environment works with [GeoPosition].
      */
     protected val isOnMaps by lazy { environment.makePosition(0, 0) is GeoPosition }
 
@@ -90,7 +91,7 @@ open class Polygon<P : Position2D<out P>>(
      * the node number
      * @return the position of the node
      */
-    override tailrec fun indexToPosition(i: Int): P = bounds
+    final override tailrec fun indexToPosition(i: Int): P = bounds
         .run {
             val (x, y) = Pair(randomDouble(minX, maxX), randomDouble(minY, maxY))
             if (isOnMaps) {
@@ -102,23 +103,23 @@ open class Polygon<P : Position2D<out P>>(
         .takeIf { polygon.contains(it) } ?: indexToPosition(i)
 
     /**
-     * Converts a Point2D to a [P]
+     * Converts a Point2D to a [P].
      */
     protected val Point2D.toPosition
         get() = environment.makePosition(first, second)
 
     /**
-     * Moves the path to the specified [Position2D]
+     * Moves the path to the specified [Position2D].
      */
     protected fun Path2D.Double.moveTo(destination: Position2D<*>) = moveTo(destination.x, destination.y)
 
     /**
-     * Adds a line to the path, connecting it to the specified [Position2D]
+     * Adds a line to the path, connecting it to the specified [Position2D].
      */
     protected fun Path2D.Double.lineTo(destination: Position2D<*>) = lineTo(destination.x, destination.y)
 
     /**
-     * Checks if a [Position2D] is inside the Polygon
+     * Checks if a [Position2D] is inside the Polygon.
      */
     protected fun Area.contains(target: Position2D<*>) = contains(target.x, target.y)
 }

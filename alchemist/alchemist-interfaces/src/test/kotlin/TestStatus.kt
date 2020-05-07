@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.test
 
-import io.kotlintest.Matcher
-import io.kotlintest.Result
-import io.kotlintest.data.forall
-import io.kotlintest.should
-import io.kotlintest.shouldNot
-import io.kotlintest.specs.StringSpec
-import io.kotlintest.tables.row
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.data.blocking.forAll
+import io.kotest.data.row
+import io.kotest.matchers.MatcherResult
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.core.interfaces.Status.INIT
 import it.unibo.alchemist.core.interfaces.Status.PAUSED
@@ -22,11 +22,12 @@ import it.unibo.alchemist.core.interfaces.Status.RUNNING
 import it.unibo.alchemist.core.interfaces.Status.TERMINATED
 
 /**
+ * Tests that the state machine is coherent.
  */
 class TestStatus : StringSpec({
     "subsequent statuses should be reachable, previous ones should not" {
         val allStatuses = Status.values().toSet()
-        forall(
+        forAll(
             row(INIT, allStatuses),
             row(READY, allStatuses.minusElement(INIT)),
             row(PAUSED, setOf(RUNNING, TERMINATED)),
@@ -43,7 +44,7 @@ class TestStatus : StringSpec({
 }) {
     companion object {
         fun beReachableFrom(initial: Status) = object : Matcher<Status> {
-            override fun test(value: Status) = Result(value.isReachableFrom(initial),
+            override fun test(value: Status) = MatcherResult(value.isReachableFrom(initial),
                 "$value should be reachable from $initial",
                 "$value should not be reachable from $initial")
         }

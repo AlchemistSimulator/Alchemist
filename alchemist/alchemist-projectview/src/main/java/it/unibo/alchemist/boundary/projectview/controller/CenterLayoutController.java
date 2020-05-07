@@ -7,6 +7,49 @@
  */
 package it.unibo.alchemist.boundary.projectview.controller;
 
+import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.projectview.ProjectGUI;
+import it.unibo.alchemist.boundary.projectview.model.Batch;
+import it.unibo.alchemist.boundary.projectview.model.Output;
+import it.unibo.alchemist.boundary.projectview.model.Project;
+import it.unibo.alchemist.boundary.projectview.utils.DoubleSpinnerValueFactory;
+import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
+import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
+import it.unibo.alchemist.boundary.projectview.utils.URLManager;
+import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.loader.YamlLoader;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import org.apache.commons.io.FilenameUtils;
+import org.controlsfx.control.ToggleSwitch;
+import org.kaikikm.threadresloader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -23,50 +66,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
-import org.apache.commons.io.FilenameUtils;
-import org.controlsfx.control.ToggleSwitch;
-import org.kaikikm.threadresloader.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
-import it.unibo.alchemist.boundary.projectview.ProjectGUI;
-import it.unibo.alchemist.boundary.projectview.model.Batch;
-import it.unibo.alchemist.boundary.projectview.model.Output;
-import it.unibo.alchemist.boundary.projectview.model.Project;
-import it.unibo.alchemist.boundary.projectview.utils.URLManager;
-import it.unibo.alchemist.boundary.projectview.utils.DoubleSpinnerValueFactory;
-import it.unibo.alchemist.boundary.projectview.utils.ProjectIOUtils;
-import it.unibo.alchemist.boundary.projectview.utils.SVGImageUtils;
-import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 /**
  * Controller of CenterLayout view.
@@ -85,10 +84,10 @@ public class CenterLayoutController {
     private static final String YAML_EXT = RESOURCES.getString("yaml_ext");
     private static final String FILE_NOT_FOUND = RESOURCES.getString("file_not_found");
     private static final String FILE_NOT_FOUND_CONTENT = RESOURCES.getString("file_not_found_content");
-    private static final double DELETE_WIDTH = 1.04167;
-    private static final double DELETE_HEIGHT = 1.85185;
+    private static final double DELETE_WIDTH = 1.041_67;
+    private static final double DELETE_HEIGHT = 1.851_85;
     private static final double BATCH_WIDTH = 1.667;
-    private static final double BATCH_HEIGHT = 2.96296;
+    private static final double BATCH_HEIGHT = 2.962_96;
 
     @FXML
     private Button addClass;

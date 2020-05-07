@@ -1,0 +1,58 @@
+incarnation: protelis
+
+variables:
+  danger: &danger
+    formula: "\"danger\""
+
+environment:
+  type: ImageEnvironment
+  parameters: [images/obstacles.png]
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: *danger
+    parameters: [600.0, 240.0, 10.0, 100.0]
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [0.25]
+    type: BlendedSteering
+    actions:
+      - type: FollowFlowField
+        parameters: [*danger]
+      - type: ObstacleAvoidance
+        parameters: [50]
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [20, -100, 240, 30]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [30, 0, 600, 50]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [40, 100, -60, 40]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior

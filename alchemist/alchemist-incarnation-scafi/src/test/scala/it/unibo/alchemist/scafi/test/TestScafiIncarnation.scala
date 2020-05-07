@@ -17,21 +17,17 @@ package it.unibo.alchemist.scafi.test
  * LICENSE in the Alchemist distribution's top directory.
  ******************************************************************************/
 import it.unibo.alchemist.model.ScafiIncarnation
-import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.Event
-import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.MersenneTwister
-
-import org.junit.jupiter.api.extension.ExtendWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 // TODO: run with JUnit 5
 // @ExtendWith(classOf[JUnitRunner])
-class TestScafiIncarnation extends FunSuite with Matchers {
-  private val INC = new ScafiIncarnation[Euclidean2DPosition]
+class TestScafiIncarnation extends AnyFunSuite with Matchers {
+  private val INC = new ScafiIncarnation[Any, Euclidean2DPosition]
 
   /**
     * Tests the ability of {@link ScafiIncarnation} of properly building
@@ -52,18 +48,6 @@ class TestScafiIncarnation extends FunSuite with Matchers {
     assertTrue(generic.isInstanceOf[Event[_]])
   }
 
-  private def testIsScafiProgram(program: Reaction[Any]) {
-    assertNotNull(program)
-    assertTrue(program.isInstanceOf[Event[_]])
-    assertTrue(program.getConditions.isEmpty)
-    assertFalse(program.getActions.isEmpty)
-    assertEquals(1, program.getActions.size)
-
-    val prog = program.getActions.get(0)
-    assertNotNull(prog)
-    assertTrue(prog.isInstanceOf[RunScafiProgram[_]])
-  }
-
   /**
     * Verifies that the incarnation can properly init new concentrations.
     */
@@ -75,6 +59,5 @@ class TestScafiIncarnation extends FunSuite with Matchers {
 
   private def assertNotNull(expr: AnyRef) = expr shouldNot be(null)
   private def assertTrue(pred: Boolean) = pred shouldBe(true)
-  private def assertFalse(pred: Boolean) = assertTrue(!pred)
   private def assertEquals[T](expected: T, actual: T) = expected shouldEqual(actual)
 }

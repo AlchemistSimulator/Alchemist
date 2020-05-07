@@ -16,6 +16,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.SupportedIncarnations;
 import org.danilopianini.io.FileUtilities;
 import org.danilopianini.lang.CollectionWithCurrentElement;
@@ -37,13 +38,12 @@ import java.util.List;
  *
  */
 public final class EffectSerializationFactory {
+    private static final RuntimeTypeAdapterFactory<Effect> RTA = RuntimeTypeAdapterFactory.of(Effect.class);
 
-    /*
-     * TODO register newly-added-effect subtypes to this factory to
-     * (de)serialize them properly
-     */
-    private static final RuntimeTypeAdapterFactory<Effect> RTA = RuntimeTypeAdapterFactory.of(Effect.class)
-            .registerSubtype(DrawShape.class, DrawShape.class.toString());
+    static {
+        ClassPathScanner.subTypesOf(Effect.class).forEach(e -> RTA.registerSubtype(e, e.toString()));
+    }
+
     private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(RTA)
             .registerTypeHierarchyAdapter(CollectionWithCurrentElement.class,
                     new TypeAdapter<ImmutableCollectionWithCurrentElement<?>>() {
@@ -87,7 +87,7 @@ public final class EffectSerializationFactory {
             }.getType());
             fr.close();
             return effects;
-        } catch (Exception e) { // NOPMD
+        } catch (final Exception e) { // NOPMD
             fr.close();
             final Object res = FileUtilities.fileToObject(effectFile);
             if (res instanceof Effect) {

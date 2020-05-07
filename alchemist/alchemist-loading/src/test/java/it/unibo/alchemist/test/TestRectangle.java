@@ -28,7 +28,7 @@ public class TestRectangle {
     public void test() {
         final Shape<GeoPosition> s = new Rectangle<>(12, 44, 1, 1);
         // CHECKSTYLE: MagicNumber OFF
-        assertTrue(s.contains(new LatLongPosition(44.132300, 12.233000)));
+        assertTrue(s.contains(new LatLongPosition(44.132300, 12.233000))); // NOPMD
         // CHECKSTYLE: MagicNumber ON
     }
 

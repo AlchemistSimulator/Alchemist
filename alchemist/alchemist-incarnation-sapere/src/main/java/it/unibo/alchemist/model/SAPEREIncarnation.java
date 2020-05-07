@@ -133,6 +133,9 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
 
     @Override
     public ILsaMolecule createMolecule(final String s) {
+        if (s == null || s.isEmpty()) {
+            return null;
+        }
         final String param = s.trim().startsWith("{") && s.endsWith("}") ? s.substring(1, s.length() - 1) : s;
         return new LsaMolecule(param);
     }

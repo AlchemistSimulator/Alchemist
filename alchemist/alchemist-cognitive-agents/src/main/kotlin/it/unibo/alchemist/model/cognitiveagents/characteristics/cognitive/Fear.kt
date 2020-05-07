@@ -1,12 +1,21 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 
-import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.cognitiveagents.characteristics.utils.advancedLogistic
 
+/**
+ * The fear emotion.
+ *
+ * @param desireWalkRandomly
+ *          the current desire of not evacuating of the agent owning this.
+ * @param desireEvacuate
+ *          the current desire of evacuating of the agent owning this.
+ * @param influencialPeople
+ *          the list of cognitive agents with an influence on the agent owning this.
+ */
 class Fear(
     private val desireWalkRandomly: () -> Double,
     private val desireEvacuate: () -> Double,
-    private val influencialPeople: () -> List<CognitivePedestrian<*>>
+    private val influencialPeople: () -> List<CognitiveAgent>
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() = maxOf(
@@ -19,7 +28,7 @@ class Fear(
         )
     )
 
-    private fun List<CognitivePedestrian<*>>.aggregateFears() =
+    private fun List<CognitiveAgent>.aggregateFears() =
         if (size > 0) {
             this.sumByDouble { it.fear() } / this.size
         } else 0.0

@@ -9,16 +9,17 @@
 package it.unibo.alchemist.model.implementations.positions;
 
 import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.geometry.Vector;
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 
  */
 public final class Euclidean2DPosition
         extends AbstractEuclideanPosition<Euclidean2DPosition>
-    implements Position2D<Euclidean2DPosition>, Vector<Euclidean2DPosition> {
+    implements Position2D<Euclidean2DPosition>, Vector2D<Euclidean2DPosition> {
 
-    private static final long serialVersionUID = 1042391992665398942L;
+    private static final long serialVersionUID = 1L;
 
     private Euclidean2DPosition(final boolean copy, final double xp, final double yp) {
         super(copy, xp, yp);
@@ -57,5 +58,17 @@ public final class Euclidean2DPosition
     @Override
     protected Euclidean2DPosition unsafeConstructor(final double[] coordinates) {
         return new Euclidean2DPosition(false, coordinates[0], coordinates[1]);
+    }
+
+    @NotNull
+    @Override
+    public Euclidean2DPosition normal() {
+        return new Euclidean2DPosition(-getY(), getX());
+    }
+
+    @NotNull
+    @Override
+    public Euclidean2DPosition newFrom(final double x, final double y) {
+        return new Euclidean2DPosition(x, y);
     }
 }

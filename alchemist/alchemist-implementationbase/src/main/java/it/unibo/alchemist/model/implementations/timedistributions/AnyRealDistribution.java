@@ -44,7 +44,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      *            the parameters for the distribution
      */
     public AnyRealDistribution(final RandomGenerator rng, final String distribution, final double... parameters) {
-        this(DoubleTime.ZERO_TIME, rng, distribution, parameters);
+        this(Time.ZERO, rng, distribution, parameters);
     }
 
     /**
@@ -68,7 +68,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      *            simulation {@link RandomGenerator}.
      */
     public AnyRealDistribution(final RealDistribution distribution) {
-        this(DoubleTime.ZERO_TIME, distribution);
+        this(Time.ZERO, distribution);
     }
 
     /**

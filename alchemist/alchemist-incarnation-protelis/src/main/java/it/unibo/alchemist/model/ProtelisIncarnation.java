@@ -296,8 +296,14 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
      */
     public static final class DummyContext extends AbstractExecutionContext<DummyContext> {
         private static final Semaphore MUTEX = new Semaphore(1);
-        private static final int SEED = -241837578;
+        private static final int SEED = -241_837_578;
         private static final RandomGenerator RNG = new MersenneTwister(SEED);
+        private static final DeviceUID NO_NODE_ID = new DeviceUID() {
+            @Override
+            public String toString() {
+                return "Wapper over a non-ProtelisNode for an invalid DeviceUID, meant to host local-only computation.";
+            }
+        };
         private final Node<?> node;
         private DummyContext(final Node<?> node) {
             super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
@@ -321,7 +327,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             if (node instanceof ProtelisNode) {
                 return (ProtelisNode) node;
             }
-            throw new IllegalStateException("You tried to compute a Protelis device UID, on a non-Protelis node");
+            return NO_NODE_ID;
         }
         @Override
         protected DummyContext instance() {

@@ -67,7 +67,7 @@ public class TestGPSLoader {
     private static final GPSTimeAlignment ALIGNMENT = new AlignToFirstTrace();
 
     private static final int NUM_MAX_TRACES = 6;
-    private static final int TOTAL_POINTS = 12196;
+    private static final int TOTAL_POINTS = 12_196;
 
     /**
      * 

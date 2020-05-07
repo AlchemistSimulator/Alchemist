@@ -19,7 +19,7 @@ class AdimensionalShape<S : Vector<S>, A : GeometricTransformation<S>>(
     override fun contains(vector: S) = false
 
     /**
-     * Any transformation is ignored
+     * Any transformation is ignored.
      */
     override fun transformed(transformation: A.() -> Unit) = this
 }

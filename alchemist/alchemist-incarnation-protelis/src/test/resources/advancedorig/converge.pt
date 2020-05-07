@@ -4,6 +4,6 @@ import protelis:coord:spreading
 import protelis:state:time
 let leader = S(25, nbrRange);
 let destination = broadcast(leader, self.getCoordinates());
-destination = if (isSignalStable(destination, 10)) { destination } else { self.getCoordinates() };
-env.put("destination", destination);
-self.getCoordinates() == destination
+let actualDestination = if (isSignalStable(destination, 10)) { destination } else { self.getCoordinates() };
+env.put("destination", actualDestination);
+self.getCoordinates() == actualDestination

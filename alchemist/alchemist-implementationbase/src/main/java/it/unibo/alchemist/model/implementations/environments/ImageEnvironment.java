@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -110,23 +112,36 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
         final BufferedImage img = resource == null 
                 ? ImageIO.read(new File(path))
                 : ImageIO.read(resource);
+        findMarkedRegions(obs, img).forEach(obstacle ->
+                addObstacle(mapToEnv(obstacle, zoom, dx, dy, img.getHeight()))
+        );
+    }
+
+    /**
+     * Finds all the regions marked with a given color.
+     *
+     * @param color
+     *              the RGB representation of the marker color.
+     * @param img
+     *              the image.
+     * @return
+     *              A list of {@link RectObstacle2D} representing the marked regions.
+     */
+    protected List<RectObstacle2D> findMarkedRegions(final int color, final BufferedImage img) {
         final int w = img.getWidth();
         final int h = img.getHeight();
         final boolean[][] bmat = new boolean[w][h];
-        int[] sp = searchNext(obs, img, new int[2], bmat);
+        final List<RectObstacle2D> regions = new ArrayList<>();
+        int[] sp = searchNext(color, img, new int[2], bmat);
         while (sp != null) {
-            final int[] ep = searchObstacleEnd(obs, img, sp, bmat);
+            final int[] ep = searchObstacleEnd(color, img, sp, bmat);
             setMatrix(bmat, sp, ep);
-            final double startx = sp[0] * zoom + dx;
-            final double starty = (h - sp[1]) * zoom + dy;
-            final double width = (ep[0] - sp[0]) * zoom;
-            final double height = -(ep[1] - sp[1]) * zoom;
-            addObstacle(new RectObstacle2D(startx, starty, width, height));
+            regions.add(new RectObstacle2D(sp[0], sp[1], ep[0] - sp[0], ep[1] - sp[1]));
             final int[] nsp = new int[2];
             if (ep[0] == w) {
                 if (sp[1] == 0) {
                     /*
-                     * The obstacle is as large as the entire screen
+                     * The region is as large as the entire screen
                      */
                     nsp[1] = ep[1];
                 } else {
@@ -136,8 +151,9 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
                 nsp[0] = ep[0];
                 nsp[1] = sp[1];
             }
-            sp = searchNext(obs, img, nsp, bmat);
+            sp = searchNext(color, img, nsp, bmat);
         }
+        return regions;
     }
 
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
@@ -189,6 +205,14 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
             i++;
         }
         return i == x;
+    }
+
+    private static RectObstacle2D mapToEnv(final RectObstacle2D obs, final double zoom, final double dx, final double dy, final int h) {
+        return new RectObstacle2D(
+                obs.x * zoom + dx,
+                (h - obs.y) * zoom + dy,
+                obs.width * zoom,
+                -obs.height * zoom);
     }
 
 }

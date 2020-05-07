@@ -7,17 +7,16 @@
  */
 package it.unibo.alchemist.grid.simulation;
 
+import com.google.common.base.Charsets;
+import it.unibo.alchemist.grid.config.SimulationConfig;
+import it.unibo.alchemist.grid.exceptions.RemoteSimulationException;
+
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
-import com.google.common.base.Charsets;
-
-import it.unibo.alchemist.grid.config.SimulationConfig;
-import it.unibo.alchemist.grid.exceptions.RemoteSimulationException;
 
 /**
  * {@link RemoteResult} implementation.
@@ -37,7 +36,10 @@ public final class RemoteResultImpl implements RemoteResult {
      * @param simulationErrors Simulation's errors
      * @param config Simulation's specific config
      */
-    public RemoteResultImpl(final String result, final UUID workerNode, final Optional<Throwable> simulationErrors,
+    public RemoteResultImpl(
+            final String result,
+            final UUID workerNode,
+            final Optional<Throwable> simulationErrors,
             final SimulationConfig config) {
         this.result = Objects.requireNonNull(result);
         this.workerNode = Objects.requireNonNull(workerNode);
@@ -46,7 +48,7 @@ public final class RemoteResultImpl implements RemoteResult {
     }
 
     @Override
-    public void saveLocally(final String targetFile) throws RemoteSimulationException, FileNotFoundException {
+    public void saveLocally(final String targetFile) throws FileNotFoundException {
         if (simulationErrors.isPresent()) {
             throw new RemoteSimulationException(this.workerNode, this.config, simulationErrors.get());
         }

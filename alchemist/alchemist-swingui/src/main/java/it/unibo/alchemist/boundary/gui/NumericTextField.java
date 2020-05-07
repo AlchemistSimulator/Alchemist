@@ -7,17 +7,16 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
-import java.util.regex.Pattern;
-
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
+import java.util.regex.Pattern;
 
 /**
  */
-class NumericTextField extends JTextField {
+public final class NumericTextField extends JTextField {
 
     private static final long serialVersionUID = 1556539674522648542L;
 

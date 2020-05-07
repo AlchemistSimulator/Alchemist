@@ -1,0 +1,87 @@
+incarnation: protelis
+
+variables:
+  danger: &danger
+    formula: "\"danger\""
+  exit1: &exit1
+    formula: "\"exit1\""
+  exit2: &exit2
+    formula: "\"exit2\""
+  exit3: &exit3
+    formula: "\"exit3\""
+  exit4: &exit4
+    formula: "\"exit4\""
+
+environment:
+  type: ImageEnvironment
+  parameters: [images/multiple-exits.png, 0.0416]
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 1
+  simulation: 0
+
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: *danger
+    parameters: [10, 10, 20, 8]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit1
+    parameters: [0.0, 10.0, 5, 2]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit2
+    parameters: [10.0, 20.0, 5, 2]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit3
+    parameters: [20.0, 10.0, 5, 2]
+  - type: BidimensionalGaussianLayer
+    molecule: *exit4
+    parameters: [10.0, 0.0, 5, 2]
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: PrioritySteering
+    conditions:
+      - type: WantToEvacuate
+    actions:
+      - type: AvoidFlowField
+        parameters: [*danger]
+      - type: FollowFlowField
+        parameters: [*exit1]
+      - type: FollowFlowField
+        parameters: [*exit2]
+      - type: FollowFlowField
+        parameters: [*exit3]
+      - type: FollowFlowField
+        parameters: [*exit4]
+  - time-distribution:
+      type: DiracComb
+      parameters: [0.25]
+    type: CognitiveBehavior
+    actions:
+      - type: RandomRotate
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [75, 10, 10, 10]
+    nodes:
+      type: CognitivePedestrian2D
+      parameters: ["adult", "male", *danger]
+    programs:
+      - *behavior
+  - in:
+      type: Circle
+      parameters: [75, 10, 10, 10]
+    nodes:
+      type: CognitivePedestrian2D
+      parameters: ["adult", "female", *danger]
+    programs:
+      - *behavior

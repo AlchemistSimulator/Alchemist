@@ -9,6 +9,8 @@ package it.unibo.alchemist.boundary.util
 
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle
 import it.unibo.alchemist.kotlin.unfold
+import java.io.PrintWriter
+import java.io.StringWriter
 import javafx.application.Platform
 import javafx.scene.control.Alert
 import javafx.scene.control.Label
@@ -16,8 +18,6 @@ import javafx.scene.control.TextArea
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
-import java.io.PrintWriter
-import java.io.StringWriter
 
 class FXUtil {
     companion object {

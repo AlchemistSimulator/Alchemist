@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 
 /**
@@ -14,6 +16,103 @@ import java.io.Serializable;
  * Interface for time representation.
  */
 public interface Time extends Comparable<Time>, Serializable {
+
+    /**
+     * Initial time.
+     */
+    Time ZERO = new Time() {
+        @Override
+        public boolean isInfinite() {
+            return false;
+        }
+
+        @Override
+        public Time times(final double var) {
+            if (Double.isFinite(var)) {
+                return ZERO;
+            }
+            throw new IllegalArgumentException("Cannot multiply zero by " + var);
+        }
+
+        @Override
+        public Time minus(final Time dt) {
+            return dt.times(-1);
+        }
+
+        @Override
+        public Time plus(final Time dt) {
+            return dt;
+        }
+
+        @Override
+        public double toDouble() {
+            return 0;
+        }
+
+        @Override
+        public int compareTo(@NotNull final Time o) {
+            return Double.compare(0, o.toDouble());
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return obj == this || obj instanceof Time && ((Time) obj).toDouble() == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Double.hashCode(0);
+        }
+    };
+
+    /**
+     * Indefinitely future time.
+     */
+    Time INFINITY = new Time() {
+        @Override
+        public boolean isInfinite() {
+            return true;
+        }
+
+        @Override
+        public Time times(final double var) {
+            if (var > 0) {
+                return INFINITY;
+            }
+            throw new IllegalArgumentException("Cannot multiply an infinite time by " + var);
+        }
+
+        @Override
+        public Time minus(final Time dt) {
+            return INFINITY;
+        }
+
+        @Override
+        public Time plus(final Time dt) {
+            return INFINITY;
+        }
+
+        @Override
+        public double toDouble() {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        @Override
+        public int compareTo(@NotNull final Time o) {
+            return Double.compare(Double.POSITIVE_INFINITY, o.toDouble());
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return obj == this
+                || obj instanceof Time && ((Time) obj).toDouble() == Double.POSITIVE_INFINITY;
+        }
+
+        @Override
+        public int hashCode() {
+            return Double.hashCode(Double.POSITIVE_INFINITY);
+        }
+    };
 
     /**
      * Verifies if the {@link Time} is set at infinite, namely if the event will

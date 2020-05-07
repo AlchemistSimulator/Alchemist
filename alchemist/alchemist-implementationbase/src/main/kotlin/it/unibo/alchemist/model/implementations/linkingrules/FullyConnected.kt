@@ -16,7 +16,10 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import org.danilopianini.util.ListSet
 
-class FullyConnected<T, P : Position<P>>() : LinkingRule<T, P> {
+/**
+ * This rule connects each and every node to each and every other.
+ */
+class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
     override fun isLocallyConsistent() = true
     override fun computeNeighborhood(center: Node<T>, env: Environment<T, P>) = object : Neighborhood<T> {
 

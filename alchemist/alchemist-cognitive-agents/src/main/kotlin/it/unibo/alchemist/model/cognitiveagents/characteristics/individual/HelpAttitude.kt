@@ -1,16 +1,36 @@
 package it.unibo.alchemist.model.cognitiveagents.characteristics.individual
 
 import com.uchuhimo.konf.Config
+import com.uchuhimo.konf.source.toml
+import it.unibo.alchemist.model.cognitiveagents.characteristics.Characteristic
 import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
 
-class HelpAttitude(age: Age, gender: Gender) : IndividualCharacteristic {
+/**
+ * The attitude of an agent towards helping another agent.
+ *
+ * @param age
+ *          the age of the helper.
+ * @param gender
+ *          the gender of the helper.
+ */
+class HelpAttitude(age: Age, gender: Gender) : Characteristic {
 
     private val helperRules = rules[age to gender]
 
+    /**
+     * The logic used to calculate the probability of helping.
+     *
+     * @param toHelpAge
+     *          the age of the agent who needs help.
+     * @param toHelpGender
+     *          the gender of the agent who needs help.
+     * @param sameGroup
+     *          whether or not the two agents belong to the same group.
+     */
     fun level(toHelpAge: Age, toHelpGender: Gender, sameGroup: Boolean): Double =
-            helperRules?.get(toHelpAge to toHelpGender)?.let {
-                if (sameGroup) it.first else it.second
-            } ?: 0.0
+        helperRules?.get(toHelpAge to toHelpGender)?.let {
+            if (sameGroup) it.first else it.second
+        } ?: 0.0
 
     companion object {
 
@@ -29,12 +49,12 @@ class HelpAttitude(age: Age, gender: Gender) : IndividualCharacteristic {
             ),
 
             Pair(Age.ADULT, Gender.FEMALE) to mapOf(
-                    Pair(Age.CHILD, Gender.MALE) to config[HelpAttitudeSpec.AdultFemale.childMale],
-                    Pair(Age.ADULT, Gender.MALE) to config[HelpAttitudeSpec.AdultFemale.adultMale],
-                    Pair(Age.ELDERLY, Gender.MALE) to config[HelpAttitudeSpec.AdultFemale.elderlyMale],
-                    Pair(Age.CHILD, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.childFemale],
-                    Pair(Age.ADULT, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.adultFemale],
-                    Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.elderlyFemale]
+                Pair(Age.CHILD, Gender.MALE) to config[HelpAttitudeSpec.AdultFemale.childMale],
+                Pair(Age.ADULT, Gender.MALE) to config[HelpAttitudeSpec.AdultFemale.adultMale],
+                Pair(Age.ELDERLY, Gender.MALE) to config[HelpAttitudeSpec.AdultFemale.elderlyMale],
+                Pair(Age.CHILD, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.childFemale],
+                Pair(Age.ADULT, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.adultFemale],
+                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.elderlyFemale]
             ),
 
             Pair(Age.ELDERLY, Gender.MALE) to mapOf(

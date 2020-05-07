@@ -31,7 +31,7 @@ interface EnvironmentWithGraph<W, T, P, A, N, E> : EnvironmentWithObstacles<W, T
     N : ConvexGeometricShape<P, A> {
 
     /**
-     * @returns the navigation graph.
+     * The navigation graph.
      */
-    fun graph(): NavigationGraph<P, A, N, E>
+    val graph: NavigationGraph<P, A, N, E>
 }

@@ -6,7 +6,6 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 
 /**
  * A graph used for navigation purposes. Nodes are [ConvexGeometricShape]s,
@@ -14,9 +13,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
  * agents (the advantage of such representation is that agents can freely
  * walk around within a convex area, as it is guaranteed that no obstacle
  * will be found).
- * Additionally, a navigation graph can store a set of positions of interest
- * that may be used during navigation (e.g. destinations in an evacuation
- * scenario).
  * Note that implementations of this graph must guarantee predictable
  * ordering for the collections they maintain, as reproducibility is a key
  * feature of Alchemist.
@@ -36,47 +32,18 @@ interface NavigationGraph<
 > : org.jgrapht.Graph<N, E> {
 
     /**
-     * A list of positions of interest (usually destinations).
+     * @returns the first node containing the specified [position], or null
+     * if no node containing it could be found.
      */
-    fun destinations(): List<V>
+    fun nodeContaining(position: V): N? = vertexSet().firstOrNull { it.contains(position) }
 
     /**
-     * @returns the destinations within the provided [node].
+     * @returns the nodes adjacent to a given [node] (two nodes are adjacent if
+     * there's a single edge between them) which are reachable from the latter
+     * (= the single edge starts in [node] and ends in the neighbor).
      */
-    fun destinationsWithin(node: N): Collection<V> = destinations().filter { node.contains(it) }
-
-    /**
-     * Checks whether the provided [node] contains any destination.
-     */
-    fun containsAnyDestination(node: N): Boolean = destinations().any { node.contains(it) }
-
-    /**
-     * @returns the first node containing the specified [destination], or
-     * null if no node containing it could be found.
-     */
-    fun nodeContaining(destination: V): N? = vertexSet().firstOrNull { it.contains(destination) }
+    fun neighborsReachableFrom(node: N): List<N> = outgoingEdgesOf(node).map { getEdgeTarget(it) }
 }
-
-/**
- * A passage between two [ConvexPolygon]s in an euclidean bidimensional space.
- * The passage is oriented, which means it connects [tail] to [head], but the opposite is
- * not necessarily true.
- * [passageShape] is a [Segment2D] modeling the shape of the passage between the two areas:
- * an agent could cross any point of it to move from the first area to the second one. To
- * make it easier, think of the following: in an indoor environment, the segment should
- * represent the shape of the door between two rooms. Additionally, [passageShape] must
- * belong to the boundary of [tail], but can or cannot belong the boundary of [head].
- * This allows two polygons to be connected even when not exactly adjacent, but introduces
- * navigation issues as agents may not know which direction to take when crossing a passage.
- * For this reason, [passageShape] must guarantee that [head] is reachable by throwing a
- * ray from any point of the segment in its normal direction. This provides agents with a
- * direction to follow when crossing [Euclidean2DPassage]s.
- */
-data class Euclidean2DPassage(
-    val tail: ConvexPolygon,
-    val head: ConvexPolygon,
-    val passageShape: Segment2D<Euclidean2DPosition>
-)
 
 /**
  * A [NavigationGraph] in an euclidean bidimensional space, whose nodes are [ConvexPolygon]s

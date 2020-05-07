@@ -2,7 +2,7 @@ incarnation: protelis
 
 environment:
   type: ImageEnvironmentWithGraph
-  parameters: [images/building-planimetry.png, 0.1, 135, 15]
+  parameters: [images/building-planimetry.png, 0.1]
 
 positions:
   type: EuclideanPosition2D
@@ -17,8 +17,11 @@ seeds:
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [1.0]
-    type: OrientingBehavior2D
+      parameters: [3.0]
+    type: PrioritySteering
+    actions:
+      - type: DestinationReaching
+        parameters: [135, 15]
 
 displacements:
   - in:

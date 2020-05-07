@@ -11,18 +11,6 @@ package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import org.apache.commons.lang3.ObjectUtils
-import org.danilopianini.lang.MathUtils.fuzzyGreaterEquals
-import java.lang.IllegalArgumentException
-
-/**
- * Maps a value in [min, max] to [newMin, newMax].
- */
-fun Double.map(min: Double, max: Double, newMin: Double, newMax: Double): Double = when {
-    this !in min..max -> throw IllegalArgumentException("$this is not in [$min, $max]")
-    fuzzyGreaterEquals(min, max) || fuzzyGreaterEquals(newMin, newMax) ->
-        throw IllegalArgumentException("either [$min, $max] and/or [$newMin, $newMax] is empty")
-    else -> (this - min) / (max - min) * (newMax - newMin) + newMin
-}
 
 /**
  * Creates a [ClosedRange] from a couple of unordered values.

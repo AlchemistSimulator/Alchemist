@@ -12,13 +12,18 @@ network-model:
 
 seeds:
   scenario: 0
-  simulation: 3
+  simulation: 2
 
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [1.0]
-    type: OrientingBehavior2D
+      parameters: [3.0]
+    type: PrioritySteering
+    actions:
+      - type: KnownDestinationReaching
+        parameters: [135, 15]
+        # KnownDestinationReaching assumes the destination is known, the pedestrian's cognitive map
+        # contains only a partial route leading there
 
 displacements:
   - in:

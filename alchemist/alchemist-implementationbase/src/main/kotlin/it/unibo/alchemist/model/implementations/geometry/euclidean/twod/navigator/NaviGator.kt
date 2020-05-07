@@ -65,27 +65,23 @@ import java.awt.Shape
  *              integer coordinates). In the growing phase, each side of each seed
  *              will be advanced of a quantity equal to unity iteratively, hence the
  *              smaller this value is the slower the algorithm will be.
- * @param destinations
- *              a collection of positions of interest that will be stored in the
- *              navigation graph and may be used during navigation (e.g. destinations
- *              in an evacuation scenario).
  */
 fun generateNavigationGraph(
     origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),
     width: Double,
     height: Double,
-    obstacles: Collection<Shape>,
+    obstacles: List<Shape>,
     rooms: Collection<Euclidean2DPosition>,
-    unity: Double = 1.0,
-    destinations: List<Euclidean2DPosition>
+    unity: Double = 1.0
 ): Euclidean2DNavigationGraph {
     require(width > 0 && height > 0) { "width and height should be positive" }
     val seeds = rooms
-        .map { createSeed(it.x, it.y, unity) }
+        .map { createSeed(it.x, it.y, unity, origin, width, height, obstacles) }
         .toMutableList()
-        .grow(origin, width, height, obstacles, unity)
-    val graph = DirectedEuclidean2DNavigationGraph(destinations, Euclidean2DPassage::class.java)
+        .grow(obstacles, unity)
+    val graph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
     seeds.forEach { graph.addVertex(it) }
+
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
             if (edge.isAxisAligned) {
@@ -93,38 +89,29 @@ fun generateNavigationGraph(
                 /*
                  * Moves the edge back to its previous position as findCrossings modified it.
                  */
-                seed.moveEdge(index, edge)
+                seed.replaceEdge(index, edge)
                 passages
             } else emptyList()
         }.flatten()
     }.forEach { graph.addEdge(it.tail, it.head, it) }
+
     return graph
 }
 
-private fun MutableList<ExtendableConvexPolygon>.grow(
-    origin: Euclidean2DPosition,
-    width: Double,
-    height: Double,
-    envObstacles: Collection<Shape>,
+private fun MutableList<ExtendableConvexPolygonInEnvironment>.grow(
+    obstacles: List<Shape>,
     step: Double
-): MutableList<ExtendableConvexPolygon> {
-    removeIf { seed -> envObstacles.any { seed.intersects(it) } }
-    val obstacles = envObstacles.toMutableList()
-    obstacles.addAll(map { it.asAwtShape() })
+): MutableList<ExtendableConvexPolygonInEnvironment> {
+    removeIf { seed -> obstacles.any { seed.intersects(it) } }
+    forEach { seed -> seed.polygonalObstacles = this - seed }
     var growing = true
     while (growing) {
         growing = false
-        forEachIndexed { i, seed ->
-            /*
-             * each seed should not consider itself as an obstacle,
-             * thus it's removed and added back at the end
-             */
-            obstacles.removeAt(envObstacles.size + i)
-            val extended = seed.extend(step, obstacles, origin, width, height)
+        forEach { seed ->
+            val extended = seed.extend(step)
             if (!growing) {
                 growing = extended
             }
-            obstacles.add(envObstacles.size + i, seed.asAwtShape())
         }
     }
     return this
@@ -137,7 +124,7 @@ private fun MutableList<ExtendableConvexPolygon>.grow(
  * In brief, this method advances the specified edge, keeping track of the portions
  * of it not occluded by obstacles yet, until every passage has been detected.
  */
-private fun ExtendableConvexPolygon.findPassages(
+private fun ExtendableConvexPolygonInEnvironment.findPassages(
     index: Int,
     seeds: Collection<ExtendableConvexPolygon>,
     origin: Euclidean2DPosition,
@@ -184,7 +171,7 @@ private fun ExtendableConvexPolygon.findPassages(
             }
         }
         while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
-            if (!advanceEdge(index, unity, origin, width, height)) {
+            if (!advanceEdge(index, unity)) {
                 /*
                  * Edge is out of the environment's boundaries.
                  */
@@ -226,10 +213,18 @@ private fun ExtendableConvexPolygon.findPassages(
         }
     }
 
-private fun createSeed(x: Double, y: Double, side: Double): ExtendableConvexPolygon =
-    ExtendableConvexPolygonImpl(
-        mutableListOf(
-            Euclidean2DPosition(x, y),
-            Euclidean2DPosition(x + side, y),
-            Euclidean2DPosition(x + side, y + side),
-            Euclidean2DPosition(x, y + side)))
+private fun createSeed(
+    x: Double,
+    y: Double,
+    side: Double,
+    origin: Euclidean2DPosition,
+    width: Double,
+    height: Double,
+    obstacles: List<Shape>
+): ExtendableConvexPolygonInEnvironment =
+    ExtendableConvexPolygonInEnvironment(mutableListOf(
+        Euclidean2DPosition(x, y),
+        Euclidean2DPosition(x + side, y),
+        Euclidean2DPosition(x + side, y + side),
+        Euclidean2DPosition(x, y + side)
+    ), origin, width, height, obstacles)

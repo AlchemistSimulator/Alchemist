@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
 
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
@@ -20,32 +29,40 @@ interface OrientingAgent<V, A, N, E> where
 
     /**
      * The knowledge degree of the agent concerning the environment, it's a Double
-     * value in [0, 1] describing the percentage of the environment the pedestrian
-     * is familiar with prior to the start of the simulation (thus it does not take
+     * value in [0, 1] describing the percentage of the environment the agent is
+     * familiar with prior to the start of the simulation (thus it does not take
      * into account the knowledge the pedestrian will gain during it, namely the
      * [volatileMemory]).
      */
     val knowledgeDegree: Double
 
     /**
-     * The cognitive map of the agent. A cognitive map is composed of landmarks
-     * (elements of the environment easy to remember due to their uniqueness)
-     * and spatial relations between them, it is represented using a [NavigationGraph].
+     * The cognitive map of the agent. It's composed of landmarks (elements of the
+     * environment easy to remember due to their uniqueness) and spatial relations
+     * between them. It is represented using a [NavigationGraph].
      */
     val cognitiveMap: NavigationGraph<V, A, N, E>
 
     /**
-     * The volatile memory of the agent, it models the ability to remember rooms
-     * or spaces of the environment already visited by the agent since the start
-     * of the simulation. In particular, each room is paired with the number of
-     * visits.
+     * The volatile memory of the agent: it models the ability to remember areas
+     * of the environment already visited by the agent since the start of the
+     * simulation. In particular, each area is paired with the number of visits.
+     * Areas are assumed to be represented as [ConvexGeometricShape]s, as in
+     * [NavigationGraph]s.
      */
     val volatileMemory: MutableMap<in ConvexGeometricShape<V, A>, Int>
 
     /**
-     * Registers a visit to the provided [area] in the pedestrian's volatile memory.
+     * Registers a visit to the provided [area] in the agent's [volatileMemory].
      */
     fun <M : ConvexGeometricShape<V, A>> registerVisit(area: M) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
+    }
+
+    /**
+     * Unregisters a visit to the provided [area] in the agent's [volatileMemory].
+     */
+    fun <M : ConvexGeometricShape<V, A>> unregisterVisit(area: M) {
+        volatileMemory[area]?.let { volatileMemory[area] = it - 1 }
     }
 }

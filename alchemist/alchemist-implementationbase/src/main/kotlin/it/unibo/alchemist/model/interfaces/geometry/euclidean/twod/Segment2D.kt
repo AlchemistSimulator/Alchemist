@@ -2,11 +2,13 @@ package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
 import it.unibo.alchemist.model.implementations.geometry.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
+import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
 import it.unibo.alchemist.model.implementations.geometry.linesIntersection
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import org.danilopianini.lang.MathUtils
+import java.lang.IllegalArgumentException
 
 /**
  * Defines a segment from [first] to [second] in an euclidean bidimensional space.
@@ -14,17 +16,34 @@ import org.danilopianini.lang.MathUtils
 data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
 
     /**
-     * Checks whether the segment is aligned to the x axis.
+     * The length of the segment.
+     */
+    val length: Double = toVector().magnitude
+
+    /**
+     * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
+     * the segment should be reduced on each size.
+     */
+    fun shrunk(factor: Double): Segment2D<P> = when (factor) {
+        !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
+        else -> copy(
+            first = first + (second - first).resized(factor * length),
+            second = second + (first - second).resized(factor * length)
+        )
+    }
+
+    /**
+     * Indicates if the segment is aligned to the x axis.
      */
     val xAxisAligned: Boolean get() = MathUtils.fuzzyEquals(first.y, second.y)
 
     /**
-     * Checks whether the segment is aligned to the y axis.
+     * Indicates if the segment is aligned to the y axis.
      */
     val yAxisAligned: Boolean get() = MathUtils.fuzzyEquals(first.x, second.x)
 
     /**
-     * Checks whether the segment is axis-aligned.
+     * Indicates if the segment is axis-aligned.
      */
     val isAxisAligned: Boolean get() = xAxisAligned || yAxisAligned
 
@@ -34,32 +53,32 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     fun toVector() = second - first
 
     /**
-     * Computes the slope of the segment. If the two points coincide (i.e. the segment
-     * [isDegenerate]), [Double.NaN] is the result.
+     * The slope of the segment. If the two points coincide, this is [Double.NaN].
      */
     val slope: Double get() = Double.NaN.takeIf { isDegenerate } ?: toVector().run { y / x }
 
     /**
-     * Computes the intercept of the line passing through [first] and [second].
+     * The intercept of the line passing through [first] and [second].
      */
     val intercept: Double get() = first.y - slope * first.x
 
     /**
-     * Checks if its points coincide (and its length is zero).
+     * A segment is degenerate if its points coincide.
      */
     val isDegenerate: Boolean get() =
         MathUtils.fuzzyEquals(first.x, second.x) && MathUtils.fuzzyEquals(first.y, second.y)
 
     /**
-     * Checks whether the segment contains the given point.
+     * Checks if the segment contains a [point]. Doubles are not directly compared,
+     * [MathUtils.fuzzyEquals] is used instead.
      */
     fun contains(point: P) =
         areCollinear(first, second, point) &&
-        point.x in rangeFromUnordered(first.x, second.x) &&
-        point.y in rangeFromUnordered(first.y, second.y)
+        point.x fuzzyIn rangeFromUnordered(first.x, second.x) &&
+        point.y fuzzyIn rangeFromUnordered(first.y, second.y)
 
     /**
-     * Computes the medium point of the segment.
+     * The medium point of the segment.
      */
     val midPoint get() = Euclidean2DPosition((first.x + second.x) / 2, (first.y + second.y) / 2)
 
@@ -92,7 +111,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
         if (this is Euclidean2DPosition) this else Euclidean2DPosition(first.x, first.y)
 
     /**
-     * Computes the distance between the segment and a given point.
+     * Computes the distance between the segment and a given [point].
      */
     fun distanceTo(point: P) = closestPointTo(point).distanceTo(point)
 

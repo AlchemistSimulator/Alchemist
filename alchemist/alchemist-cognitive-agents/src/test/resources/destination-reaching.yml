@@ -21,15 +21,15 @@ reactions: &behavior
     type: PrioritySteering
     actions:
       - type: DestinationReaching
-        parameters: [103, 99]
-        # destination is unknown as pedestrian's cognitive map is empty
+        parameters: [40, 105, 85, 15]
+        # (85, 15) will be known, (40, 105) won't be known but will be reached because found along the way to the former
 
 displacements:
   - in:
       type: Point
-      parameters: [108, 88]
+      parameters: [15, 15]
     nodes:
       type: OrientingHomogeneousPedestrian2D
-      parameters: [0.0]
+      parameters: [0.4]
     programs:
       - *behavior

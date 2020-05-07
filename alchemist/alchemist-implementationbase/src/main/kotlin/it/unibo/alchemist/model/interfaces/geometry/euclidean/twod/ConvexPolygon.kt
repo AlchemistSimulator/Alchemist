@@ -1,77 +1,110 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
 import java.awt.Shape
-import java.lang.IllegalStateException
-import kotlin.math.min
 
 /**
- * A convex polygon is a simple polygon (i.e. not self-intersecting and
- * without holes) in which no line segment between two points on the boundary
- * ever goes outside the polygon.
+ * A simple polygon (i.e. not self-intersecting and without holes) in which no
+ * line segment between two points on the boundary ever goes outside the polygon.
  */
 interface ConvexPolygon : Euclidean2DConvexShape, AwtShapeCompatible {
 
     /**
-     * A list is used because vertices do have an order.
+     * @returns the vertices of the polygon, sorted so that the polygon could
+     * be obtained by connecting consecutive points in the list with a segment
      */
     fun vertices(): List<Euclidean2DPosition>
 
     /**
-     * The index parameter specify which edge to get: edge i connects
-     * vertices i and i+1.
+     * @returns the edges (= sides) of the polygon
+     */
+    fun edges(): List<Segment2D<Euclidean2DPosition>>
+
+    /**
+     * Depending on the implementation, this may be faster than [edges].get([index]).
+     * @param index indicates which edge to get: edge i connects vertices i and i+1
+     * (with respect to the ordering of vertices used in [vertices])
+     * @returns the specified edge (= side) of the polygon
      */
     fun getEdge(index: Int): Segment2D<Euclidean2DPosition>
 
     /**
-     * Checks whether the given shape intersects with the polygon.
+     * Checks if the polygon contains a vector (= a point). The definition of insideness
+     * may vary depending on the implementation, this may affect the outcome for points
+     * lying on the polygon's boundary. For accurate operations see [containsBoundaryIncluded]
+     * and [containsBoundaryExcluded].
+     * @param vector the vector (= point)
+     * @returns true if the polygon contains the vector
+     */
+    override fun contains(vector: Euclidean2DPosition): Boolean
+
+    /**
+     * Checks if a vector (= a point) lies on the polygon's boundary.
+     * @param vector the vector (= point)
+     * @returns true if the vector lies on the polygon's boundary
+     */
+    fun liesOnBoundary(vector: Euclidean2DPosition): Boolean
+
+    /**
+     * Checks if a vector (= a point) is contained in the polygon or lies on its boundary.
+     * @param vector the vector (= point)
+     * @returns true if the vector is contained in the polygon or lies on its boundary
+     */
+    fun containsBoundaryIncluded(vector: Euclidean2DPosition): Boolean
+
+    /**
+     * Checks if a vector (= a point) is contained in the polygon, boundary excluded.
+     * @param vector the vector (= point)
+     * @returns true if the vector is contained in the interior of the polygon
+     */
+    fun containsBoundaryExcluded(vector: Euclidean2DPosition): Boolean
+
+    /**
+     * Checks if the polygon contains a polygonal [java.awt.Shape] (i.e. without curved
+     * segments). A polygonal shape is contained in a polygon if all of its points are
+     * contained in (or lie on the boundary of) the latter.
+     * @param shape the polygonal shape
+     * @returns true if the polygon contains the shape.
+     */
+    fun contains(shape: Shape): Boolean
+
+    /**
+     * Checks if a [java.awt.Shape] intersects the polygon, adjacent shapes are not
+     * considered to be intersecting.
+     * @param shape the shape
+     * @returns true if the shape intersects with the polygon
      */
     fun intersects(shape: Shape): Boolean
 
     /**
-     * Returns a collection containing the edges (or sides) of the polygon.
+     * A polygon is adjacent to another if any of its points lies on the boundary of the other.
+     * @param other the other polygon
+     * @returns true if the polygons are adjacent
      */
-    fun edges() = vertices().indices.map { getEdge(it) }
+    fun isAdjacentTo(other: ConvexPolygon): Boolean
 
     /**
-     * Checks whether the polygon contains the given shape.
+     * Checks if the polygon is adjacent to a convex polygonal [java.awt.Shape].
+     * @param shape the convex polygonal shape
+     * @returns true if the polygons are adjacent
      */
-    fun contains(shape: Shape) = shape.vertices().all { contains(it) }
+    fun isAdjacentTo(shape: Shape): Boolean
 
     /**
-     * Checks whether the given vector is contained in the polygon or lies on its boundary.
+     * Checks if a segment intersects with the polygon, segments lying on the polygon's
+     * boundary are not considered to be intersecting.
+     * @param segment the segment
+     * @returns true if the segment intersects the polygon
      */
-    fun containsBoundaryIncluded(vector: Euclidean2DPosition) = contains(vector) || edges().any { it.contains(vector) }
+    fun intersects(segment: Segment2D<Euclidean2DPosition>): Boolean
 
     /**
-     * Checks whether the given vector is contained in the polygon, boundary excluded.
+     * Finds the edge of the polygon closest to the provided [segment], i.e. the first one
+     * that would collide (= intersect) with the segment in case the polygon extended on
+     * each side.
+     * @param segment the segment
+     * @returns the edge of the polygon closest to the provided segment
      */
-    fun containsBoundaryExcluded(vector: Euclidean2DPosition): Boolean =
-        contains(vector) && edges().none { it.contains(vector) }
-
-    /**
-     * Checks if the provided segment intersects with the polygon, boundary excluded.
-     */
-    fun intersectsBoundaryExcluded(segment: Segment2D<Euclidean2DPosition>): Boolean = edges()
-        .map { intersection(it, segment) }
-        .filter { it.type == SegmentsIntersectionType.POINT }
-        .map { it.point.get() }
-        .distinct()
-        .size > 1
-
-    /**
-     * Finds the edge of the polygon closest to the provided segment.
-     */
-    fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> = edges().minWith(
-        compareBy({
-            it.distanceTo(segment)
-        }, {
-            min(segment.distanceTo(it.first) + segment.distanceTo(it.second),
-                it.distanceTo(segment.first) + it.distanceTo(segment.second))
-        })
-    ) ?: throw IllegalStateException("no edge could be found")
+    fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition>
 }

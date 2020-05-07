@@ -24,7 +24,7 @@ import java.util.Optional
  */
 fun fromShape(shape: Shape): Optional<MutableConvexPolygon> {
     return try {
-        Optional.of(MutableConvexPolygonImpl(shape.vertices().toMutableList()))
+        Optional.of(AwtMutableConvexPolygon(shape.vertices().toMutableList()))
     } catch (e: IllegalArgumentException) {
         Optional.empty()
     }

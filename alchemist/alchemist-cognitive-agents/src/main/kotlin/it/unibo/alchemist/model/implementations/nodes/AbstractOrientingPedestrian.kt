@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.nodes
 
+import it.unibo.alchemist.model.implementations.actions.takePercentage
 import it.unibo.alchemist.model.implementations.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.graph.pathExists
 import it.unibo.alchemist.model.implementations.utils.shuffled
@@ -79,35 +80,21 @@ abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
      * graph). We then produce a minimum spanning tree of the described graph.
      */
     override val cognitiveMap: NavigationGraph<P, A, N, DefaultEdge> by lazy {
-        val environmentGraph = environment.graph()
+        val environmentGraph = environment.graph
         /*
          * The rooms in which landmarks will be placed.
          */
         val rooms = environmentGraph.vertexSet()
-            .filter {
-                it.diameter > shape.diameter * minArea || environmentGraph.containsAnyDestination(it)
-            }
+            .filter { it.diameter > shape.diameter * minArea }
             .shuffled(randomGenerator)
             .toList()
             .takePercentage(knowledgeDegree)
             .toMutableList()
         /*
-         * At least one destination is provided if knowledge degree >= 0.1.
-         */
-        if (rooms.none { environmentGraph.containsAnyDestination(it) } && knowledgeDegree >= minimumKnowledge) {
-            environmentGraph.vertexSet()
-                .shuffled(randomGenerator)
-                .firstOrNull { environmentGraph.containsAnyDestination(it) }
-                ?.let { rooms.add(it) }
-        }
-        /*
          * landmarks[i] will contain the landmark generated in rooms[i].
          */
         val landmarks = rooms.map { generateLandmarkWithin(it) }
-        val destinationsProvided = landmarks.flatMap { landmark ->
-            environmentGraph.destinations().filter { landmark.contains(it) }
-        }
-        val fullGraph = UndirectedNavigationGraph<P, A, N, DefaultEdge>(destinationsProvided, DefaultEdge::class.java)
+        val fullGraph = UndirectedNavigationGraph<P, A, N, DefaultEdge>(DefaultEdge::class.java)
         landmarks.forEach { fullGraph.addVertex(it) }
         rooms.indices.forEach { i ->
             rooms.indices.forEach { j ->
@@ -144,10 +131,4 @@ abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
      * one or more destinations, the generated landmark must contain at least one of them.
      */
     protected abstract fun generateLandmarkWithin(region: M): N
-
-    private fun <E> List<E>.takePercentage(percentage: Double) = subList(0, (percentage * size).toInt())
-
-    companion object {
-        private const val minimumKnowledge = 0.1
-    }
 }

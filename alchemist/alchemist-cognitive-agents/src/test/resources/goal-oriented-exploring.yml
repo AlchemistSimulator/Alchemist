@@ -20,14 +20,14 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: DestinationReaching
-        parameters: [103, 99]
-        # destination is unknown as pedestrian's cognitive map is empty
+      - type: GoalOrientedExploring
+        parameters: [135, 15]
+        # GoalOrientedExploring assumes the destination is unknown
 
 displacements:
   - in:
       type: Point
-      parameters: [108, 88]
+      parameters: [15, 15]
     nodes:
       type: OrientingHomogeneousPedestrian2D
       parameters: [0.0]

@@ -2,7 +2,7 @@ incarnation: protelis
 
 environment:
   type: ImageEnvironmentWithGraph
-  parameters: [images/building-planimetry.png, 0.1, 135, 105]
+  parameters: [images/building-planimetry.png, 0.1]
 
 positions:
   type: EuclideanPosition2D
@@ -17,8 +17,12 @@ seeds:
 reactions: &behavior
   - time-distribution:
       type: DiracComb
-      parameters: [0.25]
-    type: OrientingBehavior2D
+      parameters: [3.0]
+    type: PrioritySteering
+    actions:
+      - type: DestinationReaching
+        parameters: [135, 15]
+        # destination is unknown as pedestrian's cognitive map is empty
 
 displacements:
   - in:

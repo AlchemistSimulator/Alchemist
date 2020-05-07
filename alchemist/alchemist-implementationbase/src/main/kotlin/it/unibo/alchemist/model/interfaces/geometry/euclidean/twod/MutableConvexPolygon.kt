@@ -8,42 +8,39 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 interface MutableConvexPolygon : ConvexPolygon {
 
     /**
-     * Adds a vertex in the specified position.
-     *
-     * If the operation would cause the violation of the convexity, false
-     * is returned and the operation is not performed.
+     * Adds a vertex to the polygon.
+     * @param index the index in the list of [vertices] where to put the new vertex
+     * @param x x coordinate
+     * @param y y coordinate
+     * @returns true if the operation was performed successfully, false otherwise
+     * (e.g. because it would have caused the loss of convexity)
      */
     fun addVertex(index: Int, x: Double, y: Double): Boolean
 
     /**
-     * Removes the specified vertex.
-     *
-     * If the operation would cause the violation of the convexity, false
-     * is returned and the operation is not performed.
+     * Removes a vertex from the polygon.
+     * @param index the index of the vertex to be removed in the list of [vertices]
+     * @returns true if the operation was performed successfully, false otherwise
+     * (e.g. because it would have caused the loss of convexity)
      */
     fun removeVertex(index: Int): Boolean
 
     /**
-     * Moves the specified vertex to the new absolute coordinates provided.
-     *
-     * If the operation would cause the violation of the convexity, false
-     * is returned and the operation is not performed.
+     * Moves a vertex of the polygon to a new absolute position.
+     * @param index the index of the vertex to move
+     * @param newX new absolute x coordinate
+     * @param newY new absolute y coordinate
+     * @returns true if the operation was performed successfully, false otherwise
+     * (e.g. because it would have caused the loss of convexity)
      */
     fun moveVertex(index: Int, newX: Double, newY: Double): Boolean
 
     /**
-     * Moves the specified edge to the new absolute coordinates provided.
-     *
-     * If the operation would cause the violation of the convexity, false
-     * is returned and the operation is not performed.
+     * Replaces an edge of the polygon.
+     * @param index the index of the edge to replace (edge i connects vertices i and i+1)
+     * @param newEdge the new edge
+     * @returns true if the operation was performed successfully, false otherwise
+     * (e.g. because it would have caused the loss of convexity)
      */
-    fun moveEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean
-
-    /**
-     * Performs a union in-place with a collection of overlapping
-     * polygons. Returns a boolean indicating whether the union was
-     * successful or not (e.g. because the polygon would have lost its
-     * convexity or the provided polygons did not overlap).
-     */
-    fun union(polygons: Collection<ConvexPolygon>): Boolean
+    fun replaceEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean
 }

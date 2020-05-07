@@ -53,39 +53,13 @@ open class OrientingPedestrian2D<T, M : ConvexPolygon, F>(
         with(region) {
             val width = randomEllipseSide()
             val height = randomEllipseSide()
-            val isFinal = environment.graph().containsAnyDestination(this)
-            /*
-             * If is final, the center of the ellipse will be the destination (too
-             * simplistic, can be modified in the future).
-             */
-            val origin = centroid.takeUnless { isFinal }
-                ?: environment.graph()
-                    .destinationsWithin(this).first() -
-                    Euclidean2DPosition(width / 2, height / 2)
-            val frame = Rectangle2D.Double(origin.x, origin.y, width, height)
+            val frame = Rectangle2D.Double(centroid.x, centroid.y, width, height)
             while (!contains(frame)) {
-                /*
-                 * If is final we will decrease the frame on each side by a quantity q,
-                 * otherwise we just half its width and height.
-                 */
-                if (isFinal) {
-                    val q = Euclidean2DPosition(frame.width * frameScale, frame.height * frameScale)
-                    frame.setFrame(
-                        frame.x + q.x,
-                        frame.y + q.y,
-                        frame.width - 2 * q.x,
-                        frame.height - 2 * q.y)
-                } else {
-                    frame.width /= 2
-                    frame.height /= 2
-                }
+                frame.width /= 2
+                frame.height /= 2
             }
             Ellipse(Ellipse2D.Double(frame.x, frame.y, frame.width, frame.height))
         }
 
     private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
-
-    companion object {
-        private const val frameScale = 0.2
-    }
 }

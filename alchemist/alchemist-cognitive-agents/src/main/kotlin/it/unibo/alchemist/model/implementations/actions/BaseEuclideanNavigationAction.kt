@@ -56,6 +56,11 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
         }
     }
 
+    /**
+     * Defined when in [State.MOVING_TO_DOOR].
+     */
+    private var targetDoor: Euclidean2DPassage? = null
+
     /*
      * Avoid costly re-computations.
      */
@@ -87,14 +92,29 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
         else -> super.findCurrentRoom()
     }
 
+    override fun crossDoor(door: Euclidean2DPassage) {
+        crossDoor(door, computeCrossingPoints(door))
+        this.targetDoor = door
+    }
+
+    private fun computeCrossingPoints(door: Euclidean2DPassage) = door
+        .copy(passageShapeOnTail = door.passageShapeOnTail.shrunk(wallRepulsionFactor))
+        .crossingPoints(pedestrianPosition)
+
+    override fun moving() {
+        super.moving()
+        if (state == State.MOVING_TO_DOOR) {
+            /*
+             * Re-computes crossing points as pedestrian position may have changed, this allows more
+             * natural movements.
+             */
+            crossingPoints = computeCrossingPoints(targetDoor.orFail())
+        }
+    }
+
     override fun nextPosition(): Euclidean2DPosition {
         update()
         return Seek2D(environment, reaction, pedestrian, *desiredPosition.coordinates).nextPosition
-    }
-
-    override fun crossDoor(door: Euclidean2DPassage) {
-        val shrunkDoor = door.copy(passageShapeOnTail = door.passageShapeOnTail.shrunk(wallRepulsionFactor))
-        crossDoor(door, shrunkDoor.crossingPoints(pedestrianPosition))
     }
 
     @Suppress("UNCHECKED_CAST") // as? operastor is safe

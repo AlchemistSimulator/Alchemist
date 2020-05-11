@@ -92,19 +92,26 @@ The strategies available to align time of GPS trace are the following:
 
 As previous say there are several behavior in order to move the nodes in a environment with real-word map:
 
-0. movement ignoring map information. A node move directly from start position to destination position:
+1. movement ignoring map information. A node move directly from start position to destination position:
+
     ![No map information]({{ 'assets/media/usage/no_map_information.png'|asset }})
-0. movement by using map information. A node move from start position to destination position using
+
+1. movement by using map information. A node move from start position to destination position using
     intermediate position in order to follow streets and avoid obstacle (like building):
+
     ![Use map information]({{ 'assets/media/usage/use_map_information.png'|asset }})
-0. movement by reproducing a GPS trace (action {{ anchor('ReproduceGPSTrace') }}). 
+
+1. movement by reproducing a GPS trace (action {{ anchor('ReproduceGPSTrace') }}). 
     A node start to the first position of the GPS trace, than move to the next
     position of the trace until arrive to the last. The movement from a position to another is direct with a straight line:
+
     ![Reproduce GPS trace]({{ 'assets/media/usage/reproduce_gps_trace.png'|asset }})
-0. movement by interpolating the GPS trace with street data (action {{ anchor('GPSTraceWalker') }}). 
+
+1. movement by interpolating the GPS trace with street data (action {{ anchor('GPSTraceWalker') }}). 
     A node start to the first position of the GPS trace, 
     than move to the next position of the trace until arrive to the last. The movement from a position to another
     use map information to define intermediate position in order to follow streets and avoid obstacle (like building):
+
     ![Interpolate GPS trace with street data]({{ 'assets/media/usage/interpolate_gps_trace_with_street_data.png'|asset }})
 
 Both the actions {{ anchor('ReproduceGPSTrace') }} and {{ anchor('GPSTraceWalker') }} require:

@@ -2,7 +2,7 @@ incarnation: protelis
 
 environment:
   type: ImageEnvironmentWithGraph
-  parameters: [images/building-planimetry.png, 0.1, 135, 15]
+  parameters: [images/building-planimetry.png, 0.1]
 
 positions:
   type: EuclideanPosition2D
@@ -20,10 +20,8 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: KnownDestinationReaching
+      - type: ReachKnownDestination
         parameters: [135, 15]
-        # KnownDestinationReaching assumes the destination is known, the pedestrian's cognitive map
-        # contains only a partial route leading there
 
 displacements:
   - in:

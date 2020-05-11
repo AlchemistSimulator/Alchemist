@@ -50,7 +50,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
          * in that position and this test would pass.
          */
         runSimulation(
-            "exploring.yml",
+            "explore.yml",
             0.1,
             30000,
             38.525186757283954, 73.81997543200241
@@ -58,15 +58,15 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
     }
 
     "goal oriented exploring allows to reach the destination" {
-        runSimulation("goal-oriented-exploring.yml", 0.1, 850, 135, 15)
+        runSimulation("goal-oriented-explore.yml", 0.1, 850, 135, 15)
     }
 
     "pursuing allows to reach the destination quicker" {
-        runSimulation("pursuing.yml", 0.1, 360, 135, 15)
+        runSimulation("pursue.yml", 0.1, 360, 135, 15)
     }
 
     "route following allows cuts to the route" {
-        loadYamlSimulation<T, P>("route-following.yml").startSimulation(
+        loadYamlSimulation<T, P>("follow-route.yml").startSimulation(
             stepDone = { env: Environment<T, P>, _, _, _ ->
                 if (env is Euclidean2DEnvironmentWithGraph<*, T, *, *>) {
                     val pedestrian = env.nodes.first()
@@ -93,17 +93,12 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
         runSimulation("complete-knowledge.yml", 0.1, 320, 135, 15)
     }
 
-    /* useless at present
-    "pedestrian with partial knowledge should exploit it to reach the destination" {
-        /*
-         * 450 steps to reach the destination means some information has been used to find a partial route.
-         */
-        runSimulation("partial-knowledge.yml", 0.1, 450, 135, 15)
+    "destination reaching should obtain a route from the pedestrian's cognitive map and use it" {
+        runSimulation("partial-knowledge.yml", 0.1, 320, 135, 15)
     }
-    */
 
     "destination reaching behavior should allow to reach an unknown destination found along the way to a known one" {
-        runSimulation("destination-reaching.yml", 0.1, 190, 40, 105)
+        runSimulation("reach-destination.yml", 0.1, 100, 60, 40)
     }
 
     "pedestrian should take nearest door when no spatial info is available" {

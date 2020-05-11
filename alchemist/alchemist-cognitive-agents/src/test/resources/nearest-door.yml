@@ -20,7 +20,7 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: DestinationReaching
+      - type: ReachDestination
         parameters: [103, 99]
         # destination is unknown as pedestrian's cognitive map is empty
 

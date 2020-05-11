@@ -7,10 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.actions.orienting
+package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.Seek2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Action
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
@@ -21,15 +22,11 @@ import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import org.apache.commons.math3.util.FastMath
 
 /**
- * An [AbstractOrientingAction] working with euclidean geometry. This behavior accepts
- * an [Euclidean2DEnvironmentWithGraph] whose graph features [ConvexPolygon]al nodes and
- * [Euclidean2DPassage]s as edges.
- *
- * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * An [AbstractNavigationAction] working with euclidean spaces. This action accepts
+ * an [Euclidean2DEnvironmentWithGraph] whose graph features [ConvexPolygon]al nodes
+ * and [Euclidean2DPassage]s as edges.
  */
-abstract class AbstractEuclideanOrientingAction<T, N : Euclidean2DConvexShape, E>(
+open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
     pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
@@ -39,8 +36,8 @@ abstract class AbstractEuclideanOrientingAction<T, N : Euclidean2DConvexShape, E
      * the pedestrian from moving attached to the wall. This factor must be in [0.0, 0.5).
      */
     private val wallRepulsionFactor: Double = DEFAULT_WALL_REPULSION_FACTOR
-) :
-AbstractOrientingAction<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, ConvexPolygon, Euclidean2DPassage>(
+) : AbstractNavigationAction
+<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, ConvexPolygon, Euclidean2DPassage>(
     environment,
     reaction,
     pedestrian
@@ -81,12 +78,12 @@ AbstractOrientingAction<T, Euclidean2DPosition, Euclidean2DTransformation, N, E,
      */
     override fun findCurrentRoom(): ConvexPolygon? = when {
         (state == State.MOVING_TO_DOOR || state == State.MOVING_TO_FINAL) &&
-            previousRoom.orFail().customContains(cachedCurrentPosition) -> previousRoom
+            previousRoom.orFail().customContains(currentPosition) -> previousRoom
         (state == State.CROSSING_DOOR || state == State.NEW_ROOM) &&
             /*
              * First time in NEW_ROOM [expectedNewRoom] is not initialised.
              */
-            expectedNewRoom?.customContains(cachedCurrentPosition) ?: false -> expectedNewRoom
+            expectedNewRoom?.customContains(currentPosition) ?: false -> expectedNewRoom
         else -> super.findCurrentRoom()
     }
 
@@ -95,30 +92,21 @@ AbstractOrientingAction<T, Euclidean2DPosition, Euclidean2DTransformation, N, E,
         return Seek2D(environment, reaction, pedestrian, *desiredPosition.coordinates).nextPosition
     }
 
-    /**
-     * Computes the distance between a passage which is in sight (= in [cachedCurrentRoom]) and the
-     * pedestrian's [cachedCurrentPosition].
-     */
-    protected open fun Euclidean2DPassage.distanceToPedestrian(): Double =
-        crossingPointOnTail(cachedCurrentPosition).distanceTo(cachedCurrentPosition)
-
-    /**
-     * Similar to [crossDoor] but takes care of computing the crossing points of an [Euclidean2DPassage].
-     */
-    protected open fun crossDoor(door: Euclidean2DPassage) {
+    override fun crossDoor(door: Euclidean2DPassage) {
         val shrunkDoor = door.copy(passageShapeOnTail = door.passageShapeOnTail.shrunk(wallRepulsionFactor))
-        crossDoor(door, shrunkDoor.crossingPoints(cachedCurrentPosition))
+        crossDoor(door, shrunkDoor.crossingPoints(pedestrianPosition))
     }
 
-    /**
-     * Allows to get back to the [previousRoom] - which must be connected to the current one -
-     * crossing the nearest door in sight.
-     */
-    protected open fun getBackTo(previousRoom: ConvexPolygon) {
-        doorsInSight()
-            .asSequence()
-            .filter { it.head == previousRoom }
-            .minBy { it.distanceToPedestrian() }
-            ?.let { crossDoor(it) }
+    @Suppress("UNCHECKED_CAST") // as? operastor is safe
+    override fun cloneAction(n: Node<T>?, r: Reaction<T>?): Action<T> {
+        require(n as? OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E> != null) {
+            "node not compatible, required: " + pedestrian.javaClass + ", found: " + n?.javaClass
+        }
+        n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
+        require(r != null) { "reaction can't be null" }
+        return BaseEuclideanNavigationAction(environment, r, n, wallRepulsionFactor).let {
+            it.strategy = this.strategy
+            it
+        }
     }
 }

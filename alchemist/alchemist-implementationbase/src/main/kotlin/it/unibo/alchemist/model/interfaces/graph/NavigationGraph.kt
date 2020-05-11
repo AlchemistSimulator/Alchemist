@@ -36,13 +36,6 @@ interface NavigationGraph<
      * if no node containing it could be found.
      */
     fun nodeContaining(position: V): N? = vertexSet().firstOrNull { it.contains(position) }
-
-    /**
-     * @returns the nodes adjacent to a given [node] (two nodes are adjacent if
-     * there's a single edge between them) which are reachable from the latter
-     * (= the single edge starts in [node] and ends in the neighbor).
-     */
-    fun neighborsReachableFrom(node: N): List<N> = outgoingEdgesOf(node).map { getEdgeTarget(it) }
 }
 
 /**

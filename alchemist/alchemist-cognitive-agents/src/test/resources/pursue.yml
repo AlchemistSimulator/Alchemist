@@ -20,9 +20,9 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: GoalOrientedExploring
+      - type: Pursue
         parameters: [135, 15]
-        # GoalOrientedExploring assumes the destination is unknown
+        # Pursuing assumes the destination is known (despite the pedestrian's cognitive map is empty)
 
 displacements:
   - in:

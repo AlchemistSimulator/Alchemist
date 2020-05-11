@@ -20,7 +20,7 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: RouteFollowing
+      - type: FollowRoute
         parameters: [40, 15, 60, 80, 70, 105, 85, 80]
 
 displacements:

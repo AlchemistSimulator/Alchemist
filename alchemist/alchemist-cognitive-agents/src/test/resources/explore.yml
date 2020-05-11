@@ -20,7 +20,7 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: Exploring
+      - type: Explore
 
 displacements:
   - in:

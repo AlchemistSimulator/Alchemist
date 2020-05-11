@@ -20,7 +20,7 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: DestinationReaching
+      - type: ReachDestination
         parameters: [135, 15]
 
 displacements:

@@ -7,46 +7,44 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.actions
+package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
-import it.unibo.alchemist.model.implementations.actions.orienting.AbstractEuclideanOrientingAction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Action
-import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
+import it.unibo.alchemist.model.interfaces.EuclideanNavigationStrategy
+import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
-import it.unibo.alchemist.model.interfaces.OrientingAction
 import java.awt.Shape
 import kotlin.math.abs
 import kotlin.math.pow
 
 /**
- * An [OrientingAction] allowing to explore the environment.
+ * A [NavigationStrategy] allowing to explore the environment.
  * In order to choose which direction to take, a weighting system is used: every time the
  * pedestrian enters a new room all the visible doors are weighted, the one with minimum
  * weight is then crossed. The weighting system used here is derived from the one by
  * [Andresen et al.](https://doi.org/10.1080/23249935.2018.1432717), see [weight].
  */
 open class Exploring<T, N : Euclidean2DConvexShape, E>(
-    environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
-    reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
-) : AbstractEuclideanOrientingAction<T, N, E>(environment, reaction, pedestrian) {
+    override val action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>
+) : EuclideanNavigationStrategy<T, N, E, ConvexPolygon, Euclidean2DPassage> {
 
-    @Suppress("UNCHECKED_CAST")
-    override fun cloneAction(n: Node<T>?, r: Reaction<T>?): Action<T> {
-        require(n as? OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E> != null) {
-            "node not compatible, required: " + pedestrian.javaClass + ", found: " + n?.javaClass
-        }
-        n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
-        require(r != null) { "reaction can't be null" }
-        return Exploring(environment, r, n)
+    /**
+     * Shortcut to obtain the pedestrian.
+     */
+    protected val pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
+        get() = action.pedestrian
+
+    /**
+     * Computes the distance between the pedestrian and a passage in sight (= inside current room).
+     */
+    protected open fun Euclidean2DPassage.distanceToPedestrian(): Double = action.pedestrianPosition.let {
+        crossingPointOnTail(it).distanceTo(it)
     }
 
     /**
@@ -56,23 +54,13 @@ open class Exploring<T, N : Euclidean2DConvexShape, E>(
     protected open val comparator: Comparator<in Euclidean2DPassage> =
         compareBy({ weight(it) }, { it.distanceToPedestrian() })
 
-    override fun inNewRoom() {
-        pedestrian.registerVisit(currentRoomOrFail())
-        explore()
-    }
-
-    protected open fun explore() {
+    override fun inNewRoom(newRoom: ConvexPolygon) = with(action) {
         doorsInSight().minWith(comparator)?.let { crossDoor(it) }
             /*
              * Closed room.
              */
-            ?: run { state = State.ARRIVED }
+            ?: stop()
     }
-
-    /**
-     * Unexpected rooms are treated just like expected ones.
-     */
-    override fun inUnexpectedNewRoom(previousRoom: ConvexPolygon) = inNewRoom()
 
     /**
      * Assigns a weight to a passage (= door). This weighting system is derived from the one by
@@ -96,7 +84,7 @@ open class Exploring<T, N : Euclidean2DConvexShape, E>(
      * to (less crowded room are preferred). It is assumed that the pedestrian can estimate the
      * level of congestion of a neighboring room.
      */
-    protected open fun congestionFactor(head: ConvexPolygon): Double = environment
+    protected open fun congestionFactor(head: ConvexPolygon): Double = action.environment
         .getNodesWithinRange(head.centroid, head.diameter / 2)
         .filterIsInstance<Pedestrian<T>>()
         .count()
@@ -118,5 +106,5 @@ open class Exploring<T, N : Euclidean2DConvexShape, E>(
      */
     protected open fun ConvexPolygon.isKnownImpasse(): Boolean =
         pedestrian.volatileMemory.contains(this) &&
-            environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
+            action.environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
 }

@@ -9,10 +9,11 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
+
 /**
- * A [SteeringAction] allowing to navigate the environment consciously (e.g. without remaining
- * blocked in U-shaped obstacles). To put it another way, [nextPosition] should be computed taking
- * into account the perceptible spatial structure of the environment and other spatial information
- * available.
+ * A [NavigationStrategy] working with euclidean spaces.
  */
-interface OrientingAction<T, P : Position<P>> : SteeringAction<T, P>
+typealias EuclideanNavigationStrategy<T, N, E, M, F> =
+    NavigationStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, F>

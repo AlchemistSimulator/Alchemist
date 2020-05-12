@@ -68,6 +68,24 @@ public final class Euclidean2DPosition
 
     @NotNull
     @Override
+    public Euclidean2DPosition coerceAtMost(final double maximumMagnitude) {
+        if (getMagnitude() > maximumMagnitude) {
+            return resized(maximumMagnitude);
+        }
+        return this;
+    }
+
+    @NotNull
+    @Override
+    public Euclidean2DPosition coerceAtLeast(final double minimumMagnitude) {
+        if (getMagnitude() < minimumMagnitude) {
+            return resized(minimumMagnitude);
+        }
+        return this;
+    }
+
+    @NotNull
+    @Override
     public Euclidean2DPosition newFrom(final double x, final double y) {
         return new Euclidean2DPosition(x, y);
     }

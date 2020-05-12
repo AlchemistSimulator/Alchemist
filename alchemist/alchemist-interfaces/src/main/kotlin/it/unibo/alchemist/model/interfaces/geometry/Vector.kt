@@ -99,6 +99,25 @@ interface Vector<S : Vector<S>> {
     fun normalized(): S
 
     /**
+     * @return this vector if its [magnitude] is smaller than or equal to [maximumMagnitude] or a resized version
+     * of [maximumMagnitude] otherwise.
+     */
+    fun coerceAtMost(maximumMagnitude: Double): S
+
+    /**
+     * @return this vector if its [magnitude] is greater than or equal to [minimumMagnitude] or a resized version
+     * of [minimumMagnitude] otherwise.
+     */
+    fun coerceAtLeast(minimumMagnitude: Double): S
+
+    /**
+     * Performs a coercion at least and at most.
+     */
+    @JvmDefault
+    fun coerceIn(minimumMagnitude: Double, maximumMagnitude: Double): S =
+        coerceAtLeast(minimumMagnitude).coerceAtMost(maximumMagnitude)
+
+    /**
      * Find the normal of a vector.
      */
     fun normal(): S

@@ -53,16 +53,16 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             "explore.yml",
             0.1,
             30000,
-            38.525186757283954, 73.81997543200241
+            55.47950927581728, 74.34535994791692
         )
     }
 
     "goal oriented exploring allows to reach the destination" {
-        runSimulation("goal-oriented-explore.yml", 0.1, 850, 135, 15)
+        runSimulation("goal-oriented-explore.yml", 1.0, 850, 135, 15)
     }
 
     "pursuing allows to reach the destination quicker" {
-        runSimulation("pursue.yml", 0.1, 360, 135, 15)
+        runSimulation("pursue.yml", 1.0, 360, 135, 15)
     }
 
     "route following allows cuts to the route" {
@@ -74,7 +74,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
                     env.graph.nodeContaining(waypointToSkip)?.contains(env.getPosition(pedestrian)) shouldBe false
                 }
             },
-            finished = { env, _, _ -> assertPedestriansReached(env, 0.1, 85, 80) },
+            finished = { env, _, _ -> assertPedestriansReached(env, 1.0, 85, 80) },
             numSteps = 185
         )
     }
@@ -83,26 +83,26 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
         /*
          * Behavior should be identical to goal oriented exploring.
          */
-        runSimulation("no-knowledge.yml", 0.1, 850, 135, 15)
+        runSimulation("no-knowledge.yml", 1.0, 850, 135, 15)
     }
 
     "pedestrian with complete knowledge should take best route to destination" {
         /*
          * Only taking the best route the destination can be reached in 320 steps.
          */
-        runSimulation("complete-knowledge.yml", 0.1, 320, 135, 15)
+        runSimulation("complete-knowledge.yml", 1.0, 320, 135, 15)
     }
 
     "destination reaching should obtain a route from the pedestrian's cognitive map and use it" {
-        runSimulation("partial-knowledge.yml", 0.1, 320, 135, 15)
+        runSimulation("partial-knowledge.yml", 1.0, 320, 135, 15)
     }
 
     "destination reaching behavior should allow to reach an unknown destination found along the way to a known one" {
-        runSimulation("reach-destination.yml", 0.1, 100, 60, 40)
+        runSimulation("reach-destination.yml", 1.0, 100, 60, 40)
     }
 
     "pedestrian should take nearest door when no spatial info is available" {
-        runSimulation("nearest-door.yml", 0.1, 40, 103, 99)
+        runSimulation("nearest-door.yml", 1.0, 40, 103, 99)
     }
 
     "pedestrian should avoid congestion" {
@@ -114,7 +114,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
                     roomToAvoid?.contains(env.getPosition(pedestrian)) shouldBe false
                 }
             },
-            finished = { env, _, _ -> assertPedestriansReached(env, 0.1, 10, 55) },
+            finished = { env, _, _ -> assertPedestriansReached(env, 1.0, 10, 55) },
             numSteps = 70
         )
     }

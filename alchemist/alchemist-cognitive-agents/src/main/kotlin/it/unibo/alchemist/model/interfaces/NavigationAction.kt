@@ -17,7 +17,7 @@ import java.util.Optional
 
 /**
  * A [SteeringAction] allowing a pedestrian to navigate an environment consciously (e.g. without
- * remaining blocked in U-shaped obstacles).
+ * getting stuck in U-shaped obstacles).
  * Names are inspired to indoor environments, but this interface works for outdoor ones as well.
  *
  * @param T the concentration type.

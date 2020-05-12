@@ -62,7 +62,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     }
 
     /**
-     * Updates [pedestrianPosition] and [currentRoom], this can be costly. 
+     * Updates [pedestrianPosition] and [currentRoom], this can be costly.
      * Depending on how [ConvexGeometricShape.contains] manage points on the boundary, the pedestrian could
      * be inside two (adjacent) rooms at once. This can happen in two cases:
      * - when in [State.MOVING_TO_CROSSING_POINT_1] or [State.MOVING_TO_FINAL] and the pedestrian is moving
@@ -172,7 +172,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      * Moves the pedestrian across the provided [door] (which must be among [doorsInSight]).
      * Since connected rooms may be non-adjacent, a pair of [crossingPoints] has to be provided:
      * - the first point must belong to the current room's boundary and will be reached first,
-     * - the second point must belong to the next room's boundary and will be pursued after 
+     * - the second point must belong to the next room's boundary and will be pursued after
      * reaching the former one. [crossingPoints] may coincide if the two rooms are adjacent.
      */
     protected open fun crossDoor(door: F, crossingPoints: Pair<P, P>) {
@@ -191,27 +191,22 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     }
 
     protected open fun moving() {
-        currentRoom.takeIf { it.isPresent && it.get() != previousRoom }?.ifPresent { newRoom ->
-            when (newRoom) {
+        currentRoom.takeIf { it.isPresent && it.get() != previousRoom }?.get()?.let { newRoom ->
+            return when (newRoom) {
                 expectedNewRoom -> state = State.NEW_ROOM
                 else -> strategy.inUnexpectedNewRoom(previousRoom.orFail(), expectedNewRoom.orFail(), newRoom)
             }
-        } ?: let {
-            if (desiredPosition.isReached()) {
-                state = when (state) {
-                    State.MOVING_TO_CROSSING_POINT_1 -> {
-                        when {
-                            /*
-                             * Short-cut to save time.
-                             */
-                            crossingPoints.orFail().run { first == second } -> State.CROSSING_DOOR
-                            else -> State.MOVING_TO_CROSSING_POINT_2
-                        }
-                    }
-                    State.MOVING_TO_CROSSING_POINT_2 -> State.CROSSING_DOOR
-                    State.MOVING_TO_FINAL -> State.ARRIVED
-                    else -> state
-                }
+        }
+        if (desiredPosition.isReached()) {
+            state = when (state) {
+                State.MOVING_TO_CROSSING_POINT_1 -> State.MOVING_TO_CROSSING_POINT_2
+                    /*
+                     * Short-cut to save time.
+                     */
+                    .takeUnless { crossingPoints.orFail().run { first == second } } ?: State.CROSSING_DOOR
+                State.MOVING_TO_CROSSING_POINT_2 -> State.CROSSING_DOOR
+                State.MOVING_TO_FINAL -> State.ARRIVED
+                else -> state
             }
         }
     }

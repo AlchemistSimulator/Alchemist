@@ -70,7 +70,7 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
         crossDoor(door, computeCrossingPoints(door))
         this.targetDoor = door
     }
-    
+
     private fun computeCrossingPoints(door: Euclidean2DPassage) = door
         .copy(passageShapeOnTail = door.passageShapeOnTail.shrunk(wallRepulsionFactor))
         .crossingPoints(pedestrianPosition)

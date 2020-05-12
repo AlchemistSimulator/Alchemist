@@ -37,6 +37,22 @@ open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
 
     private var indexOfNextWaypoint: Int = 0
 
+    /**
+     * When in an unexpected room the pedestrian gets back to [previousRoom] to continue following the
+     * route correctly.
+     */
+    override fun inUnexpectedNewRoom(
+        previousRoom: ConvexPolygon,
+        expectedNewRoom: ConvexPolygon,
+        actualNewRoom: ConvexPolygon
+    ) = with(action) {
+        doorsInSight()
+            .filter { it.head == previousRoom }
+            .minBy { it.distanceToPedestrian() }
+            ?.let { crossDoor(it) }
+            ?: inNewRoom(actualNewRoom)
+    }
+
     override fun inNewRoom(newRoom: ConvexPolygon) = when {
         route.isEmpty() -> action.stop()
         else -> {

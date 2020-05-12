@@ -118,10 +118,4 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             numSteps = 70
         )
     }
-
-    /*
-    "every orienting pedestrian should reach the destination" {
-        runSimulation("multiple-orienting-pedestrians.yml", 15.0, 25000, 12.0, 60.0)
-    }
-    */
 })

@@ -57,7 +57,7 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
     }
 
     /**
-     * Defined when in [State.MOVING_TO_DOOR].
+     * Defined when crossing a door.
      */
     private var targetDoor: Euclidean2DPassage? = null
 
@@ -66,46 +66,20 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
      */
     override val Euclidean2DPassage.target: ConvexPolygon get() = head
 
-    /**
-     * Delegated to [ConvexPolygon.containsBoundaryIncluded]. Including the boundary means the pedestrian
-     * can be inside two rooms at once (e.g. if they're adjacent).
-     */
-    override fun ConvexPolygon.customContains(vector: Euclidean2DPosition): Boolean = containsBoundaryIncluded(vector)
-
-    /**
-     * Finds the current room. In two cases the pedestrian can be located inside two rooms at once (see
-     * [customContains]):
-     * - when in [State.MOVING_TO_DOOR] or [State.MOVING_TO_FINAL] and he/she's moving on [previousRoom]'s
-     * boundary. In such case [previousRoom] is returned.
-     * - when in [State.CROSSING_DOOR] or [State.NEW_ROOM] and [expectedNewRoom] is adjacent to [previousRoom].
-     * In such case [expectedNewRoom] is returned.
-     * Otherwise super method is used.
-     */
-    override fun findCurrentRoom(): ConvexPolygon? = when {
-        (state == State.MOVING_TO_DOOR || state == State.MOVING_TO_FINAL) &&
-            previousRoom.orFail().customContains(currentPosition) -> previousRoom
-        (state == State.CROSSING_DOOR || state == State.NEW_ROOM) &&
-            /*
-             * First time in NEW_ROOM [expectedNewRoom] is not initialised.
-             */
-            expectedNewRoom?.customContains(currentPosition) ?: false -> expectedNewRoom
-        else -> super.findCurrentRoom()
-    }
-
     override fun crossDoor(door: Euclidean2DPassage) {
         crossDoor(door, computeCrossingPoints(door))
         this.targetDoor = door
     }
-
+    
     private fun computeCrossingPoints(door: Euclidean2DPassage) = door
         .copy(passageShapeOnTail = door.passageShapeOnTail.shrunk(wallRepulsionFactor))
         .crossingPoints(pedestrianPosition)
 
     override fun moving() {
         super.moving()
-        if (state == State.MOVING_TO_DOOR) {
+        if (state == State.MOVING_TO_CROSSING_POINT_1) {
             /*
-             * Re-computes crossing points as pedestrian position may have changed, this allows more
+             * Re-computes crossing points as pedestrian position may have changed, this allows more 
              * natural movements.
              */
             crossingPoints = computeCrossingPoints(targetDoor.orFail())

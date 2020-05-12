@@ -65,7 +65,7 @@ open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
 ) {
 
     /**
-     * This behavior considers a [waypoint] reached when it's inside [currentRoom] or in an adjacent one.
+     * This behavior considers a [waypoint] reached when it's inside [currentRoom] or in an adjacent room.
      */
     override fun isReached(waypoint: Euclidean2DPosition, currentRoom: ConvexPolygon): Boolean = with(action) {
         super.isReached(waypoint, currentRoom) || doorsInSight().map { it.head }.any { it.contains(waypoint) }

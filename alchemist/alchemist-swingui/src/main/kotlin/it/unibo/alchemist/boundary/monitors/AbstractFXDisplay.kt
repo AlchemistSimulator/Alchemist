@@ -17,6 +17,7 @@ import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.input.KeyboardActionListener
+import it.unibo.alchemist.kotlin.clear
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
@@ -33,10 +34,10 @@ import java.util.stream.Stream
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.layout.Pane
-import tornadofx.add
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -67,17 +68,21 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     private var viewStatus = DEFAULT_VIEW_STATUS
     protected lateinit var wormhole: BidimensionalWormhole<P>
         private set
-    protected val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
-    private val canvas = Canvas()
+    private val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
+    private val effectsCanvas = Canvas()
+    /**
+     * Group dedicated for painting the background.
+     */
+    protected val background = Group()
 
     init {
         firstTime = true
         setStep(steps)
-        canvas.style = "-fx-background-color: #FFF;"
-        canvas.isMouseTransparent = true
-        canvas.widthProperty().bind(widthProperty())
-        canvas.heightProperty().bind(heightProperty())
-        children.add(canvas)
+//        effectsCanvas.style = "-fx-background-color: #FFF;"
+        effectsCanvas.isMouseTransparent = true
+        effectsCanvas.widthProperty().bind(widthProperty())
+        effectsCanvas.heightProperty().bind(heightProperty())
+        children.addAll(background, effectsCanvas)
         children.addAll(interactions.canvases)
     }
 
@@ -131,19 +136,19 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         mutex.release()
     }
 
-    /**
-     * Changes the background of the specified [GraphicsContext].
-     *
-     * @param graphicsContext the graphic component to draw on
-     * @param environment the [Environment] that contains the data to pass to [Effects]
-     * @return a function of what to do to draw the background
-     * @see .repaint
-     */
-    protected open fun drawBackground(graphicsContext: GraphicsContext, environment: Environment<T, P>): () -> Unit {
-        // TODO environment.dimensions is called to avoid the warning, because -werror registers it as an error
-        environment.dimensions
-        return { graphicsContext.clearRect(0.0, 0.0, width, height) }
-    }
+//    /**
+//     * Changes the background of the specified [GraphicsContext].
+//     *
+//     * @param graphicsContext the graphic component to draw on
+//     * @param environment the [Environment] that contains the data to pass to [Effects]
+//     * @return a function of what to do to draw the background
+//     * @see .repaint
+//     */
+//    private fun drawBackground(graphicsContext: GraphicsContext, environment: Environment<T, P>): () -> Unit {
+//        // TODO environment.dimensions is called to avoid the warning, because -werror registers it as an error
+//        environment.dimensions
+//        return { graphicsContext.clearRect(0.0, 0.0, width, height) }
+//    }
 
     override fun addEffects(effects: Collection<EffectGroup<P>>) {
         this.effectStack.addAll(effects)
@@ -221,15 +226,15 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
              * need to constantly regenerate the position map.
              */
             interactions.nodes = environment.nodes.associate { Pair(it, environment.getPosition(it)) }
-            val graphicsContext = canvas.graphicsContext2D
-            val background = Stream.of(drawBackground(graphicsContext, environment))
+            val graphicsContext = effectsCanvas.graphicsContext2D
+//            val background = Stream.of(drawBackground(graphicsContext, environment))
             val effects = effects
                 .stream()
                 .map<Queue<DrawCommand<P>>> { group -> group.computeDrawCommands(environment) }
-                .flatMap<DrawCommand<P>> { it.stream() }
+                .flatMap { it.stream() }
                 .map { cmd -> { cmd.accept(graphicsContext, wormhole) } }
             commandQueue = Stream
-                .concat(background, effects)
+                .concat(Stream.of(effectsCanvas::clear), effects)
                 .collect(Collectors.toCollection { ConcurrentLinkedQueue<() -> Unit>() })
             interactions.simulationStep()
             repaint()
@@ -246,7 +251,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         /**
          * The default time per frame.
          */
-        const val TIME_STEP = (1 / DEFAULT_FRAME_RATE).toDouble()
+        const val DEFAULT_TIME_STEP = (1 / DEFAULT_FRAME_RATE).toDouble()
         /**
          * Default number of steps.
          */

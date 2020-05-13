@@ -9,7 +9,6 @@
 dependencies {
     api(project(":alchemist-implementationbase"))
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
     implementation(Libs.guava)
     implementation(Libs.jirf)

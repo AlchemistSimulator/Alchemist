@@ -15,9 +15,8 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
-import org.jooq.lambda.Unchecked;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.InputStream;
@@ -38,7 +37,7 @@ public class TestWithProtelis {
      * are delivered using ns3.
      */
     @Test
-    public void testNs3asySimple() {
+    public void testNs3asySimple() throws Throwable {
         if (canExecute()) {
             final var env = testInSimulator("ns3asy.yml", 50);
             if (env.getIncarnation().isPresent()) {
@@ -57,7 +56,7 @@ public class TestWithProtelis {
      * executing the 'channel' Protelis program.
      */
     @Test
-    public void testChannel() {
+    public void testChannel() throws Throwable {
         if (canExecute()) {
             testInSimulator("channel.yml", Long.MAX_VALUE);
         }
@@ -77,15 +76,15 @@ public class TestWithProtelis {
         return System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("linux");
     }
 
-    private <T, P extends Position<P>> Environment<T, P> testInSimulator(final String ymlName, final long steps) {
+    private <T, P extends Position<P>> Environment<T, P> testInSimulator(final String ymlName, final long steps) throws Throwable {
         final InputStream res = ResourceLoader.getResourceAsStream(ymlName);
         final Environment<T, P> env = new YamlLoader(res).getWith(Collections.emptyMap());
         final Simulation<T, P> sim = new Engine<>(env, steps);
         sim.play();
         sim.run();
-        sim.getError().ifPresent(Unchecked.consumer(e -> {
-            throw e;
-        }));
+        if (sim.getError().isPresent()) {
+            throw sim.getError().get();
+        }
         return env;
     }
 }

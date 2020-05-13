@@ -5,19 +5,30 @@ title: Integration with the ns3 network simulator
 ---
 
 
-Alchemist supports the use of the [ns3](https://www.nsnam.org/) network simulator to obtain a realistic simulation of network communication.
-This can be useful, for example, when simulating distributed system where the node must communicate to tackle their collective task. 
+Alchemist can provide a realistic network simulation by leveraging
+the [ns3](https://www.nsnam.org/) network simulator.
 
-The integration between Alchemist and ns3 is currently supported only by the Protelis incarnation. 
 
-### What the integration with ns3 can do
+### Features and Limitations
 
-The integration with ns3 provides the ability to configure the following parameters: 
+Alchemist's integration with ns3 provides the following features:
 
-- The physical technology to use (Ethernet and WiFi are supported)
-- The transport protocol (TCP and UDP are supported)
-- The packet size (optional parameter; if not specified, it is determined automatically)
-- How objects should be serialized (and deserialized) before sending them (optional parameter; if not specified, the default Java serialization facility is used)
+- Pysical and layer-2 simulation of Ethernet and WiFi
+- Layer 4 realistic simulation via UDP and TCP protocols
+- Packet size can be set manually, or be realistically determined at runtime
+- Control over the serialization mechanism, defaulting to Java serialization.
+
+In its current state, the realistic networking has a number of important limitations
+the user should be well aware of:
+
+- Realistic networking is supported only if the Protelis incarnation is used.
+- Node mobility is *not supported* in conjunction with realistic networking.
+- A single simulation at once can be executed with realistic networking.
+  In case you intend to run a batch, make sure to set the maximum parallelism (`-t` CLI option) to `1`.
+- The simulation seed internally used by ns3 is currently not configurable:
+  simulations are reproducible, but there will be a single result per settings configuration.
+- Realistic network simulation only works under Linux
+- Ethernet and WiFi connection can't get mixed
 
 #### Additional configuration for Ethernet
 
@@ -30,11 +41,11 @@ When using Ethernet, it is possible to configure the following parameters:
 
 When using WiFi, it is possible to configure the following parameters:
 
-- The position of the access point (optional; if not specified it is (0, 0))
+- The position of the access point (optional; defaults to (0, 0))
 - The propagation delay model ([these models](https://www.nsnam.org/doxygen/group__propagation.html) are available)
 - The propagation loss model ([these models](https://www.nsnam.org/doxygen/group__propagation.html) are available)
 
-### How to setup a simulation using ns3 with the Protelis incarnation
+### Configuring a simulation with ns3
 
 The use of the ns3 simulator can be added to a pre-existing simulation (based on the Protelis incarnation) by adding these configuration parameters to the `.yml` file: 
 
@@ -61,12 +72,8 @@ ns3:
     type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer #optional
 ```
 
-If such configuration is present, every time the `send` program is executed the corresponding data will be sent using ns3 instead of the built-in system. 
+If such configuration is present, every time the `send` program is executed the corresponding data will be sent using ns3 instead of the built-in system.
 
-To understand how to setup a fully fledged Protelis simulation, please refer to its wiki. 
+To understand how to setup a full fledged Protelis simulation,
+please refer to the Protelis documentation of this wiki. 
 
-### Current limitations
-
-- It is not possible to make the nodes move when using ns3
-- It's only possibile to use ns3 from a single thread at once (be aware of this when running multiple simulations in batch mode)
-- It's only possible to use it on Linux

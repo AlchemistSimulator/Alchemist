@@ -9,17 +9,13 @@
 
 package it.unibo.alchemist.ns3.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * A {@link Serializer} which uses a {@link ObjectOutputStream} to serialize objects and
  * a {@link ObjectInputStream} to deserialize them.
  */
-public final class DefaultNs3Serializer implements Serializer {
+public final class DefaultNs3Serializer implements Serializer, Serializable {
 
     @Override
     public void serializeAndSend(final Object toSend, final OutputStream outputStream) throws IOException {

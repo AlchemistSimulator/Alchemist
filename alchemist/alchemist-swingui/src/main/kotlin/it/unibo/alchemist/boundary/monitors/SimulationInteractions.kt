@@ -123,7 +123,7 @@ class InteractionManager<T, P : Position2D<P>>(
     /**
      * The canvases used for input/output.
      */
-    val canvases = Group().also { listOf(input, highlighter, selector).forEach(it.children::add) }
+    val canvases = Group().apply { listOf(input, highlighter, selector).forEach { children.add(it) } }
 
     /**
      * Invokes a given command on the simulation.

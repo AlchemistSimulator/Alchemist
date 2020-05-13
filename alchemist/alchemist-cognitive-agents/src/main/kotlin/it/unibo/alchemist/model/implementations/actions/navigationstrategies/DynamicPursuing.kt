@@ -17,6 +17,10 @@ import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 
 /**
  * [Pursuing] strategy allowing to dynamically change [destination].
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 open class DynamicPursuing<T, N : Euclidean2DConvexShape, E>(
     action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
@@ -34,10 +38,8 @@ open class DynamicPursuing<T, N : Euclidean2DConvexShape, E>(
         destination = newDestination
         action.currentRoom.ifPresent {
             /*
-             * If the pedestrian is inside a room, force re-computation of what to do by calling
-             * inNewRoom after modifying the destination. If the pedestrian is not inside a room,
-             * he/she's crossing a door so as to reach one and inNewRoom will be called as soon as
-             * the new room is reached.
+             * If the pedestrian is inside a room, we force the re-computation of what to do. Otherwise
+             * he/she's crossing a door and inNewRoom will be called as soon as a room is reached.
              */
             inNewRoom(it)
         }

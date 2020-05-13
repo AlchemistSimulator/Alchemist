@@ -26,6 +26,10 @@ import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
  * pedestrian reach that exact position), apart from the last waypoint which is actually approached.
  * Cuts to the route are allowed (i.e. if the pedestrian finds a waypoint which is farther than the
  * expected next one, he/she skips all the waypoints in between).
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
     action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
@@ -38,7 +42,7 @@ open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
     private var indexOfNextWaypoint: Int = 0
 
     /**
-     * When in an unexpected room the pedestrian gets back to [previousRoom] to continue following the
+     * When in an unexpected room the pedestrian gets back to [previousRoom] so as to continue following the
      * route correctly.
      */
     override fun inUnexpectedNewRoom(

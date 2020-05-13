@@ -24,6 +24,10 @@ import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
  * known, but in case another destination is found along the way (either known or unknown), the latter will
  * be approached instead of the chosen known destination. To put it in another way, this behavior mixes
  * [KnownDestinationReaching] and [GoalOrientedExploring].
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 open class DestinationReaching<T, N : Euclidean2DConvexShape, E>(
     action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,

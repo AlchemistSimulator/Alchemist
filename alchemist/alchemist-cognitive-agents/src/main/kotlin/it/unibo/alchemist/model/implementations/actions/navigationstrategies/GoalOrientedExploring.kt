@@ -21,8 +21,12 @@ import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
  * is unknown.
  * The client can specify a list of [unknownDestinations]: these can be recognized once they're in sight,
  * but the pedestrian doesn't know their position until that moment (think e.g. of exits in an evacuation
- * scenario). More specifically, unknown destinations can be sensed if they're located in a room adjacent
- * to the room the pedestrian is into.
+ * scenario). More specifically, unknown destinations can be detected if located in a room adjacent to the
+ * room the pedestrian is into. Once a destination is detected, the pedestrian will reach it and stop.
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 open class GoalOrientedExploring<T, N : Euclidean2DConvexShape, E>(
     action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
@@ -33,9 +37,10 @@ open class GoalOrientedExploring<T, N : Euclidean2DConvexShape, E>(
         reachUnknownDestination(newRoom, orElse = { super.inNewRoom(newRoom) })
 
     /**
-     * If one or more [unknownDestinations] can be sensed (as defined above), they are weighted using
-     * [weightExit] and the one with minimum weight is crossed. [orElse] is executed if no unknown
-     * destination is sensed.
+     * If one or more unknown destinations are inside [newRoom] (= the room the pedestrian is into), the closest
+     * one is approached. Otherwise, if one or more destinations are in a room adjacent to the current one, the
+     * related doors are weighted using [weightExit] and the one with minimum weight is crossed. [orElse] is
+     * executed otherwise.
      */
     protected open fun reachUnknownDestination(newRoom: ConvexPolygon, orElse: () -> Unit) = with(action) {
         unknownDestinations
@@ -53,10 +58,10 @@ open class GoalOrientedExploring<T, N : Euclidean2DConvexShape, E>(
         unknownDestinations.any { head.contains(it) }
 
     /**
-     * Assigns a weight to a passage leading to an unknown destination (e.g. an exit).
+     * Assigns a weight to a door (= passage) leading to an unknown destination (e.g. an exit).
      * By default, the exit's distance and its congestion are considered.
      */
-    protected open fun weightExit(passage: Euclidean2DPassage): Double = with(passage) {
+    protected open fun weightExit(door: Euclidean2DPassage): Double = with(door) {
         distanceToPedestrian() * congestionFactor(head)
     }
 }

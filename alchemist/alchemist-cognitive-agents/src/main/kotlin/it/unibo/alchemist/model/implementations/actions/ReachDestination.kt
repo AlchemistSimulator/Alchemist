@@ -31,6 +31,10 @@ import org.jgrapht.Graphs
  * A [NavigationAction] using [DestinationReaching] navigation strategy.
  * Accepts an array of coordinates representing the destinations and uses [inferIsKnown] to partition them into
  * known and unknown ones.
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 class ReachDestination<T, N : Euclidean2DConvexShape, E>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,

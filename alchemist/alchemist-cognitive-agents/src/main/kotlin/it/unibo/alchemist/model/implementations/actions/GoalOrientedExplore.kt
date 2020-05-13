@@ -22,6 +22,10 @@ import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 
 /**
  * A [NavigationAction] using [GoalOrientedExploring] navigation strategy.
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 class GoalOrientedExplore<T, N : Euclidean2DConvexShape, E>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,

@@ -31,6 +31,10 @@ import org.jgrapht.alg.shortestpath.BFSShortestPath
  * The difference between this behavior and [Pursuing] is that the latter assumes no route
  * leading to the destination is known, whereas this behavior tries to exploit the pedestrian's
  * cognitive map to obtain a route to follow.
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
     action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
@@ -65,7 +69,7 @@ open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
 ) {
 
     /**
-     * This behavior considers a [waypoint] reached when it's inside [currentRoom] or in an adjacent room.
+     * A [waypoint] is considered reached when inside [currentRoom] or in an adjacent room.
      */
     override fun isReached(waypoint: Euclidean2DPosition, currentRoom: ConvexPolygon): Boolean = with(action) {
         super.isReached(waypoint, currentRoom) || doorsInSight().map { it.head }.any { it.contains(waypoint) }

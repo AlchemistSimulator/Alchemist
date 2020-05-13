@@ -27,12 +27,12 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
  * is subject, while maintaining that warranty. Such forces are combined as follows:
  * let f be the prevalent force,
  * - if f leads the pedestrian outside the room (= environment's area) he/she is into, no combination is performed
- * and f is used as it is. This is because crossing doors can be a thorny issue and we don't want to introduce
+ * and f is used as it is. This because crossing doors can be a thorny issue and we don't want to introduce
  * disturbing forces.
  * - Otherwise, a linear combination is performed: f is assigned unitary weight, all other forces are assigned
- * weight w equal to the maximum value in [0,1] so that the resulting force satisfy two conditions:
- * - it forms with f an angle smaller than or equal to the specified [toleranceAngle],
- * - it doesn't lead the pedestrian outside the current room.
+ * weight w equal to the maximum value in [0,1] so that the resulting force:
+ * - forms with f an angle smaller than or equal to the specified [toleranceAngle],
+ * - doesn't lead the pedestrian outside the current room.
  * The idea is to decrease the intensity of non-prevalent forces until the resulting one enters in some tolerance
  * sector defined by both the tolerance angle and the current room's boundary. With a suitable tolerance angle
  * this allows to steer the pedestrian towards the target defined by the prevalent force, while using a trajectory
@@ -46,12 +46,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 class SinglePrevalent<T, M : ConvexPolygon>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, M, *>,
     pedestrian: Pedestrian<T>,
-    /**
-     * Function computing the prevalent action.
-     */
     private val prevalent: List<SteeringAction<T, Euclidean2DPosition>>.() -> EuclideanNavigationAction<T, *, *, M, *>,
     /**
-     * The tolerance angle in radians, defaults to PI / 3.
+     * Tolerance angle in radians.
      */
     private val toleranceAngle: Double = DEFAULT_TOLERANCE_ANGLE,
     /**

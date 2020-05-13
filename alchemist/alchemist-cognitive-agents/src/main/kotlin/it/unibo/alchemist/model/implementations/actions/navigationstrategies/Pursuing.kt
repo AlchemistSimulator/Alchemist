@@ -27,11 +27,15 @@ import kotlin.math.pow
  * path leading there, this is also known as path searching.
  * In this context, knowing a destination means knowing its position, which, in turn, means
  * knowing two things:
- * - the direction that connects the destination and the current position as the crow flies
+ * - the direction that connects the destination and the current position as the crow flies,
  * - an estimation of the distance between the destination and the current position.
  * In order to reach the [destination] without a route to follow, the weighting system used
  * in [Exploring] is extended so as to take into account the (estimated) suitability of each
  * door to reach the provided [destination], see [suitabilityFactor].
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
  */
 open class Pursuing<T, N : Euclidean2DConvexShape, E>(
     action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
@@ -53,18 +57,18 @@ open class Pursuing<T, N : Euclidean2DConvexShape, E>(
     }
 
     /**
-     * Assigns a weight to a passage (= door). This weighting system is derived from the one by
-     * [Andresen et al.](https://doi.org/10.1080/23249935.2018.1432717). The [suitabilityFactor]
-     * is added to the factors of the super method (= [Exploring.weight]).
+     * Assigns a weight to a visible door (= passage). This weighting system is derived from the one
+     * by [Andresen et al.](https://doi.org/10.1080/23249935.2018.1432717). The [suitabilityFactor]
+     * is added to the factors of super method (= [Exploring.weight]).
      */
-    override fun weight(passage: Euclidean2DPassage): Double =
-        super.weight(passage) * suitabilityFactor(doorsRankings[passage]
+    override fun weight(door: Euclidean2DPassage): Double =
+        super.weight(door) * suitabilityFactor(doorsRankings[door]
             ?: throw IllegalStateException("internal error: doors rankings are empty"))
 
     /**
-     * This factor takes into account the rank given to the passage when assessing its suitability
-     * to reach the [destination] (see [computeDoorsRankings]). It is computed as 1 - 0.5^[rank].
-     * This is derived from [Andresen's work](https://doi.org/10.1080/23249935.2018.1432717).
+     * Takes into account the rank given to the passage when assessing its suitability to reach
+     * the [destination] (see [computeDoorsRankings]). It is computed as 1 - 0.5^[rank]. This is
+     * derived from [Andresen's work](https://doi.org/10.1080/23249935.2018.1432717).
      */
     protected open fun suitabilityFactor(rank: Int): Double = 1.0 - 0.5.pow(rank)
 

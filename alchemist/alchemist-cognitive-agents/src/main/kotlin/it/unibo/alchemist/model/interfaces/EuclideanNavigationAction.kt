@@ -14,6 +14,12 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTr
 
 /**
  * A [NavigationAction] working with euclidean spaces.
+ *
+ * @param T the concentration type.
+ * @param N the type of landmarks of the pedestrian's cognitive map.
+ * @param E the type of edges of the pedestrian's cognitive map.
+ * @param M the type of nodes of the navigation graph provided by the environment.
+ * @param F the type of edges of the navigation graph provided by the environment.
  */
 typealias EuclideanNavigationAction<T, N, E, M, F> =
     NavigationAction<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, F>

@@ -67,27 +67,27 @@ class ExtendableConvexPolygonInEnvironment(
         MutableList(vertices.size) { null }
 
     override fun addVertex(index: Int, x: Double, y: Double): Boolean {
-        val oldEdge = getEdge(circularPrev(index))
+        val oldEdge = getEdge(circularPrevious(index))
         if (super.addVertex(index, x, y)) {
             addCacheAt(index)
-            voidCacheAt(circularPrev(index), oldEdge)
+            voidCacheAt(circularPrevious(index), oldEdge)
             return true
         }
         return false
     }
 
     override fun removeVertex(index: Int): Boolean {
-        val oldEdge = getEdge(circularPrev(index))
+        val oldEdge = getEdge(circularPrevious(index))
         if (super.removeVertex(index)) {
             removeCacheAt(index)
-            voidCacheAt(circularPrev(index), oldEdge)
+            voidCacheAt(circularPrevious(index), oldEdge)
             return true
         }
         return false
     }
 
     override fun moveVertex(index: Int, newX: Double, newY: Double): Boolean {
-        val modifiedEdges = listOf(circularPrev(index), index)
+        val modifiedEdges = listOf(circularPrevious(index), index)
             .map { it to getEdge(it) }
         if (super.moveVertex(index, newX, newY)) {
             modifiedEdges.forEach { voidCacheAt(it.first, it.second) }
@@ -97,7 +97,7 @@ class ExtendableConvexPolygonInEnvironment(
     }
 
     override fun replaceEdge(index: Int, newEdge: Segment2D<Euclidean2DPosition>): Boolean {
-        val modifiedEdges = listOf(circularPrev(index), index, circularNext(index))
+        val modifiedEdges = listOf(circularPrevious(index), index, circularNext(index))
             .map { it to getEdge(it) }
         if (super.replaceEdge(index, newEdge)) {
             modifiedEdges.forEach { voidCacheAt(it.first, it.second) }
@@ -188,7 +188,7 @@ class ExtendableConvexPolygonInEnvironment(
      */
     private fun computeNormal(index: Int, edge: Segment2D<Euclidean2DPosition> = getEdge(index)): Euclidean2DPosition {
         val curr = edge.toVector()
-        val prev = getEdge(circularPrev(index)).toVector()
+        val prev = getEdge(circularPrevious(index)).toVector()
         val normal = curr.normal().normalized()
         if (zCross(curr, normal) > 0.0 != zCross(curr, prev) > 0.0) {
             return normal * -1.0
@@ -324,7 +324,7 @@ class ExtendableConvexPolygonInEnvironment(
         val indexOfIntrudingV = vertices.indexOfFirst { obstacle.contains(it.toPoint()) }
         // intersecting edges
         val polygonEdge1 = getEdge(indexOfIntrudingV)
-        val polygonEdge2 = getEdge(circularPrev(indexOfIntrudingV))
+        val polygonEdge2 = getEdge(circularPrevious(indexOfIntrudingV))
         val obstacleEdge: Segment2D<Euclidean2DPosition> = firstIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
         val p1 = intersection(polygonEdge1, obstacleEdge).point.get().toEuclidean
@@ -346,7 +346,7 @@ class ExtendableConvexPolygonInEnvironment(
         modifyGrowthDirection(indexOfIntrudingV, d1, true)
         addVertex(indexOfIntrudingV, vertices[indexOfIntrudingV].x, vertices[indexOfIntrudingV].y)
         canEdgeAdvance[indexOfIntrudingV] = false
-        modifyGrowthDirection(circularPrev(indexOfIntrudingV), d2, false)
+        modifyGrowthDirection(circularPrevious(indexOfIntrudingV), d2, false)
     }
 
     private fun modifyGrowthDirection(i: Int, newD: Euclidean2DPosition, first: Boolean) {

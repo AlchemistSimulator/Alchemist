@@ -34,6 +34,8 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
+val executionRequirements = listOf("interfaces", "engine", "loading").map { project(":alchemist-$it") }
+
 apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
@@ -62,40 +64,49 @@ allprojects {
     }
 
     repositories {
+        // Prefer Google mirrors, they're more stable
         listOf("", "-eu", "-asia").forEach {
             maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
         }
         mavenCentral()
-        maven {
-            url = uri("https://dl.bintray.com/kotlin/dokka")
-            content {
-                includeGroup("org.jetbrains.dokka")
-            }
-        }
-        maven {
-            url = uri("https://dl.bintray.com/kotlin/kotlinx.html/")
-            content {
-                includeGroup("org.jetbrains.kotlinx")
+        // Stuff on bintray, build-only dependencies allowed
+        mapOf(
+            "kotlin/dokka" to setOf("org.jetbrains.dokka"),
+            "kotlin/kotlinx.html" to setOf("org.jetbrains.kotlinx"),
+            "arturbosch/code-analysis" to setOf("io.gitlab.arturbosch.detekt")
+        ).forEach { (uriPart, groups) ->
+            maven {
+                url = uri("https://dl.bintray.com/$uriPart")
+                content { groups.forEach { includeGroup(it) } }
             }
         }
     }
 
     dependencies {
+        // Code quality control
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
+        // Compilation only
         compileOnly(Libs.annotations)
         compileOnly(Libs.spotbugs)
+        // Implementation
         implementation(Libs.slf4j_api)
         implementation(kotlin("stdlib-jdk8"))
         implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
+        // Test compilation only
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
+        // Test implementation: JUnit 5 + Kotest
         testImplementation(Libs.junit_jupiter_api)
-        testRuntimeOnly(Libs.junit_jupiter_engine)
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
-        runtimeOnly(Libs.logback_classic)
+        // Test runtime: Junit engine
+        testRuntimeOnly(Libs.junit_jupiter_engine)
+        // executable jar packaging
+        if ("incarnation" in project.name) {
+            shadow(rootProject)
+        }
     }
 
     // COMPILE
@@ -253,6 +264,9 @@ allprojects {
     }
 }
 
+/*
+ * Root project additional configuration
+ */
 evaluationDependsOnChildren()
 
 repositories {
@@ -267,13 +281,12 @@ repositories {
 }
 
 dependencies {
-    api(project(":alchemist-engine"))
-    api(project(":alchemist-interfaces"))
-    api(project(":alchemist-loading"))
+    executionRequirements.forEach { api(it) }
     implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
+    runtimeOnly(Libs.logback_classic)
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
     orchidRuntimeOnly(Libs.orchideditorial)
     orchidRuntimeOnly(Libs.orchidkotlindoc)

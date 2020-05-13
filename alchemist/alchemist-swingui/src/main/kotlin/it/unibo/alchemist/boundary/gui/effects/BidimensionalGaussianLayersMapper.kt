@@ -57,7 +57,7 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
         return layers
             .filter { l -> l is BidimensionalGaussianLayer }
             .map { l -> l as BidimensionalGaussianLayer }
-            .map { l -> Function { p: P -> l.getValue(p) } } // l::getValue
+            .map { l -> Function { p: P -> l.getValue(p) } }
     }
 
     companion object {

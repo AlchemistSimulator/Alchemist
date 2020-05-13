@@ -70,14 +70,14 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
     override fun toString(): String = javaClass.simpleName + vertices()
 
     /**
-     * Computes the circular previous index in the [vertices] collection.
+     * Finds the previous index with the respect to the given [index], restarting from the end if necessary.
      */
-    protected fun circularPrev(index: Int) = vertices().size.let { (index - 1 + it) % it }
+    protected fun circularPrevious(index: Int): Int = vertices().size.let { (index - 1 + it) % it }
 
     /**
-     * Computes the circular next index in the [vertices] collection.
+     * Finds the next index with respect to the given [index], restarting from the beginning if necessary.
      */
-    protected fun circularNext(index: Int) = (index + 1) % vertices().size
+    protected fun circularNext(index: Int): Int = (index + 1) % vertices().size
 
     /**
      * Checks if the polygon is convex (see [ConvexPolygon]).
@@ -158,9 +158,9 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         /*
          * First previous edge not degenerate
          */
-        var i = circularPrev(index)
+        var i = circularPrevious(index)
         while (getEdge(i).isDegenerate) {
-            i = circularPrev(i)
+            i = circularPrevious(i)
         }
         val prevIndex = i
         val prev = getEdge(i)

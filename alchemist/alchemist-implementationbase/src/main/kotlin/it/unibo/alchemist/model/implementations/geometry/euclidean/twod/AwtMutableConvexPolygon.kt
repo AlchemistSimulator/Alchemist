@@ -32,7 +32,7 @@ open class AwtMutableConvexPolygon(
          */
         var i = 0
         while (i < vertices.size) {
-            if (areCollinear(vertices[circularPrev(i)], vertices[i], vertices[circularNext(i)])) {
+            if (areCollinear(vertices[circularPrevious(i)], vertices[i], vertices[circularNext(i)])) {
                 vertices.removeAt(i)
                 i--
             }
@@ -67,7 +67,7 @@ open class AwtMutableConvexPolygon(
          * Only the modified/new edges are passed, which vary depending
          * on the operation performed (addition/removal of a vertex/edge).
          */
-        if (isConvex(circularPrev(index), index)) {
+        if (isConvex(circularPrevious(index), index)) {
             shape = null
             return true
         }
@@ -78,7 +78,7 @@ open class AwtMutableConvexPolygon(
     override fun removeVertex(index: Int): Boolean {
         val oldVertex = vertices[index]
         vertices.removeAt(index)
-        if (isConvex(circularPrev(index))) {
+        if (isConvex(circularPrevious(index))) {
             shape = null
             return true
         }
@@ -89,7 +89,7 @@ open class AwtMutableConvexPolygon(
     override fun moveVertex(index: Int, newX: Double, newY: Double): Boolean {
         val oldVertex = vertices[index]
         vertices[index] = Euclidean2DPosition(newX, newY)
-        if (isConvex(circularPrev(index), index)) {
+        if (isConvex(circularPrevious(index), index)) {
             shape = null
             return true
         }
@@ -101,7 +101,7 @@ open class AwtMutableConvexPolygon(
         val oldEdge = getEdge(index)
         vertices[index] = newEdge.first
         vertices[circularNext(index)] = newEdge.second
-        if (isConvex(circularPrev(index), index, circularNext(index))) {
+        if (isConvex(circularPrevious(index), index, circularNext(index))) {
             shape = null
             return true
         }

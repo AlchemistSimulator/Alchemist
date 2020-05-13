@@ -244,7 +244,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
             /*
              * Arrived.
              */
-            else -> {}
+            else -> Unit
         }
     }
 }

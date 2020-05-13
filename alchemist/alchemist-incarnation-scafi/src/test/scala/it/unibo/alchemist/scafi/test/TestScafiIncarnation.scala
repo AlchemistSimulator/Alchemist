@@ -59,6 +59,5 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
 
   private def assertNotNull(expr: AnyRef) = expr shouldNot be(null)
   private def assertTrue(pred: Boolean) = pred shouldBe(true)
-  private def assertFalse(pred: Boolean) = assertTrue(!pred)
   private def assertEquals[T](expected: T, actual: T) = expected shouldEqual(actual)
 }

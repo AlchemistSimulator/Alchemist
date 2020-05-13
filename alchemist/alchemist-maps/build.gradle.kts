@@ -10,6 +10,7 @@ dependencies {
     api(project(":alchemist-interfaces"))
 
     implementation(project(":alchemist-implementationbase"))
+    implementation(project(":alchemist-loading"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.commons_codec)
@@ -25,10 +26,6 @@ dependencies {
     implementation(Libs.jpx)
     implementation(Libs.simplelatlng)
     implementation(Libs.trove4j)
-}
-
-tasks.withType<Test> {
-    maxHeapSize = "3500m"
 }
 
 publishing.publications {

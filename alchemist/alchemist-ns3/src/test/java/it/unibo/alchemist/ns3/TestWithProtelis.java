@@ -45,9 +45,7 @@ public class TestWithProtelis {
                 for (final var node : env.getNodes()) {
                     final var received = ((Double) node.getConcentration(env.getIncarnation().get().createMolecule("msgs_received"))).intValue();
                     assertTrue(received > 0);
-                    //System.out.println("The node " + node.toString() + " received " + received + " messages");
                 }
-                //System.out.println("Time is " + env.getSimulation().getTime());
             } else {
                 fail("Incarnation not present");
             }
@@ -62,8 +60,6 @@ public class TestWithProtelis {
     public void testChannel() {
         if (canExecute()) {
             testInSimulator("channel.yml", Long.MAX_VALUE);
-            //System.out.println("Step is " + env.getSimulation().getStep());
-            //System.out.println("Time is " + env.getSimulation().getTime());
         }
     }
 

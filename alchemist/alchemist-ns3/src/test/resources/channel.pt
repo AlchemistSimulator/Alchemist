@@ -1,7 +1,3 @@
 module channel
 import protelis:coord:spreading
-channel2(
-  optionally(env.get("source")).orElse(false),
-  optionally(env.get("destination")).orElse(false),
-  5
-)
+distanceTo(optionally(env.get("source")).orElse(false))

@@ -9,6 +9,7 @@ package it.unibo.alchemist.kotlin
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Time
+import javafx.scene.canvas.Canvas
 import java.awt.Point
 
 /**
@@ -63,3 +64,10 @@ operator fun Time.minus(other: Double): Time = minus(
         other
     )
 )
+
+/**
+ * Clears a given canvas.
+ */
+fun Canvas.clear() {
+    graphicsContext2D.clearRect(0.0, 0.0, width, height)
+}

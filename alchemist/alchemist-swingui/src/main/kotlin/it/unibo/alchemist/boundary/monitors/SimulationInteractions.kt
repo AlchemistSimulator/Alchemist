@@ -27,6 +27,7 @@ import it.unibo.alchemist.input.KeyboardEventDispatcher
 import it.unibo.alchemist.input.MouseButtonTriggerAction
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.input.TemporariesMouseEventDispatcher
+import it.unibo.alchemist.kotlin.clear
 import it.unibo.alchemist.kotlin.makePoint
 import it.unibo.alchemist.kotlin.minus
 import it.unibo.alchemist.kotlin.plus
@@ -137,15 +138,10 @@ class InteractionManager<T, P : Position2D<P>>(
             widthProperty().bind(parentMonitor.widthProperty())
             heightProperty().bind(parentMonitor.heightProperty())
         }
-        selector.apply {
-            widthProperty().bind(parentMonitor.widthProperty())
-            heightProperty().bind(parentMonitor.heightProperty())
-            isMouseTransparent = true
-        }
-        highlighter.apply {
-            widthProperty().bind(parentMonitor.widthProperty())
-            heightProperty().bind(parentMonitor.heightProperty())
-            isMouseTransparent = true
+        listOf(selector, highlighter).forEach {
+            it.widthProperty().bind(parentMonitor.widthProperty())
+            it.heightProperty().bind(parentMonitor.heightProperty())
+            it.isMouseTransparent = true
         }
 
         highlighter.graphicsContext2D.globalAlpha = Alphas.highlight
@@ -407,13 +403,6 @@ class InteractionManager<T, P : Position2D<P>>(
     }
 
     /**
-     * Clears a given canvas.
-     */
-    private fun clearCanvas(canvas: Canvas) {
-        canvas.graphicsContext2D.clearRect(0.0, 0.0, canvas.width, canvas.height)
-    }
-
-    /**
      * Grabs all the nodes in the selection box and adds them to the selection candidates.
      */
     private fun addNodesToSelectionCandidates() {
@@ -432,8 +421,8 @@ class InteractionManager<T, P : Position2D<P>>(
      */
     fun repaint() {
         Platform.runLater {
-            clearCanvas(selector)
-            clearCanvas(highlighter)
+            selector.clear()
+            highlighter.clear()
             feedback.values.forEach { it.forEach { it() } }
         }
     }

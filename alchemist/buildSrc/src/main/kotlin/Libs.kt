@@ -7,8 +7,6 @@ import kotlin.String
  *   `$ ./gradlew buildSrcVersions`
  */
 object Libs {
-    const val org_danilopianini_conrec: String = "org.danilopianini:conrec:" + Versions.org_danilopianini_conrec
-
     /**
      * https://javaeden.github.io/Orchid/latest/core/
      */
@@ -279,6 +277,12 @@ object Libs {
     const val miglayout_swing: String = "com.miglayout:miglayout-swing:" + Versions.miglayout_swing
 
     /**
+     * https://github.com/gscaparrotti/ns3asy-bindings
+     */
+    const val ns3asy_bindings: String = "com.github.gscaparrotti:ns3asy-bindings:" +
+            Versions.ns3asy_bindings
+
+    /**
      * https://scafi.github.io/
      */
     const val scafi_core_2_12: String = "it.unibo.apice.scafiteam:scafi-core_2.12:" +
@@ -300,7 +304,7 @@ object Libs {
     const val commons_codec: String = "commons-codec:commons-codec:" + Versions.commons_codec
 
     /**
-     * http://commons.apache.org/proper/commons-lang/
+     * https://commons.apache.org/proper/commons-lang/
      */
     const val commons_lang3: String = "org.apache.commons:commons-lang3:" + Versions.commons_lang3
 
@@ -415,6 +419,11 @@ object Libs {
      * http://trove4j.sf.net
      */
     const val trove4j: String = "net.sf.trove4j:trove4j:" + Versions.trove4j
+
+    /**
+     * https://github.com/DanySK/conrec
+     */
+    const val conrec: String = "org.danilopianini:conrec:" + Versions.conrec
 
     /**
      * https://github.com/pinterest/ktlint

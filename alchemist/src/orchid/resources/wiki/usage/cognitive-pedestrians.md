@@ -13,13 +13,11 @@ The animation above shows an adult male with no previous knowledge of the enviro
 ### Prerequisites
 This guide assumes you already know [the Alchemist metamodel](../simulator/metamodel.md), [how to write simulations in YAML](yaml.md) and [how to generate a navigation graph](navigation-graphs.md).
 
-### Types of pedestrians
-The characteristics of the pedestrians loadable in a simulation can be chosen from three available types, 
-each representing a more refined version of the previous one.
+### Types of pedestrian
+There are three basic types of pedestrian, each representing a more sophisticated version of the previous one. These are derived from the work of [van der Wal et al](https://doi.org/10.1007/978-3-319-70647-4_11).
 
 #### Homogeneous Pedestrian
-Homogeneous pedestrians are a particular type of _Node_ which have no peculiar characteristic each other. 
-It is the most common type of pedestrian which can be load in a simulation.
+Homogeneous pedestrians are _Nodes_ with no peculiar characteristic each other.
 
 ```yaml
 displacements:
@@ -31,10 +29,8 @@ displacements:
 ```
 
 #### Heterogeneous Pedestrian
-Heterogeneous pedestrians are _Nodes_ who have a given age and gender, based on which their speed, compliance 
-and social attitudes are computed.
-The kinds of age which can be used are: *child*, *adult*, *elderly*; alternatively you can specify the exact age as a number.
-The kinds of sex available are: *male*, *female*.
+Heterogeneous pedestrians have an age and a gender, based on which their speed, compliance and social attitudes are computed.
+The age groups available are: *child*, *adult*, *elderly*; alternatively you can specify the exact age. The genders available are: *male*, *female*.
 
 ```yaml
 displacements:
@@ -53,7 +49,7 @@ displacements:
 ```
 
 #### Cognitive Pedestrian
-A cognitive pedestrian is a heterogeneous pedestrian with cognitive capabilities. It has an emotional state and is able to influence and to be influenced by other people with the same capabilities. For instance, cognitive pedestrians can perceive fear, not just directly but also by contagion (e.g. seeing other people fleeing may cause them flee as well).
+Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities. They have an emotional state and are able to influence and be influenced by others with the same capabilities. As an example, cognitive pedestrians can perceive fear via social contagion (e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).
 
 ```yaml
 reactions: &behavior
@@ -77,6 +73,43 @@ displacements:
     nodes:
       type: CognitivePedestrian2D
       parameters: ["adult", "female"]
+    programs:
+      - *behavior
+```
+
+### Orienting pedestrians
+As shown in the animation on the top of the page, pedestrians can be equipped with different knowledge degrees of the environment. To do so, orienting pedestrians are required: these are derived from the work of [Andresen et al](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717). There are two available types of orienting pedestrian, described below.
+
+#### Homogeneous orienting pedestrian
+These are homogeneous pedestrians that can be equipped with a given knowledge degree of the environment. Such quantity is a `Double` value in [0,1] describing the percentage of environment the pedestrian is familiar with prior to the start of the simulation (thus it does not take into account the knowledge the pedestrian will gain during it). Note that despite their name, the knowledge degree of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment. Be also aware that orienting pedestrians can only be placed in an `EnvironmentWithGraph`, which is a type of environment providing a navigation graph (see [how to generate navigation graphs](navigation-graphs.md)). 
+
+```yaml
+displacements:
+  - in:
+      type: Point
+      parameters: [15, 15]
+    nodes:
+      type: OrientingHomogeneousPedestrian2D
+      parameters: [0.5]
+```
+
+#### Cognitive orienting pedestrian
+As you may guess, these are cognitive pedestrians equipable with a given knowledge degree of the environment. Cognitive orienting pedestrians can be instanced providing their knowledge degree before every other parameter.
+
+```yaml
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: CognitiveBehavior
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    nodes:
+      type: OrientingCognitivePedestrian2D
+      parameters: [0.5, "adult", "male"]
     programs:
       - *behavior
 ```
@@ -117,12 +150,11 @@ displacements:
 ```
 
 ### Steering Actions
-A pedestrian that doesn't move is not a pedestrian. The need of _Actions_ which can make it move in a realistic way
-inside the environment lead to the creation of particular behaviors such as _Flee_, _Wander_, _FollowFlowField_, _ObstacleAvoidance_... <br />
-As a potential part of a group, there must exist also some attitudes typical of this sort of formation such as _Cohesion_ and _Separation_.
-The creation of complex movements can be accomplished by combining different steering actions together. <br />
-The only way currently available to do so, it is to use some _SteeringBehavior_ extending _Reaction_, which can recognize, across all the actions specified, the steering ones
-to trait them in a separate way.
+Steering actions are _Actions_ whose purpose is moving a node inside an environment. There are quite a lot of these actions, but they can be divided into two categories:
+- those inspired to [Reynold's steering behaviors](http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8035), which operate in a greedy fashion, i.e. performing only local choices;
+- those inspired to the work of [Andresen et al](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717), also called `NavigationAction`s, which exploit the spatial information available to orienting pedestrians in order to navigate the environment consciously (e.g. without getting stuck in U-shaped obstacles). Note that these actions *do not* assume that pedestrians have global knowledge of the environment, on the contrary only the spatial information available to a pedestrian is used to move it (which can be little or nothing).
+
+For a complete overview of the available actions refer to the api documentation. The creation of complex movements can be accomplished by combining different steering actions together. The only way currently available to do so is by using some _SteeringBehavior_ extending _Reaction_, which can recognize, across all the actions specified, the steering ones to trait them in a separate way.
 
 In this simulation 50 people wander around the environment and if they are approaching an obstacle they avoid it.
 
@@ -192,66 +224,6 @@ displacements:
     programs:
       - *behavior
 ```
-
-### Orienting abilities
-
-As showed in the animation on the top of the page, pedestrians can be equipped with orienting abilities and different knowledge degrees of the environment. Of the types of pedestrians described above, only homogeneous and cognitive pedestrians can be equipped with orienting abilities.
-
-#### Homogeneous orienting pedestrians
-
-First of all, orienting pedestrians can only be placed in an `ImageEnvironmentWithGraph`, which is a type of environment providing a navigation graph (see [how to generate navigation graphs](navigation-graphs.md)). Additionally, in order for orienting pedestrians to be able to navigate the environment, you need to provide them with the orienting behavior. Such object is a _reaction_ that will exploit the spatial information available to a pedestrian in order to navigate the environment towards (or in search of) a destination. It will also register new information gained by the pedestrian during the simulation. Once you instanced the two objects described above, the only parameter you need to specify when declaring a homogeneous orienting pedestrian is its knowledge degree:
-
-```yaml
-environment:
-  type: ImageEnvironmentWithGraph
-  parameters: [path/to/image.png, 1.0, 50, 50]
-
-reactions: &behavior
-  - time-distribution:
-      type: DiracComb
-      parameters: [1.0]
-    type: OrientingBehavior2D
-
-displacements:
-  - in:
-      type: Point
-      parameters: [15, 15]
-    nodes:
-      type: OrientingHomogeneousPedestrian2D
-      parameters: [0.5]
-    programs:
-      - *behavior
-```
-
-The knowledge degree is a `Double` value in [0,1] describing the percentage of the environment the pedestrian is familiar with prior to the start of the simulation (thus it does not take into account the knowledge the pedestrian will gain during it). Note that despite their name, the knowledge degree of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment.
-
-#### Cognitive orienting pedestrian
-
-Cognitive orienting pedestrians can be instanced providing their knowledge degree before all the other parameters needed. Remember to provide them with cognitive behavior as well or their emotions won't evolve at all:
-
-```yaml
-reactions: &behavior
-  - time-distribution:
-      type: DiracComb
-      parameters: [1.0]
-    type: CognitiveBehavior
-  - time-distribution:
-        type: DiracComb
-        parameters: [1.0]
-    type: OrientingBehavior2D
-
-displacements:
-  - in:
-      type: Point
-      parameters: [0, 0]
-    nodes:
-      type: OrientingCognitivePedestrian2D
-      parameters: [0.5, "adult", "male"]
-    programs:
-      - *behavior
-```
-
-As you may have noted, no destination is specified when instancing orienting pedestrians and the associated behavior. This is because the navigation graph provided by the environment contains a set of destinations that will be used by the orienting behavior. These can be specified in the constructor of `ImageEnvironmentWithGraph`, for more information see [how to generate navigation graphs](navigation-graphs.md).
 
 ### Evacuation Scenarios
 Pedestrians can be loaded in any kind of _Environment_ but it is recommended to use _PhysicsEnvironments_ since they

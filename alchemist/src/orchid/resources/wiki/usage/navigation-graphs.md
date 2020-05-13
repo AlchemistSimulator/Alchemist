@@ -3,12 +3,11 @@
 title: Generating navigation graphs
 
 ---
-A navigation graph of an environment is a graph whose nodes are convex shapes representing portions of the environment which are traversable by agents (namely, walkable areas), and edges represent connections between them. The image below shows a bidimensional environment with obstacles on the left and the associated navigation graph on the right (nodes are painted blue whereas edges are represented as line segments connecting the centroid of the node to the associated crossing, which is painted green).
+A *navigation graph* of an environment with obstacles is a graph whose nodes are convex shapes representing portions of the environment which are traversable by agents (namely, walkable areas), and edges represent connections between them. The image below shows a bidimensional environment with obstacles on the left and the associated navigation graph on the right (nodes are painted blue, edges are represented as line segments connecting the centroid of a node to the associated crossing, which is painted green).
 
 ![navigation graph]({{ 'assets/media/usage/navigation-graph.jpeg'|asset }})
 
-
-Navigation graphs are mainly used for navigation purposes (e.g. in pathfinding algorithms): the advantage of decomposing the environment into convex regions lies in the fact that agents can freely walk around within a convex region, as it is guaranteed that no obstacle will be found (remember that a shape is convex when no line segment between any two points on its boundary ever goes outside the shape). 
+Navigation graphs are mainly used for navigation purposes (e.g. in pathfinding algorithms): the advantage of decomposing the environment into convex regions is that agents can freely walk around within a convex region, as it is guaranteed that no obstacle will be found (remember that a shape is convex when no line segment between any two points on its boundary ever goes outside the shape). 
 
 Alchemist is capable of generating navigation graphs of bidimensional environments featuring euclidean geometry and double precision coordinates. Before diving into the topic, please be aware that the algorithm implemented in Alchemist for the generation of navigation graphs:
 - Does not guarantee the coverage of 100% of the walkable area (as the image above shows).
@@ -25,23 +24,13 @@ If your environment is codified as an image (such as the planimetry showed above
 
 ![navigation graph generation]({{ 'assets/media/usage/navigation-graph-generation.jpeg'|asset }})
 
-Once you have your image ready for the generation of the navigation graph, you can exploit the `ImageEnvironmentWithGraph` class to produce it for you. This will read your image, extract the positions you marked blue and pass them to the NaviGator algorithm. In other words, that class is capable of reading the visual format we defined in the previous paragraph. Assuming you already know [how to write simulations in YAML](yaml.md), instancing an `ImageEnvironmentWithGraph` in a simulation file is straight-forward:
+Once you have your image ready for the generation of the navigation graph, you can exploit the `ImageEnvironmentWithGraph` class to produce it for you. This will read your image, extract the positions you marked blue and pass them to the NaviGator algorithm. Assuming you already know [how to write simulations in YAML](yaml.md), instancing an `ImageEnvironmentWithGraph` in a simulation file is straight-forward:
 ```yaml
 environment:
   type: ImageEnvironmentWithGraph
   parameters: [path/to/image.png, 1.0]
 ```
 The second parameter is the zoom level. As you may see in the API documentation, the `ImageEnvironmentWithGraph` class exposes a method that will allow you to obtain the generated graph.
-
-#### Destinations
-
-In Alchemist, navigation graphs can store a set of positions of interest that may be used during navigation (e.g. destinations in an evacuation scenario). You can specify one or more positions of interest providing the coordinates in the constructor of `ImageEnvironmentWithGraph`:
-```yaml
-environment:
-  type: ImageEnvironmentWithGraph
-  parameters: [path/to/image.png, 1.0, 50, 50]
-```
-The code above will place a position of interest in (50, 50).
 
 #### Drawing navigation graphs
 
@@ -57,8 +46,7 @@ fun generateNavigationGraph(
     height: Double,
     obstacles: Collection<Shape>,
     rooms: Collection<Euclidean2DPosition>,
-    unity: Double = 1.0,
-    destinations: List<Euclidean2DPosition>
+    unity: Double = 1.0
 ): Euclidean2DNavigationGraph
 ```
 Here's a brief description of each parameter:
@@ -68,4 +56,3 @@ Here's a brief description of each parameter:
 - `obstacles`: the obstacles of the environment (only convex polygonal obstacles are supported).
 - `rooms`: a collection of positions where to plant initial seeds. In indoor environments, these positions are usually located inside rooms (and corridors), hence the name of the parameter.
 - `unity`: the quantity considered to be a unit in the environment (defaults to 1.0 because this algorithm works best with environments featuring integer coordinates). In the growing phase, each side of each seed will be advanced of a quantity equal to unity iteratively, hence the smaller this value is the slower the algorithm will be.
-- `destinations`: a collection of positions of interest that will be stored in the navigation graph and may be used during navigation (e.g. destinations in an evacuation scenario).

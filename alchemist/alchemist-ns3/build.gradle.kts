@@ -7,7 +7,7 @@
  */
 
 dependencies {
-    api("com.github.gscaparrotti:ns3asy-bindings:0.3.0")
+    api(Libs.ns3asy_bindings)
     testImplementation(project(":alchemist-interfaces"))
     testImplementation(project(":alchemist-implementationbase"))
     testImplementation(project(":alchemist-engine"))
@@ -15,11 +15,8 @@ dependencies {
     testRuntime(project(":alchemist-incarnation-protelis"))
 }
 
-tasks.register("download", Exec::class) {
+tasks.register<Exec>("download") {
     commandLine("bash", "$rootDir/alchemist-ns3/ns3asy.sh")
-}
-
-tasks.getByName("download") {
     // ns3asy must be downloaded (if not present) only if we're under linux
     onlyIf {
         !(File("$rootDir/alchemist-ns3/tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib/libns3.29-ns3asy-debug.so").isFile) &&
@@ -31,6 +28,6 @@ tasks.test {
     dependsOn(tasks.getByName("download"))
 }
 
-tasks.withType(Test::class) {
+tasks.withType<Test> {
     environment("LD_LIBRARY_PATH", "$rootDir/alchemist-ns3/tmp/ns3/ns-allinone-3.29/ns-3.29/build/lib")
 }

@@ -4,8 +4,6 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.input.KeyboardActionListener;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.Collection;
-import java.util.List;
-import javafx.scene.canvas.Canvas;
 
 /**
  * {@code OutputMonitor} that handles the graphical part of the simulation in JavaFX.
@@ -46,7 +44,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     void setRealTime(boolean realTime);
 
     /**
-     * Repaints this {@link Canvas}' {@link javafx.scene.canvas.GraphicsContext} by drawing all the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effect}s of each
+     * Repaints this {@link javafx.scene.canvas.Canvas}' {@link javafx.scene.canvas.GraphicsContext} by drawing all the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effect}s of each
      * {@link it.unibo.alchemist.model.interfaces.Node} of the specified {@link it.unibo.alchemist.model.interfaces.Environment}.
      */
     void repaint();

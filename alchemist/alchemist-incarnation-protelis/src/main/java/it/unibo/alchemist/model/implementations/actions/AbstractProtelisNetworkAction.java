@@ -19,7 +19,7 @@ import java.util.Objects;
  * Base class for actions involving network communication in Protelis.
  */
 public abstract class AbstractProtelisNetworkAction extends AbstractAction<Object> {
-    private static final long serialVersionUID = -4480142077176788705L;
+    private static final long serialVersionUID = 1L;
     private final RunProtelisProgram<?> prog;
     private final Reaction<Object> reaction;
 

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public final class SendToNeighbor extends AbstractProtelisNetworkAction {
 
-    private static final long serialVersionUID = -4202725911872207702L;
+    private static final long serialVersionUID = 2L;
 
     /**
      * @param node
@@ -58,7 +58,7 @@ public final class SendToNeighbor extends AbstractProtelisNetworkAction {
                     .map(a -> (RunProtelisProgram<?>) a)
                     .collect(Collectors.toList());
             if (possibleRefs.size() == 1) {
-                return new SendToNeighbor((ProtelisNode<?>) n, this.getReaction(), possibleRefs.get(0));
+                return new SendToNeighbor((ProtelisNode<?>) n, r, possibleRefs.get(0));
             }
             throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
         }

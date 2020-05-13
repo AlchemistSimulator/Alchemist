@@ -82,8 +82,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         effectsCanvas.isMouseTransparent = true
         effectsCanvas.widthProperty().bind(widthProperty())
         effectsCanvas.heightProperty().bind(heightProperty())
-        children.addAll(background, effectsCanvas)
-        children.addAll(interactions.canvases)
+        children.addAll(background, effectsCanvas, interactions.canvases)
     }
 
     override fun getViewStatus(): FXOutputMonitor.ViewStatus {

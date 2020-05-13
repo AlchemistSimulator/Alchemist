@@ -42,6 +42,7 @@ import javafx.collections.FXCollections
 import javafx.collections.MapChangeListener
 import javafx.collections.ObservableMap
 import javafx.event.Event
+import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -90,11 +91,6 @@ class InteractionManager<T, P : Position2D<P>>(
      */
     var nodes: Map<Node<T>, P> = emptyMap()
     /**
-     * The canvases used for input/output.
-     */
-    val canvases: List<Canvas>
-        get() = listOf(input, highlighter, selector)
-    /**
      * The keyboard listener.
      */
     val keyboardListener: KeyboardActionListener
@@ -124,6 +120,10 @@ class InteractionManager<T, P : Position2D<P>>(
     }
     @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
     private val runMutex: Semaphore = Semaphore(1)
+    /**
+     * The canvases used for input/output.
+     */
+    val canvases = Group().also { listOf(input, highlighter, selector).forEach(it.children::add) }
 
     /**
      * Invokes a given command on the simulation.

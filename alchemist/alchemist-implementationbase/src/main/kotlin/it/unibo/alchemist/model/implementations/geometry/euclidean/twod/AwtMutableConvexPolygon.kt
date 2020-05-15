@@ -139,7 +139,7 @@ open class AwtMutableConvexPolygon(
     final override fun asAwtShape() = getShape().asAwtShape()
 
     override fun equals(other: Any?) =
-        other != null && (this === other || (other is AwtMutableConvexPolygon && vertices == other.vertices))
+        other != null && (this === other || other is AwtMutableConvexPolygon && vertices == other.vertices)
 
     override fun hashCode() = vertices.hashCode()
 

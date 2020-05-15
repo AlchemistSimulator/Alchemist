@@ -4,12 +4,15 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.NavigationAction
+import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 
 /**
- * Tests contained here are dependent on the pedestrian's speed.
+ * Contains tests concerning [NavigationAction]s and [NavigationStrategy], such tests are
+ * dependent on the pedestrian's speed.
  */
 class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
 

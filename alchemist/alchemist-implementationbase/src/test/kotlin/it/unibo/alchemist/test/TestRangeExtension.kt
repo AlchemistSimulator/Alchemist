@@ -28,6 +28,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows
 import java.lang.IllegalArgumentException
 
+/**
+ * Contains tests concerning [ClosedRange] extension functions.
+ */
 class TestRangeExtension : StringSpec({
 
     "test mapping" {

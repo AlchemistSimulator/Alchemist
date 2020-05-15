@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 
-/*
+/**
  * Tests contained here are dependent on the pedestrian's speed.
  */
 class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({

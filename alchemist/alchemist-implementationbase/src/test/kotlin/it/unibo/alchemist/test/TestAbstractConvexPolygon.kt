@@ -14,14 +14,14 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AbstractConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
 import java.awt.geom.Rectangle2D
 
 /**
- * Contains tests concerning [ConvexPolygon] and, in particular, [AbstractConvexPolygon].
+ * Tests all the "utils" methods implemented by [AbstractConvexPolygon] (e.g. [AbstractConvexPolygon.liesOnBoundary],
+ * [AbstractConvexPolygon.isAdjacentTo], etc.).
  */
-class TestConvexPolygon : StringSpec({
+class TestAbstractConvexPolygon : StringSpec({
 
     fun createPolygon(vararg coords: Euclidean2DPosition): MutableConvexPolygon =
         AwtMutableConvexPolygon(coords.toMutableList())

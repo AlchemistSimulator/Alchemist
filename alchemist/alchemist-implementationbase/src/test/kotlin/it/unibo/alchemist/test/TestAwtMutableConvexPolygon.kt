@@ -9,7 +9,11 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
 
-class TestMutableConvexPolygon {
+/**
+ * Tests the creation of [AwtMutableConvexPolygon]s, the addition, removal and movement of vertices,
+ * and the replacement of edges.
+ */
+class TestAwtMutableConvexPolygon {
 
     @Test
     fun testCreation() {
@@ -89,7 +93,7 @@ class TestMutableConvexPolygon {
     }
 
     @Test
-    fun testMoveEdge() {
+    fun testReplaceEdge() {
         var p = AwtMutableConvexPolygon(mutableListOf(
             Euclidean2DPosition(0.0, 0.0),
             Euclidean2DPosition(1.0, 0.0),

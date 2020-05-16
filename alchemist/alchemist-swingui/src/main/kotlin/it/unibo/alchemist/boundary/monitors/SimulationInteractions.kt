@@ -99,14 +99,14 @@ class InteractionManager<T, P : Position2D<P>>(
     private lateinit var wormhole: BidimensionalWormhole<P>
     private val input: Canvas = Canvas()
     private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
-    private val keyboardPan: DirectionalPan<P> by lazy {
-        DirectionalPan(wormhole = wormhole) {
+    private val keyboardPan: DigitalPan<P> by lazy {
+        DigitalPan(wormhole = wormhole) {
             parentMonitor.repaint()
             repaint()
         }
     }
     private val mouse: TemporariesMouseEventDispatcher = CanvasBoundMouseEventDispatcher(input)
-    private lateinit var mousePan: PanHelper
+    private lateinit var mousePan: AnalogPan
     private val highlighter = Canvas()
     private val selector = Canvas()
     private val selectionHelper: SelectionHelper<T, P> = SelectionHelper()
@@ -286,7 +286,7 @@ class InteractionManager<T, P : Position2D<P>>(
      * @param event the caller
      */
     private fun onPanInitiated(event: MouseEvent) {
-        mousePan = PanHelper(makePoint(event.x, event.y))
+        mousePan = AnalogPan(makePoint(event.x, event.y))
     }
 
     /**
@@ -560,7 +560,7 @@ enum class Direction2D(val x: Int, val y: Int) {
  * @param wormhole The wormhole used to pan.
  * @param updates A runnable which will be called whenever a panning movement occurs.
  */
-class DirectionalPan<P : Position2D<P>>(
+class DigitalPan<P : Position2D<P>>(
     private val speed: Int = 5,
     private val period: Long = 15,
     private val wormhole: BidimensionalWormhole<P>,
@@ -615,9 +615,9 @@ class DirectionalPan<P : Position2D<P>>(
 /**
  * Manages panning.
  */
-class PanHelper(private var current: Point) {
+class AnalogPan(private var current: Point) {
     /**
-     * Returns whether this [PanHelper] is still valid.
+     * Returns whether this [AnalogPan] is still valid.
      * Invalidation happens when [close] is called, for example when the mouse goes out of bounds.
      */
     var valid: Boolean = true
@@ -635,7 +635,7 @@ class PanHelper(private var current: Point) {
     }
 
     /**
-     * Closes the helper. This invalidates the [PanHelper]
+     * Closes the helper. This invalidates the [AnalogPan]
      */
     fun close() {
         valid = false

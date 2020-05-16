@@ -92,9 +92,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         effectsCanvas.widthProperty().bind(widthProperty())
         effectsCanvas.heightProperty().bind(heightProperty())
 
-        // not necessary if the monitor is a region instead of a canvas
-//                dm.widthProperty().bind(main.widthProperty());
-//                dm.heightProperty().bind(main.heightProperty());
         children.addAll(background, effectsCanvas, interactions.canvases)
     }
 

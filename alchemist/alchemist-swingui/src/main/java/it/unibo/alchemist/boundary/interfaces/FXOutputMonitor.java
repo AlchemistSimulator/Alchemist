@@ -3,6 +3,8 @@ package it.unibo.alchemist.boundary.interfaces;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.input.KeyboardActionListener;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import javafx.scene.Node;
+
 import java.util.Collection;
 
 /**
@@ -116,4 +118,10 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
      * @return the listener
      */
     KeyboardActionListener getKeyboardListener();
+
+    /**
+     * Returns the JavaFX Node that is this monitor.
+     * @return the node
+     */
+    Node getNode();
 }

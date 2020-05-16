@@ -6,6 +6,7 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
+import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.monitor.FXStepMonitor;
 import it.unibo.alchemist.boundary.monitor.FXTimeMonitor;
@@ -32,7 +33,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -89,7 +89,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     @Nullable
     private Simulation<T, P> simulation;
     @Nullable
-    private AbstractFXDisplay<T, P> displayMonitor;
+    private FXOutputMonitor<T, P> displayMonitor;
     private PlayPauseMonitor<T, P> playPauseMonitor;
     private FXTimeMonitor<T, P> timeMonitor;
     private FXStepMonitor<T, P> stepMonitor;
@@ -214,27 +214,14 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                 throw new IllegalArgumentException(exception);
             }
         });
-        final Optional<AbstractFXDisplay<T, P>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
+        final Optional<FXOutputMonitor<T, P>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
         final Pane rootLayout;
         try {
             rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
             final Scene scene = new Scene(rootLayout);
             optDisplayMonitor.ifPresent(dm -> {
-                // not necessary if the monitor is a region instead of a canvas
-//                dm.widthProperty().bind(main.widthProperty());
-//                dm.heightProperty().bind(main.heightProperty());
-                dm.widthProperty().addListener((observable, oldValue, newValue) -> {
-                    if (!Objects.equals(oldValue, newValue)) {
-                        dm.repaint();
-                    }
-                });
-                dm.heightProperty().addListener((observable, oldValue, newValue) -> {
-                    if (!Objects.equals(oldValue, newValue)) {
-                        dm.repaint();
-                    }
-                });
-                main.getChildren().add(dm);
+                main.getChildren().add(dm.getNode());
                 initKeybindings(scene, dm.getKeyboardListener());
             });
             this.timeMonitor = new FXTimeMonitor<>();
@@ -267,7 +254,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             initialized = true;
             primaryStage.show();
             // The initialization of the monitors MUST be done AFTER the Stage is shown
-            optSim.ifPresent(s -> initMonitors(s, (OutputMonitor<T, P>) optDisplayMonitor.orElse(null), stepMonitor, timeMonitor, playPauseMonitor));
+            optSim.ifPresent(s -> initMonitors(s, optDisplayMonitor.orElse(null), stepMonitor, timeMonitor, playPauseMonitor));
         } catch (final IOException e) {
             L.error("I/O Exception loading FXML layout files", e);
             throw new UncheckedIOException(e);

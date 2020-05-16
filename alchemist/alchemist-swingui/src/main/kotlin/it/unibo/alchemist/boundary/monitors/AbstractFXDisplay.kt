@@ -25,19 +25,20 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
+import javafx.application.Platform
+import javafx.beans.value.ChangeListener
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.scene.Group
+import javafx.scene.Node
+import javafx.scene.canvas.Canvas
+import javafx.scene.layout.Pane
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
 import java.util.stream.Stream
-import javafx.application.Platform
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
-import javafx.scene.Group
-import javafx.scene.canvas.Canvas
-import javafx.scene.canvas.GraphicsContext
-import javafx.scene.layout.Pane
 
 /**
  * Base abstract class for each display able to graphically represent a 2D space and simulation.
@@ -73,15 +74,27 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     /**
      * Group dedicated for painting the background.
      */
-    protected val background = Group()
+    val background = Group()
 
     init {
         firstTime = true
         setStep(steps)
-//        effectsCanvas.style = "-fx-background-color: #FFF;"
+
+        val repaintOnResize = ChangeListener<Number> { _, oldValue, newValue ->
+            if (oldValue != newValue) {
+                repaint()
+            }
+        }
+        widthProperty().addListener(repaintOnResize)
+        heightProperty().addListener(repaintOnResize)
+
         effectsCanvas.isMouseTransparent = true
         effectsCanvas.widthProperty().bind(widthProperty())
         effectsCanvas.heightProperty().bind(heightProperty())
+
+        // not necessary if the monitor is a region instead of a canvas
+//                dm.widthProperty().bind(main.widthProperty());
+//                dm.heightProperty().bind(main.heightProperty());
         children.addAll(background, effectsCanvas, interactions.canvases)
     }
 
@@ -224,16 +237,17 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
              * expose the last moment at which a change in position occurred. This way, we don't
              * need to constantly regenerate the position map.
              */
-            interactions.nodes = environment.nodes.associate { Pair(it, environment.getPosition(it)) }
+            interactions.nodes = environment.nodes.associateWith(environment::getPosition)
             val graphicsContext = effectsCanvas.graphicsContext2D
 //            val background = Stream.of(drawBackground(graphicsContext, environment))
-            val effects = effects
+            val clearEffects = Stream.of(effectsCanvas::clear)
+            val drawEffects = effects
                 .stream()
                 .map<Queue<DrawCommand<P>>> { group -> group.computeDrawCommands(environment) }
                 .flatMap { it.stream() }
                 .map { cmd -> { cmd.accept(graphicsContext, wormhole) } }
             commandQueue = Stream
-                .concat(Stream.of(effectsCanvas::clear), effects)
+                .concat(clearEffects, drawEffects)
                 .collect(Collectors.toCollection { ConcurrentLinkedQueue<() -> Unit>() })
             interactions.simulationStep()
             repaint()
@@ -268,4 +282,9 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
          */
         private val DEFAULT_VIEW_STATUS = FXOutputMonitor.ViewStatus.PANNING
     }
+
+    /**
+     * @inheritDoc.
+     */
+    override fun getNode() = this as Node
 }

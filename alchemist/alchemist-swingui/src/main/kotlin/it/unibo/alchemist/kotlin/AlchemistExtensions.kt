@@ -68,6 +68,4 @@ operator fun Time.minus(other: Double): Time = minus(
 /**
  * Clears a given canvas.
  */
-fun Canvas.clear() {
-    graphicsContext2D.clearRect(0.0, 0.0, width, height)
-}
+fun Canvas.clear() = graphicsContext2D.clearRect(0.0, 0.0, width, height)

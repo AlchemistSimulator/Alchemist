@@ -59,7 +59,7 @@ import kotlin.math.roundToInt
 
 /**
  * An interaction manager that controls the input/output on the environment done through the GUI.
- * @param parentMonitor the parent monitor
+ * @param monitor the monitor
  */
 @SuppressFBWarnings(
     "SF_SWITCH_NO_DEFAULT",
@@ -69,7 +69,7 @@ import kotlin.math.roundToInt
         " statement doesn't contain break statements for other cases."
 )
 class InteractionManager<T, P : Position2D<P>>(
-    private val parentMonitor: AbstractFXDisplay<T, P>
+    private val monitor: AbstractFXDisplay<T, P>
 ) {
     /**
      * Describes a certain interaction that has a feedback associated to it.
@@ -101,7 +101,7 @@ class InteractionManager<T, P : Position2D<P>>(
     private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
     private val keyboardPan: DigitalPan<P> by lazy {
         DigitalPan(wormhole = wormhole) {
-            parentMonitor.repaint()
+            monitor.repaint()
             repaint()
         }
     }
@@ -135,12 +135,12 @@ class InteractionManager<T, P : Position2D<P>>(
 
     init {
         input.apply {
-            widthProperty().bind(parentMonitor.widthProperty())
-            heightProperty().bind(parentMonitor.heightProperty())
+            widthProperty().bind(monitor.widthProperty())
+            heightProperty().bind(monitor.heightProperty())
         }
         listOf(selector, highlighter).forEach {
-            it.widthProperty().bind(parentMonitor.widthProperty())
-            it.heightProperty().bind(parentMonitor.heightProperty())
+            it.widthProperty().bind(monitor.widthProperty())
+            it.heightProperty().bind(monitor.heightProperty())
             it.isMouseTransparent = true
         }
 
@@ -224,35 +224,35 @@ class InteractionManager<T, P : Position2D<P>>(
         }
 
         // select
-        mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY)] = this::onSelectInitiated
-        mouse[MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.SECONDARY)] = this::onSelecting
-        mouse[MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.SECONDARY)] = this::onSelected
-        mouse[MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.SECONDARY)] = this::onSelectCanceled
+        mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY)] = ::onSelectInitiated
+        mouse[MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.SECONDARY)] = ::onSelecting
+        mouse[MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.SECONDARY)] = ::onSelected
+        mouse[MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.SECONDARY)] = ::onSelectCanceled
 
         // primary mouse button
         mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.PRIMARY)] = {
-            when (parentMonitor.viewStatus) {
+            when (monitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanInitiated(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectInitiated(it)
                 else -> { }
             }
         }
         mouse[MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.PRIMARY)] = {
-            when (parentMonitor.viewStatus) {
+            when (monitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanning(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelecting(it)
                 else -> { }
             }
         }
         mouse[MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.PRIMARY)] = {
-            when (parentMonitor.viewStatus) {
+            when (monitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanned(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelected(it)
                 else -> { }
             }
         }
         mouse[MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.PRIMARY)] = {
-            when (parentMonitor.viewStatus) {
+            when (monitor.viewStatus) {
                 FXOutputMonitor.ViewStatus.PANNING -> onPanCanceled(it)
                 FXOutputMonitor.ViewStatus.SELECTING -> onSelectCanceled(it)
                 else -> { }
@@ -263,7 +263,7 @@ class InteractionManager<T, P : Position2D<P>>(
         input.setOnScroll {
             zoomManager.inc(it.deltaY / ZOOM_SCALE)
             wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager.zoom)
-            parentMonitor.repaint()
+            monitor.repaint()
             it.consume()
         }
 
@@ -296,7 +296,7 @@ class InteractionManager<T, P : Position2D<P>>(
     private fun onPanning(event: MouseEvent) {
         if (mousePan.valid) {
             wormhole.viewPosition = mousePan.update(makePoint(event.x, event.y), wormhole.viewPosition)
-            parentMonitor.repaint()
+            monitor.repaint()
         }
         event.consume()
     }

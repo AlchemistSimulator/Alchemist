@@ -35,6 +35,6 @@ class FollowRoute<T, N : Euclidean2DConvexShape, E>(
 ) : BaseEuclideanNavigationAction<T, N, E>(environment, reaction, pedestrian) {
 
     init {
-        strategy = RouteFollowing(this, route.toPositions())
+        strategy = RouteFollowing(this, route.toPositions(environment))
     }
 }

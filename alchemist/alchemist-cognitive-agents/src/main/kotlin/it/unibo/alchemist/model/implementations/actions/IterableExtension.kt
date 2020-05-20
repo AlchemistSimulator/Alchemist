@@ -9,7 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Position
 
 /**
  * Takes the first [percentage] * size elements of the list.
@@ -17,10 +18,11 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 fun <T> List<T>.takePercentage(percentage: Double): List<T> = take((percentage * size).toInt())
 
 /**
- * Converts an array of numbers representing [Euclidean2DPosition]s to an actual list of positions.
+ * Converts an array of numbers representing positions to an actual list of positions. E.g. the array [2,3,4,5] in
+ * a bidimensional environment would be transformed into a list containing positions (2,3) and (4,5).
  */
-fun Array<out Number>.toPositions(): List<Euclidean2DPosition> =
-    toList().chunked(2) { Euclidean2DPosition(it[0].toDouble(), it[1].toDouble()) }
+fun <P : Position<P>> Array<out Number>.toPositions(environment: Environment<*, P>): List<P> =
+    toList().chunked(environment.dimensions) { environment.makePosition(*it.toTypedArray()) }
 
 /**
  * Performs the cartesian product of the given sequences.

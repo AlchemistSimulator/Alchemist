@@ -35,6 +35,6 @@ class GoalOrientedExplore<T, N : Euclidean2DConvexShape, E>(
 ) : BaseEuclideanNavigationAction<T, N, E>(environment, reaction, pedestrian) {
 
     init {
-        strategy = GoalOrientedExploring(this, unknownDestinations.toPositions())
+        strategy = GoalOrientedExploring(this, unknownDestinations.toPositions(environment))
     }
 }

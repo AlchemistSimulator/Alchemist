@@ -36,6 +36,6 @@ class ReachKnownDestination<T, N : Euclidean2DConvexShape, E>(
 ) : BaseEuclideanNavigationAction<T, N, E>(environment, reaction, pedestrian) {
 
     override var strategy: EuclideanNavigationStrategy<T, N, E, ConvexPolygon, Euclidean2DPassage> by lazyMutable {
-        KnownDestinationReaching(this, destinations.toPositions())
+        KnownDestinationReaching(this, destinations.toPositions(environment))
     }
 }

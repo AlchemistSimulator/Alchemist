@@ -45,7 +45,7 @@ class ReachDestination<T, N : Euclidean2DConvexShape, E>(
 
     override var strategy: EuclideanNavigationStrategy<T, N, E, ConvexPolygon, Euclidean2DPassage> by lazyMutable {
         destinations
-            .toPositions()
+            .toPositions(environment)
             .partition { inferIsKnown(it, pedestrian, environment) }
             .let { (known, unknown) ->
                 DestinationReaching(this, known, unknown)

@@ -117,7 +117,8 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
         currentRoom = when {
             (state == NavigationState.MOVING_TO_CROSSING_POINT_1 || state == NavigationState.MOVING_TO_FINAL) &&
                 previousRoom.orFail().contains(pedestrianPosition) -> previousRoom
-            (state == NavigationState.MOVING_TO_CROSSING_POINT_2 || state == NavigationState.CROSSING_DOOR || state == NavigationState.NEW_ROOM) &&
+            (state == NavigationState.MOVING_TO_CROSSING_POINT_2 || state == NavigationState.CROSSING_DOOR ||
+                state == NavigationState.NEW_ROOM) &&
                 expectedNewRoom.isPresent &&
                 expectedNewRoom.get().contains(pedestrianPosition) -> expectedNewRoom
             else -> Optional.ofNullable(

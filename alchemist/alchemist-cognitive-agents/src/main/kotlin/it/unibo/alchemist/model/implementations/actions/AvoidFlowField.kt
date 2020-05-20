@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 /**
  * Move the pedestrian towards positions of the environment with a low concentration of the target molecule.
  *
- * @param env
+ * @param environment
  *          the environment inside which the pedestrian moves.
  * @param reaction
  *          the reaction which executes this action.
@@ -28,13 +28,13 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
  * @param viewDepth
  *          the depth of view of the pedestrian, defaults to infinity.
  */
-class AvoidFlowField<P> @JvmOverloads constructor(
-    env: Environment<Number, P>,
+open class AvoidFlowField<P> @JvmOverloads constructor(
+    environment: Environment<Number, P>,
     reaction: Reaction<Number>,
     override val pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule,
     private val viewDepth: Double = Double.POSITIVE_INFINITY
-) : FlowFieldSteeringAction<P>(env, reaction, pedestrian, targetMolecule)
+) : FlowFieldSteeringAction<P>(environment, reaction, pedestrian, targetMolecule)
     where
         P : Position2D<P>,
         P : Vector2D<P> {

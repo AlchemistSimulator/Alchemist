@@ -58,11 +58,4 @@ interface OrientingAgent<V, A, N, E> where
     fun <M : ConvexGeometricShape<V, A>> registerVisit(area: M) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
-
-    /**
-     * Unregisters a visit to the provided [area] in the agent's [volatileMemory].
-     */
-    fun <M : ConvexGeometricShape<V, A>> unregisterVisit(area: M) {
-        volatileMemory[area]?.let { volatileMemory[area] = it - 1 }
-    }
 }

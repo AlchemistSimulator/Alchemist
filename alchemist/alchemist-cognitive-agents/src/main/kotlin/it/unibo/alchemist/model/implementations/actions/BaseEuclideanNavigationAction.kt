@@ -82,7 +82,7 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
 
     override fun moving() {
         super.moving()
-        if (state == State.MOVING_TO_CROSSING_POINT_1) {
+        if (state == NavigationState.MOVING_TO_CROSSING_POINT_1) {
             /*
              * When moving towards a door the most convenient crossing point may change depending on the pedestrian
              * position. Recomputing the crossing points allows more natural movement (even though it's costly).

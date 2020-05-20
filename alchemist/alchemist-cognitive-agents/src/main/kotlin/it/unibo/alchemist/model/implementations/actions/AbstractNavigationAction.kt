@@ -75,35 +75,11 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      */
     protected open fun P.isReached(): Boolean = distanceTo(pedestrianPosition) <= minDistance
 
-    protected enum class State {
-        START,
-        NEW_ROOM,
-        /**
-         * Moving towards the first crossing point (see [crossDoor]).
-         */
-        MOVING_TO_CROSSING_POINT_1,
-        /**
-         * Moving towards the second crossing point (see [crossDoor]).
-         */
-        MOVING_TO_CROSSING_POINT_2,
-        /**
-         * When the second crossing point [isReached] (see [crossDoor]), the pedestrian may still be outside
-         * any room. In such case it moves towards [expectedNewRoom] centroid until he/she enters a room.
-         */
-        CROSSING_DOOR,
-        /**
-         * Moving to the final destination, which is inside [currentRoom] (this means it can be directly
-         * approached as no obstacle is placed in between).
-         */
-        MOVING_TO_FINAL,
-        ARRIVED
-    }
-    protected var state: State = State.START
+    protected var state: NavigationState = NavigationState.START
     /**
-     * Caches the room the pedestrian is into when he/she starts moving.
-     * When the pedestrian is crossing a door, it contains the room being left. When in [State.MOVING_TO_FINAL],
-     * it contains the room the pedestrian was (and should be) into. It's used to detect if the pedestrian ended
-     * up in an unexpected room while moving.
+     * Caches the room the pedestrian is into when he/she starts moving. When the pedestrian is crossing a door, it
+     * contains the room being left. When in [NavigationState.MOVING_TO_FINAL], it contains the room the pedestrian
+     * was (and should be) into. It's used to detect if the pedestrian ended up in an unexpected room while moving.
      */
     protected var previousRoom: Optional<M> = Optional.empty()
     /**
@@ -115,7 +91,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      */
     protected var expectedNewRoom: Optional<M> = Optional.empty()
     /**
-     * Defined in [State.MOVING_TO_FINAL].
+     * Defined in [NavigationState.MOVING_TO_FINAL].
      */
     protected var finalDestination: Optional<P> = Optional.empty()
 
@@ -130,18 +106,18 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      * Updates [pedestrianPosition] and [currentRoom], this can be costly.
      * Depending on how [ConvexGeometricShape.contains] manage points on the boundary, the pedestrian could
      * be inside two (adjacent) rooms at once. This can happen in two cases:
-     * - when in [State.MOVING_TO_CROSSING_POINT_1] or [State.MOVING_TO_FINAL] and the pedestrian is moving
-     * on [previousRoom]'s boundary. In such case [previousRoom] is used.
-     * - when crossing a door or in [State.NEW_ROOM] and [expectedNewRoom] is adjacent to [previousRoom].
+     * - when in [NavigationState.MOVING_TO_CROSSING_POINT_1] or [NavigationState.MOVING_TO_FINAL] and the pedestrian
+     * is moving on [previousRoom]'s boundary. In such case [previousRoom] is used.
+     * - when crossing a door or in [NavigationState.NEW_ROOM] and [expectedNewRoom] is adjacent to [previousRoom].
      * In such case [expectedNewRoom] is used.
      * Otherwise the first room containing [pedestrianPosition] is used.
      */
     protected open fun updateCachedVariables() {
         pedestrianPosition = environment.getPosition(pedestrian)
         currentRoom = when {
-            (state == State.MOVING_TO_CROSSING_POINT_1 || state == State.MOVING_TO_FINAL) &&
+            (state == NavigationState.MOVING_TO_CROSSING_POINT_1 || state == NavigationState.MOVING_TO_FINAL) &&
                 previousRoom.orFail().contains(pedestrianPosition) -> previousRoom
-            (state == State.MOVING_TO_CROSSING_POINT_2 || state == State.CROSSING_DOOR || state == State.NEW_ROOM) &&
+            (state == NavigationState.MOVING_TO_CROSSING_POINT_2 || state == NavigationState.CROSSING_DOOR || state == NavigationState.NEW_ROOM) &&
                 expectedNewRoom.isPresent &&
                 expectedNewRoom.get().contains(pedestrianPosition) -> expectedNewRoom
             else -> Optional.ofNullable(
@@ -152,11 +128,11 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
 
     protected open fun onStart() {
         state = when {
-            currentRoom.isPresent -> State.NEW_ROOM
+            currentRoom.isPresent -> NavigationState.NEW_ROOM
             /*
              * If the pedestrian cannot locate itself inside any room on start, it simply won't move.
              */
-            else -> State.ARRIVED
+            else -> NavigationState.ARRIVED
         }
     }
 
@@ -181,7 +157,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      */
     protected open fun crossDoor(door: F, crossingPoints: Pair<P, P>) {
         require(doorsInSight().contains(door)) { "$door is not in sight" }
-        state = State.MOVING_TO_CROSSING_POINT_1
+        state = NavigationState.MOVING_TO_CROSSING_POINT_1
         this.previousRoom = Optional.of(currentRoom.orFail())
         this.crossingPoints = Optional.of(crossingPoints)
         this.expectedNewRoom = Optional.of(door.target)
@@ -189,7 +165,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
 
     override fun moveToFinal(destination: P) {
         require(currentRoom.orFail().contains(destination)) { "$destination is not in $currentRoom" }
-        state = State.MOVING_TO_FINAL
+        state = NavigationState.MOVING_TO_FINAL
         this.previousRoom = Optional.of(currentRoom.orFail())
         this.finalDestination = Optional.of(destination)
     }
@@ -197,19 +173,19 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     protected open fun moving() {
         currentRoom.takeIf { it.isPresent && it.get() != previousRoom.orFail() }?.get()?.let { newRoom ->
             return when (newRoom) {
-                expectedNewRoom.orFail() -> state = State.NEW_ROOM
+                expectedNewRoom.orFail() -> state = NavigationState.NEW_ROOM
                 else -> strategy.inUnexpectedNewRoom(previousRoom.orFail(), expectedNewRoom.orFail(), newRoom)
             }
         }
         if (desiredPosition.isReached()) {
             state = when (state) {
-                State.MOVING_TO_CROSSING_POINT_1 -> State.MOVING_TO_CROSSING_POINT_2
+                NavigationState.MOVING_TO_CROSSING_POINT_1 -> NavigationState.MOVING_TO_CROSSING_POINT_2
                     /*
                      * Short-cut to save time.
                      */
-                    .takeUnless { crossingPoints.orFail().run { first == second } } ?: State.CROSSING_DOOR
-                State.MOVING_TO_CROSSING_POINT_2 -> State.CROSSING_DOOR
-                State.MOVING_TO_FINAL -> State.ARRIVED
+                    .takeUnless { crossingPoints.orFail().run { first == second } } ?: NavigationState.CROSSING_DOOR
+                NavigationState.MOVING_TO_CROSSING_POINT_2 -> NavigationState.CROSSING_DOOR
+                NavigationState.MOVING_TO_FINAL -> NavigationState.ARRIVED
                 else -> state
             }
         }
@@ -219,10 +195,10 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      * The position the pedestrian wants to reach.
      */
     val desiredPosition: P get() = when (state) {
-        State.MOVING_TO_CROSSING_POINT_1 -> crossingPoints.orFail().first
-        State.MOVING_TO_CROSSING_POINT_2 -> crossingPoints.orFail().second
-        State.CROSSING_DOOR -> expectedNewRoom.orFail().centroid
-        State.MOVING_TO_FINAL -> finalDestination.orFail()
+        NavigationState.MOVING_TO_CROSSING_POINT_1 -> crossingPoints.orFail().first
+        NavigationState.MOVING_TO_CROSSING_POINT_2 -> crossingPoints.orFail().second
+        NavigationState.CROSSING_DOOR -> expectedNewRoom.orFail().centroid
+        NavigationState.MOVING_TO_FINAL -> finalDestination.orFail()
         /*
          * Always up to date current position.
          */
@@ -235,16 +211,40 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     open fun update() {
         updateCachedVariables()
         when (state) {
-            State.START -> onStart()
-            State.NEW_ROOM -> currentRoom.orFail().let {
+            NavigationState.START -> onStart()
+            NavigationState.NEW_ROOM -> currentRoom.orFail().let {
                 pedestrian.registerVisit(it)
                 strategy.inNewRoom(it)
             }
-            in State.MOVING_TO_CROSSING_POINT_1..State.MOVING_TO_FINAL -> moving()
+            in NavigationState.MOVING_TO_CROSSING_POINT_1..NavigationState.MOVING_TO_FINAL -> moving()
             /*
              * Arrived.
              */
             else -> Unit
         }
+    }
+
+    protected enum class NavigationState {
+        START,
+        NEW_ROOM,
+        /**
+         * Moving towards the first crossing point (see [crossDoor]).
+         */
+        MOVING_TO_CROSSING_POINT_1,
+        /**
+         * Moving towards the second crossing point (see [crossDoor]).
+         */
+        MOVING_TO_CROSSING_POINT_2,
+        /**
+         * When the second crossing point [isReached] (see [crossDoor]), the pedestrian may still be outside
+         * any room. In such case it moves towards [expectedNewRoom] centroid until he/she enters a room.
+         */
+        CROSSING_DOOR,
+        /**
+         * Moving to the final destination, which is inside [currentRoom] (this means it can be directly
+         * approached as no obstacle is placed in between).
+         */
+        MOVING_TO_FINAL,
+        ARRIVED
     }
 }

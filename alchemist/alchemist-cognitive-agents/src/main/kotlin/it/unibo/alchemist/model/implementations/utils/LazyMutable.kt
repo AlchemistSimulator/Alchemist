@@ -9,26 +9,26 @@
 
 package it.unibo.alchemist.model.implementations.utils
 
-import java.util.Optional
+import java.lang.IllegalStateException
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- * A delegate allowing to lazily initialise a mutable variable (= var).
+ * A delegate allowing to lazily initialise a non-null mutable variable (= var).
  */
 class LazyMutable<T>(private val initializer: () -> T) : ReadWriteProperty<Any?, T> {
 
-    private var value: Optional<T> = Optional.empty()
+    private var value: T? = null
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        if (value.isEmpty) {
-            value = Optional.of(initializer())
+        if (value == null) {
+            value = initializer()
         }
-        return value.get()
+        return value ?: throw IllegalStateException("null found")
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        this.value = Optional.of(value)
+        this.value = value
     }
 }
 

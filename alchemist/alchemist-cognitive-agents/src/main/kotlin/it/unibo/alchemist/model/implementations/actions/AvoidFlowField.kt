@@ -43,8 +43,8 @@ open class AvoidFlowField<P> @JvmOverloads constructor(
         AvoidFlowField(env, r, n as Pedestrian2D<Number>, targetMolecule)
 
     /**
-     * Moves the pedestrian only if he percepts the danger (either because it is in sight or
-     * due to social contagion).
+     * @returns the next relative position. The pedestrian is moved only if he/she percepts the danger
+     * (either because it is in sight or due to social contagion), otherwise the zero vector is returned.
      */
     override fun nextPosition(): P = when {
         pedestrian.wantsToEvacuate() || isDangerInSight() -> super.nextPosition()

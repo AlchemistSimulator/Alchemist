@@ -36,7 +36,7 @@ open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
     /**
      * The route to follow.
      */
-    protected val route: List<Euclidean2DPosition>
+    protected open val route: List<Euclidean2DPosition>
 ) : DynamicPursuing<T, N, E>(action, action.environment.origin().takeIf { route.isEmpty() } ?: route[0]) {
 
     private var indexOfNextWaypoint: Int = 0

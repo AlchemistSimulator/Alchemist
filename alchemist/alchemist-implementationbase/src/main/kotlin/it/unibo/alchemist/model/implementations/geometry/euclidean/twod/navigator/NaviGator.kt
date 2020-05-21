@@ -144,17 +144,17 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
     remaining: ClosedRange<Double> = oldEdge.toRange()
 ): Collection<Euclidean2DPassage> = emptyList<Euclidean2DPassage>()
     .takeIf { fuzzyEquals(remaining.start, remaining.endInclusive) }
-    ?: let {
+    ?: let { _ ->
         /*
          * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
          * the intersection with the advancing edge.
          */
         val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
-            closestEdgeTo(oldEdge).toRange(oldEdge.xAxisAligned)
+            it.closestEdgeTo(oldEdge).toRange(oldEdge.xAxisAligned)
         }
         val shapeToInterval: (Shape) -> ClosedRange<Double> = { shape ->
             shape.vertices().let {
-                if (oldEdge.isAxisAligned) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
+                if (oldEdge.xAxisAligned) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
             }
         }
         val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {

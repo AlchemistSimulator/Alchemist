@@ -14,7 +14,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.model.implementations.geometry.coincide
 import it.unibo.alchemist.model.implementations.geometry.contains
-import it.unibo.alchemist.model.implementations.geometry.findExtremeCoords
+import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
+import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.intersects
 import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExcluded
@@ -129,8 +130,8 @@ class TestRangeExtension : StringSpec({
             coords(3.0, 2.0),
             coords(-1.0, 30.0)
         ).let { list ->
-            list.findExtremeCoords(getXCoords = true) rangeShouldBe -1.0..3.0
-            list.findExtremeCoords(getXCoords = false) rangeShouldBe 1.0..30.0
+            list.findExtremeCoordsOnX() rangeShouldBe -1.0..3.0
+            list.findExtremeCoordsOnY() rangeShouldBe 1.0..30.0
         }
     }
 

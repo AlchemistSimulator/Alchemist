@@ -79,7 +79,7 @@ before_install:
 script:
   - cd "$TRAVIS_BUILD_DIR"/alchemist
   - BUILD_COMMAND='./gradlew clean check --scan --parallel -Dorg.gradle.daemon=true'
-  - DELETE_CACHE='rm -rvf $HOME/.gradle/'
+  - DELETE_CACHE="rm -rvf $HOME/.gradle/"
   - $BUILD_COMMAND || ($DELETE_CACHE && travis_retry $BUILD_COMMAND)
 
 after_script:

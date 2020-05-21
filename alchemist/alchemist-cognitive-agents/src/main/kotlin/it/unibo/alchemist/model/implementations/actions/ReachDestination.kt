@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.implementations.actions.navigationstrategies.Des
 import it.unibo.alchemist.model.implementations.actions.navigationstrategies.Pursuing
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.utils.lazyMutable
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationStrategy
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position

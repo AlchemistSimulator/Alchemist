@@ -39,7 +39,7 @@ open class Exploring<T, N : Euclidean2DConvexShape, E>(
     /**
      * Weight assigned to known impasses, see [impasseFactor].
      */
-    private val impasseWeight: Double = DEFAULT_IMPASSE_WEIGHT
+    private val knownImpasseWeight: Double = DEFAULT_IMPASSE_WEIGHT
 ) : EuclideanNavigationStrategy<T, N, E, ConvexPolygon, Euclidean2DPassage> {
 
     companion object {
@@ -107,10 +107,11 @@ open class Exploring<T, N : Euclidean2DConvexShape, E>(
 
     /**
      * Takes into account whereas the assessed edge leads to a known impasse or not, known impasses
-     * are given [impasseWeight] (which is usually a high value, allowing to avoid them), otherwise
+     * are given [knownImpasseWeight] (which is usually a high value, allowing to avoid them), otherwise
      * this factor assumes unitary value.
      */
-    protected open fun impasseFactor(head: ConvexPolygon): Double = if (head.isKnownImpasse()) 10.0 else 1.0
+    protected open fun impasseFactor(head: ConvexPolygon): Double =
+        knownImpasseWeight.takeIf { head.isKnownImpasse() } ?: 1.0
 
     /**
      * A rough estimation of the area of a [Shape].

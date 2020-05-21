@@ -10,8 +10,10 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.SinglePrevalent
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
 import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
@@ -42,14 +44,19 @@ class NavigationPrioritisedSteering<T, M : ConvexPolygon> @JvmOverloads construc
     SinglePrevalent(
         env,
         pedestrian,
-        {
-            filterIsInstance<EuclideanNavigationAction<T, *, *, M, *>>().let {
-                require(it.size == 1) { "There should be only one navigation action" }
-                it.first()
-            }
-        },
+        { this.getSingleNavigationAction() },
         maxWalk = { pedestrian.speed() / timeDistribution.rate },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha
     )
-)
+) {
+
+    companion object {
+        private fun <T, M : ConvexPolygon> List<SteeringAction<T, Euclidean2DPosition>>.getSingleNavigationAction():
+            EuclideanNavigationAction<T, *, *, M, *> = filterIsInstance<EuclideanNavigationAction<T, *, *, M, *>>()
+            .let {
+                require(it.size == 1) { "There should be only one navigation action" }
+                it.first()
+            }
+    }
+}

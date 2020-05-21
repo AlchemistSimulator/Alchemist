@@ -48,9 +48,7 @@ class ReachDestination<T, N : Euclidean2DConvexShape, E>(
         destinations
             .toPositions(environment)
             .partition { inferIsKnown(it, pedestrian, environment) }
-            .let { (known, unknown) ->
-                DestinationReaching(this, known, unknown)
-            }
+            .let { (known, unknown) -> DestinationReaching(this, known, unknown) }
     }
 }
 

@@ -89,10 +89,22 @@ fun <T : Comparable<T>> ClosedRange<T>.subtractAll(others: List<ClosedRange<T>>)
  * coordinates (i.e. min and max coordinates) either on the X-axis or the Y-axis. [getXCoords]
  * indicates which coordinates to extract, these are used to create the returned [ClosedRange].
  */
-fun <V : Vector2D<V>> List<V>.findExtremeCoords(getXCoords: Boolean): ClosedRange<Double> {
+private fun <V : Vector2D<V>> List<V>.findExtremeCoords(getXCoords: Boolean): ClosedRange<Double> {
     val selector = { v: V -> v.x.takeIf { getXCoords } ?: v.y }
     val min = minBy(selector)?.run(selector)
     val max = maxBy(selector)?.run(selector)
     require(min != null && max != null) { "no point could be found" }
     return min..max
 }
+
+/**
+ * Given a non empty list of points represented as vectors, this method finds the extreme coordinates
+ * (i.e. min and max coordinates) on the X-axis, these are used to create the returned [ClosedRange].
+ */
+fun <V : Vector2D<V>> List<V>.findExtremeCoordsOnX(): ClosedRange<Double> = findExtremeCoords(true)
+
+/**
+ * Given a non empty list of points represented as vectors, this method finds the extreme coordinates
+ * (i.e. min and max coordinates) on the Y-axis, these are used to create the returned [ClosedRange].
+ */
+fun <V : Vector2D<V>> List<V>.findExtremeCoordsOnY(): ClosedRange<Double> = findExtremeCoords(false)

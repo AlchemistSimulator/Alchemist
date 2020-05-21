@@ -10,7 +10,8 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.createSegment
-import it.unibo.alchemist.model.implementations.geometry.findExtremeCoords
+import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
+import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExcluded
 import it.unibo.alchemist.model.implementations.geometry.subtractAll
@@ -149,10 +150,12 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
          * the intersection with the advancing edge.
          */
         val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
-            it.closestEdgeTo(oldEdge).toRange(oldEdge.xAxisAligned)
+            closestEdgeTo(oldEdge).toRange(oldEdge.xAxisAligned)
         }
-        val shapeToInterval: (Shape) -> ClosedRange<Double> = {
-            it.vertices().findExtremeCoords(oldEdge.xAxisAligned)
+        val shapeToInterval: (Shape) -> ClosedRange<Double> = { shape ->
+            shape.vertices().let {
+                if (oldEdge.isAxisAligned) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
+            }
         }
         val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
             seeds.filter {

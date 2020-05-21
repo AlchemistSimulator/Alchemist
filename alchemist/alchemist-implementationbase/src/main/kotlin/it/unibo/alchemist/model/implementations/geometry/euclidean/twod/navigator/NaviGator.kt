@@ -159,13 +159,11 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
         }
         val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
             seeds.filter {
-                it != this && it.intersects(asAwtShape()) &&
-                    /*
-                     * A seed is considered intersected if it intersects with the polygon
-                     * and, in particular, with the remaining portion of the advancing edge.
-                     * Similarly for obstacles below.
-                     */
-                    polygonToInterval(it).intersectsBoundsExcluded(remaining)
+                /*
+                 * A seed is considered intersected if it intersects with the polygon and, in particular, with the
+                 * remaining portion of the advancing edge. Similarly for obstacles below.
+                 */
+                it != this && it.intersects(asAwtShape()) && polygonToInterval(it).intersectsBoundsExcluded(remaining)
             }
         }
         val intersectedObstacles: () -> List<Shape> = {

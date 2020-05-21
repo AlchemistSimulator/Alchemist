@@ -16,12 +16,8 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.lazyMutable
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationStrategy
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
@@ -44,26 +40,23 @@ class ReachDestination<T, N : Euclidean2DConvexShape, E>(
     vararg destinations: Number
 ) : BaseEuclideanNavigationAction<T, N, E>(environment, reaction, pedestrian) {
 
+    /**
+     * Infers if a [destination] is known by the [pedestrian] (see [Pursuing]). A destination is considered
+     * to be known if the pedestrian's cognitive map contains at least one landmark located in the same
+     * room (= [environment]'s area) of the destination, or in an adjacent room.
+     */
+    private fun inferIsKnown(destination: Euclidean2DPosition): Boolean =
+        environment.graph.nodeContaining(destination)?.let { room ->
+            val neighborhood = Graphs.neighborListOf(environment.graph, room) + room
+            pedestrian.cognitiveMap.vertexSet().any { landmark ->
+                neighborhood.any { it.contains(landmark.centroid) }
+            }
+        } ?: false
+
     override var strategy: EuclideanNavigationStrategy<T, N, E, ConvexPolygon, Euclidean2DPassage> by lazyMutable {
         destinations
             .toPositions(environment)
-            .partition { inferIsKnown(it, pedestrian, environment) }
+            .partition { inferIsKnown(it) }
             .let { (known, unknown) -> DestinationReaching(this, known, unknown) }
     }
 }
-
-/**
- * Infers if a [destination] is known by the [pedestrian] (see [Pursuing]). A destination is considered
- * to be known if the pedestrian's cognitive map contains at least one landmark located in the same
- * room (= [environment]'s area) of the destination, or in an adjacent room.
- */
-fun <T, P, N : ConvexGeometricShape<P, *>, M : ConvexGeometricShape<P, *>> inferIsKnown(
-    destination: P,
-    pedestrian: OrientingPedestrian<T, P, *, N, *>,
-    environment: EnvironmentWithGraph<*, T, P, *, M, *>
-): Boolean where P : Position<P>, P : Vector<P> = environment.graph.nodeContaining(destination)?.let { room ->
-    val neighborhood = Graphs.neighborListOf(environment.graph, room) + room
-    pedestrian.cognitiveMap.vertexSet().any { landmark ->
-        neighborhood.any { it.contains(landmark.centroid) }
-    }
-} ?: false

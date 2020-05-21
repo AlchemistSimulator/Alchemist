@@ -28,9 +28,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
         val target = env.makePosition(*coords)
         env.nodes
             .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
-            .forEach { p ->
-                env.getPosition(p).distanceTo(target) shouldBeLessThan tolerance
-            }
+            .forEach { p -> env.getPosition(p).distanceTo(target) shouldBeLessThan tolerance }
     }
 
     /**

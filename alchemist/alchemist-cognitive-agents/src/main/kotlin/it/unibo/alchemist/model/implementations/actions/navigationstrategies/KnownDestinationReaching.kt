@@ -100,28 +100,7 @@ fun <T, P, N : ConvexGeometricShape<P, *>, M : ConvexGeometricShape<P, *>> findK
         if (currRoom == null || destRoom == null) {
             return emptyList()
         }
-        val landmarksIn: (room: M) -> Sequence<N> = { room ->
-            cognitiveMap.vertexSet().asSequence().filter { room.contains(it.centroid) }
-        }
-        val landmarksInAny: (rooms: List<M>) -> Sequence<N> = { rooms -> rooms.asSequence().flatMap(landmarksIn) }
-        val landmarksInCurrRoom = landmarksIn(currRoom)
-        val landmarksInDestRoom = landmarksIn(destRoom)
-        val landmarksAdjacentToCurrRoom = landmarksInAny(Graphs.successorListOf(environment.graph, currRoom))
-        val landmarksAdjacentToDestRoom = landmarksInAny(Graphs.predecessorListOf(environment.graph, destRoom))
-        /*
-         * In order, we try to find a path in which:
-         * - the first landmark is in current room and the last one in destination room
-         * - the first landmark is in current room and the last one in a room adjacent to destination room
-         * - the first landmark is in a room adjacent to current room and the last one in destination room
-         * - the first landmark is in a room adjacent to current room and the last one in a room adjacent to destination
-         * room
-         * - landmarks may be located anywhere (and may coincide), but we try to minimise the distance between the first
-         * landmark and currPos and the distance between the last landmark and destination
-         */
-        return (cartesianProduct(landmarksInCurrRoom, landmarksInDestRoom) +
-            cartesianProduct(landmarksInCurrRoom, landmarksAdjacentToDestRoom) +
-            cartesianProduct(landmarksAdjacentToCurrRoom, landmarksInDestRoom) +
-            cartesianProduct(landmarksAdjacentToCurrRoom, landmarksAdjacentToDestRoom) +
+        return (buildSequence(currRoom, destRoom, pedestrian, environment) +
             cognitiveMap.vertexSet().asSequence().let { landmarks ->
                 cartesianProduct(landmarks, landmarks).sortedBy { (start, end) ->
                     start.centroid.distanceTo(currPos) + end.centroid.distanceTo(destination)
@@ -137,4 +116,33 @@ fun <T, P, N : ConvexGeometricShape<P, *>, M : ConvexGeometricShape<P, *>> findK
             }
             .firstOrNull() ?: emptyList()
     }
+}
+
+/**
+ * @returns a sequence of pairs of landmarks, for each pair the first element is contained in [startRoom] or
+ * in an adjacent one, and the second element is contained in [endRoom] or in adjacent one. The sequence is
+ * sorted, pairs appear in the following order:
+ * - pairs where the first landmark is inside [startRoom] and the second landmark is inside [endRoom],
+ * - pairs where the first landmark is inside [startRoom] and the second landmark is adjacent to [endRoom],
+ * - pairs where the first landmark is adjacent to [startRoom] and the second landmark is inside [endRoom],
+ * - pairs where the first landmark is adjacent to [startRoom] and the second landmark is adjacent to [endRoom].
+ */
+fun <T, P, N : ConvexGeometricShape<P, *>, M : ConvexGeometricShape<P, *>> buildSequence(
+    startRoom: M,
+    endRoom: M,
+    pedestrian: OrientingPedestrian<T, P, *, N, *>,
+    environment: EnvironmentWithGraph<*, T, P, *, M, *>
+): Sequence<Pair<N, N>> where P : Position<P>, P : Vector<P> {
+    val landmarksIn: (room: M) -> Sequence<N> = { room ->
+        pedestrian.cognitiveMap.vertexSet().asSequence().filter { room.contains(it.centroid) }
+    }
+    val landmarksInAny: (rooms: List<M>) -> Sequence<N> = { rooms -> rooms.asSequence().flatMap(landmarksIn) }
+    val landmarksInStartRoom = landmarksIn(startRoom)
+    val landmarksInEndRoom = landmarksIn(endRoom)
+    val landmarksAdjacentToStartRoom = landmarksInAny(Graphs.successorListOf(environment.graph, startRoom))
+    val landmarksAdjacentToEndRoom = landmarksInAny(Graphs.predecessorListOf(environment.graph, endRoom))
+    return cartesianProduct(landmarksInStartRoom, landmarksInEndRoom) +
+        cartesianProduct(landmarksInStartRoom, landmarksAdjacentToEndRoom) +
+        cartesianProduct(landmarksAdjacentToStartRoom, landmarksInEndRoom) +
+        cartesianProduct(landmarksAdjacentToStartRoom, landmarksAdjacentToEndRoom)
 }

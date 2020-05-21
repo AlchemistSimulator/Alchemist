@@ -38,6 +38,9 @@ open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
      * Known destinations (must not be empty).
      */
     private val destinations: List<Euclidean2DPosition>
+    /*
+     * An empty list is passed to super method, because route is initialised in this class' init block.
+     */
 ) : RouteFollowing<T, N, E>(action, emptyList()) {
 
     final override val route: List<Euclidean2DPosition>

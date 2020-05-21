@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import java.lang.IllegalStateException
-import java.util.Optional
 
 /**
  * An abstract [NavigationAction], taking care of properly moving the pedestrian in the
@@ -60,7 +59,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      * The room (= environment's area) the [pedestrian] is into, this is cached and updated
      * every time [update] is called so as to avoid potentially costly re-computations.
      */
-    override var currentRoom: Optional<M> = Optional.empty()
+    override var currentRoom: M? = null
 
     /**
      * Minimum distance to consider a target reached. Using zero (even with fuzzy equals) may lead to some
@@ -81,26 +80,26 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      * contains the room being left. When in [NavigationState.MOVING_TO_FINAL], it contains the room the pedestrian
      * was (and should be) into. It's used to detect if the pedestrian ended up in an unexpected room while moving.
      */
-    protected var previousRoom: Optional<M> = Optional.empty()
+    protected var previousRoom: M? = null
     /**
      * Defined when crossing a door. See [crossDoor].
      */
-    protected var crossingPoints: Optional<Pair<P, P>> = Optional.empty()
+    protected var crossingPoints: Pair<P, P>? = null
     /**
      * Defined when crossing a door.
      */
-    protected var expectedNewRoom: Optional<M> = Optional.empty()
+    protected var expectedNewRoom: M? = null
     /**
      * Defined in [NavigationState.MOVING_TO_FINAL].
      */
-    protected var finalDestination: Optional<P> = Optional.empty()
+    protected var finalDestination: P? = null
 
     /**
-     * @returns the value if present or throws an [IllegalStateException] with a meaningful message.
+     * @returns the non-null value of a nullable variable or throws an [IllegalStateException] with a meaningful
+     * message.
      */
-    protected fun <T> Optional<T>.orFail(): T = orElseThrow {
-        IllegalStateException("internal error: variable must be defined in $state")
-    }
+    protected fun <T> T?.orFail(): T =
+        this ?: throw IllegalStateException("internal error: variable must be defined in $state")
 
     /**
      * Updates [pedestrianPosition] and [currentRoom], this can be costly.
@@ -119,17 +118,14 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
                 previousRoom.orFail().contains(pedestrianPosition) -> previousRoom
             (state == NavigationState.MOVING_TO_CROSSING_POINT_2 || state == NavigationState.CROSSING_DOOR ||
                 state == NavigationState.NEW_ROOM) &&
-                expectedNewRoom.isPresent &&
-                expectedNewRoom.get().contains(pedestrianPosition) -> expectedNewRoom
-            else -> Optional.ofNullable(
-                environment.graph.vertexSet().firstOrNull { it.contains(pedestrianPosition) }
-            )
+                expectedNewRoom?.contains(pedestrianPosition) ?: false -> expectedNewRoom
+            else -> environment.graph.vertexSet().firstOrNull { it.contains(pedestrianPosition) }
         }
     }
 
     protected open fun onStart() {
         state = when {
-            currentRoom.isPresent -> NavigationState.NEW_ROOM
+            currentRoom != null -> NavigationState.NEW_ROOM
             /*
              * If the pedestrian cannot locate itself inside any room on start, it simply won't move.
              */
@@ -140,9 +136,8 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     /**
      * @returns all the doors (= passages/edges) outgoing from the current room.
      */
-    override fun doorsInSight(): List<F> = emptyList<F>()
-        .takeUnless { currentRoom.isPresent }
-        ?: environment.graph.outgoingEdgesOf(currentRoom.get()).toList()
+    override fun doorsInSight(): List<F> =
+        currentRoom?.let { environment.graph.outgoingEdgesOf(it).toList() } ?: emptyList()
 
     /**
      * The target of a directed edge of the environment's graph.
@@ -159,20 +154,20 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     protected open fun crossDoor(door: F, crossingPoints: Pair<P, P>) {
         require(doorsInSight().contains(door)) { "$door is not in sight" }
         state = NavigationState.MOVING_TO_CROSSING_POINT_1
-        this.previousRoom = Optional.of(currentRoom.orFail())
-        this.crossingPoints = Optional.of(crossingPoints)
-        this.expectedNewRoom = Optional.of(door.target)
+        this.previousRoom = currentRoom.orFail()
+        this.crossingPoints = crossingPoints
+        this.expectedNewRoom = door.target
     }
 
     override fun moveToFinal(destination: P) {
         require(currentRoom.orFail().contains(destination)) { "$destination is not in $currentRoom" }
         state = NavigationState.MOVING_TO_FINAL
-        this.previousRoom = Optional.of(currentRoom.orFail())
-        this.finalDestination = Optional.of(destination)
+        this.previousRoom = currentRoom.orFail()
+        this.finalDestination = destination
     }
 
     protected open fun moving() {
-        currentRoom.takeIf { it.isPresent && it.get() != previousRoom.orFail() }?.get()?.let { newRoom ->
+        currentRoom?.takeIf { it != previousRoom.orFail() }?.let { newRoom ->
             return when (newRoom) {
                 expectedNewRoom.orFail() -> state = NavigationState.NEW_ROOM
                 else -> strategy.inUnexpectedNewRoom(previousRoom.orFail(), expectedNewRoom.orFail(), newRoom)

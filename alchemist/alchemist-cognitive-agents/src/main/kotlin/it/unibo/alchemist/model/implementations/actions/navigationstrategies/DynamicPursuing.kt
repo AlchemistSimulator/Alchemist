@@ -36,7 +36,7 @@ open class DynamicPursuing<T, N : Euclidean2DConvexShape, E>(
      */
     fun setDestination(newDestination: Euclidean2DPosition, voidVolatileMemory: Boolean = false) {
         destination = newDestination
-        action.currentRoom.ifPresent {
+        action.currentRoom?.let {
             /*
              * If the pedestrian is inside a room, we force the re-computation of what to do. Otherwise
              * he/she's crossing a door and inNewRoom will be called as soon as a room is reached.

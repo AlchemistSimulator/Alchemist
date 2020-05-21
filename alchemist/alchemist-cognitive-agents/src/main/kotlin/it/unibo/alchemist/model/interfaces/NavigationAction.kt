@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import java.util.Optional
 
 /**
  * A [SteeringAction] allowing a pedestrian to navigate an environment consciously (e.g. without
@@ -53,7 +52,7 @@ interface NavigationAction<T, P, A, N, E, M, F> : SteeringAction<T, P>
     /**
      * The room (= environment's area) the [pedestrian] is into.
      */
-    val currentRoom: Optional<M>
+    val currentRoom: M?
 
     /**
      * @returns the doors (= passages/edges) the pedestrian can perceive.

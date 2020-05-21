@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DCo
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import org.apache.commons.math3.util.FastMath
-import java.util.Optional
 
 /**
  * An [AbstractNavigationAction] working with euclidean spaces. This action accepts
@@ -64,7 +63,7 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
     /**
      * Defined when crossing a door.
      */
-    private var targetDoor: Optional<Euclidean2DPassage> = Optional.empty()
+    private var targetDoor: Euclidean2DPassage? = null
 
     /*
      * Avoid costly computations.
@@ -73,7 +72,7 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
 
     override fun crossDoor(door: Euclidean2DPassage) {
         crossDoor(door, computeCrossingPoints(door))
-        this.targetDoor = Optional.of(door)
+        this.targetDoor = door
     }
 
     private fun computeCrossingPoints(door: Euclidean2DPassage) = door
@@ -87,7 +86,7 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
              * When moving towards a door the most convenient crossing point may change depending on the pedestrian
              * position. Recomputing the crossing points allows more natural movement (even though it's costly).
              */
-            crossingPoints = Optional.of(computeCrossingPoints(targetDoor.orFail()))
+            crossingPoints = computeCrossingPoints(targetDoor.orFail())
         }
     }
 

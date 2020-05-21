@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
+import java.lang.IllegalStateException
 
 /**
  * A [SteeringStrategy] in which one action is prevalent. Only [NavigationAction]s can be prevalent, because
@@ -100,9 +101,11 @@ class SinglePrevalent<T, M : ConvexPolygon>(
         with(actions.prevalent()) {
             val prevalentForce = this.nextPosition()
             val leadsOutsideCurrentRoom: Euclidean2DPosition.() -> Boolean = {
-                !currentRoom.get().containsBoundaryIncluded(pedestrianPosition + this)
+                (currentRoom ?: throw IllegalStateException("currentRoom should be defined")).let { currRoom ->
+                    !currRoom.containsBoundaryIncluded(pedestrianPosition + this)
+                }
             }
-            if (prevalentForce == environment.origin() || currentRoom.isEmpty ||
+            if (prevalentForce == environment.origin() || currentRoom == null ||
                 prevalentForce.leadsOutsideCurrentRoom()) {
                 return prevalentForce
             }

@@ -44,6 +44,11 @@ open class DynamicPursuing<T, N : Euclidean2DConvexShape, E>(
             inNewRoom(it)
         }
         if (voidVolatileMemory) {
+            /*
+             * clear() would cause volatileMemory[anyArea] to be null, which in turn means the pedestrian would
+             * forget known impasses as well (an impasse is known when volatileMemory[area] != null). Setting
+             * volatileMemory[anyArea] to zero allows to remember known impasses.
+             */
             pedestrian.volatileMemory.replaceAll { _, _ -> 0 }
         }
     }

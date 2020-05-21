@@ -62,8 +62,9 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             compareBy({
                 it.distanceTo(segment)
             }, {
-                min(segment.distanceTo(it.first) + segment.distanceTo(it.second),
-                    it.distanceTo(segment.first) + it.distanceTo(segment.second))
+                val segmentDistanceToEdgeBounds = segment.distanceTo(it.first) + segment.distanceTo(it.second)
+                val edgeDistanceToSegmentBounds = it.distanceTo(segment.first) + it.distanceTo(segment.second)
+                min(segmentDistanceToEdgeBounds, edgeDistanceToSegmentBounds)
             })
         ) ?: throw IllegalStateException("no edge found")
 

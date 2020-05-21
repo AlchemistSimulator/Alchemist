@@ -30,7 +30,7 @@ class NavigationPrioritisedSteering<T, M : ConvexPolygon> @JvmOverloads construc
     /**
      * Tolerance angle in degrees (see [SinglePrevalent]).
      */
-    toleranceAngle: Double = SinglePrevalent.DEFAULT_TOLERANCE_ANGLE,
+    toleranceAngle: Double = Math.toDegrees(SinglePrevalent.DEFAULT_TOLERANCE_ANGLE),
     /**
      * Alpha value for exponential smoothing (see [SinglePrevalent]).
      */

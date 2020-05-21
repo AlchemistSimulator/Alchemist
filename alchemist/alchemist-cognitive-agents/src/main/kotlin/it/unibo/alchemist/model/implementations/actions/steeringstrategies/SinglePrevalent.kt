@@ -83,7 +83,7 @@ class SinglePrevalent<T, M : ConvexPolygon>(
          * Empirically found to produce a good smoothing while leaving enough freedom of movement to the pedestrian
          * (e.g. to perform sudden changes of direction).
          */
-        const val DEFAULT_ALPHA = 0.6
+        const val DEFAULT_ALPHA = 0.5
         /**
          * Empirically found to produce natural movements.
          */

@@ -35,7 +35,7 @@ import org.jgrapht.alg.shortestpath.BFSShortestPath
 open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
     action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
     /**
-     * Known destinations.
+     * Known destinations (must not be empty).
      */
     private val destinations: List<Euclidean2DPosition>
 ) : RouteFollowing<T, N, E>(action, emptyList()) {
@@ -71,6 +71,7 @@ open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
                 .map { (destination, path) -> path.map { it.centroid } + destination }
                 .firstOrNull() ?: listOf(closestDest)
         }
+        setDestination(route[0])
     }
 
     /**

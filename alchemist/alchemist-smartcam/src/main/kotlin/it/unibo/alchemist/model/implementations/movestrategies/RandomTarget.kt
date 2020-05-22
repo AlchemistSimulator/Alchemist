@@ -1,13 +1,24 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.implementations.movestrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.utils.nextDouble
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.smartcam.randomAngle
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
 import kotlin.math.cos
 import kotlin.math.sin
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
+import kotlin.math.PI
 
 /**
  * Selects a target based on a random direction extracted from [directionRng],
@@ -16,6 +27,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * [T] is the type of the concentration of the node.
  */
 class RandomTarget<T>(
+    private val environment: Environment<T, Euclidean2DPosition>,
     getCurrentPosition: () -> Euclidean2DPosition,
     private val makePosition: (Double, Double) -> Euclidean2DPosition,
     private val directionRng: RandomGenerator,
@@ -26,14 +38,20 @@ class RandomTarget<T>(
      * Handy constructor for Alchemist where the object to move is a [node] in the [env].
      */
     constructor(
-        node: Node<T>,
         env: Environment<T, Euclidean2DPosition>,
+        node: Node<T>,
         directionRng: RandomGenerator,
         distanceDistribution: RealDistribution
-    ) : this({ env.getPosition(node) }, { x, y -> env.makePosition(x, y) }, directionRng, distanceDistribution)
+    ) : this(env, { env.getPosition(node) }, { x, y -> env.makePosition(x, y) }, directionRng, distanceDistribution)
 
-    override fun chooseTarget() = with(directionRng.randomAngle()) {
+    override fun chooseTarget() = with(directionRng.nextDouble(0.0, 2 * PI)) {
         val distance = distanceDistribution.sample()
-        getCurrentPosition() + makePosition(distance * cos(this), distance * sin(this))
+        val current = getCurrentPosition()
+        val delta = makePosition(distance * cos(this), distance * sin(this))
+        val desired = current + delta
+        when (environment) {
+            is Environment2DWithObstacles<*, T, Euclidean2DPosition> -> environment.next(current, desired)
+            else -> desired
+        }
     }
 }

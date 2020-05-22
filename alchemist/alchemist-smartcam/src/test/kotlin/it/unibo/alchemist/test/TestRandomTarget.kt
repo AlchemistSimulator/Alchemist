@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import kotlin.math.abs
@@ -94,7 +95,13 @@ class TestRandomTarget : StringSpec() {
         directionGenerator = DummyRandomGenerator()
         directionGenerator.value = 0.5
         distanceDistribution.value = 1.0
-        randomTarget = RandomTarget({ currentPosition }, { x, y -> Euclidean2DPosition(x, y) }, directionGenerator, distanceDistribution)
+        randomTarget = RandomTarget(
+            Continuous2DEnvironment(),
+            { currentPosition },
+            ::Euclidean2DPosition,
+            directionGenerator,
+            distanceDistribution
+        )
     }
 
     init {

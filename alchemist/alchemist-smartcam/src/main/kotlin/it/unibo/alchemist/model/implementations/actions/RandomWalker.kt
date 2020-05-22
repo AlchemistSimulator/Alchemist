@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
@@ -18,17 +27,17 @@ import org.apache.commons.math3.random.RandomGenerator
 open class RandomWalker<T>(
     node: Node<T>,
     reaction: Reaction<T>,
-    private val env: Environment<T, Euclidean2DPosition>,
+    environment: Environment<T, Euclidean2DPosition>,
     private val rng: RandomGenerator,
     private val speed: Double,
     private val distanceDistribution: RealDistribution
 ) : AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
-    env,
+    environment,
     node,
     RoutingStrategy { p1, p2 -> PolygonalChain<Euclidean2DPosition>(listOf(p1, p2)) },
-    RandomTarget<T>(node, env, rng, distanceDistribution),
+    RandomTarget<T>(environment, node, rng, distanceDistribution),
     GloballyConstantSpeed(reaction, speed)
 ) {
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        RandomWalker(n, r, env, rng, speed, distanceDistribution)
+        RandomWalker(n, r, environment, rng, speed, distanceDistribution)
 }

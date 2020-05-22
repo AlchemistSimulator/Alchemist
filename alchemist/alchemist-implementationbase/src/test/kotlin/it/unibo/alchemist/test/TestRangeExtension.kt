@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
 import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.intersects
 import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExcluded
-import it.unibo.alchemist.model.implementations.geometry.map
 import it.unibo.alchemist.model.implementations.geometry.minus
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.geometry.subtractAll
@@ -33,15 +32,6 @@ import java.lang.IllegalArgumentException
  * Contains tests concerning [ClosedRange] extension functions.
  */
 class TestRangeExtension : StringSpec({
-
-    "test mapping" {
-        0.0.map(0.0, 1.0, 0.0, 10.0) shouldBe 0.0
-        0.1.map(0.0, 1.0, 0.0, 1.0) shouldBe 0.1
-        0.1.map(0.0, 1.0, 0.0, 10.0) shouldBe 1.0
-        assertThrows<IllegalArgumentException> { 0.0.map(0.0, 0.0, 0.0, 0.0) }
-        assertThrows<IllegalArgumentException> { 0.0.map(0.0, -1.0, 0.0, 0.0) }
-        0.0.map(-1.0, 1.0, 0.0, 10.0) shouldBe 5.0
-    }
 
     infix fun <T : Comparable<T>> ClosedRange<T>?.rangeShouldBe(other: ClosedRange<T>) {
         this shouldNotBe null

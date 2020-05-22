@@ -10,17 +10,6 @@
 package it.unibo.alchemist.model.implementations.geometry
 
 import org.danilopianini.lang.MathUtils
-import java.lang.IllegalArgumentException
-
-/**
- * Maps a value in [min, max] to [newMin, newMax].
- */
-fun Double.map(min: Double, max: Double, newMin: Double, newMax: Double): Double = when {
-    this !in min..max -> throw IllegalArgumentException("$this is not in [$min, $max]")
-    MathUtils.fuzzyGreaterEquals(min, max) || MathUtils.fuzzyGreaterEquals(newMin, newMax) ->
-        throw IllegalArgumentException("either [$min, $max] and/or [$newMin, $newMax] is empty")
-    else -> (this - min) / (max - min) * (newMax - newMin) + newMin
-}
 
 /**
  * Checks if a double value is fuzzy contained in a range.

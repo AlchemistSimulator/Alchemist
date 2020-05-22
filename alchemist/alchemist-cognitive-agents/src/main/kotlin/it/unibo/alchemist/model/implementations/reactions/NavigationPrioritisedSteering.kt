@@ -44,7 +44,7 @@ class NavigationPrioritisedSteering<T, M : ConvexPolygon> @JvmOverloads construc
     SinglePrevalent(
         env,
         pedestrian,
-        { this.getSingleNavigationAction() },
+        prevalent = { getSingleNavigationAction() },
         maxWalk = { pedestrian.speed() / timeDistribution.rate },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha
@@ -52,10 +52,14 @@ class NavigationPrioritisedSteering<T, M : ConvexPolygon> @JvmOverloads construc
 ) {
 
     companion object {
+        /**
+         * @returns the only navigation action contained in the list or throws an exception.
+         */
         private fun <T, M : ConvexPolygon> List<SteeringAction<T, Euclidean2DPosition>>.getSingleNavigationAction():
-            EuclideanNavigationAction<T, *, *, M, *> = filterIsInstance<EuclideanNavigationAction<T, *, *, M, *>>()
+            EuclideanNavigationAction<T, *, *, M, *> = this
+            .filterIsInstance<EuclideanNavigationAction<T, *, *, M, *>>()
             .let {
-                require(it.size == 1) { "There should be only one navigation action" }
+                require(it.size == 1) { "There should be exactly one navigation action" }
                 it.first()
             }
     }

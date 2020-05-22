@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.interfaces.geometry
 
+import java.util.function.Predicate
 import kotlin.math.acos
 import kotlin.math.sqrt
 
@@ -98,17 +99,27 @@ interface Vector<S : Vector<S>> {
      */
     fun normalized(): S
 
+    @Suppress("UNCHECKED_CAST")
+    private fun resizedIf(toBeResized: Boolean, newLen: Double): S = when {
+        toBeResized -> resized(newLen)
+        else -> this as S
+    }
+
     /**
      * @return this vector if its [magnitude] is smaller than or equal to [maximumMagnitude] or a resized version
      * of [maximumMagnitude] otherwise.
      */
-    fun coerceAtMost(maximumMagnitude: Double): S
+    @JvmDefault
+    fun coerceAtMost(maximumMagnitude: Double): S =
+        resizedIf(magnitude > maximumMagnitude, maximumMagnitude)
 
     /**
      * @return this vector if its [magnitude] is greater than or equal to [minimumMagnitude] or a resized version
      * of [minimumMagnitude] otherwise.
      */
-    fun coerceAtLeast(minimumMagnitude: Double): S
+    @JvmDefault
+    fun coerceAtLeast(minimumMagnitude: Double): S =
+        resizedIf(magnitude < minimumMagnitude, minimumMagnitude)
 
     /**
      * Performs a coercion at least and at most.

@@ -26,6 +26,21 @@ import kotlin.math.min
  */
 abstract class AbstractConvexPolygon : ConvexPolygon {
 
+    companion object {
+        /**
+         * @returns the sum of the distances between this segment's endpoints and [other].
+         */
+        private fun <V : Vector2D<V>> Segment2D<V>.cumulativeDistanceTo(other: Segment2D<V>): Double =
+            other.distanceTo(first) + other.distanceTo(second)
+
+        /**
+         * @returns the minimum cumulative distance between this segment and [other] (this segment's
+         * [cumulativeDistanceTo] [other] maybe different from [other]'s [cumulativeDistanceTo] this segment).
+         */
+        private fun <V : Vector2D<V>> Segment2D<V>.minCumulativeDistanceTo(other: Segment2D<V>): Double =
+            min(cumulativeDistanceTo(other), other.cumulativeDistanceTo(this))
+    }
+
     override fun liesOnBoundary(vector: Euclidean2DPosition): Boolean = edges().any { it.contains(vector) }
 
     override fun containsBoundaryIncluded(vector: Euclidean2DPosition): Boolean =
@@ -57,16 +72,9 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         }
     }
 
-    override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> =
-        edges().minWith(
-            compareBy({
-                it.distanceTo(segment)
-            }, {
-                val segmentDistanceToEdgeBounds = segment.distanceTo(it.first) + segment.distanceTo(it.second)
-                val edgeDistanceToSegmentBounds = it.distanceTo(segment.first) + it.distanceTo(segment.second)
-                min(segmentDistanceToEdgeBounds, edgeDistanceToSegmentBounds)
-            })
-        ) ?: throw IllegalStateException("no edge found")
+    override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> = edges()
+        .minWith(compareBy({ it.distanceTo(segment) }, { it.minCumulativeDistanceTo(segment) }))
+        ?: throw IllegalStateException("no edge found")
 
     override fun toString(): String = javaClass.simpleName + vertices()
 

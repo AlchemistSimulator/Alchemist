@@ -77,10 +77,10 @@ before_install:
   - source $GRAVIS/install-jdk
 
 script:
-  - cd "$TRAVIS_BUILD_DIR"/alchemist
   - IS_SANE='./gradlew tasks -Dorg.gradle.daemon=true'
   - BUILD_COMMAND='./gradlew clean check --scan --parallel -Dorg.gradle.daemon=true'
-  - DELETE_CACHE="rm -rvf $HOME/.gradle/ | pv -l > /dev/null"
+  - DELETE_CACHE="rm -rvf $HOME/.gradle/caches/*.*"
+  - cd "$TRAVIS_BUILD_DIR"/alchemist
   - if ! $IS_SANE; then echo "Deleting cache"; $DELETE_CACHE; echo "Cache cleaned"; fi
   - travis_retry $BUILD_COMMAND
 

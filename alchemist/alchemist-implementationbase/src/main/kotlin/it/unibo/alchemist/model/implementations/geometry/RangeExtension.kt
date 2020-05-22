@@ -24,7 +24,7 @@ fun <T : Comparable<T>> rangeFromUnordered(bound1: T, bound2: T): ClosedRange<T>
  * may influence the actual class used, and you can have two coincident ranges which don't
  * result equals because of different classes.
  */
-fun <T : Comparable<T>> ClosedRange<T>.coincide(other: ClosedRange<T>): Boolean =
+fun <T : Comparable<T>> ClosedRange<T>.coincidesWith(other: ClosedRange<T>): Boolean =
     start == other.start && endInclusive == other.endInclusive
 
 /**
@@ -50,7 +50,7 @@ private fun <T : Comparable<T>> ClosedRange<T>.unsafeIntersection(other: ClosedR
  * Finds the intersection between two ranges, the resulting range may feature a single value
  * (if the ranges only share an endpoint) or can be null, if they don't intersect at all.
  */
-fun <T : Comparable<T>> ClosedRange<T>.intersection(other: ClosedRange<T>): ClosedRange<T>? = when {
+fun <T : Comparable<T>> ClosedRange<T>.intersect(other: ClosedRange<T>): ClosedRange<T>? = when {
     intersects(other) -> unsafeIntersection(other)
     else -> null
 }

@@ -12,11 +12,11 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.model.implementations.geometry.coincide
+import it.unibo.alchemist.model.implementations.geometry.coincidesWith
 import it.unibo.alchemist.model.implementations.geometry.contains
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
-import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.intersect
 import it.unibo.alchemist.model.implementations.geometry.intersects
 import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExcluded
 import it.unibo.alchemist.model.implementations.geometry.minus
@@ -25,8 +25,6 @@ import it.unibo.alchemist.model.implementations.geometry.subtractAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalArgumentException
 
 /**
  * Contains tests concerning [ClosedRange] extension functions.
@@ -62,14 +60,14 @@ class TestRangeExtension : StringSpec({
         (1..5).intersects(-5..-3) shouldBe false
         (1..5).intersects(6..8) shouldBe false
         (1..5).intersects(5..6) shouldBe true
-        (1..5).intersection(-3..2) rangeShouldBe 1..2
-        (1..5).intersection(4..6) rangeShouldBe 4..5
-        (1..5).intersection(2..4) rangeShouldBe 2..4
-        (1..5).intersection(-3..6) rangeShouldBe 1..5
-        (1..5).intersection(-5..-3) shouldBe null
-        (1..5).intersection(6..8) shouldBe null
-        (1..5).intersection(1..5) rangeShouldBe 1..5
-        (1..5).intersection(5..6) rangeShouldBe 5..5
+        (1..5).intersect(-3..2) rangeShouldBe 1..2
+        (1..5).intersect(4..6) rangeShouldBe 4..5
+        (1..5).intersect(2..4) rangeShouldBe 2..4
+        (1..5).intersect(-3..6) rangeShouldBe 1..5
+        (1..5).intersect(-5..-3) shouldBe null
+        (1..5).intersect(6..8) shouldBe null
+        (1..5).intersect(1..5) rangeShouldBe 1..5
+        (1..5).intersect(5..6) rangeShouldBe 5..5
     }
 
     "test intersects bounds excluded" {
@@ -81,12 +79,12 @@ class TestRangeExtension : StringSpec({
 
     /**
      * Asserts that the collection contains exactly the [expected] elements. Instead of using
-     * equality check between ranges (i.e. == operator), [ClosedRange.coincide] is used.
+     * equality check between ranges (i.e. == operator), [ClosedRange.coincidesWith] is used.
      */
     fun <T : Comparable<T>> List<ClosedRange<T>>.shouldContainRanges(vararg expected: ClosedRange<T>) {
         expected.toMutableList().let { expectedRanges ->
             this.forEach { actualRange ->
-                expectedRanges.filter { it.coincide(actualRange) }.let { equalRanges ->
+                expectedRanges.filter { it.coincidesWith(actualRange) }.let { equalRanges ->
                     assertTrue(equalRanges.size == 1)
                     expectedRanges.removeAll(equalRanges)
                 }
@@ -128,7 +126,7 @@ class TestRangeExtension : StringSpec({
     /* old tests below */
 
     fun assertIntersectionIsNull(first: Double, second: Double, third: Double, fourth: Double) =
-        assertNull(rangeFromUnordered(first, second).intersection(rangeFromUnordered(third, fourth)))
+        assertNull(rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth)))
 
     fun assertIntersectionIs(
         first: Double,
@@ -138,7 +136,7 @@ class TestRangeExtension : StringSpec({
         intersectionFirst: Double,
         intersectionSecond: Double
     ) {
-        val intersection = rangeFromUnordered(first, second).intersection(rangeFromUnordered(third, fourth))
+        val intersection = rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth))
         Assertions.assertNotNull(intersection)
         intersection?.let {
             it.start shouldBe intersectionFirst

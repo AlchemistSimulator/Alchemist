@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigat
 import it.unibo.alchemist.model.implementations.geometry.createSegment
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
-import it.unibo.alchemist.model.implementations.geometry.intersection
+import it.unibo.alchemist.model.implementations.geometry.intersect
 import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExcluded
 import it.unibo.alchemist.model.implementations.geometry.subtractAll
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -188,7 +188,7 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
              * the portions of the advancing edge leading to that neighbor.
              */
             neighbor to newRemaining.mapNotNull { remaining ->
-                polygonToInterval(neighbor).intersection(remaining)
+                polygonToInterval(neighbor).intersect(remaining)
             }
         }
         val passages = neighborToIntervals.flatMap { (neighbor, intervals) ->

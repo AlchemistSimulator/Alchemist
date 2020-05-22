@@ -21,7 +21,8 @@ import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Chooses random targets in a direction extracted from [randomGenerator] at a distance extracted from [distanceDistribution].
+ * Chooses random targets in a direction extracted from [randomGenerator]
+ * at a distance extracted from [distanceDistribution].
  * Moves the node towards the targets at the given constant [speed]. Changes target on collision.
  */
 open class RandomWalker<T>(

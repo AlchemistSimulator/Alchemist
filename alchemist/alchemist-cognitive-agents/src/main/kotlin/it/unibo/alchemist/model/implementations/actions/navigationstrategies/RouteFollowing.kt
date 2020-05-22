@@ -57,9 +57,10 @@ open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
             ?: inNewRoom(actualNewRoom)
     }
 
-    override fun inNewRoom(newRoom: ConvexPolygon) = when {
-        route.isEmpty() -> action.stop()
-        else -> {
+    override fun inNewRoom(newRoom: ConvexPolygon) {
+        if (route.isEmpty()) {
+            action.stop()
+        } else {
             if (waypointReached(newRoom)) {
                 setDestination(route[indexOfNextWaypoint])
             }

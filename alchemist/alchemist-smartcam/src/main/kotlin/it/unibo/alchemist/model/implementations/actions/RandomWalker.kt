@@ -21,23 +21,23 @@ import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Chooses random targets in a direction extracted from [rng] at a distance extracted from [distanceDistribution].
+ * Chooses random targets in a direction extracted from [randomGenerator] at a distance extracted from [distanceDistribution].
  * Moves the [node] towards the targets at the given constant [speed]. Changes target on collision.
  */
 open class RandomWalker<T>(
     node: Node<T>,
     reaction: Reaction<T>,
     environment: Environment<T, Euclidean2DPosition>,
-    private val rng: RandomGenerator,
+    private val randomGenerator: RandomGenerator,
     private val speed: Double,
     private val distanceDistribution: RealDistribution
 ) : AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
     environment,
     node,
     RoutingStrategy { p1, p2 -> PolygonalChain<Euclidean2DPosition>(listOf(p1, p2)) },
-    RandomTarget<T>(environment, node, rng, distanceDistribution),
+    RandomTarget<T>(environment, node, randomGenerator, distanceDistribution),
     GloballyConstantSpeed(reaction, speed)
 ) {
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        RandomWalker(n, r, environment, rng, speed, distanceDistribution)
+        RandomWalker(n, r, environment, randomGenerator, speed, distanceDistribution)
 }

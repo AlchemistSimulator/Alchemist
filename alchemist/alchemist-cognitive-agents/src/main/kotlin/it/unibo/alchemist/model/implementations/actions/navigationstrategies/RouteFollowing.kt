@@ -71,15 +71,17 @@ open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
     /**
      * Checks if a new waypoint has been reached and updates [indexOfNextWaypoint] accordingly.
      */
-    protected fun waypointReached(currentRoom: ConvexPolygon): Boolean = false
-        .takeIf { indexOfNextWaypoint >= route.size - 1 }
-        ?: route.indexOfLast { isReached(it, currentRoom) }.let { indexOfFartherWaypointReached ->
-            if (indexOfFartherWaypointReached < indexOfNextWaypoint) {
-                return false
-            }
-            indexOfNextWaypoint = (indexOfFartherWaypointReached + 1).coerceAtMost(route.size - 1)
-            return true
+    protected fun waypointReached(currentRoom: ConvexPolygon): Boolean {
+        if (indexOfNextWaypoint >= route.size - 1) {
+            return false
         }
+        val indexOfFartherWaypointReached = route.indexOfLast { isReached(it, currentRoom) }
+        val newWaypointReached = indexOfFartherWaypointReached >= indexOfNextWaypoint
+        if (newWaypointReached) {
+            indexOfNextWaypoint = (indexOfFartherWaypointReached + 1).coerceAtMost(route.size - 1)
+        }
+        return newWaypointReached
+    }
 
     /**
      * Checks if the given [waypoint] is reached (as stated above, if it's inside [currentRoom]).

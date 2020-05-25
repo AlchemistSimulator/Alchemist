@@ -43,7 +43,7 @@ fun <T : Comparable<T>> ClosedRange<T>.intersects(other: ClosedRange<T>): Boolea
 /*
  * Finds the intersection between two ranges which are guaranteed to intersect.
  */
-private fun <T : Comparable<T>> ClosedRange<T>.unsafeIntersection(other: ClosedRange<T>): ClosedRange<T> =
+private fun <T : Comparable<T>> ClosedRange<T>.unsafeIntersect(other: ClosedRange<T>): ClosedRange<T> =
     ObjectUtils.max(start, other.start)..ObjectUtils.min(endInclusive, other.endInclusive)
 
 /**
@@ -51,7 +51,7 @@ private fun <T : Comparable<T>> ClosedRange<T>.unsafeIntersection(other: ClosedR
  * (if the ranges only share an endpoint) or can be null, if they don't intersect at all.
  */
 fun <T : Comparable<T>> ClosedRange<T>.intersect(other: ClosedRange<T>): ClosedRange<T>? = when {
-    intersects(other) -> unsafeIntersection(other)
+    intersects(other) -> unsafeIntersect(other)
     else -> null
 }
 

@@ -7,6 +7,9 @@
  */
 package it.unibo.alchemist.kotlin
 
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Position
+
 /**
  * The opposite of [fold].
  *
@@ -20,3 +23,23 @@ package it.unibo.alchemist.kotlin
  */
 fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
     sequenceOf(this) + extractor(this).flatMap { it.unfold(extractor) }
+
+/**
+ * Tries to convert a concentration [T] into a valid position of type [P] descriptor.
+ * Types are bound to the [environment] types.
+ */
+inline fun <T, reified P : Position<P>> T.toPosition(environment: Environment<T, P>): P = when (this) {
+    is P -> this
+    is Iterable<*> -> environment.makePosition(*(
+        this.map {
+            when (it) {
+                is Number -> it
+                else -> throw IllegalStateException(
+                    "The Iterable being converted to position must contain Numbers only" +
+                    "but $it has type ${it?.javaClass ?: "null"}"
+                )
+            }
+        }).toTypedArray())
+    else -> throw IllegalArgumentException(
+        "$this (type: ${if (this is Any) this.javaClass else null}) can't get converted to a Position")
+}

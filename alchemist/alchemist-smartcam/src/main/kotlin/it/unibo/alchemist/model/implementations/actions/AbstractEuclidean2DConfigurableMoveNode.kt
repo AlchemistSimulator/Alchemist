@@ -13,7 +13,7 @@ import kotlin.math.sin
  * It's an [AbstractConfigurableMoveNode] for [Euclidean2DPosition] which provides a default [interpolatePositions]
  * that is accurate with respect to the target given and the current maximum speed.
  */
-abstract class AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
+abstract class AbstractEuclidean2DConfigurableMoveNode<T>(
     environment: Environment<T, Euclidean2DPosition>,
     node: Node<T>,
     routing: RoutingStrategy<Euclidean2DPosition>,

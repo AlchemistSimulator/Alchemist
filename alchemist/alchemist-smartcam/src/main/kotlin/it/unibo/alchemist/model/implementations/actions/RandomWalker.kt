@@ -32,7 +32,7 @@ open class RandomWalker<T>(
     private val randomGenerator: RandomGenerator,
     private val speed: Double,
     private val distanceDistribution: RealDistribution
-) : AbstractConfigurableMoveNodeWithAccurateEuclideanDestination<T>(
+) : AbstractEuclidean2DConfigurableMoveNode<T>(
     environment,
     node,
     RoutingStrategy { p1, p2 -> PolygonalChain(listOf(p1, p2)) },

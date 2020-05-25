@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.interfaces.geometry
 
-import java.util.function.Predicate
 import kotlin.math.acos
 import kotlin.math.sqrt
 

@@ -46,6 +46,8 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
     private RangedInteger nOfIsolines = new RangedInteger(1, MAX_NUMBER_OF_ISOLINES, MAX_NUMBER_OF_ISOLINES / 4);
     @ExportForGUI(nameToExport = "Distribution between min and max")
     private Distribution distribution = Distribution.LINEAR;
+    @ExportForGUI(nameToExport = "Draw isolines values")
+    private boolean drawValues;
     private int nOfIsolinesCached = nOfIsolines.getVal();
     private Distribution distributionCached = distribution;
     private Collection<Number> levels;
@@ -93,13 +95,15 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
         }
         algorithm.findIsolines((x, y) -> f.apply(env.makePosition(x, y)),
                 envStart.getX(), envStart.getY(), envEnd.getX(), envEnd.getY(), levels).forEach(isoline -> {
-            // draw isoline value
-            isoline.getSegments().stream().findAny().ifPresent(segment -> {
-                final Point viewPoint = wormhole.getViewPoint(env.makePosition(segment.getX1(), segment.getY1()));
-                final int x = (int) Math.ceil(viewPoint.getX());
-                final int y = (int) Math.ceil(viewPoint.getY());
-                g.drawString(isoline.getValue().toString(), x, y);
-            });
+            if (drawValues) {
+                // draw isoline value
+                isoline.getSegments().stream().findAny().ifPresent(segment -> {
+                    final Point viewPoint = wormhole.getViewPoint(env.makePosition(segment.getX1(), segment.getY1()));
+                    final int x = (int) Math.ceil(viewPoint.getX());
+                    final int y = (int) Math.ceil(viewPoint.getY());
+                    g.drawString(isoline.getValue().toString(), x, y);
+                });
+            }
             // draw isoline
             isoline.getSegments().forEach(segment -> {
                 final Point start = wormhole.getViewPoint(env.makePosition(segment.getX1(), segment.getY1()));
@@ -139,6 +143,20 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
      */
     public void setDistribution(final Distribution distribution) {
         this.distribution = distribution;
+    }
+
+    /**
+     * @return whether the values of the isolines are to be drawn or not
+     */
+    public Boolean getDrawValues() {
+        return drawValues;
+    }
+
+    /**
+     * @param drawValues whether the values of the isolines are to be drawn or not
+     */
+    public void setDrawValues(final Boolean drawValues) {
+        this.drawValues = drawValues;
     }
 
     /**

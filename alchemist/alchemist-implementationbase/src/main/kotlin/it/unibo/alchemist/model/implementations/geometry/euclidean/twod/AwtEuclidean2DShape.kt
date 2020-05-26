@@ -34,9 +34,15 @@ internal class AwtEuclidean2DShape(
 
     override fun asAwtShape() = AffineTransform().createTransformedShape(shape)!!
 
+    /**
+     * Delegated to [java.awt.Shape.contains], hence adopting the definition of insideness used by [java.awt.Shape]s.
+     */
     override fun contains(vector: Euclidean2DPosition) =
         shape.contains(Point2D.Double(vector.x, vector.y))
 
+    /**
+     * Bounding boxes are used, allowing some inaccuracy.
+     */
     override fun intersects(other: Euclidean2DShape) =
         when (other) {
             /*

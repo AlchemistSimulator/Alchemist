@@ -34,8 +34,7 @@ abstract class FlowFieldSteeringAction<P>(
         P : Position2D<P>,
         P : Vector2D<P> {
 
-    override fun nextPosition(): P = env.getLayer(targetMolecule)
-        .orElseThrow { IllegalStateException("no layer containing $targetMolecule could be found") }
+    override fun nextPosition(): P = getLayerOrFail()
         .let { layer ->
             currentPosition.surrounding(env, maxWalk())
                 .asSequence()
@@ -54,6 +53,9 @@ abstract class FlowFieldSteeringAction<P>(
 
     protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
         getValue(position).toDouble()
+
+    protected fun getLayerOrFail(): Layer<Number, P> = env.getLayer(targetMolecule)
+        .orElseThrow { IllegalStateException("no layer containing $targetMolecule could be found") }
 
     /**
      * @returns the center of the layer or null if there's no center.

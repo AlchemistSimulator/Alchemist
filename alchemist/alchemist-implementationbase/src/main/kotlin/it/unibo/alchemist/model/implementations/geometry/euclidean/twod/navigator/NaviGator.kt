@@ -9,10 +9,12 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.DoubleInterval
-import it.unibo.alchemist.model.implementations.geometry.DoubleInterval.Companion.findExtremePoints
-import it.unibo.alchemist.model.implementations.geometry.DoubleInterval.Companion.toInterval
 import it.unibo.alchemist.model.implementations.geometry.createSegment
+import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
+import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
+import it.unibo.alchemist.model.implementations.geometry.intersect
+import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExcluded
+import it.unibo.alchemist.model.implementations.geometry.subtractAll
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.vertices
@@ -64,27 +66,23 @@ import java.awt.Shape
  *              integer coordinates). In the growing phase, each side of each seed
  *              will be advanced of a quantity equal to unity iteratively, hence the
  *              smaller this value is the slower the algorithm will be.
- * @param destinations
- *              a collection of positions of interest that will be stored in the
- *              navigation graph and may be used during navigation (e.g. destinations
- *              in an evacuation scenario).
  */
 fun generateNavigationGraph(
     origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),
     width: Double,
     height: Double,
-    obstacles: Collection<Shape>,
+    obstacles: List<Shape>,
     rooms: Collection<Euclidean2DPosition>,
-    unity: Double = 1.0,
-    destinations: List<Euclidean2DPosition>
+    unity: Double = 1.0
 ): Euclidean2DNavigationGraph {
     require(width > 0 && height > 0) { "width and height should be positive" }
     val seeds = rooms
-        .map { createSeed(it.x, it.y, unity) }
+        .map { createSeed(it.x, it.y, unity, origin, width, height, obstacles) }
         .toMutableList()
-        .grow(origin, width, height, obstacles, unity)
-    val graph = DirectedEuclidean2DNavigationGraph(destinations, Euclidean2DPassage::class.java)
+        .grow(obstacles, unity)
+    val graph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
     seeds.forEach { graph.addVertex(it) }
+
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
             if (edge.isAxisAligned) {
@@ -92,38 +90,29 @@ fun generateNavigationGraph(
                 /*
                  * Moves the edge back to its previous position as findCrossings modified it.
                  */
-                seed.moveEdge(index, edge)
+                seed.replaceEdge(index, edge)
                 passages
             } else emptyList()
         }.flatten()
     }.forEach { graph.addEdge(it.tail, it.head, it) }
+
     return graph
 }
 
-private fun MutableList<ExtendableConvexPolygon>.grow(
-    origin: Euclidean2DPosition,
-    width: Double,
-    height: Double,
-    envObstacles: Collection<Shape>,
+private fun MutableList<ExtendableConvexPolygonInEnvironment>.grow(
+    obstacles: List<Shape>,
     step: Double
-): MutableList<ExtendableConvexPolygon> {
-    removeIf { seed -> envObstacles.any { seed.intersects(it) } }
-    val obstacles = envObstacles.toMutableList()
-    obstacles.addAll(map { it.asAwtShape() })
+): MutableList<ExtendableConvexPolygonInEnvironment> {
+    removeIf { seed -> obstacles.any { seed.intersects(it) } }
+    forEach { seed -> seed.polygonalObstacles = this - seed }
     var growing = true
     while (growing) {
         growing = false
-        forEachIndexed { i, seed ->
-            /*
-             * each seed should not consider itself as an obstacle,
-             * thus it's removed and added back at the end
-             */
-            obstacles.removeAt(envObstacles.size + i)
-            val extended = seed.extend(step, obstacles, origin, width, height)
+        forEach { seed ->
+            val extended = seed.extend(step)
             if (!growing) {
                 growing = extended
             }
-            obstacles.add(envObstacles.size + i, seed.asAwtShape())
         }
     }
     return this
@@ -136,7 +125,7 @@ private fun MutableList<ExtendableConvexPolygon>.grow(
  * In brief, this method advances the specified edge, keeping track of the portions
  * of it not occluded by obstacles yet, until every passage has been detected.
  */
-private fun ExtendableConvexPolygon.findPassages(
+private fun ExtendableConvexPolygonInEnvironment.findPassages(
     index: Int,
     seeds: Collection<ExtendableConvexPolygon>,
     origin: Euclidean2DPosition,
@@ -152,38 +141,38 @@ private fun ExtendableConvexPolygon.findPassages(
      * Portion of the advancing edge not occluded by obstacles yet. Since the edge
      * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
      */
-    remaining: DoubleInterval = oldEdge.toInterval()
+    remaining: ClosedRange<Double> = oldEdge.toRange()
 ): Collection<Euclidean2DPassage> = emptyList<Euclidean2DPassage>()
-    .takeIf { fuzzyEquals(remaining.first, remaining.second) }
-    ?: let {
+    .takeIf { fuzzyEquals(remaining.start, remaining.endInclusive) }
+    ?: let { _ ->
         /*
          * ToInterval functions map a shape or polygon to the DoubleInterval relevant for
          * the intersection with the advancing edge.
          */
-        val polygonToInterval: (ExtendableConvexPolygon) -> DoubleInterval = {
-            it.closestEdgeTo(oldEdge).toInterval(oldEdge.xAxisAligned)
+        val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
+            it.closestEdgeTo(oldEdge).toRange(oldEdge.xAxisAligned)
         }
-        val shapeToInterval: (Shape) -> DoubleInterval = {
-            it.vertices().findExtremePoints(oldEdge.xAxisAligned)
+        val shapeToInterval: (Shape) -> ClosedRange<Double> = { shape ->
+            shape.vertices().let {
+                if (oldEdge.xAxisAligned) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
+            }
         }
         val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
             seeds.filter {
-                it != this && it.intersects(asAwtShape()) &&
-                    /*
-                     * A seed is considered intersected if it intersects with the polygon
-                     * and, in particular, with the remaining portion of the advancing edge.
-                     * Similarly for obstacles below.
-                     */
-                    polygonToInterval(it).intersectsEndpointsExcluded(remaining)
+                /*
+                 * A seed is considered intersected if it intersects with the polygon and, in particular, with the
+                 * remaining portion of the advancing edge. Similarly for obstacles below.
+                 */
+                it != this && it.intersects(asAwtShape()) && polygonToInterval(it).intersectsBoundsExcluded(remaining)
             }
         }
         val intersectedObstacles: () -> List<Shape> = {
             obstacles.filter {
-                intersects(it) && shapeToInterval(it).intersectsEndpointsExcluded(remaining)
+                intersects(it) && shapeToInterval(it).intersectsBoundsExcluded(remaining)
             }
         }
         while (intersectedSeeds().isEmpty() && intersectedObstacles().isEmpty()) {
-            if (!advanceEdge(index, unity, origin, width, height)) {
+            if (!advanceEdge(index, unity)) {
                 /*
                  * Edge is out of the environment's boundaries.
                  */
@@ -199,7 +188,7 @@ private fun ExtendableConvexPolygon.findPassages(
              * the portions of the advancing edge leading to that neighbor.
              */
             neighbor to newRemaining.mapNotNull { remaining ->
-                polygonToInterval(neighbor).intersectionEndpointsExcluded(remaining)
+                polygonToInterval(neighbor).intersect(remaining)
             }
         }
         val passages = neighborToIntervals.flatMap { (neighbor, intervals) ->
@@ -208,10 +197,9 @@ private fun ExtendableConvexPolygon.findPassages(
              * coordinate we ignored so far of the oldEdge.
              */
             intervals.map {
-                val passageShape = if (oldEdge.xAxisAligned) {
-                    createSegment(it.first, oldEdge.first.y, x2 = it.second)
-                } else {
-                    createSegment(oldEdge.first.x, it.first, y2 = it.second)
+                val passageShape = when {
+                    oldEdge.xAxisAligned -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
+                    else -> createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
                 }
                 Euclidean2DPassage(this, neighbor, passageShape)
             }
@@ -226,10 +214,18 @@ private fun ExtendableConvexPolygon.findPassages(
         }
     }
 
-private fun createSeed(x: Double, y: Double, side: Double): ExtendableConvexPolygon =
-    ExtendableConvexPolygonImpl(
-        mutableListOf(
-            Euclidean2DPosition(x, y),
-            Euclidean2DPosition(x + side, y),
-            Euclidean2DPosition(x + side, y + side),
-            Euclidean2DPosition(x, y + side)))
+private fun createSeed(
+    x: Double,
+    y: Double,
+    side: Double,
+    origin: Euclidean2DPosition,
+    width: Double,
+    height: Double,
+    obstacles: List<Shape>
+): ExtendableConvexPolygonInEnvironment =
+    ExtendableConvexPolygonInEnvironment(mutableListOf(
+        Euclidean2DPosition(x, y),
+        Euclidean2DPosition(x + side, y),
+        Euclidean2DPosition(x + side, y + side),
+        Euclidean2DPosition(x, y + side)
+    ), origin, width, height, obstacles)

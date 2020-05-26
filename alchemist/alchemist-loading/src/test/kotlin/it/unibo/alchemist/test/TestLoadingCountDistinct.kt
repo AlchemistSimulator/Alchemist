@@ -8,20 +8,18 @@
 
 package it.unibo.alchemist.test
 
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.doubles.shouldBeExactly
 import it.unibo.alchemist.loader.export.StatUtil
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 
-class TestLoadingCountDistinct {
-
-    /**
-     * Tests loading and executing CountDistinct
-     */
-    @Test
-    fun `test loading "CountDistinct" and its execution`() {
+/**
+ * Tests loading and executing CountDistinct
+ */
+class TestLoadingCountDistinct : StringSpec({
+    "CountDistinct should load and execute" {
         val stat = StatUtil.makeUnivariateStatistic("countdistinct").get()
-        Assertions.assertEquals(3.0, stat.evaluate(doubleArrayOf(1.0, 2.0, 3.0, 1.0)), Double.MIN_VALUE)
-        Assertions.assertEquals(100.0, stat.evaluate((1..100).map(Int::toDouble).toDoubleArray()), 100.0)
-        Assertions.assertEquals(100.0, stat.evaluate((1..100).map(Int::toDouble).toDoubleArray(), 50, 1000), 50.0)
+        stat.evaluate(doubleArrayOf(1.0, 2.0, 3.0, 1.0)) shouldBeExactly 3.0
+        stat.evaluate((1..100).map(Int::toDouble).toDoubleArray()) shouldBeExactly 100.0
+        stat.evaluate((1..100).map(Int::toDouble).toDoubleArray(), 50, 1000) shouldBeExactly 50.0
     }
-}
+})

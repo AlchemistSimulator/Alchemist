@@ -18,15 +18,19 @@ import java.util.function.Function
 import java.util.stream.Stream
 
 /**
- * Defines an object capable of mapping a Layer<T, P> to a Function<* in P, * out Number>
+ * Defines an object capable of mapping a Layer<T, P> to a Function<* in P, * out Number>.
  */
 interface LayerToFunctionMapper {
     /**
-     * Prepare the mapping (if necessary)
+     * Prepare the mapping (if necessary).
      */
-    fun <T, P : Position2D<P>> prepare(effect: DrawLayersValues, toDraw: Collection<Layer<T, P>>, env: Environment<T, P>, g: Graphics2D, wormhole: IWormhole2D<P>) {
-        // defaults to nothing
-    }
+    fun <T, P : Position2D<P>> prepare(
+        effect: DrawLayersValues,
+        toDraw: Collection<Layer<T, P>>,
+        env: Environment<T, P>,
+        g: Graphics2D,
+        wormhole: IWormhole2D<P>
+    ) = Unit // defaults to nothing
 
     /**
      * Effectively map the given layers, layers may be filtered too if the mapper is only able
@@ -35,7 +39,7 @@ interface LayerToFunctionMapper {
     fun <T, P : Position2D<P>> map(layers: Collection<Layer<T, P>>): Collection<Function<in P, out Number>>
 
     /**
-     * see [LayerToFunctionMapper.map]
+     * see [LayerToFunctionMapper.map].
      */
     fun <T, P : Position2D<P>> map(layers: Stream<Layer<T, P>>): Stream<Function<in P, out Number>>
 }

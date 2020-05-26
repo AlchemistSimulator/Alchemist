@@ -251,8 +251,8 @@ public class TestEnvironmentNodes {
                 .parallel()
                 .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
                 .min((n1, n2) -> Double.compare(
-                        env.getPosition(n1).getDistanceTo(env.getPosition(center)), 
-                        env.getPosition(n2).getDistanceTo(env.getPosition(center))
+                        env.getPosition(n1).distanceTo(env.getPosition(center)),
+                        env.getPosition(n2).distanceTo(env.getPosition(center))
                         ))
                 .get().getConcentration(new Biomolecule("A"));
         assertEquals(conAInNearest, 1000, PRECISION);

@@ -8,7 +8,7 @@
 
 package it.unibo.alchemist.test
 
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,8 +23,11 @@ class TestKtVariable<T, P : Position<P>> : StringSpec({
         assertNotNull(loader.getWith<T, P>(emptyMap<String, String>()))
         loader.constants.let { variable ->
             assertEquals(23, variable["a"])
-            assertEquals(listOf("a", 5.5), variable["test2"])
-            assertEquals(listOf(23, 5.5), variable["test"])
+            val expectedTest2 = listOf("a", 5.5)
+            assertEquals(expectedTest2, variable["test2"])
+            val expectedTest = listOf(23, 5.5)
+            assertEquals(expectedTest, variable["test"])
+            assertEquals(expectedTest + expectedTest2, variable["test3"])
         }
     }
 })

@@ -41,7 +41,7 @@ class SendScafiMessage[T, P<:Position[P]](
    * Effectively executes this action.
    */
   override def execute(): Unit = {
-    import scala.collection.JavaConverters._
+    import scala.jdk.CollectionConverters._
     val toSend = program.getExport(node.getId).get
     for (
       nbr <- env.getNeighborhood(node).getNeighbors.iterator().asScala;

@@ -16,7 +16,8 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> :
     fun adimensional(): AdimensionalShape<S, A>
 
     /**
-     * Requires that the given shape is compatible with the ones provided by this factory, otherwise throws an exception.
+     * Requires that the given shape is compatible with the ones provided by this factory,
+     * otherwise throws an exception.
      *
      * @param shape the shape to check
      * @return the same shape
@@ -32,7 +33,10 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> :
          * @param <F> The interface of the factory requested
          * @return the factory
          */
-        inline fun <reified S : Vector<S>, reified A : GeometricTransformation<S>, reified F : GeometricShapeFactory<S, A>> getInstance(): F =
+        inline fun <reified S, reified A, reified F> getInstance(): F
+            where S : Vector<S>,
+                  A : GeometricTransformation<S>,
+                  F : GeometricShapeFactory<S, A> =
             getInstance(F::class.java)
 
         /**
@@ -47,12 +51,13 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> :
          */
         @JvmStatic
         @Suppress("UNCHECKED_CAST")
-        fun <S : Vector<S>, A : GeometricTransformation<S>, F : GeometricShapeFactory<S, A>> getInstance(
-            type: Class<F>
-        ): F =
+        fun <S, A, F> getInstance(type: Class<F>): F
+            where S : Vector<S>,
+                  A : GeometricTransformation<S>,
+                  F : GeometricShapeFactory<S, A> =
             when (type) {
                 Euclidean2DShapeFactory::class.java -> AwtEuclidean2DShapeFactory()
-                else -> throw NotImplementedError("No implementation found for GeometricShapeFactory<" + type.simpleName + ">")
+                else -> TODO("No implementation found for GeometricShapeFactory<" + type.simpleName + ">")
             } as F
     }
 }

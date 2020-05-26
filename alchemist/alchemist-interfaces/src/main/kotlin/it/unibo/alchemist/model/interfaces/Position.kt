@@ -39,7 +39,7 @@ interface Position<P : Position<P>> : Serializable {
      * @return an array of size getDimensions() where each element represents a
      *         coordinate.
      */
-    val cartesianCoordinates: DoubleArray
+    val coordinates: DoubleArray
 
     /**
      * Allows to access the value of a coordinate.
@@ -64,7 +64,7 @@ interface Position<P : Position<P>> : Serializable {
      *            the position you want to know the distance to
      * @return the distance between this and p
      */
-    fun getDistanceTo(p: P): Double
+    fun distanceTo(p: P): Double
 
     /**
      * Considers both positions as vectors, and sums them.

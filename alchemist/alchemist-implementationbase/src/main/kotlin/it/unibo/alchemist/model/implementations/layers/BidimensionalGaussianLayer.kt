@@ -13,6 +13,9 @@ import it.unibo.alchemist.model.interfaces.Position2D
 
 /**
  * A [Layer] based on a [2D gaussian function][BidimensionalGaussian] and an optional baseline value.
+ *
+ * @param centerX x coord of the layer's center.
+ * @param centerY y coord of the layer's center.
  */
 open class BidimensionalGaussianLayer<P : Position2D<P>> @JvmOverloads constructor(
     private val baseline: Double = 0.0,

@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * @param <T> the concentration type
  */
-public class GenericMoleculeUnderLevel<T extends Number> extends
+public final class GenericMoleculeUnderLevel<T extends Number> extends
         GenericMoleculePresent<T> {
 
     /**
@@ -43,13 +43,6 @@ public class GenericMoleculeUnderLevel<T extends Number> extends
         return getNode().getConcentration(getMolecule()).doubleValue() < getQuantity().doubleValue();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * alice.alchemist.model.interfaces.ICondition#cloneOnNewNode(alice.alchemist
-     * .model.interfaces.Node)
-     */
     @Override
     public GenericMoleculeUnderLevel<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
         return new GenericMoleculeUnderLevel<T>(n, getMolecule(), getQuantity());

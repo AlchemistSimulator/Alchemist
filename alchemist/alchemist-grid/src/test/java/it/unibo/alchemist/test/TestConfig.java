@@ -12,7 +12,7 @@ import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Time;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -40,7 +40,7 @@ public class TestConfig {
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         Assertions.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
-        final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, DoubleTime.INFINITE_TIME);
+        final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, Time.INFINITY);
         Assertions.assertEquals(gsc.getDependencies().size(), 2);
         Assertions.assertArrayEquals(gsc.getDependencies().get(DEPENDENCY_FILE), Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI())));
     }
@@ -54,7 +54,7 @@ public class TestConfig {
         final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
         Assertions.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
-        final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, DoubleTime.INFINITE_TIME);
+        final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, Time.INFINITY);
         Assertions.assertEquals(gsc.getDependencies().size(), 2);
         final File test;
         try (WorkingDirectory wd = new WorkingDirectory()) {

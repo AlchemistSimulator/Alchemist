@@ -13,6 +13,10 @@ import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 
+/**
+ * This [Displacement] places new nodes in the proximity of those already included in the environment.
+ * Behaviour if there are no nodes already inserted is undefined.
+ */
 class CloseToAlreadyDisplaced<T, P : Position<P>> (
     randomGenerator: RandomGenerator,
     environment: Environment<T, P>,
@@ -23,7 +27,7 @@ class CloseToAlreadyDisplaced<T, P : Position<P>> (
         .map { environment.getPosition(it) }
         .map { when (it) {
                 is GeoPosition -> doubleArrayOf(it.latitude, it.longitude)
-                else -> it.cartesianCoordinates
+                else -> it.coordinates
             }
         }
 }

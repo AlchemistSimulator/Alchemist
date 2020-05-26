@@ -1,10 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.geometry.asAngle
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import kotlin.math.cos
 import kotlin.math.sin
 import org.apache.commons.math3.util.FastMath.toRadians
@@ -15,7 +14,7 @@ import org.apache.commons.math3.util.FastMath.toRadians
 class Spin<T>(
     node: Node<T>,
     private val reaction: Reaction<T>,
-    private val env: EuclideanPhysics2DEnvironment<T>,
+    private val env: Physics2DEnvironment<T>,
     private val angularSpeedDegrees: Double
 ) : AbstractAction<T>(node) {
 
@@ -28,7 +27,7 @@ class Spin<T>(
      */
     override fun execute() {
         val realSpeed = angularSpeedRadians / reaction.timeDistribution.rate
-        val headingAngle = env.getHeading(node).asAngle() + realSpeed
+        val headingAngle = env.getHeading(node).asAngle + realSpeed
         env.setHeading(node, env.makePosition(cos(headingAngle), sin(headingAngle)))
     }
 

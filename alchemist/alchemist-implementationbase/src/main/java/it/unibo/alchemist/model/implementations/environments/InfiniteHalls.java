@@ -125,7 +125,7 @@ public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
 
     @Override
     protected boolean isAllowed(final Euclidean2DPosition p) {
-        final double[] coord = p.getCartesianCoordinates();
+        final double[] coord = p.getCoordinates();
         return allowed(coord[0], coord[1]);
     }
 

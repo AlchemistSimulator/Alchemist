@@ -1,10 +1,10 @@
 grammar Biochemistrydsl;
 
-reaction
-    : biochemicalReaction 
+reaction: (
+    biochemicalReaction
     | createJunction
     | junctionReaction
-    ;
+    ) EOF;
 
 biochemicalReaction:
     biochemicalReactionLeft

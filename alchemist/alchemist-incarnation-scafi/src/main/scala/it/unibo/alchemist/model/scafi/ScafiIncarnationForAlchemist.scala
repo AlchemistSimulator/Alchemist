@@ -8,12 +8,13 @@
 package it.unibo.alchemist.model.scafi
 
 import it.unibo.alchemist.model.implementations.nodes.NodeManager
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
 import it.unibo.scafi.PlatformDependentConstants
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation
 import it.unibo.scafi.lib.StandardLibrary
-import it.unibo.scafi.space.{BasicSpatialAbstraction, Point3D}
+import it.unibo.scafi.space.{BasicSpatialAbstraction, Point2D, Point3D}
 import it.unibo.scafi.time.BasicTimeAbstraction
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -57,12 +58,24 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
 
     def alchemistTimestamp = sense[it.unibo.alchemist.model.interfaces.Time](LSNS_ALCHEMIST_TIMESTAMP)
 
-    //def nextRandom: Double = sense[RandomGenerator](LSNS_RANDOM).nextDouble()
     def alchemistRandomGen = sense[RandomGenerator](LSNS_ALCHEMIST_RANDOM)
     lazy val randomGen: Random = new AlchemistRandomWrapper(alchemistRandomGen)
     override def randomGenerator(): Random = randomGen
     override def nextRandom(): Double = alchemistRandomGen.nextDouble()
 
     def alchemistEnvironment = sense[Environment[Any,Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
+  }
+
+  /**
+   * Typical adjustment that needs to be performed when using Alchemist environments with positions of type [[Euclidean2DPosition]]
+   * to properly adapt values and types to ScaFi standard sensors.
+   */
+  trait AlchemistEuclidean2DPosition { self: AggregateProgram with ScafiAlchemistSupport with StandardSensors =>
+    override def currentPosition(): Point3D = {
+      val pos = sense[Euclidean2DPosition](LSNS_POSITION)
+      Point3D(pos.getX, pos.getY, 0)
+    }
+
+    def current2DPosition(): Point2D = Point2D(currentPosition().x, currentPosition().y)
   }
 }

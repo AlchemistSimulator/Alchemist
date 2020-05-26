@@ -14,7 +14,6 @@ import it.unibo.alchemist.core.interfaces.DependencyGraph;
 import it.unibo.alchemist.core.interfaces.Scheduler;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -78,7 +77,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private final long finalStep;
     private volatile Status status = Status.INIT;
     private Optional<Throwable> error = Optional.empty();
-    private Time currentTime = DoubleTime.ZERO_TIME;
+    private Time currentTime = Time.ZERO;
     private long currentStep;
     private Thread myThread;
 
@@ -95,7 +94,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      *            the maximum number of steps to do
      */
     public Engine(final Environment<T, P> e, final long maxSteps) {
-        this(e, maxSteps, new DoubleTime(Double.POSITIVE_INFINITY));
+        this(e, maxSteps, Time.INFINITY);
     }
 
     /**

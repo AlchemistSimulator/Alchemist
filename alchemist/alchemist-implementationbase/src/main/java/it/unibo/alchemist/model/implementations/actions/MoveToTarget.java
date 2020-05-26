@@ -69,7 +69,7 @@ public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConf
     @Override
     protected P interpolatePositions(final P current, final P target, final double maxWalk) {
         final P vector = target.minus(current);
-        if (current.getDistanceTo(target) < maxWalk) {
+        if (current.distanceTo(target) < maxWalk) {
             return vector;
         }
         final double angle = atan2(vector.getY(), vector.getX());

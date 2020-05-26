@@ -8,8 +8,23 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-time"))
     implementation(project(":alchemist-implementationbase"))
-    testImplementation(Libs.kotlintest_runner_junit5)
     testImplementation(project(":alchemist-cognitive-agents"))
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Diego Mazzieri")
+                    email.set("diego.mazzieri@studio.unibo.it")
+                }
+                developer {
+                    name.set("Federico Pettinari")
+                    email.set("federico.pettinari2@studio.unibo.it")
+                }
+            }
+        }
+    }
 }

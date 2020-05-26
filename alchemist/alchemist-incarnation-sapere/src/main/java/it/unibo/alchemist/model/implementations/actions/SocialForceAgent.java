@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -497,7 +497,7 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                 final P pos = env.getPosition(n);
                 // If the distance between me and the current person is less
                 // than a minor range
-                if (pos.getDistanceTo(mypos) < proximityTurnRange) {
+                if (pos.distanceTo(mypos) < proximityTurnRange) {
                     /*
                      * The pedestrian has the 85% of probability to turn to
                      * the rightand the 15% of probability to turn to the
@@ -511,15 +511,15 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                             final Action<List<ILsaMolecule>> action = actions.get(0);
                             @SuppressWarnings("unchecked")
                             final SocialForceAgent<P> currAgent = (SocialForceAgent<P>) action;
-                            if ((vx > 0 && currAgent.getSpeed().getCartesianCoordinates()[0] < 0 && vy > 0 && currAgent.getSpeed().getCartesianCoordinates()[1] < 0) || (vx < 0 && currAgent.getSpeed().getCartesianCoordinates()[0] > 0 && vy < 0 && currAgent.getSpeed().getCartesianCoordinates()[1] > 0)) {
+                            if ((vx > 0 && currAgent.getSpeed().getCoordinates()[0] < 0 && vy > 0 && currAgent.getSpeed().getCoordinates()[1] < 0) || (vx < 0 && currAgent.getSpeed().getCoordinates()[0] > 0 && vy < 0 && currAgent.getSpeed().getCoordinates()[1] > 0)) {
                                 if (rs.nextDouble() >= turnRightProbability) {
                                     // turn left
-                                    dodgeForceX = -dodgeForceStrength * desiredForce.getCartesianCoordinates()[1];
-                                    dodgeForceY = dodgeForceStrength * desiredForce.getCartesianCoordinates()[0];
+                                    dodgeForceX = -dodgeForceStrength * desiredForce.getCoordinates()[1];
+                                    dodgeForceY = dodgeForceStrength * desiredForce.getCoordinates()[0];
                                 } else {
                                     // turn right
-                                    dodgeForceX = dodgeForceStrength * desiredForce.getCartesianCoordinates()[1];
-                                    dodgeForceY = -dodgeForceStrength * desiredForce.getCartesianCoordinates()[0];
+                                    dodgeForceX = dodgeForceStrength * desiredForce.getCoordinates()[1];
+                                    dodgeForceY = -dodgeForceStrength * desiredForce.getCoordinates()[0];
                                 }
                             }
                         }
@@ -562,8 +562,8 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                 final double dist = env.getDistanceBetweenNodes(n, getNode());
                 if (dist <= interactionRange) {
                     // STEP 1
-                    final double ex = (pi.getCartesianCoordinates()[0] - myx) / dist;
-                    final double ey = (pi.getCartesianCoordinates()[1] - myy) / dist;
+                    final double ex = (pi.getCoordinates()[0] - myx) / dist;
+                    final double ey = (pi.getCoordinates()[1] - myy) / dist;
 
                     // STEP 2
                     double vij = 0.0;
@@ -576,7 +576,7 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                             @SuppressWarnings("unchecked")
                             final SocialForceAgent<P> currAgent = (SocialForceAgent<P>) action;
 
-                            vij = ((vx - currAgent.getSpeed().getCartesianCoordinates()[0]) * ex) + ((vy - currAgent.getSpeed().getCartesianCoordinates()[1]) * ey);
+                            vij = ((vx - currAgent.getSpeed().getCoordinates()[0]) * ex) + ((vy - currAgent.getSpeed().getCoordinates()[1]) * ey);
                             if (vij < 0) {
                                 vij = 0.0;
                             }
@@ -593,7 +593,7 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                         kij = 0.0;
                     }
                     // STEP 4
-                    final double desired = Math.sqrt(Math.pow(desiredForce.getCartesianCoordinates()[0], 2) + Math.pow(desiredForce.getCartesianCoordinates()[1], 2));
+                    final double desired = Math.sqrt(Math.pow(desiredForce.getCoordinates()[0], 2) + Math.pow(desiredForce.getCoordinates()[1], 2));
                     socialForceX += kij * (Math.pow(((eta * desired) + vij), 2) / (dist - interactionRange)) * ex;
                     socialForceY += kij * (Math.pow(((eta * desired) + vij), 2) / (dist - interactionRange)) * ey;
                 }
@@ -633,13 +633,13 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                 if (edge == null) {
                     return getEnvironment().makePosition(obstacleForceX, obstacleForceY);
                 } else {
-                    if (edge[1].getCartesianCoordinates()[0] - edge[0].getCartesianCoordinates()[0] == 0) {
-                        intersectionPoint = env.makePosition(edge[0].getCartesianCoordinates()[0], myy);
-                    } else if (edge[1].getCartesianCoordinates()[1] - edge[0].getCartesianCoordinates()[1] == 0) {
-                        intersectionPoint = env.makePosition(myx, edge[0].getCartesianCoordinates()[0]);
+                    if (edge[1].getCoordinates()[0] - edge[0].getCoordinates()[0] == 0) {
+                        intersectionPoint = env.makePosition(edge[0].getCoordinates()[0], myy);
+                    } else if (edge[1].getCoordinates()[1] - edge[0].getCoordinates()[1] == 0) {
+                        intersectionPoint = env.makePosition(myx, edge[0].getCoordinates()[0]);
                     }
                 }
-                final double dist = mypos.getDistanceTo(Objects.requireNonNull(intersectionPoint));
+                final double dist = mypos.distanceTo(Objects.requireNonNull(intersectionPoint));
                 if (dist < minDist) {
                     minDist = dist;
                     nearestObstacle = ob;
@@ -701,8 +701,8 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
 
         if (targetPositions != null) {
             // Get target x and y coordinates
-            final double x = targetPositions.getCartesianCoordinates()[0];
-            final double y = targetPositions.getCartesianCoordinates()[1];
+            final double x = targetPositions.getCoordinates()[0];
+            final double y = targetPositions.getCoordinates()[1];
             double dx;
             double dy;
             double ax;
@@ -710,8 +710,8 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
             // TARGET FORCE - Compute the target node attractive force
             // contribution
             final P mypos = getCurrentPosition();
-            final double myx = mypos.getCartesianCoordinates()[0];
-            final double myy = mypos.getCartesianCoordinates()[1];
+            final double myx = mypos.getCoordinates()[0];
+            final double myy = mypos.getCoordinates()[1];
             final double distancex = x - myx;
             final double distancey = y - myy;
             final double dist = env.getDistanceBetweenNodes(bestNode, getNode());
@@ -733,8 +733,8 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
             final P obstacleForce = computeObstacleForce(myx, myy, mypos);
             // Compute acceleration components as a sum between all forces
             // acting on the agent
-            ax = desiredForceFactor * desiredForce.getCartesianCoordinates()[0] + socialForceFactor * socialForce.getCartesianCoordinates()[0] + dodgeForceFactor * dodgeForce.getCartesianCoordinates()[0] + obstacleForceFactor * obstacleForce.getCartesianCoordinates()[0];
-            ay = desiredForceFactor * desiredForce.getCartesianCoordinates()[1] + socialForceFactor * socialForce.getCartesianCoordinates()[1] + dodgeForceFactor * dodgeForce.getCartesianCoordinates()[1] + obstacleForceFactor * obstacleForce.getCartesianCoordinates()[1];
+            ax = desiredForceFactor * desiredForce.getCoordinates()[0] + socialForceFactor * socialForce.getCoordinates()[0] + dodgeForceFactor * dodgeForce.getCoordinates()[0] + obstacleForceFactor * obstacleForce.getCoordinates()[0];
+            ay = desiredForceFactor * desiredForce.getCoordinates()[1] + socialForceFactor * socialForce.getCoordinates()[1] + dodgeForceFactor * dodgeForce.getCoordinates()[1] + obstacleForceFactor * obstacleForce.getCoordinates()[1];
             // Compute new speed components
             vx = momentumFactor * vx + ax;
             vy = momentumFactor * vy + ay;
@@ -777,9 +777,9 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                     double xOther, yOther;
                     // If the distance between me and the current person is
                     // less than a certain range
-                    if (pos.getDistanceTo(mypos) < proximityDecelerationRange) {
-                        xOther = pos.getCartesianCoordinates()[0];
-                        yOther = pos.getCartesianCoordinates()[1];
+                    if (pos.distanceTo(mypos) < proximityDecelerationRange) {
+                        xOther = pos.getCoordinates()[0];
+                        yOther = pos.getCoordinates()[1];
                         // If the current person is in front of me, so
                         // decelerate
                         if ((dx > 0 && xOther > myx) || (dx < 0 && xOther < myx)) {

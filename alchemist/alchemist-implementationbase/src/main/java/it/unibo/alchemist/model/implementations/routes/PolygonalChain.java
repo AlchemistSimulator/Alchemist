@@ -65,9 +65,9 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
     @SuppressWarnings("unchecked")
     protected <U extends Position<U>> double computeDistance(final P p1, final P p2) {
         if (p1.getClass() == p2.getClass() || p1.getClass().isAssignableFrom(p2.getClass())) {
-            return ((U) p1).getDistanceTo((U) p2);
+            return ((U) p1).distanceTo((U) p2);
         } else if (p2.getClass().isAssignableFrom(p1.getClass())) {
-            return ((U) p2).getDistanceTo((U) p1);
+            return ((U) p2).distanceTo((U) p1);
         }
         throw new UncomparableDistancesException(p1, p2);
     }

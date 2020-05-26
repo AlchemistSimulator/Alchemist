@@ -64,7 +64,7 @@ public final class Manhattan2DPosition implements Position2D<Manhattan2DPosition
     }
 
     @Override
-    public double[] getCartesianCoordinates() {
+    public double[] getCoordinates() {
         return new double[] { xCoord, yCoord };
     }
 
@@ -86,7 +86,7 @@ public final class Manhattan2DPosition implements Position2D<Manhattan2DPosition
     }
 
     @Override
-    public double getDistanceTo(final Manhattan2DPosition p) {
+    public double distanceTo(final Manhattan2DPosition p) {
         return Math.abs(xCoord - p.xCoord) + Math.abs(yCoord - p.yCoord);
     }
 

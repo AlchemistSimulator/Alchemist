@@ -7,15 +7,13 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import org.junit.jupiter.api.Test;
-
 import com.google.common.collect.ImmutableList;
-
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.implementations.routes.GPSTraceImpl;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Time;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -28,7 +26,7 @@ public class TestGPSTraceImpl {
     @Test
     public void testConstructionWithList() {
         assertNotNull(new GPSTraceImpl(ImmutableList.of(
-                new GPSPointImpl(0d,  0d, DoubleTime.ZERO_TIME))));
+                new GPSPointImpl(0d,  0d, Time.ZERO))));
     }
 
 }

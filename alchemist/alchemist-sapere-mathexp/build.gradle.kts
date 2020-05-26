@@ -13,9 +13,27 @@ dependencies {
 }
 
 spotbugs {
-    isIgnoreFailures = true
+    ignoreFailures.set(true)
 }
 
 pmd {
     isIgnoreFailures = true
+}
+
+checkstyle {
+    isIgnoreFailures = true
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Giacomo Pronti")
+                    email.set("giacomo.pronti@studio.unibo.it")
+                    url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/")
+                }
+            }
+        }
+    }
 }

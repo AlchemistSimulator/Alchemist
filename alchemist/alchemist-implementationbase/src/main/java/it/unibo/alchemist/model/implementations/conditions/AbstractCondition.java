@@ -6,20 +6,16 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import java.util.Objects;
-
+import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Dependency;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 
-import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import java.util.Objects;
 
 
 /**

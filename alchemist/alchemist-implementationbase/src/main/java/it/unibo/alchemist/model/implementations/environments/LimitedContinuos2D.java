@@ -26,8 +26,8 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      */
     @Override
     public void moveNodeToPosition(final Node<T> node, final Euclidean2DPosition newPos) {
-        final double[] cur = getPosition(node).getCartesianCoordinates();
-        final double[] np = newPos.getCartesianCoordinates();
+        final double[] cur = getPosition(node).getCoordinates();
+        final double[] np = newPos.getCoordinates();
         // Calculate the next position allowed
         final Euclidean2DPosition next = next(cur[0], cur[1], np[0], np[1]);
         super.moveNodeToPosition(node, next);
@@ -48,7 +48,7 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      * the next allowed position (because, e.g., of physical obstacles) is
      * [2.5,3.5], the result must be a Position containing coordinates
      * [2.5,3.5].
-     * 
+     *
      * @param ox
      *            The current X position
      * @param oy
@@ -57,7 +57,7 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      *            The requested X position
      * @param ny
      *            The requested Y position
-     * 
+     *
      * @return the next allowed position, where the node can actually move. This
      *         position MUST be considered as a vector whose start point is in
      *         [ox, oy].

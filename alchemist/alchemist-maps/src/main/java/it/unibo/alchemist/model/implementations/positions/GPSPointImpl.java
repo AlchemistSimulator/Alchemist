@@ -78,8 +78,8 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public double[] getCartesianCoordinates() {
-        return repr.getCartesianCoordinates();
+    public double[] getCoordinates() {
+        return repr.getCoordinates();
     }
 
     @Override
@@ -93,11 +93,11 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public double getDistanceTo(final GeoPosition p) {
+    public double distanceTo(final GeoPosition p) {
         if (p instanceof GPSPointImpl) {
-            return repr.getDistanceTo(((GPSPointImpl) p).repr);
+            return repr.distanceTo(((GPSPointImpl) p).repr);
         }
-        return repr.getDistanceTo(p);
+        return repr.distanceTo(p);
     }
 
     @Override

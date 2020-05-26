@@ -15,12 +15,22 @@ import javax.script.ScriptException
  */
 data class JSR223Variable<R>(val language: String, val formula: String) : DependentVariable<R> {
 
-    private val engine = with(ScriptEngineManager()) {
-        getEngineByName(language) ?: getEngineByExtension(language) ?: getEngineByMimeType(language)
-        ?: throw IllegalArgumentException("$language is not an available language. Your environment supports the following languages:" +
-            engineFactories.map {
-                " - ${it.languageName }, aka ${it.extensions + it.mimeTypes} (${it.languageVersion} on ${it.engineName} ${it.engineVersion})"
-            }.joinToString(separator = System.lineSeparator(), prefix = System.lineSeparator()))
+    private val engine by lazy {
+        with(ScriptEngineManager()) {
+            getEngineByName(language)
+            ?: getEngineByExtension(language)
+            ?: getEngineByMimeType(language)
+            ?: throw IllegalArgumentException(
+                "$language is not an available language. Your environment supports the following languages: ${
+                    engineFactories.map {
+                        " - ${it.languageName}, " +
+                            "aka ${it.extensions + it.mimeTypes} " +
+                            "(${it.languageVersion} on ${it.engineName} ${it.engineVersion})"
+                    }
+                    .joinToString(separator = System.lineSeparator(), prefix = System.lineSeparator())
+                }"
+            )
+        }
     }
 
     /**
@@ -38,8 +48,9 @@ data class JSR223Variable<R>(val language: String, val formula: String) : Depend
     override fun getWith(variables: Map<String, Any>): R = try {
         engine.eval(formula, variables.asBindings()) as R
     } catch (e: ScriptException) {
-        throw IllegalStateException(e)
+        throw IllegalStateException("Unable to evaluate $formula with bindings: $variables", e)
     }
 
-    fun Map<String, Any>.asBindings(): Bindings = object : Bindings, MutableMap<String, Any> by this.toMutableMap() { }
+    private fun Map<String, Any>.asBindings(): Bindings =
+        object : Bindings, MutableMap<String, Any> by this.toMutableMap() { }
 }

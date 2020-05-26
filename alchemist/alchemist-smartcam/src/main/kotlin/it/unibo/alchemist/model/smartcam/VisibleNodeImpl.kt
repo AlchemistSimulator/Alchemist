@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.VisibleNode
 
 /**
- * Basic implementation of [VisibleNode]
+ * Basic implementation of [VisibleNode].
  */
 class VisibleNodeImpl<T, P : Position<P>>(
     override val node: Node<T>,

@@ -1,0 +1,12 @@
+incarnation: protelis
+variables:
+  foo: &foo
+    formula: 1
+  bar: &bar
+    formula: 5 * foo
+  baz:
+    type: ArbitraryVariable
+    parameters: [0, [1, 2, 3, 4, 5]]
+  fiz:
+    type: ArbitraryVariable
+    parameters: [0, [1, 2, 3, 4, 5]]

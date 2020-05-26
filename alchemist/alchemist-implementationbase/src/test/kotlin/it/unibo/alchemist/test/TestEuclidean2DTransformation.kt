@@ -1,8 +1,8 @@
 package it.unibo.alchemist.test
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.FreeSpec
+import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
@@ -23,17 +23,17 @@ class TestEuclidean2DTransformation : FreeSpec({
                     shape = shape.transformed {
                         origin(0.0, 0.0)
                     }
-                    reference.getDistanceTo(shape.centroid) shouldBe 0.0
+                    reference.distanceTo(shape.centroid) shouldBe 0.0
                     shape = shape.transformed {
                         origin(0.0, 10.0)
                     }
-                    reference.getDistanceTo(shape.centroid) shouldBe 10.0
+                    reference.distanceTo(shape.centroid) shouldBe 10.0
                     shape = shape.transformed {
                         origin(10.0, 10.0)
                         origin(3.0, 3.0)
                         origin(6.0, 0.0)
                     }
-                    reference.getDistanceTo(shape.centroid) shouldBe 6.0
+                    reference.distanceTo(shape.centroid) shouldBe 6.0
                 }
             }
     }

@@ -89,6 +89,7 @@
 		<exclude name="AvoidFieldNameMatchingMethodName" />
         <exclude name="AvoidLiteralsInIfCondition" />
         <exclude name="BeanMembersShouldSerialize" />
+		<exclude name="CloseResource" />
         <exclude name="DataflowAnomalyAnalysis" />
 		<exclude name="DoNotCallSystemExit" />
         <exclude name="MissingBreakInSwitch" />

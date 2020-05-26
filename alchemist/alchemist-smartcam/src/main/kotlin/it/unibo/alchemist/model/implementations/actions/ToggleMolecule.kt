@@ -31,7 +31,7 @@ open class ToggleMolecule<T>(
     protected fun isOn() = node.contains(molecule)
 
     /**
-     * Switch off the molecule, or remove it
+     * Switch off the molecule, or remove it.
      */
     private fun switchOff() = node.removeConcentration(molecule)
 

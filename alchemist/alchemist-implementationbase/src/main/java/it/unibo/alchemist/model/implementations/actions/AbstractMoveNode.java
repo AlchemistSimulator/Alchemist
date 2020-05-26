@@ -90,8 +90,8 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     }
 
     /**
-     * @return The next position where to move, in relative coordinates with
-     *         respect to the current node position.
+     * @return The next position where to move, in absolute or relative coordinates depending on the
+     *         value of isAbsolute.
      */
     public abstract P getNextPosition();
 

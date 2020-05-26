@@ -160,7 +160,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double[] getCartesianCoordinates() {
+    public double[] getCoordinates() {
         return new double[] { getX(), getY() };
     }
 
@@ -181,7 +181,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double getDistanceTo(@NotNull final GeoPosition p) {
+    public double distanceTo(@NotNull final GeoPosition p) {
         if (p instanceof LatLongPosition) {
             return distance(latlng, ((LatLongPosition) p).latlng, df);
         }

@@ -103,7 +103,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
             if (!nodes.add(node)) {
                 throw new IllegalArgumentException("Node with id " + node.getId() + " was already existing in this environment.");
             }
-            spatialIndex.insert(node, actualPosition.getCartesianCoordinates());
+            spatialIndex.insert(node, actualPosition.getCoordinates());
             /*
              * Neighborhood computation
              */
@@ -164,7 +164,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     @Override
     public final double getDistanceBetweenNodes(final Node<T> n1, final Node<T> n2) {
-        return getPosition(n1).getDistanceTo(getPosition(n2));
+        return getPosition(n1).distanceTo(getPosition(n2));
     }
 
     @Override
@@ -388,7 +388,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         invalidateCache();
         nodes.remove(Objects.requireNonNull(node));
         final P pos = nodeToPos.remove(node.getId());
-        spatialIndex.remove(node, pos.getCartesianCoordinates());
+        spatialIndex.remove(node, pos.getCoordinates());
         /*
          * Neighborhood update
          */
@@ -410,11 +410,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
 
     private ListSet<Node<T>> runQuery(final P center, final double range) {
         final List<Node<T>> result = spatialIndex.query(center.boundingBox(range).stream()
-                .map(Position::getCartesianCoordinates)
+                .map(Position::getCoordinates)
                 .toArray(double[][]::new));
         final int size = result.size();
         return ListSets.unmodifiableListSet(result.stream()
-                .filter(it -> getPosition(it).getDistanceTo(center) <= range)
+                .filter(it -> getPosition(it).distanceTo(center) <= range)
                 .collect(Collectors.toCollection(() -> new ArrayListSet<>(size))));
     }
 
@@ -431,7 +431,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         if (!p.equals(pos)) {
             invalidateCache();
         }
-        if (pos != null && !spatialIndex.move(n, pos.getCartesianCoordinates(), p.getCartesianCoordinates())) {
+        if (pos != null && !spatialIndex.move(n, pos.getCoordinates(), p.getCoordinates())) {
             throw new IllegalArgumentException("Tried to move a node not previously present in the environment: \n"
                     + "Node: " + n + "\n" + "Requested position" + p);
         }

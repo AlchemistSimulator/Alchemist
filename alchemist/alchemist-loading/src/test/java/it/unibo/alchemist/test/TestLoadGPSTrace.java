@@ -84,7 +84,7 @@ public class TestLoadGPSTrace {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
                     final GeoPosition realArrive = Objects.requireNonNull(env.getPosition(node));
-                    assertEquals(0.0, idealArrive.getDistanceTo(realArrive), DELTA);
+                    assertEquals(0.0, idealArrive.distanceTo(realArrive), DELTA);
                 }
             }
 

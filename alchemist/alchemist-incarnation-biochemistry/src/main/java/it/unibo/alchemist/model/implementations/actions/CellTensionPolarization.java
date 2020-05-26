@@ -52,7 +52,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     @Override
     public void execute() {
         // get node position as array
-        final double[] nodePos = env.getPosition(getNode()).getCartesianCoordinates();
+        final double[] nodePos = env.getPosition(getNode()).getCoordinates();
         // initializing resulting versor
         final double[] resVersor = new double[nodePos.length];
         // declaring a variable for the node where this action is set, to have faster access
@@ -82,7 +82,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 })
                 .map(n -> {
                     // position of node n as array
-                    final double[] nPos =  env.getPosition(n).getCartesianCoordinates();
+                    final double[] nPos =  env.getPosition(n).getCoordinates();
                     // max radius of n
                     final double localNodeMaxRadius;
                     // min radius of n

@@ -38,7 +38,7 @@ public final class StraightLineTraceDependantSpeed<T> extends TraceDependantSpee
 
     @Override
     protected double computeDistance(final MapEnvironment<T> environment, final Node<T> curNode, final GeoPosition targetPosition) {
-        return environment.getPosition(curNode).getDistanceTo(targetPosition);
+        return environment.getPosition(curNode).distanceTo(targetPosition);
     }
 
 }

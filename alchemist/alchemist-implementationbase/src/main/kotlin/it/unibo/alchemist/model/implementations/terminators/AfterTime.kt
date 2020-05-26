@@ -4,6 +4,9 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Time
 import java.util.function.Predicate
 
+/**
+ * @param endTime the end time.
+ */
 class AfterTime(val endTime: Time) : Predicate<Environment<*, *>> {
 
     /**
@@ -12,6 +15,6 @@ class AfterTime(val endTime: Time) : Predicate<Environment<*, *>> {
      * Otherwise, reads the current time, and flips to true once it got past the provided [endTime].
      */
     override fun test(environment: Environment<*, *>): Boolean =
-        environment.getSimulation()?.getTime()?.let { it > endTime }
+        environment.getSimulation()?.getTime()?.let { it >= endTime }
             ?: throw IllegalStateException("No simulation available for environment $environment, unable to read time.")
 }

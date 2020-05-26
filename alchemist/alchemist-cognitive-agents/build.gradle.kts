@@ -8,12 +8,28 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-time"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-influence-sphere"))
     implementation(Libs.konf)
+    implementation(Libs.jgrapht_core)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-incarnation-protelis"))
-    testImplementation(Libs.kotlintest_runner_junit5)
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Diego Mazzieri")
+                    email.set("diego.mazzieri@studio.unibo.it")
+                }
+                developer {
+                    name.set("Lorenzo Paganelli")
+                    email.set("lorenzo.paganelli3@studio.unibo.it")
+                }
+            }
+        }
+    }
 }

@@ -145,14 +145,14 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
     @Override
     public void moveNode(final Node<T> node, final Euclidean2DPosition direction) {
         final Euclidean2DPosition cur = getPosition(node);
-        final double ox = cur.getCartesianCoordinates()[0];
-        final double oy = cur.getCartesianCoordinates()[1];
-        double nx = direction.getCartesianCoordinates()[0] + ox;
-        double ny = direction.getCartesianCoordinates()[1] + oy;
+        final double ox = cur.getCoordinates()[0];
+        final double oy = cur.getCoordinates()[1];
+        double nx = direction.getCoordinates()[0] + ox;
+        double ny = direction.getCoordinates()[1] + oy;
         if (ox >= 0 && oy <= SIZE) {
             final Euclidean2DPosition next = next(ox, oy, nx, ny);
-            nx = next.getCartesianCoordinates()[0] + ox;
-            ny = next.getCartesianCoordinates()[1] + oy;
+            nx = next.getCoordinates()[0] + ox;
+            ny = next.getCoordinates()[1] + oy;
             if (nx < 1.0 && ny < 1.0 || nx > UPPER && ny > UPPER) {
                 removeNode(node);
             } else {

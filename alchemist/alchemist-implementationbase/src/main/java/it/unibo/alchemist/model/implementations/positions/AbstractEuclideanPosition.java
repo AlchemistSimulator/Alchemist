@@ -6,22 +6,20 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.positions;
+
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.geometry.Vector;
+import org.apache.commons.math3.util.MathArrays;
+import org.danilopianini.util.Hashes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import org.apache.commons.math3.util.MathArrays;
-import org.danilopianini.util.Hashes;
-
-import it.unibo.alchemist.exceptions.UncomparableDistancesException;
-import it.unibo.alchemist.model.interfaces.Position;
-import org.jetbrains.annotations.NotNull;
+import java.util.function.BinaryOperator;
+import java.util.function.DoubleUnaryOperator;
 
 /**
  * N-dimensional Euclidean position.
@@ -29,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <P>
  *            actual type
  */
-public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosition<P>> implements Position<P> {
+public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosition<P>> implements Position<P>, Vector<P> {
 
     /**
      * 
@@ -86,12 +84,17 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
 
     @Override
     @NotNull
-    public final double[] getCartesianCoordinates() {
+    public final double[] getCoordinates() {
         return Arrays.copyOf(c, c.length);
     }
 
     @Override
     public final double getCoordinate(final int dim) {
+        return get(dim);
+    }
+
+    @Override
+    public final double get(final int dim) {
         if (dim < 0 || dim >= c.length) {
             throw new IllegalArgumentException(dim + "is not an allowed dimension, only values between 0 and " + (c.length - 1) + "are allowed.");
         }
@@ -104,13 +107,8 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     }
 
     @Override
-    public final double getDistanceTo(final P p) {
-        final double[] coord = p.getCartesianCoordinates();
-        if (c.length == coord.length) {
-            return MathArrays.distance(c, coord);
-        } else {
-            throw new UncomparableDistancesException(this, p);
-        }
+    public final double distanceTo(@NotNull final P other) {
+        return MathArrays.distance(c, ((AbstractEuclideanPosition<P>) other).c);
     }
 
     @Override
@@ -127,7 +125,7 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
      * @return true if the two positions are the the same
      */
     public boolean samePosition(final P o) {
-        final double[] p = o.getCartesianCoordinates();
+        final double[] p = o.getCoordinates();
         return Arrays.equals(c, p);
     }
 
@@ -149,13 +147,50 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     @Override
     @NotNull
     public final P plus(@NotNull final P other) {
-        return unsafeConstructor(MathArrays.ebeAdd(c, extractInternalRepresentation(other)));
+        return unsafelyRun(other, MathArrays::ebeAdd);
     }
 
     @Override
     @NotNull
     public final P minus(@NotNull final P other) {
-        return unsafeConstructor(MathArrays.ebeSubtract(c, extractInternalRepresentation(other)));
+        return unsafelyRun(other, MathArrays::ebeSubtract);
+    }
+
+
+    /**
+     * Multiplication by a number.
+     *
+     * @param other the number
+     * @return every element times the number
+     */
+    @NotNull
+    @Override
+    public final P times(final double other) {
+        return unsafelyRun(it -> it * other);
+    }
+
+    /**
+     * Division by a number.
+     *
+     * @param other the number
+     * @return every element divided by the number
+     */
+    @NotNull
+    @Override
+    public final P div(final double other) {
+        return unsafelyRun(it -> it / other);
+    }
+
+    private P unsafelyRun(final P other, final BinaryOperator<double[]> operation) {
+        return unsafeConstructor(operation.apply(c, extractInternalRepresentation(other)));
+    }
+
+    private P unsafelyRun(final DoubleUnaryOperator operation) {
+        final double[] result = Arrays.copyOf(c, c.length);
+        for (int i = 0; i < result.length; i++) {
+            result[i] = operation.applyAsDouble(result[i]);
+        }
+        return unsafeConstructor(result);
     }
 
     /**

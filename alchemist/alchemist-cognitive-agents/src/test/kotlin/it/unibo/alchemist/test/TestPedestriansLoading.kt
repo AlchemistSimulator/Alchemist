@@ -1,7 +1,8 @@
 package it.unibo.alchemist.test
 
-import io.kotlintest.fail
-import io.kotlintest.specs.StringSpec
+import io.kotest.assertions.fail
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 
@@ -20,10 +21,10 @@ class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
     }
 
     "can't give non-cognitive pedestrians cognitive characteristics" {
-        try {
+        shouldThrow<IllegalArgumentException> {
             loadYamlSimulation<T, P>("cant-give-cognitive-to-heterogeneous.yml").startSimulation()
             fail("An heterogeneous pedestrian can't have cognitive capabilities")
-        } catch (exc: Throwable) { }
+        }
     }
 
     "groups of pedestrians loading" {

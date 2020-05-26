@@ -9,6 +9,9 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.interfaces.Environment
 
+/**
+ * An integer node.
+ */
 open class IntNode(env: Environment<*, *>) : AbstractNode<Int>(env) {
     override fun createT() = 0
 }

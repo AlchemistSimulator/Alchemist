@@ -601,9 +601,11 @@ public final class YamlLoader implements Loader {
                                     new BuilderConfiguration<>(
                                             ImmutableMap.of(REACTION, CharSequence.class),
                                             ImmutableMap.of(TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class),
-                                            factory, m -> incarnation.createReaction(simRng, env, node, td, m.get(REACTION).toString())),
+                                            factory,
+                                            m -> Objects.requireNonNull(incarnation.createReaction(simRng, env, node, td, m.get(REACTION).toString()), () ->
+                                                    incarnation + " created a null reaction for " + REACTION + ": " + m.get(REACTION))),
                                     factory);
-                            final Reaction<T> reaction = reactionBuilder.build(program);
+                            final Reaction<T> reaction = Objects.requireNonNull(reactionBuilder.build(program));
                             factory.registerSingleton(Reaction.class, reaction);
                             /*
                              * Actions and conditions
@@ -672,7 +674,7 @@ public final class YamlLoader implements Loader {
                     final double[] apPosition = ArrayUtils.toPrimitive((Double[]) m.getOrDefault(AP_POSITION, new Double[] {0.0, 0.0}));
                     final int packetSize = (int) m.getOrDefault(PACKET_SIZE, 0);
                     final List<double[]> nodesPositions = env.getNodes().stream()
-                            .map(n -> env.getPosition(n).getCartesianCoordinates())
+                            .map(n -> env.getPosition(n).getCoordinates())
                             .collect(Collectors.toList());
                     AlchemistNs3.initWithWifi(env.getNodesNumber(), (String) m.get(PROTOCOL), packetSize, (String) m.get(PROPAGATION_DELAY), (String) m.get(PROPAGATION_LOSS),
                             nodesPositions, apPosition);
@@ -862,7 +864,7 @@ public final class YamlLoader implements Loader {
                                 final List<?> parameters = rawParams.map(l -> (List<?>) l).orElse(emptyList());
                                 return factory.build((Class<T>) actualClass, parameters);
                             } else {
-                                throw new IllegalAlchemistYAMLException(type + "is not a subclass of " + clazz);
+                                throw new IllegalAlchemistYAMLException(type + " is not a subclass of " + clazz);
                             }
                         } catch (ClassNotFoundException e) {
                             throw new IllegalAlchemistYAMLException(type + " is not a valid Java class", e);

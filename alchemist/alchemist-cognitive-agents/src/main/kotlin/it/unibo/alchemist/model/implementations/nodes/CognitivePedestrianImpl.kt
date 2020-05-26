@@ -44,23 +44,32 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to
             BeliefDanger({ dangerousLayerLevel() }, { characteristicLevel<Fear>() }, { influencialPeople() }),
-        Fear::class to
-            Fear({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }, { influencialPeople() }),
-        DesireEvacuate::class to
-            DesireEvacuate(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
-        DesireWalkRandomly::class to
-            DesireWalkRandomly(compliance, { characteristicLevel<BeliefDanger>() }, { characteristicLevel<Fear>() }),
-        IntentionEvacuate::class to
-            IntentionEvacuate({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() }),
-        IntentionWalkRandomly::class to
-            IntentionWalkRandomly({ characteristicLevel<DesireWalkRandomly>() }, { characteristicLevel<DesireEvacuate>() })
+        Fear::class to Fear(
+            { characteristicLevel<DesireWalkRandomly>() },
+            { characteristicLevel<DesireEvacuate>() },
+            { influencialPeople() }),
+        DesireEvacuate::class to DesireEvacuate(
+            compliance,
+            { characteristicLevel<BeliefDanger>() },
+            { characteristicLevel<Fear>() }),
+        DesireWalkRandomly::class to DesireWalkRandomly(
+            compliance,
+            { characteristicLevel<BeliefDanger>() },
+            { characteristicLevel<Fear>() }),
+        IntentionEvacuate::class to IntentionEvacuate(
+            { characteristicLevel<DesireWalkRandomly>() },
+            { characteristicLevel<DesireEvacuate>() }),
+        IntentionWalkRandomly::class to IntentionWalkRandomly(
+            { characteristicLevel<DesireWalkRandomly>() },
+            { characteristicLevel<DesireEvacuate>() })
     )
 
     override fun speed() =
-        if (wantsToEvacuate())
+        if (wantsToEvacuate()) {
             runningSpeed * minOf(characteristicLevel<IntentionEvacuate>(), 1.0)
-        else
+        } else {
             walkingSpeed * minOf(characteristicLevel<IntentionWalkRandomly>(), 1.0)
+        }
 
     override fun dangerBelief() = characteristicLevel<BeliefDanger>()
 

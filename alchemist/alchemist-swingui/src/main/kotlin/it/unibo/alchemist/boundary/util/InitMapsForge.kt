@@ -3,6 +3,10 @@ package it.unibo.alchemist.boundary.util
 import java.io.File
 import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik
 
+/**
+ * Static configurator for Mapsforge, providing a custom user-agent and referer to identify Alchemist
+ * on the OpenStreetMaps side.
+ */
 object InitMapsForge {
     @JvmStatic
     fun initAgent() {

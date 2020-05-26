@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithObstacles;
 
 /**
  * Connects two nodes if, throwing a beam from one to the other, there exists at
@@ -38,14 +38,13 @@ import it.unibo.alchemist.model.interfaces.Position2D;
  * tolerance in connection breaking.
  * 
  * @param <T>
- * @param <P>
  */
-public final class ConnectionBeam<T, P extends Position2D<P>> extends ConnectWithinDistance<T, P> {
+public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2DPosition> {
 
     private static final long serialVersionUID = 1L;
     private static final int COORDS = 6;
     private final double beamWidth;
-    private transient Environment2DWithObstacles<?, T, P> oenv;
+    private transient Euclidean2DEnvironmentWithObstacles<?, T> oenv;
     private transient Area obstacles = new Area();
 
     /**
@@ -60,13 +59,13 @@ public final class ConnectionBeam<T, P extends Position2D<P>> extends ConnectWit
     }
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
+    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, Euclidean2DPosition> env) {
         final Neighborhood<T> normal = super.computeNeighborhood(center, env);
         if (oenv == null) {
-            if (!(env instanceof Environment2DWithObstacles<?, ?, ?>)) {
+            if (!(env instanceof Euclidean2DEnvironmentWithObstacles<?, ?>)) {
                 return normal;
             }
-            oenv = (Environment2DWithObstacles<?, T, P>) env;
+            oenv = (Euclidean2DEnvironmentWithObstacles<?, T>) env;
             obstacles.reset();
             oenv.getObstacles().forEach((obs) -> {
                 /*
@@ -81,10 +80,10 @@ public final class ConnectionBeam<T, P extends Position2D<P>> extends ConnectWit
             });
         }
         if (!normal.isEmpty()) {
-            final P cp = env.getPosition(center);
+            final Euclidean2DPosition cp = env.getPosition(center);
             final List<Node<T>> neighs = normal.getNeighbors().stream()
                 .filter((neigh) -> {
-                    final P np = env.getPosition(neigh);
+                    final Euclidean2DPosition np = env.getPosition(neigh);
                     return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
@@ -93,7 +92,7 @@ public final class ConnectionBeam<T, P extends Position2D<P>> extends ConnectWit
         return normal;
     }
 
-    private boolean projectedBeamOvercomesObstacle(final P pos1, final P pos2) {
+    private boolean projectedBeamOvercomesObstacle(final Euclidean2DPosition pos1, final Euclidean2DPosition pos2) {
         final double p1x = pos1.getX();
         final double p1y = pos1.getY();
         final double p2x = pos2.getX();

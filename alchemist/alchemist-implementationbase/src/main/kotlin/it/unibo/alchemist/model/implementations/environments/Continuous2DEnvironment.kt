@@ -3,15 +3,16 @@ package it.unibo.alchemist.model.implementations.environments
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 
 /**
- * Implementation of [EuclideanPhysics2DEnvironment]
+ * Implementation of [Physics2DEnvironment].
  */
-open class Continuous2DEnvironment<T> : Abstract2DEnvironment<T, Euclidean2DPosition>(), EuclideanPhysics2DEnvironment<T> {
+open class Continuous2DEnvironment<T> :
+    Abstract2DEnvironment<T, Euclidean2DPosition>(), Physics2DEnvironment<T> {
 
     companion object {
         @JvmStatic private val serialVersionUID: Long = 1L
@@ -58,7 +59,7 @@ open class Continuous2DEnvironment<T> : Abstract2DEnvironment<T, Euclidean2DPosi
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) =
         super.nodeRemoved(node, neighborhood)
@@ -76,7 +77,8 @@ open class Continuous2DEnvironment<T> : Abstract2DEnvironment<T, Euclidean2DPosi
         if (canNodeFitPosition(node, newpos)) super.moveNodeToPosition(node, newpos) else Unit
 
     /**
-     * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's limits
+     * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
+     * limits.
      */
     override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =
         getNodesWithin(shapeFactory.requireCompatible(node.shape).transformed { origin(position) })

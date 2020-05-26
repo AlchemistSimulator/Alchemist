@@ -10,7 +10,7 @@ interface VisibleNode<T, P : Position<P>> {
     val node: Node<T>
 
     /**
-     * The position of the node
+     * The position of the node.
      */
     val position: P
 }

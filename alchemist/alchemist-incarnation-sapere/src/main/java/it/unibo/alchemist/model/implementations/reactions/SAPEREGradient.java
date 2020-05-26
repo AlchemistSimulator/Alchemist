@@ -7,18 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.reactions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import it.unibo.alchemist.model.interfaces.Dependency;
-import org.danilopianini.lang.HashString;
-import org.danilopianini.util.ImmutableListSet;
-import org.danilopianini.util.ListSet;
-
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.TIntObjectMap;
@@ -31,10 +19,10 @@ import it.unibo.alchemist.expressions.implementations.Type;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
@@ -45,6 +33,16 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.danilopianini.lang.HashString;
+import org.danilopianini.util.ImmutableListSet;
+import org.danilopianini.util.ListSet;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class provides a fast and stable gradient implementation, inspired on
@@ -244,7 +242,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             /*
              * First run
              */
-            updateInternalStatus(DoubleTime.ZERO_TIME, true, environment);
+            updateInternalStatus(Time.ZERO, true, environment);
         }
         canRun = false;
         final Map<HashString, ITreeNode<?>> matches = new HashMap<>();
@@ -421,7 +419,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         public boolean execute(final int a, final List<? extends ILsaMolecule> mgnList) {
             if (!mgnList.isEmpty()) {
                 final P aPos = positionCache.get(a);
-                final double distNode = aPos.getDistanceTo(mypos);
+                final double distNode = aPos.distanceTo(mypos);
                 matches.put(LsaMolecule.SYN_O, new NumTreeNode(a));
                 matches.put(LsaMolecule.SYN_D, new NumTreeNode(distNode));
                 if (mapenvironment != null) {

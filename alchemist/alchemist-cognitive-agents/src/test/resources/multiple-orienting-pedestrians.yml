@@ -1,0 +1,41 @@
+incarnation: protelis
+
+environment:
+  type: ImageEnvironmentWithGraph
+  parameters: [images/congestion-avoidance.png, 0.1, 12, 60]
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 2
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: OrientingBehavior2D
+
+displacements:
+  - in:
+      type: Circle
+      parameters: [130, 70, 52, 5]
+    nodes:
+      type: OrientingHomogeneousPedestrian2D
+      parameters: [1.0]
+    programs:
+      - *behavior
+  - in:
+      type: Grid
+      parameters: [27, 52, 56, 58, 0.5, 0.5, 0.3, 0.3]
+    nodes:
+      type: HomogeneousPedestrian2D
+  - in:
+      type: Grid
+      parameters: [30, 40, 50, 45, 0.5, 0.5, 0.3, 0.3]
+    nodes:
+      type: HomogeneousPedestrian2D

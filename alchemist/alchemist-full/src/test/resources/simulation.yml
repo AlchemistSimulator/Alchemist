@@ -1,0 +1,29 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [0.5]
+
+gradient: &gradient
+  - time-distribution: 1
+    # Writing Protelis programs within a YAML file is a bad experience
+    # (some characters need escaping, no syntax highlight, no code suggestions...)
+    # We recommend using the Protelis Eclipse plugin to write your code, then
+    # Loading the code as a module within Alchemist
+    # In order to run this example, make sure that src/main/protelis is part of
+    # your classpath (the Gradle script is already properly configured).
+    program: org:protelis:tutorial:distanceTo
+  - program: send
+
+displacements:
+  - in:
+      type: Grid
+      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+    contents:
+      - in:
+          type: Rectangle
+          parameters: [-6, -6, 2, 2]
+        molecule: source
+        concentration: true
+    programs:
+      - *gradient

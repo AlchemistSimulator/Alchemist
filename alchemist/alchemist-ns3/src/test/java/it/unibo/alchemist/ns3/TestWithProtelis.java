@@ -35,6 +35,8 @@ public class TestWithProtelis {
      * Tests the integration with ns3 via ns3asy by running a simulation consisting in some nodes
      * executing a Protelis program which makes them send messages to each other. These messages
      * are delivered using ns3.
+     *
+     * @throws Throwable if the simulator throws a {@link Throwable}
      */
     @Test
     public void testNs3asySimple() throws Throwable {
@@ -54,6 +56,8 @@ public class TestWithProtelis {
     /**
      * Tests the integration with ns3 via ns3asy by running a simulation consisting in some nodes
      * executing the 'channel' Protelis program.
+     *
+     * @throws Throwable if the simulator throws a {@link Throwable}
      */
     @Test
     public void testChannel() throws Throwable {

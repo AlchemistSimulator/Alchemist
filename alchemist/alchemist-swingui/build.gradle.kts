@@ -26,7 +26,7 @@ dependencies {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
     }
-    implementation(Libs.org_danilopianini_conrec)
+    implementation(Libs.conrec)
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }

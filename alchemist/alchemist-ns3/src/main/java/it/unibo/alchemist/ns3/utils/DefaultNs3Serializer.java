@@ -22,6 +22,8 @@ import java.io.Serializable;
  */
 public final class DefaultNs3Serializer implements Serializer, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     public void serializeAndSend(final Object toSend, final OutputStream outputStream) throws IOException {
         final var oos = new ObjectOutputStream(outputStream);

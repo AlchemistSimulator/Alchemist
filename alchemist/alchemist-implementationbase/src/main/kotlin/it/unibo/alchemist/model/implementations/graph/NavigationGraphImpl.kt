@@ -29,7 +29,6 @@ import java.util.function.Supplier
  * Further information available [here](https://jgrapht.org/guide/VertexAndEdgeTypes).
  */
 open class BaseNavigationGraph<V, A, N, E>(
-    private val destinations: List<V>,
     vertexSupplier: Supplier<N>?,
     edgeSupplier: Supplier<E>?,
     graphType: GraphType
@@ -44,11 +43,9 @@ open class BaseNavigationGraph<V, A, N, E>(
      * Allows to rapidly create a directed or undirected unweighted graph without
      * self-loops and allowing multiple edges.
      */
-    constructor(
-        destinations: List<V>,
-        edgeClass: Class<out E>,
-        directed: Boolean
-    ) : this(destinations, null, SupplierUtil.createSupplier(edgeClass),
+    constructor(edgeClass: Class<out E>, directed: Boolean) : this(
+        null,
+        SupplierUtil.createSupplier(edgeClass),
         DefaultGraphType.Builder().let {
             when {
                 directed -> it.directed()
@@ -56,8 +53,6 @@ open class BaseNavigationGraph<V, A, N, E>(
             }
         }.weighted(false).allowMultipleEdges(true).allowSelfLoops(false).build()
     )
-
-    override fun destinations(): List<V> = destinations
 }
 
 /**
@@ -66,9 +61,8 @@ open class BaseNavigationGraph<V, A, N, E>(
  * itself).
  */
 class DirectedNavigationGraph<V, A, N, E>(
-    destinations: List<V>,
     edgeClass: Class<out E>
-) : BaseNavigationGraph<V, A, N, E>(destinations, edgeClass, true)
+) : BaseNavigationGraph<V, A, N, E>(edgeClass, true)
     where
         V : Vector<V>,
         A : GeometricTransformation<V>,
@@ -80,9 +74,8 @@ class DirectedNavigationGraph<V, A, N, E>(
  * itself).
  */
 class UndirectedNavigationGraph<V, A, N, E>(
-    destinations: List<V>,
     edgeClass: Class<out E>
-) : BaseNavigationGraph<V, A, N, E>(destinations, edgeClass, false)
+) : BaseNavigationGraph<V, A, N, E>(edgeClass, false)
     where
         V : Vector<V>,
         A : GeometricTransformation<V>,

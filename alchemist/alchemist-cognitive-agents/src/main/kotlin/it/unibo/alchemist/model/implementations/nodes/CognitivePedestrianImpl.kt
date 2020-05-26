@@ -37,7 +37,7 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
     rg: RandomGenerator,
     age: Age,
     gender: Gender,
-    private val danger: Molecule? = null,
+    val danger: Molecule? = null,
     group: PedestrianGroup<T>? = null
 ) : HeterogeneousPedestrianImpl<T, P>(env, rg, age, gender, group), CognitivePedestrian<T> {
 

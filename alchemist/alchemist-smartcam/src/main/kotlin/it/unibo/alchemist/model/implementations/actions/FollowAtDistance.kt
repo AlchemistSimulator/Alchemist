@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.smartcam.closestPositionToTargetAtDistance
-import it.unibo.alchemist.model.smartcam.toPosition
+import it.unibo.alchemist.kotlin.toPosition
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin

@@ -21,5 +21,6 @@ import kotlin.reflect.KClass
 class TypeBased<T>(
     env: Environment<T, Euclidean2DPosition>,
     pedestrian: Pedestrian<T>,
-    typeWeights: LinkedHashMap<KClass<SteeringAction<T, Euclidean2DPosition>>, Double>
-) : Weighted<T>(env, pedestrian, { typeWeights[this::class] ?: 0.0 })
+    typeWeights: LinkedHashMap<KClass<SteeringAction<T, Euclidean2DPosition>>, Double>,
+    defaultWeight: Double = 0.0
+) : Weighted<T>(env, pedestrian, { typeWeights[this::class] ?: defaultWeight })

@@ -1,3 +1,4 @@
+#!/bin/bash
 source ns3asy_script_config.sh
 rm -rf tmp/
 mkdir -p tmp/ns3

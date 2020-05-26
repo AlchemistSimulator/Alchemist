@@ -1,9 +1,19 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import kotlin.math.abs
@@ -94,7 +104,13 @@ class TestRandomTarget : StringSpec() {
         directionGenerator = DummyRandomGenerator()
         directionGenerator.value = 0.5
         distanceDistribution.value = 1.0
-        randomTarget = RandomTarget({ currentPosition }, { x, y -> Euclidean2DPosition(x, y) }, directionGenerator, distanceDistribution)
+        randomTarget = RandomTarget(
+            Continuous2DEnvironment(),
+            { currentPosition },
+            ::Euclidean2DPosition,
+            directionGenerator,
+            distanceDistribution
+        )
     }
 
     init {

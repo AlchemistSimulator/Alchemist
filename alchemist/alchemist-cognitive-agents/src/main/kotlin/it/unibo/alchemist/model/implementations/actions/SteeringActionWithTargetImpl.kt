@@ -47,14 +47,8 @@ open class SteeringActionWithTargetImpl<T, P> @JvmOverloads constructor(
     /**
      * Next relative position.
      */
-    override fun interpolatePositions(
-        current: P,
-        target: P,
-        maxWalk: Double
-    ): P = when {
-        current.distanceTo(target) <= maxWalk -> target - current
-        else -> (target - current).resized(maxWalk)
-    }
+    override fun interpolatePositions(current: P, target: P, maxWalk: Double): P =
+        (target - current).coerceAtMost(maxWalk)
 
     override fun nextPosition(): P = nextPosition
 

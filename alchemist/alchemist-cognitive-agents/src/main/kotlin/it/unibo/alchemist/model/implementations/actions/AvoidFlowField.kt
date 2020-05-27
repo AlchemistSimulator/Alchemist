@@ -59,7 +59,7 @@ open class AvoidFlowField<P> @JvmOverloads constructor(
                  * is the one obtained by moving away from the center along the
                  * direction which connects the current position to the center.
                  */
-                it + (currentPosition + (currentPosition - center).resized(maxWalk()))
+                it + (currentPosition + (currentPosition - center).resized(maxWalk))
             } ?: it
         }
         .discardUnsuitablePositions(env, pedestrian)

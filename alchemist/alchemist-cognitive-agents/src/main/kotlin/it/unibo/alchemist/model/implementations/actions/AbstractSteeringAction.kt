@@ -36,22 +36,12 @@ abstract class AbstractSteeringAction<T, P>(
         P : Vector<P> {
 
     /**
+     * The maximum distance the pedestrian can walk, this is a length.
+     */
+    val maxWalk: Double get() = pedestrian.speed() / reaction.rate
+
+    /**
      * Next relative position.
      */
     override fun getNextPosition(): P = nextPosition()
-
-    /**
-     * The maximum distance the pedestrian can walk, this is a length.
-     */
-    fun maxWalk(): Double = pedestrian.speed() / reaction.rate
-
-    /**
-     * If the magnitude of the vector is greater than [maxWalk], a resized version with
-     * magnitude equal to such quantity is returned. Otherwise, the original vector is
-     * returned.
-     */
-    protected fun P.resizedToMaxWalkIfGreater(): P = when {
-        magnitude <= maxWalk() -> this
-        else -> resized(maxWalk())
-    }
 }

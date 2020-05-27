@@ -43,7 +43,7 @@ open class FollowFlowField<P>(
                  * is the one obtained by moving towards the center along the
                  * direction which connects the current position to the center.
                  */
-                it + (currentPosition + (center - currentPosition).resized(maxWalk()))
+                it + (currentPosition + (center - currentPosition).resized(maxWalk))
             } ?: it
         }
         .discardUnsuitablePositions(env, pedestrian)

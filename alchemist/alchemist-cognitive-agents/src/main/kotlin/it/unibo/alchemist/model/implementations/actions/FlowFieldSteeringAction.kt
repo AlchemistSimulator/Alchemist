@@ -36,7 +36,7 @@ abstract class FlowFieldSteeringAction<P>(
 
     override fun nextPosition(): P = getLayerOrFail()
         .let { layer ->
-            currentPosition.surrounding(env, maxWalk())
+            currentPosition.surrounding(env, maxWalk)
                 .asSequence()
                 /*
                  * Next relative position.

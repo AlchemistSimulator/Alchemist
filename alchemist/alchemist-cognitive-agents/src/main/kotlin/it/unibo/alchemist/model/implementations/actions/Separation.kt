@@ -28,7 +28,7 @@ class Separation<T>(
         Separation(env, r, n as Pedestrian2D<T>)
 
     override fun nextPosition(): Euclidean2DPosition =
-        (currentPosition - centroid()).resizedToMaxWalkIfGreater()
+        (currentPosition - centroid()).coerceAtMost(maxWalk)
 
     override fun group(): List<Pedestrian<T>> = pedestrian.fieldOfView(env)
             .influentialNodes()

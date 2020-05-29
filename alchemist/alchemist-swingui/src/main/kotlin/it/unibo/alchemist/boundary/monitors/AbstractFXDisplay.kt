@@ -14,8 +14,10 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory
 import it.unibo.alchemist.boundary.interfaces.DrawCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
+import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.kotlin.clear
 import it.unibo.alchemist.model.implementations.times.DoubleTime
@@ -67,8 +69,8 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     private var realTime: Boolean = false
     @Volatile private var commandQueue: ConcurrentLinkedQueue<() -> Unit> = ConcurrentLinkedQueue()
     private var viewStatus = DEFAULT_VIEW_STATUS
-    protected lateinit var wormhole: BidimensionalWormhole<P>
-        private set
+    private lateinit var wormhole: BidimensionalWormhole<P>
+    private lateinit var zoomManager: ZoomManager
     private val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
     private val effectsCanvas = Canvas()
     /**
@@ -79,11 +81,8 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     init {
         firstTime = true
         setStep(steps)
-
-        val repaintOnResize = ChangeListener<Number> { _, oldValue, newValue ->
-            if (oldValue != newValue) {
-                repaint()
-            }
+        val repaintOnResize = ChangeListener<Number> { _, _, _ ->
+            repaint()
         }
         widthProperty().addListener(repaintOnResize)
         heightProperty().addListener(repaintOnResize)
@@ -202,13 +201,36 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      * @param environment the `Environment`
      */
     protected open fun init(environment: Environment<T, P>) {
-        wormhole = Wormhole2D(environment, this)
+        wormhole = createWormhole(environment)
+        zoomManager = createZoomManager(wormhole)
+        interactions.setWormhole(wormhole)
+        interactions.setZoomManager(zoomManager)
         wormhole.center()
         wormhole.optimalZoom()
-        interactions.setWormhole(wormhole)
+        zoomManager.zoom = wormhole.zoom
         firstTime = false
         System.currentTimeMillis()
     }
+
+    /**
+     * Creates a wormhole for this monitor.
+     * Subclasses that make use of their own wormholes can set them through this method.
+     *
+     * @param environment the current environment.
+     * @returns the wormhole.
+     */
+    protected open fun createWormhole(environment: Environment<T, P>): Wormhole2D<P> =
+        Wormhole2D(environment, this)
+
+    /**
+     * Creates a zoom manager for this monitor.
+     * Subclasess that make use of their own zoom managers can set them through this method.
+     *
+     * @param wormhole the current wormhole.
+     * @returns the zoom manager.
+     */
+    protected open fun createZoomManager(wormhole: BidimensionalWormhole<P>): ZoomManager =
+        ExponentialZoomManager(wormhole.zoom, ExponentialZoomManager.DEF_BASE)
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         update(environment, time)

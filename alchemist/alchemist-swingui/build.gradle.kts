@@ -35,6 +35,7 @@ dependencies {
         exclude(module = "findbugs")
     }
     implementation(Libs.org_danilopianini_conrec)
+    implementation(Libs.ssaring_sportstracker_leafletmap)
 
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {
@@ -44,6 +45,7 @@ dependencies {
         api("org.openjfx:javafx-graphics:$javaFXVersion:$platform")
         api("org.openjfx:javafx-media:$javaFXVersion:$platform")
         api("org.openjfx:javafx-swing:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-web:$javaFXVersion:$platform")
     }
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))

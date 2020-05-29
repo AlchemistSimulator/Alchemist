@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.input
 
-import javafx.scene.canvas.Canvas
+import javafx.scene.Node
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 
@@ -105,30 +105,30 @@ open class TemporariesMouseEventDispatcher : SimpleMouseEventDispatcher() {
 /**
  * A mouse event dispatcher that catches mouse input from a canvas.
  */
-open class CanvasBoundMouseEventDispatcher(canvas: Canvas) : TemporariesMouseEventDispatcher() {
+open class NodeBoundMouseEventDispatcher(node: Node) : TemporariesMouseEventDispatcher() {
     init {
-        canvas.setOnMouseClicked {
+        node.setOnMouseClicked {
             listener.action(MouseButtonTriggerAction(ActionOnMouse.CLICKED, it.button), it)
         }
-        canvas.setOnMouseDragged {
+        node.setOnMouseDragged {
             listener.action(MouseButtonTriggerAction(ActionOnMouse.DRAGGED, it.button), it)
         }
-        canvas.setOnMouseEntered {
+        node.setOnMouseEntered {
             listener.action(MouseButtonTriggerAction(ActionOnMouse.ENTERED, it.button), it)
         }
-        canvas.setOnMouseExited {
+        node.setOnMouseExited {
             listener.action(MouseButtonTriggerAction(ActionOnMouse.EXITED, it.button), it)
         }
-        canvas.setOnMouseMoved {
+        node.setOnMouseMoved {
             listener.action(MouseButtonTriggerAction(ActionOnMouse.MOVED, it.button), it)
         }
-        canvas.setOnMousePressed {
+        node.setOnMousePressed {
             listener.action(MouseButtonTriggerAction(ActionOnMouse.PRESSED, it.button), it)
         }
-        canvas.setOnMouseReleased {
+        node.setOnMouseReleased {
             listener.action(MouseButtonTriggerAction(ActionOnMouse.RELEASED, it.button), it)
         }
-        canvas.setOnMouseMoved {
+        node.setOnMouseMoved {
             listener.action(BasicMouseTriggerAction.MOVEMENT, it)
         }
     }

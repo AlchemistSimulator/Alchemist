@@ -12,7 +12,6 @@ package it.unibo.alchemist.boundary.monitors
 import com.google.common.collect.ImmutableMap
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
-import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.core.interfaces.Simulation
@@ -20,11 +19,11 @@ import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.ActionOnKey
 import it.unibo.alchemist.input.ActionOnMouse
-import it.unibo.alchemist.input.CanvasBoundMouseEventDispatcher
 import it.unibo.alchemist.input.Keybinds
 import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.input.KeyboardEventDispatcher
 import it.unibo.alchemist.input.MouseButtonTriggerAction
+import it.unibo.alchemist.input.NodeBoundMouseEventDispatcher
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.input.TemporariesMouseEventDispatcher
 import it.unibo.alchemist.kotlin.clear
@@ -34,9 +33,6 @@ import it.unibo.alchemist.kotlin.plus
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
-import java.awt.Point
-import java.util.Timer
-import java.util.concurrent.Semaphore
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.MapChangeListener
@@ -51,6 +47,9 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
+import java.awt.Point
+import java.util.Timer
+import java.util.concurrent.Semaphore
 import kotlin.concurrent.fixedRateTimer
 import kotlin.math.abs
 import kotlin.math.max
@@ -97,7 +96,7 @@ class InteractionManager<T, P : Position2D<P>>(
         get() = keyboard.listener
 
     private lateinit var wormhole: BidimensionalWormhole<P>
-    private val input: Canvas = Canvas()
+    private lateinit var zoomManager: ZoomManager
     private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
     private val keyboardPan: DigitalPan<P> by lazy {
         DigitalPan(wormhole = wormhole) {
@@ -105,7 +104,7 @@ class InteractionManager<T, P : Position2D<P>>(
             repaint()
         }
     }
-    private val mouse: TemporariesMouseEventDispatcher = CanvasBoundMouseEventDispatcher(input)
+    private val mouse: TemporariesMouseEventDispatcher = NodeBoundMouseEventDispatcher(monitor)
     private lateinit var mousePan: AnalogPan
     private val highlighter = Canvas()
     private val selector = Canvas()
@@ -115,15 +114,12 @@ class InteractionManager<T, P : Position2D<P>>(
     private val selectedElements: ImmutableMap<Node<T>, P>
         get() = ImmutableMap.copyOf(selection)
     private val selectionCandidatesMutex: Semaphore = Semaphore(1)
-    private val zoomManager: ZoomManager by lazy {
-        ExponentialZoomManager(this.wormhole.zoom, ExponentialZoomManager.DEF_BASE)
-    }
     @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
     private val runMutex: Semaphore = Semaphore(1)
     /**
      * The canvases used for input/output.
      */
-    val canvases = Group().apply { listOf(input, highlighter, selector).forEach { children.add(it) } }
+    val canvases = Group().apply { listOf(highlighter, selector).forEach { children.add(it) } }
 
     /**
      * Invokes a given command on the simulation.
@@ -134,10 +130,6 @@ class InteractionManager<T, P : Position2D<P>>(
             ?: throw IllegalStateException("Uninitialized environment or simulation")
 
     init {
-        input.apply {
-            widthProperty().bind(monitor.widthProperty())
-            heightProperty().bind(monitor.heightProperty())
-        }
         listOf(selector, highlighter).forEach {
             it.widthProperty().bind(monitor.widthProperty())
             it.heightProperty().bind(monitor.heightProperty())
@@ -260,11 +252,14 @@ class InteractionManager<T, P : Position2D<P>>(
         }
 
         // scroll
-        input.setOnScroll {
-            zoomManager.inc(it.deltaY / ZOOM_SCALE)
-            wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager.zoom)
-            monitor.repaint()
-            it.consume()
+        // TODO: [NodeBoundMouseEventDispatcher] should handle this somehow instead
+        monitor.setOnScroll {
+            if (it.deltaY != 0.0) {
+                zoomManager.inc(it.deltaY / ZOOM_SCALE)
+                wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager.zoom)
+                monitor.repaint()
+                it.consume()
+            }
         }
 
         selection.addListener(MapChangeListener {
@@ -432,6 +427,13 @@ class InteractionManager<T, P : Position2D<P>>(
      */
     fun setWormhole(wormhole: BidimensionalWormhole<P>) {
         this.wormhole = wormhole
+    }
+
+    /**
+     * Sets the zoom manager.
+     */
+    fun setZoomManager(zoomManager: ZoomManager) {
+        this.zoomManager = zoomManager
     }
 
     /**

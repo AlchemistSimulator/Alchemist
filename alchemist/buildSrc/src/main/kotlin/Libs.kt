@@ -380,4 +380,9 @@ object Libs {
      * https://github.com/jIconFont/jiconfont-google_material_design_icons
      */
     const val jiconfont_google_material_design_icons: String = "com.github.jiconfont:jiconfont-google_material_design_icons:_"
+
+    /**
+     * https://github.com/ssaring/sportstracker/tree/master/leafletmap
+     */
+    const val ssaring_sportstracker_leafletmap: String = "com.github.ssaring.sportstracker:leafletmap:d33b2144f0c9710ead111a90c61cda62580cd0ac"
 }

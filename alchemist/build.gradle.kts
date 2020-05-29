@@ -81,6 +81,8 @@ allprojects {
 
         // for tornadofx 2.0.0 snapshot release
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+        // for LeafletMap
+        maven(url = "https://jitpack.io")
     }
 
     dependencies {

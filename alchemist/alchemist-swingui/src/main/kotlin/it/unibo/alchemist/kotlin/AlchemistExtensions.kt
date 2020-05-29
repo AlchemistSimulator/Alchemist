@@ -9,8 +9,12 @@ package it.unibo.alchemist.kotlin
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Time
+import javafx.application.Platform
+import javafx.application.Platform.runLater
 import javafx.scene.canvas.Canvas
 import java.awt.Point
+import java.util.concurrent.FutureTask
+import java.util.concurrent.TimeUnit
 
 /**
  * The opposite of [fold].
@@ -69,3 +73,45 @@ operator fun Time.minus(other: Double): Time = minus(
  * Clears a given canvas.
  */
 fun Canvas.clear() = graphicsContext2D.clearRect(0.0, 0.0, width, height)
+
+private const val SYNC_RUN_LATER_TIMEOUT = 2000L
+
+/**
+ * Runs the given task on the FX thread and waits for the task to finish, returning any value the task returns.
+ * Throws an exception if the task takes more than a given amount of milliseconds.
+ *
+ * @param timeout the time in milliseconds to wait before throwing an exception, default is 2000.
+ * @param task the task to execute.
+ */
+fun <T : Any> syncRunLater(timeout: Long = SYNC_RUN_LATER_TIMEOUT, task: () -> T): T =
+    FutureTask(task).run {
+        runLater {
+            run()
+        }
+        get(timeout, TimeUnit.MILLISECONDS)
+    }
+
+/**
+ * Checks if the current thread is the FX Application thread and calls [syncRunLater] if so, otherwise runs the task.
+ *
+ * @param timeout the time in milliseconds to wait before throwing an exception, default is 2000.
+ * @param task the task to execute.
+ */
+fun <T : Any> syncRunOnFXThread(timeout: Long = SYNC_RUN_LATER_TIMEOUT, task: () -> T): T =
+    if (!Platform.isFxApplicationThread()) {
+        syncRunLater(timeout) { task() }
+    } else {
+        task()
+    }
+
+/**
+ * Checks if the current thread is the FX Application thread and calls [runLater] if so, otherwise runs the task.
+ *
+ * @param task the task to execute.
+ */
+fun runOnFXThread(task: () -> Unit): Unit =
+    if (!Platform.isFxApplicationThread()) {
+        runLater { task() }
+    } else {
+        task()
+    }

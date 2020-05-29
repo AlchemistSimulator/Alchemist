@@ -13,7 +13,7 @@ import it.unibo.alchemist.boundary.monitor.FXTimeMonitor;
 import it.unibo.alchemist.boundary.monitor.PlayPauseMonitor;
 import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay;
 import it.unibo.alchemist.boundary.monitors.FX2DDisplay;
-import it.unibo.alchemist.boundary.monitors.FXMapDisplay;
+import it.unibo.alchemist.boundary.monitors.LeafletMapDisplay;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.input.ActionFromKey;
 import it.unibo.alchemist.input.ActionOnKey;
@@ -206,7 +206,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             try {
                 initDisplayMonitor(
                         MapEnvironment.class.isAssignableFrom(sim.getEnvironment().getClass())
-                                ? FXMapDisplay.class.getName()
+                                ? LeafletMapDisplay.class.getName()
                                 : FX2DDisplay.class.getName()
                 );
             } catch (final ClassCastException exception) {

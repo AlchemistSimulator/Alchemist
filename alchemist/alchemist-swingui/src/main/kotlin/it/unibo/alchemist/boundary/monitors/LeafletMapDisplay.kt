@@ -182,10 +182,9 @@ class LeafletMapWormhole(
         throw UnsupportedOperationException()
 
     override fun setEnvPosition(envPoint: GeoPosition) {
-        val latLong = envPoint.toLatLong()
-        position = syncRunOnFXThread { from(map.getPointFromLatLong(latLong)) }
+        position = from(getViewPoint(envPoint))
         runOnFXThread {
-            map.panTo(latLong)
+            map.panTo(envPoint.toLatLong())
         }
     }
 
@@ -202,7 +201,7 @@ class LeafletMapWormhole(
         @Suppress("UNCHECKED_CAST")
         val env = environment as Environment<Any?, GeoPosition>
         while (
-            zoom > CustomLeafletMapView.MIN_ZOOM_VALUE &&
+            zoom > MIN_ZOOM_VALUE &&
             !env.nodes.parallelStream()
                 .map(env::getPosition)
                 .map(::getViewPoint)

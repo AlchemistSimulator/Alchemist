@@ -4,33 +4,6 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
-import java.awt.Shape
-import java.awt.geom.PathIterator
-
-/**
- * When using java.awt.geom.PathIterator to iterate over the boundary of a
- * Shape, you need to pass an array of this size.
- */
-const val ARRAY_SIZE_FOR_PATH_ITERATOR = 6
-
-/**
- * Obtains the vertices of a polygonal shape. Any curved segment connecting
- * two points will be considered as a straight line between them.
- */
-fun Shape.vertices(): List<Euclidean2DPosition> {
-    val vertices = mutableListOf<Euclidean2DPosition>()
-    val coords = DoubleArray(ARRAY_SIZE_FOR_PATH_ITERATOR)
-    val iterator = getPathIterator(null)
-    while (!iterator.isDone) {
-        when (iterator.currentSegment(coords)) {
-            PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> {
-                vertices.add(Euclidean2DPosition(coords[0], coords[1]))
-            }
-        }
-        iterator.next()
-    }
-    return vertices
-}
 
 /**
  * Checks whether the given [segment] is inside a rectangular region described by an [origin]

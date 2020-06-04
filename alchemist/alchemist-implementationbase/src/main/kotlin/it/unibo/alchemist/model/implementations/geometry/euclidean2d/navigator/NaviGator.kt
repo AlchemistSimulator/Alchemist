@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.createSegment
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
 import it.unibo.alchemist.model.implementations.geometry.intersect
@@ -17,7 +18,6 @@ import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExclude
 import it.unibo.alchemist.model.implementations.geometry.subtractAll
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
-import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.graph.DirectedEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage

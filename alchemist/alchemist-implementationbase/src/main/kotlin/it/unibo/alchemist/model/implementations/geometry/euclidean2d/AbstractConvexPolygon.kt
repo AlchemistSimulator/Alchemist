@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
-import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon

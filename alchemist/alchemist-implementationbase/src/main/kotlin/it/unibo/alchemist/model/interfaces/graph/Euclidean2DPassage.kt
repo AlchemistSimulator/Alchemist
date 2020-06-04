@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.graph
 
-import it.unibo.alchemist.model.implementations.geometry.linesIntersection
+import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.linesIntersection
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
@@ -92,7 +92,10 @@ data class Euclidean2DPassage(
         crossingPointOnTail(position).let { Pair(it, crossingPointOnHead(it)) }
 
     private fun <V : Vector2D<V>> linesIntersectionOrFail(segment1: Segment2D<V>, segment2: Segment2D<V>): V =
-        linesIntersection(segment1, segment2).point.orElseThrow {
+        linesIntersection(
+            segment1,
+            segment2
+        ).point.orElseThrow {
             IllegalStateException("internal error: impossible movement")
         }
 }

@@ -1,4 +1,13 @@
-package it.unibo.alchemist.model.implementations.geometry
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
@@ -35,12 +44,18 @@ data class LinesIntersection<P : Vector2D<P>>(
         /**
          * Creates an instance of [LinesIntersection] whose type is [LinesIntersectionType.EMPTY].
          */
-        fun <P : Vector2D<P>> empty() = LinesIntersection<P>(LinesIntersectionType.EMPTY)
+        fun <P : Vector2D<P>> empty() =
+            LinesIntersection<P>(
+                LinesIntersectionType.EMPTY
+            )
 
         /**
          * Creates an instance of [LinesIntersection] whose type is [LinesIntersectionType.LINE].
          */
-        fun <P : Vector2D<P>> line() = LinesIntersection<P>(LinesIntersectionType.LINE)
+        fun <P : Vector2D<P>> line() =
+            LinesIntersection<P>(
+                LinesIntersectionType.LINE
+            )
     }
 }
 
@@ -55,8 +70,18 @@ fun <P : Vector2D<P>> linesIntersection(s1: Segment2D<P>, s2: Segment2D<P>): Lin
     val m2 = s2.slope
     val q2 = s2.intercept
     return when {
-        coincide(m1, m2, q1, q2, s1, s2) -> LinesIntersection.line()
-        areParallel(m1, m2) -> LinesIntersection.empty()
+        coincide(
+            m1,
+            m2,
+            q1,
+            q2,
+            s1,
+            s2
+        ) -> LinesIntersection.line()
+        areParallel(
+            m1,
+            m2
+        ) -> LinesIntersection.empty()
         else -> {
             val intersection = when {
                 s1.yAxisAligned -> s1.first.newFrom(s1.first.x, m2 * s1.first.x + q2)
@@ -67,7 +92,9 @@ fun <P : Vector2D<P>> linesIntersection(s1: Segment2D<P>, s2: Segment2D<P>): Lin
                     s1.first.newFrom(x, y)
                 }
             }
-            LinesIntersection(intersection)
+            LinesIntersection(
+                intersection
+            )
         }
     }
 }
@@ -114,12 +141,18 @@ data class SegmentsIntersection<P : Vector2D<P>>(
         /**
          * Creates an instance of [SegmentsIntersection] whose type is [SegmentsIntersectionType.EMPTY].
          */
-        fun <P : Vector2D<P>> empty() = SegmentsIntersection<P>(SegmentsIntersectionType.EMPTY)
+        fun <P : Vector2D<P>> empty() =
+            SegmentsIntersection<P>(
+                SegmentsIntersectionType.EMPTY
+            )
 
         /**
          * Creates an instance of [SegmentsIntersection] whose type is [SegmentsIntersectionType.SEGMENT].
          */
-        fun <P : Vector2D<P>> segment() = SegmentsIntersection<P>(SegmentsIntersectionType.SEGMENT)
+        fun <P : Vector2D<P>> segment() =
+            SegmentsIntersection<P>(
+                SegmentsIntersectionType.SEGMENT
+            )
     }
 }
 
@@ -132,18 +165,36 @@ fun <P : Vector2D<P>> intersection(s1: Segment2D<P>, s2: Segment2D<P>): Segments
         val degenerate = s1.takeIf { it.isDegenerate } ?: s2
         val other = s2.takeIf { degenerate == s1 } ?: s1
         return when {
-            other.contains(degenerate.first) -> SegmentsIntersection(degenerate.first)
+            other.contains(degenerate.first) -> SegmentsIntersection(
+                degenerate.first
+            )
             else -> SegmentsIntersection.empty()
         }
     }
-    val intersection = linesIntersection(s1, s2)
+    val intersection =
+        linesIntersection(s1, s2)
     return when {
-        intersection.type == LinesIntersectionType.POINT && bothContain(s1, s2, intersection.point.get()) ->
-            SegmentsIntersection(intersection.point.get())
-        intersection.type == LinesIntersectionType.LINE && !disjoint(s1, s2) -> {
-            val sharedEndPoint = sharedEndPoint(s1, s2)
+        intersection.type == LinesIntersectionType.POINT && bothContain(
+            s1,
+            s2,
+            intersection.point.get()
+        ) ->
+            SegmentsIntersection(
+                intersection.point.get()
+            )
+        intersection.type == LinesIntersectionType.LINE && !disjoint(
+            s1,
+            s2
+        ) -> {
+            val sharedEndPoint =
+                sharedEndPoint(
+                    s1,
+                    s2
+                )
             when {
-                sharedEndPoint != null -> SegmentsIntersection(sharedEndPoint)
+                sharedEndPoint != null -> SegmentsIntersection(
+                    sharedEndPoint
+                )
                 /*
                  * Overlapping.
                  */
@@ -212,7 +263,10 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
         /**
          * Creates an instance of [CircleSegmentIntersection] whose type is [CircleSegmentIntersectionType.EMPTY].
          */
-        fun <P : Vector2D<P>> empty() = CircleSegmentIntersection<P>(CircleSegmentIntersectionType.EMPTY)
+        fun <P : Vector2D<P>> empty() =
+            CircleSegmentIntersection<P>(
+                CircleSegmentIntersectionType.EMPTY
+            )
 
         /**
          * Creates an appropriate instance of [CircleSegmentIntersection], taking care that, in case the resulting
@@ -221,9 +275,17 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
         fun <P : Vector2D<P>> create(point1: P?, point2: P?): CircleSegmentIntersection<P> =
             when {
                 point1 == null && point2 == null -> empty()
-                point1 == null -> CircleSegmentIntersection(point2!!) // Necessarily not null
-                point2 == null -> CircleSegmentIntersection(point1)
-                else -> CircleSegmentIntersection(CircleSegmentIntersectionType.PAIR, point1, point2)
+                point1 == null -> CircleSegmentIntersection(
+                    point2!!
+                ) // Necessarily not null
+                point2 == null -> CircleSegmentIntersection(
+                    point1
+                )
+                else -> CircleSegmentIntersection(
+                    CircleSegmentIntersectionType.PAIR,
+                    point1,
+                    point2
+                )
             }
     }
 }
@@ -248,18 +310,38 @@ fun <P : Vector2D<P>> intersection(
         fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0 -> CircleSegmentIntersection.empty()
         fuzzyEquals(det, 0.0) -> {
             val t = -b / (2 * a)
-            val p = intersectionPoint(segment, vector, t)
+            val p =
+                intersectionPoint(
+                    segment,
+                    vector,
+                    t
+                )
             when {
                 p == null -> CircleSegmentIntersection.empty()
-                else -> CircleSegmentIntersection(p)
+                else -> CircleSegmentIntersection(
+                    p
+                )
             }
         }
         else -> {
             val t1 = (-b + sqrt(det)) / (2 * a)
             val t2 = (-b - sqrt(det)) / (2 * a)
-            val p1 = intersectionPoint(segment, vector, t1)
-            val p2 = intersectionPoint(segment, vector, t2)
-            CircleSegmentIntersection.create(p1, p2)
+            val p1 =
+                intersectionPoint(
+                    segment,
+                    vector,
+                    t1
+                )
+            val p2 =
+                intersectionPoint(
+                    segment,
+                    vector,
+                    t2
+                )
+            CircleSegmentIntersection.create(
+                p1,
+                p2
+            )
         }
     }
 }

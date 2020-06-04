@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.intersection
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
@@ -65,7 +63,12 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {
             return true
         }
-        val intersections = edges().map { intersection(it, segment) }
+        val intersections = edges().map {
+            intersection(
+                it,
+                segment
+            )
+        }
         return when {
             intersections.any { it.type == SegmentsIntersectionType.SEGMENT } -> false
             else -> intersections.mapNotNull { it.point.orElse(null) }.distinct().size > 1
@@ -182,8 +185,14 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         }
         val next = getEdge(i)
         return when {
-            intersection(prev, curr).type != SegmentsIntersectionType.POINT ||
-                intersection(curr, next).type != SegmentsIntersectionType.POINT -> true
+            intersection(
+                prev,
+                curr
+            ).type != SegmentsIntersectionType.POINT ||
+                intersection(
+                    curr,
+                    next
+                ).type != SegmentsIntersectionType.POINT -> true
             /*
              * We check every edge between the first prev not
              * degenerate and the first next not degenerate.
@@ -192,7 +201,10 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
                 .takeWhile { it != prevIndex }
                 .map { getEdge(it) }
                 .filter { !it.isDegenerate }
-                .any { intersection(curr, it).type != SegmentsIntersectionType.EMPTY }
+                .any { intersection(
+                    curr,
+                    it
+                ).type != SegmentsIntersectionType.EMPTY }
         }
     }
 }

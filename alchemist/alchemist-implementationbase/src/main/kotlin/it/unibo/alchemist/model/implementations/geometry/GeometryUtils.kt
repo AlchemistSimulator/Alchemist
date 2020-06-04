@@ -33,8 +33,8 @@ fun Shape.vertices(): List<Euclidean2DPosition> {
 }
 
 /**
- * Checks whether the given segment is inside a rectangular region described by an origin
- * point and width and height values (only positive).
+ * Checks whether the given [segment] is inside a rectangular region described by an [origin]
+ * point and [width] and [height] values (only positive).
  */
 fun isInBoundaries(segment: Segment2D<*>, origin: Vector2D<*>, width: Double, height: Double) =
     isInBoundaries(segment.first, origin, width, height) && isInBoundaries(segment.second, origin, width, height)

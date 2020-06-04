@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.implementations.geometry.areCollinear

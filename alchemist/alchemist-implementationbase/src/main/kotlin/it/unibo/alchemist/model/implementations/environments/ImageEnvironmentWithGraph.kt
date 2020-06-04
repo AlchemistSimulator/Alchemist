@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AwtMutableConvexPolygon
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator.generateNavigationGraph
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator.generateNavigationGraph
 import it.unibo.alchemist.model.implementations.graph.DirectedEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D

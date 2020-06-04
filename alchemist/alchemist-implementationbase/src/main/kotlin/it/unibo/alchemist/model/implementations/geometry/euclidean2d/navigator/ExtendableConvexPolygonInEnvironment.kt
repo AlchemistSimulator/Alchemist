@@ -1,9 +1,9 @@
-package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.vertices
 import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.intersection
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersection
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross

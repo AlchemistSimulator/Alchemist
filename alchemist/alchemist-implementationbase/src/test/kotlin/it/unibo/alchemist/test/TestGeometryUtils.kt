@@ -1,11 +1,11 @@
 package it.unibo.alchemist.test
 
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.intersection
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.linesIntersection
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.SegmentsIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.LinesIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.CircleSegmentIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersection
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.linesIntersection
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory

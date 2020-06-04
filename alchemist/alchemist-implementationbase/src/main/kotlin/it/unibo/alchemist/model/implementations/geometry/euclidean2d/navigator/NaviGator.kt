@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.createSegment
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX

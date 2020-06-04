@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.LinesIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.linesIntersection
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.linesIntersection
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D

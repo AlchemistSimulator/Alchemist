@@ -280,8 +280,8 @@ class TestGeometryUtils {
         center: P,
         radius: Double,
         expectedType: CircleSegmentIntersectionType,
-        expectedPoint1: Optional<P> = Optional.empty(),
-        expectedPoint2: Optional<P> = Optional.empty()
+        expectedPoint1: P? = null,
+        expectedPoint2: P? = null
     ) {
         intersection(segment, center, radius).let { intersection ->
             intersection.type shouldBe expectedType
@@ -304,8 +304,8 @@ class TestGeometryUtils {
         center,
         radius,
         CircleSegmentIntersectionType.PAIR,
-        Optional.of(expectedPoint1),
-        Optional.of(expectedPoint2)
+        expectedPoint1,
+        expectedPoint2
     )
 
     private fun <P : Vector2D<P>> intersectionShouldBe(
@@ -313,7 +313,7 @@ class TestGeometryUtils {
         center: P,
         radius: Double,
         expectedPoint: P
-    ) = intersectionShouldBe(segment, center, radius, CircleSegmentIntersectionType.POINT, Optional.of(expectedPoint))
+    ) = intersectionShouldBe(segment, center, radius, CircleSegmentIntersectionType.POINT, expectedPoint)
 
     private fun <P : Vector2D<P>> intersectionShouldBeEmpty(
         segment: Segment2D<P>,

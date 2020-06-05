@@ -37,21 +37,10 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
     val asAngle: Double get() = atan2(y, x)
 
     /**
-     * Normalizes the vector.
-     */
-    @JvmDefault
-    override fun normalized(): P = times(1.0 / sqrt(x * x + y * y))
-
-    /**
      * Dot product between bidimensional vectors.
      */
     @JvmDefault
     override fun dot(other: P) = x * other.x + y * other.y
-
-    /**
-     * Creates a new Vector2D with the same type of the current one with different [x] and [y].
-     */
-    fun newFrom(x: Double, y: Double): P
 
     /**
      * Checks whether the given point is inside a rectangular region described by an [origin]
@@ -60,6 +49,17 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
     @JvmDefault
     fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double): Boolean =
         x >= origin.x && y >= origin.y && x <= origin.x + width && y <= origin.y + height
+
+    /**
+     * Creates a new Vector2D with the same type of the current one with different [x] and [y].
+     */
+    fun newFrom(x: Double, y: Double): P
+
+    /**
+     * Normalizes the vector.
+     */
+    @JvmDefault
+    override fun normalized(): P = times(1.0 / sqrt(x * x + y * y))
 
     companion object {
         /**

@@ -8,7 +8,7 @@
  */
 
 @file:JvmName("RandomGeneratorExtension")
-package it.unibo.alchemist.kotlin
+package it.unibo.alchemist.model
 
 import org.apache.commons.math3.random.RandomGenerator
 

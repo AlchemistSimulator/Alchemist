@@ -8,7 +8,7 @@
  */
 
 @file:JvmName("TimeExtension")
-package it.unibo.alchemist.kotlin
+package it.unibo.alchemist.model
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Time

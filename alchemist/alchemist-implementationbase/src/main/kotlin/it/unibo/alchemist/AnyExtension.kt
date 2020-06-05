@@ -6,7 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 @file:JvmName("AnyExtension")
-package it.unibo.alchemist.kotlin
+package it.unibo.alchemist
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position

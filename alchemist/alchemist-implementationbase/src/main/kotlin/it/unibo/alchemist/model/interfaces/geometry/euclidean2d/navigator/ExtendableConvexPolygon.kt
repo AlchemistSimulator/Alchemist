@@ -1,6 +1,6 @@
-package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator
+package it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigator
 
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.MutableConvexPolygon
 
 /**
  * A sophisticated [MutableConvexPolygon].

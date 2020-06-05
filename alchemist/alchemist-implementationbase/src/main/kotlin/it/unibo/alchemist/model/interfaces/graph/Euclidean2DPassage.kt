@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.interfaces.graph
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.linesIntersection
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 
 /**
  * A passage between two [ConvexPolygon]s in an euclidean bidimensional space.

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.MutableConvexPolygon
 import java.awt.Shape
 import java.util.Optional
 

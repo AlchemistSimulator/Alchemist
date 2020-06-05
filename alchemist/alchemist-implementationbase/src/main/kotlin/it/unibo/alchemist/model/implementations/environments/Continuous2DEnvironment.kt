@@ -6,8 +6,8 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 
 /**
  * Implementation of [Physics2DEnvironment].

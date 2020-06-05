@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.util.Optional
 import kotlin.math.pow

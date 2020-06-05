@@ -8,8 +8,8 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesInters
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.junit.jupiter.api.Test
 import java.util.Optional
 

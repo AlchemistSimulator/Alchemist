@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.geometry
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 
 @JvmName("Geometry2DUtil")

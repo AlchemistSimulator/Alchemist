@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import java.lang.IllegalStateException
 
 /**

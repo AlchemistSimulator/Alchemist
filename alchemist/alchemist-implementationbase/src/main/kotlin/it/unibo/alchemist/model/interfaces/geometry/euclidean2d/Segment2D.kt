@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
+package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear

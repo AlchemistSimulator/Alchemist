@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.interfaces.geometry
 
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtEuclidean2DShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import java.io.Serializable
 
 /**

@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.interfaces.environments
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Obstacle2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 
 /**
  * An [Euclidean2DEnvironmentWithGraph] with physics.

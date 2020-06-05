@@ -4,7 +4,7 @@ import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException

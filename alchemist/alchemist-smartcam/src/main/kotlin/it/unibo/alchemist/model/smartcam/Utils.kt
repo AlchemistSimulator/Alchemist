@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import kotlin.math.cos
 import kotlin.math.sin
 
-internal fun <P: Vector2D<P>> offsetPositionAtDistance(
+internal fun <P : Vector2D<P>> offsetPositionAtDistance(
     source: P,
     direction: P,
     distance: Double
@@ -12,7 +12,7 @@ internal fun <P: Vector2D<P>> offsetPositionAtDistance(
     source + source.newFrom(cos(this) * distance, sin(this) * distance)
 }
 
-internal fun <P: Vector2D<P>> closestPositionToTargetAtDistance(
+internal fun <P : Vector2D<P>> closestPositionToTargetAtDistance(
     source: P,
     target: P,
     distance: Double

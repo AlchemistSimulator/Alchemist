@@ -40,7 +40,7 @@ class FollowAtDistance<T>(
         node.getConcentration(target)?.also {
             val targetPosition = it.toPosition(env)
             val currentPosition = env.getPosition(node)
-            var destination = closestPositionToTargetAtDistance(env, currentPosition, targetPosition, distance)
+            var destination = closestPositionToTargetAtDistance(currentPosition, targetPosition, distance)
             if (currentPosition != destination) { // avoid "bouncing"
                 val currentSpeed = min(
                     speedStrategy.getNodeMovementLength(destination),

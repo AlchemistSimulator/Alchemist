@@ -6,7 +6,6 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.HomogeneousPedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.influencesphere.FieldOfView2D
 import org.apache.commons.math3.random.MersenneTwister
 
@@ -20,7 +19,7 @@ class TestSensory<T> : StringSpec({
         val origin = Euclidean2DPosition(5.0, 5.0)
         env.addNode(observed, origin)
         val radius = 10.0
-        origin.surrounding(env, radius).forEach {
+        origin.surrounding(radius).forEach {
             with(HomogeneousPedestrian2D(env, rand)) {
                 env.addNode(this, it)
                 env.setHeading(this, origin - it)

@@ -4,7 +4,6 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.direction
 import it.unibo.alchemist.model.implementations.utils.position
 import it.unibo.alchemist.model.implementations.utils.shuffled
-import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
@@ -53,7 +52,7 @@ open class Wander<T>(
             environment.origin,
             heading().asAngle
                 .let { Euclidean2DPosition(offset * cos(it), offset * sin(it)) }
-                .let { it.surrounding(environment, radius).shuffled(rg).first() },
+                .let { it.surrounding(radius).shuffled(rg).first() },
             maxWalk
         )
 }

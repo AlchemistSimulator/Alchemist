@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
@@ -25,7 +24,7 @@ open class Seek2D<T, P>(
 
     public override fun interpolatePositions(current: P, target: P, maxWalk: Double): P {
         val superPosition = current + super.interpolatePositions(current, target, maxWalk)
-        return (current.surrounding(environment, maxWalk) + superPosition)
+        return (current.surrounding(maxWalk) + superPosition)
             .asSequence()
             .discardUnsuitablePositions(environment, pedestrian)
             .minBy { it.distanceTo(target) }?.minus(current)

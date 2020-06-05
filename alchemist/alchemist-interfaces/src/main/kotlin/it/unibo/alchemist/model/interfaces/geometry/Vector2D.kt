@@ -10,6 +10,8 @@
 package it.unibo.alchemist.model.interfaces.geometry
 
 import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
@@ -60,6 +62,36 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
      */
     @JvmDefault
     override fun normalized(): P = times(1.0 / sqrt(x * x + y * y))
+
+    /**
+     * Perform the rotation of a position.
+     *
+     * @param center
+     *          the position around which operate the rotation.
+     * @param radians
+     *          the number of radians representing the rotation angle.
+     */
+    @JvmDefault
+    fun rotate(center: P, radians: Double): P =
+        with(this - center) {
+            newFrom(x * cos(radians) - y * sin(radians), y * cos(radians) + x * sin(radians))
+        } + center
+
+    /**
+     * Creates a list of [count] points equally spaced in the circle of given [radius] with center in this vector.
+     *
+     * @param radius
+     *          the distance each generated position must have from this.
+     * @param count
+     *          the number of positions to generate.
+     */
+    @JvmDefault
+    // @JvmOverloads disabled due to https://youtrack.jetbrains.com/issue/KT-12224
+    fun surrounding(radius: Double, count: Int = 12): List<P> = (1..count)
+        .map {
+            @Suppress("UNCHECKED_CAST")
+            newFrom(this.x + radius, y).rotate(this as P, it * Math.PI * 2 / count)
+        }
 
     companion object {
         /**

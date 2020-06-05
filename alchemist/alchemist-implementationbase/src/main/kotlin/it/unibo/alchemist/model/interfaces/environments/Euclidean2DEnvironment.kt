@@ -15,8 +15,7 @@ import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 /**
  * A bidimensional euclidean space with any concentration type [T].
  */
-interface Euclidean2DEnvironment<T> :
-    EuclideanEnvironment<T, Euclidean2DPosition> {
+interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPosition> {
 
     @JvmDefault
     override val origin: Euclidean2DPosition
@@ -28,12 +27,18 @@ interface Euclidean2DEnvironment<T> :
     @JvmDefault
     fun makePosition(x: Double, y: Double): Euclidean2DPosition = Euclidean2DPosition(x, y)
 
+    /**
+     * Creates a new [Euclidean2DPosition].
+     */
     @JvmDefault
     override fun makePosition(vararg coordinates: Double): Euclidean2DPosition =
         if (coordinates.size == 2) makePosition(coordinates[0], coordinates[1])
         else throw IllegalArgumentException("Illegal coordinates (required 2): ${coordinates.contentToString()}")
 
     companion object {
+        /**
+         * The origin of this Euclidean environment: vector [0, 0].
+         */
         val origin = Euclidean2DPosition(0.0, 0.0)
     }
 }

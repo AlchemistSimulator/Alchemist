@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacl
  *          the distance at which an obstacle is perceived by the pedestrian.
  */
 class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
-    private val env: Environment2DWithObstacles<W, T, Euclidean2DPosition>,
+    private val env: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
     pedestrian: Pedestrian<T>,
     private val proximityRange: Double

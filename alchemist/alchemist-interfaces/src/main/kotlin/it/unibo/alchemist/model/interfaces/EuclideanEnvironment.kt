@@ -21,6 +21,7 @@ where P : Position<P>, P : Vector<P> {
     /**
      * Creates a [Position] compatible with this environment given its [coordinates].
      */
+    @JvmDefault
     fun makePosition(vararg coordinates: Double): P
 
     /**

@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
-import it.unibo.alchemist.model.implementations.utils.surrounding
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
@@ -36,7 +35,7 @@ abstract class FlowFieldSteeringAction<P>(
 
     override fun nextPosition(): P = getLayerOrFail()
         .let { layer ->
-            currentPosition.surrounding(environment, maxWalk())
+            currentPosition.surrounding(maxWalk())
                 .asSequence()
                 /*
                  * Next relative position.

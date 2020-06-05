@@ -7,6 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+@file:JvmName("RandomGeneratorExtension")
 package it.unibo.alchemist.kotlin
 
 import org.apache.commons.math3.random.RandomGenerator

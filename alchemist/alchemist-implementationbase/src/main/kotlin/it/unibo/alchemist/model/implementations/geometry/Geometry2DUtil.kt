@@ -6,19 +6,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 
 @JvmName("Geometry2DUtil")
-/**
- * Checks whether the given [segment] is inside a rectangular region described by an [origin]
- * point and [width] and [height] values (only positive).
- */
-fun isInBoundaries(segment: Segment2D<*>, origin: Vector2D<*>, width: Double, height: Double) =
-    isInBoundaries(segment.first, origin, width, height) && isInBoundaries(segment.second, origin, width, height)
-
-/**
- * Checks whether the given point is inside a rectangular region described by an origin
- * point and width and height values (only positive).
- */
-fun isInBoundaries(point: Vector2D<*>, origin: Vector2D<*>, width: Double, height: Double): Boolean =
-    point.x >= origin.x && point.y >= origin.y && point.x <= origin.x + width && point.y <= origin.y + height
 
 /**
  * Determines if three points are collinear (i.e. they lie on the same line).

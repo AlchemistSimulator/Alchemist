@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersection
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
@@ -174,7 +173,7 @@ class ExtendableConvexPolygonInEnvironment(
          * super method is used in order to avoid voiding useful cache
          */
         if (super.replaceEdge(index, Segment2D(edge.first + firstMovement, edge.second + secondMovement))) {
-            if (isInBoundaries(getEdge(index), origin, width, height)) {
+            if (getEdge(index).isInRectangle(origin, width, height)) {
                 return true
             }
             super.replaceEdge(index, edge)
@@ -249,7 +248,7 @@ class ExtendableConvexPolygonInEnvironment(
                  */
                 intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) }
             }
-            if (hasAdvanced && isInBoundaries(getEdge(i), origin, width, height) && isAdvancedCase()) {
+            if (hasAdvanced && getEdge(i).isInRectangle(origin, width, height) && isAdvancedCase()) {
                 intersectedObs.forEach { adjustGrowth(it, i, step) }
                 extended = true
             } else {

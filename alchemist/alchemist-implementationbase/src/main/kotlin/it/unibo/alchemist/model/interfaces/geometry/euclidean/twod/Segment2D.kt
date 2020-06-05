@@ -140,4 +140,11 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
         getXCoords -> rangeFromUnordered(first.x, second.x)
         else -> rangeFromUnordered(first.y, second.y)
     }
+
+    /**
+     * Checks whether the given [segment] is inside a rectangular region described by an [origin]
+     * point and [width] and [height] values (only positive).
+     */
+    fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
+        first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
 }

@@ -53,6 +53,14 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
      */
     fun newFrom(x: Double, y: Double): P
 
+    /**
+     * Checks whether the given point is inside a rectangular region described by an [origin]
+     * point and [width] and [height] values (only positive).
+     */
+    @JvmDefault
+    fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double): Boolean =
+        x >= origin.x && y >= origin.y && x <= origin.x + width && y <= origin.y + height
+
     companion object {
         /**
          * Computes the z component of the cross product of the given vectors.

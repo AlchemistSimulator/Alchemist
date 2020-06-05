@@ -5,6 +5,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 
+@JvmName("Geometry2DUtil")
 /**
  * Checks whether the given [segment] is inside a rectangular region described by an [origin]
  * point and [width] and [height] values (only positive).

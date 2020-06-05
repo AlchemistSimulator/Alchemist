@@ -7,6 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+@file:JvmName("TimeExtension")
 package it.unibo.alchemist.kotlin
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime

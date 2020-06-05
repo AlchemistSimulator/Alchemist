@@ -1,7 +1,5 @@
 package it.unibo.alchemist.model.smartcam
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import kotlin.math.cos
 import kotlin.math.sin

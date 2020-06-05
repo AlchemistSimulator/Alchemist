@@ -58,24 +58,36 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
     fun newFrom(x: Double, y: Double): P
 
     /**
+     * Allows subtraction with a [Pair].
+     */
+    @JvmDefault
+    operator fun minus(other: Pair<Double, Double>) = newFrom(x - other.first, y - other.second)
+
+    /**
      * Normalizes the vector.
      */
     @JvmDefault
     override fun normalized(): P = times(1.0 / sqrt(x * x + y * y))
 
     /**
-     * Perform the rotation of a position.
-     *
-     * @param center
-     *          the position around which operate the rotation.
-     * @param radians
-     *          the number of radians representing the rotation angle.
+     * Allows summaction with a [Pair].
      */
     @JvmDefault
-    fun rotate(center: P, radians: Double): P =
-        with(this - center) {
-            newFrom(x * cos(radians) - y * sin(radians), y * cos(radians) + x * sin(radians))
-        } + center
+    operator fun plus(other: Pair<Double, Double>) = newFrom(x + other.first, y + other.second)
+
+    /**
+     * Computes a point which is at a certain [distance] and [angle] (in radians) from this one.
+     */
+    @JvmDefault
+    fun surroundingPointAt(angle: Double, distance: Double) =
+        newFrom(x + cos(angle) * distance, y + sin(angle) * distance)
+
+    /**
+     * Computes a point which is at a certain [distance] and angle (expressed as a [versor] centered in this node)
+     * from this one.
+     */
+    @JvmDefault
+    fun surroundingPointAt(versor: P, distance: Double) = surroundingPointAt(versor.asAngle, distance)
 
     /**
      * Creates a list of [count] points equally spaced in the circle of given [radius] with center in this vector.
@@ -90,7 +102,7 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
     fun surrounding(radius: Double, count: Int = 12): List<P> = (1..count)
         .map {
             @Suppress("UNCHECKED_CAST")
-            newFrom(this.x + radius, y).rotate(this as P, it * Math.PI * 2 / count)
+            surroundingPointAt(angle = it * Math.PI * 2 / count, distance = radius)
         }
 
     companion object {

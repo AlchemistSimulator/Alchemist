@@ -7,7 +7,6 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.smartcam.closestPositionToTargetAtDistance
 import it.unibo.alchemist.toPosition
 import kotlin.math.cos
 import kotlin.math.min
@@ -40,7 +39,7 @@ class FollowAtDistance<T>(
         node.getConcentration(target)?.also {
             val targetPosition = it.toPosition(env)
             val currentPosition = env.getPosition(node)
-            var destination = closestPositionToTargetAtDistance(currentPosition, targetPosition, distance)
+            var destination = targetPosition.surroundingPointAt(currentPosition - targetPosition, distance)
             if (currentPosition != destination) { // avoid "bouncing"
                 val currentSpeed = min(
                     speedStrategy.getNodeMovementLength(destination),

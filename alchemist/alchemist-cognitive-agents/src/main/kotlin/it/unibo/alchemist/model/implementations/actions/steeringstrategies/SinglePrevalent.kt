@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.Pedestrian
@@ -105,7 +104,7 @@ class SinglePrevalent<T, M : ConvexPolygon>(
                     !currRoom.containsBoundaryIncluded(pedestrianPosition + this)
                 }
             }
-            if (prevalentForce == environment.origin() || currentRoom == null ||
+            if (prevalentForce == environment.origin || currentRoom == null ||
                 prevalentForce.leadsOutsideCurrentRoom()) {
                 return prevalentForce
             }

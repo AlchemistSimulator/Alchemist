@@ -1,19 +1,18 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.origin
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
+import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 
 /**
  * Steering logic where each steering action is associated to a weight
  * and the final computed position is their weighted sum.
  *
- * @param env
+ * @param environment
  *          the environment in which the pedestrian moves.
  * @param pedestrian
  *          the owner of the steering action this strategy belongs to.
@@ -22,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.SteeringStrategy
  *          its relevance in the position computation.
  */
 open class Weighted<T>(
-    private val env: Environment<T, Euclidean2DPosition>,
+    private val environment: Euclidean2DEnvironment<T>,
     private val pedestrian: Pedestrian<T>,
     private val weight: SteeringAction<T, Euclidean2DPosition>.() -> Double
 ) : SteeringStrategy<T, Euclidean2DPosition> {
@@ -38,7 +37,7 @@ open class Weighted<T>(
      * which will be considered the overall target.
      */
     override fun computeTarget(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
-        with(env.getPosition(pedestrian) ?: env.origin()) {
+        with(environment.getPosition(pedestrian) ?: environment.origin) {
             actions
                 .filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
                 .map { it.target() }
@@ -52,5 +51,5 @@ open class Weighted<T>(
                 val totalWeight = map { it.second }.sum()
                 map { it.first * (it.second / totalWeight) }.reduce { acc, pos -> acc + pos }
             }
-        } else firstOrNull()?.nextPosition() ?: env.origin()
+        } else firstOrNull()?.nextPosition() ?: environment.origin
 }

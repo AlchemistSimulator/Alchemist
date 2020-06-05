@@ -1,11 +1,10 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
-import it.unibo.alchemist.model.implementations.utils.makePosition
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
@@ -28,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the coordinates of the position the pedestrian moves towards.
  */
 open class Arrive<T, P>(
-    env: Environment<T, P>,
+    env: EuclideanEnvironment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T>,
     decelerationRadius: Double,
@@ -38,7 +37,7 @@ open class Arrive<T, P>(
     env,
     reaction,
     pedestrian,
-    TargetSelectionStrategy { env.makePosition(coords) },
+    TargetSelectionStrategy { env.makePosition(*coords) },
     SpeedSelectionStrategy {
         target -> with(env.getPosition(pedestrian).distanceTo(target)) {
             when {

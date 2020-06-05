@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
@@ -37,7 +36,7 @@ open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
      * The route to follow.
      */
     protected open val route: List<Euclidean2DPosition>
-) : DynamicPursuing<T, N, E>(action, action.environment.origin().takeIf { route.isEmpty() } ?: route[0]) {
+) : DynamicPursuing<T, N, E>(action, action.environment.origin.takeIf { route.isEmpty() } ?: route[0]) {
 
     private var indexOfNextWaypoint: Int = 0
 

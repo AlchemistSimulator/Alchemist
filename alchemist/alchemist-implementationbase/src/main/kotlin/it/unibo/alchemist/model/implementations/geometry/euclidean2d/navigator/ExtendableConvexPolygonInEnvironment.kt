@@ -326,14 +326,8 @@ class ExtendableConvexPolygonInEnvironment(
         val polygonEdge2 = getEdge(circularPrevious(indexOfIntrudingV))
         val obstacleEdge: Segment2D<Euclidean2DPosition> = firstIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = intersectSegment(
-            polygonEdge1,
-            obstacleEdge
-        ).point.get().toEuclidean
-        val p2 = intersectSegment(
-            polygonEdge2,
-            obstacleEdge
-        ).point.get().toEuclidean
+        val p1 = polygonEdge1.intersectSegment(obstacleEdge).point.get().toEuclidean
+        val p2 = polygonEdge2.intersectSegment(obstacleEdge).point.get().toEuclidean
         // a new edge is going to be added, its vertices will grow following the intruded
         // obstacleEdge. In order to do so, their growth directions will be modified to be
         // parallel to such edge, but in opposite senses.

@@ -63,12 +63,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {
             return true
         }
-        val intersections = edges().map {
-            intersectSegment(
-                it,
-                segment
-            )
-        }
+        val intersections = edges().map { it.intersectSegment(segment) }
         return when {
             intersections.any { it.type == SegmentsIntersectionType.SEGMENT } -> false
             else -> intersections.mapNotNull { it.point.orElse(null) }.distinct().size > 1
@@ -184,27 +179,19 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             i = circularNext(i)
         }
         val next = getEdge(i)
-        return when {
-            intersectSegment(
-                prev,
-                curr
-            ).type != SegmentsIntersectionType.POINT ||
-                intersectSegment(
-                    curr,
-                    next
-                ).type != SegmentsIntersectionType.POINT -> true
+        return if (prev.intersectSegment(curr).type != SegmentsIntersectionType.POINT ||
+                curr.intersectSegment(next).type != SegmentsIntersectionType.POINT) {
+                true
             /*
              * We check every edge between the first prev not
              * degenerate and the first next not degenerate.
              */
-            else -> generateSequence(circularNext(i)) { circularNext(it) }
-                .takeWhile { it != prevIndex }
-                .map { getEdge(it) }
-                .filter { !it.isDegenerate }
-                .any { intersectSegment(
-                    curr,
-                    it
-                ).type != SegmentsIntersectionType.EMPTY }
-        }
+            } else {
+                generateSequence(circularNext(i)) { circularNext(it) }
+                    .takeWhile { it != prevIndex }
+                    .map { getEdge(it) }
+                    .filter { !it.isDegenerate }
+                    .any { curr.intersectSegment(it).type != SegmentsIntersectionType.EMPTY }
+            }
     }
 }

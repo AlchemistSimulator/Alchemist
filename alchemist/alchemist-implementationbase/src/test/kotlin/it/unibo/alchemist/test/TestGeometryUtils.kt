@@ -120,10 +120,7 @@ class TestGeometryUtils {
         expectedType: SegmentsIntersectionType,
         expectedPoint: Optional<P> = Optional.empty()
     ) {
-        intersectSegment(
-            segment1,
-            segment2
-        ).let { intersection ->
+        segment1.intersectSegment(segment2).let { intersection ->
             intersection.type shouldBe expectedType
             intersection.point shouldBe expectedPoint
         }

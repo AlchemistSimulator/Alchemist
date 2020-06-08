@@ -162,41 +162,23 @@ data class SegmentsIntersection<P : Vector2D<P>>(
  * Finds the intersection point of two given segments. This method is able to deal with degenerate
  * and collinear segments.
  */
-fun <P : Vector2D<P>> intersectSegment(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsIntersection<P> {
-    if (s1.isDegenerate || s2.isDegenerate) {
-        val degenerate = s1.takeIf { it.isDegenerate } ?: s2
-        val other = s2.takeIf { degenerate == s1 } ?: s1
+fun <P : Vector2D<P>> Segment2D<P>.intersectSegment(other: Segment2D<P>): SegmentsIntersection<P> {
+    if (isDegenerate || other.isDegenerate) {
+        val degenerate = takeIf { it.isDegenerate } ?: other
+        val otherSegment = other.takeIf { degenerate == this } ?: this
         return when {
-            other.contains(degenerate.first) -> SegmentsIntersection(
-                degenerate.first
-            )
+            otherSegment.contains(degenerate.first) -> SegmentsIntersection(degenerate.first)
             else -> SegmentsIntersection.empty()
         }
     }
-    val intersection =
-        linesIntersection(s1, s2)
+    val intersection = linesIntersection(this, other)
     return when {
-        intersection.type == LinesIntersectionType.POINT && bothContain(
-            s1,
-            s2,
-            intersection.point.get()
-        ) ->
-            SegmentsIntersection(
-                intersection.point.get()
-            )
-        intersection.type == LinesIntersectionType.LINE && !disjoint(
-            s1,
-            s2
-        ) -> {
-            val sharedEndPoint =
-                sharedEndPoint(
-                    s1,
-                    s2
-                )
+        intersection.type == LinesIntersectionType.POINT && bothContain(this, other, intersection.point.get()) ->
+            SegmentsIntersection(intersection.point.get())
+        intersection.type == LinesIntersectionType.LINE && !disjoint(this, other) -> {
+            val sharedEndPoint = sharedEndPoint(this, other)
             when {
-                sharedEndPoint != null -> SegmentsIntersection(
-                    sharedEndPoint
-                )
+                sharedEndPoint != null -> SegmentsIntersection(sharedEndPoint)
                 /*
                  * Overlapping.
                  */

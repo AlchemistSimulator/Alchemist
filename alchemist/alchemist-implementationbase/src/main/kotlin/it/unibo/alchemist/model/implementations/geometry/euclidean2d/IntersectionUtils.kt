@@ -9,6 +9,15 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType.EMPTY
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType.PAIR
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType.POINT
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType.EMPTY
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType.LINE
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType.POINT
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.EMPTY
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.POINT
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.SEGMENT
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
@@ -116,6 +125,7 @@ private fun areParallel(m1: Double, m2: Double) =
 enum class SegmentsIntersectionType {
     EMPTY,
     POINT,
+
     /**
      * Note that two segments may be collinear, overlapping and share a single point (e.g. an
      * endpoint). In this case the intersection type is [POINT].
@@ -310,38 +320,18 @@ fun <P : Vector2D<P>> intersection(
         fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0 -> CircleSegmentIntersection.empty()
         fuzzyEquals(det, 0.0) -> {
             val t = -b / (2 * a)
-            val p =
-                intersectionPoint(
-                    segment,
-                    vector,
-                    t
-                )
+            val p = intersectionPoint(segment, vector, t)
             when {
                 p == null -> CircleSegmentIntersection.empty()
-                else -> CircleSegmentIntersection(
-                    p
-                )
+                else -> CircleSegmentIntersection(p)
             }
         }
         else -> {
             val t1 = (-b + sqrt(det)) / (2 * a)
             val t2 = (-b - sqrt(det)) / (2 * a)
-            val p1 =
-                intersectionPoint(
-                    segment,
-                    vector,
-                    t1
-                )
-            val p2 =
-                intersectionPoint(
-                    segment,
-                    vector,
-                    t2
-                )
-            CircleSegmentIntersection.create(
-                p1,
-                p2
-            )
+            val p1 = intersectionPoint(segment, vector, t1 )
+            val p2 = intersectionPoint(segment, vector, t2)
+            CircleSegmentIntersection.create(p1, p2)
         }
     }
 }

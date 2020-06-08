@@ -54,16 +54,16 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
             "explore.yml",
             0.1,
             30000,
-            55.47950927581728, 74.34535994791692
+            91.93063541066631, 131.82495484342178
         )
     }
 
     "goal oriented exploring allows to reach the destination" {
-        runSimulation("goal-oriented-explore.yml", 1.0, 850, 135, 15)
+        runSimulation("goal-oriented-explore.yml", 1.0, 900, 135, 15)
     }
 
     "pursuing allows to reach the destination quicker" {
-        runSimulation("pursue.yml", 1.0, 360, 135, 15)
+        runSimulation("pursue.yml", 1.0, 370, 135, 15)
     }
 
     "route following allows cuts to the route" {
@@ -76,7 +76,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
                 }
             },
             finished = { env, _, _ -> assertPedestriansReached(env, 1.0, 85, 80) },
-            numSteps = 185
+            numSteps = 190
         )
     }
 
@@ -84,14 +84,14 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
         /*
          * Behavior should be identical to goal oriented exploring.
          */
-        runSimulation("no-knowledge.yml", 1.0, 850, 135, 15)
+        runSimulation("no-knowledge.yml", 1.0, 900, 135, 15)
     }
 
     "pedestrian with complete knowledge should take best route to destination" {
         /*
          * Only taking the best route the destination can be reached in 320 steps.
          */
-        runSimulation("complete-knowledge.yml", 1.0, 320, 135, 15)
+        runSimulation("complete-knowledge.yml", 1.0, 330, 135, 15)
     }
 
     "destination reaching should obtain a route from the pedestrian's cognitive map and use it" {

@@ -94,7 +94,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
                  * Intersection between the line defined by the segment and the line
                  * perpendicular to the segment passing through the given point.
                  */
-                val intersection = intersectAsLines(this, Segment2D(point, point + toVector().normal()))
+                val intersection = intersectAsLines(Segment2D(point, point + toVector().normal()))
                     .let {
                         require(it.type == LinesIntersectionType.POINT && it.point.isPresent) { "internal error" }
                         it.point.get()

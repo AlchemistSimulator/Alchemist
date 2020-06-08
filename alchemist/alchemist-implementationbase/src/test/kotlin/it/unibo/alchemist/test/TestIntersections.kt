@@ -45,10 +45,7 @@ class TestIntersections {
         expectedType: LinesIntersectionType,
         expectedPoint: Optional<P> = Optional.empty()
     ) {
-        intersectAsLines(
-            segment1,
-            segment2
-        ).let { intersection ->
+        segment1.intersectAsLines(segment2).let { intersection ->
             intersection.type shouldBe expectedType
             intersection.point shouldBe expectedPoint
         }

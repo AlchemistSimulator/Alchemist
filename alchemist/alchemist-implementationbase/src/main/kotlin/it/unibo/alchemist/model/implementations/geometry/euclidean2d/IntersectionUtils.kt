@@ -65,23 +65,23 @@ data class LinesIntersection<P : Vector2D<P>>(
  * Degenerate segments (of zero
  * length) are not supported.
  */
-fun <P : Vector2D<P>> intersectAsLines(s1: Segment2D<P>, s2: Segment2D<P>): LinesIntersection<P> {
-    require(!s1.isDegenerate && !s2.isDegenerate) { "degenerate segments are not lines" }
-    val m1 = s1.slope
-    val q1 = s1.intercept
-    val m2 = s2.slope
-    val q2 = s2.intercept
+fun <P : Vector2D<P>> Segment2D<P>.intersectAsLines(other: Segment2D<P>): LinesIntersection<P> {
+    require(!isDegenerate && !other.isDegenerate) { "degenerate segments are not lines" }
+    val m1 = slope
+    val q1 = intercept
+    val m2 = other.slope
+    val q2 = other.intercept
     return when {
-        coincide(m1, m2, q1, q2, s1, s2) -> LinesIntersection.line()
+        coincide(m1, m2, q1, q2, this, other) -> LinesIntersection.line()
         areParallel(m1, m2) -> LinesIntersection.empty()
         else -> {
             val intersection = when {
-                s1.yAxisAligned -> s1.first.newFrom(s1.first.x, m2 * s1.first.x + q2)
-                s2.yAxisAligned -> s1.first.newFrom(s2.first.x, m1 * s2.first.x + q1)
+                yAxisAligned -> first.newFrom(first.x, m2 * first.x + q2)
+                other.yAxisAligned -> first.newFrom(other.first.x, m1 * other.first.x + q1)
                 else -> {
                     val x = (q2 - q1) / (m1 - m2)
                     val y = m1 * x + q1
-                    s1.first.newFrom(x, y)
+                    first.newFrom(x, y)
                 }
             }
             LinesIntersection(intersection)
@@ -160,7 +160,7 @@ fun <P : Vector2D<P>> Segment2D<P>.intersectSegment(other: Segment2D<P>): Segmen
             else -> SegmentsIntersection.empty()
         }
     }
-    val intersection = intersectAsLines(this, other)
+    val intersection = intersectAsLines(other)
     return when {
         intersection.type == LinesIntersectionType.POINT && bothContain(this, other, intersection.point.get()) ->
             SegmentsIntersection(intersection.point.get())

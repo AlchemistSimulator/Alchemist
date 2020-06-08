@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType.PAIR
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
@@ -55,23 +56,23 @@ data class LinesIntersection<P : Vector2D<P>>(
 /**
  * Intersects two lines represented by segments.
  */
-fun <P : Vector2D<P>> intersectLines(s1: Segment2D<P>, s2: Segment2D<P>): LinesIntersection<P> {
-    require(!s1.isDegenerate && !s2.isDegenerate) { "degenerate segments are not lines" }
-    val m1 = s1.slope
-    val q1 = s1.intercept
-    val m2 = s2.slope
-    val q2 = s2.intercept
+fun <P : Vector2D<P>> Segment2D<P>.intersectAsLines(other: Segment2D<P>): LinesIntersection<P> {
+    require(!isDegenerate && !other.isDegenerate) { "degenerate segments are not lines" }
+    val m1 = slope
+    val q1 = intercept
+    val m2 = other.slope
+    val q2 = other.intercept
     return when {
-        areCoincident(m1, m2, q1, q2, s1, s2) -> LinesIntersection.line()
+        areCoincident(m1, m2, q1, q2, this, other) -> LinesIntersection.line()
         areParallel(m1, m2) -> LinesIntersection.empty()
         else -> {
             val intersection = when {
-                s1.yAxisAligned -> s1.first.newFrom(s1.first.x, m2 * s1.first.x + q2)
-                s2.yAxisAligned -> s1.first.newFrom(s2.first.x, m1 * s2.first.x + q1)
+                yAxisAligned -> first.newFrom(first.x, m2 * first.x + q2)
+                other.yAxisAligned -> first.newFrom(other.first.x, m1 * other.first.x + q1)
                 else -> {
                     val x = (q2 - q1) / (m1 - m2)
                     val y = m1 * x + q1
-                    s1.first.newFrom(x, y)
+                    first.newFrom(x, y)
                 }
             }
             LinesIntersection(intersection)
@@ -95,6 +96,7 @@ private fun areParallel(m1: Double, m2: Double) =
 enum class SegmentsIntersectionType {
     EMPTY,
     POINT,
+
     /**
      * Note that two segments may be collinear, overlapping and share a single point (e.g. an
      * endpoint). In this case the intersection type is [POINT].
@@ -129,21 +131,21 @@ data class SegmentsIntersection<P : Vector2D<P>>(
 /**
  * Intersects two segments. This method is able to deal with degenerate and collinear segments.
  */
-fun <P : Vector2D<P>> intersect(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsIntersection<P> {
-    if (s1.isDegenerate || s2.isDegenerate) {
-        val degenerate = s1.takeIf { it.isDegenerate } ?: s2
-        val other = s2.takeIf { degenerate == s1 } ?: s1
+fun <P : Vector2D<P>> Segment2D<P>.intersectSegment(other: Segment2D<P>): SegmentsIntersection<P> {
+    if (isDegenerate || other.isDegenerate) {
+        val degenerate = takeIf { it.isDegenerate } ?: other
+        val otherSegment = other.takeIf { degenerate == this } ?: this
         return when {
-            other.contains(degenerate.first) -> SegmentsIntersection(degenerate.first)
+            otherSegment.contains(degenerate.first) -> SegmentsIntersection(degenerate.first)
             else -> SegmentsIntersection.empty()
         }
     }
-    val intersection = intersectLines(s1, s2)
+    val intersection = intersectAsLines(other)
     return when {
-        intersection.type == LinesIntersectionType.POINT && bothContain(s1, s2, intersection.point.get()) ->
+        intersection.type == LinesIntersectionType.POINT && bothContain(this, other, intersection.point.get()) ->
             SegmentsIntersection(intersection.point.get())
-        intersection.type == LinesIntersectionType.LINE && areOverlapping(s1, s2) -> {
-            val sharedEndPoint = sharedEndPoint(s1, s2)
+        intersection.type == LinesIntersectionType.LINE && areOverlapping(this, other) -> {
+            val sharedEndPoint = sharedEndPoint(this, other)
             when {
                 sharedEndPoint != null -> SegmentsIntersection(sharedEndPoint)
                 /*
@@ -239,20 +241,29 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
 /**
  * Finds the intersection between a segment and a circle.
  */
-fun <P : Vector2D<P>> intersect(segment: Segment2D<P>, center: P, radius: Double): CircleSegmentIntersection<P> {
-    val vector = segment.toVector()
+fun <P : Vector2D<P>> Segment2D<P>.intersectCircle(
+    center: Vector2D<P>,
+    radius: Double
+): CircleSegmentIntersection<P> {
+    fun <P : Vector2D<P>> intersectionPoint(segment: Segment2D<P>, vector: Vector2D<P>, t: Double): P? =
+        t.takeIf { it fuzzyIn 0.0..1.0 }?.let {
+            val x = segment.first.x + t * vector.x
+            val y = segment.first.y + t * vector.y
+            segment.first.newFrom(x, y)
+        }
+    val vector = toVector()
     /*
      * a, b and c are the terms of the 2nd grade equation of the intersection
      */
     val a = vector.x.pow(2) + vector.y.pow(2)
-    val b = 2 * (vector.x * (segment.first.x - center.x) + vector.y * (segment.first.y - center.y))
-    val c = (segment.first.x - center.x).pow(2) + (segment.first.y - center.y).pow(2) - radius.pow(2)
+    val b = 2 * (vector.x * (first.x - center.x) + vector.y * (first.y - center.y))
+    val c = (first.x - center.x).pow(2) + (first.y - center.y).pow(2) - radius.pow(2)
     val det = b.pow(2) - 4 * a * c
     return when {
         fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0 -> CircleSegmentIntersection.empty()
         fuzzyEquals(det, 0.0) -> {
             val t = -b / (2 * a)
-            when (val p = intersectionPoint(segment, vector, t)) {
+            when (val p = intersectionPoint(this, vector, t)) {
                 null -> CircleSegmentIntersection.empty()
                 else -> CircleSegmentIntersection(p)
             }
@@ -260,16 +271,9 @@ fun <P : Vector2D<P>> intersect(segment: Segment2D<P>, center: P, radius: Double
         else -> {
             val t1 = (-b + sqrt(det)) / (2 * a)
             val t2 = (-b - sqrt(det)) / (2 * a)
-            val p1 = intersectionPoint(segment, vector, t1)
-            val p2 = intersectionPoint(segment, vector, t2)
+            val p1 = intersectionPoint(this, vector, t1)
+            val p2 = intersectionPoint(this, vector, t2)
             CircleSegmentIntersection.create(p1, p2)
         }
     }
 }
-
-private fun <P : Vector2D<P>> intersectionPoint(segment: Segment2D<P>, vector: Vector2D<P>, t: Double): P? =
-    t.takeIf { it fuzzyIn 0.0..1.0 }?.let {
-        val x = segment.first.x + t * vector.x
-        val y = segment.first.y + t * vector.y
-        segment.first.newFrom(x, y)
-    }

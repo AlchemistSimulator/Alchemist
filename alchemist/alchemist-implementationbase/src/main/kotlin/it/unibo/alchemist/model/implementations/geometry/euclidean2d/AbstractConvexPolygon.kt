@@ -18,6 +18,7 @@ import java.awt.Shape
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import kotlin.math.min
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.POINT as POINT
 
 /**
  * An abstract [ConvexPolygon] providing a convexity test.
@@ -63,7 +64,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {
             return true
         }
-        val intersections = edges().map { intersect(it, segment) }
+        val intersections = edges().map { it.intersectSegment(segment) }
         return when {
             intersections.any { it.type == SegmentsIntersectionType.SEGMENT } -> false
             else -> intersections.mapNotNull { it.point.orElse(null) }.distinct().size > 1
@@ -179,18 +180,16 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             i = circularNext(i)
         }
         val next = getEdge(i)
-        return when {
-            intersect(prev, curr).type != SegmentsIntersectionType.POINT ||
-                intersect(curr, next).type != SegmentsIntersectionType.POINT -> true
+        return prev.intersectSegment(curr).type != POINT ||
+            curr.intersectSegment(next).type != POINT ||
             /*
              * We check every edge between the first prev not
              * degenerate and the first next not degenerate.
              */
-            else -> generateSequence(circularNext(i)) { circularNext(it) }
+            generateSequence(circularNext(i)) { circularNext(it) }
                 .takeWhile { it != prevIndex }
                 .map { getEdge(it) }
                 .filter { !it.isDegenerate }
-                .any { intersect(curr, it).type != SegmentsIntersectionType.EMPTY }
-        }
+                .any { curr.intersectSegment(it).type != SegmentsIntersectionType.EMPTY }
     }
 }

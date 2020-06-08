@@ -164,7 +164,7 @@ data class SegmentsIntersection<P : Vector2D<P>>(
  * Finds the intersection point of two given segments. This method is able to deal with degenerate
  * and collinear segments.
  */
-fun <P : Vector2D<P>> intersection(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsIntersection<P> {
+fun <P : Vector2D<P>> intersectCircle(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsIntersection<P> {
     if (s1.isDegenerate || s2.isDegenerate) {
         val degenerate = s1.takeIf { it.isDegenerate } ?: s2
         val other = s2.takeIf { degenerate == s1 } ?: s1
@@ -297,7 +297,7 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
 /**
  * Finds the intersection between a segment and a circle.
  */
-fun <P : Vector2D<P>> Segment2D<P>.intersection(
+fun <P : Vector2D<P>> Segment2D<P>.intersectCircle(
     center: Vector2D<P>,
     radius: Double
 ): CircleSegmentIntersection<P> {

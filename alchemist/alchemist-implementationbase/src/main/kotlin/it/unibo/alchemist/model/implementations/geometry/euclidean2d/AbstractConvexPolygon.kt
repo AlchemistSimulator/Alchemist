@@ -64,7 +64,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             return true
         }
         val intersections = edges().map {
-            intersection(
+            intersectCircle(
                 it,
                 segment
             )
@@ -185,11 +185,11 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         }
         val next = getEdge(i)
         return when {
-            intersection(
+            intersectCircle(
                 prev,
                 curr
             ).type != SegmentsIntersectionType.POINT ||
-                intersection(
+                intersectCircle(
                     curr,
                     next
                 ).type != SegmentsIntersectionType.POINT -> true
@@ -201,7 +201,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
                 .takeWhile { it != prevIndex }
                 .map { getEdge(it) }
                 .filter { !it.isDegenerate }
-                .any { intersection(
+                .any { intersectCircle(
                     curr,
                     it
                 ).type != SegmentsIntersectionType.EMPTY }

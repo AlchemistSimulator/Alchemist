@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersection
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectCircle
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -326,11 +326,11 @@ class ExtendableConvexPolygonInEnvironment(
         val polygonEdge2 = getEdge(circularPrevious(indexOfIntrudingV))
         val obstacleEdge: Segment2D<Euclidean2DPosition> = firstIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = intersection(
+        val p1 = intersectCircle(
             polygonEdge1,
             obstacleEdge
         ).point.get().toEuclidean
-        val p2 = intersection(
+        val p2 = intersectCircle(
             polygonEdge2,
             obstacleEdge
         ).point.get().toEuclidean

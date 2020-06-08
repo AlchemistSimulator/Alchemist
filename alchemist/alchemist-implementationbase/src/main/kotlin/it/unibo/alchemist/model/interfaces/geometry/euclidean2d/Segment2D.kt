@@ -110,9 +110,6 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
             }
         }
 
-    private fun Vector2D<*>.toEuclidean2D(): Euclidean2DPosition =
-        if (this is Euclidean2DPosition) this else Euclidean2DPosition(first.x, first.y)
-
     /**
      * Computes the distance between the segment and a given [point].
      */

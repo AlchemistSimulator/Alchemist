@@ -2,7 +2,7 @@ package it.unibo.alchemist.test
 
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersection
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectCircle
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectSegment
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.linesIntersection
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
@@ -120,7 +120,7 @@ class TestGeometryUtils {
         expectedType: SegmentsIntersectionType,
         expectedPoint: Optional<P> = Optional.empty()
     ) {
-        intersectCircle(
+        intersectSegment(
             segment1,
             segment2
         ).let { intersection ->

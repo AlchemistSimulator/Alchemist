@@ -1,6 +1,7 @@
 package it.unibo.alchemist.test
 
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersection
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectCircle
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.linesIntersection
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType
@@ -10,8 +11,11 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
+import org.danilopianini.lang.MathUtils
 import org.junit.jupiter.api.Test
 import java.util.Optional
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 internal fun Euclidean2DShapeFactory.oneOfEachWithSize(size: Double) =
     mapOf(
@@ -369,5 +373,48 @@ class TestGeometryUtils {
         segment.closestPointTo(coords(4.0, 2.0)) shouldBe segment.second
         segment.closestPointTo(coords(4.0, 1.0)) shouldBe segment.second
         segment.closestPointTo(coords(3.0, 2.0)) shouldBe coords(2.5, 1.5)
+    }
+}
+
+/**
+ * Finds the intersection between a segment and a circle.
+ */
+fun <P : Vector2D<P>> Segment2D<P>.intersectCircle(
+    center: Vector2D<P>,
+    radius: Double
+): CircleSegmentIntersection<P> {
+    fun <P : Vector2D<P>> intersectionPoint(segment: Segment2D<P>, vector: Vector2D<P>, t: Double): P? =
+        if (t in 0.0..1.0 || MathUtils.fuzzyEquals(t, 0.0) || MathUtils.fuzzyEquals(t, 1.0)) {
+            val x = segment.first.x + t * vector.x
+            val y = segment.first.y + t * vector.y
+            segment.first.newFrom(x, y)
+        } else {
+            null
+        }
+    val vector = toVector()
+    /*
+     * a, b and c are the terms of the 2nd grade equation of the intersection
+     */
+    val a = vector.x.pow(2) + vector.y.pow(2)
+    val b = 2 * (vector.x * (first.x - center.x) + vector.y * (first.y - center.y))
+    val c = (first.x - center.x).pow(2) + (first.y - center.y).pow(2) - radius.pow(2)
+    val det = b.pow(2) - 4 * a * c
+    return when {
+        MathUtils.fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0 -> CircleSegmentIntersection.empty()
+        MathUtils.fuzzyEquals(det, 0.0) -> {
+            val t = -b / (2 * a)
+            val p = intersectionPoint(this, vector, t)
+            when {
+                p == null -> CircleSegmentIntersection.empty()
+                else -> CircleSegmentIntersection(p)
+            }
+        }
+        else -> {
+            val t1 = (-b + sqrt(det)) / (2 * a)
+            val t2 = (-b - sqrt(det)) / (2 * a)
+            val p1 = intersectionPoint(this, vector, t1)
+            val p2 = intersectionPoint(this, vector, t2)
+            CircleSegmentIntersection.create(p1, p2)
+        }
     }
 }

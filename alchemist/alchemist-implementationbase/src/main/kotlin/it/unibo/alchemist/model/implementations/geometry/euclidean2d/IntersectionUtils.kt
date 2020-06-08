@@ -16,8 +16,6 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.util.Optional
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 /**
  * In euclidean geometry, the intersection of two lines can be an [EMPTY] set, a [POINT],
@@ -293,47 +291,3 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
             }
     }
 }
-
-/**
- * Finds the intersection between a segment and a circle.
- */
-fun <P : Vector2D<P>> Segment2D<P>.intersectCircle(
-    center: Vector2D<P>,
-    radius: Double
-): CircleSegmentIntersection<P> {
-    val vector = toVector()
-    /*
-     * a, b and c are the terms of the 2nd grade equation of the intersection
-     */
-    val a = vector.x.pow(2) + vector.y.pow(2)
-    val b = 2 * (vector.x * (first.x - center.x) + vector.y * (first.y - center.y))
-    val c = (first.x - center.x).pow(2) + (first.y - center.y).pow(2) - radius.pow(2)
-    val det = b.pow(2) - 4 * a * c
-    return when {
-        fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0 -> CircleSegmentIntersection.empty()
-        fuzzyEquals(det, 0.0) -> {
-            val t = -b / (2 * a)
-            val p = intersectionPoint(this, vector, t)
-            when {
-                p == null -> CircleSegmentIntersection.empty()
-                else -> CircleSegmentIntersection(p)
-            }
-        }
-        else -> {
-            val t1 = (-b + sqrt(det)) / (2 * a)
-            val t2 = (-b - sqrt(det)) / (2 * a)
-            val p1 = intersectionPoint(this, vector, t1)
-            val p2 = intersectionPoint(this, vector, t2)
-            CircleSegmentIntersection.create(p1, p2)
-        }
-    }
-}
-
-private fun <P : Vector2D<P>> intersectionPoint(segment: Segment2D<P>, vector: Vector2D<P>, t: Double): P? =
-    if (t in 0.0..1.0 || fuzzyEquals(t, 0.0) || fuzzyEquals(t, 1.0)) {
-        val x = segment.first.x + t * vector.x
-        val y = segment.first.y + t * vector.y
-        segment.first.newFrom(x, y)
-    } else {
-        null
-    }

@@ -18,6 +18,7 @@ import java.awt.Shape
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import kotlin.math.min
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.POINT as POINT
 
 /**
  * An abstract [ConvexPolygon] providing a convexity test.
@@ -179,19 +180,16 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             i = circularNext(i)
         }
         val next = getEdge(i)
-        return if (prev.intersectSegment(curr).type != SegmentsIntersectionType.POINT ||
-                curr.intersectSegment(next).type != SegmentsIntersectionType.POINT) {
-                true
+        return prev.intersectSegment(curr).type != POINT ||
+            curr.intersectSegment(next).type != POINT ||
             /*
              * We check every edge between the first prev not
              * degenerate and the first next not degenerate.
              */
-            } else {
-                generateSequence(circularNext(i)) { circularNext(it) }
-                    .takeWhile { it != prevIndex }
-                    .map { getEdge(it) }
-                    .filter { !it.isDegenerate }
-                    .any { curr.intersectSegment(it).type != SegmentsIntersectionType.EMPTY }
-            }
+            generateSequence(circularNext(i)) { circularNext(it) }
+                .takeWhile { it != prevIndex }
+                .map { getEdge(it) }
+                .filter { !it.isDegenerate }
+                .any { curr.intersectSegment(it).type != SegmentsIntersectionType.EMPTY }
     }
 }

@@ -104,7 +104,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
             finished = { e, _, _ -> e.nodes.forEach {
                 e.getPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
             } },
-            steps = 22000
+            steps = 26000
         )
     }
 }) where P : Position2D<P>, P : Vector2D<P>

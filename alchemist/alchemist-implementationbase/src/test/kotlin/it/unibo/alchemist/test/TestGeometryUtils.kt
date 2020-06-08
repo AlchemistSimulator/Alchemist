@@ -1,8 +1,8 @@
 package it.unibo.alchemist.test
 
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.linesIntersection
+import it.unibo.alchemist.model.implementations.geometry.intersect
+import it.unibo.alchemist.model.implementations.geometry.intersectLines
 import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.CircleSegmentIntersectionType
@@ -10,8 +10,12 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import org.danilopianini.lang.MathUtils
 import org.junit.jupiter.api.Test
 import java.util.Optional
+
+internal infix fun Double.shouldBeFuzzy(other: Double): Unit =
+    MathUtils.fuzzyEquals(this, other) shouldBe true
 
 internal fun Euclidean2DShapeFactory.oneOfEachWithSize(size: Double) =
     mapOf(
@@ -41,7 +45,7 @@ class TestGeometryUtils {
         expectedType: LinesIntersectionType,
         expectedPoint: Optional<P> = Optional.empty()
     ) {
-        linesIntersection(segment1, segment2).let { intersection ->
+        intersectLines(segment1, segment2).let { intersection ->
             intersection.type shouldBe expectedType
             intersection.point shouldBe expectedPoint
         }
@@ -113,7 +117,7 @@ class TestGeometryUtils {
         expectedType: SegmentsIntersectionType,
         expectedPoint: Optional<P> = Optional.empty()
     ) {
-        intersection(segment1, segment2).let { intersection ->
+        intersect(segment1, segment2).let { intersection ->
             intersection.type shouldBe expectedType
             intersection.point shouldBe expectedPoint
         }
@@ -283,7 +287,7 @@ class TestGeometryUtils {
         expectedPoint1: Optional<P> = Optional.empty(),
         expectedPoint2: Optional<P> = Optional.empty()
     ) {
-        intersection(segment, center, radius).let { intersection ->
+        intersect(segment, center, radius).let { intersection ->
             intersection.type shouldBe expectedType
             /*
              * Points can be provided in any order
@@ -351,6 +355,12 @@ class TestGeometryUtils {
             segment(10.0, 3.0, 12.0, 3.0),
             coords(3.0, 3.0),
             2.0
+        )
+        intersectionShouldBe(
+            segment(0.0, 1.0, 1.0, 1.0),
+            coords(1.0, 1.0),
+            1.0,
+            coords(0.0, 1.0)
         )
     }
 

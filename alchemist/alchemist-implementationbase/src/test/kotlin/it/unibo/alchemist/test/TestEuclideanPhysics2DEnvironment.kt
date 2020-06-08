@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.doubles.shouldBeGreaterThanOrEqual
+import io.kotest.matchers.doubles.shouldBeGreaterThan
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.CircleNode
@@ -39,8 +39,8 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
             env.addNode(node1, Euclidean2DPosition(0.0, 0.0))
             env.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
             env.moveNodeToPosition(node2, env.getPosition(node1))
-            env.getPosition(node1)!!.distanceTo(env.getPosition(node2)) shouldBeGreaterThanOrEqual
-                (env.getShape(node1).diameter + env.getShape(node2).diameter) / 2
+            env.getPosition(node1).distanceTo(env.getPosition(node2)) shouldBeFuzzy
+                node1.shape.radius + node2.shape.radius
         }
 
         "Get nodes within a small shape" {
@@ -56,6 +56,24 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
             env.addNode(node3, Euclidean2DPosition(30 * DEFAULT_SHAPE_SIZE, 0.0))
             val shape = env.shapeFactory.rectangle(3.1 * DEFAULT_SHAPE_SIZE, DEFAULT_SHAPE_SIZE)
             env.getNodesWithin(shape) shouldContainExactlyInAnyOrder listOf(node1, node2)
+        }
+
+        "Node is moved to the farthest position reachable when its path is occupied by others" {
+            env.addNode(node1, coords(2.0, 2.0))
+            env.addNode(node2, coords(6.0, 2.0))
+            val target = coords(8.0, 2.0)
+            env.moveNodeToPosition(node1, target)
+            env.getPosition(node1).distanceTo(target) shouldBeFuzzy
+                env.getPosition(node2).distanceTo(target) + node1.shape.radius + node2.shape.radius
+        }
+
+        "Node is moved to the farthest position reachable when its path is occupied by others 2" {
+            env.addNode(node1, coords(2.0, 2.0))
+            env.addNode(node2, coords(8.0, 1.0))
+            env.addNode(node3, coords(8.0, 2.5))
+            val target = coords(8.0, 2.0)
+            env.moveNodeToPosition(node1, target)
+            env.getPosition(node1).distanceTo(target) shouldBeGreaterThan node1.shape.radius
         }
     }
 }

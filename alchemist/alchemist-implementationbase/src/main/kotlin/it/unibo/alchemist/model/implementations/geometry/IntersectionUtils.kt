@@ -9,7 +9,7 @@ import kotlin.math.sqrt
 
 /**
  * In euclidean geometry, the intersection of two lines can be an [EMPTY] set, a [POINT],
- * or a [LINE] (in other words, infinite points).
+ * or a [LINE] (= infinite points).
  */
 enum class LinesIntersectionType {
     EMPTY,
@@ -18,12 +18,9 @@ enum class LinesIntersectionType {
 }
 
 /**
- * Describes the result of the intersection between two lines in an euclidean space.
- *
- * @param type
- *              the type of intersection.
- * @param point
- *              the intersection point (if present).
+ * Describes the result of the intersection between two lines in euclidean space.
+ * @param type the type of intersection
+ * @param point the intersection point (if present)
  */
 data class LinesIntersection<P : Vector2D<P>>(
     val type: LinesIntersectionType,
@@ -45,17 +42,16 @@ data class LinesIntersection<P : Vector2D<P>>(
 }
 
 /**
- * Finds the intersection of two lines represented by segments. Degenerate segments (of zero
- * length) are not supported.
+ * Intersects two lines represented by segments.
  */
-fun <P : Vector2D<P>> linesIntersection(s1: Segment2D<P>, s2: Segment2D<P>): LinesIntersection<P> {
+fun <P : Vector2D<P>> intersectLines(s1: Segment2D<P>, s2: Segment2D<P>): LinesIntersection<P> {
     require(!s1.isDegenerate && !s2.isDegenerate) { "degenerate segments are not lines" }
     val m1 = s1.slope
     val q1 = s1.intercept
     val m2 = s2.slope
     val q2 = s2.intercept
     return when {
-        coincide(m1, m2, q1, q2, s1, s2) -> LinesIntersection.line()
+        areCoincident(m1, m2, q1, q2, s1, s2) -> LinesIntersection.line()
         areParallel(m1, m2) -> LinesIntersection.empty()
         else -> {
             val intersection = when {
@@ -72,19 +68,18 @@ fun <P : Vector2D<P>> linesIntersection(s1: Segment2D<P>, s2: Segment2D<P>): Lin
     }
 }
 
-private fun coincide(m1: Double, m2: Double, q1: Double, q2: Double, s1: Segment2D<*>, s2: Segment2D<*>) =
-    when {
-        !areParallel(m1, m2) -> false
-        s1.yAxisAligned && s2.yAxisAligned -> fuzzyEquals(s1.first.x, s2.first.x)
-        else -> fuzzyEquals(q1, q2)
-    }
+private fun areCoincident(m1: Double, m2: Double, q1: Double, q2: Double, s1: Segment2D<*>, s2: Segment2D<*>) = when {
+    !areParallel(m1, m2) -> false
+    s1.yAxisAligned && s2.yAxisAligned -> fuzzyEquals(s1.first.x, s2.first.x)
+    else -> fuzzyEquals(q1, q2)
+}
 
 private fun areParallel(m1: Double, m2: Double) =
     (m1.isInfinite() && m2.isInfinite()) || (m1.isFinite() && m2.isFinite() && fuzzyEquals(m1, m2))
 
 /**
  * In euclidean geometry, the intersection of two segments can be an [EMPTY] set, a [POINT], or a
- * [SEGMENT] (in other words, infinite points).
+ * [SEGMENT] (= infinite points).
  */
 enum class SegmentsIntersectionType {
     EMPTY,
@@ -97,12 +92,9 @@ enum class SegmentsIntersectionType {
 }
 
 /**
- * Describes the result of the intersection between two segments in an euclidean space.
- *
- * @param type
- *              the type of intersection.
- * @param point
- *              the intersection point (if present).
+ * Describes the result of the intersection between two segments in euclidean space.
+ * @param type the type of intersection
+ * @param point the intersection point (if present)
  */
 data class SegmentsIntersection<P : Vector2D<P>>(
     val type: SegmentsIntersectionType,
@@ -124,10 +116,9 @@ data class SegmentsIntersection<P : Vector2D<P>>(
 }
 
 /**
- * Finds the intersection point of two given segments. This method is able to deal with degenerate
- * and collinear segments.
+ * Intersects two segments. This method is able to deal with degenerate and collinear segments.
  */
-fun <P : Vector2D<P>> intersection(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsIntersection<P> {
+fun <P : Vector2D<P>> intersect(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsIntersection<P> {
     if (s1.isDegenerate || s2.isDegenerate) {
         val degenerate = s1.takeIf { it.isDegenerate } ?: s2
         val other = s2.takeIf { degenerate == s1 } ?: s1
@@ -136,11 +127,11 @@ fun <P : Vector2D<P>> intersection(s1: Segment2D<P>, s2: Segment2D<P>): Segments
             else -> SegmentsIntersection.empty()
         }
     }
-    val intersection = linesIntersection(s1, s2)
+    val intersection = intersectLines(s1, s2)
     return when {
         intersection.type == LinesIntersectionType.POINT && bothContain(s1, s2, intersection.point.get()) ->
             SegmentsIntersection(intersection.point.get())
-        intersection.type == LinesIntersectionType.LINE && !disjoint(s1, s2) -> {
+        intersection.type == LinesIntersectionType.LINE && areOverlapping(s1, s2) -> {
             val sharedEndPoint = sharedEndPoint(s1, s2)
             when {
                 sharedEndPoint != null -> SegmentsIntersection(sharedEndPoint)
@@ -158,14 +149,14 @@ private fun <P : Vector2D<P>> bothContain(s1: Segment2D<P>, s2: Segment2D<P>, po
     s1.contains(point) && s2.contains(point)
 
 /*
- * Returns false if the segments share one or more points.
+ * Returns true if the segments share one or more points.
  */
-private fun <P : Vector2D<P>> disjoint(s1: Segment2D<P>, s2: Segment2D<P>) =
-    !(s1.contains(s2.first) || s1.contains(s2.second) || s2.contains(s1.first) || s2.contains(s1.second))
+private fun <P : Vector2D<P>> areOverlapping(s1: Segment2D<P>, s2: Segment2D<P>) =
+    s1.contains(s2.first) || s1.contains(s2.second) || s2.contains(s1.first) || s2.contains(s1.second)
 
 /*
  * Returns the end point shared by the two segments, or null if they share no endpoint OR
- * if they share more than one point (i.e. they overlap).
+ * if they share more than one point.
  */
 private fun <P : Vector2D<P>> sharedEndPoint(s1: Segment2D<P>, s2: Segment2D<P>): P? {
     val fuzzyEquals: (P, P) -> Boolean = { first, second ->
@@ -191,14 +182,10 @@ enum class CircleSegmentIntersectionType {
 }
 
 /**
- * Describes the result of the intersection between a circle and a segment in an euclidean space.
- *
- * @param type
- *              the type of intersection.
- * @param point1
- *              the first point of intersection (if present).
- * @param point2
- *              the second point of intersection (if present).
+ * Describes the result of the intersection between a circle and a segment in euclidean space.
+ * @param type the type of intersection
+ * @param point1 the first point of intersection (if present)
+ * @param point2 the second point of intersection (if present).
  */
 data class CircleSegmentIntersection<P : Vector2D<P>>(
     val type: CircleSegmentIntersectionType,
@@ -207,6 +194,15 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
 ) {
 
     constructor(point: P) : this(CircleSegmentIntersectionType.POINT, Optional.of(point))
+
+    /**
+     * A list containing the intersection points (can be empty).
+     */
+    val points: List<P> = when (type) {
+        CircleSegmentIntersectionType.EMPTY -> emptyList()
+        CircleSegmentIntersectionType.POINT -> listOf(point1.get())
+        else -> listOf(point1.get(), point2.get())
+    }
 
     companion object {
         /**
@@ -235,11 +231,7 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
 /**
  * Finds the intersection between a segment and a circle.
  */
-fun <P : Vector2D<P>> intersection(
-    segment: Segment2D<P>,
-    center: Vector2D<P>,
-    radius: Double
-): CircleSegmentIntersection<P> {
+fun <P : Vector2D<P>> intersect(segment: Segment2D<P>, center: P, radius: Double): CircleSegmentIntersection<P> {
     val vector = segment.toVector()
     /*
      * a, b and c are the terms of the 2nd grade equation of the intersection
@@ -269,7 +261,7 @@ fun <P : Vector2D<P>> intersection(
 }
 
 private fun <P : Vector2D<P>> intersectionPoint(segment: Segment2D<P>, vector: Vector2D<P>, t: Double): Optional<P> =
-    Optional.empty<P>().takeUnless { t in 0.0..1.0 || fuzzyEquals(t, 0.0) || fuzzyEquals(t, 1.0) } ?: run {
+    Optional.empty<P>().takeUnless { t fuzzyIn 0.0..1.0 } ?: run {
         val x = segment.first.x + t * vector.x
         val y = segment.first.y + t * vector.y
         Optional.of(segment.first.newFrom(x, y))

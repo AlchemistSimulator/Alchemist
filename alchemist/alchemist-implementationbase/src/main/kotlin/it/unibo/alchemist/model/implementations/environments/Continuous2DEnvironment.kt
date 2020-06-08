@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.environments
 
+import it.unibo.alchemist.model.implementations.geometry.intersect
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
@@ -7,6 +8,7 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
 
 /**
  * Implementation of [Physics2DEnvironment].
@@ -71,10 +73,11 @@ open class Continuous2DEnvironment<T> :
             }
 
     /**
-     * Moves the node only if it doesn't collide with others.
+     * Moves the node to the [farthestPositionReachable] towards the desired [newpos]. Note that circular hitboxes
+     * are used (see [farthestPositionReachable]).
      */
-    override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
-        if (canNodeFitPosition(node, newpos)) super.moveNodeToPosition(node, newpos) else Unit
+    override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition): Unit =
+        super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
@@ -99,4 +102,32 @@ open class Continuous2DEnvironment<T> :
         getNodesWithin(getShape(node).transformed { origin(position) })
             .minusElement(node)
             .isEmpty()
+
+    /**
+     * @returns all nodes that the given [node] would collide with while moving to the [desiredPosition].
+     */
+    private fun nodesOnPath(node: Node<T>, desiredPosition: Euclidean2DPosition): List<Node<T>> = with(node.shape) {
+        val currentPosition = getPosition(node)
+        shapeFactory.rectangle(currentPosition.distanceTo(desiredPosition) + diameter, diameter)
+            .transformed { Segment2D(currentPosition, desiredPosition).midPoint.let { origin(it.x, it.y) } }
+            .let { movementArea -> getNodesWithin(movementArea).minusElement(node) }
+    }
+
+    /**
+     * @returns the farthest position reachable by the given [node] towards the [desiredPosition], avoiding
+     * node overlapping. Since nodes may have various shapes, this method uses the circle circumscribing their
+     * shape as hitbox. For a better understanding of how to compute collision points with circular hitboxes
+     * see [this discussion](https://bit.ly/3f00NvJ).
+     */
+    private fun farthestPositionReachable(node: Node<T>, desiredPosition: Euclidean2DPosition): Euclidean2DPosition {
+        val currentPosition = getPosition(node)
+        val desiredMovement = Segment2D(currentPosition, desiredPosition)
+        return nodesOnPath(node, desiredPosition)
+            .map { getShape(it) }
+            .flatMap { other ->
+                intersect(desiredMovement, other.centroid, other.radius + node.shape.radius).points
+            }
+            .minBy { currentPosition.distanceTo(it) }
+            ?: desiredPosition
+    }
 }

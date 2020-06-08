@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
 import it.unibo.alchemist.model.implementations.geometry.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
-import it.unibo.alchemist.model.implementations.geometry.linesIntersection
+import it.unibo.alchemist.model.implementations.geometry.intersectLines
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
@@ -85,27 +85,25 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * Finds the point of the segment which is closest to the provided position.
      */
-    fun closestPointTo(point: P): P =
-        when {
-            isDegenerate -> first
-            contains(point) -> point
-            else -> {
-                /*
-                 * Intersection between the line defined by the segment and the line
-                 * perpendicular to the segment passing through the given point.
-                 */
-                val intersection = linesIntersection(this, Segment2D(point, point + toVector().normal()))
-                    .let {
-                        require(it.type == LinesIntersectionType.POINT && it.point.isPresent) { "internal error" }
-                        it.point.get()
-                    }
-                when {
-                    contains(intersection) -> intersection
-                    first.distanceTo(intersection) < second.distanceTo(intersection) -> first
-                    else -> second
-                }
+    fun closestPointTo(point: P): P = when {
+        isDegenerate -> first
+        contains(point) -> point
+        else -> {
+            /*
+             * Intersection between the line defined by the segment and the line
+             * perpendicular to the segment passing through the given point.
+             */
+            val intersection = intersectLines(this, Segment2D(point, point + toVector().normal())).let {
+                require(it.type == LinesIntersectionType.POINT && it.point.isPresent) { "internal error" }
+                it.point.get()
+            }
+            when {
+                contains(intersection) -> intersection
+                first.distanceTo(intersection) < second.distanceTo(intersection) -> first
+                else -> second
             }
         }
+    }
 
     private fun Vector2D<*>.toEuclidean2D(): Euclidean2DPosition =
         if (this is Euclidean2DPosition) this else Euclidean2DPosition(first.x, first.y)

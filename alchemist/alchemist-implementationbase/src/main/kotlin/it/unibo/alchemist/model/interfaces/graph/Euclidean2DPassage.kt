@@ -92,10 +92,7 @@ data class Euclidean2DPassage(
         crossingPointOnTail(position).let { Pair(it, crossingPointOnHead(it)) }
 
     private fun <V : Vector2D<V>> linesIntersectionOrFail(segment1: Segment2D<V>, segment2: Segment2D<V>): V =
-        linesIntersection(
-            segment1,
-            segment2
-        ).point.orElseThrow {
+        linesIntersection(segment1, segment2).point.orElseThrow {
             IllegalStateException("internal error: impossible movement")
         }
 }

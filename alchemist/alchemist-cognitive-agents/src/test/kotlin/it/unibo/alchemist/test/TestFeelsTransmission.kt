@@ -5,8 +5,9 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
-class TestFeelsTransmission<T, P : Position<P>> : StringSpec({
+class TestFeelsTransmission<T, P> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
         val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>("feels-transmission-without-layer.yml")
@@ -26,10 +27,10 @@ class TestFeelsTransmission<T, P : Position<P>> : StringSpec({
 
     "social contagion makes nodes evacuate despite they haven't directly seen the danger" {
         loadYamlSimulation<T, P>("social-contagion.yml").startSimulation(
-            numSteps = 15000,
+            steps = 15000,
             finished = { e, _, _ -> e.nodes.forEach {
                 e.getPosition(it).distanceTo(e.makePosition(-50.0, 0.0)) shouldBeLessThan 12.0 }
             }
         )
     }
-})
+}) where P : Position<P>, P : Vector<P>

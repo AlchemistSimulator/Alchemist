@@ -1,15 +1,15 @@
 package it.unibo.alchemist.test
 
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.implementations.geometry.intersect
-import it.unibo.alchemist.model.implementations.geometry.intersectLines
-import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.LinesIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.CircleSegmentIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersect
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectLines
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.danilopianini.lang.MathUtils
 import org.junit.jupiter.api.Test
 import java.util.Optional
@@ -284,8 +284,8 @@ class TestGeometryUtils {
         center: P,
         radius: Double,
         expectedType: CircleSegmentIntersectionType,
-        expectedPoint1: Optional<P> = Optional.empty(),
-        expectedPoint2: Optional<P> = Optional.empty()
+        expectedPoint1: P? = null,
+        expectedPoint2: P? = null
     ) {
         intersect(segment, center, radius).let { intersection ->
             intersection.type shouldBe expectedType
@@ -308,8 +308,8 @@ class TestGeometryUtils {
         center,
         radius,
         CircleSegmentIntersectionType.PAIR,
-        Optional.of(expectedPoint1),
-        Optional.of(expectedPoint2)
+        expectedPoint1,
+        expectedPoint2
     )
 
     private fun <P : Vector2D<P>> intersectionShouldBe(
@@ -317,7 +317,7 @@ class TestGeometryUtils {
         center: P,
         radius: Double,
         expectedPoint: P
-    ) = intersectionShouldBe(segment, center, radius, CircleSegmentIntersectionType.POINT, Optional.of(expectedPoint))
+    ) = intersectionShouldBe(segment, center, radius, CircleSegmentIntersectionType.POINT, expectedPoint)
 
     private fun <P : Vector2D<P>> intersectionShouldBeEmpty(
         segment: Segment2D<P>,

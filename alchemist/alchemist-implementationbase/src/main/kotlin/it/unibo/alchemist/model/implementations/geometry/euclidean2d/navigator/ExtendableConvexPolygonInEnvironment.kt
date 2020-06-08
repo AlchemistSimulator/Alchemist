@@ -1,15 +1,14 @@
-package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.vertices
-import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
-import it.unibo.alchemist.model.implementations.geometry.intersect
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersect
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigator.ExtendableConvexPolygon
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.Point2D
@@ -174,7 +173,7 @@ class ExtendableConvexPolygonInEnvironment(
          * super method is used in order to avoid voiding useful cache
          */
         if (super.replaceEdge(index, Segment2D(edge.first + firstMovement, edge.second + secondMovement))) {
-            if (isInBoundaries(getEdge(index), origin, width, height)) {
+            if (getEdge(index).isInRectangle(origin, width, height)) {
                 return true
             }
             super.replaceEdge(index, edge)
@@ -249,7 +248,7 @@ class ExtendableConvexPolygonInEnvironment(
                  */
                 intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) }
             }
-            if (hasAdvanced && isInBoundaries(getEdge(i), origin, width, height) && isAdvancedCase()) {
+            if (hasAdvanced && getEdge(i).isInRectangle(origin, width, height) && isAdvancedCase()) {
                 intersectedObs.forEach { adjustGrowth(it, i, step) }
                 extended = true
             } else {

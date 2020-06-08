@@ -7,25 +7,18 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.kotlin
+@file:JvmName("TimeExtension")
+package it.unibo.alchemist.model
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
- * Plus operator for [Time].
+ * Plus operator for [Time] and [Double].
  */
-operator fun Time.plus(other: Double): Time = plus(
-    DoubleTime(
-        other
-    )
-)
+operator fun Time.plus(other: Double): Time = plus(DoubleTime(other))
 
 /**
- * Minus operator for [Time].
+ * Minus operator for [Time] and [Double].
  */
-operator fun Time.minus(other: Double): Time = minus(
-    DoubleTime(
-        other
-    )
-)
+operator fun Time.minus(other: Double): Time = minus(DoubleTime(other))

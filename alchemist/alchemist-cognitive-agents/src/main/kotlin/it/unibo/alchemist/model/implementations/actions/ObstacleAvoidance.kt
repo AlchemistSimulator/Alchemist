@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.SteeringBehavior
-import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Obstacle2D
@@ -23,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacl
  *          the distance at which an obstacle is perceived by the pedestrian.
  */
 class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
-    private val env: Environment2DWithObstacles<W, T, Euclidean2DPosition>,
+    private val env: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
     pedestrian: Pedestrian<T>,
     private val proximityRange: Double
@@ -44,7 +43,7 @@ class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
             /*
              * Otherwise we just don't apply any repulsion force.
              */
-            ?: env.origin()
+            ?: env.origin
     }
 
     /*

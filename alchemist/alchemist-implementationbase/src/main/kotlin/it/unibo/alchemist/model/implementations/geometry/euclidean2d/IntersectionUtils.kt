@@ -1,8 +1,19 @@
-package it.unibo.alchemist.model.implementations.geometry
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d
+
+import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
+import java.lang.IllegalStateException
 import java.util.Optional
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -136,7 +147,7 @@ fun <P : Vector2D<P>> intersect(s1: Segment2D<P>, s2: Segment2D<P>): SegmentsInt
             when {
                 sharedEndPoint != null -> SegmentsIntersection(sharedEndPoint)
                 /*
-                 * Overlapping.
+                 * Share more than one point.
                  */
                 else -> SegmentsIntersection.segment()
             }
@@ -189,19 +200,18 @@ enum class CircleSegmentIntersectionType {
  */
 data class CircleSegmentIntersection<P : Vector2D<P>>(
     val type: CircleSegmentIntersectionType,
-    val point1: Optional<P> = Optional.empty(),
-    val point2: Optional<P> = Optional.empty()
+    val point1: P? = null,
+    val point2: P? = null
 ) {
-
-    constructor(point: P) : this(CircleSegmentIntersectionType.POINT, Optional.of(point))
+    constructor(point: P) : this(CircleSegmentIntersectionType.POINT, point)
 
     /**
      * A list containing the intersection points (can be empty).
      */
     val points: List<P> = when (type) {
         CircleSegmentIntersectionType.EMPTY -> emptyList()
-        CircleSegmentIntersectionType.POINT -> listOf(point1.get())
-        else -> listOf(point1.get(), point2.get())
+        CircleSegmentIntersectionType.POINT -> listOf(point1.orFail())
+        else -> listOf(point1.orFail(), point2.orFail())
     }
 
     companion object {
@@ -214,18 +224,16 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
          * Creates an appropriate instance of [CircleSegmentIntersection], taking care that, in case the resulting
          * instance has type [CircleSegmentIntersectionType.POINT], such point is stored in [point1].
          */
-        fun <P : Vector2D<P>> create(point1: Optional<P>, point2: Optional<P>): CircleSegmentIntersection<P> =
-            when {
-                point1.isPresent && point2.isPresent ->
-                    CircleSegmentIntersection(CircleSegmentIntersectionType.PAIR, point1, point2)
-                point1.isPresent || point2.isPresent -> {
-                    val present = point1.takeIf { point1.isPresent } ?: point2
-                    val absent = point2.takeIf { point2.isEmpty } ?: point1
-                    CircleSegmentIntersection(CircleSegmentIntersectionType.POINT, present, absent)
-                }
-                else -> empty()
-            }
+        fun <P : Vector2D<P>> create(point1: P?, point2: P?): CircleSegmentIntersection<P> = when {
+            point1 == null && point2 == null -> empty()
+            point1 == null -> CircleSegmentIntersection(point2!!) // Necessarily not null
+            point2 == null -> CircleSegmentIntersection(point1)
+            else -> CircleSegmentIntersection(CircleSegmentIntersectionType.PAIR, point1, point2)
+        }
     }
+
+    private fun <T> T?.orFail(): T =
+        this ?: throw IllegalStateException("variable should be defined when type is $type")
 }
 
 /**
@@ -244,10 +252,9 @@ fun <P : Vector2D<P>> intersect(segment: Segment2D<P>, center: P, radius: Double
         fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0 -> CircleSegmentIntersection.empty()
         fuzzyEquals(det, 0.0) -> {
             val t = -b / (2 * a)
-            val p = intersectionPoint(segment, vector, t)
-            when {
-                p.isPresent -> CircleSegmentIntersection(p.get())
-                else -> CircleSegmentIntersection.empty()
+            when (val p = intersectionPoint(segment, vector, t)) {
+                null -> CircleSegmentIntersection.empty()
+                else -> CircleSegmentIntersection(p)
             }
         }
         else -> {
@@ -260,9 +267,9 @@ fun <P : Vector2D<P>> intersect(segment: Segment2D<P>, center: P, radius: Double
     }
 }
 
-private fun <P : Vector2D<P>> intersectionPoint(segment: Segment2D<P>, vector: Vector2D<P>, t: Double): Optional<P> =
-    Optional.empty<P>().takeUnless { t fuzzyIn 0.0..1.0 } ?: run {
+private fun <P : Vector2D<P>> intersectionPoint(segment: Segment2D<P>, vector: Vector2D<P>, t: Double): P? =
+    t.takeIf { it fuzzyIn 0.0..1.0 }?.let {
         val x = segment.first.x + t * vector.x
         val y = segment.first.y + t * vector.y
-        Optional.of(segment.first.newFrom(x, y))
+        segment.first.newFrom(x, y)
     }

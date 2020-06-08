@@ -9,18 +9,16 @@
 
 package it.unibo.alchemist.model.interfaces.environments
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle2D
-import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
  * A bidimensional [EnvironmentWithObstacles].
  */
-interface Environment2DWithObstacles<W, T, P> : EnvironmentWithObstacles<W, T, P> where
-    W : Obstacle2D<P>,
-    P : Position2D<P>,
-    P : Vector2D<P> {
+interface Environment2DWithObstacles<W : Obstacle2D<Euclidean2DPosition>, T> :
+    EnvironmentWithObstacles<W, T, Euclidean2DPosition>,
+    Euclidean2DEnvironment<T> {
 
     /**
      * Given a point and a range, retrieves all the obstacles within.
@@ -31,7 +29,7 @@ interface Environment2DWithObstacles<W, T, P> : EnvironmentWithObstacles<W, T, P
      *              the range to scan
      * @return the list of obstacles
      */
-    fun getObstaclesInRange(center: P, range: Double): List<W>
+    fun getObstaclesInRange(center: Euclidean2DPosition, range: Double): List<W>
 
     /**
      * Given a point and a range, retrieves all the obstacles within.

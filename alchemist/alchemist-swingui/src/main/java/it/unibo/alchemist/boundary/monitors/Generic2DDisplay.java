@@ -484,7 +484,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     private void loadObstacles(final Environment<T, P> env) {
-        obstacles = ((Environment2DWithObstacles<?, ?, ?>) env).getObstacles();
+        obstacles = ((Environment2DWithObstacles<?, ?>) env).getObstacles();
     }
 
     /**
@@ -658,7 +658,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      *         and has mobile obstacles
      */
     protected static boolean envHasMobileObstacles(final Environment<?, ?> env) {
-        return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?, ?>) env).hasMobileObstacles();
+        return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?>) env).hasMobileObstacles();
     }
 
     private static <I, O> Pair<O, O> mapPair(

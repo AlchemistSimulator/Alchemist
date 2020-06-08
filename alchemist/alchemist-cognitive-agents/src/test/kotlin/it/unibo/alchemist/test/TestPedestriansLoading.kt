@@ -5,8 +5,9 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
-class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
+class TestPedestriansLoading<T, P> : StringSpec({
 
     "homogeneous pedestrians loading" {
         loadYamlSimulation<T, P>("homogeneous-pedestrians.yml").startSimulation()
@@ -34,4 +35,4 @@ class TestPedestriansLoading<T, P : Position<P>> : StringSpec({
             } }
         )
     }
-})
+}) where P : Position<P>, P : Vector<P>

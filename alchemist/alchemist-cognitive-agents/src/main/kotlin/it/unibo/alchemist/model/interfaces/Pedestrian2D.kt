@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.interfaces
 
 import it.unibo.alchemist.model.influencesphere.FieldOfView2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 
 /**
  * The bidimensional representation of a pedestrian.

@@ -1,9 +1,9 @@
-package it.unibo.alchemist.model.interfaces.geometry.euclidean.twod
+package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
-import it.unibo.alchemist.model.implementations.geometry.LinesIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectLines
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
-import it.unibo.alchemist.model.implementations.geometry.intersectLines
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
@@ -21,18 +21,6 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     val length: Double = toVector().magnitude
 
     /**
-     * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
-     * the segment should be reduced on each size.
-     */
-    fun shrunk(factor: Double): Segment2D<P> = when (factor) {
-        !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
-        else -> copy(
-            first = first + (second - first).resized(factor * length),
-            second = second + (first - second).resized(factor * length)
-        )
-    }
-
-    /**
      * Indicates if the segment is aligned to the x axis.
      */
     val xAxisAligned: Boolean get() = MathUtils.fuzzyEquals(first.y, second.y)
@@ -46,11 +34,6 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      * Indicates if the segment is axis-aligned.
      */
     val isAxisAligned: Boolean get() = xAxisAligned || yAxisAligned
-
-    /**
-     * @returns the vector representing the movement from [first] to [second].
-     */
-    fun toVector() = second - first
 
     /**
      * The slope of the segment. If the two points coincide, this is [Double.NaN].
@@ -69,6 +52,28 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
         MathUtils.fuzzyEquals(first.x, second.x) && MathUtils.fuzzyEquals(first.y, second.y)
 
     /**
+     * The medium point of the segment.
+     */
+    val midPoint get() = Euclidean2DPosition((first.x + second.x) / 2, (first.y + second.y) / 2)
+
+    /**
+     * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
+     * the segment should be reduced on each size.
+     */
+    fun shrunk(factor: Double): Segment2D<P> = when (factor) {
+        !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
+        else -> copy(
+            first = first + (second - first).resized(factor * length),
+            second = second + (first - second).resized(factor * length)
+        )
+    }
+
+    /**
+     * @returns the vector representing the movement from [first] to [second].
+     */
+    fun toVector() = second - first
+
+    /**
      * Checks if the segment contains a [point]. Doubles are not directly compared,
      * [MathUtils.fuzzyEquals] is used instead.
      */
@@ -76,11 +81,6 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
         areCollinear(first, second, point) &&
         point.x fuzzyIn rangeFromUnordered(first.x, second.x) &&
         point.y fuzzyIn rangeFromUnordered(first.y, second.y)
-
-    /**
-     * The medium point of the segment.
-     */
-    val midPoint get() = Euclidean2DPosition((first.x + second.x) / 2, (first.y + second.y) / 2)
 
     /**
      * Finds the point of the segment which is closest to the provided position.
@@ -116,13 +116,12 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * Computes the (minimum) distance between two segments.
      */
-    fun distanceTo(other: Segment2D<P>): Double =
-        mutableListOf(
-            distanceTo(other.first),
-            distanceTo(other.second),
-            other.distanceTo(first),
-            other.distanceTo(second)
-        ).min() ?: Double.POSITIVE_INFINITY
+    fun distanceTo(other: Segment2D<P>): Double = listOf(
+        distanceTo(other.first),
+        distanceTo(other.second),
+        other.distanceTo(first),
+        other.distanceTo(second)
+    ).min() ?: Double.POSITIVE_INFINITY
 
     /**
      * Maps the segment a [ClosedRange], this is done by extracting either the X coordinates or
@@ -135,4 +134,11 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
         getXCoords -> rangeFromUnordered(first.x, second.x)
         else -> rangeFromUnordered(first.y, second.y)
     }
+
+    /**
+     * Checks whether the given [segment] is inside a rectangular region described by an [origin]
+     * point and [width] and [height] values (only positive).
+     */
+    fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
+        first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
 }

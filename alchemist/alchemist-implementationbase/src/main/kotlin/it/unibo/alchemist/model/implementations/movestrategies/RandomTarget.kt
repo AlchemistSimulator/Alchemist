@@ -50,7 +50,7 @@ class RandomTarget<T>(
         val delta = makePosition(distance * cos(this), distance * sin(this))
         val desired = current + delta
         when (environment) {
-            is Environment2DWithObstacles<*, T, Euclidean2DPosition> -> environment.next(current, desired)
+            is Environment2DWithObstacles<*, T> -> environment.next(current, desired)
             else -> desired
         }
     }

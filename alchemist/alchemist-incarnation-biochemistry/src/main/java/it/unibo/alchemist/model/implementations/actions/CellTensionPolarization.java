@@ -7,8 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import com.google.common.reflect.TypeToken;
-import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -45,7 +43,11 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
 
     @Override
     public CellTensionPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new CellTensionPolarization<>(env, AlchemistUtil.cast(new TypeToken<CircularDeformableCell<P>>() { }, n));
+        if (n instanceof CircularDeformableCell) {
+            return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) n);
+        }
+        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + n
+                + " of type: " + n.getClass());
     }
 
     @SuppressWarnings("unchecked")

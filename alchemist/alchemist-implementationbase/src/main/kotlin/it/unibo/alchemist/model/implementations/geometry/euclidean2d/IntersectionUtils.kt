@@ -61,7 +61,8 @@ data class LinesIntersection<P : Vector2D<P>>(
 }
 
 /**
- * Finds the intersection of two lines represented by segments. Degenerate segments (of zero
+ * Finds the intersection of two lines represented by segments.
+ * Degenerate segments (of zero
  * length) are not supported.
  */
 fun <P : Vector2D<P>> linesIntersection(s1: Segment2D<P>, s2: Segment2D<P>): LinesIntersection<P> {

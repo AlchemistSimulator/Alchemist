@@ -37,7 +37,7 @@ fun coords(x: Double, y: Double) = Euclidean2DPosition(x, y)
  */
 fun segment(x1: Double, y1: Double, x2: Double, y2: Double) = Segment2D(coords(x1, y1), coords(x2, y2))
 
-class TestGeometryUtils {
+class TestIntersections {
 
     private fun <P : Vector2D<P>> linesIntersectionShouldBe(
         segment1: Segment2D<P>,

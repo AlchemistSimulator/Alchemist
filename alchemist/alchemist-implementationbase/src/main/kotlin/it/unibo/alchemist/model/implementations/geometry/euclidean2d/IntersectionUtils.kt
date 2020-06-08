@@ -9,14 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType.EMPTY
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType.PAIR
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType.POINT
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType.EMPTY
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType.LINE
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType.POINT
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.EMPTY
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.POINT
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.SEGMENT
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
@@ -329,7 +323,7 @@ fun <P : Vector2D<P>> intersection(
         else -> {
             val t1 = (-b + sqrt(det)) / (2 * a)
             val t2 = (-b - sqrt(det)) / (2 * a)
-            val p1 = intersectionPoint(segment, vector, t1 )
+            val p1 = intersectionPoint(segment, vector, t1)
             val p2 = intersectionPoint(segment, vector, t2)
             CircleSegmentIntersection.create(p1, p2)
         }

@@ -297,24 +297,23 @@ data class CircleSegmentIntersection<P : Vector2D<P>>(
 /**
  * Finds the intersection between a segment and a circle.
  */
-fun <P : Vector2D<P>> intersection(
-    segment: Segment2D<P>,
+fun <P : Vector2D<P>> Segment2D<P>.intersection(
     center: Vector2D<P>,
     radius: Double
 ): CircleSegmentIntersection<P> {
-    val vector = segment.toVector()
+    val vector = toVector()
     /*
      * a, b and c are the terms of the 2nd grade equation of the intersection
      */
     val a = vector.x.pow(2) + vector.y.pow(2)
-    val b = 2 * (vector.x * (segment.first.x - center.x) + vector.y * (segment.first.y - center.y))
-    val c = (segment.first.x - center.x).pow(2) + (segment.first.y - center.y).pow(2) - radius.pow(2)
+    val b = 2 * (vector.x * (first.x - center.x) + vector.y * (first.y - center.y))
+    val c = (first.x - center.x).pow(2) + (first.y - center.y).pow(2) - radius.pow(2)
     val det = b.pow(2) - 4 * a * c
     return when {
         fuzzyEquals(a, 0.0) || a < 0.0 || det < 0.0 -> CircleSegmentIntersection.empty()
         fuzzyEquals(det, 0.0) -> {
             val t = -b / (2 * a)
-            val p = intersectionPoint(segment, vector, t)
+            val p = intersectionPoint(this, vector, t)
             when {
                 p == null -> CircleSegmentIntersection.empty()
                 else -> CircleSegmentIntersection(p)
@@ -323,8 +322,8 @@ fun <P : Vector2D<P>> intersection(
         else -> {
             val t1 = (-b + sqrt(det)) / (2 * a)
             val t2 = (-b - sqrt(det)) / (2 * a)
-            val p1 = intersectionPoint(segment, vector, t1)
-            val p2 = intersectionPoint(segment, vector, t2)
+            val p1 = intersectionPoint(this, vector, t1)
+            val p2 = intersectionPoint(this, vector, t2)
             CircleSegmentIntersection.create(p1, p2)
         }
     }

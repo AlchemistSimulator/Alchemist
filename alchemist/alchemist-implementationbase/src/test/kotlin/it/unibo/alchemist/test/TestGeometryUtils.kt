@@ -289,8 +289,7 @@ class TestGeometryUtils {
         expectedPoint1: P? = null,
         expectedPoint2: P? = null
     ) {
-        intersection(
-            segment,
+       segment.intersection(
             center,
             radius
         ).let { intersection ->

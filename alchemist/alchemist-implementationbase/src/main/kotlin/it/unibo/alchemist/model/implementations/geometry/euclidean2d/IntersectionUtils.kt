@@ -65,7 +65,7 @@ data class LinesIntersection<P : Vector2D<P>>(
  * Degenerate segments (of zero
  * length) are not supported.
  */
-fun <P : Vector2D<P>> linesIntersection(s1: Segment2D<P>, s2: Segment2D<P>): LinesIntersection<P> {
+fun <P : Vector2D<P>> intersectAsLines(s1: Segment2D<P>, s2: Segment2D<P>): LinesIntersection<P> {
     require(!s1.isDegenerate && !s2.isDegenerate) { "degenerate segments are not lines" }
     val m1 = s1.slope
     val q1 = s1.intercept
@@ -160,7 +160,7 @@ fun <P : Vector2D<P>> Segment2D<P>.intersectSegment(other: Segment2D<P>): Segmen
             else -> SegmentsIntersection.empty()
         }
     }
-    val intersection = linesIntersection(this, other)
+    val intersection = intersectAsLines(this, other)
     return when {
         intersection.type == LinesIntersectionType.POINT && bothContain(this, other, intersection.point.get()) ->
             SegmentsIntersection(intersection.point.get())

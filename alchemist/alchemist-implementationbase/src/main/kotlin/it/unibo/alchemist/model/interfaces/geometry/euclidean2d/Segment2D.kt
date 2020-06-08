@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.linesIntersection
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
@@ -94,7 +94,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
                  * Intersection between the line defined by the segment and the line
                  * perpendicular to the segment passing through the given point.
                  */
-                val intersection = linesIntersection(this, Segment2D(point, point + toVector().normal()))
+                val intersection = intersectAsLines(this, Segment2D(point, point + toVector().normal()))
                     .let {
                         require(it.type == LinesIntersectionType.POINT && it.point.isPresent) { "internal error" }
                         it.point.get()

@@ -3,7 +3,7 @@ package it.unibo.alchemist.test
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersection
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectSegment
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.linesIntersection
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType
@@ -45,7 +45,7 @@ class TestIntersections {
         expectedType: LinesIntersectionType,
         expectedPoint: Optional<P> = Optional.empty()
     ) {
-        linesIntersection(
+        intersectAsLines(
             segment1,
             segment2
         ).let { intersection ->

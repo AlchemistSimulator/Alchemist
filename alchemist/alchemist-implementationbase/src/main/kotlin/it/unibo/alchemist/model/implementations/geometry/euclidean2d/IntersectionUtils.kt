@@ -71,18 +71,8 @@ fun <P : Vector2D<P>> linesIntersection(s1: Segment2D<P>, s2: Segment2D<P>): Lin
     val m2 = s2.slope
     val q2 = s2.intercept
     return when {
-        coincide(
-            m1,
-            m2,
-            q1,
-            q2,
-            s1,
-            s2
-        ) -> LinesIntersection.line()
-        areParallel(
-            m1,
-            m2
-        ) -> LinesIntersection.empty()
+        coincide(m1, m2, q1, q2, s1, s2) -> LinesIntersection.line()
+        areParallel(m1, m2) -> LinesIntersection.empty()
         else -> {
             val intersection = when {
                 s1.yAxisAligned -> s1.first.newFrom(s1.first.x, m2 * s1.first.x + q2)
@@ -93,9 +83,7 @@ fun <P : Vector2D<P>> linesIntersection(s1: Segment2D<P>, s2: Segment2D<P>): Lin
                     s1.first.newFrom(x, y)
                 }
             }
-            LinesIntersection(
-                intersection
-            )
+            LinesIntersection(intersection)
         }
     }
 }

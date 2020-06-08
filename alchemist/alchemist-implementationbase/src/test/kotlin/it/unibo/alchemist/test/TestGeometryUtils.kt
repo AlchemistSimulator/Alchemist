@@ -290,10 +290,7 @@ class TestGeometryUtils {
         expectedPoint1: P? = null,
         expectedPoint2: P? = null
     ) {
-       segment.intersectCircle(
-            center,
-            radius
-        ).let { intersection ->
+        segment.intersectCircle(center, radius).let { intersection ->
             intersection.type shouldBe expectedType
             /*
              * Points can be provided in any order
@@ -376,7 +373,7 @@ class TestGeometryUtils {
 /**
  * Finds the intersection between a segment and a circle.
  */
-fun <P : Vector2D<P>> Segment2D<P>.intersectCircle(
+private fun <P : Vector2D<P>> Segment2D<P>.intersectCircle(
     center: Vector2D<P>,
     radius: Double
 ): CircleSegmentIntersection<P> {

@@ -1,7 +1,6 @@
 package it.unibo.alchemist.test
 
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersection
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectSegment
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType
@@ -407,5 +406,54 @@ private fun <P : Vector2D<P>> Segment2D<P>.intersectCircle(
             val p2 = intersectionPoint(this, vector, t2)
             CircleSegmentIntersection.create(p1, p2)
         }
+    }
+}
+
+/**
+ * Describes the result of the intersection between a circle and a segment in an euclidean space.
+ *
+ * @param type
+ *              the type of intersection.
+ * @param point1
+ *              the first point of intersection (if present).
+ * @param point2
+ *              the second point of intersection (if present).
+ */
+data class CircleSegmentIntersection<P : Vector2D<P>>(
+    val type: CircleSegmentIntersectionType,
+    val point1: P? = null,
+    val point2: P? = null
+) {
+
+    constructor(point: P) : this(CircleSegmentIntersectionType.POINT, point)
+
+    companion object {
+        /**
+         * Creates an instance of [CircleSegmentIntersection] whose type is [CircleSegmentIntersectionType.EMPTY].
+         */
+        fun <P : Vector2D<P>> empty() =
+            CircleSegmentIntersection<P>(
+                CircleSegmentIntersectionType.EMPTY
+            )
+
+        /**
+         * Creates an appropriate instance of [CircleSegmentIntersection], taking care that, in case the resulting
+         * instance has type [CircleSegmentIntersectionType.POINT], such point is stored in [point1].
+         */
+        fun <P : Vector2D<P>> create(point1: P?, point2: P?): CircleSegmentIntersection<P> =
+            when {
+                point1 == null && point2 == null -> empty()
+                point1 == null -> CircleSegmentIntersection(
+                    point2!!
+                ) // Necessarily not null
+                point2 == null -> CircleSegmentIntersection(
+                    point1
+                )
+                else -> CircleSegmentIntersection(
+                    CircleSegmentIntersectionType.PAIR,
+                    point1,
+                    point2
+                )
+            }
     }
 }

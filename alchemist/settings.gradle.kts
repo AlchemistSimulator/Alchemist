@@ -18,7 +18,6 @@ include(
     "alchemist-incarnation-sapere",
     "alchemist-incarnation-scafi",
     "alchemist-incarnation-biochemistry",
-    "alchemist-influence-sphere",
     "alchemist-interfaces",
     "alchemist-loading",
     "alchemist-maps",

@@ -3,7 +3,6 @@ package it.unibo.alchemist.test
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectSegment
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D

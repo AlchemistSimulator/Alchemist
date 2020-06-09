@@ -1,6 +1,5 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectSegment
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D

@@ -140,4 +140,61 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      */
     fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
         first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
+
+    /**
+     * Finds the intersection point of two given segments. This method is able to deal with degenerate
+     * and collinear segments.
+     */
+    fun intersectSegment(other: Segment2D<P>): Intersection2D<P> {
+        if (isDegenerate || other.isDegenerate) {
+            val degenerate = takeIf { it.isDegenerate } ?: other
+            val otherSegment = other.takeIf { degenerate == this } ?: this
+            return when {
+                otherSegment.contains(degenerate.first) -> Intersection2D.SinglePoint(degenerate.first)
+                else -> Intersection2D.None
+            }
+        }
+        val intersection: Intersection2D<P> = intersectAsLines(other)
+        return when {
+            intersection is Intersection2D.SinglePoint && bothContain(this, other, intersection.point) -> intersection
+            intersection is Intersection2D.Line && ! disjoint(this, other) -> {
+                val sharedEndPoint = sharedEndPoint(this, other)
+                /*
+                 * Overlapping if there is no shared end point.
+                 */
+                if (sharedEndPoint == null) {
+                    Intersection2D.Segment(this)
+                } else {
+                    Intersection2D.SinglePoint(sharedEndPoint)
+                }
+            }
+            else -> Intersection2D.None
+        }
+    }
+
+    private fun <P : Vector2D<P>> bothContain(s1: Segment2D<P>, s2: Segment2D<P>, point: P) =
+        s1.contains(point) && s2.contains(point)
+
+    /*
+     * Returns false if the segments share one or more points.
+     */
+    private fun <P : Vector2D<P>> disjoint(s1: Segment2D<P>, s2: Segment2D<P>) =
+        !(s1.contains(s2.first) || s1.contains(s2.second) || s2.contains(s1.first) || s2.contains(s1.second))
+
+    /*
+     * Returns the end point shared by the two segments, or null if they share no endpoint OR
+     * if they share more than one point (i.e. they overlap).
+     */
+    private fun <P : Vector2D<P>> sharedEndPoint(s1: Segment2D<P>, s2: Segment2D<P>): P? {
+        val fuzzyEquals: (P, P) -> Boolean = { first, second ->
+            MathUtils.fuzzyEquals(first.x, second.x) && MathUtils.fuzzyEquals(first.y, second.y)
+        }
+        return when {
+            fuzzyEquals(s1.first, s2.first) && !s1.contains(s2.second) -> s1.first
+            fuzzyEquals(s1.first, s2.second) && !s1.contains(s2.first) -> s1.first
+            fuzzyEquals(s1.second, s2.first) && !s1.contains(s2.second) -> s1.second
+            fuzzyEquals(s1.second, s2.second) && !s1.contains(s1.first) -> s1.second
+            else -> null
+        }
+    }
 }

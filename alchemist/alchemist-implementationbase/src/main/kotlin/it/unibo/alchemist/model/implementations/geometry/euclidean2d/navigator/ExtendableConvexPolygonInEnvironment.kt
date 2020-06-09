@@ -3,6 +3,7 @@ package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectSegment
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
@@ -326,8 +327,13 @@ class ExtendableConvexPolygonInEnvironment(
         val polygonEdge2 = getEdge(circularPrevious(indexOfIntrudingV))
         val obstacleEdge: Segment2D<Euclidean2DPosition> = firstIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = polygonEdge1.intersectSegment(obstacleEdge).point.get().toEuclidean
-        val p2 = polygonEdge2.intersectSegment(obstacleEdge).point.get().toEuclidean
+        val intersection1 = polygonEdge1.intersectSegment(obstacleEdge)
+        val intersection2 = polygonEdge2.intersectSegment(obstacleEdge)
+        require(intersection1 is Intersection2D.SinglePoint && intersection2 is Intersection2D.SinglePoint) {
+            "Bug in the Alchemist geometric engine. Found in ${this::class.qualifiedName}"
+        }
+        val p1 = intersection1.point.toEuclidean
+        val p2 = intersection2.point.toEuclidean
         // a new edge is going to be added, its vertices will grow following the intruded
         // obstacleEdge. In order to do so, their growth directions will be modified to be
         // parallel to such edge, but in opposite senses.

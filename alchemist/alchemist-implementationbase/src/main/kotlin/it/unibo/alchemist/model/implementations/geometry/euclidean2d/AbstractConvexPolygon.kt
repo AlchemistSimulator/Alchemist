@@ -18,7 +18,6 @@ import java.awt.Shape
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import kotlin.math.min
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType.POINT as POINT
 
 /**
  * An abstract [ConvexPolygon] providing a convexity test.
@@ -64,11 +63,16 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {
             return true
         }
-        val intersections = edges().map { it.intersectSegment(segment) }
-        return when {
-            intersections.any { it.type == SegmentsIntersectionType.SEGMENT } -> false
-            else -> intersections.mapNotNull { it.point.orElse(null) }.distinct().size > 1
-        }
+        val intersections = edges()
+            .map { it.intersectSegment(segment) } // Either Segment, SinglePoint, or None
+            .filterNot { it is Intersection2D.None }
+            .asSequence()
+        // Lazily evaluated
+        val intersectionPoints = intersections
+            .filterIsInstance<Intersection2D.SinglePoint<Euclidean2DPosition>>()
+            .map { it.point }
+            .distinct()
+        return intersections.none { it is Intersection2D.Segment } && intersectionPoints.count() > 1
     }
 
     override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> = edges()
@@ -180,8 +184,8 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             i = circularNext(i)
         }
         val next = getEdge(i)
-        return prev.intersectSegment(curr).type != POINT ||
-            curr.intersectSegment(next).type != POINT ||
+        return prev.intersectSegment(curr) !is Intersection2D.SinglePoint ||
+            curr.intersectSegment(next) !is Intersection2D.SinglePoint ||
             /*
              * We check every edge between the first prev not
              * degenerate and the first next not degenerate.
@@ -190,6 +194,6 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
                 .takeWhile { it != prevIndex }
                 .map { getEdge(it) }
                 .filter { !it.isDegenerate }
-                .any { curr.intersectSegment(it).type != SegmentsIntersectionType.EMPTY }
+                .any { curr.intersectSegment(it) !is Intersection2D.None }
     }
 }

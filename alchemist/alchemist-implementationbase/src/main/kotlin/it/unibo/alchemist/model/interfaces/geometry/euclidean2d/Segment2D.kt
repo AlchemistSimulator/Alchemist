@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
@@ -95,13 +95,12 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
                  * perpendicular to the segment passing through the given point.
                  */
                 val intersection = intersectAsLines(Segment2D(point, point + toVector().normal()))
-                    .let {
-                        require(it.type == LinesIntersectionType.POINT && it.point.isPresent) { "internal error" }
-                        it.point.get()
-                    }
+                require(intersection is Intersection2D.SinglePoint<P>) {
+                    "Bug in Alchemist geometric engine, found in ${this::class.qualifiedName}"
+                }
                 when {
-                    contains(intersection) -> intersection
-                    first.distanceTo(intersection) < second.distanceTo(intersection) -> first
+                    contains(intersection.point) -> intersection.point
+                    first.distanceTo(intersection.point) < second.distanceTo(intersection.point) -> first
                     else -> second
                 }
             }
@@ -136,8 +135,8 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     }
 
     /**
-     * Checks whether the given [segment] is inside a rectangular region described by an [origin]
-     * point and [width] and [height] values (only positive).
+     * Checks whether this segment is inside a rectangular region described by an [origin]
+     * point and [width] and [height] values (must be positive).
      */
     fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
         first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)

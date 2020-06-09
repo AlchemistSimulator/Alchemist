@@ -85,7 +85,7 @@ fun generateNavigationGraph(
 
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
-            if (edge.isAxisAligned) {
+            if (edge.isAlignedToAnyAxis) {
                 val passages = seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
                 /*
                  * Moves the edge back to its previous position as findCrossings modified it.
@@ -150,11 +150,11 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
          * the intersection with the advancing edge.
          */
         val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
-            it.closestEdgeTo(oldEdge).toRange(oldEdge.xAxisAligned)
+            it.closestEdgeTo(oldEdge).toRange(oldEdge.isHorizontal)
         }
         val shapeToInterval: (Shape) -> ClosedRange<Double> = { shape ->
             shape.vertices().let {
-                if (oldEdge.xAxisAligned) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
+                if (oldEdge.isHorizontal) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
             }
         }
         val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
@@ -198,7 +198,7 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
              */
             intervals.map {
                 val passageShape = when {
-                    oldEdge.xAxisAligned -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
+                    oldEdge.isHorizontal -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
                     else -> createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
                 }
                 Euclidean2DPassage(this, neighbor, passageShape)

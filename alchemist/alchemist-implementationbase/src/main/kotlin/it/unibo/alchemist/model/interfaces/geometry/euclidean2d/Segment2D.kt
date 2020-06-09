@@ -23,17 +23,17 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * Indicates if the segment is aligned to the x axis.
      */
-    val xAxisAligned: Boolean get() = fuzzyEquals(first.y, second.y)
+    val isHorizontal: Boolean get() = fuzzyEquals(first.y, second.y)
 
     /**
      * Indicates if the segment is aligned to the y axis.
      */
-    val yAxisAligned: Boolean get() = fuzzyEquals(first.x, second.x)
+    val isVertical: Boolean get() = fuzzyEquals(first.x, second.x)
 
     /**
      * Indicates if the segment is axis-aligned.
      */
-    val isAxisAligned: Boolean get() = xAxisAligned || yAxisAligned
+    val isAlignedToAnyAxis: Boolean get() = isHorizontal || isVertical
 
     /**
      * The slope of the segment. If the two points coincide, this is [Double.NaN].
@@ -128,7 +128,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      * This can be useful e.g. to represent portions of axis-aligned segments without creating
      * new ones.
      */
-    fun toRange(getXCoords: Boolean = this.xAxisAligned): ClosedRange<Double> = when {
+    fun toRange(getXCoords: Boolean = this.isHorizontal): ClosedRange<Double> = when {
         getXCoords -> rangeFromUnordered(first.x, second.x)
         else -> rangeFromUnordered(first.y, second.y)
     }
@@ -211,8 +211,8 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
             areParallel(m1, m2) -> Intersection2D.None
             else -> {
                 val intersection = when {
-                    yAxisAligned -> first.newFrom(first.x, m2 * first.x + q2)
-                    other.yAxisAligned -> first.newFrom(other.first.x, m1 * other.first.x + q1)
+                    isVertical -> first.newFrom(first.x, m2 * first.x + q2)
+                    other.isVertical -> first.newFrom(other.first.x, m1 * other.first.x + q1)
                     else -> {
                         val x = (q2 - q1) / (m1 - m2)
                         val y = m1 * x + q1
@@ -227,7 +227,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     private fun coincide(m1: Double, m2: Double, q1: Double, q2: Double, s1: Segment2D<*>, s2: Segment2D<*>) =
         when {
             !areParallel(m1, m2) -> false
-            s1.yAxisAligned && s2.yAxisAligned -> fuzzyEquals(s1.first.x, s2.first.x)
+            s1.isVertical && s2.isVertical -> fuzzyEquals(s1.first.x, s2.first.x)
             else -> fuzzyEquals(q1, q2)
         }
 

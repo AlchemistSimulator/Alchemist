@@ -7,10 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.geometry.euclidean2d
+package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 
 /**
  * Describes the result an intersection operation in an euclidean 2D space.

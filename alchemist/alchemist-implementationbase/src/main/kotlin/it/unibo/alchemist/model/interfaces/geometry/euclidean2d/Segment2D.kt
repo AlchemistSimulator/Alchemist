@@ -1,7 +1,5 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
-import it.unibo.alchemist.model.implementations.geometry.areCollinear
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
@@ -11,77 +9,70 @@ import org.danilopianini.lang.MathUtils.fuzzyEquals
 /**
  * Defines a segment from [first] to [second] in an euclidean bidimensional space.
  */
-data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
+interface Segment2D<P : Vector2D<P>> {
 
     /**
-     * The length of the segment.
+     * First point.
      */
-    val length: Double = toVector().magnitude
+    val first: P
 
     /**
-     * Indicates if the segment is aligned to the x axis.
+     * Second point.
      */
-    val isHorizontal: Boolean get() = fuzzyEquals(first.y, second.y)
 
-    /**
-     * Indicates if the segment is aligned to the y axis.
-     */
-    val isVertical: Boolean get() = fuzzyEquals(first.x, second.x)
-
-    /**
-     * Indicates if the segment is axis-aligned.
-     */
-    val isAlignedToAnyAxis: Boolean get() = isHorizontal || isVertical
-
-    /**
-     * The slope of the segment. If the two points coincide, this is [Double.NaN].
-     */
-    val slope: Double get() = Double.NaN.takeIf { isDegenerate } ?: toVector().run { y / x }
-
+    val second: P
     /**
      * The intercept of the line passing through [first] and [second].
      */
+    @JvmDefault
     val intercept: Double get() = first.y - slope * first.x
 
     /**
      * A segment is degenerate if its points coincide.
      */
+    @JvmDefault
     val isDegenerate: Boolean get() = fuzzyEquals(first.x, second.x) && fuzzyEquals(first.y, second.y)
+
+    /**
+     * Indicates if the segment is aligned to the x axis.
+     */
+    @JvmDefault
+    val isHorizontal: Boolean get() = fuzzyEquals(first.y, second.y)
+
+    /**
+     * Indicates if the segment is aligned to the y axis.
+     */
+    @JvmDefault
+    val isVertical: Boolean get() = fuzzyEquals(first.x, second.x)
+
+    /**
+     * Indicates if the segment is axis-aligned.
+     */
+    @JvmDefault
+    val isAlignedToAnyAxis: Boolean get() = isHorizontal || isVertical
+
+    /**
+     * The length of the segment.
+     */
+    @JvmDefault
+    val length: Double get() = toVector().magnitude
+
+    /**
+     * The slope of the segment. If the two points coincide, this is [Double.NaN].
+     */
+    @JvmDefault
+    val slope: Double get() = if (isDegenerate) Double.NaN else toVector().run { y / x }
 
     /**
      * The medium point of the segment.
      */
+    @JvmDefault
     val midPoint get() = first.newFrom((first.x + second.x) / 2, (first.y + second.y) / 2)
-
-    /**
-     * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
-     * the segment should be reduced on each size.
-     */
-    fun shrunk(factor: Double): Segment2D<P> = when (factor) {
-        !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
-        else -> copy(
-            first = first + (second - first).resized(factor * length),
-            second = second + (first - second).resized(factor * length)
-        )
-    }
-
-    /**
-     * @returns the vector representing the movement from [first] to [second].
-     */
-    fun toVector() = second - first
-
-    /**
-     * Checks if the segment contains a [point]. Doubles are not directly compared,
-     * [MathUtils.fuzzyEquals] is used instead.
-     */
-    fun contains(point: P) =
-        areCollinear(first, second, point) &&
-        point.x fuzzyIn rangeFromUnordered(first.x, second.x) &&
-        point.y fuzzyIn rangeFromUnordered(first.y, second.y)
 
     /**
      * Finds the point of the segment which is closest to the provided position.
      */
+    @JvmDefault
     fun closestPointTo(point: P): P =
         when {
             isDegenerate -> first
@@ -91,7 +82,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
                  * Intersection between the line defined by the segment and the line
                  * perpendicular to the segment passing through the given point.
                  */
-                val intersection = intersectAsLines(Segment2D(point, point + toVector().normal()))
+                val intersection = intersectAsLines(copyWith(point, point + toVector().normal()))
                 require(intersection is Intersection2D.SinglePoint<P>) {
                     "Bug in Alchemist geometric engine, found in ${this::class.qualifiedName}"
                 }
@@ -104,13 +95,30 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
         }
 
     /**
+     * Creates a copy of this Segment2D using the specified [first] and [second] points.
+     */
+    @JvmDefault
+    fun copyWith(first: P = this.first, second: P = this.second): Segment2D<P>
+
+    /**
+     * Checks if the segment contains a [point]. Doubles are not directly compared,
+     * [MathUtils.fuzzyEquals] is used instead.
+     */
+    @JvmDefault
+    fun contains(point: P) = isCollinearWith(point) &&
+        point.x fuzzyIn rangeFromUnordered(first.x, second.x) &&
+        point.y fuzzyIn rangeFromUnordered(first.y, second.y)
+
+    /**
      * Computes the distance between the segment and a given [point].
      */
+    @JvmDefault
     fun distanceTo(point: P) = closestPointTo(point).distanceTo(point)
 
     /**
      * Computes the (minimum) distance between two segments.
      */
+    @JvmDefault
     fun distanceTo(other: Segment2D<P>): Double =
         mutableListOf(
             distanceTo(other.first),
@@ -120,12 +128,26 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
         ).min() ?: Double.POSITIVE_INFINITY
 
     /**
+     * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
+     * the segment should be reduced on each size.
+     */
+    @JvmDefault
+    fun shrunk(factor: Double): Segment2D<P> = when (factor) {
+        !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
+        else -> copyWith(
+            first = first + (second - first).resized(factor * length),
+            second = second + (first - second).resized(factor * length)
+        )
+    }
+
+    /**
      * Maps the segment a [ClosedRange], this is done by extracting either the X coordinates or
      * the Y coordinates of the two endpoints of the segment. [getXCoords] indicates which pair
      * of coordinates should be extracted.
      * This can be useful e.g. to represent portions of axis-aligned segments without creating
      * new ones.
      */
+    @JvmDefault
     fun toRange(getXCoords: Boolean = this.isHorizontal): ClosedRange<Double> = when {
         getXCoords -> rangeFromUnordered(first.x, second.x)
         else -> rangeFromUnordered(first.y, second.y)
@@ -135,6 +157,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      * Checks whether this segment is inside a rectangular region described by an [origin]
      * point and [width] and [height] values (must be positive).
      */
+    @JvmDefault
     fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
         first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
 
@@ -142,6 +165,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      * Finds the intersection point of two given segments. This method is able to deal with degenerate
      * and collinear segments.
      */
+    @JvmDefault
     fun intersectSegment(other: Segment2D<P>): Intersection2D<P> {
         if (isDegenerate || other.isDegenerate) {
             val degenerate = takeIf { it.isDegenerate } ?: other
@@ -198,6 +222,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      * Degenerate segments (of zero
      * length) are not supported.
      */
+    @JvmDefault
     fun intersectAsLines(other: Segment2D<P>): Intersection2D<P> {
         require(!isDegenerate && !other.isDegenerate) { "degenerate segments are not lines" }
         val m1 = slope
@@ -231,4 +256,25 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
 
     private fun areParallel(m1: Double, m2: Double) =
         (m1.isInfinite() && m2.isInfinite()) || (m1.isFinite() && m2.isFinite() && fuzzyEquals(m1, m2))
+
+    /**
+     * @returns the vector representing the movement from [first] to [second].
+     */
+    @JvmDefault
+    fun toVector() = second - first
+
+    /**
+     * Determines if a segment built from the [second] point of this segment to the provided [point]
+     * is collinear (forms a line) with this segment.
+     */
+    @JvmDefault
+    fun isCollinearWith(point: P): Boolean =
+        when {
+            isVertical -> fuzzyEquals(first.x, point.x)
+            isHorizontal -> fuzzyEquals(first.y, point.y)
+            else -> {
+                val q = first.y - slope * first.x
+                fuzzyEquals((slope * point.x + q), point.y)
+            }
+        }
 }

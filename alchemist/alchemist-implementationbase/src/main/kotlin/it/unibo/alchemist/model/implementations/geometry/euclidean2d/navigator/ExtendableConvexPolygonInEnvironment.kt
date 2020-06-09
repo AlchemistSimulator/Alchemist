@@ -2,7 +2,8 @@ package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
@@ -172,7 +173,7 @@ class ExtendableConvexPolygonInEnvironment(
         /*
          * super method is used in order to avoid voiding useful cache
          */
-        if (super.replaceEdge(index, Segment2D(edge.first + firstMovement, edge.second + secondMovement))) {
+        if (super.replaceEdge(index, edge.copyWith(edge.first + firstMovement, edge.second + secondMovement))) {
             if (getEdge(index).isInRectangle(origin, width, height)) {
                 return true
             }
@@ -289,7 +290,7 @@ class ExtendableConvexPolygonInEnvironment(
         /*
          * a segment going from the old position of the intruding vertex to the new one
          */
-        val movementSegment = Segment2D(intrudingVertex, intrudingVertex - growthDirection.resized(step))
+        val movementSegment = Segment2DImpl(intrudingVertex, intrudingVertex - growthDirection.resized(step))
         val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
         require(intrudedEdges.size == 1) { "vertex is not intruding" }
         return intrudedEdges.first()
@@ -300,7 +301,7 @@ class ExtendableConvexPolygonInEnvironment(
      */
     private fun findIntersectingEdges(obstacle: Shape, e: Segment2D<Euclidean2DPosition>) =
         obstacle.vertices().run {
-            mapIndexed { i, v -> Segment2D(v, this[(i + 1) % size]) }
+            mapIndexed { i, v -> Segment2DImpl(v, this[(i + 1) % size]) }
                 .filter { edgesIntersect(it, e) }
         }
 

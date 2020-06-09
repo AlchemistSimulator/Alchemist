@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
 import it.unibo.alchemist.model.implementations.geometry.intersect
@@ -229,9 +230,8 @@ private fun createSeed(
         Euclidean2DPosition(x, y + side)
     ), origin, width, height, obstacles)
 
-
 /**
  * Creates a [Segment2D]. [x2] defaults to [x1] and [y2] defaults to [y1].
  */
 private fun createSegment(x1: Double, y1: Double, x2: Double = x1, y2: Double = y1) =
-    Segment2D(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))
+    Segment2DImpl(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))

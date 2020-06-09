@@ -77,7 +77,17 @@ fun generateNavigationGraph(
 ): Euclidean2DNavigationGraph {
     require(width > 0 && height > 0) { "width and height should be positive" }
     val seeds = rooms
-        .map { createSeed(it.x, it.y, unity, origin, width, height, obstacles) }
+        .map {
+            createSeed(
+                it.x,
+                it.y,
+                unity,
+                origin,
+                width,
+                height,
+                obstacles
+            )
+        }
         .toMutableList()
         .grow(obstacles, unity)
     val graph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
@@ -198,8 +208,16 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
              */
             intervals.map {
                 val passageShape = when {
-                    oldEdge.isHorizontal -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
-                    else -> createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
+                    oldEdge.isHorizontal -> createSegment(
+                        it.start,
+                        oldEdge.first.y,
+                        x2 = it.endInclusive
+                    )
+                    else -> createSegment(
+                        oldEdge.first.x,
+                        it.start,
+                        y2 = it.endInclusive
+                    )
                 }
                 Euclidean2DPassage(this, neighbor, passageShape)
             }
@@ -223,12 +241,14 @@ private fun createSeed(
     height: Double,
     obstacles: List<Shape>
 ): ExtendableConvexPolygonInEnvironment =
-    ExtendableConvexPolygonInEnvironment(mutableListOf(
-        Euclidean2DPosition(x, y),
-        Euclidean2DPosition(x + side, y),
-        Euclidean2DPosition(x + side, y + side),
-        Euclidean2DPosition(x, y + side)
-    ), origin, width, height, obstacles)
+    ExtendableConvexPolygonInEnvironment(
+        mutableListOf(
+            Euclidean2DPosition(x, y),
+            Euclidean2DPosition(x + side, y),
+            Euclidean2DPosition(x + side, y + side),
+            Euclidean2DPosition(x, y + side)
+        ), origin, width, height, obstacles
+    )
 
 /**
  * Creates a [Segment2D]. [x2] defaults to [x1] and [y2] defaults to [y1].

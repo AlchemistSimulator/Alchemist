@@ -19,9 +19,3 @@ fun <P : Vector2D<P>> areCollinear(p1: P, p2: P, p3: P): Boolean =
             fuzzyEquals((m * p3.x + q), p3.y)
         }
     }
-
-/**
- * Creates a [Segment2D]. [x2] defaults to [x1] and [y2] defaults to [y1].
- */
-fun createSegment(x1: Double, y1: Double, x2: Double = x1, y2: Double = y1) =
-    Segment2D(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))

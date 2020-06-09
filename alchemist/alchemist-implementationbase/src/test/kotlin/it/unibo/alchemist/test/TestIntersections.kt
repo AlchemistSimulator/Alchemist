@@ -1,11 +1,12 @@
 package it.unibo.alchemist.test
 
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersect
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectLines
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectSegment
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectCircle
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
@@ -37,7 +38,7 @@ fun coords(x: Double, y: Double) = Euclidean2DPosition(x, y)
  */
 fun segment(x1: Double, y1: Double, x2: Double, y2: Double) = Segment2D(coords(x1, y1), coords(x2, y2))
 
-class TestGeometryUtils {
+class TestIntersections {
 
     private fun <P : Vector2D<P>> linesIntersectionShouldBe(
         segment1: Segment2D<P>,
@@ -45,7 +46,7 @@ class TestGeometryUtils {
         expectedType: LinesIntersectionType,
         expectedPoint: Optional<P> = Optional.empty()
     ) {
-        intersectLines(segment1, segment2).let { intersection ->
+        segment1.intersectAsLines(segment2).let { intersection ->
             intersection.type shouldBe expectedType
             intersection.point shouldBe expectedPoint
         }
@@ -117,7 +118,7 @@ class TestGeometryUtils {
         expectedType: SegmentsIntersectionType,
         expectedPoint: Optional<P> = Optional.empty()
     ) {
-        intersect(segment1, segment2).let { intersection ->
+        segment1.intersectSegment(segment2).let { intersection ->
             intersection.type shouldBe expectedType
             intersection.point shouldBe expectedPoint
         }
@@ -287,7 +288,7 @@ class TestGeometryUtils {
         expectedPoint1: P? = null,
         expectedPoint2: P? = null
     ) {
-        intersect(segment, center, radius).let { intersection ->
+        segment.intersectCircle(center, radius).let { intersection ->
             intersection.type shouldBe expectedType
             /*
              * Points can be provided in any order

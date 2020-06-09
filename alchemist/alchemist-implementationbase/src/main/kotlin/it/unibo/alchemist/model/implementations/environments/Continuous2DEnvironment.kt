@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersect
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectCircle
 
 /**
  * Implementation of [Physics2DEnvironment].
@@ -127,7 +127,7 @@ open class Continuous2DEnvironment<T> :
         return nodesOnPath(node, desiredPosition)
             .map { getShape(it) }
             .flatMap { other ->
-                intersect(desiredMovement, other.centroid, other.radius + node.shape.radius).points
+                desiredMovement.intersectCircle(other.centroid, other.radius + node.shape.radius).points
             }
             .minBy { currentPosition.distanceTo(it) }
             ?: desiredPosition

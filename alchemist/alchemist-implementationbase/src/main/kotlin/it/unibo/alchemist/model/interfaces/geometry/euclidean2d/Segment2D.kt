@@ -4,11 +4,9 @@ import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import org.danilopianini.lang.MathUtils
 import org.danilopianini.lang.MathUtils.fuzzyEquals
-import java.lang.IllegalArgumentException
 
 /**
  * Defines a segment from [first] to [second] in an euclidean bidimensional space.
@@ -53,7 +51,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * The medium point of the segment.
      */
-    val midPoint get() = Euclidean2DPosition((first.x + second.x) / 2, (first.y + second.y) / 2)
+    val midPoint get() = first.newFrom((first.x + second.x) / 2, (first.y + second.y) / 2)
 
     /**
      * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much

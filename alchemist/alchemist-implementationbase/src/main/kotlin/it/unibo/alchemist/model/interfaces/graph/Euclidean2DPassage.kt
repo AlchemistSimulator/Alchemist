@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.interfaces.graph
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon

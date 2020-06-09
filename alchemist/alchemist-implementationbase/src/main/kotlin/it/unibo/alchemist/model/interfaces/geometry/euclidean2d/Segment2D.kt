@@ -3,11 +3,11 @@ package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.geometry.fuzzyIn
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
 import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import org.danilopianini.lang.MathUtils
+import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.lang.IllegalArgumentException
 
 /**
@@ -23,12 +23,12 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * Indicates if the segment is aligned to the x axis.
      */
-    val xAxisAligned: Boolean get() = MathUtils.fuzzyEquals(first.y, second.y)
+    val xAxisAligned: Boolean get() = fuzzyEquals(first.y, second.y)
 
     /**
      * Indicates if the segment is aligned to the y axis.
      */
-    val yAxisAligned: Boolean get() = MathUtils.fuzzyEquals(first.x, second.x)
+    val yAxisAligned: Boolean get() = fuzzyEquals(first.x, second.x)
 
     /**
      * Indicates if the segment is axis-aligned.
@@ -48,8 +48,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
     /**
      * A segment is degenerate if its points coincide.
      */
-    val isDegenerate: Boolean get() =
-        MathUtils.fuzzyEquals(first.x, second.x) && MathUtils.fuzzyEquals(first.y, second.y)
+    val isDegenerate: Boolean get() = fuzzyEquals(first.x, second.x) && fuzzyEquals(first.y, second.y)
 
     /**
      * The medium point of the segment.
@@ -186,9 +185,7 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
      * if they share more than one point (i.e. they overlap).
      */
     private fun <P : Vector2D<P>> sharedEndPoint(s1: Segment2D<P>, s2: Segment2D<P>): P? {
-        val fuzzyEquals: (P, P) -> Boolean = { first, second ->
-            MathUtils.fuzzyEquals(first.x, second.x) && MathUtils.fuzzyEquals(first.y, second.y)
-        }
+        fun fuzzyEquals(first: P, second: P): Boolean = fuzzyEquals(first.x, second.x) && fuzzyEquals(first.y, second.y)
         return when {
             fuzzyEquals(s1.first, s2.first) && !s1.contains(s2.second) -> s1.first
             fuzzyEquals(s1.first, s2.second) && !s1.contains(s2.first) -> s1.first
@@ -197,4 +194,43 @@ data class Segment2D<P : Vector2D<P>>(val first: P, val second: P) {
             else -> null
         }
     }
+
+    /**
+     * Finds the intersection of two lines represented by segments.
+     * Degenerate segments (of zero
+     * length) are not supported.
+     */
+    fun intersectAsLines(other: Segment2D<P>): Intersection2D<P> {
+        require(!isDegenerate && !other.isDegenerate) { "degenerate segments are not lines" }
+        val m1 = slope
+        val q1 = intercept
+        val m2 = other.slope
+        val q2 = other.intercept
+        return when {
+            coincide(m1, m2, q1, q2, this, other) -> Intersection2D.Line
+            areParallel(m1, m2) -> Intersection2D.None
+            else -> {
+                val intersection = when {
+                    yAxisAligned -> first.newFrom(first.x, m2 * first.x + q2)
+                    other.yAxisAligned -> first.newFrom(other.first.x, m1 * other.first.x + q1)
+                    else -> {
+                        val x = (q2 - q1) / (m1 - m2)
+                        val y = m1 * x + q1
+                        first.newFrom(x, y)
+                    }
+                }
+                Intersection2D.SinglePoint(intersection)
+            }
+        }
+    }
+
+    private fun coincide(m1: Double, m2: Double, q1: Double, q2: Double, s1: Segment2D<*>, s2: Segment2D<*>) =
+        when {
+            !areParallel(m1, m2) -> false
+            s1.yAxisAligned && s2.yAxisAligned -> fuzzyEquals(s1.first.x, s2.first.x)
+            else -> fuzzyEquals(q1, q2)
+        }
+
+    private fun areParallel(m1: Double, m2: Double) =
+        (m1.isInfinite() && m2.isInfinite()) || (m1.isFinite() && m2.isFinite() && fuzzyEquals(m1, m2))
 }

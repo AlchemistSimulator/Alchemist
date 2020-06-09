@@ -128,38 +128,44 @@ interface Segment2D<P : Vector2D<P>> {
         ).min() ?: Double.POSITIVE_INFINITY
 
     /**
-     * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
-     * the segment should be reduced on each size.
+     * Finds the intersection of two lines represented by segments.
+     * Degenerate segments (of zero
+     * length) are not supported.
      */
     @JvmDefault
-    fun shrunk(factor: Double): Segment2D<P> = when (factor) {
-        !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
-        else -> copyWith(
-            first = first + (second - first).resized(factor * length),
-            second = second + (first - second).resized(factor * length)
-        )
+    fun intersectAsLines(other: Segment2D<P>): Intersection2D<P> {
+        require(!isDegenerate && !other.isDegenerate) { "degenerate segments are not lines" }
+        val m1 = slope
+        val q1 = intercept
+        val m2 = other.slope
+        val q2 = other.intercept
+        return when {
+            coincide(m1, m2, q1, q2, this, other) -> Intersection2D.Line
+            areParallel(m1, m2) -> Intersection2D.None
+            else -> {
+                val intersection = when {
+                    isVertical -> first.newFrom(first.x, m2 * first.x + q2)
+                    other.isVertical -> first.newFrom(other.first.x, m1 * other.first.x + q1)
+                    else -> {
+                        val x = (q2 - q1) / (m1 - m2)
+                        val y = m1 * x + q1
+                        first.newFrom(x, y)
+                    }
+                }
+                Intersection2D.SinglePoint(intersection)
+            }
+        }
     }
 
-    /**
-     * Maps the segment a [ClosedRange], this is done by extracting either the X coordinates or
-     * the Y coordinates of the two endpoints of the segment. [getXCoords] indicates which pair
-     * of coordinates should be extracted.
-     * This can be useful e.g. to represent portions of axis-aligned segments without creating
-     * new ones.
-     */
-    @JvmDefault
-    fun toRange(getXCoords: Boolean = this.isHorizontal): ClosedRange<Double> = when {
-        getXCoords -> rangeFromUnordered(first.x, second.x)
-        else -> rangeFromUnordered(first.y, second.y)
-    }
+    private fun coincide(m1: Double, m2: Double, q1: Double, q2: Double, s1: Segment2D<*>, s2: Segment2D<*>) =
+        when {
+            !areParallel(m1, m2) -> false
+            s1.isVertical && s2.isVertical -> fuzzyEquals(s1.first.x, s2.first.x)
+            else -> fuzzyEquals(q1, q2)
+        }
 
-    /**
-     * Checks whether this segment is inside a rectangular region described by an [origin]
-     * point and [width] and [height] values (must be positive).
-     */
-    @JvmDefault
-    fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
-        first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
+    private fun areParallel(m1: Double, m2: Double) =
+        (m1.isInfinite() && m2.isInfinite()) || (m1.isFinite() && m2.isFinite() && fuzzyEquals(m1, m2))
 
     /**
      * Finds the intersection point of two given segments. This method is able to deal with degenerate
@@ -218,52 +224,6 @@ interface Segment2D<P : Vector2D<P>> {
     }
 
     /**
-     * Finds the intersection of two lines represented by segments.
-     * Degenerate segments (of zero
-     * length) are not supported.
-     */
-    @JvmDefault
-    fun intersectAsLines(other: Segment2D<P>): Intersection2D<P> {
-        require(!isDegenerate && !other.isDegenerate) { "degenerate segments are not lines" }
-        val m1 = slope
-        val q1 = intercept
-        val m2 = other.slope
-        val q2 = other.intercept
-        return when {
-            coincide(m1, m2, q1, q2, this, other) -> Intersection2D.Line
-            areParallel(m1, m2) -> Intersection2D.None
-            else -> {
-                val intersection = when {
-                    isVertical -> first.newFrom(first.x, m2 * first.x + q2)
-                    other.isVertical -> first.newFrom(other.first.x, m1 * other.first.x + q1)
-                    else -> {
-                        val x = (q2 - q1) / (m1 - m2)
-                        val y = m1 * x + q1
-                        first.newFrom(x, y)
-                    }
-                }
-                Intersection2D.SinglePoint(intersection)
-            }
-        }
-    }
-
-    private fun coincide(m1: Double, m2: Double, q1: Double, q2: Double, s1: Segment2D<*>, s2: Segment2D<*>) =
-        when {
-            !areParallel(m1, m2) -> false
-            s1.isVertical && s2.isVertical -> fuzzyEquals(s1.first.x, s2.first.x)
-            else -> fuzzyEquals(q1, q2)
-        }
-
-    private fun areParallel(m1: Double, m2: Double) =
-        (m1.isInfinite() && m2.isInfinite()) || (m1.isFinite() && m2.isFinite() && fuzzyEquals(m1, m2))
-
-    /**
-     * @returns the vector representing the movement from [first] to [second].
-     */
-    @JvmDefault
-    fun toVector() = second - first
-
-    /**
      * Determines if a segment built from the [second] point of this segment to the provided [point]
      * is collinear (forms a line) with this segment.
      */
@@ -277,4 +237,44 @@ interface Segment2D<P : Vector2D<P>> {
                 fuzzyEquals((slope * point.x + q), point.y)
             }
         }
+
+    /**
+     * Checks whether this segment is inside a rectangular region described by an [origin]
+     * point and [width] and [height] values (must be positive).
+     */
+    @JvmDefault
+    fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
+        first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
+
+    /**
+     * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
+     * the segment should be reduced on each size.
+     */
+    @JvmDefault
+    fun shrunk(factor: Double): Segment2D<P> = when (factor) {
+        !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
+        else -> copyWith(
+            first = first + (second - first).resized(factor * length),
+            second = second + (first - second).resized(factor * length)
+        )
+    }
+
+    /**
+     * Maps the segment a [ClosedRange], this is done by extracting either the X coordinates or
+     * the Y coordinates of the two endpoints of the segment. [getXCoords] indicates which pair
+     * of coordinates should be extracted.
+     * This can be useful e.g. to represent portions of axis-aligned segments without creating
+     * new ones.
+     */
+    @JvmDefault
+    fun toRange(getXCoords: Boolean = this.isHorizontal): ClosedRange<Double> = when {
+        getXCoords -> rangeFromUnordered(first.x, second.x)
+        else -> rangeFromUnordered(first.y, second.y)
+    }
+
+    /**
+     * @returns the vector representing the movement from [first] to [second].
+     */
+    @JvmDefault
+    fun toVector() = second - first
 }

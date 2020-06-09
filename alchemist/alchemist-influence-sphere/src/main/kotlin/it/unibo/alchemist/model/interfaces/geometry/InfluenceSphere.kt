@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.influencesphere
+package it.unibo.alchemist.model.interfaces.geometry
 
 import it.unibo.alchemist.model.interfaces.Node
 

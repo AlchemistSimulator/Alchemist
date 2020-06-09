@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.HomogeneousPedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.influencesphere.FieldOfView2D
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import org.apache.commons.math3.random.MersenneTwister
 
 class TestSensory<T> : StringSpec({
@@ -26,7 +26,13 @@ class TestSensory<T> : StringSpec({
             }
         }
         env.nodes.minusElement(observed).forEach {
-            with(FieldOfView2D(env, it, radius, Math.PI / 2).influentialNodes()) {
+            with(
+                FieldOfView2D(
+                    env,
+                    it,
+                    radius,
+                    Math.PI / 2
+                ).influentialNodes()) {
                 size shouldBe 1
                 first() shouldBe observed
             }

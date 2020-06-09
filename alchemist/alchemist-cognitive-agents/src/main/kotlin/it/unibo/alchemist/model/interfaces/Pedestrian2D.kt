@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.influencesphere.FieldOfView2D
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 
@@ -24,7 +24,12 @@ interface Pedestrian2D<T> : Pedestrian<T> {
      *          the environment where the pedestrian is.
      */
     fun fieldOfView(env: Physics2DEnvironment<T>): FieldOfView2D<T> =
-        FieldOfView2D(env, this, defaultFieldOfViewDepth, defaultFieldOfViewAperture)
+        FieldOfView2D(
+            env,
+            this,
+            defaultFieldOfViewDepth,
+            defaultFieldOfViewAperture
+        )
 
     companion object {
         /**

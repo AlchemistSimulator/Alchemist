@@ -6,7 +6,7 @@ import kotlin.math.sqrt
 /**
  * A generic vector in a multidimensional space.
  *
- * @param <S> self type to prevent vector operations between vectors of different spaces.
+ * @param S self type to prevent vector operations between vectors of different spaces.
  */
 interface Vector<S : Vector<S>> {
 
@@ -22,11 +22,12 @@ interface Vector<S : Vector<S>> {
     val coordinates: DoubleArray
 
     /**
-     * The coordinate of this vector in the specified dimension relatively to the basis its space is described with.
+     * The coordinate of this vector in the specified dimension relatively to the basis
+     * its space is described with.
      *
      * @param dim
-     *            the dimension. E.g., in a 2-dimensional implementation, 0
-     *            could be the X-axis and 1 the Y-axis
+     *            the dimension. E.g., in a 2-dimensional implementation, 0 could be the
+     *            X-axis and 1 the Y-axis
      * @return the coordinate value
      */
     operator fun get(dim: Int): Double
@@ -47,11 +48,13 @@ interface Vector<S : Vector<S>> {
 
     /**
      * Multiplication by a Double.
+     * @return the resulting vector, the operation is not performed in-place.
      */
     operator fun times(other: Double): S
 
     /**
      * Division by a Double.
+     * @return the resulting vector, the operation is not performed in-place.
      */
     @JvmDefault
     operator fun div(other: Double): S = times(1 / other)
@@ -78,22 +81,51 @@ interface Vector<S : Vector<S>> {
     fun angleBetween(other: S): Double = acos(dot(other) / (magnitude * other.magnitude))
 
     /**
-     * Computes the distance between two vectors, interpreted as points in an Euclidean space.
-     * throws [IllegalArgumentException] if vectors have different dimensions.
+     * Computes the distance between two vectors, interpreted as points in an Euclidean
+     * space. Throws [IllegalArgumentException] if vectors have different dimensions.
      */
     fun distanceTo(other: S): Double
 
     /**
-     * Resizes the vector in order for it to have a length equal
-     * to the specified parameter. Its direction and verse are preserved.
+     * @return a resized version of the vector, whose magnitude is equal to [newLen].
+     * Direction and verse of the original vector are preserved.
      */
     @JvmDefault
-    fun resize(newLen: Double): S = normalized().times(newLen)
+    fun resized(newLen: Double): S = normalized().times(newLen)
 
     /**
-     * Normalizes the vector.
+     * @return a normalized version of the vector (i.e. of unitary magnitude).
      */
     fun normalized(): S
+
+    @Suppress("UNCHECKED_CAST")
+    private fun resizedIf(toBeResized: Boolean, newLen: Double): S = when {
+        toBeResized -> resized(newLen)
+        else -> this as S
+    }
+
+    /**
+     * @return this vector if its [magnitude] is smaller than or equal to [maximumMagnitude] or a resized version
+     * of [maximumMagnitude] otherwise.
+     */
+    @JvmDefault
+    fun coerceAtMost(maximumMagnitude: Double): S =
+        resizedIf(magnitude > maximumMagnitude, maximumMagnitude)
+
+    /**
+     * @return this vector if its [magnitude] is greater than or equal to [minimumMagnitude] or a resized version
+     * of [minimumMagnitude] otherwise.
+     */
+    @JvmDefault
+    fun coerceAtLeast(minimumMagnitude: Double): S =
+        resizedIf(magnitude < minimumMagnitude, minimumMagnitude)
+
+    /**
+     * Performs a coercion at least and at most.
+     */
+    @JvmDefault
+    fun coerceIn(minimumMagnitude: Double, maximumMagnitude: Double): S =
+        coerceAtLeast(minimumMagnitude).coerceAtMost(maximumMagnitude)
 
     /**
      * Find the normal of a vector.

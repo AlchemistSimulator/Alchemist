@@ -36,7 +36,6 @@ dependencies {
     }
     implementation(Libs.org_danilopianini_conrec)
     implementation(Libs.ssaring_sportstracker_leafletmap)
-
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {
         api("org.openjfx:javafx-base:$javaFXVersion:$platform")
@@ -47,6 +46,7 @@ dependencies {
         api("org.openjfx:javafx-swing:$javaFXVersion:$platform")
         api("org.openjfx:javafx-web:$javaFXVersion:$platform")
     }
+    implementation(Libs.jgrapht_core) // just to draw cognitive maps
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }
@@ -57,6 +57,33 @@ configurations.all {
             if (requested.name == "svgSalamander") {
                 useTarget(Libs.svgsalamander)
                 because("mapsforge version is not on central")
+            }
+        }
+    }
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Giovanni Ciatto")
+                    email.set("giovanni.ciatto@unibo.it")
+                }
+                developer {
+                    name.set("Lorenzo Paganelli")
+                    email.set("lorenzo.paganelli3@studio.unibo.it")
+                }
+            }
+            contributors {
+                contributor {
+                    name.set("Matteo Francia")
+                    email.set("m.francia@unibo.it")
+                }
+                contributor {
+                    name.set("Federico Pettinari")
+                    email.set("federico.pettinari2@studio.unibo.it")
+                }
             }
         }
     }

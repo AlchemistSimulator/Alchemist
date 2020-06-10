@@ -18,4 +18,36 @@ dependencies {
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
+    implementation(Libs.jgrapht_core)
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Lorenzo Paganelli")
+                    email.set("lorenzo.paganelli3@studio.unibo.it")
+                }
+                developer {
+                    name.set("Federico Pettinari")
+                    email.set("federico.pettinari2@studio.unibo.it")
+                }
+            }
+            contributors {
+                contributor {
+                    name.set("Matteo Magnani")
+                    email.set("matteo.magnani18@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Diego Mazzieri")
+                    email.set("diego.mazzieri@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Franco Pradelli")
+                    email.set("franco.pradelli@studio.unibo.it")
+                }
+            }
+        }
+    }
 }

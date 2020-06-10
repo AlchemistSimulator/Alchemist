@@ -25,13 +25,13 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.environments.HasBoundaries;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
@@ -524,7 +524,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     private void loadObstacles(final Environment<T, P> env) {
-        obstacles = ((Environment2DWithObstacles<?, ?, ?>) env).getObstacles();
+        obstacles = ((Environment2DWithObstacles<?, ?>) env).getObstacles();
     }
 
     /**
@@ -704,7 +704,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      *         and has mobile obstacles
      */
     protected static boolean envHasMobileObstacles(final Environment<?, ?> env) {
-        return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?, ?>) env).hasMobileObstacles();
+        return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?>) env).hasMobileObstacles();
     }
 
     private void bindKey(final int key, final Runnable fun) {

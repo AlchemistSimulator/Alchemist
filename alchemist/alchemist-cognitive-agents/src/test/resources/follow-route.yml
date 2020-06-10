@@ -1,0 +1,34 @@
+incarnation: protelis
+
+environment:
+  type: ImageEnvironmentWithGraph
+  parameters: [images/building-planimetry.png, 0.1]
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [3.0]
+    type: PrioritySteering
+    actions:
+      - type: FollowRoute
+        parameters: [40, 15, 60, 80, 70, 105, 85, 80]
+
+displacements:
+  - in:
+      type: Point
+      parameters: [15, 15]
+    nodes:
+      type: OrientingHomogeneousPedestrian2D
+      parameters: [0.0]
+    programs:
+      - *behavior

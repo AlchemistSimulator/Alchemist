@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.interfaces.environments
 
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param <A> geometric transformations used in this environment
  * @param <F> factory of shapes compatible with this environment
  */
-interface PhysicsEnvironment<T, P, A, F> : Environment<T, P>
+interface PhysicsEnvironment<T, P, A, F> : EuclideanEnvironment<T, P>
 where P : Position<P>,
       P : Vector<P>,
       A : GeometricTransformation<P>,

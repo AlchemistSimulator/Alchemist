@@ -7,8 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import com.google.common.reflect.TypeToken;
-import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -46,10 +44,13 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @SuppressWarnings("unchecked")
     @Override
     public AddJunctionInNeighbor<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new AddJunctionInNeighbor<>(
-                (Environment<Double, P>) getEnvironment(),
-                AlchemistUtil.cast(new TypeToken<CellNode<P>>() { }, n),
-                jun, getRandomGenerator());
+        if (n instanceof CellNode) {
+            return new AddJunctionInNeighbor<>(
+                    (Environment<Double, P>) getEnvironment(),
+                    (CellNode<P>) n,
+                    jun, getRandomGenerator());
+        }
+        throw new IllegalArgumentException("Node must be CellNode, found " + n + " of type: " + n.getClass());
     }
 
     /**

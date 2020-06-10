@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.Position
 import org.danilopianini.util.ListSet
 
 /**
+ * This rule connects each and every node to each and every other.
  */
 class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
     override fun isLocallyConsistent() = true

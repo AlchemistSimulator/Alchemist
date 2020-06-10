@@ -11,6 +11,9 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 
 import java.awt.geom.Rectangle2D;
 
+import static java.lang.Math.min;
+import static java.lang.Math.abs;
+
 /**
  * A Rectangle.
  *
@@ -29,7 +32,7 @@ public class Rectangle<P extends Position2D<P>> extends Abstract2DShape<P> {
      *            height
      */
     public Rectangle(final double x, final double y, final double w, final double h) {
-        super(new Rectangle2D.Double(x, y, w, h));
+        super(new Rectangle2D.Double(min(x, x + w), min(y, y + h), abs(w), abs(h)));
     }
 
 }

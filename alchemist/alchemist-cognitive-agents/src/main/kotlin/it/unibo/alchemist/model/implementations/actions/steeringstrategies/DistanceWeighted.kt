@@ -1,29 +1,35 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
+import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 
 /**
  * Weighted steering logic where the weight of each steering action is
- * the inverse of its distance from the target.
+ * the inverse of the pedestrian's distance from the action's target.
  *
- * @param env
+ * @param environment
  *          the environment in which the pedestrian moves.
  * @param pedestrian
  *          the owner of the steering action this strategy belongs to.
  */
 open class DistanceWeighted<T>(
-    env: Environment<T, Euclidean2DPosition>,
-    pedestrian: Pedestrian<T>
-) : Weighted<T>(env, pedestrian, {
-    pedestrian.targetDistance(env, this).let { if (it > 0.0) 1 / it else it }
+    environment: Euclidean2DEnvironment<T>,
+    pedestrian: Pedestrian<T>,
+    /**
+     * Default weight for steering actions without a defined target.
+     */
+    defaultWeight: Double = 1.0
+) : Weighted<T>(environment, pedestrian, {
+    if (this is SteeringActionWithTarget) {
+        pedestrian.targetDistance(environment, this).let { if (it > 0.0) 1 / it else it }
+    } else defaultWeight
 })
 
 /**
- * Calculate the distance between this pedestrian current position and the specified steering action target.
+ * Calculate the distance between this pedestrian current position and the target of the specified steering action.
  *
  * @param env
  *          the environment in which the pedestrian moves.
@@ -32,5 +38,5 @@ open class DistanceWeighted<T>(
  */
 fun <T, P : Position<P>> Pedestrian<T>.targetDistance(
     env: Environment<T, P>,
-    action: SteeringAction<T, P>
+    action: SteeringActionWithTarget<T, P>
 ): Double = action.target().distanceTo(env.getPosition(this))

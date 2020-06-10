@@ -4,26 +4,30 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
-import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import kotlin.math.abs
 
 private const val EPSILON = 0.001
 
-class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
+class TestSteeringBehaviors<T, P> : StringSpec({
 
     "nodes seeking a target must approach it" {
         val startDistances = mutableMapOf<Node<T>, Double>()
         val endDistances = mutableMapOf<Node<T>, Double>()
         loadYamlSimulation<T, P>("seek.yml").startSimulation(
-            initialized = { e -> e.nodes.forEach {
-                startDistances[it] = e.getPosition(it).distanceTo(e.origin())
-            } },
-            finished = { e, _, _ -> e.nodes.forEach {
-                endDistances[it] = e.getPosition(it).distanceTo(e.origin())
-            } }
+            initialized = { environment ->
+                environment.nodes.forEach {
+                    startDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
+                }
+            },
+            finished = { environment, _, _ ->
+                environment.nodes.forEach {
+                    endDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
+                }
+            }
         ).nodes.forEach { startDistances[it]!! shouldBeGreaterThan endDistances[it]!! }
     }
 
@@ -32,10 +36,10 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
         val endDistances = mutableMapOf<Node<T>, Double>()
         loadYamlSimulation<T, P>("flee.yml").startSimulation(
             initialized = { e -> e.nodes.forEach {
-                startDistances[it] = e.getPosition(it).distanceTo(e.origin())
+                startDistances[it] = e.getPosition(it).distanceTo(e.origin)
             } },
             finished = { e, _, _ -> e.nodes.forEach {
-                endDistances[it] = e.getPosition(it).distanceTo(e.origin())
+                endDistances[it] = e.getPosition(it).distanceTo(e.origin)
             } }
         ).nodes.forEach { startDistances[it]!! shouldBeLessThan endDistances[it]!! }
     }
@@ -78,7 +82,7 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
                         }
                     }
             },
-            numSteps = 20000
+            steps = 20000
         )
     }
 
@@ -91,7 +95,7 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
                     }
                 }
             } },
-            numSteps = 30000
+            steps = 30000
         )
     }
 
@@ -100,7 +104,7 @@ class TestSteeringBehaviors<T, P : Position2D<P>> : StringSpec({
             finished = { e, _, _ -> e.nodes.forEach {
                 e.getPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
             } },
-            numSteps = 15000
+            steps = 22000
         )
     }
-})
+}) where P : Position2D<P>, P : Vector2D<P>

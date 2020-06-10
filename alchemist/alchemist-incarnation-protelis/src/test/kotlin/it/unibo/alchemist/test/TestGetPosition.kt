@@ -46,8 +46,8 @@ class TestGetPosition {
     fun testGetPosition() {
         val sim: Simulation<Any, Euclidean2DPosition> = Engine(env, 100)
         sim.addOutputMonitor(object : OutputMonitor<Any, Euclidean2DPosition> {
-            override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) { }
-            override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) { }
+            override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) = Unit
+            override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) = Unit
             override fun stepDone(env: Environment<Any, Euclidean2DPosition>?, r: Reaction<Any>?, time: Time?, step: Long) {
                 if (step > 0) {
                     Assertions.assertEquals(

@@ -34,10 +34,7 @@ class TestImageEnvironment {
         "Senzanome.png",
         "duelocalioreno-pianta3.png",
         "2rettangolo_nero.png",
-        "PlanimetriaChiaravalle1.png",
-        "duelocalioreno-pianta3.png",
-        "duelocalioreno-pianta3.png",
-        "duelocalioreno-pianta3.png"
+        "PlanimetriaChiaravalle1.png"
     )
 
     /**

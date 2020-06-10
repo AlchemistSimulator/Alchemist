@@ -54,7 +54,7 @@ public class DrawPedestrianPath extends DrawOnce {
     private RangedInteger blue = new RangedInteger(0, MAX_COLOUR_VALUE, MAX_COLOUR_VALUE);
     private Color colorCache = Color.BLUE;
     @ExportForGUI(nameToExport = "to be drawn")
-    private boolean toBeDrawn;
+    private boolean toBeDrawn = true;
     private final List<Position2D> path = new ArrayList<>();
 
     /**

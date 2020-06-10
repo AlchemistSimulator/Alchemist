@@ -7,13 +7,37 @@
  */
 
 dependencies {
+    // API
     api(project(":alchemist-interfaces"))
     api(project(":alchemist-implementationbase"))
     api(Libs.protelis_interpreter)
     api(Libs.protelis_lang)
+    // IMPLEMENTATION
     implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
-    testImplementation(project(":alchemist-engine"))
+    // TESTING
     testImplementation(project(":alchemist-loading"))
+    testImplementation(project(":alchemist-engine"))
     testImplementation(Libs.commons_io)
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            developers {
+                developer {
+                    name.set("Danilo Pianini")
+                    email.set("danilo.pianini@unibo.it")
+                    url.set("http://www.danilopianini.org")
+                }
+            }
+            contributors {
+                contributor {
+                    name.set("Jacob Beal")
+                    email.set("jakebeal@bbn.com")
+                    url.set("http://web.mit.edu/jakebeal/www/")
+                }
+            }
+        }
+    }
 }

@@ -34,6 +34,8 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
+val executionRequirements = listOf("interfaces", "engine", "loading").map { project(":alchemist-$it") }
+
 apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
@@ -62,20 +64,20 @@ allprojects {
     }
 
     repositories {
+        // Prefer Google mirrors, they're more stable
         listOf("", "-eu", "-asia").forEach {
             maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
         }
         mavenCentral()
-        maven {
-            url = uri("https://dl.bintray.com/kotlin/dokka")
-            content {
-                includeGroup("org.jetbrains.dokka")
-            }
-        }
-        maven {
-            url = uri("https://dl.bintray.com/kotlin/kotlinx.html/")
-            content {
-                includeGroup("org.jetbrains.kotlinx")
+        // Stuff on bintray, build-only dependencies allowed
+        mapOf(
+            "kotlin/dokka" to setOf("org.jetbrains.dokka"),
+            "kotlin/kotlinx.html" to setOf("org.jetbrains.kotlinx"),
+            "arturbosch/code-analysis" to setOf("io.gitlab.arturbosch.detekt")
+        ).forEach { (uriPart, groups) ->
+            maven {
+                url = uri("https://dl.bintray.com/$uriPart")
+                content { groups.forEach { includeGroup(it) } }
             }
         }
 
@@ -86,21 +88,30 @@ allprojects {
     }
 
     dependencies {
+        // Code quality control
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
+        // Compilation only
         compileOnly(Libs.annotations)
         compileOnly(Libs.spotbugs)
+        // Implementation
         implementation(Libs.slf4j_api)
         implementation(kotlin("stdlib-jdk8"))
         implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
+        // Test compilation only
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
+        // Test implementation: JUnit 5 + Kotest
         testImplementation(Libs.junit_jupiter_api)
-        testRuntimeOnly(Libs.junit_jupiter_engine)
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
-        runtimeOnly(Libs.logback_classic)
+        // Test runtime: Junit engine
+        testRuntimeOnly(Libs.junit_jupiter_engine)
+        // executable jar packaging
+        if ("incarnation" in project.name) {
+            shadow(rootProject)
+        }
     }
 
     // COMPILE
@@ -186,106 +197,7 @@ allprojects {
                         name.set("Danilo Pianini")
                         email.set("danilo.pianini@unibo.it")
                         url.set("http://www.danilopianini.org")
-                    }
-                    developer {
-                        name.set("Roberto Casadei")
-                        email.set("roby.casadei@unibo.it")
-                        url.set("https://www.unibo.it/sitoweb/roby.casadei")
-                    }
-                }
-                contributors {
-                    contributor {
-                        name.set("Jacob Beal")
-                        email.set("jakebeal@bbn.com")
-                        url.set("http://web.mit.edu/jakebeal/www/")
-                    }
-                    contributor {
-                        name.set("Michele Bombardi")
-                        email.set("michele.bombardi@studio.unibo.it")
-                        url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/MicheleBombardi/")
-                    }
-                    contributor {
-                        name.set("Elisa Casadio")
-                        email.set("elisa.casadio7@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Chiara Casalboni")
-                        email.set("chiara.casalboni2@studio.unibo.it")
-                        url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/ChiaraCasalboni2/")
-                    }
-                    contributor {
-                        name.set("Matteo Francia")
-                        email.set("m.francia@unibo.it")
-                    }
-                    contributor {
-                        name.set("Enrico Galassi")
-                        email.set("enrico.galassi@studio.unibo.it")
-                        url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/EnricoGalassi/")
-                    }
-                    contributor {
-                        name.set("Luca Giuliani")
-                        email.set("luca.giuliani10@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Gabriele Graffieti")
-                        email.set("gabriele.graffieti@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Matteo Magnani")
-                        email.set("matteo.magnani18@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Niccolò Maltoni")
-                        email.set("niccolo.maltoni@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Diego Mazzieri")
-                        email.set("diego.mazzieri@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Luca Mella")
-                        email.set("luca.mella@studio.unibo.it")
-                        url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/LucaMella/")
-                    }
-                    contributor {
-                        name.set("Vuksa Mihajlovic")
-                        email.set("vuksa.mihajlovic@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Sara Montagna")
-                        email.set("sara.montagna@unibo.it")
-                        url.set("http://saramontagna.apice.unibo.it/")
-                    }
-                    contributor {
-                        name.set("Luca Nenni")
-                        email.set("luca.nenni@studio.unibo.it")
-                        url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/LucaNenni/")
-                    }
-                    contributor {
-                        name.set("Lorenzo Paganelli")
-                        email.set("lorenzo.paganelli3@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Federico Pettinari")
-                        email.set("federico.pettinari2@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Andrea Placuzzi")
-                        email.set("andrea.placuzzi@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Franco Pradelli")
-                        email.set("franco.pradelli@studio.unibo.it")
-                    }
-                    contributor {
-                        name.set("Giacomo Pronti")
-                        email.set("giacomo.pronti@studio.unibo.it")
-                        url.set("http://apice.unibo.it/xwiki/bin/view/XWiki/GiacomoPronti/")
-                    }
-                    contributor {
-                        name.set("Giacomo Scaparrotti")
-                        email.set("giacomo.scaparrotti@studio.unibo.it")
-                        url.set("https://www.linkedin.com/in/giacomo-scaparrotti-0aa77569")
+                        roles.set(mutableSetOf("architect", "developer"))
                     }
                 }
             }
@@ -357,6 +269,9 @@ allprojects {
     }
 }
 
+/*
+ * Root project additional configuration
+ */
 evaluationDependsOnChildren()
 
 repositories {
@@ -371,13 +286,12 @@ repositories {
 }
 
 dependencies {
-    api(project(":alchemist-engine"))
-    api(project(":alchemist-interfaces"))
-    api(project(":alchemist-loading"))
+    executionRequirements.forEach { api(it) }
     implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
+    runtimeOnly(Libs.logback_classic)
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
     orchidRuntimeOnly(Libs.orchideditorial)
     orchidRuntimeOnly(Libs.orchidkotlindoc)

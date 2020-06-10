@@ -22,6 +22,7 @@ import it.unibo.alchemist.core.interfaces.Status.RUNNING
 import it.unibo.alchemist.core.interfaces.Status.TERMINATED
 
 /**
+ * Tests that the state machine is coherent.
  */
 class TestStatus : StringSpec({
     "subsequent statuses should be reachable, previous ones should not" {

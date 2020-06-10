@@ -9,7 +9,6 @@
 dependencies {
     api(project(":alchemist-implementationbase"))
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
     implementation(Libs.guava)
     implementation(Libs.jirf)
@@ -17,12 +16,12 @@ dependencies {
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(Libs.kotlin_scripting_jsr223_embeddable)
-    runtimeOnly(Libs.scala_compiler)
+    runtimeOnly("org.scala-lang:scala-compiler:2.13.1")
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
     testImplementation(Libs.gson)
-    testImplementation(Libs.scala_compiler)
+    testImplementation("org.scala-lang:scala-compiler:2.13.1")
 
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }
@@ -30,4 +29,25 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
     maxHeapSize = "1500m"
+}
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            contributors {
+                contributor {
+                    name.set("Matteo Magnani")
+                    email.set("matteo.magnani18@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Andrea Placuzzi")
+                    email.set("andrea.placuzzi@studio.unibo.it")
+                }
+                contributor {
+                    name.set("Franco Pradelli")
+                    email.set("franco.pradelli@studio.unibo.it")
+                }
+            }
+        }
+    }
 }

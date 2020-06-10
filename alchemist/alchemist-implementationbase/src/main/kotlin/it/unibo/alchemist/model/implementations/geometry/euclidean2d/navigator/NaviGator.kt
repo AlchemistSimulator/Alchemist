@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.createSegment
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
 import it.unibo.alchemist.model.implementations.geometry.intersect
@@ -85,7 +85,7 @@ fun generateNavigationGraph(
 
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
-            if (edge.isAxisAligned) {
+            if (edge.isAlignedToAnyAxis) {
                 val passages = seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
                 /*
                  * Moves the edge back to its previous position as findCrossings modified it.
@@ -150,11 +150,11 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
          * the intersection with the advancing edge.
          */
         val polygonToInterval: (ExtendableConvexPolygon) -> ClosedRange<Double> = {
-            it.closestEdgeTo(oldEdge).toRange(oldEdge.xAxisAligned)
+            it.closestEdgeTo(oldEdge).toRange(oldEdge.isHorizontal)
         }
         val shapeToInterval: (Shape) -> ClosedRange<Double> = { shape ->
             shape.vertices().let {
-                if (oldEdge.xAxisAligned) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
+                if (oldEdge.isHorizontal) it.findExtremeCoordsOnX() else it.findExtremeCoordsOnY()
             }
         }
         val intersectedSeeds: () -> List<ExtendableConvexPolygon> = {
@@ -198,7 +198,7 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
              */
             intervals.map {
                 val passageShape = when {
-                    oldEdge.xAxisAligned -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
+                    oldEdge.isHorizontal -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
                     else -> createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
                 }
                 Euclidean2DPassage(this, neighbor, passageShape)
@@ -229,3 +229,9 @@ private fun createSeed(
         Euclidean2DPosition(x + side, y + side),
         Euclidean2DPosition(x, y + side)
     ), origin, width, height, obstacles)
+
+/**
+ * Creates a [Segment2D]. [x2] defaults to [x1] and [y2] defaults to [y1].
+ */
+private fun createSegment(x1: Double, y1: Double, x2: Double = x1, y2: Double = y1) =
+    Segment2DImpl(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))

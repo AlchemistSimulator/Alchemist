@@ -1,19 +1,16 @@
 package it.unibo.alchemist.test
 
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectSegment
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectAsLines
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SegmentsIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.LinesIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.CircleSegmentIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectCircle
+import io.kotest.matchers.types.shouldBeTypeOf
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.danilopianini.lang.MathUtils
 import org.junit.jupiter.api.Test
-import java.util.Optional
 
 internal infix fun Double.shouldBeFuzzy(other: Double): Unit =
     MathUtils.fuzzyEquals(this, other) shouldBe true
@@ -36,33 +33,96 @@ fun coords(x: Double, y: Double) = Euclidean2DPosition(x, y)
 /**
  * Creates a [Segment2D].
  */
-fun segment(x1: Double, y1: Double, x2: Double, y2: Double) = Segment2D(coords(x1, y1), coords(x2, y2))
+fun segment(x1: Double, y1: Double, x2: Double, y2: Double) = Segment2DImpl(coords(x1, y1), coords(x2, y2))
 
 class TestIntersections {
 
-    private fun <P : Vector2D<P>> linesIntersectionShouldBe(
+    private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
         segment1: Segment2D<P>,
         segment2: Segment2D<P>,
-        expectedType: LinesIntersectionType,
-        expectedPoint: Optional<P> = Optional.empty()
-    ) {
-        segment1.intersectAsLines(segment2).let { intersection ->
-            intersection.type shouldBe expectedType
-            intersection.point shouldBe expectedPoint
-        }
+        intersect: Segment2D<P>.(Segment2D<P>) -> Intersection2D<P>
+    ): I {
+        val intersection = segment1.intersect(segment2)
+        intersection.shouldBeTypeOf<I>()
+        return intersection as I
     }
+
+    private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> linesIntersectionShouldBe(
+        segment1: Segment2D<P>,
+        segment2: Segment2D<P>
+    ): I = intersectionShouldBe(segment1, segment2) { intersectAsLines(it) }
 
     private fun <P : Vector2D<P>> linesIntersectionShouldBe(
         segment1: Segment2D<P>,
         segment2: Segment2D<P>,
         expectedPoint: P
-    ) = linesIntersectionShouldBe(segment1, segment2, LinesIntersectionType.POINT, Optional.of(expectedPoint))
+    ) {
+        val intersection = linesIntersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment1, segment2)
+        intersection.point shouldBe expectedPoint
+    }
 
     private fun <P : Vector2D<P>> linesIntersectionShouldBeEmpty(segment1: Segment2D<P>, segment2: Segment2D<P>) =
-        linesIntersectionShouldBe(segment1, segment2, LinesIntersectionType.EMPTY)
+        linesIntersectionShouldBe<P, Intersection2D.None>(segment1, segment2)
 
     private fun <P : Vector2D<P>> linesIntersectionShouldBeInfinite(segment1: Segment2D<P>, segment2: Segment2D<P>) =
-        linesIntersectionShouldBe(segment1, segment2, LinesIntersectionType.LINE)
+        linesIntersectionShouldBe<P, Intersection2D.InfinitePoints>(segment1, segment2)
+
+    private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> segmentsIntersectionShouldBe(
+        segment1: Segment2D<P>,
+        segment2: Segment2D<P>
+    ): I = intersectionShouldBe(segment1, segment2) { intersectSegment(it) }
+
+    private fun <P : Vector2D<P>> segmentsIntersectionShouldBe(
+        segment1: Segment2D<P>,
+        segment2: Segment2D<P>,
+        expectedPoint: P
+    ) {
+        val intersection = segmentsIntersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment1, segment2)
+        intersection.point shouldBe expectedPoint
+    }
+
+    private fun <P : Vector2D<P>> intersectionShouldBeEmpty(segment1: Segment2D<P>, segment2: Segment2D<P>) =
+        segmentsIntersectionShouldBe<P, Intersection2D.None>(segment1, segment2)
+
+    private fun <P : Vector2D<P>> intersectionShouldBeInfinite(segment1: Segment2D<P>, segment2: Segment2D<P>) =
+        segmentsIntersectionShouldBe<P, Intersection2D.InfinitePoints>(segment1, segment2)
+
+    private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> circleIntersectionShouldBe(
+        segment: Segment2D<P>,
+        center: P,
+        radius: Double
+    ): I {
+        val intersection = segment.intersectCircle(center, radius)
+        intersection.shouldBeTypeOf<I>()
+        return intersection as I
+    }
+
+    private fun <P : Vector2D<P>> circleIntersectionShouldBe(
+        segment: Segment2D<P>,
+        center: P,
+        radius: Double,
+        expectedPoint1: P,
+        expectedPoint2: P
+    ) {
+        val intersection = circleIntersectionShouldBe<P, Intersection2D.MultiplePoints<P>>(segment, center, radius)
+        intersection.points shouldContainExactlyInAnyOrder listOf(expectedPoint1, expectedPoint2)
+    }
+
+    private fun <P : Vector2D<P>> circleIntersectionShouldBe(
+        segment: Segment2D<P>,
+        center: P,
+        radius: Double,
+        expectedPoint: P
+    ) {
+        val intersection = circleIntersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment, center, radius)
+        intersection.point shouldBe expectedPoint
+    }
+
+    private fun <P : Vector2D<P>> circleIntersectionShouldBeEmpty(
+        segment: Segment2D<P>,
+        center: P,
+        radius: Double
+    ) = circleIntersectionShouldBe<P, Intersection2D.None>(segment, center, radius)
 
     @Test
     fun testLinesIntersection() {
@@ -112,36 +172,12 @@ class TestIntersections {
         )
     }
 
-    private fun <P : Vector2D<P>> intersectionShouldBe(
-        segment1: Segment2D<P>,
-        segment2: Segment2D<P>,
-        expectedType: SegmentsIntersectionType,
-        expectedPoint: Optional<P> = Optional.empty()
-    ) {
-        segment1.intersectSegment(segment2).let { intersection ->
-            intersection.type shouldBe expectedType
-            intersection.point shouldBe expectedPoint
-        }
-    }
-
-    private fun <P : Vector2D<P>> intersectionShouldBe(
-        segment1: Segment2D<P>,
-        segment2: Segment2D<P>,
-        expectedPoint: P
-    ) = intersectionShouldBe(segment1, segment2, SegmentsIntersectionType.POINT, Optional.of(expectedPoint))
-
-    private fun <P : Vector2D<P>> intersectionShouldBeEmpty(segment1: Segment2D<P>, segment2: Segment2D<P>) =
-        intersectionShouldBe(segment1, segment2, SegmentsIntersectionType.EMPTY)
-
-    private fun <P : Vector2D<P>> intersectionShouldBeInfinite(segment1: Segment2D<P>, segment2: Segment2D<P>) =
-        intersectionShouldBe(segment1, segment2, SegmentsIntersectionType.SEGMENT)
-
     @Test
     fun testSegmentsIntersection() {
         /*
          * Plain intersection.
          */
-        intersectionShouldBe(
+        segmentsIntersectionShouldBe(
             segment(1.0, 1.0, 5.0, 5.0),
             segment(3.0, 1.0, 1.0, 3.0),
             coords(2.0, 2.0)
@@ -149,7 +185,7 @@ class TestIntersections {
         /*
          * Segments share an endpoint.
          */
-        intersectionShouldBe(
+        segmentsIntersectionShouldBe(
             segment(1.0, 1.0, 5.0, 5.0),
             segment(5.0, 5.0, 6.0, 1.0),
             coords(5.0, 5.0)
@@ -157,7 +193,7 @@ class TestIntersections {
         /*
          * Segments share an endpoint and are collinear.
          */
-        intersectionShouldBe(
+        segmentsIntersectionShouldBe(
             segment(1.0, 1.0, 5.0, 5.0),
             segment(5.0, 5.0, 6.0, 6.0),
             coords(5.0, 5.0)
@@ -221,17 +257,17 @@ class TestIntersections {
         /*
          * Intersections with axis-aligned segments.
          */
-        intersectionShouldBe(
+        segmentsIntersectionShouldBe(
             segment(1.0, 1.0, 5.0, 1.0),
             segment(3.0, -1.0, 3.0, 1.0),
             coords(3.0, 1.0)
         )
-        intersectionShouldBe(
+        segmentsIntersectionShouldBe(
             segment(1.0, 1.0, 5.0, 1.0),
             segment(3.0, -1.0, 3.0, 5.0),
             coords(3.0, 1.0)
         )
-        intersectionShouldBe(
+        segmentsIntersectionShouldBe(
             segment(1.0, 1.0, 5.0, 1.0),
             segment(5.0, 1.0, 6.0, 1.0),
             coords(5.0, 1.0)
@@ -253,7 +289,7 @@ class TestIntersections {
         /*
          * Aligned to the y-axis.
          */
-        intersectionShouldBe(
+        segmentsIntersectionShouldBe(
             segment(1.0, 1.0, 1.0, 6.0),
             segment(1.0, 1.0, 1.0, -6.0),
             coords(1.0, 1.0)
@@ -269,7 +305,7 @@ class TestIntersections {
         /*
          * Degenerate segments.
          */
-        intersectionShouldBe(
+        segmentsIntersectionShouldBe(
             segment(1.0, 1.0, 1.0, 1.0),
             segment(1.0, 1.0, 1.0, 1.0),
             coords(1.0, 1.0)
@@ -280,84 +316,38 @@ class TestIntersections {
         )
     }
 
-    private fun <P : Vector2D<P>> intersectionShouldBe(
-        segment: Segment2D<P>,
-        center: P,
-        radius: Double,
-        expectedType: CircleSegmentIntersectionType,
-        expectedPoint1: P? = null,
-        expectedPoint2: P? = null
-    ) {
-        segment.intersectCircle(center, radius).let { intersection ->
-            intersection.type shouldBe expectedType
-            /*
-             * Points can be provided in any order
-             */
-            mutableSetOf(intersection.point1, intersection.point2) shouldBe
-                mutableSetOf(expectedPoint1, expectedPoint2)
-        }
-    }
-
-    private fun <P : Vector2D<P>> intersectionShouldBe(
-        segment: Segment2D<P>,
-        center: P,
-        radius: Double,
-        expectedPoint1: P,
-        expectedPoint2: P
-    ) = intersectionShouldBe(
-        segment,
-        center,
-        radius,
-        CircleSegmentIntersectionType.PAIR,
-        expectedPoint1,
-        expectedPoint2
-    )
-
-    private fun <P : Vector2D<P>> intersectionShouldBe(
-        segment: Segment2D<P>,
-        center: P,
-        radius: Double,
-        expectedPoint: P
-    ) = intersectionShouldBe(segment, center, radius, CircleSegmentIntersectionType.POINT, expectedPoint)
-
-    private fun <P : Vector2D<P>> intersectionShouldBeEmpty(
-        segment: Segment2D<P>,
-        center: P,
-        radius: Double
-    ) = intersectionShouldBe(segment, center, radius, CircleSegmentIntersectionType.EMPTY)
-
     @Test
     fun testCircleSegmentIntersection() {
-        intersectionShouldBe(
+        circleIntersectionShouldBe(
             segment(1.0, 1.0, 5.0, 1.0),
             coords(3.0, 3.0),
             2.0,
             coords(3.0, 1.0)
         )
-        intersectionShouldBeEmpty(
+        circleIntersectionShouldBe(
             segment(1.0, -1.0, 5.0, -1.0),
             coords(3.0, 3.0),
             2.0
         )
-        intersectionShouldBe(
+        circleIntersectionShouldBe(
             segment(0.0, 3.0, 6.0, 3.0),
             coords(3.0, 3.0),
             2.0,
             coords(1.0, 3.0),
             coords(5.0, 3.0)
         )
-        intersectionShouldBe(
+        circleIntersectionShouldBe(
             segment(3.0, 3.0, 6.0, 3.0),
             coords(3.0, 3.0),
             2.0,
             coords(5.0, 3.0)
         )
-        intersectionShouldBeEmpty(
+        circleIntersectionShouldBe(
             segment(10.0, 3.0, 12.0, 3.0),
             coords(3.0, 3.0),
             2.0
         )
-        intersectionShouldBe(
+        circleIntersectionShouldBe(
             segment(0.0, 1.0, 1.0, 1.0),
             coords(1.0, 1.0),
             1.0,

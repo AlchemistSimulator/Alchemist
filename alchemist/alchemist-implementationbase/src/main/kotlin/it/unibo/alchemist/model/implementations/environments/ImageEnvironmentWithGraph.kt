@@ -76,7 +76,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     }
 
     private fun <V : Vector2D<V>> Segment2D<V>.mapSegment(mapper: (V) -> V): Segment2D<V> =
-        copy(mapper.invoke(first), mapper.invoke(second))
+        copyWith(mapper.invoke(first), mapper.invoke(second))
 
     private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =
         AwtMutableConvexPolygon(vertices().map(mapper).toMutableList())

@@ -22,6 +22,7 @@ dependencies {
     implementation("org.scala-lang:scala-library:2.13.1")
 
     testImplementation(project(":alchemist-engine"))
+    testImplementation(project(":alchemist-euclidean-geometry"))
     testImplementation(project(":alchemist-loading"))
     testImplementation("org.scalatest:scalatest_2.13:_")
     testImplementation("org.scalatestplus:scalatestplus-junit_2.13:_")

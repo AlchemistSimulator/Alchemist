@@ -1,4 +1,4 @@
-
+package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ClosestN

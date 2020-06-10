@@ -25,4 +25,20 @@ public interface GeoPosition extends Position2D<GeoPosition> {
     @Deprecated
     @Override
     double getCoordinate(int dim);
+
+    /**
+     * Adds two {@link GeoPosition}.
+     *
+     * @param other the position to sum to
+     * @return the sum.
+     */
+    GeoPosition plus(GeoPosition other);
+
+    /**
+     * Subtracts the provided {@link GeoPosition} from this {@link GeoPosition}.
+     *
+     * @param other the position to subtract to this one
+     * @return the difference.
+     */
+    GeoPosition minus(GeoPosition other);
 }

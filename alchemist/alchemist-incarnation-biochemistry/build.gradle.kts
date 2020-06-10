@@ -13,6 +13,7 @@ plugins {
 dependencies {
     antlr(Libs.antlr4)
     api(project(":alchemist-implementationbase"))
+    api(project(":alchemist-euclidean-geometry"))
     implementation(Libs.commons_lang3)
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)

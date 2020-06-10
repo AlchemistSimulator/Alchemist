@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.EuclideanEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
@@ -61,12 +62,17 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
      * Detects if the move is in absolute or relative coordinates, then calls the correct method on the
      * {@link Environment}.
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void execute() {
         if (isAbs) {
             env.moveNodeToPosition(getNode(), getNextPosition());
         } else {
-            env.moveNode(getNode(), getNextPosition());
+            if (env instanceof EuclideanEnvironment) {
+                ((EuclideanEnvironment) env).moveNode(getNode(), getNextPosition());
+            } else {
+                env.moveNodeToPosition(getNode(), env.getPosition(getNode()).plus(getNextPosition().getCoordinates()));
+            }
         }
     }
 
@@ -111,5 +117,4 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     protected final boolean isAbsolute() {
         return isAbs;
     }
-
 }

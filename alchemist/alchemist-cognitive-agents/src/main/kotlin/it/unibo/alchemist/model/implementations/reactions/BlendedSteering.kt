@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.DistanceWeighted
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 
@@ -17,6 +17,6 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  */
 class BlendedSteering<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Pedestrian<T>,
+    pedestrian: Pedestrian2D<T>,
     timeDistribution: TimeDistribution<T>
 ) : SteeringBehavior<T>(environment, pedestrian, timeDistribution, DistanceWeighted(environment, pedestrian))

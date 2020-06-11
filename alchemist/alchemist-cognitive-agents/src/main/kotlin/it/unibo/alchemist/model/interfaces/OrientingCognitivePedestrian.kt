@@ -19,4 +19,4 @@ interface OrientingCognitivePedestrian<
     A : GeometricTransformation<V>,
     N : ConvexGeometricShape<V, A>,
     E
-> : OrientingPedestrian<T, V, A, N, E>, CognitivePedestrian<T>
+> : OrientingPedestrian<T, V, A, N, E>, CognitivePedestrian<T, V, A>

@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
@@ -290,7 +299,11 @@ class ExtendableConvexPolygonInEnvironment(
         /*
          * a segment going from the old position of the intruding vertex to the new one
          */
-        val movementSegment = Segment2DImpl(intrudingVertex, intrudingVertex - growthDirection.resized(step))
+        val movementSegment =
+            Segment2DImpl(
+                intrudingVertex,
+                intrudingVertex - growthDirection.resized(step)
+            )
         val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
         require(intrudedEdges.size == 1) { "vertex is not intruding" }
         return intrudedEdges.first()
@@ -301,7 +314,12 @@ class ExtendableConvexPolygonInEnvironment(
      */
     private fun findIntersectingEdges(obstacle: Shape, e: Segment2D<Euclidean2DPosition>) =
         obstacle.vertices().run {
-            mapIndexed { i, v -> Segment2DImpl(v, this[(i + 1) % size]) }
+            mapIndexed { i, v ->
+                Segment2DImpl(
+                    v,
+                    this[(i + 1) % size]
+                )
+            }
                 .filter { edgesIntersect(it, e) }
         }
 

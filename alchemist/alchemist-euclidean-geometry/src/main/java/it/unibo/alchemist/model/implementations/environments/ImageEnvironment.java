@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.utils.RectObstacle2D;
+import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.imageio.ImageIO;

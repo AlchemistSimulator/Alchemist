@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DObstacl
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.IntNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.implementations.utils.RectObstacle2D;
+import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 

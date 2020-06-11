@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
+import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
@@ -17,16 +18,22 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
 /**
  * Implementation of [Physics2DEnvironment].
  */
 open class Continuous2DEnvironment<T> :
     Euclidean2DEnvironment<T>,
-    Abstract2DEnvironment<T, Euclidean2DPosition>(), Physics2DEnvironment<T> {
+    Abstract2DEnvironment<T, Euclidean2DPosition>(),
+    Physics2DEnvironment<T> {
 
     companion object {
         @JvmStatic private val serialVersionUID: Long = 1L
+
+        private val adimensional =
+            AdimensionalShape<Euclidean2DPosition, Euclidean2DTransformation>(Euclidean2DEnvironment.origin)
     }
 
     override val shapeFactory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
@@ -53,18 +60,22 @@ open class Continuous2DEnvironment<T> :
     }
 
     override fun getShape(node: Node<T>): Euclidean2DShape =
-        shapeFactory.requireCompatible(node.shape)
-            .transformed {
-                origin(getPosition(node))
-                rotate(getHeading(node))
-            }
+        if (node is NodeWithShape<*, *, *>) {
+            shapeFactory.requireCompatible(node.shape)
+                .transformed {
+                    origin(getPosition(node))
+                    rotate(getHeading(node))
+                }
+        } else {
+            Companion.adimensional
+        }
 
     /**
      * Keeps track of the largest diameter of the shapes.
      */
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
-        if (node.shape.diameter > largestShapeDiameter) {
+        if (node is NodeWithShape<*, *, *> && node.shape.diameter > largestShapeDiameter) {
             largestShapeDiameter = node.shape.diameter
         }
     }
@@ -76,8 +87,11 @@ open class Continuous2DEnvironment<T> :
         super.nodeRemoved(node, neighborhood)
             .also {
                 nodeToHeading.remove(node)
-                if (largestShapeDiameter >= node.shape.diameter) {
-                    largestShapeDiameter = nodes.map { it.shape.diameter }.max() ?: 0.0
+                if (node is NodeWithShape<*, *, *> && largestShapeDiameter <= node.shape.diameter) {
+                    largestShapeDiameter = nodes.asSequence()
+                        .filterIsInstance<NodeWithShape<*, *, *>>()
+                        .map { it.shape.diameter }
+                        .max() ?: 0.0
                 }
             }
 
@@ -92,8 +106,8 @@ open class Continuous2DEnvironment<T> :
      * limits.
      */
     override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =
-        getNodesWithin(shapeFactory.requireCompatible(node.shape).transformed { origin(position) })
-            .isEmpty()
+        node !is NodeWithShape<*, *, *> ||
+            getNodesWithin(shapeFactory.requireCompatible(node.shape).transformed { origin(position) }).isEmpty()
 
     /**
      * Creates an euclidean position from the given coordinates.

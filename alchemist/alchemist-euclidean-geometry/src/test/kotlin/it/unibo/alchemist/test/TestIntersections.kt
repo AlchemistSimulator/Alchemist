@@ -31,7 +31,11 @@ fun coords(x: Double, y: Double) = Euclidean2DPosition(x, y)
 /**
  * Creates a [Segment2D].
  */
-fun segment(x1: Double, y1: Double, x2: Double, y2: Double) = Segment2DImpl(coords(x1, y1), coords(x2, y2))
+fun segment(x1: Double, y1: Double, x2: Double, y2: Double) =
+    Segment2DImpl(
+        coords(x1, y1),
+        coords(x2, y2)
+    )
 
 class TestIntersections {
 

@@ -71,7 +71,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
     "cohesion gives importance to the other members of the group during an evacuation" {
         loadYamlSimulation<T, P>("cohesion.yml").startSimulation(
             finished = { e, _, _ -> e.nodes.asSequence()
-                    .filterIsInstance<Pedestrian<T>>()
+                    .filterIsInstance<Pedestrian<T, *, *>>()
                     .groupBy { it.membershipGroup }
                     .values
                     .forEach {

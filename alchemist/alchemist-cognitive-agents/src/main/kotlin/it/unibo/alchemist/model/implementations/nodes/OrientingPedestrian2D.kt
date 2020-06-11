@@ -1,18 +1,21 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.nextDouble
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
-import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
+private typealias AbstractOrientingPedestrianAlias<T, M, E> = AbstractOrientingPedestrian<
+    T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, M, E, Euclidean2DShapeFactory>
 /**
  * An [OrientingPedestrian] in an euclidean bidimensional space.
  * This class defines the method responsible for the creation of landmarks, which
@@ -24,20 +27,20 @@ import java.awt.geom.Rectangle2D
  *
  * @param T the concentration type.
  * @param M the type of nodes of the navigation graph provided by the environment.
- * @param F the type of edges of the navigation graph provided by the environment.
+ * @param E the type of edges of the navigation graph provided by the environment.
  */
-open class OrientingPedestrian2D<T, M : ConvexPolygon, F>(
-    knowledgeDegree: Double,
+open class OrientingPedestrian2D<T, M : ConvexPolygon, E> @JvmOverloads constructor(
+    override val environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, E>,
     randomGenerator: RandomGenerator,
-    environment: Euclidean2DEnvironmentWithGraph<*, T, M, F>,
-    group: PedestrianGroup<T>? = null,
+    knowledgeDegree: Double,
     /*
      * The starting width and height of the generated Ellipses will be a random
      * quantity in [minSide, maxSide] * the diameter of this pedestrian.
      */
     private val minSide: Double = 30.0,
-    private val maxSide: Double = 60.0
-) : AbstractOrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, M, F>(
+    private val maxSide: Double = 60.0,
+    group: PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>? = null
+) : AbstractOrientingPedestrianAlias<T, M, E> (
     knowledgeDegree,
     randomGenerator,
     environment,
@@ -58,8 +61,22 @@ open class OrientingPedestrian2D<T, M : ConvexPolygon, F>(
                 frame.width /= 2
                 frame.height /= 2
             }
-            Ellipse(Ellipse2D.Double(frame.x, frame.y, frame.width, frame.height))
+            Ellipse(
+                Ellipse2D.Double(
+                    frame.x,
+                    frame.y,
+                    frame.width,
+                    frame.height
+                )
+            )
         }
 
     private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
+
+    override val shape by lazy { super<Pedestrian2D>.shape }
+    final override val fieldOfView by lazy { super.fieldOfView }
+
+    init {
+        senses += fieldOfView
+    }
 }

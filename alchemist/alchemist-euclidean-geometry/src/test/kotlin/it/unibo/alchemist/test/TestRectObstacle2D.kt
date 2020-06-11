@@ -12,13 +12,19 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
+import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 
 class TestRectObstacle2D : StringSpec({
 
-    val obstacle = RectObstacle2D<Euclidean2DPosition>(2.0, 2.0, 4.0, 4.0)
+    val obstacle =
+        RectObstacle2D<Euclidean2DPosition>(
+            2.0,
+            2.0,
+            4.0,
+            4.0
+        )
 
     fun coords(x: Double, y: Double): Euclidean2DPosition = Euclidean2DPosition(x, y)
 

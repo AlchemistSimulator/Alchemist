@@ -22,9 +22,12 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
         super.beforeTest(testCase)
         env = Continuous2DEnvironment()
         env.linkingRule = NoLinks()
-        node1 = CircleNode(env, DEFAULT_SHAPE_SIZE / 2)
-        node2 = CircleNode(env, DEFAULT_SHAPE_SIZE / 2)
-        node3 = CircleNode(env, DEFAULT_SHAPE_SIZE / 2)
+        node1 =
+            CircleNode(env, DEFAULT_SHAPE_SIZE / 2)
+        node2 =
+            CircleNode(env, DEFAULT_SHAPE_SIZE / 2)
+        node3 =
+            CircleNode(env, DEFAULT_SHAPE_SIZE / 2)
     }
 
     init {

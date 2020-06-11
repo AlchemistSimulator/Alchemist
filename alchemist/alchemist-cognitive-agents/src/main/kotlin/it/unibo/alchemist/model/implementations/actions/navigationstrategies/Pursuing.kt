@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph
@@ -108,7 +108,12 @@ open class Pursuing<T, N : Euclidean2DConvexShape, E>(
                 }
         }
         graph.vertexSet().forEach {
-            if (it != destination && !currentRoom.intersects(Segment2DImpl(it, destination))) {
+            if (it != destination && !currentRoom.intersects(
+                    Segment2DImpl(
+                        it,
+                        destination
+                    )
+                )) {
                 graph.addEdge(it, destination)
                 graph.setEdgeWeight(it, destination, it.distanceTo(destination))
             }

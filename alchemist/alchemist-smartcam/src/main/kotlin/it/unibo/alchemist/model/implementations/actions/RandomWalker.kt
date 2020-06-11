@@ -36,7 +36,12 @@ open class RandomWalker<T>(
     environment,
     node,
     RoutingStrategy { p1, p2 -> PolygonalChain(listOf(p1, p2)) },
-    RandomTarget<T>(environment, node, randomGenerator, distanceDistribution),
+    RandomTarget<T>(
+        environment,
+        node,
+        randomGenerator,
+        distanceDistribution
+    ),
     GloballyConstantSpeed(reaction, speed)
 ) {
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =

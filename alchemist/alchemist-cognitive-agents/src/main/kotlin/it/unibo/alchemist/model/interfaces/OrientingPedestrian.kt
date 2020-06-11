@@ -20,4 +20,4 @@ interface OrientingPedestrian<
     A : GeometricTransformation<V>,
     N : ConvexGeometricShape<V, A>,
     E
-> : Pedestrian<T>, OrientingAgent<V, A, N, E>
+> : Pedestrian<T, V, A>, OrientingAgent<V, A, N, E>

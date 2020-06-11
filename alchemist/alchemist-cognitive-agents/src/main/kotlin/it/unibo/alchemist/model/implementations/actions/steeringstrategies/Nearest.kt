@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  */
 class Nearest<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Pedestrian<T>
+    pedestrian: Pedestrian2D<T>
 ) : Filtered<T, Euclidean2DPosition>(DistanceWeighted(environment, pedestrian), {
     partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, steerActions) ->
         mutableListOf<SteeringAction<T, Euclidean2DPosition>>().apply {
@@ -36,7 +36,7 @@ class Nearest<T>(
  */
 fun <T> List<SteeringAction<T, Euclidean2DPosition>>.pickNearestOrFirst(
     env: Environment<T, Euclidean2DPosition>,
-    pedestrian: Pedestrian<T>
+    pedestrian: Pedestrian2D<T>
 ): SteeringAction<T, Euclidean2DPosition>? =
     filterIsInstance<SteeringActionWithTarget<T, Euclidean2DPosition>>()
     .minBy { pedestrian.targetDistance(env, it) } ?: firstOrNull()

@@ -5,9 +5,10 @@ import it.unibo.alchemist.model.implementations.reactions.SteeringBehavior
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Obstacle2D
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * Move the agent avoiding potential obstacles in its path.
@@ -24,12 +25,12 @@ import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacl
 class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     private val env: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
-    pedestrian: Pedestrian<T>,
+    pedestrian: Pedestrian2D<T>,
     private val proximityRange: Double
-) : AbstractSteeringAction<T, Euclidean2DPosition>(env, reaction, pedestrian) {
+) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
 
     override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
-        ObstacleAvoidance(env, r as SteeringBehavior<T>, n as Pedestrian<T>, proximityRange)
+        ObstacleAvoidance(env, r as SteeringBehavior<T>, n as Pedestrian2D<T>, proximityRange)
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->
         env.getObstaclesInRange(currentPosition, proximityRange)

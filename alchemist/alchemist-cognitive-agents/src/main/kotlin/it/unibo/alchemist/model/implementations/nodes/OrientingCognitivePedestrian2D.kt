@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.graph.DefaultEdge
 
+private typealias PGroup<T> = PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>
 /**
  * A cognitive [OrientingPedestrian] in an [EuclideanPhysics2DEnvironmentWithGraph].
  *
@@ -23,14 +24,14 @@ import org.jgrapht.graph.DefaultEdge
  * @param F the type of edges of the navigation graph provided by the environment.
  */
 class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads constructor(
-    knowledgeDegree: Double,
-    randomGenerator: RandomGenerator,
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
-    group: PedestrianGroup<T>? = null,
+    randomGenerator: RandomGenerator,
+    knowledgeDegree: Double,
+    group: PGroup<T>? = null,
     override val age: Age,
     override val gender: Gender,
     danger: Molecule? = null
-) : OrientingPedestrian2D<T, M, F>(knowledgeDegree, randomGenerator, environment, group),
+) : OrientingPedestrian2D<T, M, F>(environment, randomGenerator, knowledgeDegree = knowledgeDegree, group = group),
     OrientingCognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, DefaultEdge> {
 
     /**
@@ -40,19 +41,19 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
         environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
-        group: PedestrianGroup<T>? = null,
+        group: PGroup<T>? = null,
         age: String,
         gender: String,
         danger: Molecule? = null
     ) : this(
-            knowledgeDegree,
-            randomGenerator,
-            environment,
-            group,
-            Age.fromString(age),
-            Gender.fromString(gender),
-            danger
-        )
+        environment,
+        randomGenerator,
+        knowledgeDegree,
+        group,
+        Age.fromString(age),
+        Gender.fromString(gender),
+        danger
+    )
 
     /**
      * Allows to specify age with an int and gender with a string.
@@ -61,36 +62,31 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
         environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
-        group: PedestrianGroup<T>? = null,
+        group: PGroup<T>? = null,
         age: Int,
         gender: String,
         danger: Molecule? = null
     ) : this(
-            knowledgeDegree,
-            randomGenerator,
-            environment,
-            group,
-            Age.fromYears(age),
-            Gender.fromString(gender),
-            danger
-        )
+        environment,
+        randomGenerator,
+        knowledgeDegree,
+        group,
+        Age.fromYears(age),
+        Gender.fromString(gender),
+        danger
+    )
 
     /*
      * The cognitive part of the pedestrian, composition is used due to the lack
      * of multiple inheritance.
      */
     private val cognitive = CognitivePedestrianImpl(environment, randomGenerator, age, gender, danger, group)
-    private val shape = shape(environment)
-
-    init {
-        senses += fieldOfView(environment)
-    }
 
     override val compliance = cognitive.compliance
 
-    override fun getShape() = shape
-
-    override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>) = cognitive.probabilityOfHelping(toHelp)
+    override fun probabilityOfHelping(
+        toHelp: HeterogeneousPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>
+    ) = cognitive.probabilityOfHelping(toHelp)
 
     override fun dangerBelief() = cognitive.dangerBelief()
 

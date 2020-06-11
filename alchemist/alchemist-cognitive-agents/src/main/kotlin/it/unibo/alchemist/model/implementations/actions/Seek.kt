@@ -1,9 +1,11 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
+import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
@@ -13,15 +15,29 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  *          the environment inside which the pedestrian moves.
  * @param pedestrian
  *          the owner of this action.
- * @param coords
+ * @param coordinates
  *          the coordinates of the position the pedestrian moves towards.
  */
-open class Seek<T, P>(
-    environment: EuclideanEnvironment<T, P>,
+open class Seek<T, P, A>(
+    environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T>,
-    vararg coords: Double
-) : Arrive<T, P>(environment, reaction, pedestrian, 0.0, 0.0, *coords)
+    pedestrian: Pedestrian<T, P, A>,
+    coordinates: P
+) : Arrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, coordinates)
     where
-        P : Position<P>,
-        P : Vector<P>
+    A : GeometricTransformation<P>,
+    P : Position<P>,
+    P : Vector<P> {
+
+    constructor(
+        environment: Environment<T, P>,
+        reaction: Reaction<T>,
+        pedestrian: Pedestrian<T, P, A>,
+        vararg coordinates: Number
+    ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
+
+    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
+        requireNodeTypeAndProduce<Pedestrian<T, P, A>, Seek<T, P, A>>(n) {
+            Seek(environment, r, it, coordinates)
+        }
+}

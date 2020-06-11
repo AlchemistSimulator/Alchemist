@@ -2,9 +2,11 @@ package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * Weighted steering logic where the weight of each steering action is
@@ -15,9 +17,9 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  * @param pedestrian
  *          the owner of the steering action this strategy belongs to.
  */
-open class DistanceWeighted<T>(
+class DistanceWeighted<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Pedestrian<T>,
+    pedestrian: Pedestrian2D<T>,
     /**
      * Default weight for steering actions without a defined target.
      */
@@ -36,7 +38,8 @@ open class DistanceWeighted<T>(
  * @param action
  *          the steering action you want to the target position.
  */
-fun <T, P : Position<P>> Pedestrian<T>.targetDistance(
+fun <T, P> Pedestrian<T, *, *>.targetDistance(
     env: Environment<T, P>,
     action: SteeringActionWithTarget<T, P>
-): Double = action.target().distanceTo(env.getPosition(this))
+): Double where P : Position<P>, P : Vector<P> =
+    action.target().distanceTo(env.getPosition(this))

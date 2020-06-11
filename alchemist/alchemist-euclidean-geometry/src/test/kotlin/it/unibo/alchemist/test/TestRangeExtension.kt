@@ -12,16 +12,16 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.model.implementations.geometry.coincidesWith
-import it.unibo.alchemist.model.implementations.geometry.contains
-import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
-import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
-import it.unibo.alchemist.model.implementations.geometry.intersect
-import it.unibo.alchemist.model.implementations.geometry.intersects
-import it.unibo.alchemist.model.implementations.geometry.intersectsBoundsExcluded
-import it.unibo.alchemist.model.implementations.geometry.minus
-import it.unibo.alchemist.model.implementations.geometry.rangeFromUnordered
-import it.unibo.alchemist.model.implementations.geometry.subtractAll
+import it.unibo.alchemist.coincidesWith
+import it.unibo.alchemist.contains
+import it.unibo.alchemist.findExtremeCoordsOnX
+import it.unibo.alchemist.findExtremeCoordsOnY
+import it.unibo.alchemist.intersect
+import it.unibo.alchemist.intersects
+import it.unibo.alchemist.intersectsBoundsExcluded
+import it.unibo.alchemist.minus
+import it.unibo.alchemist.rangeFromUnordered
+import it.unibo.alchemist.subtractAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -126,7 +126,9 @@ class TestRangeExtension : StringSpec({
     /* old tests below */
 
     fun assertIntersectionIsNull(first: Double, second: Double, third: Double, fourth: Double) =
-        assertNull(rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth)))
+        assertNull(
+            rangeFromUnordered(first, second)
+                .intersect(rangeFromUnordered(third, fourth)))
 
     fun assertIntersectionIs(
         first: Double,
@@ -136,7 +138,8 @@ class TestRangeExtension : StringSpec({
         intersectionFirst: Double,
         intersectionSecond: Double
     ) {
-        val intersection = rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth))
+        val intersection = rangeFromUnordered(first, second)
+            .intersect(rangeFromUnordered(third, fourth))
         Assertions.assertNotNull(intersection)
         intersection?.let {
             it.start shouldBe intersectionFirst
@@ -160,7 +163,10 @@ class TestRangeExtension : StringSpec({
         fourth: Double,
         vararg expected: Double
     ) {
-        (rangeFromUnordered(first, second) - rangeFromUnordered(third, fourth))
+        (rangeFromUnordered(
+            first,
+            second
+        ) - rangeFromUnordered(third, fourth))
             .flatMap { mutableListOf(it.start, it.endInclusive) }
             .toDoubleArray() shouldBe expected
     }

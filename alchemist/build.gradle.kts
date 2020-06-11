@@ -280,14 +280,14 @@ allprojects {
             }
             fun throwException(keywordFounded: String, where: String, cmd: String): Nothing =
                 throw IllegalStateException("Keyword not desired ($keywordFounded) founded in $where executing the command $cmd")
-            
+
             val cmd = "java -jar ${archiveFile.get().asFile.absolutePath} --help"
             val process = Runtime.getRuntime().exec(cmd)
             val stdout = BufferedInputStream(process.inputStream)
             val stderr = BufferedInputStream(process.errorStream)
             process.onExit().get(1, TimeUnit.MINUTES)
             // check if there is any keyword not desired in standard output or standard error
-            checkKewywords(stdout)?.let { 
+            checkKewywords(stdout)?.let {
                 stderr.close()
                 throwException(it, "stdout", cmd)
             } ?: checkKewywords(stderr)?.let { throwException(it, "stderr", cmd) }

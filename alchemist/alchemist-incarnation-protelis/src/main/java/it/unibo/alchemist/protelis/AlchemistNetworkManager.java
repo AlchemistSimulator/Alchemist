@@ -7,14 +7,33 @@
  */
 package it.unibo.alchemist.protelis;
 
+import com.github.gscaparrotti.ns3asybindings.bindings.NS3asy;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.github.gscaparrotti.ns3asybindings.communication.NS3Gateway;
+import com.github.gscaparrotti.ns3asybindings.communication.NS3Gateway.Endpoint;
+import it.unibo.alchemist.model.ProtelisIncarnation;
+import it.unibo.alchemist.model.implementations.actions.AbstractProtelisNetworkAction;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
+import it.unibo.alchemist.model.implementations.reactions.Event;
+import it.unibo.alchemist.model.implementations.timedistributions.Trigger;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.ns3.AlchemistNs3;
 import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.lang.datatype.impl.IntegerUID;
 import org.protelis.vm.CodePath;
 import org.protelis.vm.NetworkManager;
+import com.github.gscaparrotti.ns3asybindings.streams.NS3OutputStream;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,7 +45,7 @@ import java.util.function.Predicate;
 /**
  * Emulates a {@link NetworkManager}. This particular network manager does not
  * send messages instantly. Instead, it records the last message to send, and
- * only when {@link #simulateMessageArrival(double)} is called the transfer is
+ * only when {@link #simulateMessageArrival(double, boolean)} is called the transfer is
  * actually done.
  */
 public final class AlchemistNetworkManager implements NetworkManager, Serializable {
@@ -133,7 +152,11 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     }
 
     private void receiveMessage(final MessageInfo msg) {
-        msgs.put(msg.source, msg);
+        final Node<?> source = env.getNodeByID(msg.source.getUID());
+        //ProtelisNode implements DeviceUID
+        if (source instanceof DeviceUID) {
+            msgs.put((DeviceUID) source, msg);
+        }
     }
 
     @Override
@@ -147,34 +170,169 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * @param currentTime
      *            the current simulation time (used to understand when a message
      *            should get dropped).
+     * @param realistic true if the message arrival should be simulated using
+     *                  a dedicated network simulator
      */
-    public void simulateMessageArrival(final double currentTime) {
+    public void simulateMessageArrival(final double currentTime, final boolean realistic) {
         assert toBeSent != null;
         Objects.requireNonNull(toBeSent);
         if (!toBeSent.isEmpty()) {
-            final MessageInfo msg = new MessageInfo(currentTime, node, toBeSent);
-            env.getNeighborhood(node).forEach(n -> {
-                if (n instanceof ProtelisNode) {
-                    final AlchemistNetworkManager destination = ((ProtelisNode<?>) n).getNetworkManager(prog);
-                    if (destination != null) {
-                        /*
-                         * The node is running the program. Otherwise, the
-                         * program is discarded
-                         */
-                        destination.receiveMessage(msg);
-                    }
-                }
-            });
+            final MessageInfo msg = new MessageInfo(currentTime, new IntegerUID(node.getId()), toBeSent);
+            if (realistic) {
+                simulateRealisticMessageArrival(msg);
+            } else {
+                simulateSimpleMessageArrival(msg);
+            }
         }
         toBeSent = null;
+    }
+
+    private void simulateRealisticMessageArrival(final MessageInfo msg) {
+        final var gateway = AlchemistNs3.getInstance();
+        if (gateway == null) {
+            throw new IllegalStateException("ns3 not initialized");
+        }
+        if (env.getIncarnation().isEmpty() || !(env.getIncarnation().get() instanceof ProtelisIncarnation)) {
+            throw new IllegalStateException();
+        }
+        final int intId = node.getId();
+        try {
+            final var ns3OutputStream = new NS3OutputStream(gateway, intId, false);
+            AlchemistNs3.getSerializer().serializeAndSend(msg, ns3OutputStream);
+            final var sendTimes = ns3OutputStream.getFirstSendTimesAndReset();
+            //At this point every received byte is already inside ns3 gateway
+            final var senderIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(intId);
+            final var sender = new Endpoint(senderIpPointer.getString(0), NS3Gateway.ANY_SENDER_PORT);
+            for (final var genericNeighbor : env.getNeighborhood(node)) {
+                if (genericNeighbor instanceof ProtelisNode) {
+                    final var neighbor = (ProtelisNode<?>) genericNeighbor;
+                    final int neighborIntId = neighbor.getId();
+                    final var receiverIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(neighborIntId);
+                    final var receiver = new Endpoint(receiverIpPointer.getString(0), NS3Gateway.DEFAULT_PORT);
+                    /*
+                     * If nothing is present in ns3 gateway, it means that the message has been lost,
+                     * so we must do nothing; otherwise, we read what's been received and put it
+                     * inside the receiving node at the appropriate time.
+                     * When using TCP, which is mandatory when using Ns3OutputStream, a packet loss
+                     * can only mean that the connection failed, probably due to a
+                     * very high error rate, which should be lowered consequently, if possible.
+                     */
+                    if (gateway.getBytesInInterval(receiver, sender, 0, 1).size() > 0) {
+                        /*
+                         * This should work, but for some unknown reason it doesn't.
+                         * The method below is a workaround.
+                         * NS3asyInputStream ns3asyInputStream = new NS3asyInputStream(gateway, sender, receiver);
+                         * ObjectInputStream ois = new ObjectInputStream(ns3asyInputStream);
+                         */
+                        final var bytes = gateway.getBytesInInterval(receiver, sender, 0, -1);
+                        final var receivedObject = AlchemistNs3.getSerializer().deserialize(new ByteArrayInputStream(NS3Gateway.convertToByteArray(bytes)));
+                        //Once the object is read it must be removed from the not-read-yet bytes
+                        gateway.removeBytesInInterval(receiver, sender, 0, -1);
+                        if (receivedObject instanceof MessageInfo) {
+                            final var rcvdMsg = (MessageInfo) receivedObject;
+                            /*
+                             * The reception of the message is scheduled to happen with a delay
+                             * given by how much time the packets needed to go from one node to another
+                             * inside ns3. This is the whole point of using ns3.
+                             */
+                            final var delta = bytes.get(bytes.size() - 1).getRight() - sendTimes.get(receiver.getIp());
+                            final var trigger = new Trigger<>(env.getSimulation().getTime().plus(new DoubleTime(delta)));
+                            final var reaction = new Event<>(neighbor, trigger);
+                            final var neighborProgram = neighbor.getReactions().stream()
+                                    .flatMap(r -> r.getActions().stream())
+                                    .filter(a -> a instanceof RunProtelisProgram)
+                                    .findFirst();
+                            if (neighborProgram.isPresent()) {
+                                reaction.setActions(Lists.newArrayList(new ReceiveFromNetwork(neighbor, reaction, (RunProtelisProgram<?>) neighborProgram.get(), rcvdMsg)));
+                                neighbor.addReaction(reaction);
+                                env.getSimulation().reactionAdded(reaction);
+                            } else {
+                                throw new IllegalStateException("The destination node is not running a Protelis program");
+                            }
+                        } else {
+                            throw new IOException("Error while receiving Java object");
+                        }
+                    }
+                    Native.free(Pointer.nativeValue(receiverIpPointer));
+                } else {
+                    throw new IllegalStateException("The neighborhood must be composed by Protelis nodes");
+                }
+            }
+            //If a node received a packet despite not being part of the neighborhood it must be discarded
+            for (final var genericFarNode : Sets.difference(env.getNodes(), env.getNeighborhood(node).getNeighbors())) {
+                if (genericFarNode instanceof ProtelisNode) {
+                    final var farNode = (ProtelisNode<?>) genericFarNode;
+                    final var farNodeIpPointer = NS3asy.INSTANCE.getIpAddressFromIndex(farNode.getId());
+                    final var farReceiver = new Endpoint(farNodeIpPointer.getString(0), NS3Gateway.DEFAULT_PORT);
+                    if (gateway.getBytesInInterval(farReceiver, sender, 0, -1).size() > 0) {
+                        gateway.removeBytesInInterval(farReceiver, sender, 0, -1);
+                    }
+                    Native.free(Pointer.nativeValue(farNodeIpPointer));
+                } else {
+                    throw new IllegalStateException("The neighborhood must be composed by Protelis nodes");
+                }
+            }
+            Native.free(Pointer.nativeValue(senderIpPointer));
+        } catch (final IOException | ClassNotFoundException e) {
+            /*
+             * since we're writing inside a "fake" stream, this should not happen,
+             * unless something bad happens in ns3 (maybe a programming error)
+             */
+            throw new IllegalStateException("ns3 was unable to deliver the message", e);
+        }
+
+    }
+
+    private void simulateSimpleMessageArrival(final MessageInfo msg) {
+        env.getNeighborhood(node).forEach(n -> {
+            if (n instanceof ProtelisNode) {
+                final AlchemistNetworkManager destination = ((ProtelisNode<?>) n).getNetworkManager(prog);
+                if (destination != null) {
+                    /*
+                     * The node is running the program. Otherwise, the
+                     * program is discarded
+                     */
+                    destination.receiveMessage(msg);
+                }
+            }
+        });
+    }
+
+    private static final class ReceiveFromNetwork extends AbstractProtelisNetworkAction {
+
+        private static final long serialVersionUID = 1L;
+        private final MessageInfo msg;
+
+        private ReceiveFromNetwork(final ProtelisNode<?> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program, final MessageInfo msg) {
+            super(node, reaction, program);
+            this.msg = msg;
+        }
+
+        @Override
+        public void execute() {
+            final AlchemistNetworkManager destination = this.getNode().getNetworkManager(this.getProtelisProgram());
+            if (destination != null) {
+                destination.receiveMessage(msg);
+            }
+        }
+
+        @Override
+        public Action<Object> cloneAction(final Node<Object> n, final Reaction<Object> r) {
+            throw new UnsupportedOperationException("Action cloning is not currently supported for ReceiveFromNetwork");
+        }
+
+        @Override
+        public String toString() {
+            return "receive " + this.getProtelisProgram().asMolecule().getName() + " data";
+        }
     }
 
     private static final class MessageInfo implements Serializable {
         private static final long serialVersionUID = 1L;
         private final double time;
         private final Map<CodePath, Object> payload;
-        private final DeviceUID source;
-        private MessageInfo(final double time, final DeviceUID source, final Map<CodePath, Object> payload) {
+        private final IntegerUID source;
+        private MessageInfo(final double time, final IntegerUID source, final Map<CodePath, Object> payload) {
             this.time = time;
             this.payload = payload;
             this.source = source;

@@ -325,6 +325,12 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     public final void update(final Time curTime, final boolean executed, final Environment<T, ?> env) {
         updateInternalStatus(curTime, executed, env);
         dist.update(curTime, executed, getRate(), env);
+        if (!dist.canOccurAgain()) {
+            node.removeReaction(this);
+            if (env.getSimulation() != null) {
+                env.getSimulation().reactionRemoved(this);
+            }
+        }
     }
 
     /**

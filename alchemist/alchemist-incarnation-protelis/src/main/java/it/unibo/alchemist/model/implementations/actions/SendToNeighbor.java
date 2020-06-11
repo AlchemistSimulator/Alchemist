@@ -7,10 +7,11 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.ns3.AlchemistNs3;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.List;
@@ -19,11 +20,9 @@ import java.util.stream.Collectors;
 
 /**
  */
-public final class SendToNeighbor extends AbstractAction<Object> {
+public final class SendToNeighbor extends AbstractProtelisNetworkAction {
 
-    private static final long serialVersionUID = -8826563176323247613L;
-    private final RunProtelisProgram<?> prog;
-    private final Reaction<Object> reaction;
+    private static final long serialVersionUID = 2L;
 
     /**
      * @param node
@@ -34,10 +33,19 @@ public final class SendToNeighbor extends AbstractAction<Object> {
      *            the reference {@link RunProtelisProgram}
      */
     public SendToNeighbor(final ProtelisNode<?> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program) {
-        super(node);
-        this.reaction = Objects.requireNonNull(reaction);
-        prog = Objects.requireNonNull(program);
-        declareDependencyTo(program.asMolecule());
+        super(node, reaction, program);
+    }
+
+    @Override
+    public void execute() {
+        final AlchemistNetworkManager mgr = getNode().getNetworkManager(this.getProtelisProgram());
+        Objects.requireNonNull(mgr);
+        final var incarnation = this.getProtelisProgram().getEnvironment().getIncarnation();
+        final boolean realistic = incarnation.isPresent()
+                && incarnation.get() instanceof ProtelisIncarnation
+                && AlchemistNs3.getInstance() != null;
+        mgr.simulateMessageArrival(this.getReaction().getTau().toDouble(), realistic);
+        this.getProtelisProgram().prepareForComputationalCycle();
     }
 
     @Override
@@ -50,7 +58,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
                     .map(a -> (RunProtelisProgram<?>) a)
                     .collect(Collectors.toList());
             if (possibleRefs.size() == 1) {
-                return new SendToNeighbor((ProtelisNode<?>) n, reaction, possibleRefs.get(0));
+                return new SendToNeighbor((ProtelisNode<?>) n, r, possibleRefs.get(0));
             }
             throw new IllegalStateException("There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName());
         }
@@ -59,32 +67,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
     }
 
     @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD;
-    }
-
-    @Override
-    public void execute() {
-        final AlchemistNetworkManager mgr = getNode().getNetworkManager(prog);
-        Objects.requireNonNull(mgr);
-        mgr.simulateMessageArrival(reaction.getTau().toDouble());
-        prog.prepareForComputationalCycle();
-    }
-
-    @Override
-    public ProtelisNode<?> getNode() {
-        return (ProtelisNode<?>) super.getNode();
-    }
-
-    /**
-     * @return the {@link RunProtelisProgram} whose data will be sent
-     */
-    public RunProtelisProgram<?> getProtelisProgram() {
-        return prog;
-    }
-
-    @Override
     public String toString() {
-        return "broadcast " + prog.asMolecule().getName() + " data";
+        return "broadcast " + this.getProtelisProgram().asMolecule().getName() + " data";
     }
 }

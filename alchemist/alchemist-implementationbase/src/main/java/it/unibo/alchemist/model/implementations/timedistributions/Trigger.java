@@ -45,6 +45,11 @@ public final class Trigger<T> extends AbstractDistribution<T> {
     }
 
     @Override
+    public boolean canOccurAgain() {
+        return !(dryRunDone && this.getNextOccurence().isInfinite());
+    }
+
+    @Override
     public Trigger<T> clone(final Time currentTime) {
         return new Trigger<>(getNextOccurence());
     }

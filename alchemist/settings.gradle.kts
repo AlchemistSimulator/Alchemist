@@ -21,6 +21,7 @@ include(
     "alchemist-interfaces",
     "alchemist-loading",
     "alchemist-maps",
+    "alchemist-ns3",
 //    "alchemist-projectview",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",

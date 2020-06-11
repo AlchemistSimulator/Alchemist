@@ -1,0 +1,41 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [2]
+
+#realistic networking configuration
+ns3:
+  protocol: "TCP"
+  packet-size: 0 #optional
+  error-rate: 0.0001
+  data-rate: "1Mbps"
+  serializer:
+    type: it.unibo.alchemist.ns3.utils.DefaultNs3Serializer #optional
+
+pools:
+  - pool: &prog
+    - time-distribution: 1
+      program: >
+        let base = if (env.has("msgs_received")) { env.get("msgs_received") } else { 0 };
+        let x = foldHood(base, nbr(1)) { a, b -> a + b };
+        env.put("msgs_received", x);
+    # This line enables sending the result of the computation to neighbors.
+    - program: send
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    programs:
+      - *prog
+  - in:
+      type: Point
+      parameters: [0, 1]
+    programs:
+      - *prog
+  - in:
+      type: Point
+      parameters: [1, 0]
+    programs:
+      - *prog

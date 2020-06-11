@@ -18,6 +18,7 @@
   - [Cognitive Pedestrians](usage/cognitive-pedestrians.md)
   - [Smart Cameras](usage/smartcam.md)
   - [Maps and GPS traces](usage/maps.md)
+  - [Integration with the ns3 simulator](usage/ns3asy.md)
   - [Exporting data](usage/export.md)
   - [Executing batches](usage/batch.md)
   - [Grid computing support](usage/grid.md)

@@ -316,4 +316,9 @@ object Libs {
      * https://github.com/jenetics/jpx
      */
     const val jpx: String = "io.jenetics:jpx:_"
+
+    /**
+     * https://github.com/gscaparrotti/ns3asy-bindings
+     */
+    const val ns3asy_bindings: String = "com.github.gscaparrotti:ns3asy-bindings:_"
 }

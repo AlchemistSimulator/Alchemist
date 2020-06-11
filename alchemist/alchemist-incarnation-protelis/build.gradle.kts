@@ -14,6 +14,7 @@ dependencies {
     api(Libs.protelis_lang)
     // IMPLEMENTATION
     implementation(project(":alchemist-maps"))
+    implementation(project(":alchemist-ns3"))
     implementation(Libs.commons_lang3)
     // TESTING
     testImplementation(project(":alchemist-loading"))

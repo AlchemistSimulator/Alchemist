@@ -312,7 +312,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     @Override
     public void nodeAdded(final Node<T> node) {
         checkCaller();
-        afterExecutionUpdates.add(new Addition(node));
+        afterExecutionUpdates.add(new NodeAddition(node));
     }
 
     @Override
@@ -324,7 +324,19 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     @Override
     public void nodeRemoved(final Node<T> node, final Neighborhood<T> oldNeighborhood) {
         checkCaller();
-        afterExecutionUpdates.add(new Removal(node));
+        afterExecutionUpdates.add(new NodeRemoval(node));
+    }
+
+    @Override
+    public void reactionAdded(final Reaction<T> reaction) {
+        checkCaller();
+        afterExecutionUpdates.add(new ReactionAddition(reaction));
+    }
+
+    @Override
+    public void reactionRemoved(final Reaction<T> reaction) {
+        checkCaller();
+        afterExecutionUpdates.add(new ReactionRemoval(reaction));
     }
 
     @Override
@@ -446,6 +458,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         ipq.addReaction(r);
     }
 
+    private void unscheduleReaction(final Reaction<T> r) {
+        dg.removeDependencies(r);
+        ipq.removeReaction(r);
+    }
+
     @Override
     public void terminate() {
         newStatus(TERMINATED);
@@ -513,9 +530,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     }
 
-    private final class Removal extends Update {
+    private final class NodeRemoval extends Update {
 
-        private Removal(final Node<T> source) {
+        private NodeRemoval(final Node<T> source) {
             super(source);
         }
 
@@ -528,13 +545,41 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private final class Addition extends Update {
-        private Addition(final Node<T> source) {
+    private final class NodeAddition extends Update {
+        private NodeAddition(final Node<T> source) {
             super(source);
         }
         @Override
         public void performChanges() {
             getSource().getReactions().forEach(Engine.this::scheduleReaction);
+        }
+    }
+
+    private final class ReactionAddition extends Update {
+        private final Reaction<T> reaction;
+
+        private ReactionAddition(final Reaction<T> reaction) {
+            super(reaction.getNode());
+            this.reaction = reaction;
+        }
+
+        @Override
+        public void performChanges() {
+            Engine.this.scheduleReaction(reaction);
+        }
+    }
+
+    private final class ReactionRemoval extends Update {
+        private final Reaction<T> reaction;
+
+        private ReactionRemoval(final Reaction<T> reaction) {
+            super(reaction.getNode());
+            this.reaction = reaction;
+        }
+
+        @Override
+        public void performChanges() {
+            Engine.this.unscheduleReaction(reaction);
         }
     }
 

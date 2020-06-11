@@ -173,6 +173,8 @@ class TestBaseSegment2D : StringSpec() {
             horizontalSegment.distanceTo(horizontalSegment) shouldBeFuzzy 0.0
             horizontalSegment.distanceTo(verticalSegment) shouldBeFuzzy 0.0
             horizontalSegment.distanceTo(obliqueSegment) shouldBeFuzzy 0.0
+            horizontalSegment.distanceTo(segment(0.0, 2.0, 2.0, 2.0)) shouldBeFuzzy 0.0
+            horizontalSegment.distanceTo(segment(4.0, 0.0, 4.0, 4.0)) shouldBeFuzzy 0.0
             obliqueSegment.distanceTo(segment(0.0, 0.0, 4.0, 0.0)) shouldBeFuzzy 2.0
             obliqueSegment.distanceTo(segment(2.0, 0.0, 8.0, 6.0)) shouldBeFuzzy sqrt(2.0)
         }

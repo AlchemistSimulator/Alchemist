@@ -30,12 +30,12 @@ interface Segment2D<P : Vector2D<P>> {
     val isDegenerate: Boolean
 
     /**
-     * Indicates if the segment is aligned to the x-axis.
+     * Indicates if the segment is aligned to the x-axis, this is true if [isDegenerate].
      */
     val isHorizontal: Boolean
 
     /**
-     * Indicates if the segment is aligned to the y-axis.
+     * Indicates if the segment is aligned to the y-axis, this is true if [isDegenerate].
      */
     val isVertical: Boolean
 
@@ -71,13 +71,13 @@ interface Segment2D<P : Vector2D<P>> {
     fun closestPointTo(point: P): P
 
     /**
-     * Computes the (minimum) distance between the segment and the given [point].
+     * Computes the shortest distance between the segment and the given [point].
      */
     @JvmDefault
     fun distanceTo(point: P): Double = closestPointTo(point).distanceTo(point)
 
     /**
-     * Computes the (minimum) distance between two segments.
+     * Computes the shortest distance between two segments (= the shortest distance between any two of their points).
      */
     fun distanceTo(other: Segment2D<P>): Double
 

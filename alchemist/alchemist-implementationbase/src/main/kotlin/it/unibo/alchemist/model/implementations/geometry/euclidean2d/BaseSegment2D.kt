@@ -68,9 +68,15 @@ data class BaseSegment2D<P : Vector2D<P>>(override val first: P, override val se
         }
     }
 
-    override fun distanceTo(other: Segment2D<P>): Double =
-        listOf(distanceTo(other.first), distanceTo(other.second), other.distanceTo(first), other.distanceTo(second))
-            .min() ?: Double.POSITIVE_INFINITY
+    /**
+     * Computes the shortest distance between two segments (= the shortest distance between any two of their points).
+     * This implementation uses [intersect] as intersection test (this may be a significant overhead).
+     */
+    override fun distanceTo(other: Segment2D<P>): Double = when {
+        intersect(other) !is Intersection2D.None -> 0.0
+        else -> listOf(distanceTo(other.first), distanceTo(other.second), other.distanceTo(first),
+            other.distanceTo(second)).min() ?: Double.POSITIVE_INFINITY
+    }
 
     override fun isCollinearWith(point: P): Boolean = isDegenerate || toLine().contains(point)
 

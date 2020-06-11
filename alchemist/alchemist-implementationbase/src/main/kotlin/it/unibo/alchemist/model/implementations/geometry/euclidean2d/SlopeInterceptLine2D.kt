@@ -158,7 +158,7 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
     /**
      * Checks if [other] is a [Line2D] and if it [coincidesWith] this one.
      */
-    override fun equals(other: Any?): Boolean = this === other || (other is Line2D<*> && coincidesWith(other))
+    override fun equals(other: Any?): Boolean = this === other || other is Line2D<*> && coincidesWith(other)
 
     /**
      * Uses [slope], [yIntercept] and [xIntercept].

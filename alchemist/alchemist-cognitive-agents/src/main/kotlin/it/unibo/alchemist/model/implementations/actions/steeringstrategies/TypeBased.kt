@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import kotlin.reflect.KClass
@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
  */
 class TypeBased<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Pedestrian<T>,
+    pedestrian: Pedestrian2D<T>,
     typeWeights: LinkedHashMap<KClass<SteeringAction<T, Euclidean2DPosition>>, Double>,
     defaultWeight: Double = 0.0
 ) : Weighted<T>(environment, pedestrian, { typeWeights[this::class] ?: defaultWeight })

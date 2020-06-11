@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWi
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import org.apache.commons.math3.util.FastMath
 
 /**
@@ -92,7 +92,7 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
 
     override fun nextPosition(): Euclidean2DPosition {
         update()
-        return Seek2D(environment, reaction, pedestrian, *desiredPosition.coordinates).nextPosition
+        return Seek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
     }
 
     @Suppress("UNCHECKED_CAST") // as? operator is safe

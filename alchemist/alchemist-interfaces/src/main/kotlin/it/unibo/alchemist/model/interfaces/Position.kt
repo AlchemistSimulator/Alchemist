@@ -31,7 +31,7 @@ interface Position<P : Position<P>> : Serializable {
      *            the radius of the hypersphere
      * @return the vertices of the circumscribed hypercube
      */
-    fun boundingBox(range: Double): kotlin.collections.MutableList<out P>
+    fun boundingBox(range: Double): List<P>
 
     /**
      * Allows to get the position as a Number array.
@@ -72,7 +72,7 @@ interface Position<P : Position<P>> : Serializable {
      * @param other the other position
      * @return a new {@link Position} that is the sum of the two.
      */
-    operator fun plus(other: P): P
+    operator fun plus(other: DoubleArray): P
 
     /**
      * Considers both positions as vectors, and returns the difference between this position and the passed one.
@@ -80,5 +80,5 @@ interface Position<P : Position<P>> : Serializable {
      * @param other the other position
      * @return a new {@link Position} that is this position minus the one passed.
      */
-    operator fun minus(other: P): P
+    operator fun minus(other: DoubleArray): P
 }

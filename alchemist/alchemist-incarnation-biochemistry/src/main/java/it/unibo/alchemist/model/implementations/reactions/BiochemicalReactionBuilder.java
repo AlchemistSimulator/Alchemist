@@ -41,6 +41,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -70,7 +71,7 @@ import java.util.Objects;
  *
  * @param <P>
  */
-public class BiochemicalReactionBuilder<P extends Position<P>> {
+public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
     private final BiochemistryIncarnation<P> incarnation;
     private final Node<Double> node;

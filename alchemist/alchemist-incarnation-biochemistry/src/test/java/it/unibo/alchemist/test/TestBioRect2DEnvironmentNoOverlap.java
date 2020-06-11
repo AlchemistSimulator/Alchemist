@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
@@ -102,7 +103,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
     private CellWithCircularArea<Euclidean2DPosition> np2;
     private CellWithCircularArea<Euclidean2DPosition> np3;
 
-    private Environment<Double, Euclidean2DPosition> env;
+    private Euclidean2DEnvironment<Double> env;
 
     /**
      *

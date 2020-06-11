@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.layers
 
-import it.unibo.alchemist.model.implementations.utils.BidimensionalGaussian
+import it.unibo.alchemist.model.math.BidimensionalGaussian
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Position2D
 
@@ -29,7 +29,8 @@ open class BidimensionalGaussianLayer<P : Position2D<P>> @JvmOverloads construct
     /**
      * The function on which the layer is based.
      */
-    val function = BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
+    val function =
+        BidimensionalGaussian(norm, centerX, centerY, sigmaX, sigmaY)
 
     override fun getValue(p: P) = baseline + function.value(p.x, p.y)
 }

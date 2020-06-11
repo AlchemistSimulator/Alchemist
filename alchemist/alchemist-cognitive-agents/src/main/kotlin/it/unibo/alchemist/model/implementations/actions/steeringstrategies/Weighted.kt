@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  */
 open class Weighted<T>(
     private val environment: Euclidean2DEnvironment<T>,
-    private val pedestrian: Pedestrian<T>,
+    private val pedestrian: Pedestrian2D<T>,
     private val weight: SteeringAction<T, Euclidean2DPosition>.() -> Double
 ) : SteeringStrategy<T, Euclidean2DPosition> {
 

@@ -9,6 +9,7 @@
 dependencies {
     api(project(":alchemist-implementationbase"))
     api(project(":alchemist-interfaces"))
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(Libs.commons_lang3)
     implementation(Libs.guava)
     implementation(Libs.jirf)

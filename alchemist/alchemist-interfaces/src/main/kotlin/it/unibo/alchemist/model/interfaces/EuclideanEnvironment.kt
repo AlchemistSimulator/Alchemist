@@ -19,6 +19,19 @@ interface EuclideanEnvironment<T, P> : Environment<T, P>
 where P : Position<P>, P : Vector<P> {
 
     /**
+     * This method moves a [node] in the environment toward some [direction]. If
+     * node move is unsupported, it does nothing.
+     * Subclasses may override this method if they want to change the way a node
+     * moves towards some direction. The current implementation internally calls
+     * {@link #moveNodeToPosition(Node, Position2D)}, as such, overriding that
+     * method may suffice.
+    */
+    fun moveNode(node: Node<T>, direction: P) {
+        val oldcoord = getPosition(node)
+        moveNodeToPosition(node, oldcoord.plus(direction))
+    }
+
+    /**
      * Creates a [Position] compatible with this environment given its [coordinates].
      */
     @JvmDefault

@@ -36,7 +36,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     override val environment: EnvironmentWithGraph<*, T, P, A, M, F>,
     override val reaction: Reaction<T>,
     final override val pedestrian: OrientingPedestrian<T, P, A, N, E>
-) : AbstractSteeringAction<T, P>(environment, reaction, pedestrian),
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     NavigationAction<T, P, A, N, E, M, F>
     where
         P : Position<P>, P : Vector<P>,

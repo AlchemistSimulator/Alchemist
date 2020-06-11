@@ -117,7 +117,7 @@ data class BaseSegment2D<P : Vector2D<P>>(override val first: P, override val se
 
     companion object {
         /**
-         * Checks if two points are fuzzy equals, using [fuzzyEquals].
+         * Checks if two points are [fuzzyEquals].
          */
         fun <P : Vector2D<P>> fuzzyEquals(a: P, b: P): Boolean = fuzzyEquals(a.x, b.x) && fuzzyEquals(a.y, b.y)
     }

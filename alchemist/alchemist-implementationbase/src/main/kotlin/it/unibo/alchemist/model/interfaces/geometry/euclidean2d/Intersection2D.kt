@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
  */
 sealed class Intersection2D<out V> {
     /**
-     * A list of the intersection points (in case of infinite points this is empty).
+     * List of intersection points (in case of infinite points this is empty).
      */
     open val asList: List<V> = emptyList()
     /**

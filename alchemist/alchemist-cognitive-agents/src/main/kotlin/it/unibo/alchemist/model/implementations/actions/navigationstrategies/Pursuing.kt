@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.BaseSegment2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
@@ -108,7 +108,7 @@ open class Pursuing<T, N : Euclidean2DConvexShape, E>(
                 }
         }
         graph.vertexSet().forEach {
-            if (it != destination && !currentRoom.intersects(Segment2DImpl(it, destination))) {
+            if (it != destination && !currentRoom.intersects(BaseSegment2D(it, destination))) {
                 graph.addEdge(it, destination)
                 graph.setEdgeWeight(it, destination, it.distanceTo(destination))
             }

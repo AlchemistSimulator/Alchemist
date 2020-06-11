@@ -65,7 +65,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             return true
         }
         val intersections = edges()
-            .map { it.intersectSegment(segment) } // Either Segment, SinglePoint, or None
+            .map { it.intersect(segment) } // Either InfinitePoints, SinglePoint, or None
             .filterNot { it is Intersection2D.None }
             .asSequence()
         // Lazily evaluated
@@ -73,7 +73,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             .filterIsInstance<Intersection2D.SinglePoint<Euclidean2DPosition>>()
             .map { it.point }
             .distinct()
-        return intersections.none { it is Intersection2D.Segment } && intersectionPoints.count() > 1
+        return intersections.none { it is Intersection2D.InfinitePoints } && intersectionPoints.count() > 1
     }
 
     override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> = edges()
@@ -120,7 +120,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         var e1 = getEdge(vertices().size - 1)
         var sense: Boolean? = null
         return edges().none { e2 ->
-            val z = Vector2D.zCross(e1.toVector(), e2.toVector())
+            val z = Vector2D.zCross(e1.toVector, e2.toVector)
             var lostConvexity = false
             /*
              * Cross product is 0 in the following cases:
@@ -185,8 +185,8 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             i = circularNext(i)
         }
         val next = getEdge(i)
-        return prev.intersectSegment(curr) !is Intersection2D.SinglePoint ||
-            curr.intersectSegment(next) !is Intersection2D.SinglePoint ||
+        return prev.intersect(curr) !is Intersection2D.SinglePoint ||
+            curr.intersect(next) !is Intersection2D.SinglePoint ||
             /*
              * We check every edge between the first prev not
              * degenerate and the first next not degenerate.
@@ -195,6 +195,6 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
                 .takeWhile { it != prevIndex }
                 .map { getEdge(it) }
                 .filter { !it.isDegenerate }
-                .any { curr.intersectSegment(it) !is Intersection2D.None }
+                .any { curr.intersect(it) !is Intersection2D.None }
     }
 }

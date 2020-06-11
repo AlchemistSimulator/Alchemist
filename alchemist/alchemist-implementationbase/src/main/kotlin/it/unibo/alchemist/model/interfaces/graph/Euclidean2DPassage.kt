@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.graph
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.BaseSegment2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
@@ -60,7 +60,7 @@ data class Euclidean2DPassage(
      */
     fun crossingPointOnTail(position: Euclidean2DPosition): Euclidean2DPosition = with(passageShapeOnTail) {
         require(tail.containsBoundaryIncluded(position)) { "$position is not inside $tail" }
-        val idealMovement = Segment2DImpl(position, head.centroid)
+        val idealMovement = BaseSegment2D(position, head.centroid)
         /*
          * The crossing point is computed as the point belonging to the passage which
          * is closest to the intersection of the lines defined by the ideal movement
@@ -81,7 +81,7 @@ data class Euclidean2DPassage(
      */
     fun crossingPointOnHead(crossingPointOnTail: Euclidean2DPosition): Euclidean2DPosition = with(crossingPointOnTail) {
         require(tail.containsBoundaryIncluded(this)) { "$crossingPointOnTail is not contained in $tail" }
-        val movement = Segment2DImpl(this, this + passageShapeOnTail.toVector().normal())
+        val movement = BaseSegment2D(this, this + passageShapeOnTail.toVector.normal())
         linesIntersectionOrFail(movement, headClosestEdge)
     }
 
@@ -93,7 +93,7 @@ data class Euclidean2DPassage(
         crossingPointOnTail(position).let { Pair(it, crossingPointOnHead(it)) }
 
     private fun <V : Vector2D<V>> linesIntersectionOrFail(segment1: Segment2D<V>, segment2: Segment2D<V>): V =
-        segment1.intersectAsLines(segment2).let { intersection ->
+        segment1.toLine().intersect(segment2.toLine()).let { intersection ->
             if (intersection is Intersection2D.SinglePoint) {
                 intersection.point
             } else {

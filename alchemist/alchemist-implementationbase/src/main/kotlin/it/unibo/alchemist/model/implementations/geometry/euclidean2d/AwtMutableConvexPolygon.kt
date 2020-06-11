@@ -31,7 +31,10 @@ open class AwtMutableConvexPolygon(
          */
         var i = 0
         while (i < vertices.size) {
-            if (Segment2DImpl(vertices[circularPrevious(i)], vertices[i]).isCollinearWith(vertices[circularNext(i)])) {
+            val prev = vertices[circularPrevious(i)]
+            val curr = vertices[i]
+            val next = vertices[circularNext(i)]
+            if (BaseSegment2D(prev, curr).isCollinearWith(next)) {
                 vertices.removeAt(i)
                 i--
             }
@@ -56,7 +59,7 @@ open class AwtMutableConvexPolygon(
     /**
      * @returns the specified edge of the polygon, this is faster than [edges].get([index]).
      */
-    override fun getEdge(index: Int) = Segment2DImpl(vertices[index], vertices[circularNext(index)])
+    override fun getEdge(index: Int) = BaseSegment2D(vertices[index], vertices[circularNext(index)])
 
     override fun edges(): List<Segment2D<Euclidean2DPosition>> = vertices.indices.map { getEdge(it) }
 

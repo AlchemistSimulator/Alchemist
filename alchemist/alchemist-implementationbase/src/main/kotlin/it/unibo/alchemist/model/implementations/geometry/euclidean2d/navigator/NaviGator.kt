@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.BaseSegment2D
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnX
 import it.unibo.alchemist.model.implementations.geometry.findExtremeCoordsOnY
 import it.unibo.alchemist.model.implementations.geometry.intersect
@@ -85,7 +85,7 @@ fun generateNavigationGraph(
 
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
-            if (edge.isAlignedToAnyAxis) {
+            if (edge.isHorizontal || edge.isVertical) {
                 val passages = seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
                 /*
                  * Moves the edge back to its previous position as findCrossings modified it.
@@ -234,4 +234,4 @@ private fun createSeed(
  * Creates a [Segment2D]. [x2] defaults to [x1] and [y2] defaults to [y1].
  */
 private fun createSegment(x1: Double, y1: Double, x2: Double = x1, y2: Double = y1) =
-    Segment2DImpl(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))
+    BaseSegment2D(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))

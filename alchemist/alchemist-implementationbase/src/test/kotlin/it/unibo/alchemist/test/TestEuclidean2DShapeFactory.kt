@@ -11,6 +11,15 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
+internal fun Euclidean2DShapeFactory.oneOfEachWithSize(size: Double) = mapOf(
+    "circle" to circle(size * 2),
+    "circleSector" to circleSector(size * 2, Math.PI, 0.0),
+    "rectangle" to rectangle(size, size),
+    "adimensional" to adimensional()
+)
+
+internal const val DEFAULT_SHAPE_SIZE: Double = 1.0
+
 private val factory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
 private val fakeShape = object : Euclidean2DShape {
     override val diameter = 0.0

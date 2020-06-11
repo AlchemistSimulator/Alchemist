@@ -1,15 +1,14 @@
 package it.unibo.alchemist.model.implementations.environments
 
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.BaseSegment2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.intersectCircle
 
 /**
  * Implementation of [Physics2DEnvironment].
@@ -111,7 +110,9 @@ open class Continuous2DEnvironment<T> :
     private fun nodesOnPath(node: Node<T>, desiredPosition: Euclidean2DPosition): List<Node<T>> = with(node.shape) {
         val currentPosition = getPosition(node)
         shapeFactory.rectangle(currentPosition.distanceTo(desiredPosition) + diameter, diameter)
-            .transformed { Segment2D(currentPosition, desiredPosition).midPoint.let { origin(it.x, it.y) } }
+            .transformed {
+                BaseSegment2D(currentPosition, desiredPosition).midPoint.let { origin(it.x, it.y) }
+            }
             .let { movementArea -> getNodesWithin(movementArea).minusElement(node) }
     }
 
@@ -123,11 +124,11 @@ open class Continuous2DEnvironment<T> :
      */
     private fun farthestPositionReachable(node: Node<T>, desiredPosition: Euclidean2DPosition): Euclidean2DPosition {
         val currentPosition = getPosition(node)
-        val desiredMovement = Segment2D(currentPosition, desiredPosition)
+        val desiredMovement = BaseSegment2D(currentPosition, desiredPosition)
         return nodesOnPath(node, desiredPosition)
             .map { getShape(it) }
             .flatMap { other ->
-                desiredMovement.intersectCircle(other.centroid, other.radius + node.shape.radius).points
+                desiredMovement.intersectCircle(other.centroid, other.radius + node.shape.radius).asList
             }
             .minBy { currentPosition.distanceTo(it) }
             ?: desiredPosition

@@ -7,14 +7,18 @@
  */
 
 dependencies {
+    // API
     api(project(":alchemist-interfaces"))
     api(project(":alchemist-implementationbase"))
     api(Libs.protelis_interpreter)
     api(Libs.protelis_lang)
+    // IMPLEMENTATION
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
-    testImplementation(project(":alchemist-engine"))
+    // TESTING
     testImplementation(project(":alchemist-loading"))
+    testImplementation(project(":alchemist-engine"))
     testImplementation(Libs.commons_io)
 }
 

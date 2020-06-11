@@ -2,12 +2,14 @@ package it.unibo.alchemist.model.implementations.conditions
 
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Context
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * The intention of the pedestrian to evacuate or not.
  */
-open class WantToEvacuate<T>(
-    private val pedestrian: CognitivePedestrian<T>
+open class WantToEvacuate<T, S : Vector<S>, A : GeometricTransformation<S>>(
+    private val pedestrian: CognitivePedestrian<T, S, A>
 ) : AbstractCondition<T>(pedestrian) {
 
     override fun getContext(): Context = Context.LOCAL

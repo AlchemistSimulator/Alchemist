@@ -11,7 +11,6 @@ import it.unibo.alchemist.model.implementations.nodes.NodeManager
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
-import it.unibo.scafi.PlatformDependentConstants
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation
 import it.unibo.scafi.lib.StandardLibrary
 import it.unibo.scafi.space.{BasicSpatialAbstraction, Point2D, Point3D}

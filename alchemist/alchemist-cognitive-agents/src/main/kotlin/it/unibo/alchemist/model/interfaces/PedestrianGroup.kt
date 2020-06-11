@@ -1,6 +1,9 @@
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
+import it.unibo.alchemist.model.interfaces.geometry.Vector
+
 /**
  * An alias for a group of pedestrians.
  */
-typealias PedestrianGroup<T> = Group<T, Pedestrian<T>>
+interface PedestrianGroup<T, P : Vector<P>, A : GeometricTransformation<P>> : Group<T, Pedestrian<T, P, A>>

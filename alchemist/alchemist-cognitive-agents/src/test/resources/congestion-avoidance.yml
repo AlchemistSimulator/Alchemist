@@ -2,7 +2,7 @@ incarnation: protelis
 
 environment:
   type: ImageEnvironmentWithGraph
-  parameters: [images/congestion-avoidance.png, 0.1, 33, 33]
+  parameters: [images/congestion-avoidance.png, 0.1]
 
 positions:
   type: EuclideanPosition2D
@@ -18,14 +18,17 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
-    type: OrientingBehavior2D
+    type: PrioritySteering
+    actions:
+      - type: ReachKnownDestination
+        parameters: [10, 55]
 
 displacements:
   - in:
       type: Point
       parameters: [70, 50]
     nodes:
-      type: OrientingHomogeneousPedestrian2D
+      type: OrientingPedestrian2D
       parameters: [1.0]
     programs:
       - *behavior

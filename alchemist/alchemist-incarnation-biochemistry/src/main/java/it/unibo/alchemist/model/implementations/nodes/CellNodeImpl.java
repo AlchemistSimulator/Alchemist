@@ -8,14 +8,6 @@
 
 package it.unibo.alchemist.model.implementations.nodes;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.math3.util.FastMath;
-
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.CellNode;
@@ -23,11 +15,19 @@ import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.geometry.Vector;
+import org.apache.commons.math3.util.FastMath;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @param <P>
  */
-public class CellNodeImpl<P extends Position<P>> extends DoubleNode implements CellNode<P>, CellWithCircularArea<P> {
+public class CellNodeImpl<P extends Position<P> & Vector<P>> extends DoubleNode implements CellNode<P>, CellWithCircularArea<P> {
 
     private static final long serialVersionUID = 837704874534888283L;
 

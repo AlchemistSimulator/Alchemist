@@ -7,13 +7,12 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.core.interfaces.Simulation;
+import org.danilopianini.util.ListSet;
+
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import org.danilopianini.util.ListSet;
-
-import it.unibo.alchemist.core.interfaces.Simulation;
 
 /**
  * Interface for an environment. Every environment must implement this
@@ -217,18 +216,6 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @return a {@link Position} compatible with this environment
      */
     P makePosition(Number... coordinates);
-
-    /**
-     * This method moves a node in the environment toward some direction. If
-     * node move is unsupported, it does nothing.
-     * 
-     * @param node
-     *            The node to move
-     * @param direction
-     *            The position which will be summed to the current position to
-     *            move the node in the right place.
-     */
-    void moveNode(Node<T> node, P direction);
 
     /**
      * This method moves a node in the environment to some position. If node

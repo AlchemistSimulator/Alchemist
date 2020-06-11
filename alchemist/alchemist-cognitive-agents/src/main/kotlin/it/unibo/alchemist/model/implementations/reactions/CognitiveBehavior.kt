@@ -5,6 +5,8 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * Reaction representing the cognitive behavior of a pedestrian.
@@ -14,13 +16,15 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  * @param timeDistribution
  *          the time distribution according to this the reaction executes.
  */
-class CognitiveBehavior<T>(
-    private val pedestrian: CognitivePedestrian<T>,
+class CognitiveBehavior<T, V, A>(
+    private val pedestrian: CognitivePedestrian<T, V, A>,
     timeDistribution: TimeDistribution<T>
-) : AbstractReaction<T>(pedestrian, timeDistribution) {
+) : AbstractReaction<T>(pedestrian, timeDistribution)
+    where V : Vector<V>, A : GeometricTransformation<V> {
 
+    @Suppress("UNCHECKED_CAST")
     override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) =
-        CognitiveBehavior(n as CognitivePedestrian<T>, timeDistribution)
+        CognitiveBehavior(n as CognitivePedestrian<T, V, A>, timeDistribution)
 
     override fun getRate() = timeDistribution.rate
 

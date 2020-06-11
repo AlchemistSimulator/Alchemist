@@ -9,15 +9,15 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AwtMutableConvexPolygon
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator.generateNavigationGraph
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator.generateNavigationGraph
 import it.unibo.alchemist.model.implementations.graph.DirectedEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.utils.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.graph.Euclidean2DNavigationGraph
 import org.kaikikm.threadresloader.ResourceLoader
@@ -76,7 +76,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     }
 
     private fun <V : Vector2D<V>> Segment2D<V>.mapSegment(mapper: (V) -> V): Segment2D<V> =
-        copy(mapper.invoke(first), mapper.invoke(second))
+        copyWith(mapper.invoke(first), mapper.invoke(second))
 
     private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =
         AwtMutableConvexPolygon(vertices().map(mapper).toMutableList())

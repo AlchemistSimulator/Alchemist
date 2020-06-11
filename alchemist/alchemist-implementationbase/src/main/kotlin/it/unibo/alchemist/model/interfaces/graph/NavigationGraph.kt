@@ -4,8 +4,8 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A graph used for navigation purposes. Nodes are [ConvexGeometricShape]s,

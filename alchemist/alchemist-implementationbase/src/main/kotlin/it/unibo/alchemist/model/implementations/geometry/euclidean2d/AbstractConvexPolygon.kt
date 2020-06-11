@@ -7,15 +7,14 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
-import it.unibo.alchemist.model.implementations.geometry.SegmentsIntersectionType
-import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.vertices
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import java.awt.Shape
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
@@ -65,11 +64,16 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {
             return true
         }
-        val intersections = edges().map { intersection(it, segment) }
-        return when {
-            intersections.any { it.type == SegmentsIntersectionType.SEGMENT } -> false
-            else -> intersections.mapNotNull { it.point.orElse(null) }.distinct().size > 1
-        }
+        val intersections = edges()
+            .map { it.intersectSegment(segment) } // Either Segment, SinglePoint, or None
+            .filterNot { it is Intersection2D.None }
+            .asSequence()
+        // Lazily evaluated
+        val intersectionPoints = intersections
+            .filterIsInstance<Intersection2D.SinglePoint<Euclidean2DPosition>>()
+            .map { it.point }
+            .distinct()
+        return intersections.none { it is Intersection2D.Segment } && intersectionPoints.count() > 1
     }
 
     override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> = edges()
@@ -181,18 +185,16 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             i = circularNext(i)
         }
         val next = getEdge(i)
-        return when {
-            intersection(prev, curr).type != SegmentsIntersectionType.POINT ||
-                intersection(curr, next).type != SegmentsIntersectionType.POINT -> true
+        return prev.intersectSegment(curr) !is Intersection2D.SinglePoint ||
+            curr.intersectSegment(next) !is Intersection2D.SinglePoint ||
             /*
              * We check every edge between the first prev not
              * degenerate and the first next not degenerate.
              */
-            else -> generateSequence(circularNext(i)) { circularNext(it) }
+            generateSequence(circularNext(i)) { circularNext(it) }
                 .takeWhile { it != prevIndex }
                 .map { getEdge(it) }
                 .filter { !it.isDegenerate }
-                .any { intersection(curr, it).type != SegmentsIntersectionType.EMPTY }
-        }
+                .any { curr.intersectSegment(it) !is Intersection2D.None }
     }
 }

@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.influencesphere
 
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 
 /**
  * A sphere of influence in the Euclidean world.

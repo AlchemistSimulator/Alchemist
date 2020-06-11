@@ -1,13 +1,12 @@
-package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
-import it.unibo.alchemist.model.implementations.geometry.areCollinear
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.MutableConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.MutableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import java.awt.Shape
 import java.awt.geom.Area
 import java.awt.geom.Path2D
@@ -32,7 +31,7 @@ open class AwtMutableConvexPolygon(
          */
         var i = 0
         while (i < vertices.size) {
-            if (areCollinear(vertices[circularPrevious(i)], vertices[i], vertices[circularNext(i)])) {
+            if (Segment2DImpl(vertices[circularPrevious(i)], vertices[i]).isCollinearWith(vertices[circularNext(i)])) {
                 vertices.removeAt(i)
                 i--
             }
@@ -57,7 +56,7 @@ open class AwtMutableConvexPolygon(
     /**
      * @returns the specified edge of the polygon, this is faster than [edges].get([index]).
      */
-    override fun getEdge(index: Int) = Segment2D(vertices[index], vertices[circularNext(index)])
+    override fun getEdge(index: Int) = Segment2DImpl(vertices[index], vertices[circularNext(index)])
 
     override fun edges(): List<Segment2D<Euclidean2DPosition>> = vertices.indices.map { getEdge(it) }
 

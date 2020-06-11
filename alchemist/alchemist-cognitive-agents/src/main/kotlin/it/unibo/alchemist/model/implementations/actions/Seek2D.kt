@@ -1,8 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.utils.origin
-import it.unibo.alchemist.model.implementations.utils.surrounding
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -15,21 +13,21 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
  * only in 2D are required to implement it.
  */
 open class Seek2D<T, P>(
-    private val env: Environment<T, P>,
+    private val environment: EuclideanEnvironment<T, P>,
     reaction: Reaction<T>,
     private val pedestrian: Pedestrian<T>,
     vararg coords: Double
-) : Seek<T, P>(env, reaction, pedestrian, *coords)
+) : Seek<T, P>(environment, reaction, pedestrian, *coords)
     where
         P : Position2D<P>,
         P : Vector2D<P> {
 
     public override fun interpolatePositions(current: P, target: P, maxWalk: Double): P {
         val superPosition = current + super.interpolatePositions(current, target, maxWalk)
-        return (current.surrounding(env, maxWalk) + superPosition)
+        return (current.surrounding(maxWalk) + superPosition)
             .asSequence()
-            .discardUnsuitablePositions(env, pedestrian)
+            .discardUnsuitablePositions(environment, pedestrian)
             .minBy { it.distanceTo(target) }?.minus(current)
-            ?: env.origin()
+            ?: environment.origin
     }
 }

@@ -1,10 +1,10 @@
-package it.unibo.alchemist.model.implementations.geometry.euclidean.twod
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import java.awt.Shape
 import java.awt.geom.AffineTransform
 import java.awt.geom.Point2D

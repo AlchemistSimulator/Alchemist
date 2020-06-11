@@ -1,15 +1,15 @@
-package it.unibo.alchemist.model.implementations.geometry.euclidean.twod.navigator
+package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
-import it.unibo.alchemist.model.implementations.geometry.vertices
-import it.unibo.alchemist.model.implementations.geometry.isInBoundaries
-import it.unibo.alchemist.model.implementations.geometry.intersection
-import it.unibo.alchemist.model.implementations.geometry.euclidean.twod.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Segment2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.navigator.ExtendableConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigator.ExtendableConvexPolygon
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.Point2D
@@ -173,8 +173,8 @@ class ExtendableConvexPolygonInEnvironment(
         /*
          * super method is used in order to avoid voiding useful cache
          */
-        if (super.replaceEdge(index, Segment2D(edge.first + firstMovement, edge.second + secondMovement))) {
-            if (isInBoundaries(getEdge(index), origin, width, height)) {
+        if (super.replaceEdge(index, edge.copyWith(edge.first + firstMovement, edge.second + secondMovement))) {
+            if (getEdge(index).isInRectangle(origin, width, height)) {
                 return true
             }
             super.replaceEdge(index, edge)
@@ -249,7 +249,7 @@ class ExtendableConvexPolygonInEnvironment(
                  */
                 intersectedObs.size <= 2 && intersectedObs.all { isAdvancedCase(it, i, step) }
             }
-            if (hasAdvanced && isInBoundaries(getEdge(i), origin, width, height) && isAdvancedCase()) {
+            if (hasAdvanced && getEdge(i).isInRectangle(origin, width, height) && isAdvancedCase()) {
                 intersectedObs.forEach { adjustGrowth(it, i, step) }
                 extended = true
             } else {
@@ -290,7 +290,7 @@ class ExtendableConvexPolygonInEnvironment(
         /*
          * a segment going from the old position of the intruding vertex to the new one
          */
-        val movementSegment = Segment2D(intrudingVertex, intrudingVertex - growthDirection.resized(step))
+        val movementSegment = Segment2DImpl(intrudingVertex, intrudingVertex - growthDirection.resized(step))
         val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
         require(intrudedEdges.size == 1) { "vertex is not intruding" }
         return intrudedEdges.first()
@@ -301,7 +301,7 @@ class ExtendableConvexPolygonInEnvironment(
      */
     private fun findIntersectingEdges(obstacle: Shape, e: Segment2D<Euclidean2DPosition>) =
         obstacle.vertices().run {
-            mapIndexed { i, v -> Segment2D(v, this[(i + 1) % size]) }
+            mapIndexed { i, v -> Segment2DImpl(v, this[(i + 1) % size]) }
                 .filter { edgesIntersect(it, e) }
         }
 
@@ -327,8 +327,13 @@ class ExtendableConvexPolygonInEnvironment(
         val polygonEdge2 = getEdge(circularPrevious(indexOfIntrudingV))
         val obstacleEdge: Segment2D<Euclidean2DPosition> = firstIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val p1 = intersection(polygonEdge1, obstacleEdge).point.get().toEuclidean
-        val p2 = intersection(polygonEdge2, obstacleEdge).point.get().toEuclidean
+        val intersection1 = polygonEdge1.intersectSegment(obstacleEdge)
+        val intersection2 = polygonEdge2.intersectSegment(obstacleEdge)
+        require(intersection1 is Intersection2D.SinglePoint && intersection2 is Intersection2D.SinglePoint) {
+            "Bug in the Alchemist geometric engine. Found in ${this::class.qualifiedName}"
+        }
+        val p1 = intersection1.point.toEuclidean
+        val p2 = intersection2.point.toEuclidean
         // a new edge is going to be added, its vertices will grow following the intruded
         // obstacleEdge. In order to do so, their growth directions will be modified to be
         // parallel to such edge, but in opposite senses.

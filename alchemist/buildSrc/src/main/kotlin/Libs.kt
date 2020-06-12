@@ -260,7 +260,7 @@ object Libs {
     /**
      * http://www.slf4j.org
      */
-    const val slf4j_api: String = "org.slf4j:slf4j-api:_"
+    const val slf4j_api: String = "org.slf4j:slf4j-api:1.7.30"
 
     /**
      * http://www.snakeyaml.org

@@ -153,7 +153,7 @@ object Libs {
     /**
      * http://logback.qos.ch
      */
-    const val logback_classic: String = "ch.qos.logback:logback-classic:_"
+    const val logback_classic: String = "ch.qos.logback:logback-classic:1.2.3"
 
     /**
      * http://www.miglayout.com/

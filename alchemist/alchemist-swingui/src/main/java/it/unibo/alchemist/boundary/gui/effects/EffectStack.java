@@ -237,6 +237,15 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     }
 
     @Override
+    public EffectFX<P> remove() {
+        if (this.isEmpty()) {
+            throw new NoSuchElementException("The stack is empty");
+        } else {
+            return this.pop();
+        }
+    }
+
+    @Override
     public boolean containsAll(final Collection<?> c) {
         return this.effects.containsAll(c);
     }
@@ -291,15 +300,6 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
             return this.add(e);
         } catch (UnsupportedOperationException | ClassCastException ex) {
             return false;
-        }
-    }
-
-    @Override
-    public EffectFX<P> remove() {
-        if (this.isEmpty()) {
-            throw new NoSuchElementException("The stack is empty");
-        } else {
-            return this.pop();
         }
     }
 

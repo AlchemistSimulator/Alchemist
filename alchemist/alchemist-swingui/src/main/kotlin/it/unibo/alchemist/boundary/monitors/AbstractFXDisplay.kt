@@ -251,11 +251,9 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         if (Thread.holdsLock(environment)) {
             time.toDouble()
             interactions.environment = environment
-            /*
-             * TODO: Future optimization -- Let the simulation (or the environment, probably both)
-             * expose the last moment at which a change in position occurred. This way, we don't
-             * need to constantly regenerate the position map.
-             */
+//            TODO: Future optimization -- Let the simulation (or the environment, probably both)
+//            expose the last moment at which a change in position occurred. This way, we don't
+//            need to constantly regenerate the position map.
             interactions.nodes = environment.nodes.associateWith(environment::getPosition)
             val graphicsContext = effectsCanvas.graphicsContext2D
 //            val background = Stream.of(drawBackground(graphicsContext, environment))

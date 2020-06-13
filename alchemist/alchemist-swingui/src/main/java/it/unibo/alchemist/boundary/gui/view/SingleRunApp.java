@@ -309,26 +309,12 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      */
     private void parseNamedParams(final Map<String, String> params) {
         params.forEach((key, value) -> {
-//            switch (key) {
-//                case USE_EFFECT_GROUPS_FROM_FILE:
-//                    try {
-//                        effectGroups.addAll(EffectSerializer.effectGroupsFromFile(new File(value)));
-//                    } catch (final IOException e) {
-//                        L.warn(e.getMessage());
-//                        effectGroups.clear(); // TODO check if necessary
-//                    }
-//                    break;
-//                default:
-//                    L.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);
-//                    break;
-//            }
-            // TODO remove if and use switch (like comment above) for new named parameters
-            if (key.equals(USE_EFFECT_GROUPS_FROM_FILE)) {
+            if (USE_EFFECT_GROUPS_FROM_FILE.equals(key)) {
                 try {
                     effectGroups.addAll(EffectSerializer.effectGroupsFromFile(new File(value)));
                 } catch (final IOException e) {
                     L.warn(e.getMessage());
-                    effectGroups.clear(); // TODO check if necessary
+                    effectGroups.clear();
                 }
             } else {
                 L.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);

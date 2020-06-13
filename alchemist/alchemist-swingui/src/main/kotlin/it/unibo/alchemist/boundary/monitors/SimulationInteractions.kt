@@ -252,7 +252,6 @@ class InteractionManager<T, P : Position2D<P>>(
         }
 
         // scroll
-        // TODO: [NodeBoundMouseEventDispatcher] should handle this somehow instead
         monitor.setOnScroll {
             if (it.deltaY != 0.0) {
                 zoomManager.inc(it.deltaY / ZOOM_SCALE)
@@ -498,9 +497,9 @@ enum class Direction2D(val x: Int, val y: Int) {
     NORTHWEST(-1, 1);
 
     private fun flip(xFlip: Boolean = true, yFlip: Boolean = true): Direction2D =
-        Direction2D.values().find {
-            it.x == (if (xFlip) -x else x) && it.y == (if (yFlip) -y else y)
-        } ?: Direction2D.NONE
+        values().find {
+            it.x == (if (xFlip) -x else x) && it.y == if (yFlip) -y else y
+        } ?: NONE
 
     /**
      * Flips the direction horizontally and vertically.
@@ -713,7 +712,7 @@ class SelectionHelper<T, P : Position2D<P>> {
         wormhole: BidimensionalWormhole<P>
     ): Pair<Node<T>, P>? =
         selectionPoint?.let { point ->
-            nodes.minBy { (nodes[it.key]!!).distanceTo(wormhole.getEnvPoint(point)) }?.let {
+            nodes.minBy { nodes[it.key]!!.distanceTo(wormhole.getEnvPoint(point)) }?.let {
                 Pair(it.key, it.value)
             }
         }
@@ -748,8 +747,8 @@ private fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
 ): Map<Node<T>, P> = let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
 
 private operator fun Rectangle.contains(point: Point): Boolean =
-    point.x.toDouble() in x..(x + width) &&
-        point.y.toDouble() in y..(y + height)
+    point.x.toDouble() in x..x + width &&
+        point.y.toDouble() in y..y + height
 
 private fun Point.makeRectangleWith(other: Point): Rectangle = Rectangle(
     min(this.x, other.x).toDouble(),

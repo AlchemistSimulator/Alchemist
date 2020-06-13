@@ -132,14 +132,13 @@ class RangedDoubleProperty @JvmOverloads constructor(
     }
 
     override fun hashCode() =
-            lowerBound.hashCode() xor upperBound.hashCode() xor value.hashCode() xor (name.hashCode())
+            lowerBound.hashCode() xor upperBound.hashCode() xor value.hashCode() xor name.hashCode()
 
-    override fun equals(other: Any?) = this === other || (
+    override fun equals(other: Any?) = this === other ||
         javaClass === other?.javaClass &&
             name == (other as RangedDoubleProperty).name &&
             abs(lowerBound - other.lowerBound) < Double.MIN_VALUE &&
             abs(upperBound - other.upperBound) < Double.MIN_VALUE
-        )
 
     companion object {
         /**

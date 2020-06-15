@@ -11,8 +11,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
-import java.io.BufferedInputStream
-import java.util.concurrent.TimeUnit
+import java.io.ByteArrayOutputStream
 
 plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
@@ -109,7 +108,7 @@ allprojects {
         testRuntimeOnly(Libs.junit_jupiter_engine)
         // executable jar packaging
         if ("incarnation" in project.name) {
-            shadow(rootProject)
+            runtimeOnly(rootProject)
         }
     }
 
@@ -265,32 +264,32 @@ allprojects {
         exclude("gradlew.bat")
         isZip64 = true
         destinationDirectory.set(file("${rootProject.buildDir}/libs"))
-        doLast {
-            fun checkKewywords(stream: BufferedInputStream): String? {
-                val keywordNotDesired = listOf("SLF4J", "NOP")
-                // read the stream looking for a not desired keyword
-                stream.reader().useLines { lines ->
-                    lines.forEach { line ->
-                        keywordNotDesired.find { keyword -> line.contains(keyword) }?.let {
-                            return it
+        if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
+            // Run the jar and check the output
+            val testShadowJar = tasks.register<Exec>("${this.name}-testWorkingOutput") {
+                val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
+                val command = arrayOf(javaExecutable, "-jar", archiveFile.get().asFile.absolutePath, "--help")
+                commandLine(*command)
+                val interceptOutput = ByteArrayOutputStream()
+                val interceptError = ByteArrayOutputStream()
+                standardOutput = interceptOutput
+                errorOutput = interceptError
+                doLast {
+                    executionResult.get().assertNormalExitValue()
+                    listOf(interceptOutput, interceptError).forEach { stream ->
+                        val text = String(stream.toByteArray(), Charsets.UTF_8)
+                        for (illegalKeyword in listOf("SLF4J", "NOP")) {
+                            require(illegalKeyword !in text) {
+                                """
+                                $illegalKeyword found while printing the help. Complete output:
+                                $text
+                            """.trimIndent()
+                            }
                         }
                     }
                 }
-                return null
             }
-            fun throwException(keywordFounded: String, where: String, cmd: String): Nothing =
-                throw IllegalStateException("Keyword not desired ($keywordFounded) founded in $where executing the command $cmd")
-
-            val cmd = "java -jar ${archiveFile.get().asFile.absolutePath} --help"
-            val process = Runtime.getRuntime().exec(cmd)
-            val stdout = BufferedInputStream(process.inputStream)
-            val stderr = BufferedInputStream(process.errorStream)
-            process.onExit().get(1, TimeUnit.MINUTES)
-            // check if there is any keyword not desired in standard output or standard error
-            checkKewywords(stdout)?.let {
-                stderr.close()
-                throwException(it, "stdout", cmd)
-            } ?: checkKewywords(stderr)?.let { throwException(it, "stderr", cmd) }
+            this.finalizedBy(testShadowJar)
         }
     }
 }

@@ -28,7 +28,7 @@ private typealias AbstractCognitivePedestrian2D<T> =
  * @param danger
  *          the molecule associated to danger in the environment.
  */
-class CognitivePedestrian2D<T> @JvmOverloads constructor(
+open class CognitivePedestrian2D<T> @JvmOverloads constructor(
     override val environment: Physics2DEnvironment<T>,
     randomGenerator: RandomGenerator,
     age: Age,
@@ -63,7 +63,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     ) : this(environment, randomGenerator, Age.fromYears(age), Gender.fromString(gender), danger, group)
 
     override val shape by lazy { super.shape }
-    override val fieldOfView by lazy { super.fieldOfView }
+    final override val fieldOfView by lazy { super.fieldOfView }
 
     init {
         senses += fieldOfView

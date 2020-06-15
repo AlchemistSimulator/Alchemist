@@ -19,7 +19,7 @@ private typealias AbstractHomogeneousPedestrian2D<T> =
  * @param randomGenerator
  *          the simulation {@link RandomGenerator}.
  */
-class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
+open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
     override val environment: Physics2DEnvironment<T>,
     randomGenerator: RandomGenerator,
     group: PedestrianGroup2D<T>? = null
@@ -30,7 +30,7 @@ class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
 ), Pedestrian2D<T> {
 
     override val shape by lazy { super.shape }
-    override val fieldOfView by lazy { super.fieldOfView }
+    final override val fieldOfView by lazy { super.fieldOfView }
 
     init {
         senses += fieldOfView

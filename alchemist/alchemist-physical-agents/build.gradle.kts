@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-cognitive-agents"))
+    implementation(project(":alchemist-orienting-agents"))
     // implementation(Libs.konf)
     // implementation(Libs.jgrapht_core)
     // implementation(project(":alchemist-engine"))

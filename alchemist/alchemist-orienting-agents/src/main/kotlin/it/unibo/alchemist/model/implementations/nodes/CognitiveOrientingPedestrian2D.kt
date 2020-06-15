@@ -29,13 +29,13 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param M the type of nodes of the navigation graph provided by the environment.
  * @param F the type of edges of the navigation graph provided by the environment.
  */
-class CognitiveOrientingPedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads constructor(
+open class CognitiveOrientingPedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads constructor(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
     randomGenerator: RandomGenerator,
     knowledgeDegree: Double,
     group: PedestrianGroup2D<T>? = null,
-    override val age: Age,
-    override val gender: Gender,
+    final override val age: Age,
+    final override val gender: Gender,
     danger: Molecule? = null
 ) : HomogeneousOrientingPedestrian2D<T, M, F>(
     environment,
@@ -89,14 +89,7 @@ class CognitiveOrientingPedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
     /*
      * The cognitive part of the pedestrian.
      */
-    private val cognitive = CognitivePedestrian2D(
-        environment,
-        randomGenerator,
-        age,
-        gender,
-        danger,
-        group
-    )
+    private val cognitive = CognitivePedestrian2D(environment, randomGenerator, age, gender, danger, group)
 
     override val compliance = cognitive.compliance
 

@@ -153,7 +153,7 @@ object Libs {
     /**
      * http://logback.qos.ch
      */
-    const val logback_classic: String = "ch.qos.logback:logback-classic:1.2.3"
+    const val logback_classic: String = "ch.qos.logback:logback-classic:_"
 
     /**
      * http://www.miglayout.com/
@@ -260,7 +260,7 @@ object Libs {
     /**
      * http://www.slf4j.org
      */
-    const val slf4j_api: String = "org.slf4j:slf4j-api:1.7.30"
+    const val slf4j_api: String = "org.slf4j:slf4j-api:_"
 
     /**
      * http://www.snakeyaml.org

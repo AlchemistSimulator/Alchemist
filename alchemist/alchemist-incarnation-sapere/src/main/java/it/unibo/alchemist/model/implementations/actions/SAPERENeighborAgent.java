@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @param <P> position type
  */
-public abstract class SAPERENeighborAgent<P extends Position<? extends P>> extends SAPEREAgent {
+public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREAgent {
 
     private static final long serialVersionUID = 8720614570156227036L;
     private final Environment<List<ILsaMolecule>, P> environment;
@@ -131,7 +131,7 @@ public abstract class SAPERENeighborAgent<P extends Position<? extends P>> exten
      * @param direction the point towards which move the node
      */
     protected final void move(final P direction) {
-        environment.moveNode(getNode(), direction);
+        environment.moveNodeToPosition(getNode(), getEnvironment().getPosition(getNode()).plus(direction.getCoordinates()));
     }
 
     /**

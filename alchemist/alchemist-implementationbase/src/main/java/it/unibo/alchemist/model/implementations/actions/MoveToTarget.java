@@ -7,10 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import static org.apache.commons.math3.util.FastMath.atan2;
-import static org.apache.commons.math3.util.FastMath.cos;
-import static org.apache.commons.math3.util.FastMath.sin;
-
 import com.google.common.collect.ImmutableList;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTarget;
@@ -20,6 +16,10 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+
+import static org.apache.commons.math3.util.FastMath.atan2;
+import static org.apache.commons.math3.util.FastMath.cos;
+import static org.apache.commons.math3.util.FastMath.sin;
 
 /**
  * Movement towards a target defined as a concentration.
@@ -68,7 +68,7 @@ public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConf
 
     @Override
     protected P interpolatePositions(final P current, final P target, final double maxWalk) {
-        final P vector = target.minus(current);
+        final P vector = target.minus(current.getCoordinates());
         if (current.distanceTo(target) < maxWalk) {
             return vector;
         }

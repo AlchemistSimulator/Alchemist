@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.graph.NavigationGraph;
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.jgrapht.graph.DefaultEdge;

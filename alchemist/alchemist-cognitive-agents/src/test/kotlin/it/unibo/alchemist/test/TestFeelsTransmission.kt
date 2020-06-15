@@ -6,6 +6,8 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.loadYamlSimulation
+import it.unibo.alchemist.model.startSimulation
 
 class TestFeelsTransmission<T, P> : StringSpec({
 
@@ -13,12 +15,12 @@ class TestFeelsTransmission<T, P> : StringSpec({
         val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>("feels-transmission-without-layer.yml")
                 .startSimulation()
                 .nodes
-                .map { it as CognitivePedestrian<T> }
+                .map { it as CognitivePedestrian<*, *, *> }
                 .sumByDouble { it.dangerBelief() }
         val aggregateDangerWithLayer = loadYamlSimulation<T, P>("feels-transmission-with-layer.yml")
                 .startSimulation()
                 .nodes
-                .map { it as CognitivePedestrian<T> }
+                .map { it as CognitivePedestrian<*, *, *> }
                 .sumByDouble { it.dangerBelief() }
         println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
         println("With layer aggregate danger: $aggregateDangerWithLayer")
@@ -27,9 +29,9 @@ class TestFeelsTransmission<T, P> : StringSpec({
 
     "social contagion makes nodes evacuate despite they haven't directly seen the danger" {
         loadYamlSimulation<T, P>("social-contagion.yml").startSimulation(
-            steps = 15000,
+            steps = 20000,
             finished = { e, _, _ -> e.nodes.forEach {
-                e.getPosition(it).distanceTo(e.makePosition(-50.0, 0.0)) shouldBeLessThan 12.0 }
+                e.getPosition(it).distanceTo(e.makePosition(-50.0, 0.0)) shouldBeLessThan 13.0 }
             }
         )
     }

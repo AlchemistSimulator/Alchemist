@@ -1,0 +1,35 @@
+incarnation: protelis
+
+environment:
+  type: ImageEnvironmentWithGraph
+  parameters: [images/building-planimetry.png, 0.1]
+
+positions:
+  type: EuclideanPosition2D
+
+network-model:
+  type: NoLinks
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [3.0]
+    type: PrioritySteering
+    actions:
+      - type: ReachDestination
+        parameters: [60, 40, 85, 15]
+        # (85, 15) will be known, (60, 40) won't be known but will be reached because found along the way to the former
+
+displacements:
+  - in:
+      type: Point
+      parameters: [15, 15]
+    nodes:
+      type: HomogeneousOrientingPedestrian2D
+      parameters: [0.4]
+    programs:
+      - *behavior

@@ -115,11 +115,11 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
        */
       NBR_DELAY -> nbrData.view.mapValues[FiniteDuration](nbr => FiniteDuration((nbr.executionTime + deltaTime - currentTime).toInt, TimeUnit.SECONDS)),
       NBR_RANGE -> nbrData.view.mapValues[Double](_.position.distanceTo(position)),
-      NBR_VECTOR -> nbrData.view.mapValues[Point3D](nbr => position - nbr.position),
+      NBR_VECTOR -> nbrData.view.mapValues[Point3D](nbr => position.minus(nbr.position.getCoordinates) ),
       NBR_ALCHEMIST_LAG -> nbrData.view.mapValues[Double](currentTime - _.executionTime),
       NBR_ALCHEMIST_DELAY -> nbrData.view.mapValues[Double](nbr => nbr.executionTime + deltaTime - currentTime),
     )
-    val exports: Iterable[(ID,EXPORT)] = nbrData.view.mapValues { _.export }.toIterable
+    val exports: Iterable[(ID,EXPORT)] = nbrData.view.mapValues { _.export }
     val ctx = new ContextImpl(node.getId, exports, localSensors, Map.empty){
       override def nbrSense[T](nsns: NSNS)(nbr: ID): Option[T] =
         nbrSensors.get(nsns).flatMap(_.get(nbr)).map(_.asInstanceOf[T])

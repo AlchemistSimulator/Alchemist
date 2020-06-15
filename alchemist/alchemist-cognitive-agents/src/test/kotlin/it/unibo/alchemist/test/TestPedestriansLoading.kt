@@ -5,9 +5,12 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.loadYamlSimulation
+import it.unibo.alchemist.model.startSimulation
 
-class TestPedestriansLoading<T, P> : StringSpec({
+class TestPedestriansLoading<T, P, A> : StringSpec({
 
     "homogeneous pedestrians loading" {
         loadYamlSimulation<T, P>("homogeneous-pedestrians.yml").startSimulation()
@@ -30,9 +33,9 @@ class TestPedestriansLoading<T, P> : StringSpec({
 
     "groups of pedestrians loading" {
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
-            initialized = { e -> e.nodes.filterIsInstance<Pedestrian<T>>().forEach {
+            initialized = { e -> e.nodes.filterIsInstance<Pedestrian<T, P, A>>().forEach {
                 println("${it.id} -> ${it.membershipGroup}")
             } }
         )
     }
-}) where P : Position<P>, P : Vector<P>
+}) where P : Position<P>, P : Vector<P>, A : GeometricTransformation<P>

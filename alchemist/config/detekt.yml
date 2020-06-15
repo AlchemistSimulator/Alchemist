@@ -8,10 +8,12 @@ comments:
   UndocumentedPublicProperty:
     active: true
 complexity:
-  NestedBlockDepth:
-    threshold: 5
+  LongMethod:
+    active: false
   LongParameterList:
     active: false
+  NestedBlockDepth:
+    threshold: 5
   TooManyFunctions:
     ignoreDeprecated: true
     ignorePrivate: true

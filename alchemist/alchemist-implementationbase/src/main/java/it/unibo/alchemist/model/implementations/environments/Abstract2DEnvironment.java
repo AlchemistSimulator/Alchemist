@@ -7,16 +7,15 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import static java.lang.Double.NEGATIVE_INFINITY;
-import static java.lang.Double.NaN;
-import static java.lang.Double.POSITIVE_INFINITY;
-
-import org.apache.commons.math3.util.FastMath;
-import org.danilopianini.util.FlexibleQuadTree;
-
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import org.apache.commons.math3.util.FastMath;
+import org.danilopianini.util.FlexibleQuadTree;
+
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.NaN;
+import static java.lang.Double.POSITIVE_INFINITY;
 
 /**
  * 
@@ -107,21 +106,7 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
 
     /**
      * Subclasses may override this method if they want to change the way a node
-     * moves towards some direction. The current implementation internally calls
-     * {@link #moveNodeToPosition(Node, Position2D)}, as such, overriding that
-     * method may suffice.
-     */
-    @Override
-    public void moveNode(final Node<T> node, final P direction) {
-        final P oldcoord = getPosition(node);
-        moveNodeToPosition(node, oldcoord.plus(direction));
-    }
-
-    /**
-     * Subclasses may override this method if they want to change the way a node
-     * moves towards some absolute position. Overriding this method will also
-     * influence {@link #moveNode(Node, Position2D)}, as it calls this method in the
-     * current implementation
+     * moves towards some absolute position.
      */
     @Override
     public void moveNodeToPosition(final Node<T> node, final P newpos) {

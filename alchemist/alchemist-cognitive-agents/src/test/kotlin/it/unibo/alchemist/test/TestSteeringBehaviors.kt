@@ -8,6 +8,8 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.loadYamlSimulation
+import it.unibo.alchemist.model.startSimulation
 import kotlin.math.abs
 
 private const val EPSILON = 0.001
@@ -71,7 +73,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
     "cohesion gives importance to the other members of the group during an evacuation" {
         loadYamlSimulation<T, P>("cohesion.yml").startSimulation(
             finished = { e, _, _ -> e.nodes.asSequence()
-                    .filterIsInstance<Pedestrian<T>>()
+                    .filterIsInstance<Pedestrian<T, *, *>>()
                     .groupBy { it.membershipGroup }
                     .values
                     .forEach {

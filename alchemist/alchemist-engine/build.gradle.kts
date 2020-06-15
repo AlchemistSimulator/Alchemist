@@ -13,6 +13,7 @@ dependencies {
     implementation(Libs.jgrapht_core)
 
     testImplementation(project(":alchemist-implementationbase"))
+    testImplementation(project(":alchemist-euclidean-geometry"))
 }
 
 publishing.publications {

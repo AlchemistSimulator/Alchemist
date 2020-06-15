@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.utils.nextDouble
+import it.unibo.alchemist.nextDouble
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction

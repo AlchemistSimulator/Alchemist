@@ -97,10 +97,12 @@ allprojects {
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
-        // Test implementation: JUnit 5 + Kotest
+        // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
         testImplementation(Libs.junit_jupiter_api)
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
+        testImplementation("org.mockito:mockito-core:_")
+        testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
         testRuntimeOnly(Libs.junit_jupiter_engine)
         // executable jar packaging

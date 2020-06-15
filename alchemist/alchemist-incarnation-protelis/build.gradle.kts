@@ -13,6 +13,7 @@ dependencies {
     api(Libs.protelis_interpreter)
     api(Libs.protelis_lang)
     // IMPLEMENTATION
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
     // TESTING

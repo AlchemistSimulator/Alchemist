@@ -12,7 +12,6 @@ package it.unibo.alchemist.launch
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import java.awt.GraphicsEnvironment
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -50,8 +49,7 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
             .map { variables ->
                 executor.submit(Callable {
                     // TODO: The type inference here is wrong, and should not consider Euclidean2DPosition
-                    val simulation: Simulation<Any, Euclidean2DPosition> =
-                        prepareSimulation(loader, parameters, variables)
+                    val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, parameters, variables)
                     simulation.play()
                     simulation.run()
                     simulation.error

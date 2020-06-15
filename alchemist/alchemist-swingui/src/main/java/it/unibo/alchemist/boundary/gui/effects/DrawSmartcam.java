@@ -10,6 +10,7 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment;
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
+import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape;
 import org.jooq.lambda.function.Consumer2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public final class DrawSmartcam implements Effect {
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {
-            @SuppressWarnings("unchecked") final Physics2DEnvironment<T> env = (Physics2DEnvironment<T>) environment;
+            final Physics2DEnvironment<T> env = (Physics2DEnvironment<T>) environment;
             drawShape(g, node, env, zoom, x, y);
             drawFieldOfView(g, node, env, zoom, x, y);
         } else {
@@ -51,7 +52,9 @@ public final class DrawSmartcam implements Effect {
     }
 
     private <T> void drawShape(final Graphics2D g, final Node<T> node, final Physics2DEnvironment<T> env, final double zoom, final int x, final int y) {
-        final GeometricShape geometricShape = node.getShape();
+        final GeometricShape<?, ?> geometricShape = node instanceof NodeWithShape
+                ? ((NodeWithShape<T, ?, ?>) node).getShape()
+                : null;
         if (geometricShape instanceof AwtShapeCompatible) {
             final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
             final Shape shape = transform.createTransformedShape(((AwtShapeCompatible) geometricShape).asAwtShape());

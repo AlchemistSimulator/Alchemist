@@ -14,13 +14,13 @@ import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * A [SteeringAction] in a vector space. The definition of [nextPosition] is left to
- * subclasses.
+ * A [SteeringAction] in a vector space. The definition of [nextPosition] is left to subclasses.
  */
-abstract class AbstractSteeringAction<T, P>(
+abstract class AbstractSteeringAction<T, P, A>(
     env: Environment<T, P>,
     /**
      * The reaction in which this action is executed.
@@ -29,11 +29,11 @@ abstract class AbstractSteeringAction<T, P>(
     /**
      * The owner of this action.
      */
-    protected open val pedestrian: Pedestrian<T>
-) : AbstractMoveNode<T, P>(env, pedestrian), SteeringAction<T, P>
-    where
-        P : Position<P>,
-        P : Vector<P> {
+    protected open val pedestrian: Pedestrian<T, P, A>
+) : AbstractMoveNode<T, P>(env, pedestrian),
+    SteeringAction<T, P>
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P> {
 
     /**
      * The maximum distance the pedestrian can walk, this is a length.
@@ -41,7 +41,7 @@ abstract class AbstractSteeringAction<T, P>(
     val maxWalk: Double get() = pedestrian.speed() / reaction.rate
 
     /**
-     * Next relative position.
+     * @returns the next relative position
      */
     override fun getNextPosition(): P = nextPosition()
 }

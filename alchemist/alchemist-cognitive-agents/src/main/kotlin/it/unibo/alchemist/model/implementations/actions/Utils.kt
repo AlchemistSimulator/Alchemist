@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Node
@@ -23,17 +24,27 @@ fun <T, P> Sequence<P>.discardUnsuitablePositions(
     environment: Environment<T, P>,
     pedestrian: Node<T>
 ): Sequence<P> where P : Position<P>, P : Vector<P> = this
-    .map { if (environment is EnvironmentWithObstacles<*, T, P>) {
-        /*
-         * Take into account obstacles
-         */
-        environment.next(environment.getPosition(pedestrian), it)
-    } else {
-        it
-    } }
+    .map { desirablePosition ->
+        if (environment is EnvironmentWithObstacles<*, T, P>) {
+            /*
+             * Takes into account obstacles.
+             */
+            environment.next(environment.getPosition(pedestrian), desirablePosition)
+        } else {
+            desirablePosition
+        }
+    }
     .filter {
         /*
-         * Take into account other pedestrians.
+         * Takes into account other pedestrians.
          */
         environment !is PhysicsEnvironment<T, P, *, *> || environment.canNodeFitPosition(pedestrian, it)
     }
+
+/**
+ * Requires [node] is [N] and returns the object produced by [builder]. Used to clone steering actions.
+ */
+inline fun <reified N : Node<*>, S : Action<*>> requireNodeTypeAndProduce(node: Node<*>, builder: (N) -> S): S {
+    require(node is N) { "Incompatible node type. Required ${N::class}, found ${node::class}" }
+    return builder(node)
+}

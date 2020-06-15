@@ -1,9 +1,5 @@
 incarnation: protelis
 
-environment:
-  type: Rectangular2DEnvironment
-  parameters: [400, 400]
-
 displacements:
   - in:
       type: Circle

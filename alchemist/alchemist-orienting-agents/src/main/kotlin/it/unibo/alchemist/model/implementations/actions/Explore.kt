@@ -22,14 +22,14 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  * A [NavigationAction] using [Exploring] navigation strategy.
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map.
  */
-class Explore<T, N : Euclidean2DConvexShape, E>(
+class Explore<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian2D<T, N, E>
-) : NavigationAction2DImpl<T, N, E>(environment, reaction, pedestrian) {
+    pedestrian: OrientingPedestrian2D<T, L, R>
+) : NavigationAction2DImpl<T, L, R>(environment, reaction, pedestrian) {
 
     init {
         strategy = Exploring(this)

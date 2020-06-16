@@ -40,12 +40,12 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
  * oscillatory movements (this also known as shaking behavior).
  *
  * @param T concentration type
- * @param M type of nodes of the environment's graph.
+ * @param N type of nodes of the environment's graph.
  */
-class SinglePrevalent<T, M : ConvexPolygon>(
-    environment: Euclidean2DEnvironmentWithGraph<*, T, M, *>,
+class SinglePrevalent<T, N : ConvexPolygon>(
+    environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: Pedestrian2D<T>,
-    private val prevalent: List<SteeringAction<T, Euclidean2DPosition>>.() -> NavigationAction2D<T, *, *, M, *>,
+    private val prevalent: List<SteeringAction<T, Euclidean2DPosition>>.() -> NavigationAction2D<T, *, *, N, *>,
     /**
      * Tolerance angle in radians.
      */

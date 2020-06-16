@@ -15,5 +15,5 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * A [NavigationStrategy] in a bidimensional euclidean space.
  */
-typealias NavigationStrategy2D<T, N, E, M, F> =
-    NavigationStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, M, F>
+typealias NavigationStrategy2D<T, L, R, N, E> =
+    NavigationStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>

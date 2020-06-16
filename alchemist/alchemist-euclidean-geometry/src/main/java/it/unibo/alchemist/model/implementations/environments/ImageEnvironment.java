@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.environments;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.imageio.ImageIO;
@@ -125,16 +126,16 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      * @return
      *              A list of {@link RectObstacle2D} representing the marked regions.
      */
-    protected List<RectObstacle2D> findMarkedRegions(final int color, final BufferedImage img) {
+    protected List<RectObstacle2D<Euclidean2DPosition>> findMarkedRegions(final int color, final BufferedImage img) {
         final int w = img.getWidth();
         final int h = img.getHeight();
         final boolean[][] bmat = new boolean[w][h];
-        final List<RectObstacle2D> regions = new ArrayList<>();
+        final List<RectObstacle2D<Euclidean2DPosition>> regions = new ArrayList<>();
         int[] sp = searchNext(color, img, new int[2], bmat);
         while (sp != null) {
             final int[] ep = searchObstacleEnd(color, img, sp, bmat);
             setMatrix(bmat, sp, ep);
-            regions.add(new RectObstacle2D(sp[0], sp[1], ep[0] - sp[0], ep[1] - sp[1]));
+            regions.add(new RectObstacle2D<>(sp[0], sp[1], ep[0] - sp[0], ep[1] - sp[1]));
             final int[] nsp = new int[2];
             if (ep[0] == w) {
                 if (sp[1] == 0) {
@@ -205,8 +206,9 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
         return i == x;
     }
 
-    private static RectObstacle2D mapToEnv(final RectObstacle2D obs, final double zoom, final double dx, final double dy, final int h) {
-        return new RectObstacle2D(
+    private static RectObstacle2D<Euclidean2DPosition> mapToEnv(
+            final RectObstacle2D<Euclidean2DPosition> obs, final double zoom, final double dx, final double dy, final int h) {
+        return new RectObstacle2D<>(
                 obs.x * zoom + dx,
                 (h - obs.y) * zoom + dy,
                 obs.width * zoom,

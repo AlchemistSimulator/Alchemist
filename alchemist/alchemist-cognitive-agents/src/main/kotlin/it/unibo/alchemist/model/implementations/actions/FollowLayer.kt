@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
@@ -20,31 +19,21 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
-open class FollowFlowField(
+open class FollowLayer(
     env: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
     pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule
 ) : AbstractFlowFieldAction(env, reaction, pedestrian, targetMolecule) {
 
-    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): FollowFlowField =
-        FollowFlowField(environment, r, n as Pedestrian2D<Number>, targetMolecule)
-
-    override fun Sequence<Euclidean2DPosition>.selectPosition(
-        layer: Layer<Number, Euclidean2DPosition>,
-        currentConcentration: Double
-    ): Euclidean2DPosition = this
-        .let {
-            layer.center()?.let { center ->
-                /*
-                 * If the layer has a center, probably the most suitable position is the one obtained by moving towards
-                 * the center along the direction which connects the current position to the center.
-                 */
-                it + (currentPosition + (center - currentPosition).resized(maxWalk))
-            } ?: it
+    private val followScalarField = getLayerOrFail().let { layer ->
+        FollowScalarField(environment, reaction, pedestrian, layer.center()) {
+            layer.concentrationIn(it)
         }
-        .discardUnsuitablePositions(environment, pedestrian)
-        .map { it to layer.concentrationIn(it) }
-        .filter { it.second > currentConcentration }
-        .maxBy { it.second }?.first ?: currentPosition
+    }
+
+    override fun nextPosition(): Euclidean2DPosition = followScalarField.nextPosition()
+
+    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): FollowLayer =
+        FollowLayer(environment, r, n as Pedestrian2D<Number>, targetMolecule)
 }

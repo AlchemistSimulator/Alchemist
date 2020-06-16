@@ -3,7 +3,6 @@ package it.unibo.alchemist.model.implementations.actions
 import it.unibo.alchemist.model.implementations.nodes.CognitivePedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
-import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
@@ -25,44 +24,35 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  * @param viewDepth
  *          the depth of view of the pedestrian, defaults to infinity.
  */
-open class AvoidFlowField @JvmOverloads constructor(
+class AvoidLayer @JvmOverloads constructor(
     environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    override val pedestrian: Pedestrian2D<Number>,
+    pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule,
-    protected val viewDepth: Double = Double.POSITIVE_INFINITY
+    private val viewDepth: Double = Double.POSITIVE_INFINITY
 ) : AbstractFlowFieldAction(environment, reaction, pedestrian, targetMolecule) {
 
-    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): AvoidFlowField =
-        AvoidFlowField(environment, r, n as Pedestrian2D<Number>, targetMolecule)
+    private val followScalarField = getLayerOrFail().let { layer ->
+        FollowScalarField(environment, reaction, pedestrian, layer.center()) {
+            /*
+             * Moves the pedestrian where the concentration is lower.
+             */
+            -layer.concentrationIn(it)
+        }
+    }
+
+
+    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): AvoidLayer =
+        AvoidLayer(environment, r, n as Pedestrian2D<Number>, targetMolecule)
 
     /**
      * @returns the next relative position. The pedestrian is moved only if he/she percepts the danger
      * (either because it is in sight or due to social contagion), otherwise a zero vector is returned.
      */
     override fun nextPosition(): Euclidean2DPosition = when {
-        pedestrian.wantsToEvacuate() || isDangerInSight() -> super.nextPosition()
+        pedestrian.wantsToEvacuate() || isDangerInSight() -> followScalarField.nextPosition()
         else -> environment.origin
     }
-
-    override fun Sequence<Euclidean2DPosition>.selectPosition(
-        layer: Layer<Number, Euclidean2DPosition>,
-        currentConcentration: Double
-    ): Euclidean2DPosition = this
-        .let {
-            layer.center()?.let { center ->
-                /*
-                 * If the layer has a center, probably the most suitable position is the one obtained by moving away
-                 * from the center along the direction which connects the current position to the center.
-                 */
-                it + (currentPosition + (currentPosition - center).resized(maxWalk))
-            } ?: it
-        }
-        .discardUnsuitablePositions(environment, pedestrian)
-        .map { it to layer.concentrationIn(it) }
-        .filter { it.second < currentConcentration }
-        .minBy { it.second }?.first
-        ?: currentPosition
 
     /**
      * Checks whether the center of the layer (if there's one) is in sight. If the layer has no center true is
@@ -70,10 +60,11 @@ open class AvoidFlowField @JvmOverloads constructor(
      */
     @Suppress("UNCHECKED_CAST") // as? operator is safe
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
-        center.distanceTo(currentPosition) <= viewDepth &&
-            !((environment as? EnvironmentWithObstacles<*, *, Euclidean2DPosition>)
-                ?.intersectsObstacle(currentPosition, center)
-                ?: false)
+        val currentPosition = environment.getPosition(pedestrian)
+        val visualTrajectoryOccluded = (environment as? EnvironmentWithObstacles<*, *, Euclidean2DPosition>)
+            ?.intersectsObstacle(currentPosition, center)
+            ?: false
+        center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded
     } ?: true
 
     private fun Pedestrian<*, *, *>.wantsToEvacuate(): Boolean =

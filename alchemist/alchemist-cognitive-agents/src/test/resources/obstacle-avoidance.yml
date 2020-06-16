@@ -29,7 +29,7 @@ reactions: &behavior
       parameters: [0.25]
     type: BlendedSteering
     actions:
-      - type: FollowFlowField
+      - type: FollowLayer
         parameters: [*danger]
       - type: ObstacleAvoidance
         parameters: [50]

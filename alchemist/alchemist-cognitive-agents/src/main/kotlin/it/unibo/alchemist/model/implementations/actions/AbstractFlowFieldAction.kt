@@ -29,32 +29,21 @@ abstract class AbstractFlowFieldAction(
     protected val targetMolecule: Molecule
 ) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
 
-    override fun nextPosition(): Euclidean2DPosition = getLayerOrFail().let { layer ->
-        currentPosition.surrounding(maxWalk).asSequence()
-            /*
-             * Next relative position.
-             */
-            .selectPosition(layer, layer.concentrationIn(currentPosition)) - currentPosition
-    }
-
     /**
-     * Selects the desired position from a sequence, given the layer and its concentration in the current position
-     * of the pedestrian. This is used to compute [nextPosition].
+     * @returns the layer containing [targetMolecule] or fails.
      */
-    abstract fun Sequence<Euclidean2DPosition>.selectPosition(
-        layer: Layer<Number, Euclidean2DPosition>,
-        currentConcentration: Double
-    ): Euclidean2DPosition
-
-    protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
-        getValue(position).toDouble()
-
     protected fun getLayerOrFail(): Layer<Number, Euclidean2DPosition> = environment.getLayer(targetMolecule)
-        .orElseThrow { IllegalStateException("no layer containing $targetMolecule could be found") }
+        .orElseThrow { IllegalStateException("no layer containing $targetMolecule") }
 
     /**
      * @returns the center of the layer or null if there's no center.
      */
     protected fun Layer<*, Euclidean2DPosition>.center(): Euclidean2DPosition? =
         (this as? BidimensionalGaussianLayer)?.let { environment.makePosition(it.centerX, it.centerY) }
+
+    /**
+     * @returns the concentration of the layer in the given [position].
+     */
+    protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
+        getValue(position).toDouble()
 }

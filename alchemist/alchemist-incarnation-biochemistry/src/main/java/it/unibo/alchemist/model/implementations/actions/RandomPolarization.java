@@ -7,8 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import com.google.common.reflect.TypeToken;
-import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -36,7 +34,8 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
         super(node, random);
         this.environment = environment;
         if (!(node instanceof CellNode)) {
-            throw new UnsupportedOperationException("Polarization can happen only in cells.");
+            throw new UnsupportedOperationException("Polarization can happen only in cells, required CellNode, got "
+                + node.getClass());
         }
     }
 
@@ -73,7 +72,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
 
     @Override
     public RandomPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new RandomPolarization<>(environment, AlchemistUtil.cast(new TypeToken<CellNode<P>>() { }, n), getRandomGenerator());
+        return new RandomPolarization<>(environment, n, getRandomGenerator());
     }
 
     @Override

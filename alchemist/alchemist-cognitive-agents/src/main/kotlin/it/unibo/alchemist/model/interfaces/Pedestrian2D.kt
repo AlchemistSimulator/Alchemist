@@ -1,30 +1,35 @@
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.influencesphere.FieldOfView2D
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * The bidimensional representation of a pedestrian.
  */
-interface Pedestrian2D<T> : Pedestrian<T> {
+interface Pedestrian2D<T> : Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
+
+    /**
+     * Access to the [environment].
+     */
+    val environment: Physics2DEnvironment<T>
 
     /**
      * The shape of any pedestrian in the Euclidean world.
-     *
-     * @param env
-     *          the environment appointed to create the shape.
+     * Implementors should override this property to prevent the continuous creation of new [Euclidean2DShape]s.
      */
-    fun shape(env: Physics2DEnvironment<T>): Euclidean2DShape = env.shapeFactory.circle(defaultRadius)
+    @JvmDefault
+    override val shape: Euclidean2DShape get() = environment.shapeFactory.circle(defaultRadius)
 
     /**
      * The field of view of a pedestrian in the Euclidean world.
-     *
-     * @param env
-     *          the environment where the pedestrian is.
+     * Implementors should override this property to prevent the continuous creation of new [FieldOfView2D]s.
      */
-    fun fieldOfView(env: Physics2DEnvironment<T>): FieldOfView2D<T> =
-        FieldOfView2D(env, this, defaultFieldOfViewDepth, defaultFieldOfViewAperture)
+    @JvmDefault
+    val fieldOfView: FieldOfView2D<T> get() =
+        FieldOfView2D(environment, this, defaultFieldOfViewDepth, defaultFieldOfViewAperture)
 
     companion object {
         /**

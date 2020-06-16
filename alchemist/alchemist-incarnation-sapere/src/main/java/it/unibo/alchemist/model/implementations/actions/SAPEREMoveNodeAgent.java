@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.EuclideanEnvironment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -99,8 +100,13 @@ public abstract class SAPEREMoveNodeAgent<P extends Position<? extends P>> exten
      * @param direction
      *            the point towards which move the node
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected final void move(final P direction) {
-        environment.moveNode(getNode(), direction);
+        if (environment instanceof EuclideanEnvironment) {
+            ((EuclideanEnvironment) environment).moveNode(getNode(), direction);
+        } else {
+            final var myPosition = environment.getPosition(getNode());
+            environment.moveNodeToPosition(getNode(), myPosition.plus(direction.getCoordinates()));
+        }
     }
-
 }

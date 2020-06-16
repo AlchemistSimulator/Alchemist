@@ -105,7 +105,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public List<LatLongPosition> boundingBox(final double range) {
+    public List<GeoPosition> boundingBox(final double range) {
         if (range < 0d) {
             throw new IllegalArgumentException("Negative ranges make no sense.");
         }
@@ -161,7 +161,7 @@ public final class LatLongPosition implements GeoPosition {
 
     @Override
     public double[] getCoordinates() {
-        return new double[] { getX(), getY() };
+        return new double[] { getLatitude(), getLongitude() };
     }
 
     @Override
@@ -230,6 +230,18 @@ public final class LatLongPosition implements GeoPosition {
     @Override
     public String toString() {
         return latlng.toString();
+    }
+
+    @NotNull
+    @Override
+    public GeoPosition plus(@NotNull final double[] other) {
+        return new LatLongPosition(getLatitude() + other[0], getLongitude() + other[1]);
+    }
+
+    @NotNull
+    @Override
+    public GeoPosition minus(@NotNull final double[] other) {
+        return new LatLongPosition(getLatitude() - other[0], getLongitude() - other[1]);
     }
 
     /**

@@ -7,14 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
-import org.apache.commons.math3.random.RandomGenerator;
-
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Action;
@@ -26,6 +18,13 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
+import org.apache.commons.math3.random.RandomGenerator;
+
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @param <P>
@@ -618,9 +617,9 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
     private P computeObstacleForce(final double myx, final double myy, final P mypos) {
         double obstacleForceX = 0.0;
         double obstacleForceY = 0.0;
-        Environment2DWithObstacles<?, ?, ?> obstacleEnv;
+        Environment2DWithObstacles<?, ?> obstacleEnv;
         if (env instanceof Environment2DWithObstacles) {
-            obstacleEnv = (Environment2DWithObstacles<?, ?, ?>) env;
+            obstacleEnv = (Environment2DWithObstacles<?, ?>) env;
             final List<?> obstacles = obstacleEnv.getObstaclesInRange(myx, myy, obstacleInteractionRange);
             Rectangle2D bounds;
             double minDist = Double.MAX_VALUE;

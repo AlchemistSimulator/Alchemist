@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.interfaces
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A [NavigationStrategy] working with euclidean spaces.

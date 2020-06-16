@@ -8,7 +8,6 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.AlchemistUtil;
 import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -39,7 +38,11 @@ public final class TensionPresent extends AbstractCondition<Double> {
 
     @Override
     public TensionPresent cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        return new TensionPresent(env, AlchemistUtil.cast(CircularDeformableCell.class, n));
+        if (n instanceof CircularDeformableCell) {
+            return new TensionPresent(env, (CircularDeformableCell<?>) n);
+        }
+        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + n
+                + " of type: " + n.getClass());
     }
 
     @Override

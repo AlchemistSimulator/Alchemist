@@ -7,7 +7,14 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ConcurrentModificationException;
 import java.util.Queue;
@@ -18,14 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Test;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -34,15 +34,17 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 public class TestGenericNode {
 
     private static final int THREADS = 1000;
+    @Mock
+    private Environment<Integer, ?> env;
 
     /**
-     * 
+     *
      */
     @Test
     public void testConcurrentAccess() {
-        final Environment<Integer, ?> env = new Continuous2DEnvironment<>();
+        MockitoAnnotations.initMocks(this);
         @SuppressWarnings("serial")
-        final AbstractNode<Object> node = new AbstractNode<Object>(env) {
+        final AbstractNode<Object> node = new AbstractNode<>(env) {
             @Override
             protected Object createT() {
                 return 0;

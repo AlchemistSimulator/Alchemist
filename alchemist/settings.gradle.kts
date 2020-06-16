@@ -10,6 +10,7 @@ import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
 include(
     "alchemist-cognitive-agents",
     "alchemist-engine",
+    "alchemist-euclidean-geometry",
     "alchemist-full",
     "alchemist-grid",
     "alchemist-implementationbase",
@@ -17,7 +18,6 @@ include(
     "alchemist-incarnation-sapere",
     "alchemist-incarnation-scafi",
     "alchemist-incarnation-biochemistry",
-    "alchemist-influence-sphere",
     "alchemist-interfaces",
     "alchemist-loading",
     "alchemist-maps",

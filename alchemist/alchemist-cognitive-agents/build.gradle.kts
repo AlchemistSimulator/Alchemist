@@ -8,8 +8,8 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-influence-sphere"))
     implementation(Libs.konf)
     implementation(Libs.jgrapht_core)
     testImplementation(project(":alchemist-engine"))

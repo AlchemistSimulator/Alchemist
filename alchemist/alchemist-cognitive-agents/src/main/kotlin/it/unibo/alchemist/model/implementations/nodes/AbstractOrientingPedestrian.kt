@@ -1,17 +1,19 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.actions.takePercentage
-import it.unibo.alchemist.model.implementations.graph.UndirectedNavigationGraph
-import it.unibo.alchemist.model.implementations.graph.pathExists
-import it.unibo.alchemist.model.implementations.utils.shuffled
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.UndirectedNavigationGraph
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.pathExists
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
+import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.graph.NavigationGraph
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
+import it.unibo.alchemist.shuffled
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
@@ -30,14 +32,15 @@ import org.jgrapht.graph.DefaultEdge
  * @param A the transformations supported by the shapes in this space.
  * @param N the type of landmarks in the pedestrian's [cognitiveMap].
  * @param M the type of nodes of the navigation graph provided by the environment.
- * @param F the type of edges of the navigation graph provided by the environment.
+ * @param E the type of edges of the navigation graph provided by the environment.
+ * @param F the type of the shape factory provided by the environment.
  *
  * The edges of the produced cognitive map are plain [DefaultEdge]s, which means no extra
  * information regarding the connections between landmarks is stored a part from the boolean
  * info concerning the fact that a connection exists. The path between two landmarks of the
  * cognitive map could or could not be simple (i.e. representable as a single line segment).
  */
-abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
+abstract class AbstractOrientingPedestrian<T, P, A, N, M, E, F>(
     final override val knowledgeDegree: Double,
     /**
      * The random generator to use in order to preserve reproducibility.
@@ -46,8 +49,8 @@ abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
     /**
      * The environment this pedestrian is into.
      */
-    protected open val environment: EnvironmentWithGraph<*, T, P, A, M, F>,
-    group: PedestrianGroup<T>? = null,
+    environment: PhysicsEnvironmentWithGraph<*, T, P, A, M, E, F>,
+    group: PedestrianGroup<T, P, A>? = null,
     /*
      * When generating the cognitive map, the regions whose diameter is
      * < of this quantity * the diameter of the agent will be discarded
@@ -55,12 +58,13 @@ abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
      */
     private val minArea: Double = 10.0
 ) : OrientingPedestrian<T, P, A, N, DefaultEdge>,
-    HomogeneousPedestrianImpl<T, P>(environment, randomGenerator, group)
+    HomogeneousPedestrianImpl<T, P, A, F>(environment, randomGenerator, group)
     where
-        P : Position<P>, P : Vector<P>,
-        A : GeometricTransformation<P>,
-        N : ConvexGeometricShape<P, A>,
-        M : ConvexGeometricShape<P, A> {
+    P : Position<P>, P : Vector<P>,
+    A : GeometricTransformation<P>,
+    N : ConvexGeometricShape<P, A>,
+    M : ConvexGeometricShape<P, A>,
+    F : GeometricShapeFactory<P, A> {
 
     init {
         require(knowledgeDegree in 0.0..1.0) { "knowledge degree must be in [0,1]" }
@@ -98,7 +102,7 @@ abstract class AbstractOrientingPedestrian<T, P, A, N, M, F>(
         landmarks.forEach { fullGraph.addVertex(it) }
         rooms.indices.forEach { i ->
             rooms.indices.forEach { j ->
-                if (i != j && environmentGraph.pathExists<M>(rooms[i], rooms[j])) {
+                if (i != j && environmentGraph.pathExists(rooms[i], rooms[j])) {
                     fullGraph.addEdge(landmarks[i], landmarks[j])
                 }
             }

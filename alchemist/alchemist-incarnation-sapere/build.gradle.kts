@@ -9,6 +9,7 @@
 dependencies {
     api(project(":alchemist-interfaces"))
 
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-sapere-mathexp"))

@@ -25,7 +25,7 @@ displacements:
       type: Circle
       parameters: [130, 70, 52, 5]
     nodes:
-      type: OrientingHomogeneousPedestrian2D
+      type: OrientingPedestrian2D
       parameters: [1.0]
     programs:
       - *behavior

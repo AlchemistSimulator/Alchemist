@@ -237,7 +237,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     @Override
     public Field<Tuple> nbrVector() {
         return buildFieldWithPosition(p -> {
-            final P diff = getDevicePosition().minus(p);
+            final P diff = getDevicePosition().minus(p.getCoordinates());
             if (diff instanceof Position2D) {
                 final Position2D<?> vector = (Position2D<?>) diff;
                 return DatatypeFactory.createTuple(vector.getX(), vector.getY());

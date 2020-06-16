@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
+import it.unibo.alchemist.test.TestEuclidean2DShapeFactory.Companion.DEFAULT_SHAPE_SIZE
 import org.danilopianini.lang.MathUtils
 
 internal infix fun Double.shouldBeFuzzy(other: Double): Unit = MathUtils.fuzzyEquals(this, other) shouldBe true

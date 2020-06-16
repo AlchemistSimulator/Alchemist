@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import java.awt.Shape
-import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import kotlin.math.min
 
@@ -55,10 +54,6 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
      */
     override fun isAdjacentTo(other: ConvexPolygon): Boolean = !intersects(other.asAwtShape()) &&
         (other.vertices().any { liesOnBoundary(it) } || vertices().any { other.liesOnBoundary(it) })
-
-    override fun isAdjacentTo(shape: Shape): Boolean = isAdjacentTo(fromShape(shape).orElseThrow {
-        IllegalArgumentException("given shape is not convex polygonal")
-    })
 
     override fun intersects(segment: Segment2D<Euclidean2DPosition>): Boolean {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {

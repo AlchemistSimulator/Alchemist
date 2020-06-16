@@ -85,13 +85,6 @@ interface ConvexPolygon : Euclidean2DConvexShape, AwtShapeCompatible {
     fun isAdjacentTo(other: ConvexPolygon): Boolean
 
     /**
-     * Checks if the polygon is adjacent to a convex polygonal [java.awt.Shape].
-     * @param shape the convex polygonal shape
-     * @returns true if the polygons are adjacent
-     */
-    fun isAdjacentTo(shape: Shape): Boolean
-
-    /**
      * Checks if a segment intersects with the polygon, segments lying on the polygon's
      * boundary are not considered to be intersecting.
      * @param segment the segment

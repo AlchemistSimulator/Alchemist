@@ -5,19 +5,20 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
-class TestFeelsTransmission<T, P : Position<P>> : StringSpec({
+class TestFeelsTransmission<T, P> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
         val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>("feels-transmission-without-layer.yml")
                 .startSimulation()
                 .nodes
-                .map { it as CognitivePedestrian<T> }
+                .map { it as CognitivePedestrian<*, *, *> }
                 .sumByDouble { it.dangerBelief() }
         val aggregateDangerWithLayer = loadYamlSimulation<T, P>("feels-transmission-with-layer.yml")
                 .startSimulation()
                 .nodes
-                .map { it as CognitivePedestrian<T> }
+                .map { it as CognitivePedestrian<*, *, *> }
                 .sumByDouble { it.dangerBelief() }
         println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
         println("With layer aggregate danger: $aggregateDangerWithLayer")
@@ -31,4 +32,4 @@ class TestFeelsTransmission<T, P : Position<P>> : StringSpec({
             }
         )
     }
-})
+}) where P : Position<P>, P : Vector<P>

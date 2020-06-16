@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import kotlin.reflect.KClass
 
 /**
@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
  * For each type,
  * only the action with the target nearest to the current pedestrian position is taken into consideration.
  *
- * @param env
+ * @param environment
  *          the environment in which the pedestrian moves.
  * @param pedestrian
  *          the owner of the steering action this strategy belongs to.
@@ -19,8 +19,8 @@ import kotlin.reflect.KClass
  *          the weight for each type of steering action.
  */
 class TypeBased<T>(
-    env: Environment<T, Euclidean2DPosition>,
-    pedestrian: Pedestrian<T>,
+    environment: Euclidean2DEnvironment<T>,
+    pedestrian: Pedestrian2D<T>,
     typeWeights: LinkedHashMap<KClass<SteeringAction<T, Euclidean2DPosition>>, Double>,
     defaultWeight: Double = 0.0
-) : Weighted<T>(env, pedestrian, { typeWeights[this::class] ?: defaultWeight })
+) : Weighted<T>(environment, pedestrian, { typeWeights[this::class] ?: defaultWeight })

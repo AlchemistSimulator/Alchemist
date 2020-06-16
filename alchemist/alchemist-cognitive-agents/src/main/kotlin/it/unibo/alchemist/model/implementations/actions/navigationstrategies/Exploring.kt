@@ -15,10 +15,10 @@ import it.unibo.alchemist.model.interfaces.EuclideanNavigationStrategy
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import java.awt.Shape
 import kotlin.math.abs
 import kotlin.math.pow
@@ -101,7 +101,7 @@ open class Exploring<T, N : Euclidean2DConvexShape, E>(
      */
     protected open fun congestionFactor(head: ConvexPolygon): Double = action.environment
         .getNodesWithinRange(head.centroid, head.diameter / 2)
-        .filterIsInstance<Pedestrian<T>>()
+        .filterIsInstance<Pedestrian<T, *, *>>()
         .count()
         .let { pedestrian.shape.diameter.pow(2) * it / head.asAwtShape().area() + 1 }
 

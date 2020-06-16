@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.influencesphere.FieldOfView2D
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
@@ -30,7 +30,13 @@ class See @JvmOverloads constructor(
     private val filterByMolecule: Molecule? = null
 ) : AbstractAction<Any>(node) {
 
-    private val fieldOfView = FieldOfView2D(env, node, distance, toRadians(angle))
+    private val fieldOfView =
+        FieldOfView2D(
+            env,
+            node,
+            distance,
+            toRadians(angle)
+        )
 
     init {
         node.setConcentration(outputMolecule, emptyList<Any>())

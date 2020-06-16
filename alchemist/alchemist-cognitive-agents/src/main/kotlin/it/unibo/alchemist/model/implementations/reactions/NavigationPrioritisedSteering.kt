@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.SinglePrevalent
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 
 /**
  * A [SteeringBehavior] using [SinglePrevalent] steering strategy and accepting a collection of actions
@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
  */
 class NavigationPrioritisedSteering<T, M : ConvexPolygon> @JvmOverloads constructor(
     env: Euclidean2DEnvironmentWithGraph<*, T, M, *>,
-    pedestrian: Pedestrian<T>,
+    pedestrian: Pedestrian2D<T>,
     timeDistribution: TimeDistribution<T>,
     /**
      * Tolerance angle in degrees (see [SinglePrevalent]).

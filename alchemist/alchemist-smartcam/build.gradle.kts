@@ -9,8 +9,8 @@
 dependencies {
     api(project(":alchemist-interfaces"))
 
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-influence-sphere"))
 
     testImplementation(project(":alchemist-incarnation-protelis"))
     testImplementation(project(":alchemist-loading"))

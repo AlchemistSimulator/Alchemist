@@ -11,19 +11,22 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.Intent
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
-import kotlin.reflect.KClass
+import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 import org.apache.commons.math3.random.RandomGenerator
+import kotlin.reflect.KClass
 
 /**
  * Implementation of a cognitive pedestrian.
  *
- * @param env
+ * @param environment
  *          the environment inside which this pedestrian moves.
- * @param rg
+ * @param randomGenerator
  *          the simulation {@link RandomGenerator}.
  * @param age
  *          the age of this pedestrian.
@@ -32,14 +35,20 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param danger
  *          the molecule associated to danger in the environment.
  */
-open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor(
-    private val env: Environment<T, P>,
-    rg: RandomGenerator,
+open class CognitivePedestrianImpl<T, P, A, F> @JvmOverloads constructor(
+    environment: PhysicsEnvironment<T, P, A, F>,
+    randomGenerator: RandomGenerator,
     age: Age,
     gender: Gender,
     val danger: Molecule? = null,
-    group: PedestrianGroup<T>? = null
-) : HeterogeneousPedestrianImpl<T, P>(env, rg, age, gender, group), CognitivePedestrian<T> {
+    group: PedestrianGroup<T, P, A>? = null
+) : HeterogeneousPedestrianImpl<T, P, A, F>(environment, randomGenerator, age, gender, group),
+    CognitivePedestrian<T, P, A>
+    where
+    P : Position<P>,
+    P : Vector<P>,
+    A : GeometricTransformation<P>,
+    F : GeometricShapeFactory<P, A> {
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to
@@ -81,7 +90,9 @@ open class CognitivePedestrianImpl<T, P : Position<P>> @JvmOverloads constructor
         cognitiveCharacteristics[C::class]?.level() ?: 0.0
 
     private fun dangerousLayerLevel(): Double =
-        env.getLayer(danger).let { if (it.isPresent) it.get().getValue(env.getPosition(this)) as Double else 0.0 }
+        environment.getLayer(danger)
+            .map { it.getValue(environment.getPosition(this)) as Double }
+            .orElse(0.0)
 
     override fun wantsToEvacuate(): Boolean =
         characteristicLevel<IntentionEvacuate>() > characteristicLevel<IntentionWalkRandomly>()

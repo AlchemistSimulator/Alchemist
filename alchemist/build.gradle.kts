@@ -11,6 +11,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
+import java.io.ByteArrayOutputStream
 
 plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
@@ -97,15 +98,17 @@ allprojects {
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
-        // Test implementation: JUnit 5 + Kotest
+        // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
         testImplementation(Libs.junit_jupiter_api)
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
+        testImplementation("org.mockito:mockito-core:_")
+        testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
         testRuntimeOnly(Libs.junit_jupiter_engine)
         // executable jar packaging
         if ("incarnation" in project.name) {
-            shadow(rootProject)
+            runtimeOnly(rootProject)
         }
     }
 
@@ -261,6 +264,33 @@ allprojects {
         exclude("gradlew.bat")
         isZip64 = true
         destinationDirectory.set(file("${rootProject.buildDir}/libs"))
+        if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
+            // Run the jar and check the output
+            val testShadowJar = tasks.register<Exec>("${this.name}-testWorkingOutput") {
+                val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
+                val command = arrayOf(javaExecutable, "-jar", archiveFile.get().asFile.absolutePath, "--help")
+                commandLine(*command)
+                val interceptOutput = ByteArrayOutputStream()
+                val interceptError = ByteArrayOutputStream()
+                standardOutput = interceptOutput
+                errorOutput = interceptError
+                doLast {
+                    executionResult.get().assertNormalExitValue()
+                    listOf(interceptOutput, interceptError).forEach { stream ->
+                        val text = String(stream.toByteArray(), Charsets.UTF_8)
+                        for (illegalKeyword in listOf("SLF4J", "NOP")) {
+                            require(illegalKeyword !in text) {
+                                """
+                                $illegalKeyword found while printing the help. Complete output:
+                                $text
+                            """.trimIndent()
+                            }
+                        }
+                    }
+                }
+            }
+            this.finalizedBy(testShadowJar)
+        }
     }
 }
 
@@ -288,6 +318,7 @@ dependencies {
     implementation(Libs.commons_lang3)
     runtimeOnly(Libs.logback_classic)
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+    orchidImplementation("io.github.javaeden.orchid:OrchidCore:_")
     orchidRuntimeOnly(Libs.orchideditorial)
     orchidRuntimeOnly(Libs.orchidkotlindoc)
     orchidRuntimeOnly(Libs.orchidplugindocs)
@@ -307,10 +338,6 @@ val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.v
 
 orchid {
     theme = "Editorial"
-    // Feed arguments to Kdoc
-//    val projects: Collection<Project> = listOf(project) + subprojects
-//    val paths = projects.map { it.sourceSets["main"].compileClasspath.asPath }
-//    args = listOf("--kotlindocClasspath") + paths.joinToString(File.pathSeparator)
     // Determine whether it's a deployment or a dry run
     baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
     // Fetch the latest version of the website, if this one is more recent enable deploy

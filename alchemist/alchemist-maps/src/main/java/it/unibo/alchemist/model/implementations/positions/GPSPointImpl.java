@@ -7,14 +7,14 @@
  */
 package it.unibo.alchemist.model.implementations.positions;
 
-import java.util.List;
-
-import org.danilopianini.util.Hashes;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.danilopianini.util.Hashes;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  */
@@ -48,17 +48,12 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public GeoPosition plus(final GeoPosition other) {
-        return repr.plus(other);
-    }
-
-    @Override
     public GPSPointImpl addTime(final Time t) {
         return new GPSPointImpl(repr, this.t.plus(t));
     }
 
     @Override
-    public List<LatLongPosition> boundingBox(final double range) {
+    public List<GeoPosition> boundingBox(final double range) {
         return repr.boundingBox(range);
     }
 
@@ -85,6 +80,28 @@ public final class GPSPointImpl implements GPSPoint {
     @Override
     public double getCoordinate(final int dim) {
         return repr.getCoordinate(dim);
+    }
+
+    @Override
+    public GeoPosition plus(final GeoPosition other) {
+        return repr.plus(other);
+    }
+
+    @NotNull
+    @Override
+    public GeoPosition plus(@NotNull final double[] other) {
+        return repr.plus(other);
+    }
+
+    @Override
+    public GeoPosition minus(final GeoPosition other) {
+        return repr.minus(other);
+    }
+
+    @NotNull
+    @Override
+    public GeoPosition minus(@NotNull final double[] other) {
+        return repr.minus(other);
     }
 
     @Override
@@ -128,11 +145,6 @@ public final class GPSPointImpl implements GPSPoint {
     @Override
     public int hashCode() {
         return Hashes.hash32(repr, t);
-    }
-
-    @Override
-    public GeoPosition minus(final GeoPosition other) {
-        return repr.minus(other);
     }
 
     @Override

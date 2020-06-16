@@ -33,7 +33,6 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -490,10 +489,6 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         public Node<Object> cloneNode(final Time t) {
             return notImplemented();
-        }
-        @Override
-        public GeometricShape<?, ?> getShape() {
-            return null;
         }
         @Override
         public boolean equals(final Object obj) {

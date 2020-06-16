@@ -1,14 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.Action
-import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
-import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 
 /**
  * Move the pedestrian towards positions of the environment with a high concentration of the target molecule.
@@ -22,21 +20,20 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
-open class FollowFlowField<P>(
-    env: Environment<Number, P>,
+open class FollowFlowField(
+    env: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
     pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule
-) : FlowFieldSteeringAction<P>(env, reaction, pedestrian, targetMolecule)
-    where
-        P : Position2D<P>,
-        P : Vector2D<P> {
+) : FlowFieldSteeringAction(env, reaction, pedestrian, targetMolecule) {
 
-    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): Action<Number> =
-        FollowFlowField(env, r, n as Pedestrian2D<Number>, targetMolecule)
+    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): FollowFlowField =
+        FollowFlowField(environment, r, n as Pedestrian2D<Number>, targetMolecule)
 
-    override fun Sequence<P>.selectPosition(layer: Layer<Number, P>, currentConcentration: Double): P = this
-        .let {
+    override fun Sequence<Euclidean2DPosition>.selectPosition(
+        layer: Layer<Number, Euclidean2DPosition>,
+        currentConcentration: Double
+    ): Euclidean2DPosition = this.let {
             layer.center()?.let { center ->
                 /*
                  * If the layer has a center, probably the most suitable position
@@ -46,7 +43,7 @@ open class FollowFlowField<P>(
                 it + (currentPosition + (center - currentPosition).resized(maxWalk()))
             } ?: it
         }
-        .discardUnsuitablePositions(env, pedestrian)
+        .discardUnsuitablePositions(environment, pedestrian)
         .map { it to layer.concentrationIn(it) }
         .filter { it.second > currentConcentration }
         .maxBy { it.second }?.first ?: currentPosition

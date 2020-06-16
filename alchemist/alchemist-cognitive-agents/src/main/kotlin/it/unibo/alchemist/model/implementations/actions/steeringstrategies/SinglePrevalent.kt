@@ -10,16 +10,14 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationAction
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import java.lang.IllegalStateException
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 
 /**
  * A [SteeringStrategy] in which one action is prevalent. Only [NavigationAction]s can be prevalent, because
@@ -46,7 +44,7 @@ import java.lang.IllegalStateException
  */
 class SinglePrevalent<T, M : ConvexPolygon>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, M, *>,
-    pedestrian: Pedestrian<T>,
+    pedestrian: Pedestrian2D<T>,
     private val prevalent: List<SteeringAction<T, Euclidean2DPosition>>.() -> EuclideanNavigationAction<T, *, *, M, *>,
     /**
      * Tolerance angle in radians.
@@ -105,7 +103,7 @@ class SinglePrevalent<T, M : ConvexPolygon>(
                     !currRoom.containsBoundaryIncluded(pedestrianPosition + this)
                 }
             }
-            if (prevalentForce == environment.origin() || currentRoom == null ||
+            if (prevalentForce == environment.origin || currentRoom == null ||
                 prevalentForce.leadsOutsideCurrentRoom()) {
                 return prevalentForce
             }

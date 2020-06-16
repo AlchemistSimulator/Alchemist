@@ -7,20 +7,21 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * Contains tests concerning [NavigationAction]s and [NavigationStrategy], such tests are
  * dependent on the pedestrian's speed.
  */
-class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
+class TestOrientingBehavior<T, P> : StringSpec({
 
     /**
      * Asserts that the distance of each pedestrian from the target position specified
      * with [coords] is less than the given [tolerance].
      */
-    fun <T, P : Position2D<P>> assertPedestriansReached(
+    fun assertPedestriansReached(
         env: Environment<T, P>,
         tolerance: Double,
         vararg coords: Number
@@ -32,14 +33,14 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
     }
 
     /**
-     * Runs the [simulation] for the specified number of steps ([numSteps]). At the end,
+     * Runs the [simulation] for the specified number of steps ([steps]). At the end,
      * asserts that the distance of each pedestrian from the target position specified
      * with [coords] is less than the given [tolerance].
      */
-    fun runSimulation(simulation: String, tolerance: Double, numSteps: Long, vararg coords: Number) {
+    fun runSimulation(simulation: String, tolerance: Double, steps: Long, vararg coords: Number) {
         loadYamlSimulation<T, P>(simulation).startSimulation(
             finished = { env, _, _ -> assertPedestriansReached(env, tolerance, *coords) },
-            numSteps = numSteps
+            steps = steps
         )
     }
 
@@ -76,7 +77,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
                 }
             },
             finished = { env, _, _ -> assertPedestriansReached(env, 1.0, 85, 80) },
-            numSteps = 185
+            steps = 185
         )
     }
 
@@ -116,7 +117,7 @@ class TestOrientingBehavior<T, P : Position2D<P>> : StringSpec({
                 }
             },
             finished = { env, _, _ -> assertPedestriansReached(env, 1.0, 10, 55) },
-            numSteps = 70
+            steps = 70
         )
     }
-})
+}) where P : Position<P>, P : Vector<P>

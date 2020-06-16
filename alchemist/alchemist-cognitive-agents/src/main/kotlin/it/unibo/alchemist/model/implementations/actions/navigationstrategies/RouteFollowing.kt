@@ -10,12 +10,11 @@
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.utils.origin
 import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean.twod.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 
 /**
  * A [NavigationStrategy] allowing to follow a given [route].
@@ -37,7 +36,7 @@ open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
      * The route to follow.
      */
     protected open val route: List<Euclidean2DPosition>
-) : DynamicPursuing<T, N, E>(action, action.environment.origin().takeIf { route.isEmpty() } ?: route[0]) {
+) : DynamicPursuing<T, N, E>(action, action.environment.origin.takeIf { route.isEmpty() } ?: route[0]) {
 
     private var indexOfNextWaypoint: Int = 0
 

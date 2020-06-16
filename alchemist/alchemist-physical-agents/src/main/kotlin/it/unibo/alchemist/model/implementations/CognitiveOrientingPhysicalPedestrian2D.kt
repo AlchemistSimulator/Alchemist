@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.nodes.HomogeneousOrientingPedestrian2D
+import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
@@ -19,15 +20,25 @@ import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.graph.DefaultEdge
 
 /**
- * A homogeneous [OrientingPedestrian2D] capable of physical interactions.
+ * A cognitive [OrientingPedestrian2D] capable of physical interactions.
+ * TODO(rename it into something linke "SmartPedestrian2D"?)
  */
-class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
-    override val environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
+    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
     override val knowledgeDegree: Double,
-    group: PedestrianGroup2D<T>? = null
-) : HomogeneousPhysicalPedestrian2D<T>(environment, randomGenerator, group),
-    OrientingPedestrian2D<T, Ellipse, DefaultEdge> {
+    group: PedestrianGroup2D<T>? = null,
+    age: String,
+    gender: String,
+    danger: Molecule? = null
+) : CognitivePhysicalPedestrian2D<T>(
+    environment,
+    randomGenerator,
+    age,
+    gender,
+    danger,
+    group
+), OrientingPedestrian2D<T, Ellipse, DefaultEdge> {
 
     /**
      * The orienting part of the pedestrian.

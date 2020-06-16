@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":alchemist-cognitive-agents"))
     implementation(project(":alchemist-orienting-agents"))
     // implementation(Libs.konf)
-    // implementation(Libs.jgrapht_core)
+    implementation(Libs.jgrapht_core)
     // implementation(project(":alchemist-engine"))
     // implementation(project(":alchemist-loading"))
     // implementation(project(":alchemist-incarnation-protelis"))

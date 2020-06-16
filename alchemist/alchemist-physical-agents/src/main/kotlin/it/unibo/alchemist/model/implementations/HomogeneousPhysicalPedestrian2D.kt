@@ -19,11 +19,11 @@ import org.apache.commons.math3.random.RandomGenerator
  * A homogeneous pedestrian capable of physical interactions, modeled as a [ComfortRepulsionNode2D]. [comfortRay] is
  * statically defined to be equal to its [shape] radius.
  */
-class HomogeneousPhysicalPedestrian2D<T> @JvmOverloads constructor(
+open class HomogeneousPhysicalPedestrian2D<T> @JvmOverloads constructor(
     override val environment: Physics2DEnvironment<T>,
     randomGenerator: RandomGenerator,
     group: PedestrianGroup2D<T>? = null
 ) : HomogeneousPedestrian2D<T>(environment, randomGenerator, group), ComfortRepulsionNode2D<T> {
 
-    override val comfortRay: Double = shape.radius
+    override val comfortRay: Double = super.shape.radius
 }

@@ -9,8 +9,6 @@
 
 package it.unibo.alchemist.model.implementations
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
 import it.unibo.alchemist.model.implementations.nodes.CognitivePedestrian2D
 import it.unibo.alchemist.model.interfaces.ComfortRepulsionNode2D
 import it.unibo.alchemist.model.interfaces.Molecule
@@ -22,32 +20,14 @@ import org.apache.commons.math3.random.RandomGenerator
  * A cognitive pedestrian capable of physical interactions, modeled as a [ComfortRepulsionNode2D]. [comfortRay] changes
  * dynamically depending on whether the pedestrian wants to evacuate or not.
  */
-class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
+open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
     override val environment: Physics2DEnvironment<T>,
     randomGenerator: RandomGenerator,
-    age: Age,
-    gender: Gender,
+    age: String,
+    gender: String,
     danger: Molecule? = null,
     group: PedestrianGroup2D<T>? = null
 ) : CognitivePedestrian2D<T>(environment, randomGenerator, age, gender, danger, group), ComfortRepulsionNode2D<T> {
-
-    @JvmOverloads constructor(
-        environment: Physics2DEnvironment<T>,
-        randomGenerator: RandomGenerator,
-        age: String,
-        gender: String,
-        danger: Molecule? = null,
-        group: PedestrianGroup2D<T>? = null
-    ) : this(environment, randomGenerator, Age.fromString(age), Gender.fromString(gender), danger, group)
-
-    @JvmOverloads constructor(
-        environment: Physics2DEnvironment<T>,
-        randomGenerator: RandomGenerator,
-        age: Int,
-        gender: String,
-        danger: Molecule? = null,
-        group: PedestrianGroup2D<T>? = null
-    ) : this(environment, randomGenerator, Age.fromYears(age), Gender.fromString(gender), danger, group)
 
     /**
      * TODO(maybe introduce some randomness? To model differences in people)

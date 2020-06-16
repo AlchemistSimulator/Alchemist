@@ -29,13 +29,13 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param N the type of nodes of the navigation graph provided by the environment.
  * @param E the type of edges of the navigation graph provided by the environment.
  */
-open class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
+class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
     knowledgeDegree: Double,
     group: PedestrianGroup2D<T>? = null,
-    final override val age: Age,
-    final override val gender: Gender,
+    override val age: Age,
+    override val gender: Gender,
     danger: Molecule? = null
 ) : HomogeneousOrientingPedestrian2D<T, N, E>(
     environment,
@@ -48,9 +48,9 @@ open class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads
      * Allows to specify age and gender with a string.
      */
     @JvmOverloads constructor(
-        knowledgeDegree: Double,
-        randomGenerator: RandomGenerator,
         environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+        randomGenerator: RandomGenerator,
+        knowledgeDegree: Double,
         group: PedestrianGroup2D<T>? = null,
         age: String,
         gender: String,
@@ -69,9 +69,9 @@ open class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads
      * Allows to specify age with an int and gender with a string.
      */
     @JvmOverloads constructor(
-        knowledgeDegree: Double,
-        randomGenerator: RandomGenerator,
         environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+        randomGenerator: RandomGenerator,
+        knowledgeDegree: Double,
         group: PedestrianGroup2D<T>? = null,
         age: Int,
         gender: String,

@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
-import it.unibo.alchemist.model.interfaces.PedestrianGroup
+import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
@@ -45,7 +45,7 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
      */
     private val minSide: Double = 30.0,
     private val maxSide: Double = 60.0,
-    group: PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>? = null
+    group: PedestrianGroup2D<T>? = null
 ) : AbstractOrientingPedestrian2D<T, Ellipse, N, E>(
     knowledgeDegree,
     randomGenerator,

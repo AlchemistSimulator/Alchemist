@@ -19,8 +19,11 @@ import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 /**
  * A [PhysicalNode] defining a [comfortArea]. When another node enters such area, this one is subject to a repulsion
  * force (hence the name). This is derived from [the work of Pelechano et al](https://bit.ly/3e3C7Tb).
- * [ComfortRepulsionNode]s don't actively push each other, but pushing behavior emerges from the interaction of nodes
- * with different comfort areas (see the article linked above).
+ * [ComfortRepulsionNode]s are mainly designed for entities with proprioception (e.g. humans or animals). Pelechano
+ * introduced these concepts to model physical interactions between pedestrians (bumping, pushing). Even though
+ * [ComfortRepulsionNode]s don't actively push each other, pushing behavior emerges from the interaction of nodes
+ * with different comfort areas (see the article linked above). However, this kind of node may be used to model
+ * different entities as well, e.g. particles subject to electromagnetic forces.
  */
 interface ComfortRepulsionNode<T, P, A, F> : PhysicalNode<T, P, A, F>
     where P : Vector<P>, P : Position<P>,
@@ -28,7 +31,7 @@ interface ComfortRepulsionNode<T, P, A, F> : PhysicalNode<T, P, A, F>
           F : GeometricShapeFactory<P, A> {
 
     /**
-     * The comfort area of this node, when someone else enters this area this node is subject to a repulsion force.
+     * The comfort area of this node, when another node enters this area this node is subject to a repulsion force.
      */
     val comfortArea: GeometricShape<P, A>
 

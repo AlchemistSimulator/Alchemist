@@ -16,8 +16,8 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * A homogeneous pedestrian capable of physical interactions. This derives from [ComfortRepulsionNode2D], its
- * [comfortRay] is statically defined to be equal to its shape radius.
+ * A homogeneous pedestrian capable of physical interactions, modeled as a [ComfortRepulsionNode2D]. [comfortRay] is
+ * statically defined to be equal to its [shape] radius.
  */
 class HomogeneousPhysicalPedestrian2D<T> @JvmOverloads constructor(
     override val environment: Physics2DEnvironment<T>,

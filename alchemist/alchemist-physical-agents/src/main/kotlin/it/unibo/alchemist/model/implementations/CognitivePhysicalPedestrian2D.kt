@@ -19,8 +19,8 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * A cognitive pedestrian capable of physical interactions. This derives from [ComfortRepulsionNode2D], its
- * [comfortRay] changes dynamically depending on whether the pedestrian wants to evacuate or not.
+ * A cognitive pedestrian capable of physical interactions, modeled as a [ComfortRepulsionNode2D]. [comfortRay] changes
+ * dynamically depending on whether the pedestrian wants to evacuate or not.
  */
 class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
     override val environment: Physics2DEnvironment<T>,
@@ -49,6 +49,9 @@ class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
         group: PedestrianGroup2D<T>? = null
     ) : this(environment, randomGenerator, Age.fromYears(age), Gender.fromString(gender), danger, group)
 
+    /**
+     * TODO(maybe introduce some randomness? To model differences in people)
+     */
     override val comfortRay: Double get() =
         if (wantsToEvacuate()) {
             shape.radius / 3

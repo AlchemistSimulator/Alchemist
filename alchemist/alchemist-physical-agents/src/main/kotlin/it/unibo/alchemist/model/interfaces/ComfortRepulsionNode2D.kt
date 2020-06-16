@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 /**
  * A [ComfortRepulsionNode] in an euclidean bidimensional space. This node has a circular [comfortArea] of radius
  * equal to its shape radius plus a [comfortRay].
- * This is modeled on [the work of Pelechano et al](https://bit.ly/3e3C7Tb).
+ * This is derived from [the work of Pelechano et al](https://bit.ly/3e3C7Tb).
  */
 interface ComfortRepulsionNode2D<T> :
     ComfortRepulsionNode<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
@@ -32,7 +32,7 @@ interface ComfortRepulsionNode2D<T> :
     val environment: Physics2DEnvironment<T>
 
     /**
-     * The comfort ray of this node, this is added to the radius of this node's [shape] to obtain the [comfortArea].
+     * The comfort ray of this node, this is added to the radius of its [shape] to obtain the [comfortArea].
      */
     val comfortRay: Double
 

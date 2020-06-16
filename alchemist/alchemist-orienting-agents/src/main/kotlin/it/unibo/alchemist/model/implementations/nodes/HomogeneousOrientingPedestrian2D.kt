@@ -23,8 +23,8 @@ import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
-private typealias AbstractOrientingPedestrian2D<T, L, M, E> =
-    AbstractOrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, L, M, E, Euclidean2DShapeFactory>
+private typealias AbstractOrientingPedestrian2D<T, L, N, E> =
+    AbstractOrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, L, N, E, Euclidean2DShapeFactory>
 
 /**
  * A homogeneous [OrientingPedestrian] in the Euclidean world. Landmarks are represented as [Ellipse]s, which can
@@ -32,11 +32,11 @@ private typealias AbstractOrientingPedestrian2D<T, L, M, E> =
  * between them. This class accepts an environment whose graph contains [ConvexPolygon]al nodes.
  *
  * @param T the concentration type.
- * @param M the type of nodes of the navigation graph provided by the environment.
+ * @param N the type of nodes of the navigation graph provided by the environment.
  * @param E the type of edges of the navigation graph provided by the environment.
  */
-open class HomogeneousOrientingPedestrian2D<T, M : ConvexPolygon, E> @JvmOverloads constructor(
-    override val environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, E>,
+open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
+    override val environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
     knowledgeDegree: Double,
     /**
@@ -46,14 +46,14 @@ open class HomogeneousOrientingPedestrian2D<T, M : ConvexPolygon, E> @JvmOverloa
     private val minSide: Double = 30.0,
     private val maxSide: Double = 60.0,
     group: PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>? = null
-) : AbstractOrientingPedestrian2D<T, Ellipse, M, E>(
+) : AbstractOrientingPedestrian2D<T, Ellipse, N, E>(
     knowledgeDegree,
     randomGenerator,
     environment,
     group
 ), Pedestrian2D<T> {
 
-    override fun createLandmarkIn(area: M): Ellipse = with(area) {
+    override fun createLandmarkIn(area: N): Ellipse = with(area) {
         val width = randomEllipseSide()
         val height = randomEllipseSide()
         val frame = Rectangle2D.Double(centroid.x, centroid.y, width, height)

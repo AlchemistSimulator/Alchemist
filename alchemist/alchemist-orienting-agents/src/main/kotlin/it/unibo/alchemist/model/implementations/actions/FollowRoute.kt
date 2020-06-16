@@ -22,15 +22,15 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  * A [NavigationAction] using [RouteFollowing] navigation strategy.
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map.
  */
-class FollowRoute<T, N : Euclidean2DConvexShape, E>(
+class FollowRoute<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian2D<T, N, E>,
+    pedestrian: OrientingPedestrian2D<T, L, R>,
     vararg route: Number
-) : NavigationAction2DImpl<T, N, E>(environment, reaction, pedestrian) {
+) : NavigationAction2DImpl<T, L, R>(environment, reaction, pedestrian) {
 
     init {
         strategy = RouteFollowing(this, route.toPositions(environment))

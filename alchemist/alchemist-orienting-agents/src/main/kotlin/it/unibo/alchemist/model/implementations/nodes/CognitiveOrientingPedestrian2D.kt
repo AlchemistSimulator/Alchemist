@@ -26,18 +26,18 @@ import org.apache.commons.math3.random.RandomGenerator
  * A cognitive [OrientingPedestrian] in the Euclidean world.
  *
  * @param T the concentration type.
- * @param M the type of nodes of the navigation graph provided by the environment.
- * @param F the type of edges of the navigation graph provided by the environment.
+ * @param N the type of nodes of the navigation graph provided by the environment.
+ * @param E the type of edges of the navigation graph provided by the environment.
  */
-class CognitiveOrientingPedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads constructor(
-    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
+class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
+    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
     knowledgeDegree: Double,
     group: PedestrianGroup2D<T>? = null,
     override val age: Age,
     override val gender: Gender,
     danger: Molecule? = null
-) : HomogeneousOrientingPedestrian2D<T, M, F>(
+) : HomogeneousOrientingPedestrian2D<T, N, E>(
     environment,
     randomGenerator,
     knowledgeDegree = knowledgeDegree,
@@ -50,7 +50,7 @@ class CognitiveOrientingPedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
     @JvmOverloads constructor(
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
-        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
+        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
         group: PedestrianGroup2D<T>? = null,
         age: String,
         gender: String,
@@ -71,7 +71,7 @@ class CognitiveOrientingPedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
     @JvmOverloads constructor(
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
-        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
+        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
         group: PedestrianGroup2D<T>? = null,
         age: Int,
         gender: String,

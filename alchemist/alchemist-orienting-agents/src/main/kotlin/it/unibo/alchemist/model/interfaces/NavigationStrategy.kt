@@ -21,30 +21,30 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param T the concentration type.
  * @param P the [Position] type and [Vector] type for the space the pedestrian is into.
  * @param A the transformations supported by the shapes in this space.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
- * @param M the type of nodes of the navigation graph provided by the environment.
- * @param F the type of edges of the navigation graph provided by the environment.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map.
+ * @param N the type of nodes of the navigation graph provided by the environment.
+ * @param E the type of edges of the navigation graph provided by the environment.
  */
-interface NavigationStrategy<T, P, A, N, E, M, F>
+interface NavigationStrategy<T, P, A, L, R, N, E>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
-          N : ConvexGeometricShape<P, A>,
-          M : ConvexGeometricShape<P, A> {
+          L : ConvexGeometricShape<P, A>,
+          N : ConvexGeometricShape<P, A> {
 
     /**
      * The [NavigationAction] used to navigate the environment.
      */
-    val action: NavigationAction<T, P, A, N, E, M, F>
+    val action: NavigationAction<T, P, A, L, R, N, E>
 
     /**
      * This is called whenever the pedestrian enters a new room.
      */
-    fun inNewRoom(newRoom: M)
+    fun inNewRoom(newRoom: N)
 
     /**
      * This is called in place of [inNewRoom] when the pedestrian ends up in an unexpected room while moving.
      * By default, unexpected rooms are treated just like expected ones.
      */
-    fun inUnexpectedNewRoom(previousRoom: M, expectedNewRoom: M, actualNewRoom: M) = inNewRoom(actualNewRoom)
+    fun inUnexpectedNewRoom(previousRoom: N, expectedNewRoom: N, actualNewRoom: N) = inNewRoom(actualNewRoom)
 }

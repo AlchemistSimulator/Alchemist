@@ -57,7 +57,7 @@ interface Line2D<P : Vector2D<P>> {
     /**
      * Checks if two lines are parallel.
      */
-    fun isParallelTo(other: Line2D<*>): Boolean
+    fun isParallelTo(other: Line2D<P>): Boolean
 
     /**
      * Intersects two lines.

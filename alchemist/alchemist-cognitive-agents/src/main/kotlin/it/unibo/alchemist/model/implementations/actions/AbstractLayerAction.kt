@@ -37,7 +37,7 @@ abstract class AbstractLayerAction(
         cloneAction(it, r)
     }
 
-    abstract fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): AbstractLayerAction
+    protected abstract fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): AbstractLayerAction
 
     /**
      * @returns the layer containing [targetMolecule] or fails.

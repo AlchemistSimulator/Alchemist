@@ -26,7 +26,7 @@ class Cohesion<T, P, A>(
           A : GeometricTransformation<P> {
 
     override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Cohesion(env, r, n)
-    
+
     override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 
     override fun group(): List<Pedestrian<T, P, *>> = pedestrian.membershipGroup.members

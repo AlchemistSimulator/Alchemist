@@ -54,7 +54,7 @@ abstract class AbstractSteeringAction<T, P, A>(
         }
     }
 
-    abstract fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>): AbstractSteeringAction<T, P, A>
+    protected abstract fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>): AbstractSteeringAction<T, P, A>
 
     protected inline fun <reified N : Node<*>, S : Action<*>> requireNodeTypeAndProduce(
         node: Node<*>,

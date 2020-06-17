@@ -68,6 +68,6 @@ class AvoidLayer @JvmOverloads constructor(
     private fun Pedestrian<*, *, *>.wantsToEvacuate(): Boolean =
         this is CognitivePedestrian2D<*> && this.danger == targetMolecule && this.wantsToEvacuate()
 
-    private inline fun <reified T : Environment<*, *>> Environment<*, *>.asOrNull(): T? = 
+    private inline fun <reified T : Environment<*, *>> Environment<*, *>.asOrNull(): T? =
         if (this is T) this else null
 }

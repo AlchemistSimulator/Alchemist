@@ -1,9 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Position2D
@@ -15,8 +13,6 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 import it.unibo.alchemist.nextDouble
 import it.unibo.alchemist.shuffled
 import org.apache.commons.math3.random.RandomGenerator
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Give the impression of a random walk through the environment targeting an ever changing pseudo-randomly point

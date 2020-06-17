@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -26,11 +25,8 @@ class Cohesion<T, P, A>(
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, Cohesion<T, P, A>>(n) {
-            Cohesion(env, r, it)
-        }
-
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Cohesion(env, r, n)
+    
     override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 
     override fun group(): List<Pedestrian<T, P, *>> = pedestrian.membershipGroup.members

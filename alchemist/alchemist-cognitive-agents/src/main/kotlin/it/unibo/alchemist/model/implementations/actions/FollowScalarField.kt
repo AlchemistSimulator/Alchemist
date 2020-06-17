@@ -9,10 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -66,10 +64,7 @@ class FollowScalarField<T, P, A>(
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, FollowScalarField<T, P, A>>(n) {
-            FollowScalarField(env, reaction,  it, center, valueIn)
-        }
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = FollowScalarField(env, r, n, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
         if (env is EnvironmentWithObstacles<*, T, P>) map { env.next(currentPosition, it) } else this

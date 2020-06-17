@@ -1,16 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
-import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
  * Move the agent towards a target position.
@@ -30,27 +26,13 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  *          the position the pedestrian moves towards.
  */
 open class Arrive<T, P, A>(
-    env: Environment<T, P>,
+    protected val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>,
     protected val decelerationRadius: Double,
     protected val arrivalTolerance: Double,
     protected val target: P
-) : AbstractSteeringActionWithTarget<T, P, A>(
-    env,
-    reaction,
-    pedestrian,
-    TargetSelectionStrategy { target },
-    SpeedSelectionStrategy { currentTarget ->
-        with(env.getPosition(pedestrian).distanceTo(currentTarget)) {
-            when {
-                this < arrivalTolerance -> 0.0
-                this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
-                else -> pedestrian.speed() / reaction.rate
-            }
-        }
-    }
-) where P : Position<P>, P : Vector<P>,
+) : AbstractSteeringActionWithTarget<T, P, A>(env, reaction, pedestrian, target) where P : Position<P>, P : Vector<P>,
         A : GeometricTransformation<P> {
 
     constructor(
@@ -62,8 +44,14 @@ open class Arrive<T, P, A>(
         vararg coordinates: Number
     ) : this(env, reaction, pedestrian, decelerationRadius, arrivalTolerance, env.makePosition(*coordinates))
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, Arrive<T, P, A>>(n) {
-            Arrive(environment, r, it, decelerationRadius, arrivalTolerance, target)
+    override val maxWalk: Double get() = with(currentPosition.distanceTo(target)) {
+        when {
+            this < arrivalTolerance -> 0.0
+            this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
+            else -> pedestrian.speed() / reaction.rate
         }
+    }
+
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>): Arrive<T, P, A> =
+        Arrive(env, r, n, decelerationRadius, arrivalTolerance, target)
 }

@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -45,8 +44,5 @@ open class Seek2D<T, P, A>(
 
     override fun nextPosition(): P = followScalarField.nextPosition()
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, Seek2D<T, P, A>>(n) {
-            Seek2D(environment, r, it, target)
-        }
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Seek2D(environment, r, n, target)
 }

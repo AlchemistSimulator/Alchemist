@@ -2,9 +2,8 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.SteeringBehavior
-import it.unibo.alchemist.model.interfaces.Action
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Obstacle2D
+import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
@@ -29,8 +28,13 @@ class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     private val proximityRange: Double
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
-        ObstacleAvoidance(env, r as SteeringBehavior<T>, n as Pedestrian2D<T>, proximityRange)
+    override fun cloneAction(
+        n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>,
+        r: Reaction<T>
+    ): ObstacleAvoidance<W, T> = requireNodeTypeAndProduce<Pedestrian2D<T>, ObstacleAvoidance<W, T>>(n) {
+        require(r is SteeringBehavior<T>) { "steering behavior needed but found $reaction" }
+        ObstacleAvoidance(env, r, it, proximityRange)
+    }
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->
         env.getObstaclesInRange(currentPosition, proximityRange)

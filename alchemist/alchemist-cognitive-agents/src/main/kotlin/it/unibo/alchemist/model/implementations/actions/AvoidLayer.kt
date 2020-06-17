@@ -2,9 +2,9 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.nodes.CognitivePedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -30,7 +30,7 @@ class AvoidLayer @JvmOverloads constructor(
     pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule,
     private val viewDepth: Double = Double.POSITIVE_INFINITY
-) : AbstractFlowFieldAction(environment, reaction, pedestrian, targetMolecule) {
+) : AbstractLayerAction(environment, reaction, pedestrian, targetMolecule) {
 
     private val followScalarField = getLayerOrFail().let { layer ->
         FollowScalarField(environment, reaction, pedestrian, layer.center()) {
@@ -41,9 +41,8 @@ class AvoidLayer @JvmOverloads constructor(
         }
     }
 
-
-    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): AvoidLayer =
-        AvoidLayer(environment, r, n as Pedestrian2D<Number>, targetMolecule)
+    override fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): AvoidLayer =
+        AvoidLayer(environment, r, n, targetMolecule, viewDepth)
 
     /**
      * @returns the next relative position. The pedestrian is moved only if he/she percepts the danger
@@ -58,10 +57,9 @@ class AvoidLayer @JvmOverloads constructor(
      * Checks whether the center of the layer (if there's one) is in sight. If the layer has no center true is
      * returned.
      */
-    @Suppress("UNCHECKED_CAST") // as? operator is safe
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
         val currentPosition = environment.getPosition(pedestrian)
-        val visualTrajectoryOccluded = (environment as? EnvironmentWithObstacles<*, *, Euclidean2DPosition>)
+        val visualTrajectoryOccluded = environment.asOrNull<EnvironmentWithObstacles<*, *, Euclidean2DPosition>>()
             ?.intersectsObstacle(currentPosition, center)
             ?: false
         center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded
@@ -69,4 +67,7 @@ class AvoidLayer @JvmOverloads constructor(
 
     private fun Pedestrian<*, *, *>.wantsToEvacuate(): Boolean =
         this is CognitivePedestrian2D<*> && this.danger == targetMolecule && this.wantsToEvacuate()
+
+    private inline fun <reified T : Environment<*, *>> Environment<*, *>.asOrNull(): T? = 
+        if (this is T) this else null
 }

@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
@@ -24,7 +23,7 @@ open class FollowLayer(
     reaction: Reaction<Number>,
     pedestrian: Pedestrian2D<Number>,
     targetMolecule: Molecule
-) : AbstractFlowFieldAction(env, reaction, pedestrian, targetMolecule) {
+) : AbstractLayerAction(env, reaction, pedestrian, targetMolecule) {
 
     private val followScalarField = getLayerOrFail().let { layer ->
         FollowScalarField(environment, reaction, pedestrian, layer.center()) {
@@ -34,6 +33,6 @@ open class FollowLayer(
 
     override fun nextPosition(): Euclidean2DPosition = followScalarField.nextPosition()
 
-    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): FollowLayer =
-        FollowLayer(environment, r, n as Pedestrian2D<Number>, targetMolecule)
+    override fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): FollowLayer =
+        FollowLayer(environment, r, n, targetMolecule)
 }

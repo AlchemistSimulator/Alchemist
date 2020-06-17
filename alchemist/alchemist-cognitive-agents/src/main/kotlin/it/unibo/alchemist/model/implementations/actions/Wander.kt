@@ -56,12 +56,10 @@ open class Wander<T>(
         .first()
         .coerceAtMost(maxWalk)
 
-    override fun cloneAction(
-        n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>,
-        r: Reaction<T>
-    ): Wander<T> = requireNodeTypeAndProduce<Pedestrian2D<T>, Wander<T>>(n) {
-        Wander(environment, r, it, randomGenerator, offset, radius)
-    }
+    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
+        requireNodeTypeAndProduce<Pedestrian2D<T>, Wander<T>>(n) {
+            Wander(environment, r, it, randomGenerator, offset, radius)
+        }
 }
 
 /**

@@ -33,9 +33,7 @@ abstract class AbstractLayerAction(
     override fun cloneAction(
         n: Pedestrian<Number, Euclidean2DPosition, Euclidean2DTransformation>,
         r: Reaction<Number>
-    ): AbstractLayerAction = requireNodeTypeAndProduce<Pedestrian2D<Number>, AbstractLayerAction>(n) {
-        cloneAction(it, r)
-    }
+    ) = requireNodeTypeAndProduce<Pedestrian2D<Number>, AbstractLayerAction>(n) { cloneAction(it, r) }
 
     protected abstract fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): AbstractLayerAction
 

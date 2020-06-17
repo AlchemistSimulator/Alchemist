@@ -10,10 +10,9 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
+import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -97,8 +96,8 @@ open class NavigationAction2DImpl<T, L : Euclidean2DConvexShape, R>(
         return Seek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
     }
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
-        requireNodeTypeAndProduce<OrientingPedestrian2D<T, L, R>, Action<T>>(n) {
+    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
+        requireNodeTypeAndProduce<OrientingPedestrian2D<T, L, R>, NavigationAction2DImpl<T, L, R>>(n) {
             val clone = NavigationAction2DImpl(environment, r, it, wallRepulsionFactor)
             clone.strategy = this.strategy
             return clone

@@ -28,13 +28,11 @@ class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     private val proximityRange: Double
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
 
-    override fun cloneAction(
-        n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>,
-        r: Reaction<T>
-    ): ObstacleAvoidance<W, T> = requireNodeTypeAndProduce<Pedestrian2D<T>, ObstacleAvoidance<W, T>>(n) {
-        require(r is SteeringBehavior<T>) { "steering behavior needed but found $reaction" }
-        ObstacleAvoidance(env, r, it, proximityRange)
-    }
+    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
+        requireNodeTypeAndProduce<Pedestrian2D<T>, ObstacleAvoidance<W, T>>(n) {
+            require(r is SteeringBehavior<T>) { "steering behavior needed but found $reaction" }
+            ObstacleAvoidance(env, r, it, proximityRange)
+        }
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->
         env.getObstaclesInRange(currentPosition, proximityRange)

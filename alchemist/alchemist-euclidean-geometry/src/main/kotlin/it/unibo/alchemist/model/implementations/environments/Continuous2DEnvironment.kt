@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
+import it.unibo.alchemist.model.implementations.asOrNull
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -88,10 +89,13 @@ open class Continuous2DEnvironment<T> :
         }
 
     /**
-     * Moves the [node] to the [farthestPositionReachable] towards the desired [newpos].
+     * Moves the [node] to the [farthestPositionReachable] towards the desired [newpos]. If the node is shapeless,
+     * it is simply moved to [newpos].
      */
     override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
-        super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
+        node.asOrNull<NodeWithShape<T, Euclidean2DPosition, Euclidean2DTransformation>>()?.let {
+            super.moveNodeToPosition(node, farthestPositionReachable(it, newpos))
+        } ?: super.moveNodeToPosition(node, newpos)
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
@@ -113,11 +117,25 @@ open class Continuous2DEnvironment<T> :
         }
 
     /**
-     * Delegated to [farthestPositionReachable] unless the node has no shape. In such case [desiredPosition] is
-     * returned as there's no possibility of node overlapping.
+     * For a better understanding of how to compute collision points with circular hitboxes see
+     * [this discussion](https://bit.ly/3f00NvJ).
      */
-    override fun farthestPositionReachable(node: Node<T>, desiredPosition: Euclidean2DPosition): Euclidean2DPosition =
-        if (node is NodeWithShape<T, *, *>) farthestPositionReachable(node, desiredPosition) else desiredPosition
+    override fun farthestPositionReachable(
+        node: NodeWithShape<T, Euclidean2DPosition, Euclidean2DTransformation>,
+        desiredPosition: Euclidean2DPosition,
+        hitboxRadius: Double
+    ): Euclidean2DPosition {
+        val currentPosition = getPosition(node)
+        val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)
+        return nodesOnPath(node, desiredMovement)
+            .map { getShape(it) }
+            .flatMap { other ->
+                desiredMovement.intersectCircle(other.centroid, other.radius + hitboxRadius).asList
+            }
+            .minBy { currentPosition.distanceTo(it) }
+            ?: desiredPosition
+
+    }
 
     /**
      * @returns all nodes that the given [node] would collide with while performing the [desiredMovement].
@@ -129,26 +147,4 @@ open class Continuous2DEnvironment<T> :
                 .transformed { desiredMovement.midPoint.let { origin(it.x, it.y) } }
                 .let { movementArea -> getNodesWithin(movementArea).minusElement(node) }
         }
-
-    /**
-     * @returns the farthest position reachable by the given [node] towards the [desiredPosition], avoiding
-     * node overlapping. Since nodes may have various shapes, circular hitboxes are used. Each node's shape
-     * diameter is used as diameter for its circular hitbox, which means a node's shape is entirely contained
-     * in its hitbox. For a better understanding of how to compute collision points with circular hitboxes see
-     * [this discussion](https://bit.ly/3f00NvJ).
-     */
-    private fun farthestPositionReachable(
-        node: NodeWithShape<T, *, *>,
-        desiredPosition: Euclidean2DPosition
-    ): Euclidean2DPosition {
-        val currentPosition = getPosition(node)
-        val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)
-        return nodesOnPath(node, desiredMovement)
-            .map { getShape(it) }
-            .flatMap { other ->
-                desiredMovement.intersectCircle(other.centroid, other.radius + node.shape.radius).asList
-            }
-            .minBy { currentPosition.distanceTo(it) }
-            ?: desiredPosition
-    }
 }

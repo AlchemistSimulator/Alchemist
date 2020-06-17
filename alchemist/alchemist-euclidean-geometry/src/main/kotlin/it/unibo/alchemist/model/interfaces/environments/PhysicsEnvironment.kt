@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
 /**
  * An environment supporting physics and nodes shapes.
@@ -62,6 +63,14 @@ where P : Position<P>,
 
     /**
      * Computes the farthest position reachable by a [node] towards a [desiredPosition], avoiding node overlapping.
+     * If no node is located in between, [desiredPosition] is returned. Otherwise, the first position where the node
+     * collides with someone else is returned. For collision purposes, hitboxes are used: each node is given a circular
+     * hitbox of radius equal to its shape's radius (shapeless nodes can't cause overlapping). The client can specify
+     * a different radius for the hitbox of the moving node.
      */
-    fun farthestPositionReachable(node: Node<T>, desiredPosition: P): P
+    fun farthestPositionReachable(
+        node: NodeWithShape<T, P, A>,
+        desiredPosition: P,
+        hitboxRadius: Double = node.shape.radius
+    ): P
 }

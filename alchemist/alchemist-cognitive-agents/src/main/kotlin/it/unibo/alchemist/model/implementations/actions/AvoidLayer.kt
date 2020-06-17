@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.asOrNull
 import it.unibo.alchemist.model.implementations.nodes.CognitivePedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
@@ -67,7 +68,4 @@ class AvoidLayer @JvmOverloads constructor(
 
     private fun Pedestrian<*, *, *>.wantsToEvacuate(): Boolean =
         this is CognitivePedestrian2D<*> && this.danger == targetMolecule && this.wantsToEvacuate()
-
-    private inline fun <reified T : Environment<*, *>> Environment<*, *>.asOrNull(): T? =
-        if (this is T) this else null
 }

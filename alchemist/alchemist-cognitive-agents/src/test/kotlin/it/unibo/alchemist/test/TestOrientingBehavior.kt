@@ -19,8 +19,6 @@ import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.loadYamlSimulation
-import it.unibo.alchemist.model.startSimulation
 
 /**
  * Contains tests concerning [NavigationAction]s and [NavigationStrategy], such tests are

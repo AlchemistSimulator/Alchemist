@@ -89,14 +89,7 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
     /*
      * The cognitive part of the pedestrian.
      */
-    private val cognitive = CognitivePedestrian2D(
-        environment,
-        randomGenerator,
-        age,
-        gender,
-        danger,
-        group
-    )
+    private val cognitive = CognitivePedestrian2D(environment, randomGenerator, age, gender, danger, group)
 
     override val compliance = cognitive.compliance
 

@@ -8,8 +8,6 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.loadYamlSimulation
-import it.unibo.alchemist.model.startSimulation
 import kotlin.math.abs
 
 private const val EPSILON = 0.001

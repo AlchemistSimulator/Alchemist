@@ -93,15 +93,19 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
 
     override fun findPoint(x: Double): P = createPoint(x, findY(x))
 
-    override fun isParallelTo(other: Line2D<P>): Boolean =
+    private fun parallelTo(other: Line2D<*>): Boolean =
         isVertical && other.isVertical || MathUtils.fuzzyEquals(slope, other.slope)
+
+    override fun isParallelTo(other: Line2D<P>): Boolean = parallelTo(other)
 
     /**
      * Checks if two lines coincide.
      */
-    fun coincidesWith(other: Line2D<*>): Boolean =
-        (isVertical || MathUtils.fuzzyEquals(yIntercept, other.yIntercept)) &&
-            (isHorizontal ||  MathUtils.fuzzyEquals(xIntercept, other.xIntercept))
+    fun coincidesWith(other: Line2D<*>): Boolean = when {
+        !parallelTo(other) -> false
+        isVertical -> MathUtils.fuzzyEquals(xIntercept, other.xIntercept)
+        else -> MathUtils.fuzzyEquals(yIntercept, other.yIntercept)
+    }
 
     override fun intersect(other: Line2D<P>): Intersection2D<P> = when {
         coincidesWith(other) -> Intersection2D.InfinitePoints

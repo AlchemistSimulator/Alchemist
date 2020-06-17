@@ -15,4 +15,4 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * A [PedestrianGroup] featuring bidimensional pedestrians.
  */
-typealias PedestrianGroup2D<T> = PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>
+interface PedestrianGroup2D<T> : PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>

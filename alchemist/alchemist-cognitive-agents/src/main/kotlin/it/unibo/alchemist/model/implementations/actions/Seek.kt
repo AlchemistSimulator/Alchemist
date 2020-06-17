@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -24,10 +23,8 @@ open class Seek<T, P, A>(
     pedestrian: Pedestrian<T, P, A>,
     target: P
 ) : Arrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
-    where
-    A : GeometricTransformation<P>,
-    P : Position<P>,
-    P : Vector<P> {
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P> {
 
     constructor(
         environment: Environment<T, P>,
@@ -36,8 +33,5 @@ open class Seek<T, P, A>(
         vararg coordinates: Number
     ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, Seek<T, P, A>>(n) {
-            Seek(environment, r, it, target)
-        }
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Seek(environment, r, n, target)
 }

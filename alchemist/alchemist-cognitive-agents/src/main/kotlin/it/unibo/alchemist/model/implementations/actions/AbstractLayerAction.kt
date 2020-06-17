@@ -4,6 +4,7 @@ import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLaye
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -22,39 +23,35 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
-abstract class AbstractFlowFieldAction(
+abstract class AbstractLayerAction(
     protected val environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    pedestrian: Pedestrian2D<Number>,
+    override val pedestrian: Pedestrian2D<Number>,
     protected val targetMolecule: Molecule
 ) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
 
-    override fun nextPosition(): Euclidean2DPosition = getLayerOrFail().let { layer ->
-        currentPosition.surrounding(maxWalk).asSequence()
-            /*
-             * Next relative position.
-             */
-            .selectPosition(layer, layer.concentrationIn(currentPosition)) - currentPosition
-    }
+    override fun cloneAction(
+        n: Pedestrian<Number, Euclidean2DPosition, Euclidean2DTransformation>,
+        r: Reaction<Number>
+    ) = requireNodeTypeAndProduce<Pedestrian2D<Number>, AbstractLayerAction>(n) { cloneAction(it, r) }
+
+    protected abstract fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): AbstractLayerAction
 
     /**
-     * Selects the desired position from a sequence, given the layer and its concentration in the current position
-     * of the pedestrian. This is used to compute [nextPosition].
+     * @returns the layer containing [targetMolecule] or fails.
      */
-    abstract fun Sequence<Euclidean2DPosition>.selectPosition(
-        layer: Layer<Number, Euclidean2DPosition>,
-        currentConcentration: Double
-    ): Euclidean2DPosition
-
-    protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
-        getValue(position).toDouble()
-
     protected fun getLayerOrFail(): Layer<Number, Euclidean2DPosition> = environment.getLayer(targetMolecule)
-        .orElseThrow { IllegalStateException("no layer containing $targetMolecule could be found") }
+        .orElseThrow { IllegalStateException("no layer containing $targetMolecule") }
 
     /**
      * @returns the center of the layer or null if there's no center.
      */
     protected fun Layer<*, Euclidean2DPosition>.center(): Euclidean2DPosition? =
         (this as? BidimensionalGaussianLayer)?.let { environment.makePosition(it.centerX, it.centerY) }
+
+    /**
+     * @returns the concentration of the layer in the given [position].
+     */
+    protected fun <P : Position<P>> Layer<Number, P>.concentrationIn(position: P): Double =
+        getValue(position).toDouble()
 }

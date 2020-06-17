@@ -16,7 +16,6 @@ dependencies {
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-smartcam"))
     implementation(project(":alchemist-cognitive-agents"))
-    implementation(project(":alchemist-orienting-agents"))
     implementation(Libs.miglayout_swing)
     implementation(Libs.mapsforge_map_awt) {
         exclude(group = "com.github.blackears", module = "svgSalamander")

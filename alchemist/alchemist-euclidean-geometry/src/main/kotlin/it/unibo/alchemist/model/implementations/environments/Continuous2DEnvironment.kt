@@ -98,13 +98,12 @@ open class Continuous2DEnvironment<T> :
      * it is simply moved to the desired position, otherwise [farthestPositionReachable] is used. Note that circular
      * hitboxes are used.
      */
-    override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) {
-        val farthestPositionReachable = when (node) {
-            is NodeWithShape<T, *, *> -> farthestPositionReachable(node, newpos)
-            else -> newpos
+    override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
+        if (node is NodeWithShape<T, *, *>) {
+            super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
+        } else {
+            super.moveNodeToPosition(node, newpos)
         }
-        super.moveNodeToPosition(node, farthestPositionReachable)
-    }
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's

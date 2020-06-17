@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -32,10 +31,7 @@ class Combine<T, P, A>(
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Combine<T, P, A> =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, Combine<T, P, A>>(n) {
-            Combine(env, r, it, actions, steerStrategy)
-        }
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Combine(env, r, n, actions, steerStrategy)
 
     override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).coerceAtMost(maxWalk)
 }

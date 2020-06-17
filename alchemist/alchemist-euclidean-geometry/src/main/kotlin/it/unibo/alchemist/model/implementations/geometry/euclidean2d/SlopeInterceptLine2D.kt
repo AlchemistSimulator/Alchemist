@@ -93,14 +93,16 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
 
     override fun findPoint(x: Double): P = createPoint(x, findY(x))
 
-    override fun isParallelTo(other: Line2D<*>): Boolean =
+    private fun parallelTo(other: Line2D<*>): Boolean =
         isVertical && other.isVertical || MathUtils.fuzzyEquals(slope, other.slope)
+
+    override fun isParallelTo(other: Line2D<P>): Boolean = parallelTo(other)
 
     /**
      * Checks if two lines coincide.
      */
     fun coincidesWith(other: Line2D<*>): Boolean = when {
-        !isParallelTo(other) -> false
+        !parallelTo(other) -> false
         isVertical -> MathUtils.fuzzyEquals(xIntercept, other.xIntercept)
         else -> MathUtils.fuzzyEquals(yIntercept, other.yIntercept)
     }
@@ -128,12 +130,11 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
      * Circle equation: (x - [center].x)^2 + (y - [center].y)^2 = r^2.
      * Line equation: y = [slope] * x + [yIntercept] unless [isVertical], x = [xIntercept] otherwise.
      */
-    @Suppress("MagicNumber")
     override fun intersectCircle(center: P, radius: Double): Intersection2D<P> = Intersection2D.create(when {
         radius <= 0.0 -> throw IllegalArgumentException("radius must be > 0")
         isVertical -> solveQuadraticEquation(
             1.0,
-            -2 * center.y,
+            2 * -center.y,
             center.y.pow(2) + (xIntercept - center.x).pow(2) - radius.pow(2))
             /*
              * The equation roots are y-coordinates.

@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -31,10 +30,7 @@ open class Flee<T, P, A>(
 
     private val danger: P = env.makePosition(*coords.toTypedArray())
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Flee<T, P, A> =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, Flee<T, P, A>>(n) {
-            Flee(env, r, it, *danger.coordinates)
-        }
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Flee(env, r, n, *danger.coordinates)
 
     override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)
 }

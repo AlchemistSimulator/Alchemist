@@ -32,8 +32,9 @@ open class Arrive<T, P, A>(
     protected val decelerationRadius: Double,
     protected val arrivalTolerance: Double,
     protected val target: P
-) : AbstractSteeringActionWithTarget<T, P, A>(env, reaction, pedestrian, target) where P : Position<P>, P : Vector<P>,
-        A : GeometricTransformation<P> {
+) : AbstractSteeringActionWithTarget<T, P, A>(env, reaction, pedestrian, target)
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P> {
 
     constructor(
         env: Environment<T, P>,

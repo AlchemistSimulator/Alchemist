@@ -37,7 +37,7 @@ open class Seek2D<T, P, A>(
     ) : this(environment, reaction, pedestrian, environment.makePosition(x, y))
 
     private val followScalarField = FollowScalarField(environment, reaction, pedestrian, target) {
-        it.distanceTo(target)
+        -it.distanceTo(target)
     }
 
     override fun target(): P = target

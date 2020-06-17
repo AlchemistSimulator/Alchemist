@@ -52,13 +52,7 @@ open class Continuous2DEnvironment<T> :
     override fun getHeading(node: Node<T>) = nodeToHeading.getOrPut(node, { defaultHeading })
 
     override fun setHeading(node: Node<T>, direction: Euclidean2DPosition) {
-        val oldHeading = getHeading(node)
-        getPosition(node)?.also {
-            nodeToHeading[node] = direction
-            if (!canNodeFitPosition(node, it)) {
-                nodeToHeading[node] = oldHeading
-            }
-        }
+        nodeToHeading[node] = direction
     }
 
     override fun getShape(node: Node<T>): Euclidean2DShape = when (node) {
@@ -94,16 +88,10 @@ open class Continuous2DEnvironment<T> :
         }
 
     /**
-     * Moves the [node] to the farthest position reachable towards the desired [newpos]. If the node has no shape
-     * it is simply moved to the desired position, otherwise [farthestPositionReachable] is used. Note that circular
-     * hitboxes are used.
+     * Moves the [node] to the [farthestPositionReachable] towards the desired [newpos].
      */
     override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
-        if (node is NodeWithShape<T, *, *>) {
-            super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
-        } else {
-            super.moveNodeToPosition(node, newpos)
-        }
+        super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
@@ -124,10 +112,12 @@ open class Continuous2DEnvironment<T> :
             Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
         }
 
-    override fun canNodeFitPosition(node: Node<T>, position: Euclidean2DPosition) =
-        getNodesWithin(getShape(node).transformed { origin(position) })
-            .minusElement(node)
-            .isEmpty()
+    /**
+     * Delegated to [farthestPositionReachable] unless the node has no shape. In such case [desiredPosition] is
+     * returned as there's no possibility of node overlapping.
+     */
+    override fun farthestPositionReachable(node: Node<T>, desiredPosition: Euclidean2DPosition): Euclidean2DPosition =
+        if (node is NodeWithShape<T, *, *>) farthestPositionReachable(node, desiredPosition) else desiredPosition
 
     /**
      * @returns all nodes that the given [node] would collide with while performing the [desiredMovement].

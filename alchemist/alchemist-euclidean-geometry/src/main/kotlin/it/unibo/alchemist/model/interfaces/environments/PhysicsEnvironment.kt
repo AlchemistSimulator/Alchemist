@@ -61,12 +61,7 @@ where P : Position<P>,
     fun getNodesWithin(shape: GeometricShape<P, A>): List<Node<T>>
 
     /**
-     * Whether or not a node can be placed in a position.
-     *
-     * @param node
-     *      the node to move.
-     * @param position
-     *      the position you want to move the node to.
+     * Computes the farthest position reachable by a [node] towards a [desiredPosition], avoiding node overlapping.
      */
-    fun canNodeFitPosition(node: Node<T>, position: P): Boolean
+    fun farthestPositionReachable(node: Node<T>, desiredPosition: P): P
 }

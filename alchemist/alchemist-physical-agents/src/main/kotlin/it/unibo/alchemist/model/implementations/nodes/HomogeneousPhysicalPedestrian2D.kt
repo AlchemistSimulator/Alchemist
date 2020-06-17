@@ -7,9 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations
+package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.nodes.HomogeneousPedestrian2D
 import it.unibo.alchemist.model.interfaces.ComfortRepulsionNode2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment

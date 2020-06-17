@@ -37,7 +37,7 @@ interface PhysicalSteeringStrategy<T, P, A, F> : SteeringStrategy<T, P>
     /**
      * Computes the next relative position reached by the node, given the overall intentional force.
      */
-    fun computeNextPosition(resultingIntentionalForce: P): P
+    fun computeNextPosition(overallIntentionalForce: P): P
 
     /**
      * Computes the next relative position reached by the node, taking into account both the intentional and the

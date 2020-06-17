@@ -7,10 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations
+package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
-import it.unibo.alchemist.model.implementations.nodes.HomogeneousOrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph

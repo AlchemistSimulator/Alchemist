@@ -1,9 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.asOrNull
 import it.unibo.alchemist.model.implementations.nodes.CognitivePedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian
@@ -58,9 +56,15 @@ class AvoidLayer @JvmOverloads constructor(
      * Checks whether the center of the layer (if there's one) is in sight. If the layer has no center true is
      * returned.
      */
+    @Suppress("UNCHECKED_CAST")
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
         val currentPosition = environment.getPosition(pedestrian)
-        val visualTrajectoryOccluded = environment.asOrNull<EnvironmentWithObstacles<*, *, Euclidean2DPosition>>()
+        /*
+         * environment is an Euclidean2DEnvironment<Number>, so if it has obstacles it must be an
+         * EnvironmentWithObstacles<*, *, Euclidean2DPosition>. Since generic types can't be checked at runtime, this
+         * is the best we can do.
+         */
+        val visualTrajectoryOccluded = (environment as? EnvironmentWithObstacles<*, *, Euclidean2DPosition>)
             ?.intersectsObstacle(currentPosition, center)
             ?: false
         center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded

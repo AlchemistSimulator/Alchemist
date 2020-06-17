@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
-import it.unibo.alchemist.model.implementations.asOrNull
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -93,9 +92,11 @@ open class Continuous2DEnvironment<T> :
      * it is simply moved to [newpos].
      */
     override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
-        node.asOrNull<NodeWithShape<T, Euclidean2DPosition, Euclidean2DTransformation>>()?.let {
-            super.moveNodeToPosition(node, farthestPositionReachable(it, newpos))
-        } ?: super.moveNodeToPosition(node, newpos)
+        if (node is NodeWithShape<T, *, *>) {
+            super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
+        } else {
+            super.moveNodeToPosition(node, newpos)
+        }
 
     /**
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
@@ -121,7 +122,7 @@ open class Continuous2DEnvironment<T> :
      * [this discussion](https://bit.ly/3f00NvJ).
      */
     override fun farthestPositionReachable(
-        node: NodeWithShape<T, Euclidean2DPosition, Euclidean2DTransformation>,
+        node: NodeWithShape<T, *, *>,
         desiredPosition: Euclidean2DPosition,
         hitboxRadius: Double
     ): Euclidean2DPosition {

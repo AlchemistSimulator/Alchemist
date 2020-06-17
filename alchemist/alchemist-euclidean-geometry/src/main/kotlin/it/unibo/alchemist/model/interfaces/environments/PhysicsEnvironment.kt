@@ -69,7 +69,7 @@ where P : Position<P>,
      * a different radius for the hitbox of the moving node.
      */
     fun farthestPositionReachable(
-        node: NodeWithShape<T, P, A>,
+        node: NodeWithShape<T, *, *>,
         desiredPosition: P,
         hitboxRadius: Double = node.shape.radius
     ): P

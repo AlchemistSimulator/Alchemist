@@ -57,7 +57,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
 
     "exploring behavior keeps moving the pedestrian indefinitely" {
         /*
-         * On a stable version of the behavior it was observed that after 30k steps of execution the
+         * On a stable version of the behavior it was observed that after 3k steps of execution the
          * pedestrian was in the position specified with coords. This test (which aims to verify that
          * the pedestrian doesn't stop moving) is slightly weak as he/she could stop moving exactly
          * in that position and this test would pass.
@@ -65,8 +65,8 @@ class TestOrientingBehavior<T, P> : StringSpec({
         runSimulation(
             "explore.yml",
             0.1,
-            30000,
-            91.93063541066631, 131.82495484342178
+            3000,
+            119.97675568510425, 30.0965400881618
         )
     }
 

@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
  * @param V the [Vector] type for the space this agent is inside.
  * @param A the transformations supported by the shapes in this space.
  * @param L the type of landmarks. See [cognitiveMap].
- * @param R the type of relations between landmarks (= the type of edges of the [cognitiveMap]).
+ * @param R the type of edges of the [cognitiveMap], representing the [R]elations between landmarks.
  */
 interface OrientingAgent<V, A, L, R> where
     V : Vector<V>,

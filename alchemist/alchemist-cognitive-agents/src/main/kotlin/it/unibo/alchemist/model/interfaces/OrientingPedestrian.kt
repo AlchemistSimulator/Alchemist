@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param V the [Vector] type for the space this pedestrian is inside.
  * @param A the transformations supported by the shapes in this space.
  * @param L the type of landmarks stored in the pedestrian's [cognitiveMap].
- * @param R the type of edges of the [cognitiveMap].
+ * @param R the type of edges of the [cognitiveMap], representing the [R]elations between landmarks.
  */
 interface OrientingPedestrian<
     T,

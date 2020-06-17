@@ -30,7 +30,7 @@ private typealias AbstractNavigationAction2D<T, L, R, N, E> =
  *
  * @param T the concentration type.
  * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
 open class NavigationAction2DImpl<T, L : Euclidean2DConvexShape, R>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,

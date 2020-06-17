@@ -57,9 +57,15 @@ class AvoidLayer @JvmOverloads constructor(
      * Checks whether the center of the layer (if there's one) is in sight. If the layer has no center true is
      * returned.
      */
+    @Suppress("UNCHECKED_CAST")
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
         val currentPosition = environment.getPosition(pedestrian)
-        val visualTrajectoryOccluded = environment.asOrNull<EnvironmentWithObstacles<*, *, Euclidean2DPosition>>()
+        /*
+         * environment is euclidean, so if it has obstacles it must be an
+         * EnvironmentWithObstacles<*, *, Euclidean2DPosition>. Since generic types can't be checked at runtime, this
+         * is the best we can do.
+         */
+        val visualTrajectoryOccluded = (environment as? EnvironmentWithObstacles<*, *, Euclidean2DPosition>)
             ?.intersectsObstacle(currentPosition, center)
             ?: false
         center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded

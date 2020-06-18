@@ -26,7 +26,7 @@ open class SteeringBehavior<T>(
     private val env: Environment<T, Euclidean2DPosition>,
     private val pedestrian: Pedestrian2D<T>,
     timeDistribution: TimeDistribution<T>,
-    val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>
+    open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>
 ) : AbstractReaction<T>(pedestrian, timeDistribution) {
 
     /**

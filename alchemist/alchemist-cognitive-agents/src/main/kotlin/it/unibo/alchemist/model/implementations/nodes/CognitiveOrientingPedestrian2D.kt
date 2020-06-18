@@ -44,6 +44,13 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
     group = group
 ), CognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
 
+    /*
+     * The cognitive part of the pedestrian.
+     */
+    private val cognitive = CognitivePedestrian2D(environment, randomGenerator, age, gender, danger, group)
+
+    override val compliance = cognitive.compliance
+
     /**
      * Allows to specify age and gender with a string.
      */
@@ -85,13 +92,6 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
         Gender.fromString(gender),
         danger
     )
-
-    /*
-     * The cognitive part of the pedestrian.
-     */
-    private val cognitive = CognitivePedestrian2D(environment, randomGenerator, age, gender, danger, group)
-
-    override val compliance = cognitive.compliance
 
     override fun probabilityOfHelping(
         toHelp: HeterogeneousPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>

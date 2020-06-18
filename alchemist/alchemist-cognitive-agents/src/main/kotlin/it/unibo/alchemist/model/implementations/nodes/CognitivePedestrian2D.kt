@@ -29,7 +29,10 @@ private typealias AbstractCognitivePedestrian2D<T> =
  *          the molecule associated to danger in the environment.
  */
 open class CognitivePedestrian2D<T> @JvmOverloads constructor(
-    override val environment: Physics2DEnvironment<T>,
+    /*
+     * This is final for a reason, see HomogeneousPedestrian2D.
+     */
+    final override val environment: Physics2DEnvironment<T>,
     randomGenerator: RandomGenerator,
     age: Age,
     gender: Gender,

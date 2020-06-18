@@ -20,7 +20,7 @@ import org.jgrapht.graph.DefaultEdge
 
 /**
  * A cognitive [OrientingPedestrian2D] capable of physical interactions.
- * TODO(rename it into something linke "SmartPedestrian2D"?)
+ * TODO(rename it into something like "SmartPedestrian2D"?)
  */
 class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,

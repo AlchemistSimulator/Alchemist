@@ -10,34 +10,27 @@
 package it.unibo.alchemist.model.interfaces
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
 /**
- * A [ComfortRepulsionNode] in an euclidean bidimensional space. This node has a circular [comfortArea] of radius
+ * A [PhysicalPedestrian] in an euclidean bidimensional space. This pedestrian has a circular [comfortArea] of radius
  * equal to its shape radius plus a [comfortRay].
  * This is derived from [the work of Pelechano et al](https://bit.ly/3e3C7Tb).
  */
-interface ComfortRepulsionNode2D<T> :
-    ComfortRepulsionNode<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
+interface PhysicalPedestrian2D<T> :
+    PhysicalPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
+    Pedestrian2D<T> {
 
     /**
-     * The environment this node is into.
-     */
-    val environment: Physics2DEnvironment<T>
-
-    /**
-     * The comfort ray of this node, this is added to the radius of its [shape] to obtain the [comfortArea].
+     * The comfort ray of this pedestrian, this is added to the radius of its [shape] to obtain the [comfortArea].
      */
     val comfortRay: Double
 
     /**
-     * The comfort area of this node, it's a circle of radius [shape].radius + [comfortRay].
+     * The comfort area of this pedestrian, it's a circle of radius [shape].radius + [comfortRay].
      */
     override val comfortArea: Euclidean2DShape get() = environment.shapeFactory.circle(shape.radius + comfortRay)
 

@@ -20,7 +20,12 @@ private typealias AbstractHomogeneousPedestrian2D<T> =
  *          the simulation {@link RandomGenerator}.
  */
 open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
-    override val environment: Physics2DEnvironment<T>,
+    /*
+     * This is final because otherwise instancing a subclass overriding it would throw a NullPointerException when
+     * computing fieldOfView (as such computation uses this property, which would not be initialised yet in the sub-
+     * class, a bit tricky).
+     */
+    final override val environment: Physics2DEnvironment<T>,
     randomGenerator: RandomGenerator,
     group: PedestrianGroup2D<T>? = null
 ) : AbstractHomogeneousPedestrian2D<T>(

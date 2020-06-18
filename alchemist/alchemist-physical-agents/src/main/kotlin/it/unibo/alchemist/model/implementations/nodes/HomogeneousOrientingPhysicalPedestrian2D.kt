@@ -21,7 +21,7 @@ import org.jgrapht.graph.DefaultEdge
  * A homogeneous [OrientingPedestrian2D] capable of physical interactions.
  */
 class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
-    override val environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
     override val knowledgeDegree: Double,
     group: PedestrianGroup2D<T>? = null

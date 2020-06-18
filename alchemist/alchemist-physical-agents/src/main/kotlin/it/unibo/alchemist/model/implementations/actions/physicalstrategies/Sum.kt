@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.actions.physicalstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.ComfortRepulsionNode2D
+import it.unibo.alchemist.model.interfaces.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.PhysicalSteeringStrategy
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  */
 class Sum<T>(
     private val environment: Physics2DEnvironment<T>,
-    override val node: ComfortRepulsionNode2D<T>,
+    override val node: PhysicalPedestrian2D<T>,
     override val nonPhysicalStrategy: SteeringStrategy<T, Euclidean2DPosition>
 ) : PhysicalSteeringStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
 

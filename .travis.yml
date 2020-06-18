@@ -148,8 +148,7 @@ jobs:
         - travis_retry ./gradlew sign shadowJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
-      after_success:
-        - travis_wait 30 ./gradlew publishAll --scan --stacktrace
+        - travis_retry travis_wait 30 ./gradlew publishAll --scan --stacktrace
       deploy:
         - <<: *deploy_base
           provider: releases

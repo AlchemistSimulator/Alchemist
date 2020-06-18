@@ -17,12 +17,12 @@ dependencies {
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(Libs.kotlin_scripting_jsr223_embeddable)
-    runtimeOnly("org.scala-lang:scala-compiler:2.13.1")
+    runtimeOnly("org.scala-lang:scala-compiler:2.13.2")
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
     testImplementation(Libs.gson)
-    testImplementation("org.scala-lang:scala-compiler:2.13.1")
+    testRuntimeOnly("org.scala-lang:scala-compiler:2.13.2")
 
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }

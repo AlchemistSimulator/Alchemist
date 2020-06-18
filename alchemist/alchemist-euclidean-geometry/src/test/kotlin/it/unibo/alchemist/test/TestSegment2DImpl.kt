@@ -12,6 +12,7 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeTypeOf
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -37,57 +38,57 @@ class TestSegment2DImpl : StringSpec() {
     private val obliqueSegment: Segment2D<Euclidean2DPosition> = segment(2.0, 2.0, 6.0, 6.0)
     private val degenerateSegment: Segment2D<Euclidean2DPosition> = segment(2.0, 2.0, 2.0, 2.0)
 
-    private fun <P : Vector2D<P>> segmentsIntersectionShouldBe(
+    private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
+        segment1: Segment2D<P>,
+        segment2: Segment2D<P>
+    ): I {
+        val intersection = segment1.intersect(segment2)
+        intersection.shouldBeTypeOf<I>()
+        return intersection as I
+    }
+
+    private fun <P : Vector2D<P>> shouldIntersectIn(
         segment1: Segment2D<P>,
         segment2: Segment2D<P>,
         expectedPoint: P
-    ) {
-        val intersection = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment1, segment2, false)
-        intersection.point shouldBe expectedPoint
+    ) = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment1, segment2).point shouldBe expectedPoint
+
+    private fun <P : Vector2D<P>> shouldNotIntersect(segment1: Segment2D<P>, segment2: Segment2D<P>) =
+        intersectionShouldBe<P, Intersection2D.None>(segment1, segment2)
+
+    private fun <P : Vector2D<P>> shouldOverlap(segment1: Segment2D<P>, segment2: Segment2D<P>) =
+        intersectionShouldBe<P, Intersection2D.InfinitePoints>(segment1, segment2)
+
+    private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
+        segment: Segment2D<P>,
+        center: P,
+        radius: Double
+    ): I {
+        val intersection = segment.intersectCircle(center, radius)
+        intersection.shouldBeTypeOf<I>()
+        return intersection as I
     }
 
-    private fun <P : Vector2D<P>> segmentIntersectionShouldBeEmpty(segment1: Segment2D<P>, segment2: Segment2D<P>) =
-        intersectionShouldBe<P, Intersection2D.None>(segment1, segment2, false)
-
-    private fun <P : Vector2D<P>> segmentsIntersectionShouldBeInfinite(segment1: Segment2D<P>, segment2: Segment2D<P>) =
-        intersectionShouldBe<P, Intersection2D.InfinitePoints>(segment1, segment2, false)
-
-    private fun <P : Vector2D<P>> segmentCircleIntersectionShouldBe(
+    private fun <P : Vector2D<P>> shouldIntersectIn(
         segment: Segment2D<P>,
         center: P,
         radius: Double,
         expectedPoint1: P,
         expectedPoint2: P
     ) {
-        val intersection = circleIntersectionShouldBe<P, Intersection2D.MultiplePoints<P>>(
-            segment,
-            center,
-            radius,
-            false
-        )
+        val intersection = intersectionShouldBe<P, Intersection2D.MultiplePoints<P>>(segment, center, radius)
         intersection.points shouldContainExactlyInAnyOrder listOf(expectedPoint1, expectedPoint2)
     }
 
-    private fun <P : Vector2D<P>> segmentCircleIntersectionShouldBe(
+    private fun <P : Vector2D<P>> shouldIntersectIn(
         segment: Segment2D<P>,
         center: P,
         radius: Double,
         expectedPoint: P
-    ) {
-        val intersection = circleIntersectionShouldBe<P, Intersection2D.SinglePoint<P>>(
-            segment,
-            center,
-            radius,
-            false
-        )
-        intersection.point shouldBe expectedPoint
-    }
+    ) = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment, center, radius).point shouldBe expectedPoint
 
-    private fun <P : Vector2D<P>> segmentCircleIntersectionShouldBeEmpty(
-        segment: Segment2D<P>,
-        center: P,
-        radius: Double
-    ) = circleIntersectionShouldBe<P, Intersection2D.None>(segment, center, radius, false)
+    private fun <P : Vector2D<P>> shouldNotIntersect(segment: Segment2D<P>, center: P, radius: Double) =
+        intersectionShouldBe<P, Intersection2D.None>(segment, center, radius)
 
     init {
         "test length" {
@@ -226,7 +227,7 @@ class TestSegment2DImpl : StringSpec() {
             /*
              * Plain intersection.
              */
-            segmentsIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(3.0, 1.0, 1.0, 3.0),
                 coords(2.0, 2.0)
@@ -234,7 +235,7 @@ class TestSegment2DImpl : StringSpec() {
             /*
              * Segments share an endpoint.
              */
-            segmentsIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(5.0, 5.0, 6.0, 1.0),
                 coords(5.0, 5.0)
@@ -242,7 +243,7 @@ class TestSegment2DImpl : StringSpec() {
             /*
              * Segments share an endpoint and are collinear.
              */
-            segmentsIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(5.0, 5.0, 6.0, 6.0),
                 coords(5.0, 5.0)
@@ -250,73 +251,73 @@ class TestSegment2DImpl : StringSpec() {
             /*
              * Segments are parallel.
              */
-            segmentIntersectionShouldBeEmpty(
+            shouldNotIntersect(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(1.0, 2.0, 5.0, 6.0)
             )
             /*
              * Segments are not parallel but not intersecting as well.
              */
-            segmentIntersectionShouldBeEmpty(
+            shouldNotIntersect(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(2.0, 3.0, 1.0, 5.0)
             )
             /*
              * Segments are collinear but disjoint.
              */
-            segmentIntersectionShouldBeEmpty(
+            shouldNotIntersect(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(6.0, 6.0, 7.0, 7.0)
             )
             /*
              * Segments are coincident.
              */
-            segmentsIntersectionShouldBeInfinite(
+            shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(1.0, 1.0, 5.0, 5.0)
             )
             /*
              * Overlapping.
              */
-            segmentsIntersectionShouldBeInfinite(
+            shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(3.0, 3.0, 7.0, 7.0)
             )
             /*
              * Overlapping with negative coords.
              */
-            segmentsIntersectionShouldBeInfinite(
+            shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(-3.0, -3.0, 4.0, 4.0)
             )
             /*
              * One contains the other.
              */
-            segmentsIntersectionShouldBeInfinite(
+            shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(-3.0, -3.0, 7.0, 7.0)
             )
             /*
              * Overlapping and share an endpoint.
              */
-            segmentsIntersectionShouldBeInfinite(
+            shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(3.0, 3.0, 5.0, 5.0)
             )
             /*
              * Intersections with axis-aligned segments.
              */
-            segmentsIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 1.0),
                 segment(3.0, -1.0, 3.0, 1.0),
                 coords(3.0, 1.0)
             )
-            segmentsIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 1.0),
                 segment(3.0, -1.0, 3.0, 5.0),
                 coords(3.0, 1.0)
             )
-            segmentsIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 1.0),
                 segment(5.0, 1.0, 6.0, 1.0),
                 coords(5.0, 1.0)
@@ -324,78 +325,78 @@ class TestSegment2DImpl : StringSpec() {
             /*
              * Aligned to the x-axis and overlapping.
              */
-            segmentsIntersectionShouldBeInfinite(
+            shouldOverlap(
                 segment(1.0, 1.0, 5.0, 1.0),
                 segment(4.9, 1.0, 6.0, 1.0)
             )
             /*
              * Aligned to the x-axis and collinear but disjoint.
              */
-            segmentIntersectionShouldBeEmpty(
+            shouldNotIntersect(
                 segment(1.0, 1.0, 5.0, 1.0),
                 segment(6.0, 1.0, 7.0, 1.0)
             )
             /*
              * Aligned to the y-axis.
              */
-            segmentsIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 1.0, 6.0),
                 segment(1.0, 1.0, 1.0, -6.0),
                 coords(1.0, 1.0)
             )
-            segmentIntersectionShouldBeEmpty(
+            shouldNotIntersect(
                 segment(1.0, 1.0, 1.0, 6.0),
                 segment(1.0, -1.0, 1.0, -6.0)
             )
-            segmentsIntersectionShouldBeInfinite(
+            shouldOverlap(
                 segment(1.0, 1.0, 1.0, 6.0),
                 segment(1.0, 2.0, 1.0, -6.0)
             )
             /*
              * Degenerate segments.
              */
-            segmentsIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 1.0, 1.0),
                 segment(1.0, 1.0, 1.0, 1.0),
                 coords(1.0, 1.0)
             )
-            segmentIntersectionShouldBeEmpty(
+            shouldNotIntersect(
                 segment(1.0, 1.0, 1.0, 1.0),
                 segment(1.0, 2.0, 1.0, 2.0)
             )
         }
 
         "test circle intersection" {
-            segmentCircleIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 1.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(3.0, 1.0)
             )
-            segmentCircleIntersectionShouldBeEmpty(
+            shouldNotIntersect(
                 segment(1.0, -1.0, 5.0, -1.0),
                 coords(3.0, 3.0),
                 2.0
             )
-            segmentCircleIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(0.0, 3.0, 6.0, 3.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(1.0, 3.0),
                 coords(5.0, 3.0)
             )
-            segmentCircleIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(3.0, 3.0, 6.0, 3.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(5.0, 3.0)
             )
-            segmentCircleIntersectionShouldBeEmpty(
+            shouldNotIntersect(
                 segment(10.0, 3.0, 12.0, 3.0),
                 coords(3.0, 3.0),
                 2.0
             )
-            segmentCircleIntersectionShouldBe(
+            shouldIntersectIn(
                 segment(0.0, 1.0, 1.0, 1.0),
                 coords(1.0, 1.0),
                 1.0,

@@ -9,27 +9,28 @@
 
 package it.unibo.alchemist.model.implementations.actions.physicalstrategies
 
-import it.unibo.alchemist.model.interfaces.PhysicalNode
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.ComfortRepulsionNode2D
 import it.unibo.alchemist.model.interfaces.PhysicalSteeringStrategy
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
-import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A [PhysicalSteeringStrategy] performing a simple sum of the overall intentional force and the physical ones.
  */
-class Sum<T, P, A, F>(
-    private val environment: PhysicsEnvironment<T, P, A, F>,
-    override val physicalNode: PhysicalNode<T, P, A, F>,
-    override val nonPhysicalStrategy: SteeringStrategy<T, P>
-) : PhysicalSteeringStrategy<T, P, A, F>
-    where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
-          F : GeometricShapeFactory<P, A> {
+class Sum<T>(
+    private val environment: Physics2DEnvironment<T>,
+    override val node: ComfortRepulsionNode2D<T>,
+    override val nonPhysicalStrategy: SteeringStrategy<T, Euclidean2DPosition>
+) : PhysicalSteeringStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
 
-    override fun computeNextPosition(overallIntentionalForce: P): P =
-        (physicalNode.physicalForces(environment) + overallIntentionalForce).reduce { acc, p -> acc + p }
+    override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition =
+        (node.physicalForces(environment) + overallIntentionalForce)
+            .reduce { acc, p -> acc + p }
+            /*
+             * Prevents the pedestrian from purposely colliding with others.
+             */
+            .let { environment.farthestPositionReachable(node, it, node.comfortArea.radius) }
 }

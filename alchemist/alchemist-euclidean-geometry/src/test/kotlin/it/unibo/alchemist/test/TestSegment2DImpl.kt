@@ -13,6 +13,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import it.unibo.alchemist.coincidesWith
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -402,6 +403,11 @@ class TestSegment2DImpl : StringSpec() {
                 1.0,
                 coords(0.0, 1.0)
             )
+        }
+
+        "test toRange" {
+            segment(1.0, 1.0, 5.0, 1.0).toRange().coincidesWith(1.0..5.0) shouldBe true
+            segment(1.0, 1.0, 1.0, 5.0).toRange().coincidesWith(1.0..5.0) shouldBe true
         }
     }
 }

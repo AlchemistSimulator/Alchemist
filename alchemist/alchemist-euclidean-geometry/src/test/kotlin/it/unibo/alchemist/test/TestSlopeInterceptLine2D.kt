@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Line2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.junit.jupiter.api.assertThrows
 
 class TestSlopeInterceptLine2D : StringSpec() {

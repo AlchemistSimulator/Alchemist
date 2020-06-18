@@ -37,13 +37,17 @@ fun runWithOptions(vararg commands: String, test: ProcessResult.() -> Unit) {
     test(ProcessResult(exitStatus, bytes.toString()))
 }
 
+private fun ProcessResult.checkThatHelpIsPrinted() {
+    output shouldContain "--batch"
+    output shouldContain "--help"
+    output shouldContain "--effect"
+}
+
 class TestCLI : StringSpec({
     "help should get printed with --help" {
         runWithOptions("--help") {
             status shouldBe 0
-            output shouldContain "batch"
-            output shouldContain "help"
-            output shouldContain "effect"
+            checkThatHelpIsPrinted()
         }
     }
     "execution of a file should launch" {
@@ -54,6 +58,12 @@ class TestCLI : StringSpec({
     "execution of a batch should work" {
         runWithOptions("-y", "simplesimulation.yml", "-b", "-var", "fiz,baz") {
             status shouldBe 0
+        }
+    }
+    "execution with no option should print help" {
+        runWithOptions {
+            status shouldBe 1
+            checkThatHelpIsPrinted()
         }
     }
     "logger should not be nop" {

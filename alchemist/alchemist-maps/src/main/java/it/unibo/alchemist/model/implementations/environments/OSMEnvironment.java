@@ -16,7 +16,6 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.GraphHopperAPI;
 import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.routing.util.EdgeFilter;
-import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.shapes.GHPoint;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -47,7 +46,6 @@ import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -252,9 +250,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
                     final GeoPosition p11 = key.start;
                     final GeoPosition p21 = key.end;
                     final GHRequest req = new GHRequest(p11.getLatitude(), p11.getLongitude(), p21.getLatitude(), p21.getLongitude())
-                            .setAlgorithm(DEFAULT_ALGORITHM)
-                            .setVehicle(vehicle1.toString())
-                            .setWeighting(ROUTING_STRATEGY);
+                            .setAlgorithm(DEFAULT_ALGORITHM);
                     final GraphHopperAPI gh = navigators.get(vehicle1);
                     if (gh != null) {
                         final GHResponse resp = gh.route(req);
@@ -457,13 +453,18 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
         navigators = KNOWN_MAPS.get(mapResource);
     }
 
-    private static synchronized GraphHopperAPI initNavigationSystem(final File mapFile, final String internalWorkdir, final Vehicle v) {
-        return new GraphHopperOSM().setOSMFile(mapFile.getAbsolutePath()).forDesktop()
+    private static synchronized GraphHopperAPI initNavigationSystem(
+            final File mapFile,
+            final String internalWorkdir,
+            final Vehicle vehicle) {
+        return new GraphHopperOSM()
+                .setOSMFile(mapFile.getAbsolutePath())
+                .forDesktop()
                 .setElevation(false)
                 .setEnableCalcPoints(true)
                 .setInMemory()
                 .setGraphHopperLocation(internalWorkdir)
-                .setEncodingManager(EncodingManager.create(v.toString().toLowerCase(Locale.US)))
+                .setEncodingManager(vehicle.getEncoder())
                 .importOrLoad();
     }
 

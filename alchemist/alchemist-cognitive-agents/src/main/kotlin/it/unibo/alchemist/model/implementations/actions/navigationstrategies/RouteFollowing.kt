@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  *
  * @param T the concentration type.
  * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
 open class RouteFollowing<T, L : Euclidean2DConvexShape, R> constructor(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,

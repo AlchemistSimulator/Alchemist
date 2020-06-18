@@ -134,7 +134,7 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
         radius <= 0.0 -> throw IllegalArgumentException("radius must be > 0")
         isVertical -> solveQuadraticEquation(
             1.0,
-            2 * -center.y,
+            -2 * center.y,
             center.y.pow(2) + (xIntercept - center.x).pow(2) - radius.pow(2))
             /*
              * The equation roots are y-coordinates.

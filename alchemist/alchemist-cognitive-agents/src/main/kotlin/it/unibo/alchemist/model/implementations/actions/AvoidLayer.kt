@@ -60,7 +60,7 @@ class AvoidLayer @JvmOverloads constructor(
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
         val currentPosition = environment.getPosition(pedestrian)
         /*
-         * environment is an Euclidean2DEnvironment<Number>, so if it has obstacles it must be an
+         * environment is euclidean, so if it has obstacles it must be an
          * EnvironmentWithObstacles<*, *, Euclidean2DPosition>. Since generic types can't be checked at runtime, this
          * is the best we can do.
          */

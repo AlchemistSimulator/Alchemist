@@ -22,6 +22,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
+import java.lang.Exception
+import java.lang.IllegalStateException
 
 /**
  * Implementation of [Physics2DEnvironment].
@@ -68,6 +70,11 @@ open class Continuous2DEnvironment<T> :
      */
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
+        check(node.canFit(position)) {
+            node as NodeWithShape<T, *, *>
+            val overlappingPositions = node.overlappingNodes(position).map { getPosition(it) }
+            "node in $position overlaps with nodes in $overlappingPositions. Node's diameter is ${node.shape.diameter}"
+        }
         if (node is NodeWithShape<*, *, *> && node.shape.diameter > largestShapeDiameter) {
             largestShapeDiameter = node.shape.diameter
         }
@@ -93,7 +100,11 @@ open class Continuous2DEnvironment<T> :
      */
     override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
         if (node is NodeWithShape<T, *, *>) {
-            super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
+            val farthestPosition = farthestPositionReachable(node, newpos)
+            if (!node.canFit(farthestPosition)) {
+                throw Exception()
+            }
+            super.moveNodeToPosition(node, farthestPosition)
         } else {
             super.moveNodeToPosition(node, newpos)
         }
@@ -102,20 +113,17 @@ open class Continuous2DEnvironment<T> :
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
      * limits.
      */
-    override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean =
-        node !is NodeWithShape<*, *, *> ||
-            getNodesWithin(shapeFactory.requireCompatible(node.shape).transformed { origin(position) }).isEmpty()
+    override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean = node.canFit(position)
 
     /**
      * Creates an euclidean position from the given coordinates.
      * @param coordinates coordinates array
      * @return Euclidean2DPosition
      */
-    override fun makePosition(vararg coordinates: Number) =
-        with(coordinates) {
-            require(size == 2)
-            Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
-        }
+    override fun makePosition(vararg coordinates: Number) = with(coordinates) {
+        require(size == 2)
+        Euclidean2DPosition(coordinates[0].toDouble(), coordinates[1].toDouble())
+    }
 
     /**
      * For a better understanding of how to compute collision points with circular hitboxes see
@@ -135,7 +143,6 @@ open class Continuous2DEnvironment<T> :
             }
             .minBy { currentPosition.distanceTo(it) }
             ?: desiredPosition
-
     }
 
     /**
@@ -145,7 +152,17 @@ open class Continuous2DEnvironment<T> :
     private fun nodesOnPath(node: NodeWithShape<T, *, *>, desiredMovement: Segment2D<*>): List<Node<T>> =
         with(node.shape) {
             shapeFactory.rectangle(desiredMovement.length + diameter, diameter)
-                .transformed { desiredMovement.midPoint.let { origin(it.x, it.y) } }
+                .transformed {
+                    desiredMovement.midPoint.let { origin(it.x, it.y) }
+                    rotate(desiredMovement.toVector.asAngle)
+                }
                 .let { movementArea -> getNodesWithin(movementArea).minusElement(node) }
         }
+
+    private fun Node<T>.canFit(position: Euclidean2DPosition): Boolean =
+        this !is NodeWithShape<T, *, *> || overlappingNodes(position).isEmpty()
+
+    private fun NodeWithShape<T, *, *>.overlappingNodes(position: Euclidean2DPosition): List<Node<T>> =
+        getNodesWithin(shapeFactory.requireCompatible(shape).transformed { origin(position) })
+            .minusElement(this)
 }

@@ -40,7 +40,7 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalNode<T, P, A, F>, Pedestrian<
 
     override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>): List<P> =
         environment.getNodesWithin(comfortArea)
-            .minus(this)
+            .minusElement(this)
             .filterIsInstance<NodeWithShape<T, P, A>>()
             .map { repulsionForce(it) }
             /*

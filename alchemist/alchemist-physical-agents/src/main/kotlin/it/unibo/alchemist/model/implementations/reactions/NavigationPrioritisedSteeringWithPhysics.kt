@@ -21,9 +21,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 /**
  * [NavigationPrioritisedSteering] strategy for physical pedestrians, taking into account physical forces as well.
  * [Sum] strategy is used to combine steering actions and physical forces.
- * TODO(not working)
  */
-class NavigationPrioritisedSteeringWithPhysics<T, N : ConvexPolygon>(
+class NavigationPrioritisedSteeringWithPhysics<T, N : ConvexPolygon> @JvmOverloads constructor(
     env: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: PhysicalPedestrian2D<T>,
     timeDistribution: TimeDistribution<T>,

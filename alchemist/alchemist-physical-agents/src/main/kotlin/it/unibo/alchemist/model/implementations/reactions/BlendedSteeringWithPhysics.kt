@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
 /**
  * [BlendedSteering] strategy for physical pedestrians, taking into account physical forces as well. [Sum] strategy
  * is used to combine steering actions and physical forces.
- * TODO(not working)
  */
 class BlendedSteeringWithPhysics<T>(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, *, *>,

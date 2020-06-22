@@ -10,8 +10,8 @@ io.github.javaeden.orchid:*
 io.kotest:*
    ^^^^^^
 
-org.antlr:*
-    ^^^^^
+org.antlr:antlr4(-*)
+          ^^^^^^
 
 org.apache.ignite:*
            ^^^^^^

@@ -33,7 +33,9 @@ buildscript {
     dependencies.classpath("de.fayard:dependencies:+")
 }
 
-bootstrapRefreshVersionsAndDependencies()
+bootstrapRefreshVersionsAndDependencies(listOf(
+    file("config/version-alias-rules.txt").readText()
+))
 
 plugins {
     id("com.gradle.enterprise") version "3.2"

@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -23,16 +22,12 @@ class Cohesion<T, P, A>(
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>
 ) : AbstractGroupSteeringAction<T, P, A>(env, reaction, pedestrian)
-    where
-    A : GeometricTransformation<P>,
-    P : Position<P>,
-    P : Vector<P> {
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P> {
 
-    @Suppress("UNCHECKED_CAST")
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        Cohesion(env, r, n as Pedestrian<T, P, A>)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Cohesion(env, r, n)
 
-    override fun nextPosition(): P = (centroid() - currentPosition).resizedToMaxWalkIfGreater()
+    override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 
     override fun group(): List<Pedestrian<T, P, *>> = pedestrian.membershipGroup.members
 }

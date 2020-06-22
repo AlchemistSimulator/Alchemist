@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.findExtremeCoordsOnX
 import it.unibo.alchemist.findExtremeCoordsOnY
 import it.unibo.alchemist.intersect
 import it.unibo.alchemist.intersectsBoundsExcluded
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.subtractAll
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigator.ExtendableConvexPolygon
@@ -26,6 +26,7 @@ import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 
 /**
+ * TODO(improve the quality of this algorithm)
  * NaviGator (Navigation Graphs Generator) is an algorithm capable of generating an
  * [Euclidean2DNavigationGraph] of a given environment with obstacles. The nodes of
  * the produced graph are convex polygons representing the areas of the environment
@@ -77,25 +78,14 @@ fun generateNavigationGraph(
 ): Euclidean2DNavigationGraph {
     require(width > 0 && height > 0) { "width and height should be positive" }
     val seeds = rooms
-        .map {
-            createSeed(
-                it.x,
-                it.y,
-                unity,
-                origin,
-                width,
-                height,
-                obstacles
-            )
-        }
+        .map { createSeed(it.x, it.y, unity, origin, width, height, obstacles) }
         .toMutableList()
         .grow(obstacles, unity)
     val graph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
     seeds.forEach { graph.addVertex(it) }
-
     seeds.flatMap { seed ->
         seed.edges().mapIndexed { index, edge ->
-            if (edge.isAlignedToAnyAxis) {
+            if (edge.isHorizontal || edge.isVertical) {
                 val passages = seed.findPassages(index, seeds, origin, width, height, obstacles, unity)
                 /*
                  * Moves the edge back to its previous position as findCrossings modified it.
@@ -208,16 +198,8 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
              */
             intervals.map {
                 val passageShape = when {
-                    oldEdge.isHorizontal -> createSegment(
-                        it.start,
-                        oldEdge.first.y,
-                        x2 = it.endInclusive
-                    )
-                    else -> createSegment(
-                        oldEdge.first.x,
-                        it.start,
-                        y2 = it.endInclusive
-                    )
+                    oldEdge.isHorizontal -> createSegment(it.start, oldEdge.first.y, x2 = it.endInclusive)
+                    else -> createSegment(oldEdge.first.x, it.start, y2 = it.endInclusive)
                 }
                 Euclidean2DPassage(this, neighbor, passageShape)
             }
@@ -254,9 +236,4 @@ private fun createSeed(
  * Creates a [Segment2D]. [x2] defaults to [x1] and [y2] defaults to [y1].
  */
 private fun createSegment(x1: Double, y1: Double, x2: Double = x1, y2: Double = y1) =
-    Segment2DImpl(
-        Euclidean2DPosition(
-            x1,
-            y1
-        ), Euclidean2DPosition(x2, y2)
-    )
+    Segment2DImpl(Euclidean2DPosition(x1, y1), Euclidean2DPosition(x2, y2))

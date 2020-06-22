@@ -15,34 +15,32 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * A [SteeringAction] allowing a pedestrian to navigate an environment consciously (e.g. without
- * getting stuck in U-shaped obstacles).
- * Names are inspired to indoor environments, but this interface works for outdoor ones as well.
+ * A [SteeringAction] allowing a pedestrian to navigate an environment consciously (e.g. without getting stuck in
+ * U-shaped obstacles). Names are inspired to indoor environments, but this interface works for outdoor ones as well.
  *
  * @param T the concentration type.
  * @param P the [Position] type and [Vector] type for the space the pedestrian is into.
  * @param A the transformations supported by the shapes in this space.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
- * @param M the type of nodes of the navigation graph provided by the [environment].
- * @param F the type of edges of the navigation graph provided by the [environment].
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param N the type of nodes of the navigation graph provided by the [environment].
+ * @param E the type of edges of the navigation graph provided by the [environment].
  */
-interface NavigationAction<T, P, A, N, E, M, F> : SteeringAction<T, P>
-    where
-        P : Position<P>, P : Vector<P>,
-        A : GeometricTransformation<P>,
-        N : ConvexGeometricShape<P, A>,
-        M : ConvexGeometricShape<P, A> {
+interface NavigationAction<T, P, A, L, R, N, E> : SteeringAction<T, P>
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P>,
+          L : ConvexGeometricShape<P, A>,
+          N : ConvexGeometricShape<P, A> {
 
     /**
      * The pedestrian to move.
      */
-    val pedestrian: OrientingPedestrian<T, P, A, N, E>
+    val pedestrian: OrientingPedestrian<T, P, A, L, R>
 
     /**
      * The environment the [pedestrian] is into.
      */
-    val environment: EnvironmentWithGraph<*, T, P, A, M, F>
+    val environment: EnvironmentWithGraph<*, T, P, A, N, E>
 
     /**
      * The position of the [pedestrian] in the [environment].
@@ -52,17 +50,17 @@ interface NavigationAction<T, P, A, N, E, M, F> : SteeringAction<T, P>
     /**
      * The room (= environment's area) the [pedestrian] is into.
      */
-    val currentRoom: M?
+    val currentRoom: N?
 
     /**
      * @returns the doors (= passages/edges) the pedestrian can perceive.
      */
-    fun doorsInSight(): List<F>
+    fun doorsInSight(): List<E>
 
     /**
      * Moves the pedestrian across the provided [door], which must be among [doorsInSight].
      */
-    fun crossDoor(door: F)
+    fun crossDoor(door: E)
 
     /**
      * Moves the pedestrian to the given final [destination], which must be inside [currentRoom].

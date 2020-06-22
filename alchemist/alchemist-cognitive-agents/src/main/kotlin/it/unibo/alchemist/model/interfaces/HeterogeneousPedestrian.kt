@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * An heterogeneous pedestrian is a pedestrian where individual characteristics are taken into consideration.
+ * A pedestrian with individual characteristics.
  */
 interface HeterogeneousPedestrian<T, S : Vector<S>, A : GeometricTransformation<S>> : Pedestrian<T, S, A> {
 

@@ -114,8 +114,7 @@ jobs:
         - *reference_jdk
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - travis_retry ./gradlew clean check jacocoTestReport --scan --parallel
-        - travis_retry ./gradlew shadowJar --scan --parallel
+        - travis_retry ./gradlew clean check jacocoTestReport shadowJar --scan --parallel
       after_success:
         - bash <(curl -s https://codecov.io/bash)
       workspaces:
@@ -148,8 +147,7 @@ jobs:
         - travis_retry ./gradlew sign shadowJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
-      after_success:
-        - travis_wait 30 ./gradlew publishAll --scan --stacktrace
+        - travis_retry travis_wait 30 ./gradlew publishAll --scan --stacktrace
       deploy:
         - <<: *deploy_base
           provider: releases

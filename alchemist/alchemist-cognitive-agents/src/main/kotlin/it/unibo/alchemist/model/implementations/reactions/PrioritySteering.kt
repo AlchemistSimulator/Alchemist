@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 
 /**
- * Steering behavior where only the action whose target is the nearest to the current pedestrian position is executed.
+ * Steering behavior using [Nearest] steering strategy (= the only action executed is the one with the nearest target).
  *
  * @param environment
  *          the environment inside which the pedestrian moves.

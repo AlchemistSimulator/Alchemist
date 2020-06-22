@@ -17,5 +17,4 @@ package it.unibo.alchemist.model.interfaces.geometry
  * be contracts the implementor has to comply, the contract defined by
  * this interface implies convexity.
  */
-interface ConvexGeometricShape<V : Vector<V>, A : GeometricTransformation<V>> :
-    GeometricShape<V, A>
+interface ConvexGeometricShape<V : Vector<V>, A : GeometricTransformation<V>> : GeometricShape<V, A>

@@ -15,20 +15,14 @@ import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 
 /**
- * A [PhysicsEnvironment] with obstacles providing a [NavigationGraph], i.e. a graph whose
- * nodes are convex shapes representing the areas of the environment traversable
- * by agents (namely, walkable areas), whereas edges represent connections between
- * them. To make it easier, think that in an indoor environment, nodes should
- * represent rooms and corridors, whereas edges should represent doors and passages.
+ * An [EnvironmentWithGraph] supporting physics.
  */
 interface PhysicsEnvironmentWithGraph<W, T, P, A, N, E, F> : EnvironmentWithGraph<W, T, P, A, N, E>,
     PhysicsEnvironment<T, P, A, F>
-    where
-    W : Obstacle<P>,
-    P : Position<P>, P : Vector<P>,
-    A : GeometricTransformation<P>,
-    N : ConvexGeometricShape<P, A>,
-    F : GeometricShapeFactory<P, A>
+    where W : Obstacle<P>,
+          P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P>,
+          N : ConvexGeometricShape<P, A>,
+          F : GeometricShapeFactory<P, A>

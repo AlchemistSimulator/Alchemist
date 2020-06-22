@@ -18,17 +18,17 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 
 /**
- * An environment with obstacles providing a [NavigationGraph], i.e. a graph whose
- * nodes are convex shapes representing the areas of the environment traversable
- * by agents (namely, walkable areas), whereas edges represent connections between
- * them. To make it easier, think that in an indoor environment, nodes should
- * represent rooms and corridors, whereas edges should represent doors and passages.
+ * An [EnvironmentWithObstacles] providing a [NavigationGraph]. This is a graph whose nodes are [ConvexGeometricShape]s
+ * representing areas of the environment traversable by agents (namely, walkable areas), whereas edges represent
+ * connections between these areas. For instance, in an indoor environment, nodes should represent rooms and corridors,
+ * whereas edges should represent doors and passages. This data structure is also known as
+ * [navigation mesh](https://en.wikipedia.org/wiki/Navigation_mesh).
  */
-interface EnvironmentWithGraph<W, T, P, A, N, E> : EnvironmentWithObstacles<W, T, P> where
-    W : Obstacle<P>,
-    P : Position<P>, P : Vector<P>,
-    A : GeometricTransformation<P>,
-    N : ConvexGeometricShape<P, A> {
+interface EnvironmentWithGraph<W, T, P, A, N, E> : EnvironmentWithObstacles<W, T, P>
+    where W : Obstacle<P>,
+          P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P>,
+          N : ConvexGeometricShape<P, A> {
 
     /**
      * The navigation graph.

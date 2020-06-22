@@ -5,7 +5,8 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * An heterogeneous pedestrian with cognitive capabilities too.
+ * A heterogeneous pedestrian with cognitive capabilities.
  */
 interface CognitivePedestrian<T, V, A> : HeterogeneousPedestrian<T, V, A>, CognitiveAgent
-    where V : Vector<V>, A : GeometricTransformation<V>
+    where V : Vector<V>,
+          A : GeometricTransformation<V>

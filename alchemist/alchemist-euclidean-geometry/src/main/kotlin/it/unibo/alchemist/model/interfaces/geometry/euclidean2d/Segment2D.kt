@@ -1,250 +1,187 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
 import it.unibo.alchemist.fuzzyIn
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SlopeInterceptLine2D
 import it.unibo.alchemist.rangeFromUnordered
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import org.danilopianini.lang.MathUtils
 import org.danilopianini.lang.MathUtils.fuzzyEquals
+import java.lang.UnsupportedOperationException
 
 /**
- * Defines a segment from [first] to [second] in an euclidean bidimensional space.
+ * Defines a line segment in a cartesian plane, endpoints are included.
  */
 interface Segment2D<P : Vector2D<P>> {
 
     /**
-     * First point.
+     * The first endpoint of the segment.
      */
     val first: P
 
     /**
-     * Second point.
+     * The second endpoint of the segment.
      */
-
     val second: P
-    /**
-     * The intercept of the line passing through [first] and [second].
-     */
-    @JvmDefault
-    val intercept: Double get() = first.y - slope * first.x
-
-    /**
-     * A segment is degenerate if its points coincide.
-     */
-    @JvmDefault
-    val isDegenerate: Boolean get() = fuzzyEquals(first.x, second.x) && fuzzyEquals(first.y, second.y)
-
-    /**
-     * Indicates if the segment is aligned to the x axis.
-     */
-    @JvmDefault
-    val isHorizontal: Boolean get() = fuzzyEquals(first.y, second.y)
-
-    /**
-     * Indicates if the segment is aligned to the y axis.
-     */
-    @JvmDefault
-    val isVertical: Boolean get() = fuzzyEquals(first.x, second.x)
-
-    /**
-     * Indicates if the segment is axis-aligned.
-     */
-    @JvmDefault
-    val isAlignedToAnyAxis: Boolean get() = isHorizontal || isVertical
 
     /**
      * The length of the segment.
      */
     @JvmDefault
-    val length: Double get() = toVector().magnitude
+    val length: Double get() = toVector.magnitude
 
     /**
-     * The slope of the segment. If the two points coincide, this is [Double.NaN].
+     * Indicates if the two endpoints coincide (= segment has zero length).
      */
     @JvmDefault
-    val slope: Double get() = if (isDegenerate) Double.NaN else toVector().run { y / x }
+    val isDegenerate: Boolean get() = fuzzyEquals(first, second)
+
+    /**
+     * Indicates if the segment is aligned to the x-axis, this is true if [isDegenerate].
+     */
+    @JvmDefault
+    val isHorizontal: Boolean get() = fuzzyEquals(first.y, second.y)
+
+    /**
+     * Indicates if the segment is aligned to the y-axis, this is true if [isDegenerate].
+     */
+    @JvmDefault
+    val isVertical: Boolean get() = fuzzyEquals(first.x, second.x)
 
     /**
      * The medium point of the segment.
      */
     @JvmDefault
-    val midPoint get() = first.newFrom((first.x + second.x) / 2, (first.y + second.y) / 2)
+    val midPoint: P get() = first.newFrom((first.x + second.x) / 2, (first.y + second.y) / 2)
 
     /**
-     * Finds the point of the segment which is closest to the provided position.
+     * The vector representing the movement from [first] to [second].
      */
     @JvmDefault
-    fun closestPointTo(point: P): P =
-        when {
-            isDegenerate -> first
-            contains(point) -> point
-            else -> {
-                /*
-                 * Intersection between the line defined by the segment and the line
-                 * perpendicular to the segment passing through the given point.
-                 */
-                val intersection = intersectAsLines(copyWith(point, point + toVector().normal()))
-                require(intersection is Intersection2D.SinglePoint<P>) {
-                    "Bug in Alchemist geometric engine, found in ${this::class.qualifiedName}"
-                }
-                when {
-                    contains(intersection.point) -> intersection.point
-                    first.distanceTo(intersection.point) < second.distanceTo(intersection.point) -> first
-                    else -> second
-                }
-            }
-        }
+    val toVector: P get() = second - first
+
+    /**
+     * @returns the [Line2D] passing through [first] and [second]. Throws an [UnsupportedOperationException] if the
+     * segment [isDegenerate].
+     */
+    @JvmDefault
+    fun toLine(): Line2D<P> = when {
+        isDegenerate -> throw UnsupportedOperationException("degenerate segment can't be converted to line")
+        else -> SlopeInterceptLine2D.fromSegment(this)
+    }
 
     /**
      * Creates a copy of this Segment2D using the specified [first] and [second] points.
      */
-    @JvmDefault
     fun copyWith(first: P = this.first, second: P = this.second): Segment2D<P>
 
     /**
-     * Checks if the segment contains a [point]. Doubles are not directly compared,
-     * [MathUtils.fuzzyEquals] is used instead.
+     * Checks if the segment contains a [point].
      */
     @JvmDefault
-    fun contains(point: P) = isCollinearWith(point) &&
+    fun contains(point: P): Boolean = isCollinearWith(point) &&
         point.x fuzzyIn rangeFromUnordered(first.x, second.x) &&
         point.y fuzzyIn rangeFromUnordered(first.y, second.y)
 
     /**
-     * Computes the distance between the segment and a given [point].
+     * Finds the point of the segment which is closest to the provided [point].
      */
     @JvmDefault
-    fun distanceTo(point: P) = closestPointTo(point).distanceTo(point)
-
-    /**
-     * Computes the (minimum) distance between two segments.
-     */
-    @JvmDefault
-    fun distanceTo(other: Segment2D<P>): Double =
-        mutableListOf(
-            distanceTo(other.first),
-            distanceTo(other.second),
-            other.distanceTo(first),
-            other.distanceTo(second)
-        ).min() ?: Double.POSITIVE_INFINITY
-
-    /**
-     * Finds the intersection of two lines represented by segments.
-     * Degenerate segments (of zero
-     * length) are not supported.
-     */
-    @JvmDefault
-    fun intersectAsLines(other: Segment2D<P>): Intersection2D<P> {
-        require(!isDegenerate && !other.isDegenerate) { "degenerate segments are not lines" }
-        val m1 = slope
-        val q1 = intercept
-        val m2 = other.slope
-        val q2 = other.intercept
-        return when {
-            coincide(m1, m2, q1, q2, this, other) -> Intersection2D.Line
-            areParallel(m1, m2) -> Intersection2D.None
-            else -> {
-                val intersection = when {
-                    isVertical -> first.newFrom(first.x, m2 * first.x + q2)
-                    other.isVertical -> first.newFrom(other.first.x, m1 * other.first.x + q1)
-                    else -> {
-                        val x = (q2 - q1) / (m1 - m2)
-                        val y = m1 * x + q1
-                        first.newFrom(x, y)
-                    }
-                }
-                Intersection2D.SinglePoint(intersection)
+    fun closestPointTo(point: P): P = when {
+        isDegenerate -> first
+        contains(point) -> point
+        else -> {
+            /*
+             * Intersect the line defined by this segment and the line perpendicular to this segment passing
+             * through the given point.
+             */
+            val intersection = toLine().intersect(copyWith(point, point + toVector.normal()).toLine())
+            require(intersection is Intersection2D.SinglePoint<P>) {
+                "Bug in Alchemist geometric engine, found in ${this::class.qualifiedName}"
+            }
+            when {
+                contains(intersection.point) -> intersection.point
+                first.distanceTo(intersection.point) < second.distanceTo(intersection.point) -> first
+                else -> second
             }
         }
     }
 
-    private fun coincide(m1: Double, m2: Double, q1: Double, q2: Double, s1: Segment2D<*>, s2: Segment2D<*>) =
-        when {
-            !areParallel(m1, m2) -> false
-            s1.isVertical && s2.isVertical -> fuzzyEquals(s1.first.x, s2.first.x)
-            else -> fuzzyEquals(q1, q2)
-        }
-
-    private fun areParallel(m1: Double, m2: Double) =
-        (m1.isInfinite() && m2.isInfinite()) || (m1.isFinite() && m2.isFinite() && fuzzyEquals(m1, m2))
-
     /**
-     * Finds the intersection point of two given segments. This method is able to deal with degenerate
-     * and collinear segments.
+     * Computes the shortest distance between the segment and the given [point].
      */
     @JvmDefault
-    fun intersectSegment(other: Segment2D<P>): Intersection2D<P> {
-        if (isDegenerate || other.isDegenerate) {
-            val degenerate = takeIf { it.isDegenerate } ?: other
-            val otherSegment = other.takeIf { degenerate == this } ?: this
-            return when {
-                otherSegment.contains(degenerate.first) -> Intersection2D.SinglePoint(degenerate.first)
-                else -> Intersection2D.None
-            }
-        }
-        val intersection: Intersection2D<P> = intersectAsLines(other)
-        return when {
-            intersection is Intersection2D.SinglePoint && bothContain(this, other, intersection.point) -> intersection
-            intersection is Intersection2D.Line && ! disjoint(this, other) -> {
-                val sharedEndPoint = sharedEndPoint(this, other)
-                /*
-                 * Overlapping if there is no shared end point.
-                 */
-                if (sharedEndPoint == null) {
-                    Intersection2D.Segment(this)
-                } else {
-                    Intersection2D.SinglePoint(sharedEndPoint)
-                }
-            }
-            else -> Intersection2D.None
-        }
-    }
+    fun distanceTo(point: P): Double = closestPointTo(point).distanceTo(point)
 
-    private fun <P : Vector2D<P>> bothContain(s1: Segment2D<P>, s2: Segment2D<P>, point: P) =
-        s1.contains(point) && s2.contains(point)
-
-    /*
-     * Returns false if the segments share one or more points.
+    /**
+     * Computes the shortest distance between two segments (= the shortest distance between any two of their points).
      */
-    private fun <P : Vector2D<P>> disjoint(s1: Segment2D<P>, s2: Segment2D<P>) =
-        !(s1.contains(s2.first) || s1.contains(s2.second) || s2.contains(s1.first) || s2.contains(s1.second))
-
-    /*
-     * Returns the end point shared by the two segments, or null if they share no endpoint OR
-     * if they share more than one point (i.e. they overlap).
-     */
-    private fun <P : Vector2D<P>> sharedEndPoint(s1: Segment2D<P>, s2: Segment2D<P>): P? {
-        fun fuzzyEquals(first: P, second: P): Boolean = fuzzyEquals(first.x, second.x) && fuzzyEquals(first.y, second.y)
-        return when {
-            fuzzyEquals(s1.first, s2.first) && !s1.contains(s2.second) -> s1.first
-            fuzzyEquals(s1.first, s2.second) && !s1.contains(s2.first) -> s1.first
-            fuzzyEquals(s1.second, s2.first) && !s1.contains(s2.second) -> s1.second
-            fuzzyEquals(s1.second, s2.second) && !s1.contains(s1.first) -> s1.second
-            else -> null
-        }
+    @JvmDefault
+    fun distanceTo(other: Segment2D<P>): Double = when {
+        intersect(other) !is Intersection2D.None -> 0.0
+        else -> listOf(distanceTo(other.first), distanceTo(other.second), other.distanceTo(first),
+            other.distanceTo(second)).min() ?: Double.POSITIVE_INFINITY
     }
 
     /**
-     * Determines if a segment built from the [second] point of this segment to the provided [point]
-     * is collinear (forms a line) with this segment.
+     * Checks if two segments are parallel. Throws an [UnsupportedOperationException] if any of the two segment
+     * [isDegenerate].
      */
     @JvmDefault
-    fun isCollinearWith(point: P): Boolean =
-        when {
-            isVertical -> fuzzyEquals(first.x, point.x)
-            isHorizontal -> fuzzyEquals(first.y, point.y)
-            else -> {
-                val q = first.y - slope * first.x
-                fuzzyEquals((slope * point.x + q), point.y)
-            }
-        }
+    fun isParallelTo(other: Segment2D<P>): Boolean = when {
+        isDegenerate || other.isDegenerate ->
+            throw UnsupportedOperationException("parallelism check is meaningless for degenerate segments")
+        else -> toLine().isParallelTo(other.toLine())
+    }
 
     /**
-     * Checks whether this segment is inside a rectangular region described by an [origin]
-     * point and [width] and [height] values (must be positive).
+     * Checks if [first], [second] and [point] lie on a single line.
      */
     @JvmDefault
-    fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
-        first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
+    fun isCollinearWith(point: P): Boolean = isDegenerate || toLine().contains(point)
+
+    /**
+     * Checks if two segments lie on a single line.
+     */
+    @JvmDefault
+    fun isCollinearWith(other: Segment2D<P>): Boolean = when {
+        isDegenerate -> other.isCollinearWith(first)
+        else -> isCollinearWith(other.first) && isCollinearWith(other.second)
+    }
+
+    /**
+     * Checks if two segments overlap (= are collinear and share one or more points).
+     */
+    @JvmDefault
+    fun overlapsWith(other: Segment2D<P>): Boolean = isCollinearWith(other) &&
+        (contains(other.first) || contains(other.second) || other.contains(first) || other.contains(second))
+
+    /**
+     * Intersects two segments.
+     */
+    @JvmDefault
+    fun intersect(other: Segment2D<P>): Intersection2D<P> = when {
+        isDegenerate -> Intersection2D.None.takeUnless { other.contains(first) } ?: Intersection2D.SinglePoint(first)
+        other.isDegenerate -> other.intersect(this)
+        isCollinearWith(other) && overlapsWith(other) -> endpointSharedWith(other)
+            ?.let { Intersection2D.SinglePoint(it) }
+            /*
+             * Overlapping and sharing more than one point means they share a portion of segment (= infinite points).
+             */
+            ?: Intersection2D.InfinitePoints
+        else -> Intersection2D.create(
+            toLine().intersect(other.toLine()).asList.filter { contains(it) && other.contains(it) }
+        )
+    }
+
+    /**
+     * Intersects a segment and a circle.
+     */
+    @JvmDefault
+    fun intersectCircle(center: P, radius: Double): Intersection2D<P> = when {
+        isDegenerate -> Intersection2D.None
+            .takeUnless { fuzzyEquals(first.distanceTo(center), radius) }
+            ?: Intersection2D.SinglePoint(first)
+        else -> Intersection2D.create(toLine().intersectCircle(center, radius).asList.filter { contains(it) })
+    }
 
     /**
      * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
@@ -260,9 +197,17 @@ interface Segment2D<P : Vector2D<P>> {
     }
 
     /**
+     * Checks if this segment is inside a rectangular region described by an [origin], [width] and
+     * [height] (must be positive).
+     */
+    @JvmDefault
+    fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
+        first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
+
+    /**
      * Maps the segment a [ClosedRange], this is done by extracting either the X coordinates or
      * the Y coordinates of the two endpoints of the segment. [getXCoords] indicates which pair
-     * of coordinates should be extracted.
+     * of coordinates should be extracted (defaults to [isHorizontal]).
      * This can be useful e.g. to represent portions of axis-aligned segments without creating
      * new ones.
      */
@@ -273,8 +218,21 @@ interface Segment2D<P : Vector2D<P>> {
     }
 
     /**
-     * @returns the vector representing the movement from [first] to [second].
+     * @returns the endpoint shared by the two segments, or null if they share no endpoint OR if they
+     * share more than one point.
      */
-    @JvmDefault
-    fun toVector() = second - first
+    private fun endpointSharedWith(other: Segment2D<P>): P? = when {
+        fuzzyEquals(first, other.first) && !contains(other.second) -> first
+        fuzzyEquals(first, other.second) && !contains(other.first) -> first
+        fuzzyEquals(second, other.first) && !contains(other.second) -> second
+        fuzzyEquals(second, other.second) && !contains(other.first) -> second
+        else -> null
+    }
+
+    companion object {
+        /**
+         * Checks if two points are [fuzzyEquals].
+         */
+        private fun <P : Vector2D<P>> fuzzyEquals(a: P, b: P): Boolean = fuzzyEquals(a.x, b.x) && fuzzyEquals(a.y, b.y)
+    }
 }

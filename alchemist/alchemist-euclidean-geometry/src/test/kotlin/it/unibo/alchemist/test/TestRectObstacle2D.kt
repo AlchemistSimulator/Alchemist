@@ -18,15 +18,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 
 class TestRectObstacle2D : StringSpec({
 
-    val obstacle =
-        RectObstacle2D<Euclidean2DPosition>(
-            2.0,
-            2.0,
-            4.0,
-            4.0
-        )
-
-    fun coords(x: Double, y: Double): Euclidean2DPosition = Euclidean2DPosition(x, y)
+    val obstacle = RectObstacle2D<Euclidean2DPosition>(2.0, 2.0, 4.0, 4.0)
 
     /*
      * Given a vector (startx, starty) -> (endx, endy), this method asserts that the

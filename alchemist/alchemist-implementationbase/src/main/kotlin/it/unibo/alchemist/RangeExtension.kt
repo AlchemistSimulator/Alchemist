@@ -71,22 +71,9 @@ fun <T : Comparable<T>> ClosedRange<T>.intersectsBoundsExcluded(other: ClosedRan
 infix operator fun <T : Comparable<T>> ClosedRange<T>.minus(other: ClosedRange<T>): List<ClosedRange<T>> = when {
     other.contains(this) -> emptyList()
     !intersects(other) -> listOf(this)
-    start >= other.start -> listOf(
-        rangeFromUnordered(
-            endInclusive,
-            other.endInclusive
-        )
-    )
-    endInclusive <= other.endInclusive -> listOf(
-        rangeFromUnordered(
-            start,
-            other.start
-        )
-    )
-    else -> listOf(
-        rangeFromUnordered(start, other.start),
-        rangeFromUnordered(endInclusive, other.endInclusive)
-    )
+    start >= other.start -> listOf(rangeFromUnordered(endInclusive, other.endInclusive))
+    endInclusive <= other.endInclusive -> listOf(rangeFromUnordered(start, other.start))
+    else -> listOf(rangeFromUnordered(start, other.start), rangeFromUnordered(endInclusive, other.endInclusive))
 }
 
 /**

@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.SinglePrevalent
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
@@ -20,13 +20,13 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 
 /**
  * A [SteeringBehavior] using [SinglePrevalent] steering strategy and accepting a collection of actions
- * containing a single [EuclideanNavigationAction], which is used as the prevalent one.
+ * containing a single [NavigationAction2D], which is used as the prevalent one.
  *
  * @param T concentration type
- * @param M type of nodes of the environment's graph.
+ * @param N type of nodes of the environment's graph.
  */
-class NavigationPrioritisedSteering<T, M : ConvexPolygon> @JvmOverloads constructor(
-    env: Euclidean2DEnvironmentWithGraph<*, T, M, *>,
+class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads constructor(
+    env: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: Pedestrian2D<T>,
     timeDistribution: TimeDistribution<T>,
     /**
@@ -56,7 +56,7 @@ class NavigationPrioritisedSteering<T, M : ConvexPolygon> @JvmOverloads construc
          * @returns the only navigation action contained in the list or throws an exception.
          */
         private fun <T, M : ConvexPolygon> Actions<T>.singleNavigationAction(): Prevalent<T, M> = this
-            .filterIsInstance<EuclideanNavigationAction<T, *, *, M, *>>()
+            .filterIsInstance<NavigationAction2D<T, *, *, M, *>>()
             .let {
                 require(it.size == 1) { "There should be exactly one navigation action" }
                 it.first()
@@ -68,4 +68,4 @@ class NavigationPrioritisedSteering<T, M : ConvexPolygon> @JvmOverloads construc
  * Just for readability.
  */
 private typealias Actions<T> = List<SteeringAction<T, Euclidean2DPosition>>
-private typealias Prevalent<T, M> = EuclideanNavigationAction<T, *, *, M, *>
+private typealias Prevalent<T, M> = NavigationAction2D<T, *, *, M, *>

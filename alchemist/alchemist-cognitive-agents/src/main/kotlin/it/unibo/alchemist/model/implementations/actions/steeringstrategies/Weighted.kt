@@ -9,16 +9,15 @@ import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 
 /**
- * Steering logic where each steering action is associated to a weight
- * and the final computed position is their weighted sum.
+ * A [SteeringStrategy] performing a weighted sum of steering actions (see [computeNextPosition]).
  *
  * @param environment
  *          the environment in which the pedestrian moves.
  * @param pedestrian
- *          the owner of the steering action this strategy belongs to.
+ *          the owner of the steering actions combined by this strategy.
  * @param weight
- *          lambda to associate each steering action a numerical value representing
- *          its relevance in the position computation.
+ *          lambda used to assign a weight to each steering action: the higher the weight, the greater the
+ *          importance of the action.
  */
 open class Weighted<T>(
     private val environment: Euclidean2DEnvironment<T>,
@@ -26,23 +25,27 @@ open class Weighted<T>(
     private val weight: SteeringAction<T, Euclidean2DPosition>.() -> Double
 ) : SteeringStrategy<T, Euclidean2DPosition> {
 
+    /**
+     * [actions] are partitioned in group steering actions and non-group steering actions. The overall next position
+     * for each of these two sets of actions is computed via weighted sum. The resulting vectors are then summed
+     * together (with unitary weight).
+     */
     override fun computeNextPosition(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
         actions.partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, steerActions) ->
             groupActions.calculatePosition() + steerActions.calculatePosition()
         }
 
     /**
-     * The overall target is computed as follows: only [SteeringActionWithTarget] are considered,
-     * and we pick the action whose target is closest to the current position of the pedestrian,
-     * which will be considered the overall target.
+     * If there's no [SteeringActionWithTarget] among the provided [actions], a zero vector is returned. Otherwise,
+     * the closest target is picked.
      */
     override fun computeTarget(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
-        with(environment.getPosition(pedestrian) ?: environment.origin) {
+        (environment.getPosition(pedestrian) ?: environment.origin).let { currPos ->
             actions
                 .filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
                 .map { it.target() }
-                .minBy { it.distanceTo(this) }
-                ?: this
+                .minBy { it.distanceTo(currPos) }
+                ?: currPos
         }
 
     private fun List<SteeringAction<T, Euclidean2DPosition>>.calculatePosition(): Euclidean2DPosition =

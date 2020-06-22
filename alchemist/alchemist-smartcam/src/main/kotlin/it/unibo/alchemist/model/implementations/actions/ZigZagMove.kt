@@ -27,7 +27,7 @@ class ZigZagMove<T>(
     private val rng: RandomGenerator,
     private val distance: Double,
     private val speed: Double
-) : AbstractEuclidean2DConfigurableMoveNode<T>(
+) : AbstractEuclideanConfigurableMoveNode<T, Euclidean2DPosition>(
     env,
     node,
     RoutingStrategy { p1, p2 -> PolygonalChain<Euclidean2DPosition>(listOf(p1, p2)) },

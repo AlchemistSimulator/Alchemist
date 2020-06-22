@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
 /**
- * A pedestrian with any characteristic taken into consideration.
+ * A plain pedestrian.
  */
 interface Pedestrian<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeWithShape<T, S, A> {
 

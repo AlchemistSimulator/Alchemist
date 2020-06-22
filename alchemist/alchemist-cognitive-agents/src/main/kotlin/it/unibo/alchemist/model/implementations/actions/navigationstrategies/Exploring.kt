@@ -9,15 +9,13 @@
 
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
-import it.unibo.alchemist.model.interfaces.EuclideanNavigationStrategy
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
+import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import java.awt.Shape
 import kotlin.math.abs
@@ -31,16 +29,16 @@ import kotlin.math.pow
  * [Andresen et al.](https://doi.org/10.1080/23249935.2018.1432717), see [weight].
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-open class Exploring<T, N : Euclidean2DConvexShape, E>(
-    override val action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
+open class Exploring<T, L : Euclidean2DConvexShape, R>(
+    override val action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
     /**
      * Weight assigned to known impasses, see [impasseFactor].
      */
     private val knownImpasseWeight: Double = DEFAULT_IMPASSE_WEIGHT
-) : EuclideanNavigationStrategy<T, N, E, ConvexPolygon, Euclidean2DPassage> {
+) : NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> {
 
     companion object {
         /**
@@ -52,8 +50,7 @@ open class Exploring<T, N : Euclidean2DConvexShape, E>(
     /**
      * Shortcut to obtain the pedestrian.
      */
-    protected val pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
-        get() = action.pedestrian
+    protected val pedestrian: OrientingPedestrian2D<T, L, R> get() = action.pedestrian
 
     /**
      * Computes the distance between the pedestrian and a visible passage.

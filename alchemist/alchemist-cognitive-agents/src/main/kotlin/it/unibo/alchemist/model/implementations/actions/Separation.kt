@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
@@ -23,14 +23,13 @@ class Separation<T>(
     override val pedestrian: Pedestrian2D<T>
 ) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        Separation(env, r, n as Pedestrian2D<T>)
+    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
+        requireNodeTypeAndProduce<Pedestrian2D<T>, Separation<T>>(n) { Separation(env, r, it) }
 
-    override fun nextPosition(): Euclidean2DPosition =
-        (currentPosition - centroid()).resizedToMaxWalkIfGreater()
+    override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)
 
     override fun group(): List<Pedestrian2D<T>> = pedestrian.fieldOfView
-            .influentialNodes()
-            .filterIsInstance<Pedestrian2D<T>>()
-            .plusElement(pedestrian)
+        .influentialNodes()
+        .filterIsInstance<Pedestrian2D<T>>()
+        .plusElement(pedestrian)
 }

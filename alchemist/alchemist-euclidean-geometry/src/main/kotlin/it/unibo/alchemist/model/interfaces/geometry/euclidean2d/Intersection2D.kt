@@ -18,23 +18,37 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
  */
 sealed class Intersection2D<out V> {
     /**
+     * List of intersection points (in case of infinite points this is empty).
+     */
+    open val asList: List<V> = emptyList()
+    /**
      * Objects do not intersect.
      */
     object None : Intersection2D<Nothing>()
     /**
      * Objects intersect in a single [point].
      */
-    data class SinglePoint<P : Vector2D<P>>(val point: P) : Intersection2D<P>()
+    data class SinglePoint<P : Vector2D<P>>(val point: P) : Intersection2D<P>() {
+        override val asList = listOf(point)
+    }
     /**
-     * Objects intersect in multiple [points].
+     * Objects intersect in a discrete number of [points].
      */
-    data class MultiplePoints<P : Vector2D<P>>(val points: List<P>) : Intersection2D<P>()
+    data class MultiplePoints<P : Vector2D<P>>(val points: List<P>) : Intersection2D<P>() {
+        override val asList: List<P> get() = points
+    }
     /**
-     * Objects intersect in a [segment].
+     * Objects intersect in infinite points (e.g. overlapping segments).
      */
-    data class Segment<P : Vector2D<P>>(val segment: Segment2D<P>) : Intersection2D<P>()
-    /**
-     * Objects intersect as a line.
-     */
-    object Line : Intersection2D<Nothing>()
+    object InfinitePoints : Intersection2D<Nothing>()
+    companion object {
+        /**
+         * @returns the correct intersection object depending of the number of items in the list.
+         */
+        fun <P : Vector2D<P>> create(points: List<P>): Intersection2D<P> = when {
+            points.isEmpty() -> None
+            points.size == 1 -> SinglePoint(points.first())
+            else -> MultiplePoints(points)
+        }
+    }
 }

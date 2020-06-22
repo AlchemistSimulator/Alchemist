@@ -6,7 +6,6 @@ import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
@@ -20,17 +19,15 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param environment
  *          the environment inside which this pedestrian moves.
  */
-open class HomogeneousPedestrianImpl<T, P, A, F> @JvmOverloads constructor(
+abstract class AbstractHomogeneousPedestrian<T, P, A, F> @JvmOverloads constructor(
     open val environment: PhysicsEnvironment<T, P, A, F>,
     private val rg: RandomGenerator,
     group: PedestrianGroup<T, P, A>? = null
 ) : AbstractNode<T>(environment),
     Pedestrian<T, P, A>
-    where
-    P : Position<P>,
-    P : Vector<P>,
-    A : GeometricTransformation<P>,
-    F : GeometricShapeFactory<P, A> {
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P>,
+          F : GeometricShapeFactory<P, A> {
 
     override fun createT(): T = TODO()
 
@@ -55,6 +52,4 @@ open class HomogeneousPedestrianImpl<T, P, A, F> @JvmOverloads constructor(
     protected val senses: MutableList<InfluenceSphere> = mutableListOf()
 
     override fun speed() = rg.nextDouble(walkingSpeed, runningSpeed)
-
-    override val shape: GeometricShape<P, A> get() = environment.shapeFactory.adimensional()
 }

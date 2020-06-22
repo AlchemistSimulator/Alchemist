@@ -18,8 +18,7 @@ import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPosition> {
 
     @JvmDefault
-    override val origin: Euclidean2DPosition
-        get() = Companion.origin
+    override val origin: Euclidean2DPosition get() = Companion.origin
 
     /**
      * Creates a new [Euclidean2DPosition].

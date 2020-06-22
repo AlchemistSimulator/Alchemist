@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
@@ -19,13 +19,13 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  * [Pursuing] strategy allowing to dynamically change [destination].
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-open class DynamicPursuing<T, N : Euclidean2DConvexShape, E>(
-    action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
+open class DynamicPursuing<T, L : Euclidean2DConvexShape, R>(
+    action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
     override var destination: Euclidean2DPosition
-) : Pursuing<T, N, E>(action, destination) {
+) : Pursuing<T, L, R>(action, destination) {
 
     /**
      * Changes the destination of the strategy. If [voidVolatileMemory] is true, the pedestrian's

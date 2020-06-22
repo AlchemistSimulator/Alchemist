@@ -89,7 +89,7 @@ displacements:
       type: Point
       parameters: [15, 15]
     nodes:
-      type: OrientingHomogeneousPedestrian2D
+      type: HomogeneousOrientingPedestrian2D
       parameters: [0.5]
 ```
 
@@ -108,7 +108,7 @@ displacements:
       type: Point
       parameters: [0, 0]
     nodes:
-      type: OrientingCognitivePedestrian2D
+      type: CognitiveOrientingPedestrian2D
       parameters: [0.5, "adult", "male"]
     programs:
       - *behavior

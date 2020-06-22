@@ -51,15 +51,15 @@ reactions: &behavior
     conditions:
       - type: WantToEvacuate
     actions:
-      - type: AvoidFlowField
+      - type: AvoidLayer
         parameters: [*danger]
-      - type: FollowFlowField
+      - type: FollowLayer
         parameters: [*exit1]
-      - type: FollowFlowField
+      - type: FollowLayer
         parameters: [*exit2]
-      - type: FollowFlowField
+      - type: FollowLayer
         parameters: [*exit3]
-      - type: FollowFlowField
+      - type: FollowLayer
         parameters: [*exit4]
   - time-distribution:
       type: DiracComb

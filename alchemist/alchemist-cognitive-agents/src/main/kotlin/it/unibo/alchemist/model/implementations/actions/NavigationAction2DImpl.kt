@@ -10,9 +10,9 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Action
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
+import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -21,27 +21,28 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import org.apache.commons.math3.util.FastMath
 
+private typealias AbstractNavigationAction2D<T, L, R, N, E> =
+    AbstractNavigationAction<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>
+
 /**
- * An [AbstractNavigationAction] working with euclidean spaces. This action accepts
- * an [Euclidean2DEnvironmentWithGraph] whose graph features [ConvexPolygon]al nodes
- * and [Euclidean2DPassage]s as edges.
+ * Implementation of a [NavigationAction2D]. This action accepts an [Euclidean2DEnvironmentWithGraph] whose graph
+ * contains [ConvexPolygon]al nodes and [Euclidean2DPassage]s as edges.
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
+open class NavigationAction2DImpl<T, L : Euclidean2DConvexShape, R>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
+    pedestrian: OrientingPedestrian2D<T, L, R>,
     /**
      * When crossing [Euclidean2DPassage]s, the pedestrian is pushed away from the wall of
-     * a quantity equal to this factor * the width of the passage. This is performed to prevent
+     * a quantity equal to (this factor * the width of the passage). This is performed to prevent
      * the pedestrian from moving attached to the wall. This factor must be in [0.0, 0.5).
      */
     private val wallRepulsionFactor: Double = DEFAULT_WALL_REPULSION_FACTOR
-) : AbstractNavigationAction
-<T, Euclidean2DPosition, Euclidean2DTransformation, N, E, ConvexPolygon, Euclidean2DPassage>(
+) : AbstractNavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>(
     environment,
     reaction,
     pedestrian
@@ -95,16 +96,10 @@ open class BaseEuclideanNavigationAction<T, N : Euclidean2DConvexShape, E>(
         return Seek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
     }
 
-    @Suppress("UNCHECKED_CAST") // as? operator is safe
-    override fun cloneAction(n: Node<T>?, r: Reaction<T>?): Action<T> {
-        require(n as? OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E> != null) {
-            "node not compatible, required: " + pedestrian.javaClass + ", found: " + n?.javaClass
+    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
+        requireNodeTypeAndProduce<OrientingPedestrian2D<T, L, R>, NavigationAction2DImpl<T, L, R>>(n) {
+            val clone = NavigationAction2DImpl(environment, r, it, wallRepulsionFactor)
+            clone.strategy = this.strategy
+            return clone
         }
-        n as OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>
-        require(r != null) { "reaction can't be null" }
-        BaseEuclideanNavigationAction(environment, r, n, wallRepulsionFactor).let { copy ->
-            copy.strategy = this.strategy
-            return copy
-        }
-    }
 }

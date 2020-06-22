@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -13,8 +13,6 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 import it.unibo.alchemist.nextDouble
 import it.unibo.alchemist.shuffled
 import org.apache.commons.math3.random.RandomGenerator
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Give the impression of a random walk through the environment targeting an ever changing pseudo-randomly point
@@ -38,7 +36,7 @@ open class Wander<T>(
     protected val randomGenerator: RandomGenerator,
     protected val offset: Double,
     protected val radius: Double
-) : SteeringActionWithTargetImpl<T, Euclidean2DPosition, Euclidean2DTransformation>(
+) : AbstractSteeringActionWithTarget<T, Euclidean2DPosition, Euclidean2DTransformation>(
     environment,
     reaction,
     pedestrian,
@@ -51,20 +49,17 @@ open class Wander<T>(
         }
     }
 
-    override fun interpolatePositions(current: Euclidean2DPosition, target: Euclidean2DPosition, maxWalk: Double) =
-        super.interpolatePositions(
-            environment.origin,
-            heading().asAngle
-                .let { Euclidean2DPosition(offset * cos(it), offset * sin(it)) }
-                .surrounding(radius)
-                .shuffled(randomGenerator)
-                .first(),
-            maxWalk
-        )
+    override fun nextPosition(): Euclidean2DPosition = heading()
+        .resized(offset)
+        .surrounding(radius)
+        .shuffled(randomGenerator)
+        .first()
+        .coerceAtMost(maxWalk)
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) = requireNodeTypeAndProduce<Pedestrian2D<T>, Wander<T>>(n) {
-        Wander(environment, r, it, randomGenerator, offset, radius)
-    }
+    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
+        requireNodeTypeAndProduce<Pedestrian2D<T>, Wander<T>>(n) {
+            Wander(environment, r, it, randomGenerator, offset, radius)
+        }
 }
 
 /**

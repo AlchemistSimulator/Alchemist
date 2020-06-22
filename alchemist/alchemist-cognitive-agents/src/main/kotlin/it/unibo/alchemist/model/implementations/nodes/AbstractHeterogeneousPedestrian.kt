@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Implementation of an heterogeneous pedestrian.
+ * Implementation of a heterogeneous pedestrian.
  *
  * @param environment
  *          the environment inside which this pedestrian moves.
@@ -26,19 +26,17 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param gender
  *          the gender of this pedestrian
  */
-open class HeterogeneousPedestrianImpl<T, P, A, F> @JvmOverloads constructor(
+abstract class AbstractHeterogeneousPedestrian<T, P, A, F> @JvmOverloads constructor(
     environment: PhysicsEnvironment<T, P, A, F>,
     randomGenerator: RandomGenerator,
     final override val age: Age,
     final override val gender: Gender,
     group: PedestrianGroup<T, P, A>? = null
-) : HomogeneousPedestrianImpl<T, P, A, F>(environment, randomGenerator, group),
+) : AbstractHomogeneousPedestrian<T, P, A, F>(environment, randomGenerator, group),
     HeterogeneousPedestrian<T, P, A>
-    where
-    P : Vector<P>,
-    P : Position<P>,
-    A : GeometricTransformation<P>,
-    F : GeometricShapeFactory<P, A> {
+    where P : Vector<P>, P : Position<P>,
+          A : GeometricTransformation<P>,
+          F : GeometricShapeFactory<P, A> {
 
     private val speed = Speed(age, gender, randomGenerator)
 

@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
+package it.unibo.alchemist.model.interfaces
 
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -19,36 +19,31 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
  *
  * @param V the [Vector] type for the space this agent is inside.
  * @param A the transformations supported by the shapes in this space.
- * @param N the type of landmarks. See [cognitiveMap].
- * @param E the type of edges of the [cognitiveMap].
+ * @param L the type of landmarks. See [cognitiveMap].
+ * @param R the type of edges of the [cognitiveMap], representing the [R]elations between landmarks.
  */
-interface OrientingAgent<V, A, N, E> where
+interface OrientingAgent<V, A, L, R> where
     V : Vector<V>,
     A : GeometricTransformation<V>,
-    N : ConvexGeometricShape<V, A> {
+    L : ConvexGeometricShape<V, A> {
 
     /**
-     * The knowledge degree of the agent concerning the environment, it's a Double
-     * value in [0, 1] describing the percentage of the environment the agent is
-     * familiar with prior to the start of the simulation (thus it does not take
-     * into account the knowledge the pedestrian will gain during it, namely the
-     * [volatileMemory]).
+     * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the
+     * percentage of environment the agent is familiar with prior to the start of the simulation (thus it does not
+     * take into account the knowledge the pedestrian will gain during it, namely the [volatileMemory]).
      */
     val knowledgeDegree: Double
 
     /**
-     * The cognitive map of the agent. It's composed of landmarks (elements of the
-     * environment easy to remember due to their uniqueness) and spatial relations
-     * between them. It is represented using a [NavigationGraph].
+     * The cognitive map of the agent. It's a graph composed of landmarks (elements of the environment easy to
+     * remember due to their uniqueness) and spatial relations between them. It's modeled as a [NavigationGraph].
      */
-    val cognitiveMap: NavigationGraph<V, A, N, E>
+    val cognitiveMap: NavigationGraph<V, A, L, R>
 
     /**
-     * The volatile memory of the agent: it models the ability to remember areas
-     * of the environment already visited by the agent since the start of the
-     * simulation. In particular, each area is paired with the number of visits.
-     * Areas are assumed to be represented as [ConvexGeometricShape]s, as in
-     * [NavigationGraph]s.
+     * The volatile memory of the agent: it models the ability to remember areas of the environment already visited
+     * since the start of the simulation. Each area is paired with the number of visits. Areas are assumed to be
+     * represented as [ConvexGeometricShape]s, as in [NavigationGraph]s.
      */
     val volatileMemory: MutableMap<in ConvexGeometricShape<V, A>, Int>
 

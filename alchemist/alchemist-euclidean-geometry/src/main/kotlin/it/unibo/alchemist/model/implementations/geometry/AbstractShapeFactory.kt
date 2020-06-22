@@ -23,6 +23,5 @@ abstract class AbstractShapeFactory<S : Vector<S>, A : GeometricTransformation<S
      */
     protected abstract val origin: S
 
-    override fun adimensional() =
-        AdimensionalShape<S, A>(origin)
+    override fun adimensional() = AdimensionalShape<S, A>(origin)
 }

@@ -35,20 +35,18 @@ import kotlin.reflect.KClass
  * @param danger
  *          the molecule associated to danger in the environment.
  */
-open class CognitivePedestrianImpl<T, P, A, F> @JvmOverloads constructor(
+abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor(
     environment: PhysicsEnvironment<T, P, A, F>,
     randomGenerator: RandomGenerator,
     age: Age,
     gender: Gender,
     val danger: Molecule? = null,
     group: PedestrianGroup<T, P, A>? = null
-) : HeterogeneousPedestrianImpl<T, P, A, F>(environment, randomGenerator, age, gender, group),
+) : AbstractHeterogeneousPedestrian<T, P, A, F>(environment, randomGenerator, age, gender, group),
     CognitivePedestrian<T, P, A>
-    where
-    P : Position<P>,
-    P : Vector<P>,
-    A : GeometricTransformation<P>,
-    F : GeometricShapeFactory<P, A> {
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P>,
+          F : GeometricShapeFactory<P, A> {
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to

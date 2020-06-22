@@ -1,38 +1,55 @@
+/*
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.OrientingCognitivePedestrian
-import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import org.apache.commons.math3.random.RandomGenerator
-import org.jgrapht.graph.DefaultEdge
 
-private typealias PGroup<T> = PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>
 /**
- * A cognitive [OrientingPedestrian] in an [EuclideanPhysics2DEnvironmentWithGraph].
+ * A cognitive [OrientingPedestrian] in the Euclidean world.
  *
  * @param T the concentration type.
- * @param M the type of nodes of the navigation graph provided by the environment.
- * @param F the type of edges of the navigation graph provided by the environment.
+ * @param N the type of nodes of the navigation graph provided by the environment.
+ * @param E the type of edges of the navigation graph provided by the environment.
  */
-class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads constructor(
-    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
+class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
+    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
     knowledgeDegree: Double,
-    group: PGroup<T>? = null,
+    group: PedestrianGroup2D<T>? = null,
     override val age: Age,
     override val gender: Gender,
     danger: Molecule? = null
-) : OrientingPedestrian2D<T, M, F>(environment, randomGenerator, knowledgeDegree = knowledgeDegree, group = group),
-    OrientingCognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Ellipse, DefaultEdge> {
+) : HomogeneousOrientingPedestrian2D<T, N, E>(
+    environment,
+    randomGenerator,
+    knowledgeDegree = knowledgeDegree,
+    group = group
+), CognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
+
+    /*
+     * The cognitive part of the pedestrian.
+     */
+    private val cognitive = CognitivePedestrian2D(environment, randomGenerator, age, gender, danger, group)
+
+    override val compliance = cognitive.compliance
 
     /**
      * Allows to specify age and gender with a string.
@@ -40,8 +57,8 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
     @JvmOverloads constructor(
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
-        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
-        group: PGroup<T>? = null,
+        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+        group: PedestrianGroup2D<T>? = null,
         age: String,
         gender: String,
         danger: Molecule? = null
@@ -61,8 +78,8 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
     @JvmOverloads constructor(
         knowledgeDegree: Double,
         randomGenerator: RandomGenerator,
-        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, M, F>,
-        group: PGroup<T>? = null,
+        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+        group: PedestrianGroup2D<T>? = null,
         age: Int,
         gender: String,
         danger: Molecule? = null
@@ -75,14 +92,6 @@ class OrientingCognitivePedestrian2D<T, M : ConvexPolygon, F> @JvmOverloads cons
         Gender.fromString(gender),
         danger
     )
-
-    /*
-     * The cognitive part of the pedestrian, composition is used due to the lack
-     * of multiple inheritance.
-     */
-    private val cognitive = CognitivePedestrianImpl(environment, randomGenerator, age, gender, danger, group)
-
-    override val compliance = cognitive.compliance
 
     override fun probabilityOfHelping(
         toHelp: HeterogeneousPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>

@@ -16,6 +16,11 @@ interface GeometricShape<S : Vector<S>, A : GeometricTransformation<S>> : Serial
     val diameter: Double
 
     /**
+     * Half the [diameter].
+     */
+    val radius: Double get() = diameter / 2
+
+    /**
      * The geometric center.
      */
     val centroid: S

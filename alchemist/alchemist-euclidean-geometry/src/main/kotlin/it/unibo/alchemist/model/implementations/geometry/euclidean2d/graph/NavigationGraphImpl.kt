@@ -34,10 +34,9 @@ open class BaseNavigationGraph<V, A, N, E>(
     graphType: GraphType
 ) : NavigationGraph<V, A, N, E>,
     AbstractBaseGraph<N, E>(vertexSupplier, edgeSupplier, graphType)
-    where
-        V : Vector<V>,
-        A : GeometricTransformation<V>,
-        N : ConvexGeometricShape<V, A> {
+    where V : Vector<V>,
+          A : GeometricTransformation<V>,
+          N : ConvexGeometricShape<V, A> {
 
     /*
      * Allows to rapidly create a directed or undirected unweighted graph without
@@ -63,10 +62,9 @@ open class BaseNavigationGraph<V, A, N, E>(
 class DirectedNavigationGraph<V, A, N, E>(
     edgeClass: Class<out E>
 ) : BaseNavigationGraph<V, A, N, E>(edgeClass, true)
-    where
-        V : Vector<V>,
-        A : GeometricTransformation<V>,
-        N : ConvexGeometricShape<V, A>
+    where V : Vector<V>,
+          A : GeometricTransformation<V>,
+          N : ConvexGeometricShape<V, A>
 
 /**
  * An undirected unweighted [NavigationGraph], allowing multiple edges between the
@@ -76,10 +74,9 @@ class DirectedNavigationGraph<V, A, N, E>(
 class UndirectedNavigationGraph<V, A, N, E>(
     edgeClass: Class<out E>
 ) : BaseNavigationGraph<V, A, N, E>(edgeClass, false)
-    where
-        V : Vector<V>,
-        A : GeometricTransformation<V>,
-        N : ConvexGeometricShape<V, A>
+    where V : Vector<V>,
+          A : GeometricTransformation<V>,
+          N : ConvexGeometricShape<V, A>
 
 /**
  * A directed [Euclidean2DNavigationGraph].

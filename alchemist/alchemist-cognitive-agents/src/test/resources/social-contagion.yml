@@ -33,9 +33,9 @@ reactions: &behavior
       parameters: [2.0]
     type: BlendedSteering
     actions:
-      - type: AvoidFlowField
+      - type: AvoidLayer
         parameters: [*danger]
-      - type: FollowFlowField
+      - type: FollowLayer
         parameters: [*target]
     conditions:
       - type: WantToEvacuate

@@ -46,9 +46,7 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> :
             where S : Vector<S>,
                   A : GeometricTransformation<S>,
                   F : GeometricShapeFactory<S, A> =
-            getInstance(
-                F::class.java
-            )
+            getInstance(F::class.java)
 
         /**
          * Retrieves a factory of [GeometricShape] compatible with the given space.

@@ -27,11 +27,10 @@ abstract class AbstractGroupSteeringAction<T, P, A>(
     protected open val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>
-) : GroupSteeringAction<T, P>, AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
-    where
-        A : GeometricTransformation<P>,
-        P : Position<P>,
-        P : Vector<P> {
+) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian),
+    GroupSteeringAction<T, P>
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P> {
 
     /**
      * Computes the centroid of the [group] in absolute coordinates.

@@ -18,9 +18,9 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  * @param pedestrian
  *          the owner of this reaction.
  * @param timeDistribution
- *          the time distribution according to this the reaction executes.
+ *          the time distribution according to which this reaction executes.
  * @param steerStrategy
- *          the logic according to the steering actions are combined.
+ *          the strategy used to combine steering actions.
  */
 open class SteeringBehavior<T>(
     private val env: Environment<T, Euclidean2DPosition>,
@@ -30,7 +30,7 @@ open class SteeringBehavior<T>(
 ) : AbstractReaction<T>(pedestrian, timeDistribution) {
 
     /**
-     * The list of only the steering actions between all the actions in this reaction.
+     * The list of steering actions in this reaction.
      */
     fun steerActions(): List<SteeringAction<T, Euclidean2DPosition>> =
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()

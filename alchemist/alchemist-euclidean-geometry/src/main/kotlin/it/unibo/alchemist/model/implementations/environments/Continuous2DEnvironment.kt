@@ -22,8 +22,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
-import java.lang.Exception
-import java.lang.IllegalStateException
 
 /**
  * Implementation of [Physics2DEnvironment].

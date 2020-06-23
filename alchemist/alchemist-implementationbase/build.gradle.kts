@@ -19,7 +19,6 @@ dependencies {
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
     implementation(Libs.jgrapht_core)
-    testImplementation(project(":alchemist-euclidean-geometry"))
 }
 
 publishing.publications {

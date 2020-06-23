@@ -19,6 +19,8 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWi
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 
+private typealias SteeringActions<T> = List<SteeringAction<T, Euclidean2DPosition>>
+
 /**
  * A [SteeringStrategy] in which one action is prevalent. Only [NavigationAction]s can be prevalent, because
  * they guarantee to navigate the environment consciously (e.g. without getting stuck in obstacles). The
@@ -45,7 +47,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 class SinglePrevalent<T, N : ConvexPolygon>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: Pedestrian2D<T>,
-    private val prevalent: List<SteeringAction<T, Euclidean2DPosition>>.() -> NavigationAction2D<T, *, *, N, *>,
+    private val prevalent: SteeringActions<T>.() -> NavigationAction2D<T, *, *, N, *>,
     /**
      * Tolerance angle in radians.
      */
@@ -98,7 +100,7 @@ class SinglePrevalent<T, N : ConvexPolygon>(
             alpha
         )
 
-    override fun computeNextPosition(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
+    override fun computeNextPosition(actions: SteeringActions<T>): Euclidean2DPosition =
         with(actions.prevalent()) {
             val prevalentForce = this.nextPosition()
             val leadsOutsideCurrentRoom: Euclidean2DPosition.() -> Boolean = {

@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
 /**
  * An environment supporting physics and nodes shapes.
- * Note: due to the high number of parameters it's highly recommended to not use this interface directly,
+ * Note: due to the high number of parameters it's highly recommended not to use this interface directly,
  * but to create an apposite interface extending this one instead.
  *
  * @param <T> nodes concentration type

@@ -53,6 +53,11 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     protected val pedestrian: OrientingPedestrian2D<T, L, R> get() = action.pedestrian
 
     /**
+     * Shortcut to obtain the environment.
+     */
+    protected val environment get() = action.environment
+
+    /**
      * Computes the distance between the pedestrian and a visible passage.
      */
     protected open fun Euclidean2DPassage.distanceToPedestrian(): Double = action.pedestrianPosition.let {
@@ -94,13 +99,16 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     /**
      * Takes into account the congestion of the area the edge being weighted leads to (it is assumed
      * that the pedestrian can estimate the congestion level of a neighboring room). It is computed
-     * as density of the area + 1, so as to have a value in [1,2] (less crowded rooms are preferred).
+     * as density of the area coerced to be in (0,1] (less crowded rooms are preferred).
      */
-    protected open fun congestionFactor(head: ConvexPolygon): Double = action.environment
-        .getNodesWithinRange(head.centroid, head.diameter / 2)
+    protected open fun congestionFactor(head: ConvexPolygon): Double = environment
+        .getNodesWithinRange(head.centroid, head.radius)
         .filterIsInstance<Pedestrian<T, *, *>>()
+        .map { environment.getPosition(it) }
+        .filter { head.contains(it) }
         .count()
-        .let { pedestrian.shape.diameter.pow(2) * it / head.asAwtShape().area() + 1 }
+        .let { pedestrian.area * it / head.asAwtShape().area }
+        .coerceAtLeast(Double.MIN_VALUE)
 
     /**
      * Takes into account whereas the assessed edge leads to a known impasse or not, known impasses
@@ -113,12 +121,16 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     /**
      * A rough estimation of the area of a [Shape].
      */
-    protected open fun Shape.area(): Double = with(bounds2D) { abs(width * height) }
+    protected open val Shape.area: Double get() = with(bounds2D) { abs(width * height) }
+
+    /**
+     * A rough estimation of the area of a [Pedestrian].
+     */
+    protected open val Pedestrian<T, *, *>.area: Double get() = Math.PI * shape.radius.pow(2)
 
     /**
      * Checks if the pedestrian knows that the area is an impasse (= an area with a single door).
      */
-    protected open fun ConvexPolygon.isKnownImpasse(): Boolean =
-        pedestrian.volatileMemory.contains(this) &&
-            action.environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
+    protected open fun ConvexPolygon.isKnownImpasse(): Boolean = pedestrian.volatileMemory.contains(this) &&
+        environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
 }

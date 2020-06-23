@@ -22,8 +22,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
-import java.lang.Exception
-import java.lang.IllegalStateException
 
 /**
  * Implementation of [Physics2DEnvironment].
@@ -101,9 +99,7 @@ open class Continuous2DEnvironment<T> :
     override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
         if (node is NodeWithShape<T, *, *>) {
             val farthestPosition = farthestPositionReachable(node, newpos)
-            if (!node.canFit(farthestPosition)) {
-                throw Exception()
-            }
+            check(node.canFit(farthestPosition)) { "Internal bug in ${this::class.qualifiedName}" }
             super.moveNodeToPosition(node, farthestPosition)
         } else {
             super.moveNodeToPosition(node, newpos)
@@ -136,7 +132,11 @@ open class Continuous2DEnvironment<T> :
     ): Euclidean2DPosition {
         val currentPosition = getPosition(node)
         val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)
-        return nodesOnPath(node, desiredMovement)
+        val nodesOnPath = nodesOnPath(node, desiredMovement)
+        if (nodesOnPath.any { getPosition(it).distanceTo(currentPosition) < it.shape.radius + hitboxRadius }) {
+            return currentPosition
+        }
+        return nodesOnPath
             .map { getShape(it) }
             .flatMap { other ->
                 desiredMovement.intersectCircle(other.centroid, other.radius + hitboxRadius).asList
@@ -149,20 +149,23 @@ open class Continuous2DEnvironment<T> :
      * @returns all nodes that the given [node] would collide with while performing the [desiredMovement].
      * Such segment should connect the [node]'s current position and its desired position.
      */
-    private fun nodesOnPath(node: NodeWithShape<T, *, *>, desiredMovement: Segment2D<*>): List<Node<T>> =
+    private fun nodesOnPath(node: NodeWithShape<T, *, *>, desiredMovement: Segment2D<*>): List<NodeWithShape<T, *, *>> =
         with(node.shape) {
             shapeFactory.rectangle(desiredMovement.length + diameter, diameter)
                 .transformed {
                     desiredMovement.midPoint.let { origin(it.x, it.y) }
                     rotate(desiredMovement.toVector.asAngle)
                 }
-                .let { movementArea -> getNodesWithin(movementArea).minusElement(node) }
+                .let { movementArea ->
+                    getNodesWithin(movementArea).filterIsInstance<NodeWithShape<T, *, *>>().minusElement(node)
+                }
         }
 
     private fun Node<T>.canFit(position: Euclidean2DPosition): Boolean =
         this !is NodeWithShape<T, *, *> || overlappingNodes(position).isEmpty()
 
-    private fun NodeWithShape<T, *, *>.overlappingNodes(position: Euclidean2DPosition): List<Node<T>> =
+    private fun NodeWithShape<T, *, *>.overlappingNodes(position: Euclidean2DPosition): List<NodeWithShape<T, *, *>> =
         getNodesWithin(shapeFactory.requireCompatible(shape).transformed { origin(position) })
+            .filterIsInstance<NodeWithShape<T, *, *>>()
             .minusElement(this)
 }

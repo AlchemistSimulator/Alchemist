@@ -18,94 +18,59 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Line2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import org.junit.jupiter.api.assertThrows
-
-internal inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
-    segment1: Segment2D<P>,
-    segment2: Segment2D<P>,
-    asLines: Boolean
-): I {
-    val intersection = if (asLines) {
-        segment1.toLine().intersect(segment2.toLine())
-    } else {
-        segment1.intersect(segment2)
-    }
-    intersection.shouldBeTypeOf<I>()
-    return intersection as I
-}
-
-internal inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> circleIntersectionShouldBe(
-    segment: Segment2D<P>,
-    center: P,
-    radius: Double,
-    asLine: Boolean
-): I {
-    val intersection = if (asLine) {
-        segment.toLine().intersectCircle(center, radius)
-    } else {
-        segment.intersectCircle(center, radius)
-    }
-    intersection.shouldBeTypeOf<I>()
-    return intersection as I
-}
 
 class TestSlopeInterceptLine2D : StringSpec() {
     private val horizontalLine: Line2D<Euclidean2DPosition> = SlopeInterceptLine2D(0.0, 2.0, ::coords)
     private val verticalLine: Line2D<Euclidean2DPosition> = SlopeInterceptLine2D(2.0, ::coords)
     private val obliqueLine: Line2D<Euclidean2DPosition> = SlopeInterceptLine2D(1.0, 2.0, ::coords)
 
-    private fun <P : Vector2D<P>> linesIntersectionShouldBe(
-        segment1: Segment2D<P>,
-        segment2: Segment2D<P>,
-        expectedPoint: P
-    ) {
-        val intersection = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment1, segment2, true)
-        intersection.point shouldBe expectedPoint
+    private fun line(x1: Double, y1: Double, x2: Double, y2: Double) = segment(x1, y1, x2, y2).toLine()
+
+    private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
+        line1: Line2D<P>,
+        line2: Line2D<P>
+    ): I {
+        val intersection = line1.intersect(line2)
+        intersection.shouldBeTypeOf<I>()
+        return intersection as I
     }
 
-    private fun <P : Vector2D<P>> linesIntersectionShouldBeEmpty(segment1: Segment2D<P>, segment2: Segment2D<P>) =
-        intersectionShouldBe<P, Intersection2D.None>(segment1, segment2, true)
+    private fun <P : Vector2D<P>> shouldIntersectIn(line1: Line2D<P>, line2: Line2D<P>, expectedPoint: P) =
+        intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(line1, line2).point shouldBe expectedPoint
 
-    private fun <P : Vector2D<P>> linesIntersectionShouldBeInfinite(segment1: Segment2D<P>, segment2: Segment2D<P>) =
-        intersectionShouldBe<P, Intersection2D.InfinitePoints>(segment1, segment2, true)
+    private fun <P : Vector2D<P>> shouldNotIntersect(line1: Line2D<P>, line2: Line2D<P>) =
+        intersectionShouldBe<P, Intersection2D.None>(line1, line2)
 
-    private fun <P : Vector2D<P>> lineCircleIntersectionShouldBe(
-        segment: Segment2D<P>,
+    private fun <P : Vector2D<P>> shouldCoincide(line1: Line2D<P>, line2: Line2D<P>) =
+        intersectionShouldBe<P, Intersection2D.InfinitePoints>(line1, line2)
+
+    private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
+        line: Line2D<P>,
+        center: P,
+        radius: Double
+    ): I {
+        val intersection = line.intersectCircle(center, radius)
+        intersection.shouldBeTypeOf<I>()
+        return intersection as I
+    }
+
+    private fun <P : Vector2D<P>> shouldIntersectIn(
+        line: Line2D<P>,
         center: P,
         radius: Double,
         expectedPoint1: P,
         expectedPoint2: P
     ) {
-        val intersection = circleIntersectionShouldBe<P, Intersection2D.MultiplePoints<P>>(
-            segment,
-            center,
-            radius,
-            true
-        )
+        val intersection = intersectionShouldBe<P, Intersection2D.MultiplePoints<P>>(line, center, radius)
         intersection.points shouldContainExactlyInAnyOrder listOf(expectedPoint1, expectedPoint2)
     }
 
-    private fun <P : Vector2D<P>> lineCircleIntersectionShouldBe(
-        segment: Segment2D<P>,
-        center: P,
-        radius: Double,
-        expectedPoint: P
-    ) {
-        val intersection = circleIntersectionShouldBe<P, Intersection2D.SinglePoint<P>>(
-            segment,
-            center,
-            radius,
-            true
-        )
-        intersection.point shouldBe expectedPoint
-    }
+    private fun <P : Vector2D<P>> shouldIntersectIn(line: Line2D<P>, center: P, radius: Double, expectedPoint: P) =
+        intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(line, center, radius).point shouldBe expectedPoint
 
-    private fun <P : Vector2D<P>> lineCircleIntersectionShouldBeEmpty(
-        segment: Segment2D<P>,
-        center: P,
-        radius: Double
-    ) = circleIntersectionShouldBe<P, Intersection2D.None>(segment, center, radius, true)
+    private fun <P : Vector2D<P>> shouldNotIntersect(line: Line2D<P>, center: P, radius: Double) =
+        intersectionShouldBe<P, Intersection2D.None>(line, center, radius)
 
     init {
         "test is horizontal" {
@@ -160,48 +125,48 @@ class TestSlopeInterceptLine2D : StringSpec() {
         }
 
         "test intersect" {
-            linesIntersectionShouldBeInfinite(
-                segment(1.0, 1.0, 2.0, 2.0),
-                segment(3.0, 3.0, 4.0, 4.0)
+            shouldCoincide(
+                line(1.0, 1.0, 2.0, 2.0),
+                line(3.0, 3.0, 4.0, 4.0)
             )
-            linesIntersectionShouldBeEmpty(
-                segment(1.0, 1.0, 2.0, 2.0),
-                segment(2.0, 1.0, 3.0, 2.0)
+            shouldNotIntersect(
+                line(1.0, 1.0, 2.0, 2.0),
+                line(2.0, 1.0, 3.0, 2.0)
             )
-            linesIntersectionShouldBe(
-                segment(1.0, 1.0, 2.0, 2.0),
-                segment(4.0, 1.0, 3.0, 2.0),
+            shouldIntersectIn(
+                line(1.0, 1.0, 2.0, 2.0),
+                line(4.0, 1.0, 3.0, 2.0),
                 coords(2.5, 2.5)
             )
-            linesIntersectionShouldBeInfinite(
-                segment(1.0, 1.0, 2.0, 1.0),
-                segment(3.0, 1.0, 4.0, 1.0)
+            shouldCoincide(
+                line(1.0, 1.0, 2.0, 1.0),
+                line(3.0, 1.0, 4.0, 1.0)
             )
-            linesIntersectionShouldBeEmpty(
-                segment(1.0, 1.0, 2.0, 1.0),
-                segment(1.0, 2.0, 4.0, 2.0)
+            shouldNotIntersect(
+                line(1.0, 1.0, 2.0, 1.0),
+                line(1.0, 2.0, 4.0, 2.0)
             )
-            linesIntersectionShouldBe(
-                segment(1.0, 1.0, 2.0, 1.0),
-                segment(1.0, 3.0, 2.0, 2.0),
+            shouldIntersectIn(
+                line(1.0, 1.0, 2.0, 1.0),
+                line(1.0, 3.0, 2.0, 2.0),
                 coords(3.0, 1.0)
             )
-            linesIntersectionShouldBe(
-                segment(1.0, 1.0, 2.0, 1.0),
-                segment(2.0, 3.0, 2.0, 2.0),
+            shouldIntersectIn(
+                line(1.0, 1.0, 2.0, 1.0),
+                line(2.0, 3.0, 2.0, 2.0),
                 coords(2.0, 1.0)
             )
-            linesIntersectionShouldBeInfinite(
-                segment(2.0, 5.0, 2.0, 6.0),
-                segment(2.0, 3.0, 2.0, 2.0)
+            shouldCoincide(
+                line(2.0, 5.0, 2.0, 6.0),
+                line(2.0, 3.0, 2.0, 2.0)
             )
-            linesIntersectionShouldBeEmpty(
-                segment(1.0, 3.0, 1.0, 2.0),
-                segment(2.0, 3.0, 2.0, 2.0)
+            shouldNotIntersect(
+                line(1.0, 3.0, 1.0, 2.0),
+                line(2.0, 3.0, 2.0, 2.0)
             )
-            linesIntersectionShouldBe(
-                segment(1.0, 3.0, 2.0, 2.0),
-                segment(2.0, 3.0, 2.0, 2.0),
+            shouldIntersectIn(
+                line(1.0, 3.0, 2.0, 2.0),
+                line(2.0, 3.0, 2.0, 2.0),
                 coords(2.0, 2.0)
             )
         }
@@ -210,19 +175,19 @@ class TestSlopeInterceptLine2D : StringSpec() {
             /*
              * Horizontal line.
              */
-            lineCircleIntersectionShouldBe(
-                segment(1.0, 1.0, 5.0, 1.0),
+            shouldIntersectIn(
+                line(1.0, 1.0, 5.0, 1.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(3.0, 1.0)
             )
-            lineCircleIntersectionShouldBeEmpty(
-                segment(1.0, -1.0, 5.0, -1.0),
+            shouldNotIntersect(
+                line(1.0, -1.0, 5.0, -1.0),
                 coords(3.0, 3.0),
                 2.0
             )
-            lineCircleIntersectionShouldBe(
-                segment(0.0, 3.0, 6.0, 3.0),
+            shouldIntersectIn(
+                line(0.0, 3.0, 6.0, 3.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(1.0, 3.0),
@@ -231,19 +196,19 @@ class TestSlopeInterceptLine2D : StringSpec() {
             /*
              * Vertical line.
              */
-            lineCircleIntersectionShouldBe(
-                segment(1.0, 1.0, 1.0, 5.0),
+            shouldIntersectIn(
+                line(1.0, 1.0, 1.0, 5.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(1.0, 3.0)
             )
-            lineCircleIntersectionShouldBeEmpty(
-                segment(-1.0, 1.0, -1.0, 5.0),
+            shouldNotIntersect(
+                line(-1.0, 1.0, -1.0, 5.0),
                 coords(3.0, 3.0),
                 2.0
             )
-            lineCircleIntersectionShouldBe(
-                segment(3.0, 1.0, 3.0, 5.0),
+            shouldIntersectIn(
+                line(3.0, 1.0, 3.0, 5.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(3.0, 1.0),
@@ -252,13 +217,13 @@ class TestSlopeInterceptLine2D : StringSpec() {
             /*
              * Oblique line.
              */
-            lineCircleIntersectionShouldBeEmpty(
-                segment(0.0, 5.0, 1.0, 6.0),
+            shouldNotIntersect(
+                line(0.0, 5.0, 1.0, 6.0),
                 coords(3.0, 3.0),
                 2.0
             )
-            lineCircleIntersectionShouldBe(
-                segment(1.0, 3.0, 3.0, 5.0),
+            shouldIntersectIn(
+                line(1.0, 3.0, 3.0, 5.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(1.0, 3.0),

@@ -47,6 +47,13 @@ open class CognitivePedestrian2D<T> @JvmOverloads constructor(
     group
 ), Pedestrian2D<T> {
 
+    override val shape by lazy { super.shape }
+    final override val fieldOfView by lazy { super.fieldOfView }
+
+    init {
+        senses += fieldOfView
+    }
+
     @JvmOverloads constructor(
         environment: Physics2DEnvironment<T>,
         randomGenerator: RandomGenerator,
@@ -64,11 +71,4 @@ open class CognitivePedestrian2D<T> @JvmOverloads constructor(
         danger: Molecule? = null,
         group: PedestrianGroup2D<T>? = null
     ) : this(environment, randomGenerator, Age.fromYears(age), Gender.fromString(gender), danger, group)
-
-    override val shape by lazy { super.shape }
-    final override val fieldOfView by lazy { super.fieldOfView }
-
-    init {
-        senses += fieldOfView
-    }
 }

@@ -53,6 +53,13 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     group
 ), Pedestrian2D<T> {
 
+    override val shape by lazy { super.shape }
+    final override val fieldOfView by lazy { super.fieldOfView }
+
+    init {
+        senses += fieldOfView
+    }
+
     override fun createLandmarkIn(area: N): Ellipse = with(area) {
         val width = randomEllipseSide()
         val height = randomEllipseSide()
@@ -65,11 +72,4 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     }
 
     private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
-
-    override val shape by lazy { super.shape }
-    final override val fieldOfView by lazy { super.fieldOfView }
-
-    init {
-        senses += fieldOfView
-    }
 }

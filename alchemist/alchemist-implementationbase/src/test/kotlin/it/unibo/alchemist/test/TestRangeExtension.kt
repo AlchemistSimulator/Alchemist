@@ -14,14 +14,10 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.coincidesWith
 import it.unibo.alchemist.contains
-import it.unibo.alchemist.findExtremeCoordsOnX
-import it.unibo.alchemist.findExtremeCoordsOnY
 import it.unibo.alchemist.intersect
 import it.unibo.alchemist.intersects
 import it.unibo.alchemist.intersectsBoundsExcluded
 import it.unibo.alchemist.minus
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.rangeFromUnordered
 import it.unibo.alchemist.subtractAll
 import org.junit.jupiter.api.Assertions
@@ -106,29 +102,6 @@ class TestRangeExtension : StringSpec({
         (1..5).subtractAll(listOf(-3..2, 4..6)).shouldContainRanges(2..4)
         assertTrue((1..5).subtractAll(listOf(-3..2, 4..6, 2..4)).isEmpty())
         (1..5).subtractAll(listOf(2..4)).shouldContainRanges(1..2, 4..5)
-    }
-
-    "test Segment2D.toRange" {
-        Segment2DImpl(
-            Euclidean2DPosition(1.0, 1.0),
-            Euclidean2DPosition(5.0, 1.0)
-        ).toRange() rangeShouldBe 1.0..5.0
-        Segment2DImpl(
-            Euclidean2DPosition(1.0, 1.0),
-            Euclidean2DPosition(1.0, 5.0)
-        ).toRange() rangeShouldBe 1.0..5.0
-    }
-
-    "test findExtremeCoords" {
-        listOf(
-            Euclidean2DPosition(1.0, 1.0),
-            Euclidean2DPosition(2.0, 2.0),
-            Euclidean2DPosition(3.0, 2.0),
-            Euclidean2DPosition(-1.0, 30.0)
-        ).let { list ->
-            list.findExtremeCoordsOnX() rangeShouldBe -1.0..3.0
-            list.findExtremeCoordsOnY() rangeShouldBe 1.0..30.0
-        }
     }
 
     /* old tests below */

@@ -39,6 +39,13 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
     group
 ), Pedestrian2D<T> {
 
+    override val shape by lazy { super.shape }
+    override val fieldOfView by lazy { super.fieldOfView }
+
+    init {
+        senses += fieldOfView
+    }
+
     @JvmOverloads constructor(
         env: Physics2DEnvironment<T>,
         rg: RandomGenerator,
@@ -54,11 +61,4 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
         gender: String,
         group: PedestrianGroup2D<T>? = null
     ) : this(env, rg, Age.fromYears(age), Gender.fromString(gender), group)
-
-    override val shape by lazy { super.shape }
-    override val fieldOfView by lazy { super.fieldOfView }
-
-    init {
-        senses += fieldOfView
-    }
 }

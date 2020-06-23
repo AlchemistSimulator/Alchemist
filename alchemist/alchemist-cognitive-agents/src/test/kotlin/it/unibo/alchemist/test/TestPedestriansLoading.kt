@@ -7,6 +7,8 @@ import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import loadYamlSimulation
+import startSimulation
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
 

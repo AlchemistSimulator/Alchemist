@@ -9,14 +9,9 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-cognitive-agents"))
-    // implementation(Libs.konf)
-    implementation(Libs.jgrapht_core)
-    testImplementation(project(":alchemist-test"))
-    testImplementation(project(":alchemist-incarnation-protelis"))
-
+    implementation(project(":alchemist-engine"))
+    implementation(project(":alchemist-loading"))
 }
 
 publishing.publications {

@@ -12,8 +12,7 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(Libs.konf)
     implementation(Libs.jgrapht_core)
-    testImplementation(project(":alchemist-engine"))
-    testImplementation(project(":alchemist-loading"))
+    testImplementation(project(":alchemist-test"))
     testImplementation(project(":alchemist-incarnation-protelis"))
 }
 

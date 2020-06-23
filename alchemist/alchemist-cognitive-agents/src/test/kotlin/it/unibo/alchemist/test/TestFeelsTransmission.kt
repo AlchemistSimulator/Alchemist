@@ -6,6 +6,8 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import loadYamlSimulation
+import startSimulation
 
 class TestFeelsTransmission<T, P> : StringSpec({
 

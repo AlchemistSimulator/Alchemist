@@ -61,8 +61,7 @@ open class Pursuing<T, L : Euclidean2DConvexShape, R>(
      * is added to the factors of super method (= [Exploring.weight]).
      */
     override fun weight(door: Euclidean2DPassage): Double =
-        super.weight(door) * suitabilityFactor(doorsRankings[door]
-            ?: throw IllegalStateException("internal error: doors rankings are empty"))
+        super.weight(door) * suitabilityFactor(doorsRankings[door] ?: error("bug in ${this::class.simpleName}"))
 
     /**
      * Takes into account the rank given to the passage when assessing its suitability to reach

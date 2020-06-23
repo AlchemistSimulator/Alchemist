@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import org.jooq.lambda.Seq
 
 /**
  * Moves the pedestrian where the given scalar field is higher.

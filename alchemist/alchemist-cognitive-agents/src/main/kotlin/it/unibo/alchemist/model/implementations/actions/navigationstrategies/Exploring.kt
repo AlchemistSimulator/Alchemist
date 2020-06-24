@@ -101,14 +101,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
      * that the pedestrian can estimate the congestion level of a neighboring room). It is computed
      * as density of the area coerced to be in (0,1] (less crowded rooms are preferred).
      */
-    protected open fun congestionFactor(head: ConvexPolygon): Double = environment
-        .getNodesWithinRange(head.centroid, head.radius)
-        .filterIsInstance<Pedestrian<T, *, *>>()
-        .map { environment.getPosition(it) }
-        .filter { head.contains(it) }
-        .count()
-        .let { pedestrian.area * it / head.asAwtShape().area }
-        .coerceAtLeast(Double.MIN_VALUE)
+    protected open fun congestionFactor(head: ConvexPolygon): Double = head.density.coerceAtLeast(0.0)
 
     /**
      * Takes into account whereas the assessed edge leads to a known impasse or not, known impasses
@@ -119,9 +112,22 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
         knownImpasseWeight.takeIf { head.isKnownImpasse() } ?: 1.0
 
     /**
-     * A rough estimation of the area of a [Shape].
+     * A value in [0, 1] representing the congestion of this room.
      */
-    protected open val Shape.area: Double get() = with(bounds2D) { abs(width * height) }
+    protected open val ConvexPolygon.density: Double get() = environment
+        .getNodesWithinRange(centroid, radius)
+        .asSequence()
+        .filterIsInstance<Pedestrian<T, *, *>>()
+        .map { environment.getPosition(it) }
+        .filter { contains(it) }
+        .count()
+        .let { it * pedestrian.area / area }
+        .coerceAtMost(1.0)
+
+    /**
+     * A rough estimation of the area of a [ConvexPolygon].
+     */
+    protected open val ConvexPolygon.area: Double get() = with(asAwtShape().bounds2D) { abs(width * height) }
 
     /**
      * A rough estimation of the area of a [Pedestrian].

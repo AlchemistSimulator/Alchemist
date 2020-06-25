@@ -121,10 +121,13 @@ class TestOrientingBehavior<T, P> : StringSpec({
     "pedestrian should avoid congestion" {
         loadYamlSimulation<T, P>("congestion-avoidance.yml").startSimulation(
             stepDone = { env: Environment<T, P>, _, _, _ ->
+                val pedestrian = env.nodes.filterIsInstance<OrientingPedestrian<T, *, *, *, *>>().first()
                 if (env is Euclidean2DEnvironmentWithGraph<*, T, *, *>) {
-                    val pedestrian = env.nodes.first()
-                    val roomToAvoid = env.graph.nodeContaining(env.makePosition(40, 40))
-                    roomToAvoid?.contains(env.getPosition(pedestrian)) shouldBe false
+                    val roomsToAvoid = listOf(
+                        env.graph.nodeContaining(env.makePosition(40, 40)),
+                        env.graph.nodeContaining(env.makePosition(40, 55))
+                    )
+                    roomsToAvoid.forEach { it?.contains(env.getPosition(pedestrian)) shouldBe false }
                 }
             },
             finished = { env, _, _ -> assertPedestriansReached(env, 1.0, 10, 55) },

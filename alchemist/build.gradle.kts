@@ -252,7 +252,6 @@ allprojects {
                 "Automatic-Module-Name" to "it.unibo.alchemist"
             ))
         }
-        exclude("META-INF/")
         exclude("ant_tasks/")
         exclude("about_files/")
         exclude("help/about/")
@@ -263,6 +262,7 @@ allprojects {
         exclude("gradlew")
         exclude("gradlew.bat")
         isZip64 = true
+        mergeServiceFiles()
         destinationDirectory.set(file("${rootProject.buildDir}/libs"))
         if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
             // Run the jar and check the output

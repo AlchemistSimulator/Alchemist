@@ -6,41 +6,6 @@ import kotlin.String
 object Libs {
     const val org_danilopianini_conrec: String = "org.danilopianini:conrec:_"
 
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
-    const val orchideditorial: String = "io.github.javaeden.orchid:OrchidEditorial:_"
-
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
-    const val orchidgithub: String = "io.github.javaeden.orchid:OrchidGithub:_"
-
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
-    const val orchidkotlindoc: String = "io.github.javaeden.orchid:OrchidKotlindoc:_"
-
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
-    const val orchidplugindocs: String = "io.github.javaeden.orchid:OrchidPluginDocs:_"
-
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
-    const val orchidsearch: String = "io.github.javaeden.orchid:OrchidSearch:_"
-
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
-    const val orchidsyntaxhighlighter: String = "io.github.javaeden.orchid:OrchidSyntaxHighlighter:_"
-
-    /**
-     * https://javaeden.github.io/Orchid/latest/core/
-     */
-    const val orchidwiki: String = "io.github.javaeden.orchid:OrchidWiki:_"
-
     const val kotlin_scripting_jsr223_embeddable: String = "org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:_"
     /**
      * http://ignite.apache.org

@@ -35,8 +35,6 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-val executionRequirements = listOf("interfaces", "engine", "loading").map { project(":alchemist-$it") }
-
 apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
@@ -311,21 +309,24 @@ repositories {
 }
 
 dependencies {
-    executionRequirements.forEach { api(it) }
+    // Depend on subprojects whose presence is necessary to run
+    listOf("interfaces", "engine", "loading") // Execution requirements
+        .map { project(":alchemist-$it") }
+        .forEach { api(it) }
     implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
     runtimeOnly(Libs.logback_classic)
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
-    orchidImplementation("io.github.javaeden.orchid:OrchidCore:_")
-    orchidRuntimeOnly(Libs.orchideditorial)
-    orchidRuntimeOnly(Libs.orchidkotlindoc)
-    orchidRuntimeOnly(Libs.orchidplugindocs)
-    orchidRuntimeOnly(Libs.orchidsearch)
-    orchidRuntimeOnly(Libs.orchidsyntaxhighlighter)
-    orchidRuntimeOnly(Libs.orchidwiki)
-    orchidRuntimeOnly(Libs.orchidgithub)
+
+    // Populate the dependencies for Orchid
+    fun orchid(module: String) = "io.github.javaeden.orchid:Orchid$module:_"
+    orchidImplementation(orchid("Core"))
+    val orchidRuntimeModules = listOf(
+        "Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki"
+    )
+    orchidRuntimeModules.forEach { orchidRuntimeOnly(orchid(it)) }
 }
 
 // WEBSITE

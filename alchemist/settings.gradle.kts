@@ -6,6 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
+import org.danilopianini.VersionAliases.justAdditionalAliases
 
 include(
     "alchemist-cognitive-agents",
@@ -29,13 +30,17 @@ include(
 rootProject.name = "alchemist"
 
 buildscript {
-    repositories { gradlePluginPortal() }
-    dependencies.classpath("de.fayard:dependencies:+")
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("de.fayard:dependencies:0.+")
+        classpath("org.danilopianini:refreshversions-aliases:0.+")
+    }
 }
 
-bootstrapRefreshVersionsAndDependencies(listOf(
-    file("config/version-alias-rules.txt").readText()
-))
+bootstrapRefreshVersionsAndDependencies(justAdditionalAliases)
 
 plugins {
     id("com.gradle.enterprise") version "3.2"

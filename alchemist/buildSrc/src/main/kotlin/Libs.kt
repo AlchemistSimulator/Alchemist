@@ -11,21 +11,6 @@ fun ignite(module: String) = "org.apache.ignite:ignite-$module:_"
 
 object Libs {
     /**
-     * http://ignite.apache.org
-     */
-    const val ignite_core: String = "org.apache.ignite:ignite-core:_"
-
-    /**
-     * http://ignite.apache.org
-     */
-    const val ignite_indexing: String = "org.apache.ignite:ignite-indexing:_"
-
-    /**
-     * http://ignite.apache.org
-     */
-    const val ignite_spring: String = "org.apache.ignite:ignite-spring:_"
-
-    /**
      * https://junit.org/junit5/
      */
     const val junit_jupiter_api: String = "org.junit.jupiter:junit-jupiter-api:_"

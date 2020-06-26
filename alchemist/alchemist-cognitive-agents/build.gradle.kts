@@ -35,4 +35,3 @@ publishing.publications {
         }
     }
 }
-

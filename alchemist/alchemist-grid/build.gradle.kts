@@ -6,7 +6,10 @@
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 
+
 dependencies {
+    fun ignite(module: String) = "org.apache.ignite:ignite-$module:_"
+
     api(ignite("core"))
 
     implementation(rootProject)

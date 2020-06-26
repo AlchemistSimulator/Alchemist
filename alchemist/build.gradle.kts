@@ -82,6 +82,8 @@ allprojects {
     }
 
     dependencies {
+        // Support functions
+        fun junit(module: String) = "org.junit.jupiter:junit-jupiter-$module:_"
         // Code quality control
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         // Compilation only
@@ -97,13 +99,13 @@ allprojects {
             exclude(group = "commons-lang")
         }
         // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
-        testImplementation(Libs.junit_jupiter_api)
+        testImplementation(junit("api"))
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
         testImplementation("org.mockito:mockito-core:_")
         testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
-        testRuntimeOnly(Libs.junit_jupiter_engine)
+        testRuntimeOnly(junit("engine"))
         // executable jar packaging
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
@@ -318,15 +320,14 @@ dependencies {
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
     runtimeOnly(Libs.logback_classic)
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+    testRuntimeOnly(incarnation("protelis"))
 
     // Populate the dependencies for Orchid
-    fun orchid(module: String) = "io.github.javaeden.orchid:Orchid$module:_"
-    orchidImplementation(orchid("Core"))
-    val orchidRuntimeModules = listOf(
-        "Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki"
-    )
-    orchidRuntimeModules.forEach { orchidRuntimeOnly(orchid(it)) }
+    fun orchidModule(module: String) = "io.github.javaeden.orchid:Orchid$module:_"
+    orchidImplementation(orchidModule("Core"))
+    listOf("Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki").forEach {
+        orchidRuntimeOnly(orchidModule(it))
+    }
 }
 
 // WEBSITE

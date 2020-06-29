@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
-import java.awt.Shape
 import kotlin.math.abs
 import kotlin.math.pow
 
@@ -90,18 +89,20 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
 
     /**
      * Takes into account the information stored in the pedestrian's volatile memory. It is computed
-     * as 2^v where v is the number of visits to the area the edge being weighted leads to (in other
-     * words, less visited rooms are preferred).
+     * as 2^v where v is the number of visits to [head] (= the area the edge being weighted leads to).
+     * Less visited rooms are preferred.
      */
     protected open fun volatileMemoryFactor(head: ConvexPolygon): Double =
         2.0.pow(pedestrian.volatileMemory[head] ?: 0)
 
     /**
-     * Takes into account the congestion of the area the edge being weighted leads to (it is assumed
-     * that the pedestrian can estimate the congestion level of a neighboring room). It is computed
-     * as density of the area coerced to be in (0,1] (less crowded rooms are preferred).
+     * Takes into account the congestion of [head], it is assumed that the pedestrian can estimate the
+     * congestion level of a neighboring room. It is computed as 2 * [head].congestionLevel + 0.5 (less
+     * crowded rooms are preferred). This function was derived empirically, observing it produces the
+     * desired behavior (i.e. allows to avoid congestion) in a simple scenario (see the "congestion
+     * avoidance" test of this module).
      */
-    protected open fun congestionFactor(head: ConvexPolygon): Double = head.density.coerceAtLeast(0.0)
+    protected open fun congestionFactor(head: ConvexPolygon): Double = 2 * head.congestionLevel + 0.5
 
     /**
      * Takes into account whereas the assessed edge leads to a known impasse or not, known impasses
@@ -112,9 +113,9 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
         knownImpasseWeight.takeIf { head.isKnownImpasse() } ?: 1.0
 
     /**
-     * A value in [0, 1] representing the congestion of this room.
+     * Area occupied by pedestrians / total area of this room. Falls in [0,1].
      */
-    protected open val ConvexPolygon.density: Double get() = environment
+    protected open val ConvexPolygon.congestionLevel: Double get() = environment
         .getNodesWithinRange(centroid, radius)
         .asSequence()
         .filterIsInstance<Pedestrian<T, *, *>>()

@@ -66,7 +66,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
             "explore.yml",
             0.1,
             3000,
-            119.97675568510425, 30.0965400881618
+            44.910744827515124, 19.554979285729484
         )
     }
 
@@ -119,18 +119,19 @@ class TestOrientingBehavior<T, P> : StringSpec({
     }
 
     "pedestrian should avoid congestion" {
+        var corridorTaken = false
         loadYamlSimulation<T, P>("congestion-avoidance.yml").startSimulation(
             stepDone = { env: Environment<T, P>, _, _, _ ->
-                val pedestrian = env.nodes.filterIsInstance<OrientingPedestrian<T, *, *, *, *>>().first()
-                if (env is Euclidean2DEnvironmentWithGraph<*, T, *, *>) {
-                    val roomsToAvoid = listOf(
-                        env.graph.nodeContaining(env.makePosition(40, 40)),
-                        env.graph.nodeContaining(env.makePosition(40, 55))
-                    )
-                    roomsToAvoid.forEach { it?.contains(env.getPosition(pedestrian)) shouldBe false }
+                if (env is Euclidean2DEnvironmentWithGraph<*, T, *, *> && !corridorTaken) {
+                    val pedestrian = env.nodes.filterIsInstance<OrientingPedestrian<T, *, *, *, *>>().first()
+                    val corridorToTake = env.graph.nodeContaining(env.makePosition(35.0, 31.0))
+                    corridorTaken = corridorToTake?.contains(env.getPosition(pedestrian)) ?: false
                 }
             },
-            finished = { env, _, _ -> assertPedestriansReached(env, 1.0, 10, 55) },
+            finished = { env, _, _ ->
+                assertPedestriansReached(env, 1.0, 10, 55)
+                corridorTaken shouldBe true
+            },
             steps = 70
         )
     }

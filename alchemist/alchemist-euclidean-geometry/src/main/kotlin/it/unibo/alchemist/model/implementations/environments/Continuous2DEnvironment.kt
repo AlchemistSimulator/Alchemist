@@ -64,14 +64,14 @@ open class Continuous2DEnvironment<T> :
     }
 
     /**
-     * Keeps track of the largest diameter of the shapes.
+     * Keeps track of the largest diameter of the shapes. Throws an [IllegalStateException] if the [node] can't fit
+     * the [position] (see [canFit]).
      */
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
         check(node.canFit(position)) {
             node as NodeWithShape<T, *, *>
-            val overlappingPositions = node.overlappingNodes(position).map { getPosition(it) }
-            "node in $position overlaps with nodes in $overlappingPositions. Node's diameter is ${node.shape.diameter}"
+            "node in $position overlaps with nodes in ${node.overlappingNodes(position).map { getPosition(it) }}."
         }
         if (node is NodeWithShape<*, *, *> && node.shape.diameter > largestShapeDiameter) {
             largestShapeDiameter = node.shape.diameter
@@ -98,9 +98,7 @@ open class Continuous2DEnvironment<T> :
      */
     override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
         if (node is NodeWithShape<T, *, *>) {
-            val farthestPosition = farthestPositionReachable(node, newpos)
-            check(node.canFit(farthestPosition)) { "Internal bug in ${this::class.qualifiedName}" }
-            super.moveNodeToPosition(node, farthestPosition)
+            super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
         } else {
             super.moveNodeToPosition(node, newpos)
         }
@@ -122,8 +120,8 @@ open class Continuous2DEnvironment<T> :
     }
 
     /**
-     * For a better understanding of how to compute collision points with circular hitboxes see
-     * [this discussion](https://bit.ly/3f00NvJ).
+     * [node].[canFit] must be true for the returned position. For a better understanding of how to compute collision
+     * points with circular hitboxes see [this discussion](https://bit.ly/3f00NvJ).
      */
     override fun farthestPositionReachable(
         node: NodeWithShape<T, *, *>,
@@ -133,11 +131,18 @@ open class Continuous2DEnvironment<T> :
         val currentPosition = getPosition(node)
         val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)
         val nodesOnPath = nodesOnPath(node, desiredMovement)
-        if (nodesOnPath.any { getPosition(it).distanceTo(currentPosition) < it.shape.radius + hitboxRadius }) {
+            .map { getShape(it) }
+            /*
+             * Considers only nodes in the direction of movement.
+             */
+            .filter { desiredMovement.toVector.angleBetween(it.centroid - currentPosition) < Math.PI / 2 }
+        /*
+         * If we're already colliding with someone, just return the current position.
+         */
+        if (nodesOnPath.any { currentPosition.distanceTo(it.centroid) < it.radius + node.shape.radius }) {
             return currentPosition
         }
         return nodesOnPath
-            .map { getShape(it) }
             .flatMap { other ->
                 desiredMovement.intersectCircle(other.centroid, other.radius + hitboxRadius).asList
             }
@@ -149,7 +154,7 @@ open class Continuous2DEnvironment<T> :
      * @returns all nodes that the given [node] would collide with while performing the [desiredMovement].
      * Such segment should connect the [node]'s current position and its desired position.
      */
-    private fun nodesOnPath(node: NodeWithShape<T, *, *>, desiredMovement: Segment2D<*>): List<NodeWithShape<T, *, *>> =
+    private fun nodesOnPath(node: NodeWithShape<T, *, *>, desiredMovement: Segment2D<*>): Nodes<T> =
         with(node.shape) {
             shapeFactory.rectangle(desiredMovement.length + diameter, diameter)
                 .transformed {
@@ -161,11 +166,21 @@ open class Continuous2DEnvironment<T> :
                 }
         }
 
+    /**
+     * Checks if a node doesn't overlap with any other node in the environment (see [overlappingNodes]). If the
+     * node is shapeless, true is returned.
+     */
     private fun Node<T>.canFit(position: Euclidean2DPosition): Boolean =
         this !is NodeWithShape<T, *, *> || overlappingNodes(position).isEmpty()
 
-    private fun NodeWithShape<T, *, *>.overlappingNodes(position: Euclidean2DPosition): List<NodeWithShape<T, *, *>> =
+    /**
+     * @returns the nodes in this environment whose shape intersects this node's shape. The [position] of this
+     * node must be specified as it may not have been added in the environment yet.
+     */
+    private fun NodeWithShape<T, *, *>.overlappingNodes(position: Euclidean2DPosition): Nodes<T> =
         getNodesWithin(shapeFactory.requireCompatible(shape).transformed { origin(position) })
             .filterIsInstance<NodeWithShape<T, *, *>>()
             .minusElement(this)
 }
+
+private typealias Nodes<T> = List<NodeWithShape<T, *, *>>

@@ -10,15 +10,11 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
-import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import org.apache.commons.math3.random.RandomGenerator
@@ -37,25 +33,17 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
     group: PedestrianGroup2D<T>? = null,
     age: Age,
     gender: Gender,
-    danger: Molecule? = null
-) : HeterogeneousOrientingPedestrian2D<T, N, E>(
+    danger: Molecule? = null,
+    private val consciousness: CognitivePedestrian2D<T> =
+        CognitivePedestrian2D(environment, randomGenerator, age, gender, danger, group)
+) : HomogeneousOrientingPedestrian2D<T, N, E>(
     environment,
     randomGenerator,
     knowledgeDegree = knowledgeDegree,
-    group = group,
-    age = age,
-    gender = gender
-), CognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
+    group = group
+), CognitiveAgent by consciousness {
 
-    /*
-     * The cognitive part of the pedestrian.
-     */
-    override val cognitive =
-        ImpactModel(this, compliance) {
-            environment.getLayer(danger)
-                .map { it.getValue(environment.getPosition(this)) as Double }
-                .orElse(0.0)
-        }
+    override fun speed() = consciousness.speed()
 
     /**
      * Allows to specify age and gender with a string.
@@ -98,9 +86,4 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
         Gender.fromString(gender),
         danger
     )
-
-    override fun influencialPeople(): List<CognitiveAgent> =
-        senses.fold(listOf()) { accumulator, sphere ->
-            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitiveAgent>()).toList()
-        }
 }

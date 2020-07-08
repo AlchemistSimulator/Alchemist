@@ -9,10 +9,14 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
+import org.jgrapht.graph.DefaultEdge
 
 /**
  * An agent capable of orienting itself inside an environment.
@@ -54,3 +58,8 @@ interface OrientingAgent<V, A, L, R> where
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
 }
+
+/**
+ * An agent capable of orienting itself inside an Euclidean environment.
+ */
+typealias OrientingAgent2D = OrientingAgent<Euclidean2DPosition, Euclidean2DTransformation, Ellipse, DefaultEdge>

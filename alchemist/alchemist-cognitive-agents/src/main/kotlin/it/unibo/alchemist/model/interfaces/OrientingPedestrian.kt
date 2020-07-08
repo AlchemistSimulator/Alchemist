@@ -9,9 +9,11 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A pedestrian capable of orienting itself.
@@ -30,3 +32,8 @@ interface OrientingPedestrian<
     R
 > : Pedestrian<T, V, A>,
     OrientingAgent<V, A, L, R>
+
+/**
+ * An [OrientingPedestrian] in an euclidean bidimensional space.
+ */
+typealias OrientingPedestrian2D<T, L, R> = OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, L, R>

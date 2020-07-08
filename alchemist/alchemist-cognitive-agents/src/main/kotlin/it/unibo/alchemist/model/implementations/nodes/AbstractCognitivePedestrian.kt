@@ -1,6 +1,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
+import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
@@ -34,7 +35,8 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
     age: Age,
     gender: Gender,
     val danger: Molecule? = null,
-    group: PedestrianGroup<T, P, A>? = null
+    group: PedestrianGroup<T, P, A>? = null,
+    cognitive: CognitiveModel? = null
 ) : AbstractHeterogeneousPedestrian<T, P, A, F>(environment, randomGenerator, age, gender, group),
     CognitivePedestrian<T, P, A>
     where P : Position<P>, P : Vector<P>,
@@ -42,7 +44,7 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
           F : GeometricShapeFactory<P, A> {
 
     override val cognitive by lazy {
-        ImpactModel(this, compliance) {
+        cognitive ?: ImpactModel(this, compliance) {
             environment.getLayer(danger)
                 .map { it.getValue(environment.getPosition(this)) as Double }
                 .orElse(0.0)

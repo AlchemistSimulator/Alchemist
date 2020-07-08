@@ -9,14 +9,13 @@
 
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.OrientingAgent2D
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import org.apache.commons.math3.random.RandomGenerator
-import org.jgrapht.graph.DefaultEdge
 
 /**
  * A cognitive [OrientingPedestrian2D] capable of physical interactions.
@@ -29,7 +28,8 @@ class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverlo
     group: PedestrianGroup2D<T>? = null,
     age: String,
     gender: String,
-    danger: Molecule? = null
+    danger: Molecule? = null,
+    orientation: OrientingAgent2D = HomogeneousOrientingPedestrian2D(environment, randomGenerator, knowledgeDegree)
 ) : CognitivePhysicalPedestrian2D<T>(
     environment,
     randomGenerator,
@@ -37,14 +37,4 @@ class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverlo
     gender,
     danger,
     group
-), OrientingPedestrian2D<T, Ellipse, DefaultEdge> {
-
-    /**
-     * The orienting part of the pedestrian.
-     */
-    private val orienting = HomogeneousOrientingPedestrian2D(environment, randomGenerator, knowledgeDegree)
-
-    override val cognitiveMap get() = orienting.cognitiveMap
-
-    override val volatileMemory get() = orienting.volatileMemory
-}
+), OrientingAgent2D by orientation

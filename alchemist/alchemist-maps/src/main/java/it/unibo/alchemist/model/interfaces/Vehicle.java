@@ -7,6 +7,17 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import com.graphhopper.routing.util.BikeFlagEncoder;
+import com.graphhopper.routing.util.CarFlagEncoder;
+import com.graphhopper.routing.util.EncodingManager;
+import com.graphhopper.routing.util.FlagEncoder;
+import com.graphhopper.routing.util.FootFlagEncoder;
+import com.graphhopper.routing.util.HikeFlagEncoder;
+import com.graphhopper.routing.util.MotorcycleFlagEncoder;
+import com.graphhopper.routing.util.MountainBikeFlagEncoder;
+import com.graphhopper.routing.util.RacingBikeFlagEncoder;
+import com.graphhopper.routing.util.WheelchairFlagEncoder;
+
 /**
  */
 public enum Vehicle {
@@ -14,41 +25,54 @@ public enum Vehicle {
     /**
      * Bikes.
      */
-    BIKE,
+    BIKE(new BikeFlagEncoder()),
 
     /**
      * Cars.
      */
-    CAR,
+    CAR(new CarFlagEncoder()),
 
     /**
      * Pedestrians.
      */
-    FOOT,
+    FOOT(new FootFlagEncoder()),
 
     /**
-     * Allows walking along mountain paths.
+     * Allows walking along path trails.
      */
-    HIKE,
-
-//    /**
-//     * Bikes, with improved elevation interpolation.
-//     */
-//    BIKE2,
-
-    /**
-     * Racing Bikes.
-     */
-    RACINGBIKE,
+    HIKE(new HikeFlagEncoder()),
 
     /**
      * Mountain Bikes.
      */
-    MTB,
+    MOUNTAN_BIKE(new MountainBikeFlagEncoder()),
 
     /**
      * Motorcycles.
      */
-    MOTORCYCLE
+    MOTORCYCLE(new MotorcycleFlagEncoder()),
 
+    /**
+     * Racing Bikes.
+     */
+    RACING_BIKE(new RacingBikeFlagEncoder()),
+
+    /**
+     * Routes along wheelchair-accessible paths.
+     */
+    WHEELCHAIR(new WheelchairFlagEncoder());
+
+    private final EncodingManager encoder;
+
+    Vehicle(final FlagEncoder encoder) {
+        this.encoder = EncodingManager.start().add(encoder).build();
+    }
+
+    /**
+     * @return the Graphopper {@link com.graphhopper.routing.util.FlagEncoder}
+     * corresponding to the selected vehicle
+     */
+    public EncodingManager getEncoder() {
+        return encoder;
+    }
 }

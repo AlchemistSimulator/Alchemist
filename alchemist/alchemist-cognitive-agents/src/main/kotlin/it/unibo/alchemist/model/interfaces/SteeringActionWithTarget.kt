@@ -14,8 +14,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * A [SteeringAction] with a defined target.
  */
-interface SteeringActionWithTarget<T, P> : SteeringAction<T, P>
-    where P : Position<P>, P : Vector<P> {
+interface SteeringActionWithTarget<T, P> : SteeringAction<T, P> where P : Position<P>, P : Vector<P> {
 
     /**
      * The position the owner of this action moves towards, in absolute coordinates.

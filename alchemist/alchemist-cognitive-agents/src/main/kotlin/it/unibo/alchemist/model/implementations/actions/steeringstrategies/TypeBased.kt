@@ -7,14 +7,13 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import kotlin.reflect.KClass
 
 /**
- * Steering strategy which gives a weight based on the type of steering action you are considering.
- * For each type,
- * only the action with the target nearest to the current pedestrian position is taken into consideration.
+ * A [Weighted] steering strategy assigning weights based on actions' types (each type has its own weight, specified
+ * by the client).
  *
  * @param environment
  *          the environment in which the pedestrian moves.
  * @param pedestrian
- *          the owner of the steering action this strategy belongs to.
+ *          the owner of the steering actions combined by this strategy.
  * @param typeWeights
  *          the weight for each type of steering action.
  */

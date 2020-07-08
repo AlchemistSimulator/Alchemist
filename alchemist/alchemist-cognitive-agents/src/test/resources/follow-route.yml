@@ -28,7 +28,7 @@ displacements:
       type: Point
       parameters: [15, 15]
     nodes:
-      type: OrientingPedestrian2D
+      type: HomogeneousOrientingPedestrian2D
       parameters: [0.0]
     programs:
       - *behavior

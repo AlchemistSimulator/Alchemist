@@ -1,7 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -20,25 +19,18 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param coords
  *          the coordinates of the position the pedestrian moves away.
  */
-open class Flee<T, P, A : GeometricTransformation<P>>(
+open class Flee<T, P, A>(
     private val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>,
     vararg coords: Double
 ) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
-    where
-        P : Position<P>,
-        P : Vector<P> {
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P> {
 
     private val danger: P = env.makePosition(*coords.toTypedArray())
 
-    @Suppress("UNCHECKED_CAST")
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Flee<T, P, A> =
-        Flee(env, r, n as Pedestrian<T, P, A>, *danger.coordinates)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Flee(env, r, n, *danger.coordinates)
 
-    /*
-     * We don't want to resizeToMaxWalkIfGreater, we want to flee from danger as
-     * much as we can (i.e. maxWalk).
-     */
-    override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk())
+    override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)
 }

@@ -6,7 +6,8 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 
 /**
- * Steering behavior which sums all the actions with a different weight based on their target distance.
+ * Steering behavior using [DistanceWeighted] steering strategy (= steering actions are summed with different
+ * weights depending on the distance to their target).
  *
  * @param environment
  *          the environment inside which the pedestrian moves.

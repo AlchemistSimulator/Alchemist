@@ -25,7 +25,7 @@ fun <P : Position<P>> Array<out Number>.toPositions(environment: Environment<*, 
     toList().chunked(environment.dimensions) { environment.makePosition(*it.toTypedArray()) }
 
 /**
- * Performs the cartesian product of the given sequences.
+ * Performs the cartesian product of two sequences.
  */
-fun <T> cartesianProduct(sequence1: Sequence<T>, sequence2: Sequence<T>): Sequence<Pair<T, T>> =
-    sequence1.flatMap { element1 -> sequence2.map { element2 -> Pair(element1, element2) } }
+fun <T> Sequence<T>.cartesianProduct(other: Sequence<T>): Sequence<Pair<T, T>> =
+    flatMap { first -> other.map { second -> Pair(first, second) } }

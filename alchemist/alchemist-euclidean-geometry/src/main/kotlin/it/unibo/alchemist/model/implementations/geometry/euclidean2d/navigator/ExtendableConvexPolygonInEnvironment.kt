@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigator.ExtendableConvexPolygon
-import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 import java.awt.geom.Point2D
 import java.awt.geom.Line2D
@@ -136,10 +135,10 @@ class ExtendableConvexPolygonInEnvironment(
      * is to be voided if the slope of the edge changes). This method accepts the index of a modified edge
      * and the old edge and applies different policies to decide if each cache should be voided.
      */
-    private fun voidCacheAt(index: Int, old: Segment2D<*>) {
+    private fun voidCacheAt(index: Int, old: Segment2D<Euclidean2DPosition>) {
         val new = getEdge(index)
         canEdgeAdvance[index] = true
-        if (!fuzzyEquals(old.slope, new.slope) && !(old.isDegenerate || new.isDegenerate)) {
+        if (!old.isParallelTo(new) && !(old.isDegenerate || new.isDegenerate)) {
             growthDirections[index] = null
             normals[index] = null
         }
@@ -196,8 +195,8 @@ class ExtendableConvexPolygonInEnvironment(
      * the polygon and not shrink it (this is all about figuring out in which verse the polygon extends).
      */
     private fun computeNormal(index: Int, edge: Segment2D<Euclidean2DPosition> = getEdge(index)): Euclidean2DPosition {
-        val curr = edge.toVector()
-        val prev = getEdge(circularPrevious(index)).toVector()
+        val curr = edge.toVector
+        val prev = getEdge(circularPrevious(index)).toVector
         val normal = curr.normal().normalized()
         if (zCross(curr, normal) > 0.0 != zCross(curr, prev) > 0.0) {
             return normal * -1.0
@@ -279,7 +278,7 @@ class ExtendableConvexPolygonInEnvironment(
     private fun isAdvancedCase(obstacle: Shape, index: Int, step: Double) =
         obstacle.vertices().none { containsBoundaryIncluded(it) } &&
             vertices.filter { obstacle.contains(it.toPoint()) }.size == 1 &&
-            !fuzzyEquals(firstIntrudedEdge(obstacle, index, step).slope, getEdge(index).slope)
+            !firstIntrudedEdge(obstacle, index, step).isParallelTo(getEdge(index))
 
     /*
      * During the advancement of an edge, multiple edges of an obstacle may be
@@ -299,11 +298,7 @@ class ExtendableConvexPolygonInEnvironment(
         /*
          * a segment going from the old position of the intruding vertex to the new one
          */
-        val movementSegment =
-            Segment2DImpl(
-                intrudingVertex,
-                intrudingVertex - growthDirection.resized(step)
-            )
+        val movementSegment = Segment2DImpl(intrudingVertex, intrudingVertex - growthDirection.resized(step))
         val intrudedEdges = findIntersectingEdges(obstacle, movementSegment)
         require(intrudedEdges.size == 1) { "vertex is not intruding" }
         return intrudedEdges.first()
@@ -314,13 +309,7 @@ class ExtendableConvexPolygonInEnvironment(
      */
     private fun findIntersectingEdges(obstacle: Shape, e: Segment2D<Euclidean2DPosition>) =
         obstacle.vertices().run {
-            mapIndexed { i, v ->
-                Segment2DImpl(
-                    v,
-                    this[(i + 1) % size]
-                )
-            }
-                .filter { edgesIntersect(it, e) }
+            mapIndexed { i, v -> Segment2DImpl(v, this[(i + 1) % size]) }.filter { edgesIntersect(it, e) }
         }
 
     /*
@@ -345,8 +334,8 @@ class ExtendableConvexPolygonInEnvironment(
         val polygonEdge2 = getEdge(circularPrevious(indexOfIntrudingV))
         val obstacleEdge: Segment2D<Euclidean2DPosition> = firstIntrudedEdge(obstacle, indexOfAdvancingEdge, step)
         // intersecting points lying on polygon boundary
-        val intersection1 = polygonEdge1.intersectSegment(obstacleEdge)
-        val intersection2 = polygonEdge2.intersectSegment(obstacleEdge)
+        val intersection1 = polygonEdge1.intersect(obstacleEdge)
+        val intersection2 = polygonEdge2.intersect(obstacleEdge)
         require(intersection1 is Intersection2D.SinglePoint && intersection2 is Intersection2D.SinglePoint) {
             "Bug in the Alchemist geometric engine. Found in ${this::class.qualifiedName}"
         }

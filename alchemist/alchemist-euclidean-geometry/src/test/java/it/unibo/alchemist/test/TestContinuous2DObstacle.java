@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class TestContinuous2DObstacle {
 
-    private static final RectObstacle2D R1021 = new RectObstacle2D(1, 0, 1, 1);
-    private static final RectObstacle2D R0527 = new RectObstacle2D(0, 5, 2, -2);
+    private static final RectObstacle2D<Euclidean2DPosition> R1021 = new RectObstacle2D<>(1, 0, 1, 1);
+    private static final RectObstacle2D<Euclidean2DPosition> R0527 = new RectObstacle2D<>(0, 5, 2, -2);
 
     /**
      * 

@@ -7,20 +7,18 @@
  */
 package it.unibo.alchemist.model.implementations.routes;
 
+import com.graphhopper.GHResponse;
+import com.graphhopper.util.PointList;
+import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.TimedRoute;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.graphhopper.GHResponse;
-import com.graphhopper.PathWrapper;
-import com.graphhopper.util.PointList;
-
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.TimedRoute;
 
 /**
  */
@@ -38,7 +36,7 @@ public final class GraphHopperRoute implements TimedRoute<GeoPosition> {
     public GraphHopperRoute(final GHResponse response) {
         final List<Throwable> errs = response.getErrors();
         if (errs.isEmpty()) {
-            final PathWrapper resp = response.getBest();
+            final var resp = response.getBest();
             time = resp.getTime() / 1000d;
             distance = resp.getDistance();
             final PointList pts = resp.getPoints();

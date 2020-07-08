@@ -9,6 +9,7 @@
 dependencies {
     api(project(":alchemist-interfaces"))
     api(project(":alchemist-implementationbase"))
+    implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.classgraph)
@@ -16,7 +17,6 @@ dependencies {
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
-    implementation(Libs.jgrapht_core)
 }
 
 publishing.publications {

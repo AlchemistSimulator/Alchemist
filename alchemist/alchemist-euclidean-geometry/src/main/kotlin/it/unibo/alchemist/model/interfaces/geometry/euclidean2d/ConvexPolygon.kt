@@ -8,8 +8,7 @@ import java.awt.Shape
  * A simple polygon (i.e. not self-intersecting and without holes) in which no
  * line segment between two points on the boundary ever goes outside the polygon.
  */
-interface ConvexPolygon : Euclidean2DConvexShape,
-    AwtShapeCompatible {
+interface ConvexPolygon : Euclidean2DConvexShape, AwtShapeCompatible {
 
     /**
      * @returns the vertices of the polygon, sorted so that the polygon could
@@ -84,13 +83,6 @@ interface ConvexPolygon : Euclidean2DConvexShape,
      * @returns true if the polygons are adjacent
      */
     fun isAdjacentTo(other: ConvexPolygon): Boolean
-
-    /**
-     * Checks if the polygon is adjacent to a convex polygonal [java.awt.Shape].
-     * @param shape the convex polygonal shape
-     * @returns true if the polygons are adjacent
-     */
-    fun isAdjacentTo(shape: Shape): Boolean
 
     /**
      * Checks if a segment intersects with the polygon, segments lying on the polygon's

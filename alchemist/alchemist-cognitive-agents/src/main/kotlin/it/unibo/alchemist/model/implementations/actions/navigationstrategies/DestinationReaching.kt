@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
@@ -26,11 +26,11 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  * [KnownDestinationReaching] and [GoalOrientedExploring].
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-open class DestinationReaching<T, N : Euclidean2DConvexShape, E>(
-    action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
+open class DestinationReaching<T, L : Euclidean2DConvexShape, R>(
+    action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
     /**
      * Known destinations, can be empty.
      */
@@ -39,7 +39,7 @@ open class DestinationReaching<T, N : Euclidean2DConvexShape, E>(
      * Unknown destinations, defaults to an empty list.
      */
     private val unknownDestinations: List<Euclidean2DPosition> = emptyList()
-) : GoalOrientedExploring<T, N, E> (
+) : GoalOrientedExploring<T, L, R> (
     action,
     /*
      * This may seem strange, but as stated above if we found a destination along the way (either known
@@ -48,7 +48,7 @@ open class DestinationReaching<T, N : Euclidean2DConvexShape, E>(
     knownDestinations + unknownDestinations
 ) {
 
-    private val knownDestinationReaching: KnownDestinationReaching<T, N, E>? =
+    private val knownDestinationReaching: KnownDestinationReaching<T, L, R>? =
         knownDestinations.takeIf { it.isNotEmpty() }?.let { KnownDestinationReaching(action, it) }
 
     override fun inNewRoom(newRoom: ConvexPolygon) = when (knownDestinationReaching) {

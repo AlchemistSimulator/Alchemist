@@ -7,22 +7,23 @@
  */
 
 dependencies {
-    api(project(":alchemist-implementationbase"))
-    api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-euclidean-geometry"))
+    api(alchemist("implementationbase"))
+    api(alchemist("interfaces"))
+
+    implementation(alchemist("euclidean-geometry"))
     implementation(Libs.commons_lang3)
     implementation(Libs.guava)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
 
     runtimeOnly(Libs.groovy_jsr223)
-    runtimeOnly(Libs.kotlin_scripting_jsr223_embeddable)
-    runtimeOnly("org.scala-lang:scala-compiler:2.13.1")
+    runtimeOnly(kotlin("scripting-jsr223-embeddable"))
+    runtimeOnly("org.scala-lang:scala-compiler:2.13.2")
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
     testImplementation(Libs.gson)
-    testImplementation("org.scala-lang:scala-compiler:2.13.1")
+    testRuntimeOnly("org.scala-lang:scala-compiler:2.13.2")
 
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }

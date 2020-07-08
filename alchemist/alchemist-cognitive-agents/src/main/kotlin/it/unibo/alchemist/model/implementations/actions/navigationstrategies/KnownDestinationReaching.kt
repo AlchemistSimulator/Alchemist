@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
 import it.unibo.alchemist.model.implementations.actions.cartesianProduct
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -29,11 +29,11 @@ import org.jgrapht.alg.shortestpath.BFSShortestPath
  * cognitive map to obtain a route to follow.
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
-    action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
+open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
+    action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
     /**
      * Known destinations (must not be empty).
      */
@@ -41,7 +41,7 @@ open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
     /*
      * An empty list is passed to super method, because route is initialised in this class' init block.
      */
-) : RouteFollowing<T, N, E>(action, emptyList()) {
+) : RouteFollowing<T, L, R>(action, emptyList()) {
 
     final override val route: List<Euclidean2DPosition>
 
@@ -89,8 +89,8 @@ open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
      * from the pedestrian's position than the destination itself it's just more convenient to pursue the latter.
      * If the cognitive map is empty the path will be empty as well.
      */
-    private fun findKnownPathTo(destination: Euclidean2DPosition): List<N> = with(pedestrian.cognitiveMap) {
-        emptyList<N>().takeIf { vertexSet().isEmpty() } ?: let {
+    private fun findKnownPathTo(destination: Euclidean2DPosition): List<L> = with(pedestrian.cognitiveMap) {
+        emptyList<L>().takeIf { vertexSet().isEmpty() } ?: let {
             val currPos = environment.getPosition(pedestrian)
             val currRoom = environment.graph.nodeContaining(currPos)
             val destRoom = environment.graph.nodeContaining(destination)
@@ -98,7 +98,7 @@ open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
                 return emptyList()
             }
             (buildSequence(currRoom, destRoom) + vertexSet().asSequence().let { landmarks ->
-                cartesianProduct(landmarks, landmarks).sortedBy { (start, end) ->
+                landmarks.cartesianProduct(landmarks).sortedBy { (start, end) ->
                     start.centroid.distanceTo(currPos) + end.centroid.distanceTo(destination)
                 }
             })
@@ -123,21 +123,21 @@ open class KnownDestinationReaching<T, N : Euclidean2DConvexShape, E>(
      * - pairs where the first landmark is adjacent to [startRoom] and the second landmark is inside [endRoom],
      * - pairs where the first landmark is adjacent to [startRoom] and the second landmark is adjacent to [endRoom].
      */
-    private fun buildSequence(startRoom: ConvexPolygon, endRoom: ConvexPolygon): Sequence<Pair<N, N>> {
-        val landmarksIn: (room: ConvexPolygon) -> Sequence<N> = { room ->
+    private fun buildSequence(startRoom: ConvexPolygon, endRoom: ConvexPolygon): Sequence<Pair<L, L>> {
+        val landmarksIn: (room: ConvexPolygon) -> Sequence<L> = { room ->
             pedestrian.cognitiveMap.vertexSet().asSequence().filter { room.contains(it.centroid) }
         }
-        val landmarksInAny: (rooms: List<ConvexPolygon>) -> Sequence<N> = {
+        val landmarksInAny: (rooms: List<ConvexPolygon>) -> Sequence<L> = {
                 rooms -> rooms.asSequence().flatMap(landmarksIn)
         }
         val landmarksInStartRoom = landmarksIn(startRoom)
         val landmarksInEndRoom = landmarksIn(endRoom)
         val landmarksAdjacentToStartRoom = landmarksInAny(Graphs.successorListOf(environment.graph, startRoom))
         val landmarksAdjacentToEndRoom = landmarksInAny(Graphs.predecessorListOf(environment.graph, endRoom))
-        return cartesianProduct(landmarksInStartRoom, landmarksInEndRoom) +
-            cartesianProduct(landmarksInStartRoom, landmarksAdjacentToEndRoom) +
-            cartesianProduct(landmarksAdjacentToStartRoom, landmarksInEndRoom) +
-            cartesianProduct(landmarksAdjacentToStartRoom, landmarksAdjacentToEndRoom)
+        return landmarksInStartRoom.cartesianProduct(landmarksInEndRoom) +
+            landmarksInStartRoom.cartesianProduct(landmarksAdjacentToEndRoom) +
+            landmarksAdjacentToStartRoom.cartesianProduct(landmarksInEndRoom) +
+            landmarksAdjacentToStartRoom.cartesianProduct(landmarksAdjacentToEndRoom)
     }
 
     /**

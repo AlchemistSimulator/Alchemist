@@ -27,8 +27,8 @@ dependencies {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
     }
-    implementation(Libs.org_danilopianini_conrec)
-    implementation(Libs.jgrapht_core) // just to draw cognitive maps
+    implementation("org.danilopianini:conrec:_")
+    implementation(jgrapht("core")) // just to draw cognitive maps
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }

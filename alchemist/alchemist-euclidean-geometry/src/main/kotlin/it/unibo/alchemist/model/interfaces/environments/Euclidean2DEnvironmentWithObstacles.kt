@@ -15,7 +15,5 @@ import it.unibo.alchemist.model.interfaces.Obstacle2D
 /**
  * An [Environment2DWithObstacles] using [Euclidean2DPosition]s.
  */
-interface Euclidean2DEnvironmentWithObstacles<W, T> :
-    Euclidean2DEnvironment<T>,
-    Environment2DWithObstacles<W, T>
+interface Euclidean2DEnvironmentWithObstacles<W, T> : Euclidean2DEnvironment<T>, Environment2DWithObstacles<W, T>
     where W : Obstacle2D<Euclidean2DPosition>

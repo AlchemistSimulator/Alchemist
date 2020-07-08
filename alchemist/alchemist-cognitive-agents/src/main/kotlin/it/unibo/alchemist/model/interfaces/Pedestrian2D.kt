@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
- * The bidimensional representation of a pedestrian.
+ * A bidimensional pedestrian.
  */
 interface Pedestrian2D<T> : Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
 

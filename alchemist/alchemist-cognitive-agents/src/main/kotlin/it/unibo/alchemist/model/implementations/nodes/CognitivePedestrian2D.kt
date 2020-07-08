@@ -5,15 +5,14 @@ import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gende
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
-import it.unibo.alchemist.model.interfaces.PedestrianGroup
+import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
 
-private typealias Group<T> = PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>
-private typealias CognitivePedestrianImplementation<T> = CognitivePedestrianImpl<T,
-    Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
+private typealias AbstractCognitivePedestrian2D<T> =
+    AbstractCognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
 
 /**
  * Implementation of a cognitive pedestrian in the Euclidean world.
@@ -35,8 +34,8 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     age: Age,
     gender: Gender,
     danger: Molecule? = null,
-    group: Group<T>? = null
-) : CognitivePedestrianImplementation<T>(
+    group: PedestrianGroup2D<T>? = null
+) : AbstractCognitivePedestrian2D<T>(
     environment,
     randomGenerator,
     age,
@@ -45,13 +44,20 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     group
 ), Pedestrian2D<T> {
 
+    override val shape by lazy { super.shape }
+    override val fieldOfView by lazy { super.fieldOfView }
+
+    init {
+        senses += fieldOfView
+    }
+
     @JvmOverloads constructor(
         environment: Physics2DEnvironment<T>,
         randomGenerator: RandomGenerator,
         age: String,
         gender: String,
         danger: Molecule? = null,
-        group: Group<T>? = null
+        group: PedestrianGroup2D<T>? = null
     ) : this(environment, randomGenerator, Age.fromString(age), Gender.fromString(gender), danger, group)
 
     @JvmOverloads constructor(
@@ -60,13 +66,6 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
         age: Int,
         gender: String,
         danger: Molecule? = null,
-        group: Group<T>? = null
+        group: PedestrianGroup2D<T>? = null
     ) : this(environment, randomGenerator, Age.fromYears(age), Gender.fromString(gender), danger, group)
-
-    override val shape by lazy { super<Pedestrian2D>.shape }
-    override val fieldOfView by lazy { super.fieldOfView }
-
-    init {
-        senses += fieldOfView
-    }
 }

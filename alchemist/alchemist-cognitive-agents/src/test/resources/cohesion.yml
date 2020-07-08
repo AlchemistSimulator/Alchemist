@@ -37,7 +37,7 @@ reactions: &behavior
     type: PrioritySteering
     actions:
       - type: Cohesion
-      - type: AvoidFlowField
+      - type: AvoidLayer
         parameters: [*exit]
 
 displacements:

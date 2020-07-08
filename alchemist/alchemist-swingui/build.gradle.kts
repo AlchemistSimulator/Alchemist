@@ -28,7 +28,7 @@ dependencies {
         exclude(module = "findbugs")
     }
     implementation("org.danilopianini:conrec:_")
-    implementation(Libs.jgrapht_core) // just to draw cognitive maps
+    implementation(jgrapht("core")) // just to draw cognitive maps
 
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }

@@ -16,8 +16,8 @@ dependencies {
     implementation(Libs.commons_codec)
     implementation(Libs.commons_io)
     implementation(Libs.commons_lang3)
-    implementation(Libs.graphhopper_core)
-    implementation(Libs.graphhopper_reader_osm) {
+    implementation(graphhopper("core"))
+    implementation(graphhopper("reader-osm")) {
         exclude(module = "slf4j-log4j12")
     }
     implementation(Libs.gson)

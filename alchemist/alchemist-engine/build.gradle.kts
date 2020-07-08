@@ -8,9 +8,10 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
+
+    implementation(jgrapht("core"))
+    implementation(Libs.guava)
     implementation(Libs.trove4j)
-    implementation(Libs.boilerplate)
-    implementation(Libs.jgrapht_core)
 
     testImplementation(project(":alchemist-implementationbase"))
     testImplementation(project(":alchemist-euclidean-geometry"))

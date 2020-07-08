@@ -1,20 +1,24 @@
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.DependencyHandlerScope
 import kotlin.String
 
 fun Project.alchemist(module: String) = project(":alchemist-$module")
 fun Project.incarnation(module: String) = alchemist("incarnation-$module")
 
+fun modularizedLibrary(base: String, module: String = "", separator: String = "-") = when {
+    module.isEmpty() -> base
+    else -> base + separator + module
+} + ":_"
+
+/*
+ * Shortcuts for libraries used in multiple places
+ */
+fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
+fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
+fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
+fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
+
 object Libs {
-    /**
-     * https://www.graphhopper.com
-     */
-    const val graphhopper_core: String = "com.graphhopper:graphhopper-core:_"
-
-    /**
-     * https://www.graphhopper.com
-     */
-    const val graphhopper_reader_osm: String = "com.graphhopper:graphhopper-reader-osm:_"
-
     /**
      * http://www.protelis.org
      */
@@ -102,11 +106,6 @@ object Libs {
      * https://github.com/blackears/svgSalamander
      */
     const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:1.1.2"
-
-    /**
-     * http://www.jgrapht.org
-     */
-    const val jgrapht_core: String = "org.jgrapht:jgrapht-core:_"
 
     /**
      * http://code.google.com/p/simplelatlng
@@ -204,11 +203,6 @@ object Libs {
      * https://github.com/DanySK/jirf
      */
     const val jirf: String = "org.danilopianini:jirf:_"
-
-    /**
-     * https://github.com/uchuhimo/konf
-     */
-    const val konf: String = "com.uchuhimo:konf:_"
 
     /**
      * https://github.com/jenetics/jpx

@@ -16,7 +16,7 @@ dependencies {
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
 }
-alchemist-engine/src/main/java/it/unibo/alchemist/core/implementations/Engine.java
+
 spotbugs {
     ignoreFailures.set(true)
 }

@@ -9,17 +9,12 @@
 
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.OrientingAgent
 import it.unibo.alchemist.model.interfaces.OrientingAgent2D
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
-import org.jgrapht.graph.DefaultEdge
 
 /**
  * A homogeneous [OrientingPedestrian2D] capable of physical interactions.

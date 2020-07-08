@@ -16,7 +16,6 @@ dependencies {
     implementation(Libs.jgrapht_core)
     testImplementation(project(":alchemist-test"))
     testImplementation(project(":alchemist-incarnation-protelis"))
-
 }
 
 publishing.publications {

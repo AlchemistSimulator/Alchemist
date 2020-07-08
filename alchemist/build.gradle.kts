@@ -35,8 +35,6 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-val executionRequirements = listOf("interfaces", "engine", "loading").map { project(":alchemist-$it") }
-
 apply(plugin = "com.eden.orchidPlugin")
 
 allprojects {
@@ -84,6 +82,8 @@ allprojects {
     }
 
     dependencies {
+        // Support functions
+        fun junit(module: String) = "org.junit.jupiter:junit-jupiter-$module:_"
         // Code quality control
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         // Compilation only
@@ -99,13 +99,13 @@ allprojects {
             exclude(group = "commons-lang")
         }
         // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
-        testImplementation(Libs.junit_jupiter_api)
+        testImplementation(junit("api"))
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
         testImplementation("org.mockito:mockito-core:_")
         testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
-        testRuntimeOnly(Libs.junit_jupiter_engine)
+        testRuntimeOnly(junit("engine"))
         // executable jar packaging
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
@@ -252,7 +252,6 @@ allprojects {
                 "Automatic-Module-Name" to "it.unibo.alchemist"
             ))
         }
-        exclude("META-INF/")
         exclude("ant_tasks/")
         exclude("about_files/")
         exclude("help/about/")
@@ -263,6 +262,7 @@ allprojects {
         exclude("gradlew")
         exclude("gradlew.bat")
         isZip64 = true
+        mergeServiceFiles()
         destinationDirectory.set(file("${rootProject.buildDir}/libs"))
         if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
             // Run the jar and check the output
@@ -311,21 +311,23 @@ repositories {
 }
 
 dependencies {
-    executionRequirements.forEach { api(it) }
+    // Depend on subprojects whose presence is necessary to run
+    listOf("interfaces", "engine", "loading") // Execution requirements
+        .map { project(":alchemist-$it") }
+        .forEach { api(it) }
     implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
     runtimeOnly(Libs.logback_classic)
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
-    orchidImplementation("io.github.javaeden.orchid:OrchidCore:_")
-    orchidRuntimeOnly(Libs.orchideditorial)
-    orchidRuntimeOnly(Libs.orchidkotlindoc)
-    orchidRuntimeOnly(Libs.orchidplugindocs)
-    orchidRuntimeOnly(Libs.orchidsearch)
-    orchidRuntimeOnly(Libs.orchidsyntaxhighlighter)
-    orchidRuntimeOnly(Libs.orchidwiki)
-    orchidRuntimeOnly(Libs.orchidgithub)
+    testRuntimeOnly(incarnation("protelis"))
+
+    // Populate the dependencies for Orchid
+    fun orchidModule(module: String) = "io.github.javaeden.orchid:Orchid$module:_"
+    orchidImplementation(orchidModule("Core"))
+    listOf("Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki").forEach {
+        orchidRuntimeOnly(orchidModule(it))
+    }
 }
 
 // WEBSITE

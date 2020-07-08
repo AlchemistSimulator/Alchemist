@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 

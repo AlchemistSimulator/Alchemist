@@ -32,7 +32,7 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
      * TODO(maybe introduce some randomness? To model differences in people)
      */
     override val comfortRay: Double get() =
-        if (wantsToEvacuate()) {
+        if (wantsToEscape()) {
             shape.radius / 3
         } else {
             shape.radius

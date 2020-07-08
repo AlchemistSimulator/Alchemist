@@ -1,6 +1,6 @@
-package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
+package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.utils.logistic
+import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.logistic
 
 /**
  * The intention not to evacuate.

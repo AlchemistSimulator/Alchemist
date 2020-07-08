@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * The intention of the pedestrian to evacuate or not.
  */
-open class WantToEvacuate<T, S : Vector<S>, A : GeometricTransformation<S>>(
+open class WantToEscape<T, S : Vector<S>, A : GeometricTransformation<S>>(
     private val pedestrian: CognitivePedestrian<T, S, A>
 ) : AbstractCondition<T>(pedestrian) {
 
@@ -16,5 +16,5 @@ open class WantToEvacuate<T, S : Vector<S>, A : GeometricTransformation<S>>(
 
     override fun getPropensityContribution(): Double = 0.0
 
-    override fun isValid(): Boolean = pedestrian.wantsToEvacuate()
+    override fun isValid(): Boolean = pedestrian.wantsToEscape()
 }

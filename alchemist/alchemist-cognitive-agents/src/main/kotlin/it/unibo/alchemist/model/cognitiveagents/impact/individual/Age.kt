@@ -1,6 +1,4 @@
-package it.unibo.alchemist.model.cognitiveagents.characteristics.individual
-
-import it.unibo.alchemist.model.cognitiveagents.characteristics.Characteristic
+package it.unibo.alchemist.model.cognitiveagents.impact.individual
 
 /**
  * An enum representing the different periods of life.

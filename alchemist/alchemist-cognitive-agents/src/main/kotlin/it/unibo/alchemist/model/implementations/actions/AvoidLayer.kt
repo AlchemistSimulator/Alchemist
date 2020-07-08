@@ -48,7 +48,7 @@ class AvoidLayer @JvmOverloads constructor(
      * (either because it is in sight or due to social contagion), otherwise a zero vector is returned.
      */
     override fun nextPosition(): Euclidean2DPosition = when {
-        pedestrian.wantsToEvacuate() || isDangerInSight() -> followScalarField.nextPosition()
+        pedestrian.wantsToEscape() || isDangerInSight() -> followScalarField.nextPosition()
         else -> environment.origin
     }
 
@@ -70,6 +70,6 @@ class AvoidLayer @JvmOverloads constructor(
         center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded
     } ?: true
 
-    private fun Pedestrian<*, *, *>.wantsToEvacuate(): Boolean =
-        this is CognitivePedestrian2D<*> && this.danger == targetMolecule && this.wantsToEvacuate()
+    private fun Pedestrian<*, *, *>.wantsToEscape(): Boolean =
+        this is CognitivePedestrian2D<*> && this.danger == targetMolecule && this.wantsToEscape()
 }

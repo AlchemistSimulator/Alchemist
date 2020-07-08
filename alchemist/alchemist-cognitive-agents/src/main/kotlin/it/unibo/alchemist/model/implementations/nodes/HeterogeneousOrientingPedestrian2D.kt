@@ -9,53 +9,42 @@
 
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
-import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Compliance
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.CognitivePedestrian
-import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
+import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * A cognitive [OrientingPedestrian] in the Euclidean world.
  *
- * @param T the concentration type.
- * @param N the type of nodes of the navigation graph provided by the environment.
- * @param E the type of edges of the navigation graph provided by the environment.
  */
-class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
+open class HeterogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
     knowledgeDegree: Double,
     group: PedestrianGroup2D<T>? = null,
-    age: Age,
-    gender: Gender,
-    danger: Molecule? = null
-) : HeterogeneousOrientingPedestrian2D<T, N, E>(
+    final override val age: Age,
+    final override val gender: Gender
+) : HomogeneousOrientingPedestrian2D<T, N, E>(
     environment,
     randomGenerator,
     knowledgeDegree = knowledgeDegree,
-    group = group,
-    age = age,
-    gender = gender
-), CognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
+    group = group
+), HeterogeneousPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
 
-    /*
-     * The cognitive part of the pedestrian.
-     */
-    override val cognitive =
-        ImpactModel(this, compliance) {
-            environment.getLayer(danger)
-                .map { it.getValue(environment.getPosition(this)) as Double }
-                .orElse(0.0)
-        }
+    override val compliance: Double = Compliance(age, gender).level
+
+    private val helpAttitude = HelpAttitude(age, gender)
+
+    override fun probabilityOfHelping(
+        toHelp: HeterogeneousPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>
+    ): Double = helpAttitude.level(toHelp.age, toHelp.gender, membershipGroup.contains(toHelp))
 
     /**
      * Allows to specify age and gender with a string.
@@ -66,16 +55,14 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
         knowledgeDegree: Double,
         group: PedestrianGroup2D<T>? = null,
         age: String,
-        gender: String,
-        danger: Molecule? = null
+        gender: String
     ) : this(
         environment,
         randomGenerator,
         knowledgeDegree,
         group,
         Age.fromString(age),
-        Gender.fromString(gender),
-        danger
+        Gender.fromString(gender)
     )
 
     /**
@@ -87,20 +74,13 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
         knowledgeDegree: Double,
         group: PedestrianGroup2D<T>? = null,
         age: Int,
-        gender: String,
-        danger: Molecule? = null
+        gender: String
     ) : this(
         environment,
         randomGenerator,
         knowledgeDegree,
         group,
         Age.fromYears(age),
-        Gender.fromString(gender),
-        danger
+        Gender.fromString(gender)
     )
-
-    override fun influencialPeople(): List<CognitiveAgent> =
-        senses.fold(listOf()) { accumulator, sphere ->
-            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitiveAgent>()).toList()
-        }
 }

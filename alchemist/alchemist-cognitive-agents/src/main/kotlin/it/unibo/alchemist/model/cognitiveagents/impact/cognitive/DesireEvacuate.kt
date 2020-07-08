@@ -1,7 +1,7 @@
-package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
+package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
 /**
- * The desire not to evacuate.
+ * The desire to evacuate.
  *
  * @param compliance
  *          the current level of compliance of the agent owning this.
@@ -10,12 +10,12 @@ package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
  * @param fear
  *          the current level of fear of the agent owning this.
  */
-class DesireWalkRandomly(
+class DesireEvacuate(
     private val compliance: Double,
     private val dangerBelief: () -> Double,
     private val fear: () -> Double
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() =
-        compliance * (1 - maxOf(inhibitingWalkRandOmega * dangerBelief(), inhibitingWalkRandOmega * fear()))
+        compliance * maxOf(amplifyingEvacuationOmega * dangerBelief(), amplifyingEvacuationOmega * fear())
 }

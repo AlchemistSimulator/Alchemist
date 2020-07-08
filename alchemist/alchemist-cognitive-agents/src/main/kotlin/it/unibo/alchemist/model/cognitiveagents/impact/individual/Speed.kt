@@ -1,9 +1,8 @@
-package it.unibo.alchemist.model.cognitiveagents.characteristics.individual
+package it.unibo.alchemist.model.cognitiveagents.impact.individual
 
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.toml
-import it.unibo.alchemist.model.cognitiveagents.characteristics.Characteristic
-import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
+import it.unibo.alchemist.model.cognitiveagents.impact.PARAMETERS_FILE
 import it.unibo.alchemist.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 

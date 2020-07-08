@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
+package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
 import com.uchuhimo.konf.ConfigSpec
 

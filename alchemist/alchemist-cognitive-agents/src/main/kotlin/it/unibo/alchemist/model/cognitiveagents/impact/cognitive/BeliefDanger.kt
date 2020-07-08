@@ -1,4 +1,6 @@
-package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
+package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
+
+import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 
 /**
  * The perception of the situation dangerousness.
@@ -26,6 +28,6 @@ class BeliefDanger(
 
     private fun List<CognitiveAgent>.aggregateDangerBeliefs() =
         if (size > 0) {
-            this.sumByDouble { it.dangerBelief() } / size
+            this.sumByDouble { it.cognitive.dangerBelief() } / size
         } else 0.0
 }

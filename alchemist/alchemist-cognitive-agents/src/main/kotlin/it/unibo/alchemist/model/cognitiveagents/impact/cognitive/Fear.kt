@@ -1,6 +1,7 @@
-package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
+package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.utils.advancedLogistic
+import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
+import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.advancedLogistic
 
 /**
  * The fear emotion.
@@ -30,6 +31,6 @@ class Fear(
 
     private fun List<CognitiveAgent>.aggregateFears() =
         if (size > 0) {
-            this.sumByDouble { it.fear() } / this.size
+            this.sumByDouble { it.cognitive.fear() } / this.size
         } else 0.0
 }

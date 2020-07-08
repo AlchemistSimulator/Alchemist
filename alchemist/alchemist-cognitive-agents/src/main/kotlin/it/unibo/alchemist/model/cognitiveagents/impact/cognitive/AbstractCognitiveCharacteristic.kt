@@ -1,10 +1,10 @@
-package it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive
+package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.toml
-import it.unibo.alchemist.model.cognitiveagents.characteristics.PARAMETERS_FILE
-import it.unibo.alchemist.model.cognitiveagents.characteristics.utils.logistic
-import it.unibo.alchemist.model.cognitiveagents.characteristics.utils.advancedLogistic
+import it.unibo.alchemist.model.cognitiveagents.impact.PARAMETERS_FILE
+import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.logistic
+import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.advancedLogistic
 
 /**
  * The generic implementation of a cognitive characteristic.

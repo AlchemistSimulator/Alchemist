@@ -1,10 +1,10 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Compliance
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.HelpAttitude
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Compliance
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position

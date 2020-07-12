@@ -77,14 +77,14 @@ open class SimpleMouseEventDispatcher : MouseEventDispatcher() {
  * These temporary actions have a higher priority than actions set through [setOnAction].
  */
 open class TemporariesMouseEventDispatcher : SimpleMouseEventDispatcher() {
-    private var temporaryActions: List<Pair<MouseTriggerAction, (MouseEvent) -> Unit>> = emptyList()
+    private var temporaryActions: Map<MouseTriggerAction, (MouseEvent) -> Unit> = emptyMap()
 
     override val listener = object : MouseActionListener {
         override fun action(action: MouseTriggerAction, event: MouseEvent) {
-            if (action in temporaryActions.map { it.first }) {
-                temporaryActions.find { it.first == action }?.let {
-                    it.second.invoke(event)
-                    temporaryActions -= it
+            if (action in temporaryActions.keys) {
+                temporaryActions[action]?.apply {
+                    invoke(event)
+                    temporaryActions -= action
                 }
             } else {
                 triggers[action]?.invoke(event)
@@ -103,7 +103,7 @@ open class TemporariesMouseEventDispatcher : SimpleMouseEventDispatcher() {
 }
 
 /**
- * A mouse event dispatcher that catches mouse input from a canvas.
+ * A mouse event dispatcher that catches mouse input from a node.
  */
 open class NodeBoundMouseEventDispatcher(node: Node) : TemporariesMouseEventDispatcher() {
     init {

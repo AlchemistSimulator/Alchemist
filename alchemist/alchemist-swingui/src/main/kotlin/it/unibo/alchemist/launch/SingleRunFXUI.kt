@@ -6,6 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
@@ -20,7 +21,7 @@ import java.awt.GraphicsEnvironment
  * Executes simulations locally with a JavaFX UI.
  */
 object SingleRunFXUI : SimulationLauncher() {
-    override val name = "Alchemist graphical simulation"
+    override val name = "Alchemist FXUI graphical simulation"
 
     override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
@@ -31,15 +32,15 @@ object SingleRunFXUI : SimulationLauncher() {
             GraphicsEnvironment.isHeadless() -> Invalid(
                 "The JVM graphic environment is marked as headless. Cannot show a graphical interface. "
             )
-            graphics != null -> OK(Priority.High("Graphical effects requested, priority shifts up"))
-            else -> OK()
+            graphics != null || fxui -> OK(Priority.High("Graphical effects and FXUI requested, priority shifts up"))
+            else -> OK(Priority.Fallback("FXUI not requested, default GUI is Swing"))
         }
     }
 
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
         prepareSimulation<Any, GeoPosition>(loader, parameters, emptyMap<String, Any>()).apply {
             SingleRunAppBuilder(this).apply {
-                parameters.graphics?.let { addEffectGroup(parameters.graphics) }
+                parameters.graphics?.run(::addEffectGroup)
                 build()
             }
             run()

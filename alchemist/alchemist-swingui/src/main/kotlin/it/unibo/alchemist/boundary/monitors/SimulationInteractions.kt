@@ -25,7 +25,7 @@ import it.unibo.alchemist.input.KeyboardEventDispatcher
 import it.unibo.alchemist.input.MouseButtonTriggerAction
 import it.unibo.alchemist.input.NodeBoundMouseEventDispatcher
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
-import it.unibo.alchemist.input.TemporariesMouseEventDispatcher
+import it.unibo.alchemist.input.DynamicMouseEventDispatcher
 import it.unibo.alchemist.kotlin.clear
 import it.unibo.alchemist.kotlin.makePoint
 import it.unibo.alchemist.kotlin.minus
@@ -104,7 +104,7 @@ class InteractionManager<T, P : Position2D<P>>(
             repaint()
         }
     }
-    private val mouse: TemporariesMouseEventDispatcher = NodeBoundMouseEventDispatcher(monitor)
+    private val mouse: DynamicMouseEventDispatcher = NodeBoundMouseEventDispatcher(monitor)
     private lateinit var mousePan: AnalogPan
     private val highlighter = Canvas()
     private val selector = Canvas()

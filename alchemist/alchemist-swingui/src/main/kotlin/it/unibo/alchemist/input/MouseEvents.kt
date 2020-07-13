@@ -76,7 +76,7 @@ open class SimpleMouseEventDispatcher : MouseEventDispatcher() {
  * A mouse event dispatcher which can receive temporary actions to listen to which will only be triggered once.
  * These temporary actions have a higher priority than actions set through [setOnAction].
  */
-open class TemporariesMouseEventDispatcher : SimpleMouseEventDispatcher() {
+open class DynamicMouseEventDispatcher : SimpleMouseEventDispatcher() {
     private var temporaryActions: Map<MouseTriggerAction, (MouseEvent) -> Unit> = emptyMap()
 
     override val listener = object : MouseActionListener {
@@ -105,7 +105,7 @@ open class TemporariesMouseEventDispatcher : SimpleMouseEventDispatcher() {
 /**
  * A mouse event dispatcher that catches mouse input from a node.
  */
-open class NodeBoundMouseEventDispatcher(node: Node) : TemporariesMouseEventDispatcher() {
+open class NodeBoundMouseEventDispatcher(node: Node) : DynamicMouseEventDispatcher() {
     init {
         node.setOnMouseClicked {
             listener.action(MouseButtonTriggerAction(ActionOnMouse.CLICKED, it.button), it)

@@ -10,9 +10,10 @@ dependencies {
     // API
     api(project(":alchemist-interfaces"))
     api(project(":alchemist-implementationbase"))
-    api(Libs.protelis_interpreter)
-    api(Libs.protelis_lang)
+    api(protelis("interpreter"))
+    api(protelis("lang"))
     // IMPLEMENTATION
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-maps"))
     implementation(Libs.commons_lang3)
     // TESTING

@@ -11,6 +11,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
+import java.io.ByteArrayOutputStream
 
 plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
@@ -33,8 +34,6 @@ plugins {
     id("com.dorongold.task-tree")
     id("com.github.johnrengelman.shadow")
 }
-
-val executionRequirements = listOf("interfaces", "engine", "loading").map { project(":alchemist-$it") }
 
 apply(plugin = "com.eden.orchidPlugin")
 
@@ -88,6 +87,8 @@ allprojects {
     }
 
     dependencies {
+        // Support functions
+        fun junit(module: String) = "org.junit.jupiter:junit-jupiter-$module:_"
         // Code quality control
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         // Compilation only
@@ -102,15 +103,17 @@ allprojects {
         testCompileOnly(Libs.spotbugs) {
             exclude(group = "commons-lang")
         }
-        // Test implementation: JUnit 5 + Kotest
-        testImplementation(Libs.junit_jupiter_api)
+        // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
+        testImplementation(junit("api"))
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
+        testImplementation("org.mockito:mockito-core:_")
+        testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
-        testRuntimeOnly(Libs.junit_jupiter_engine)
+        testRuntimeOnly(junit("engine"))
         // executable jar packaging
         if ("incarnation" in project.name) {
-            shadow(rootProject)
+            runtimeOnly(rootProject)
         }
     }
 
@@ -254,7 +257,6 @@ allprojects {
                 "Automatic-Module-Name" to "it.unibo.alchemist"
             ))
         }
-        exclude("META-INF/")
         exclude("ant_tasks/")
         exclude("about_files/")
         exclude("help/about/")
@@ -265,7 +267,35 @@ allprojects {
         exclude("gradlew")
         exclude("gradlew.bat")
         isZip64 = true
+        mergeServiceFiles()
         destinationDirectory.set(file("${rootProject.buildDir}/libs"))
+        if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
+            // Run the jar and check the output
+            val testShadowJar = tasks.register<Exec>("${this.name}-testWorkingOutput") {
+                val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
+                val command = arrayOf(javaExecutable, "-jar", archiveFile.get().asFile.absolutePath, "--help")
+                commandLine(*command)
+                val interceptOutput = ByteArrayOutputStream()
+                val interceptError = ByteArrayOutputStream()
+                standardOutput = interceptOutput
+                errorOutput = interceptError
+                doLast {
+                    executionResult.get().assertNormalExitValue()
+                    listOf(interceptOutput, interceptError).forEach { stream ->
+                        val text = String(stream.toByteArray(), Charsets.UTF_8)
+                        for (illegalKeyword in listOf("SLF4J", "NOP")) {
+                            require(illegalKeyword !in text) {
+                                """
+                                $illegalKeyword found while printing the help. Complete output:
+                                $text
+                            """.trimIndent()
+                            }
+                        }
+                    }
+                }
+            }
+            this.finalizedBy(testShadowJar)
+        }
     }
 }
 
@@ -286,20 +316,23 @@ repositories {
 }
 
 dependencies {
-    executionRequirements.forEach { api(it) }
+    // Depend on subprojects whose presence is necessary to run
+    listOf("interfaces", "engine", "loading") // Execution requirements
+        .map { project(":alchemist-$it") }
+        .forEach { api(it) }
     implementation(Libs.commons_io)
     implementation(Libs.commons_cli)
     implementation(Libs.logback_classic)
     implementation(Libs.commons_lang3)
     runtimeOnly(Libs.logback_classic)
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
-    orchidRuntimeOnly(Libs.orchideditorial)
-    orchidRuntimeOnly(Libs.orchidkotlindoc)
-    orchidRuntimeOnly(Libs.orchidplugindocs)
-    orchidRuntimeOnly(Libs.orchidsearch)
-    orchidRuntimeOnly(Libs.orchidsyntaxhighlighter)
-    orchidRuntimeOnly(Libs.orchidwiki)
-    orchidRuntimeOnly(Libs.orchidgithub)
+    testRuntimeOnly(incarnation("protelis"))
+
+    // Populate the dependencies for Orchid
+    fun orchidModule(module: String) = "io.github.javaeden.orchid:Orchid$module:_"
+    orchidImplementation(orchidModule("Core"))
+    listOf("Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki").forEach {
+        orchidRuntimeOnly(orchidModule(it))
+    }
 }
 
 // WEBSITE
@@ -312,10 +345,6 @@ val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.v
 
 orchid {
     theme = "Editorial"
-    // Feed arguments to Kdoc
-//    val projects: Collection<Project> = listOf(project) + subprojects
-//    val paths = projects.map { it.sourceSets["main"].compileClasspath.asPath }
-//    args = listOf("--kotlindocClasspath") + paths.joinToString(File.pathSeparator)
     // Determine whether it's a deployment or a dry run
     baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
     // Fetch the latest version of the website, if this one is more recent enable deploy

@@ -11,6 +11,7 @@ dependencies {
     api(Libs.commons_math3)
     api(Libs.java_quadtree)
     api(Libs.guava)
+    implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.classgraph)
@@ -18,7 +19,6 @@ dependencies {
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
-    implementation(Libs.jgrapht_core)
 }
 
 publishing.publications {

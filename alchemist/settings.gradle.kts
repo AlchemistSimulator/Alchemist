@@ -6,10 +6,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
+import org.danilopianini.VersionAliases.justAdditionalAliases
 
 include(
     "alchemist-cognitive-agents",
     "alchemist-engine",
+    "alchemist-euclidean-geometry",
     "alchemist-full",
     "alchemist-grid",
     "alchemist-implementationbase",
@@ -17,7 +19,6 @@ include(
     "alchemist-incarnation-sapere",
     "alchemist-incarnation-scafi",
     "alchemist-incarnation-biochemistry",
-    "alchemist-influence-sphere",
     "alchemist-interfaces",
     "alchemist-loading",
     "alchemist-maps",
@@ -29,11 +30,17 @@ include(
 rootProject.name = "alchemist"
 
 buildscript {
-    repositories { gradlePluginPortal() }
-    dependencies.classpath("de.fayard:dependencies:+")
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("de.fayard:dependencies:0.+")
+        classpath("org.danilopianini:refreshversions-aliases:0.+")
+    }
 }
 
-bootstrapRefreshVersionsAndDependencies()
+bootstrapRefreshVersionsAndDependencies(justAdditionalAliases)
 
 plugins {
     id("com.gradle.enterprise") version "3.2"

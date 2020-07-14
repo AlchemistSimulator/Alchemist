@@ -8,10 +8,12 @@ comments:
   UndocumentedPublicProperty:
     active: true
 complexity:
-  NestedBlockDepth:
-    threshold: 5
+  LongMethod:
+    active: false
   LongParameterList:
     active: false
+  NestedBlockDepth:
+    threshold: 5
   TooManyFunctions:
     ignoreDeprecated: true
     ignorePrivate: true
@@ -25,6 +27,6 @@ performance:
     active: false
 style:
   MagicNumber:
-    ignoreNumbers: ['-1', '0', '0.5', '1', '2', '3', '4', '10', '360.0']
+    ignoreNumbers: ['-2', '-1', '0', '0.5', '1', '2', '3', '4', '10', '360.0']
   ForbiddenComment:
     allowedPatterns: 'TODO:'

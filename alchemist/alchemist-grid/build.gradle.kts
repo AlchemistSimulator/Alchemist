@@ -7,18 +7,21 @@
  */
 
 dependencies {
-    api(Libs.ignite_core)
+    fun ignite(module: String) = "org.apache.ignite:ignite-$module:_"
+
+    api(ignite("core"))
+
     implementation(rootProject)
-    implementation(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-loading"))
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-engine"))
+    implementation(alchemist("interfaces"))
+    implementation(alchemist("loading"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("engine"))
     implementation(Libs.guava)
-    implementation(Libs.ignite_spring)
-    implementation(Libs.ignite_indexing)
+    implementation(ignite("spring"))
+    implementation(ignite("indexing"))
     implementation(Libs.commons_io)
 
-    testImplementation(project(":alchemist-incarnation-sapere"))
+    testImplementation(incarnation("sapere"))
 }
 
 publishing.publications {

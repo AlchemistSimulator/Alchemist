@@ -1,0 +1,23 @@
+com.graphhopper:*
+    ^^^^^^^^^^^
+
+com.github.cb372:scalacache-*
+                 ^^^^^^^^^^
+
+io.github.javaeden.orchid:*
+                   ^^^^^^
+
+io.kotest:*
+   ^^^^^^
+
+org.antlr:antlr4(-*)
+          ^^^^^^
+
+org.apache.ignite:*
+           ^^^^^^
+
+org.junit.jupiter:junit-*
+    ^^^^^
+
+org.protelis:*
+    ^^^^^^^^

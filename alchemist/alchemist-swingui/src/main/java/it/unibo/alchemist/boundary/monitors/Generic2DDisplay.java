@@ -32,7 +32,6 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.environments.HasBoundaries;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
@@ -121,8 +120,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     private final Semaphore mapConsistencyMutex = new Semaphore(1);
     private final transient PointerSpeed mouseMovement = new PointerSpeedImpl();
-    private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors = new ConcurrentHashMap<>();
-    private final ConcurrentMap<Node<T>, P> positions = new ConcurrentHashMap<>();
     private transient AngleManagerImpl angleManager;
     private Environment<T, P> currentEnv;
     private List<Effect> effectStack;
@@ -133,7 +130,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private double lastTime;
     private int mouseX, mouseY;
     private Node<T> nearest;
-    private List<? extends Obstacle2D> obstacles;
+    private final ConcurrentMap<Node<T>, Neighborhood<T>> neighbors = new ConcurrentHashMap<>();
+    private List<? extends Obstacle2D<?>> obstacles;
+    private final ConcurrentMap<Node<T>, P> positions = new ConcurrentHashMap<>();
     private boolean realTime;
     private int st;
     private long timeInit = System.currentTimeMillis();
@@ -369,13 +368,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 }
             }
         }
-        /*
-         * Draws the borders if there are any
-         */
-        if (currentEnv instanceof HasBoundaries) {
-            g.setColor(Color.BLACK);
-            ((HasBoundaries) currentEnv).getBoundaries().accept(new BoundariesDrawer<>(g, wormhole, currentEnv));
-        }
         g.setColor(Color.GREEN);
         if (effectStack != null) {
             effectStack.forEach(effect -> onView.forEach((node, point) ->
@@ -401,8 +393,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
         if (isDraggingMouse && status == ViewStatus.SELECTING_NODES && originPoint.isPresent() && endingPoint.isPresent()) {
             g.setColor(Color.BLACK);
-            final int x = originPoint.get().x < endingPoint.get().x ? originPoint.get().x : endingPoint.get().x;
-            final int y = originPoint.get().y < endingPoint.get().y ? originPoint.get().y : endingPoint.get().y;
+            final int x = Math.min(originPoint.get().x, endingPoint.get().x);
+            final int y = Math.min(originPoint.get().y, endingPoint.get().y);
             final int width = Math.abs(endingPoint.get().x - originPoint.get().x);
             final int height = Math.abs(endingPoint.get().y - originPoint.get().y);
             g.drawRect(x, y, width, height);
@@ -788,7 +780,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 if (isDraggingMouse) {
                     endingPoint = Optional.of(e.getPoint());
                 }
-                if (!hooked.isPresent() && isNotInteracting()) {
+                if (hooked.isEmpty() && isNotInteracting()) {
                     final Point previous = wormhole.getViewPosition();
                     wormhole.setViewPosition(
                             PointAdapter.from(previous)
@@ -862,7 +854,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                             final P envOrigin = wormhole.getEnvPoint(originPoint.get());
                             for (final Node<T> n : selectedNodes) {
                                 final P p = currentEnv.getPosition(n);
-                                final P finalPos = p.plus(envEnding.minus(envOrigin));
+                                final P finalPos = p.plus(envEnding.minus(envOrigin.getCoordinates()).getCoordinates());
                                 engine.schedule(() -> {
                                     currentEnv.moveNodeToPosition(n, finalPos);
                                     update(currentEnv, engine.getTime());

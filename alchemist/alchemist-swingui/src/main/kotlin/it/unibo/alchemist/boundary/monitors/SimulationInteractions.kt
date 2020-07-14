@@ -184,13 +184,13 @@ class InteractionManager<T, P : Position2D<P>>(
                     val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
                     invokeOnSimulation {
                         nodesToMove.values.maxWith(Comparator { a, b ->
-                            (b - a).let { it.x + it.y }.roundToInt()
+                            (b - a.coordinates).let { it.x + it.y }.roundToInt()
                         })?.let {
-                            mousePosition - it
+                            mousePosition - it.coordinates
                         }?.let { offset ->
                             environment?.let { env ->
                                 nodesToMove.forEach {
-                                    env.moveNode(it.key, offset)
+                                    env.moveNodeToPosition(it.key, offset)
                                 }
                             }
                         }

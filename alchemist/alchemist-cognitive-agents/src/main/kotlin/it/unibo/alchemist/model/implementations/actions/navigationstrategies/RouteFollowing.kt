@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 
 /**
  * A [NavigationStrategy] allowing to follow a given [route].
@@ -27,16 +27,16 @@ import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
  * expected next one, he/she skips all the waypoints in between).
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-open class RouteFollowing<T, N : Euclidean2DConvexShape, E> constructor(
-    action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
+open class RouteFollowing<T, L : Euclidean2DConvexShape, R> constructor(
+    action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
     /**
      * The route to follow.
      */
     protected open val route: List<Euclidean2DPosition>
-) : DynamicPursuing<T, N, E>(action, action.environment.origin.takeIf { route.isEmpty() } ?: route[0]) {
+) : DynamicPursuing<T, L, R>(action, action.environment.origin.takeIf { route.isEmpty() } ?: route[0]) {
 
     private var indexOfNextWaypoint: Int = 0
 

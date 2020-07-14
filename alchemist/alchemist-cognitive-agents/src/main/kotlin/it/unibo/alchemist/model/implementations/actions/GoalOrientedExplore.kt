@@ -10,29 +10,27 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.actions.navigationstrategies.GoalOrientedExploring
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 
 /**
  * A [NavigationAction] using [GoalOrientedExploring] navigation strategy.
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-class GoalOrientedExplore<T, N : Euclidean2DConvexShape, E>(
+class GoalOrientedExplore<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, N, E>,
+    pedestrian: OrientingPedestrian2D<T, L, R>,
     vararg unknownDestinations: Number
-) : BaseEuclideanNavigationAction<T, N, E>(environment, reaction, pedestrian) {
+) : NavigationAction2DImpl<T, L, R>(environment, reaction, pedestrian) {
 
     init {
         strategy = GoalOrientedExploring(this, unknownDestinations.toPositions(environment))

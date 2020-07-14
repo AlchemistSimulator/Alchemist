@@ -15,8 +15,6 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment;
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -51,7 +49,6 @@ public abstract class AbstractNode<T> implements Node<T> {
             .maximumWeightedCapacity(Long.MAX_VALUE)
             .concurrencyLevel(2)
             .build();
-    private final GeometricShape<?, ?> shape;
 
     private static int idFromEnv(final Environment<?, ?> env) {
         MUTEX.acquireUninterruptibly();
@@ -71,24 +68,6 @@ public abstract class AbstractNode<T> implements Node<T> {
      */
     public AbstractNode(final Environment<?, ?> env) {
         id = idFromEnv(env);
-        if (env instanceof PhysicsEnvironment) {
-            shape = ((PhysicsEnvironment) env).getShapeFactory().adimensional();
-        } else {
-            shape = null; // throws an exception in getShape
-        }
-    }
-
-    /**
-     * Override to provide a different shape than the default adimensional one.
-     *
-     * @return the shape of this node.
-     */
-    @Override
-    public GeometricShape<?, ?> getShape() {
-        if (shape == null) {
-            throw new IllegalStateException("The node was initialized with an environment lacking shapes support, so it does not have a shape");
-        }
-        return shape;
     }
 
     @Override

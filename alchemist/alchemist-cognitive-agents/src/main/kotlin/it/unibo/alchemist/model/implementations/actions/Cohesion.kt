@@ -1,11 +1,10 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
@@ -18,19 +17,17 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param pedestrian
  *          the owner of this action.
  */
-class Cohesion<T, P>(
+class Cohesion<T, P, A>(
     env: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T>
-) : AbstractGroupSteeringAction<T, P>(env, reaction, pedestrian)
-    where
-        P : Position<P>,
-        P : Vector<P> {
+    pedestrian: Pedestrian<T, P, A>
+) : AbstractGroupSteeringAction<T, P, A>(env, reaction, pedestrian)
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P> {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
-        Cohesion(env, r, n as Pedestrian<T>)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Cohesion(env, r, n)
 
-    override fun nextPosition(): P = (centroid() - currentPosition).resizedToMaxWalkIfGreater()
+    override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 
-    override fun group(): List<Pedestrian<T>> = pedestrian.membershipGroup.members
+    override fun group(): List<Pedestrian<T, P, *>> = pedestrian.membershipGroup.members
 }

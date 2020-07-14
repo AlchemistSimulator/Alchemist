@@ -2,11 +2,13 @@ package it.unibo.alchemist.model.interfaces
 
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * An heterogeneous pedestrian is a pedestrian where individual characteristics are taken into consideration.
+ * A pedestrian with individual characteristics.
  */
-interface HeterogeneousPedestrian<T> : Pedestrian<T> {
+interface HeterogeneousPedestrian<T, S : Vector<S>, A : GeometricTransformation<S>> : Pedestrian<T, S, A> {
 
     /**
      * The age of this pedestrian.
@@ -28,5 +30,5 @@ interface HeterogeneousPedestrian<T> : Pedestrian<T> {
      *
      * @param toHelp The pedestrian who needs help.
      */
-    fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T>): Double
+    fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T, S, A>): Double
 }

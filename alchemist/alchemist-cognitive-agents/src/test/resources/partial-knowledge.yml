@@ -12,7 +12,7 @@ network-model:
 
 seeds:
   scenario: 0
-  simulation: 2
+  simulation: 4
 
 reactions: &behavior
   - time-distribution:
@@ -28,7 +28,7 @@ displacements:
       type: Point
       parameters: [15, 15]
     nodes:
-      type: OrientingHomogeneousPedestrian2D
+      type: HomogeneousOrientingPedestrian2D
       parameters: [0.3]
     programs:
       - *behavior

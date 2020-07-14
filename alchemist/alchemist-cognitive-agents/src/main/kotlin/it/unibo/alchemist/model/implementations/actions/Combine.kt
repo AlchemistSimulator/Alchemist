@@ -1,13 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
@@ -22,19 +21,17 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param steerStrategy
  *          the logic according to the steering actions are combined.
  */
-class Combine<T, P>(
+class Combine<T, P, A>(
     private val env: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T>,
+    pedestrian: Pedestrian<T, P, A>,
     private val actions: List<SteeringAction<T, P>>,
     private val steerStrategy: SteeringStrategy<T, P>
-) : AbstractSteeringAction<T, P>(env, reaction, pedestrian)
-    where
-        P : Position<P>,
-        P : Vector<P> {
+) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P> {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
-        Combine(env, r, n as Pedestrian<T>, actions, steerStrategy)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Combine(env, r, n, actions, steerStrategy)
 
-    override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).resizedToMaxWalkIfGreater()
+    override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).coerceAtMost(maxWalk)
 }

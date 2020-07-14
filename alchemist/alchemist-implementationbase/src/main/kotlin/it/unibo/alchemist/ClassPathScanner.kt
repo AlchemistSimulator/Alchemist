@@ -21,8 +21,10 @@ object ClassPathScanner {
     private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph()
         .apply {
             if (inPackage != null) {
-                whitelistPackages(inPackage)
-                blacklistPackages("org.gradle")
+                // WHITELIST package
+                acceptPackages(inPackage)
+                // BLACKLIST package
+                rejectPackages("org.gradle")
             }
         }
 

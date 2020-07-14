@@ -27,27 +27,26 @@ import java.lang.IllegalStateException
  * @param T the concentration type.
  * @param P the [Position] type and [Vector] type for the space the pedestrian is into.
  * @param A the transformations supported by the shapes in this space.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
- * @param M the type of nodes of the navigation graph provided by the [environment].
- * @param F the type of edges of the navigation graph provided by the [environment].
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param N the type of nodes of the navigation graph provided by the [environment].
+ * @param E the type of edges of the navigation graph provided by the [environment].
  */
-abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
-    override val environment: EnvironmentWithGraph<*, T, P, A, M, F>,
+abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
+    override val environment: EnvironmentWithGraph<*, T, P, A, N, E>,
     override val reaction: Reaction<T>,
-    final override val pedestrian: OrientingPedestrian<T, P, A, N, E>
-) : AbstractSteeringAction<T, P>(environment, reaction, pedestrian),
-    NavigationAction<T, P, A, N, E, M, F>
-    where
-        P : Position<P>, P : Vector<P>,
-        A : GeometricTransformation<P>,
-        N : ConvexGeometricShape<P, A>,
-        M : ConvexGeometricShape<P, A> {
+    final override val pedestrian: OrientingPedestrian<T, P, A, L, R>
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
+    NavigationAction<T, P, A, L, R, N, E>
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P>,
+          L : ConvexGeometricShape<P, A>,
+          N : ConvexGeometricShape<P, A> {
 
     /**
      * The strategy used to navigate the environment.
      */
-    protected open lateinit var strategy: NavigationStrategy<T, P, A, N, E, M, F>
+    protected open lateinit var strategy: NavigationStrategy<T, P, A, L, R, N, E>
 
     /**
      * The position of the [pedestrian] in the [environment], this is cached and updated
@@ -59,7 +58,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      * The room (= environment's area) the [pedestrian] is into, this is cached and updated
      * every time [update] is called so as to avoid potentially costly re-computations.
      */
-    override var currentRoom: M? = null
+    override var currentRoom: N? = null
 
     /**
      * Minimum distance to consider a target reached. Using zero (even with fuzzy equals) may lead to some
@@ -80,7 +79,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      * contains the room being left. When in [NavigationState.MOVING_TO_FINAL], it contains the room the pedestrian
      * was (and should be) into. It's used to detect if the pedestrian ended up in an unexpected room while moving.
      */
-    protected var previousRoom: M? = null
+    protected var previousRoom: N? = null
     /**
      * Defined when crossing a door. See [crossDoor].
      */
@@ -88,7 +87,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     /**
      * Defined when crossing a door.
      */
-    protected var expectedNewRoom: M? = null
+    protected var expectedNewRoom: N? = null
     /**
      * Defined in [NavigationState.MOVING_TO_FINAL].
      */
@@ -136,13 +135,13 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
     /**
      * @returns all the doors (= passages/edges) outgoing from the current room.
      */
-    override fun doorsInSight(): List<F> =
+    override fun doorsInSight(): List<E> =
         currentRoom?.let { environment.graph.outgoingEdgesOf(it).toList() } ?: emptyList()
 
     /**
      * The target of a directed edge of the environment's graph.
      */
-    protected open val F.target: M get() = environment.graph.getEdgeTarget(this)
+    protected open val E.target: N get() = environment.graph.getEdgeTarget(this)
 
     /**
      * Moves the pedestrian across the provided [door], which must be among [doorsInSight].
@@ -151,7 +150,7 @@ abstract class AbstractNavigationAction<T, P, A, N, E, M, F>(
      * - the second point must belong to the next room's boundary and will be pursued after
      * reaching the former one. [crossingPoints] may coincide if the two rooms are adjacent.
      */
-    protected open fun crossDoor(door: F, crossingPoints: Pair<P, P>) {
+    protected open fun crossDoor(door: E, crossingPoints: Pair<P, P>) {
         require(doorsInSight().contains(door)) { "$door is not in sight" }
         state = NavigationState.MOVING_TO_CROSSING_POINT_1
         this.previousRoom = currentRoom.orFail()

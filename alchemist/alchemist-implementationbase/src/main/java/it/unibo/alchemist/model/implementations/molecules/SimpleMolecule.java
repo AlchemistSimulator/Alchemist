@@ -6,24 +6,18 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/**
- * 
- */
 package it.unibo.alchemist.model.implementations.molecules;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import it.unibo.alchemist.model.interfaces.Molecule;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-
-import it.unibo.alchemist.model.interfaces.Molecule;
-
 
 /**
- *         Simple implementation of Molecule. Ids are generated through a simple
- *         Singleton Pattern, no thread safeness is provided.
- * 
+ *         Simple implementation of Molecule.
  */
 public class SimpleMolecule implements Molecule {
 
@@ -32,14 +26,14 @@ public class SimpleMolecule implements Molecule {
     private byte[] hash;
     private int hash32;
     private long hash64;
-    private final CharSequence n;
+    private final String n;
 
     /**
      * @param name
      *            the molecule name
      */
     public SimpleMolecule(final CharSequence name) {
-        this.n = name;
+        this.n = name.toString();
     }
 
     /**
@@ -68,7 +62,7 @@ public class SimpleMolecule implements Molecule {
 
     @Override
     public final String getName() {
-        return n.toString();
+        return n;
     }
 
     /**
@@ -94,7 +88,7 @@ public class SimpleMolecule implements Molecule {
      */
     @Override
     public String toString() {
-        return n.toString();
+        return n;
     }
 
 }

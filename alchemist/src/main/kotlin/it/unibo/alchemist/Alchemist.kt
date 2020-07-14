@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException
 import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
 
+private typealias ValidLauncher = Pair<Validation.OK, Launcher>
 /**
  * Starts Alchemist.
  */
@@ -98,30 +99,21 @@ object Alchemist {
             val cmd = parser.parse(opts, args)
             setVerbosity(cmd)
             val options = cmd.toAlchemist
-            if (cmd.hasOption(HELP)) {
+            if (options.isEmpty || options.help) {
                 printHelp()
-                exitWith(ExitStatus.OK)
+                exitWith(if (options.help) ExitStatus.OK else ExitStatus.INVALID_CLI)
             }
-            val (validLaunchers, invalidLaunchers) = launchers
-                .map { it.validate(options) to it }
-                .partition { (validation, _) -> validation is Validation.OK }
-            val sortedLaunchers: List<Pair<Validation.OK, Launcher>> = validLaunchers
+            val (validLaunchers, invalidLaunchers) = options.classifyLaunchers()
+            val sortedLaunchers: List<ValidLauncher> = validLaunchers
                 .map { (validation, launcher) ->
                     validation as Validation.OK to launcher
                 }
                 .sortedByDescending { it.first.priority }
-            fun List<Pair<Validation.OK, Launcher>>.priorityOf(index: Int) = get(index).first.priority
-            fun Pair<Validation.OK, Launcher>.launch() {
-                if (first.priority !is Priority.Normal) {
-                    printLaunchers()
-                }
-                second(options)
-            }
             when {
-                sortedLaunchers.size == 1 -> sortedLaunchers.first().launch()
+                sortedLaunchers.size == 1 -> sortedLaunchers.first().launch(options)
                 validLaunchers.size > 1 ->
                     if (sortedLaunchers.priorityOf(0) > sortedLaunchers.priorityOf(1)) {
-                        sortedLaunchers.first().launch()
+                        sortedLaunchers.first().launch(options)
                     } else {
                         L.error("Unable to select an execution strategy among {} with options {}",
                             sortedLaunchers, options
@@ -147,10 +139,22 @@ object Alchemist {
         }
     }
 
+    private fun AlchemistExecutionOptions.classifyLaunchers() = launchers
+        .map { it.validate(this) to it }
+        .partition { (validation, _) -> validation is Validation.OK }
+
     private fun printLaunchers() {
         L.warn("Available launchers: {}", launchers.map { it.name })
     }
 
+    private fun List<ValidLauncher>.priorityOf(index: Int) = get(index).first.priority
+
+    private fun ValidLauncher.launch(options: AlchemistExecutionOptions) {
+        if (first.priority !is Priority.Normal) {
+            printLaunchers()
+        }
+        second(options)
+    }
     /**
      * Call this method to enable testing mode, preventing Alchemist from shutting down the JVM.
      */

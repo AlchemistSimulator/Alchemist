@@ -41,6 +41,10 @@ data class AlchemistExecutionOptions(
     val parallelism: Int = defaultParallelism,
     val endTime: Double = defaultEndTime
 ) {
+    /**
+     * returns true if all options are set to their default value.
+     */
+    val isEmpty: Boolean get() = this == NO_OPTION
     companion object {
         /**
          * If no sampling interval is specified, this option value is used. Defaults to 1.0.
@@ -56,5 +60,7 @@ data class AlchemistExecutionOptions(
          * Defaults to [Double.POSITIVE_INFINITY].
          */
         val defaultEndTime = Double.POSITIVE_INFINITY
+
+        private val NO_OPTION = AlchemistExecutionOptions()
     }
 }

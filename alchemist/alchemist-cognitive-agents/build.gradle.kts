@@ -7,14 +7,16 @@
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-influence-sphere"))
-    implementation(Libs.konf)
-    implementation(Libs.jgrapht_core)
-    testImplementation(project(":alchemist-engine"))
-    testImplementation(project(":alchemist-loading"))
-    testImplementation(project(":alchemist-incarnation-protelis"))
+    api(alchemist("interfaces"))
+
+    implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("implementationbase"))
+    implementation(konf())
+    implementation(jgrapht("core"))
+
+    testImplementation(alchemist("engine"))
+    testImplementation(alchemist("loading"))
+    testImplementation(incarnation("protelis"))
 }
 
 publishing.publications {

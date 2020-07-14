@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.EuclideanEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 
@@ -23,8 +24,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 public abstract class AbstractMoveNode<T, P extends Position<P>> extends AbstractAction<T> {
 
     private static final long serialVersionUID = -5867654295577425307L;
-    private final Environment<T, P> env;
-    private final boolean isAbs;
+    private final Environment<T, P> environment;
+    private final boolean absolute;
 
     /**
      * Builds a new move node action. By default the movements are relative.
@@ -52,8 +53,8 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
      */
     protected AbstractMoveNode(final Environment<T, P> environment, final Node<T> node, final boolean isAbsolute) {
         super(node);
-        this.env = environment;
-        this.isAbs = isAbsolute;
+        this.environment = environment;
+        this.absolute = isAbsolute;
         declareDependencyTo(Dependency.MOVEMENT);
     }
 
@@ -61,12 +62,17 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
      * Detects if the move is in absolute or relative coordinates, then calls the correct method on the
      * {@link Environment}.
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void execute() {
-        if (isAbs) {
-            env.moveNodeToPosition(getNode(), getNextPosition());
+        if (absolute) {
+            environment.moveNodeToPosition(getNode(), getNextPosition());
         } else {
-            env.moveNode(getNode(), getNextPosition());
+            if (environment instanceof EuclideanEnvironment) {
+                ((EuclideanEnvironment) environment).moveNode(getNode(), getNextPosition());
+            } else {
+                environment.moveNodeToPosition(getNode(), environment.getPosition(getNode()).plus(getNextPosition().getCoordinates()));
+            }
         }
     }
 
@@ -79,7 +85,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
      * @return the current environment
      */
     public Environment<T, P> getEnvironment() {
-        return env;
+        return environment;
     }
 
     /**
@@ -102,14 +108,13 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
      * @return the position of the node
      */
     protected final P getNodePosition(final Node<T> n) {
-        return env.getPosition(n);
+        return environment.getPosition(n);
     }
 
     /**
      * @return true if this {@link it.unibo.alchemist.model.interfaces.Action} is using absolute positions
      */
     protected final boolean isAbsolute() {
-        return isAbs;
+        return absolute;
     }
-
 }

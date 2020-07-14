@@ -11,11 +11,11 @@ package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EuclideanNavigationAction
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph
@@ -33,16 +33,16 @@ import kotlin.math.pow
  * door to reach the provided [destination], see [suitabilityFactor].
  *
  * @param T the concentration type.
- * @param N the type of landmarks of the pedestrian's cognitive map.
- * @param E the type of edges of the pedestrian's cognitive map.
+ * @param L the type of landmarks of the pedestrian's cognitive map.
+ * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-open class Pursuing<T, N : Euclidean2DConvexShape, E>(
-    action: EuclideanNavigationAction<T, N, E, ConvexPolygon, Euclidean2DPassage>,
+open class Pursuing<T, L : Euclidean2DConvexShape, R>(
+    action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
     /**
      * The destination to pursue.
      */
     protected open val destination: Euclidean2DPosition
-) : Exploring<T, N, E>(action) {
+) : Exploring<T, L, R>(action) {
 
     private lateinit var doorsRankings: Map<Euclidean2DPassage, Int>
 

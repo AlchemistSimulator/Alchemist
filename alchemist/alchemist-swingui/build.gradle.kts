@@ -10,6 +10,7 @@ dependencies {
     api(project(":alchemist-interfaces"))
     implementation(rootProject)
     implementation(project(":alchemist-engine"))
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-maps"))
@@ -34,7 +35,6 @@ dependencies {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
     }
-    implementation(Libs.org_danilopianini_conrec)
     implementation(Libs.ssaring_sportstracker_leafletmap)
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {
@@ -46,8 +46,8 @@ dependencies {
         api("org.openjfx:javafx-swing:$javaFXVersion:$platform")
         api("org.openjfx:javafx-web:$javaFXVersion:$platform")
     }
-    implementation(Libs.jgrapht_core) // just to draw cognitive maps
-
+    implementation("org.danilopianini:conrec:_")
+    implementation(jgrapht("core")) // just to draw cognitive maps
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }
 

@@ -15,12 +15,18 @@ Editorial:
     - type: 'wiki'
     - type: 'separator'
       title: 'API Docs'
-    - type: "kotlindocPackages"
-      title: All Packages
-    - type: "kotlindocClasses"
-      title: All Classes
-    - type: "kotlindocClassLinks"
-      includeItems: true
+    - type: 'sourcedocPages'
+      moduleType: 'kotlindoc'
+      node: 'packages'
+      asSubmenu: true
+      submenuTitle: 'Packages'
+      transform: '{{ title | shortenPackage(38) }}'
+    - type: 'sourcedocPages'
+      moduleType: 'kotlindoc'
+      node: 'classes'
+      asSubmenu: true
+      submenuTitle: 'Classes'
+      transform: '{{ title | abbreviate(38) }}'
   extraCss:
     - 'assets/css/pygments.scss'
 allPages:

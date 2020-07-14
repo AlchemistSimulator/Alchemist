@@ -10,13 +10,15 @@ package it.unibo.alchemist.model.implementations.nodes;
 import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.geometry.Vector;
 
 /**
  * Implementation of a circular deformable cell.
  *
  * @param <P>
  */
-public final class CircularDeformableCellImpl<P extends Position<P>> extends CellNodeImpl<P> implements CircularDeformableCell<P> {
+public final class CircularDeformableCellImpl<P extends Position<P> & Vector<P>>
+        extends CellNodeImpl<P> implements CircularDeformableCell<P> {
 
     /**
      * 

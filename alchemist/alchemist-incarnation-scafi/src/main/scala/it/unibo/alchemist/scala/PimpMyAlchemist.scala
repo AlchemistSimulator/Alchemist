@@ -21,7 +21,7 @@ object PimpMyAlchemist {
   /**
    * Wraps a Position, providing + and - operations.
    */
-  implicit class RichPosition[P <: Position[P]](position: P) {
+  implicit class RichPosition[P <: Position[P] with it.unibo.alchemist.model.interfaces.geometry.Vector[P]](position: P) {
     def -(p: P) = position.minus(p)
     def +(p: P) = position.plus(p)
   }

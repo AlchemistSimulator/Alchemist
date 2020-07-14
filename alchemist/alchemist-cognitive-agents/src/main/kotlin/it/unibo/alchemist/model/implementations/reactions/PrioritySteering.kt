@@ -1,12 +1,12 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.Nearest
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 
 /**
- * Steering behavior where only the action whose target is the nearest to the current pedestrian position is executed.
+ * Steering behavior using [Nearest] steering strategy (= the only action executed is the one with the nearest target).
  *
  * @param environment
  *          the environment inside which the pedestrian moves.
@@ -17,6 +17,6 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  */
 class PrioritySteering<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Pedestrian<T>,
+    pedestrian: Pedestrian2D<T>,
     timeDistribution: TimeDistribution<T>
 ) : SteeringBehavior<T>(environment, pedestrian, timeDistribution, Nearest(environment, pedestrian))

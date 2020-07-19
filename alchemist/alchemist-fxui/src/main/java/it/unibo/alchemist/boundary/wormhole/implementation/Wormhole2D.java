@@ -9,11 +9,12 @@
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
 import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
+import it.unibo.alchemist.boundary.wormhole.implementation.adapter.NodeViewType;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
-
 import java.awt.Component;
 import java.awt.geom.Dimension2D;
+import javafx.scene.Node;
 
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
@@ -45,6 +46,22 @@ public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormh
         );
     }
 
+    /**
+     * Bidimensional wormhole constructor for an AWT/Swing {@link Node} class.
+     * <br/>
+     * Initializes a new instance directly setting the size of both view and
+     * environment, and the offset too.
+     *
+     * @param env         the {@code Environment}
+     * @param view        the controlled {@code Node}
+     */
+    public Wormhole2D(final Environment<?, P> env, final Node view) {
+        super(
+                env,
+                new NodeViewType(view),
+                from(view.getBoundsInLocal().getWidth() / 2, view.getBoundsInLocal().getHeight() / 2)
+        );
+    }
     @Override
     public final Dimension2D getViewSize() {
         return new DoubleDimension(getView().getWidth(), getView().getHeight());

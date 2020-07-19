@@ -14,34 +14,30 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-maps"))
-    implementation(project(":alchemist-smartcam"))
-    implementation(project(":alchemist-cognitive-agents"))
-    implementation(Libs.miglayout_swing)
-    implementation(Libs.mapsforge_map_awt) {
-        exclude(group = "com.github.blackears", module = "svgSalamander")
-    }
     implementation(Libs.gson_extras)
-    implementation(Libs.svgsalamander)
+    implementation(Libs.jfoenix)
+    implementation(Libs.javafxsvg)
+    implementation(Libs.controlsfx)
+    implementation(Libs.jiconfont_javafx)
+    implementation(Libs.jiconfont_google_material_design_icons)
+    implementation(Libs.tornadofx)
     // TODO: deprecated, must be removed
     implementation(Libs.javalib_java7) {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
     }
-    implementation("org.danilopianini:conrec:_")
-    implementation(jgrapht("core")) // just to draw cognitive maps
-
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
-}
-
-configurations.all {
-    resolutionStrategy {
-        eachDependency {
-            if (requested.name == "svgSalamander") {
-                useTarget(Libs.svgsalamander)
-                because("mapsforge version is not on central")
-            }
-        }
+    implementation(Libs.ssaring_sportstracker_leafletmap)
+    val javaFXVersion = "11"
+    for (platform in listOf("linux", "mac", "win")) {
+        api("org.openjfx:javafx-base:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-controls:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-fxml:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-graphics:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-media:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-swing:$javaFXVersion:$platform")
+        api("org.openjfx:javafx-web:$javaFXVersion:$platform")
     }
+    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }
 
 publishing.publications {

@@ -95,17 +95,6 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     private FXStepMonitor<T, P> stepMonitor;
 
     /**
-     * Method that launches the application.
-     * <br>
-     * For testing purpose only
-     *
-     * @param args {@link Parameters parameters} for the application
-     */
-    public static void main(final String[] args) {
-        Application.launch(args);
-    }
-
-    /**
      * Getter method for the unnamed parameters.
      *
      * @return the unnamed params

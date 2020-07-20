@@ -127,7 +127,7 @@ class InteractionManager<T, P : Position2D<P>>(
     private val invokeOnSimulation: (Simulation<T, P>.() -> Unit) -> Unit
         get() =
             environment?.simulation?.let { { exec: Simulation<T, P>.() -> Unit -> it.schedule { exec.invoke(it) } } }
-            ?: throw IllegalStateException("Uninitialized environment or simulation")
+                ?: throw IllegalStateException("Uninitialized environment or simulation")
 
     init {
         listOf(selector, highlighter).forEach {
@@ -179,9 +179,11 @@ class InteractionManager<T, P : Position2D<P>>(
                     selection.clear()
                     val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
                     invokeOnSimulation {
-                        nodesToMove.values.maxWith(Comparator { a, b ->
-                            (b - a.coordinates).let { it.x + it.y }.roundToInt()
-                        })?.let {
+                        nodesToMove.values.maxWith(
+                            Comparator { a, b ->
+                                (b - a.coordinates).let { it.x + it.y }.roundToInt()
+                            }
+                        )?.let {
                             mousePosition - it.coordinates
                         }?.let { offset ->
                             environment?.let { env ->
@@ -252,18 +254,22 @@ class InteractionManager<T, P : Position2D<P>>(
                 it.consume()
             }
         }
-        selection.addListener(MapChangeListener {
-            selection.map { paintHighlight(it.value, Colors.alreadySelected) }.let { highlighters ->
-                feedback = feedback + (Interaction.HIGHLIGHTED to highlighters)
+        selection.addListener(
+                MapChangeListener {
+                selection.map { paintHighlight(it.value, Colors.alreadySelected) }.let { highlighters ->
+                    feedback = feedback + (Interaction.HIGHLIGHTED to highlighters)
+                }
+                repaint()
             }
-            repaint()
-        })
-        selectionCandidates.addListener(MapChangeListener {
-            selectionCandidates.map { paintHighlight(it.value, Colors.selecting) }.let { highlighters ->
-                feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters)
+        )
+        selectionCandidates.addListener(
+            MapChangeListener {
+                selectionCandidates.map { paintHighlight(it.value, Colors.selecting) }.let { highlighters ->
+                    feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters)
+                }
+                repaint()
             }
-            repaint()
-        })
+        )
     }
 
     /**
@@ -724,7 +730,8 @@ private fun Canvas.createDrawCommand(rectangle: Rectangle, colour: Paint): () ->
     graphicsContext2D.let {
         it.fill = colour
         it.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
-    } }
+    }
+}
 
 /**
  * Returns the nodes intersecting with the caller rectangle.
@@ -742,4 +749,5 @@ private fun Point.makeRectangleWith(other: Point): Rectangle = Rectangle(
     min(this.x, other.x).toDouble(),
     min(this.y, other.y).toDouble(),
     abs(this.x - other.x).toDouble(),
-    abs(this.y - other.y).toDouble())
+    abs(this.y - other.y).toDouble()
+)

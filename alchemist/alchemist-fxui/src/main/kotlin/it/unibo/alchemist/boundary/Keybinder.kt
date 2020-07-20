@@ -95,7 +95,7 @@ class KeybindController : Controller() {
             .map { Keybind(it.key, it.value) }
             .plus(ActionFromKey.values().map { Keybind(it, KeyCode.UNDEFINED) })
             .distinctBy { it.action }.toList()
-        )
+    )
     /**
      * The keybind currently selected in the view.
      */
@@ -167,8 +167,10 @@ class EditKeybindView : View() {
      * {@inheritDoc}.
      */
     override val root = vbox(SPACING_SMALL) {
-        label("${messages["label_key_rebind"]} ${toEdit.actionProperty.value}. " +
-            "${messages["label_key_current"]}: ${toEdit.keyProperty.value}")
+        label(
+            "${messages["label_key_rebind"]} ${toEdit.actionProperty.value}. " +
+            "${messages["label_key_current"]}: ${toEdit.keyProperty.value}"
+        )
         keyboard {
             addEventHandler(KeyEvent.KEY_PRESSED) {
                 if (it.code != KeyCode.ESCAPE) {

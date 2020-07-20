@@ -132,13 +132,13 @@ class RangedDoubleProperty @JvmOverloads constructor(
     }
 
     override fun hashCode() =
-            lowerBound.hashCode() xor upperBound.hashCode() xor value.hashCode() xor name.hashCode()
+        lowerBound.hashCode() xor upperBound.hashCode() xor value.hashCode() xor name.hashCode()
 
     override fun equals(other: Any?) = this === other ||
         javaClass === other?.javaClass &&
-            name == (other as RangedDoubleProperty).name &&
-            abs(lowerBound - other.lowerBound) < Double.MIN_VALUE &&
-            abs(upperBound - other.upperBound) < Double.MIN_VALUE
+        name == (other as RangedDoubleProperty).name &&
+        abs(lowerBound - other.lowerBound) < Double.MIN_VALUE &&
+        abs(upperBound - other.upperBound) < Double.MIN_VALUE
 
     companion object {
         /**
@@ -158,10 +158,11 @@ class RangedDoubleProperty @JvmOverloads constructor(
                 ): RangedDoubleProperty {
                     val jObj = json as JsonObject
                     return RangedDoubleProperty(
-                            jObj.get(NAME).asString,
-                            jObj.get(VALUE).asDouble,
-                            jObj.get(LOWER_BOUND).asDouble,
-                            jObj.get(UPPER_BOUND).asDouble)
+                        jObj.get(NAME).asString,
+                        jObj.get(VALUE).asDouble,
+                        jObj.get(LOWER_BOUND).asDouble,
+                        jObj.get(UPPER_BOUND).asDouble
+                    )
                 }
 
                 override fun serialize(

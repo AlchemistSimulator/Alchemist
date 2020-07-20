@@ -361,7 +361,6 @@ class InteractionManager<T, P : Position2D<P>>(
         selectionCandidates.clear()
         selectionCandidatesMutex.release()
         feedback = feedback - Interaction.SELECTION_BOX
-//        feedback += Interaction.SELECTION_BOX to emptyList<() -> Unit>()
         repaint()
         event.consume()
     }
@@ -373,8 +372,6 @@ class InteractionManager<T, P : Position2D<P>>(
         selectionHelper.close()
         feedback = feedback - Interaction.SELECTION_BOX
         feedback = feedback - Interaction.HIGHLIGHT_CANDIDATE
-//        feedback += Interaction.SELECTION_BOX to emptyList<() -> Unit>()
-//        feedback += Interaction.HIGHLIGHT_CANDIDATE to emptyList<() -> Unit>()
         repaint()
         event.consume()
     }

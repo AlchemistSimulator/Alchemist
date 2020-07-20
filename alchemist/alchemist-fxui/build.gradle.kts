@@ -40,22 +40,12 @@ publishing.publications {
         pom {
             developers {
                 developer {
-                    name.set("Giovanni Ciatto")
-                    email.set("giovanni.ciatto@unibo.it")
+                    name.set("Niccolò Maltoni")
+                    email.set("niccolo.maltoni@studio.unibo.it")
                 }
                 developer {
-                    name.set("Lorenzo Paganelli")
-                    email.set("lorenzo.paganelli3@studio.unibo.it")
-                }
-            }
-            contributors {
-                contributor {
-                    name.set("Matteo Francia")
-                    email.set("m.francia@unibo.it")
-                }
-                contributor {
-                    name.set("Federico Pettinari")
-                    email.set("federico.pettinari2@studio.unibo.it")
+                    name.set("Vuksa Mihajlovic")
+                    email.set("vuksa.mihajlovic@studio.unibo.it")
                 }
             }
         }

@@ -21,11 +21,6 @@ dependencies {
     implementation(Libs.jiconfont_javafx)
     implementation(Libs.jiconfont_google_material_design_icons)
     implementation(Libs.tornadofx)
-    // TODO: deprecated, must be removed
-    implementation(Libs.javalib_java7) {
-        exclude(group = "org.ow2.asm")
-        exclude(module = "findbugs")
-    }
     implementation(Libs.ssaring_sportstracker_leafletmap)
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {

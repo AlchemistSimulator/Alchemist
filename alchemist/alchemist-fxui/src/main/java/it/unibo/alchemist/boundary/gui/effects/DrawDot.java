@@ -37,7 +37,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
     /**
      * Default generated Serial Version UID.
      */
-    private static final long serialVersionUID = -6098041600645663870L;
+    private static final long serialVersionUID = 1L;
     /**
      * Default effect name.
      */

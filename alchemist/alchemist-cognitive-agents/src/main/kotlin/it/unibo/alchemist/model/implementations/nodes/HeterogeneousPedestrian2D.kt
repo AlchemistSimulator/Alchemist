@@ -31,13 +31,8 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
     age: Age,
     gender: Gender,
     group: PedestrianGroup2D<T>? = null
-) : AbstractHeterogeneousPedestrian2D<T>(
-    environment,
-    randomGenerator,
-    age,
-    gender,
-    group
-), Pedestrian2D<T> {
+) : AbstractHeterogeneousPedestrian2D<T>(environment, randomGenerator, age, gender, group),
+    Pedestrian2D<T> {
 
     override val shape by lazy { super.shape }
     override val fieldOfView by lazy { super.fieldOfView }

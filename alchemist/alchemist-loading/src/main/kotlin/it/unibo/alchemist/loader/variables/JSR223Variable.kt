@@ -18,18 +18,19 @@ data class JSR223Variable<R>(val language: String, val formula: String) : Depend
     private val engine by lazy {
         with(ScriptEngineManager()) {
             getEngineByName(language)
-            ?: getEngineByExtension(language)
-            ?: getEngineByMimeType(language)
-            ?: throw IllegalArgumentException(
-                "$language is not an available language. Your environment supports the following languages: ${
-                    engineFactories.map {
-                        " - ${it.languageName}, " +
-                            "aka ${it.extensions + it.mimeTypes} " +
-                            "(${it.languageVersion} on ${it.engineName} ${it.engineVersion})"
-                    }
-                    .joinToString(separator = System.lineSeparator(), prefix = System.lineSeparator())
-                }"
-            )
+                ?: getEngineByExtension(language)
+                ?: getEngineByMimeType(language)
+                ?: throw IllegalArgumentException(
+                    "$language is not an available language. Your environment supports the following languages: ${
+                    engineFactories
+                        .map {
+                            " - ${it.languageName}, " +
+                                "aka ${it.extensions + it.mimeTypes} " +
+                                "(${it.languageVersion} on ${it.engineName} ${it.engineVersion})"
+                        }
+                        .joinToString(separator = System.lineSeparator(), prefix = System.lineSeparator())
+                    }"
+                )
         }
     }
 

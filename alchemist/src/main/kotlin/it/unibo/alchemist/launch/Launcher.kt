@@ -102,10 +102,12 @@ sealed class Priority : Comparable<Priority> {
         this is Fallback -> -1
         other is High -> -1
         other is Fallback -> 1
-        else -> throw IllegalStateException("""
+        else -> throw IllegalStateException(
+            """
             Comparison of $this and $other failed.
             There is a bug in alchemist. Please open an issue with this stacktrace.
-        """.trimIndent())
+            """.trimIndent()
+        )
     }
 
     override fun toString() = this::class.simpleName!!

@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -305,7 +306,7 @@ public class EffectPropertiesController implements Initializable {
      * Shows a {@link Label} that tell the user that there is nothing to tune in that effect.
      */
     private void showNothing() {
-        assert mainBox != null;
+        Objects.requireNonNull(mainBox, FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT));
         L.debug("Effect " + effect.toString() + " does not have tunable properties");
         final Label nothingHere = new Label(ResourceLoader.getStringRes("nothing_to_tune"));
         nothingHere.setTextAlignment(TextAlignment.CENTER);
@@ -318,7 +319,7 @@ public class EffectPropertiesController implements Initializable {
      * @return the property
      */
     public StringProperty effectNameProperty() {
-        assert this.effectName != null;
+        Objects.requireNonNull(this.effectName, FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT));
         return this.effectName.textProperty();
     }
 }

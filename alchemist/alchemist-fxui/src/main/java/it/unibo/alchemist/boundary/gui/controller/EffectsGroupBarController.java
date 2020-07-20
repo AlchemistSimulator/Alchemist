@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -189,7 +190,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         });
         fileChooser.setInitialFileName("Effects" + DEFAULT_EXTENSION);
         fileChooser.setSelectedExtensionFilter(json);
-        assert this.save != null;
+        Objects.requireNonNull(this.save, FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT));
         File selectedFile = fileChooser.showSaveDialog(this.save.getScene().getWindow());
         if (selectedFile != null) {
             if (FilenameUtils.getExtension(selectedFile.getAbsolutePath()).equals("")) {
@@ -223,7 +224,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter(getStringRes("json_extension_filter_description"), "*" + DEFAULT_EXTENSION),
                 new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*"));
-        assert this.load != null;
+        Objects.requireNonNull(this.load, FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT));
         final File selectedFile = fileChooser.showOpenDialog(this.load.getScene().getWindow());
         if (selectedFile != null) {
             this.lastPath = Optional.ofNullable(selectedFile.getParent());

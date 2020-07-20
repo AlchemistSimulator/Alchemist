@@ -210,7 +210,7 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
      * @return the name property
      */
     public StringProperty groupNameProperty() {
-        assert this.groupName != null;
+        Objects.requireNonNull(this.groupName, FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT));
         return this.groupName.textProperty();
     }
 }

@@ -192,7 +192,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
         if (controlTypePopOver.isPresent() && controlTypePopOver.get().isShowing()) {
             controlTypePopOver.get().hide();
         } else {
-            assert controlType != null;
+            Objects.requireNonNull(controlType, FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT));
             final ControlTypePopoverController controlTypePopoverController = new ControlTypePopoverController();
             final Node popoverContent;
             try {

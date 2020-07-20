@@ -45,8 +45,9 @@ open class Continuous2DEnvironment<T> :
 
     override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> = when {
         shape.diameter + largestShapeDiameter <= 0 -> emptyList()
-        else -> getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
-            .filter { shape.intersects(getShape(it)) }
+        else ->
+            getNodesWithinRange(shape.centroid, (shape.diameter + largestShapeDiameter) / 2)
+                .filter { shape.intersects(getShape(it)) }
     }
 
     override fun getHeading(node: Node<T>) = nodeToHeading.getOrPut(node, { defaultHeading })

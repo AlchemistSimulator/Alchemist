@@ -25,19 +25,32 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
     override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
             headless || GraphicsEnvironment.isHeadless() -> Validation.OK()
-            graphics != null -> Validation.OK(Priority.Fallback("""
-                Graphical interface required but unavailable.
-                Import an Alchemist module with a graphical launcher, e.g. alchemist-swingui.
-                See: https://alchemistsimulator.github.io/wiki/usage/gui/
-                """.trimIndent()))
-            distributed != null -> Validation.OK(Priority.Fallback("""
-                Distributed execution required but unavailable.
-                Import an Alchemist module with a distributed executor, e.g. alchemist-grid.
-                See: https://alchemistsimulator.github.io/wiki/usage/grid/
-                """.trimIndent()))
-            else -> Validation.OK(Priority.Fallback(
-                "Headless mode not explicitly requested, but no graphic environment found")
-            )
+            graphics != null ->
+                Validation.OK(
+                    Priority.Fallback(
+                        """
+                        Graphical interface required but unavailable.
+                        Import an Alchemist module with a graphical launcher, e.g. alchemist-swingui.
+                        See: https://alchemistsimulator.github.io/wiki/usage/gui/
+                        """.trimIndent()
+                    )
+                )
+            distributed != null ->
+                Validation.OK(
+                    Priority.Fallback(
+                        """
+                        Distributed execution required but unavailable.
+                        Import an Alchemist module with a distributed executor, e.g. alchemist-grid.
+                        See: https://alchemistsimulator.github.io/wiki/usage/grid/
+                        """.trimIndent()
+                    )
+                )
+            else ->
+                Validation.OK(
+                    Priority.Fallback(
+                        "Headless mode not explicitly requested, but no graphic environment found"
+                    )
+                )
         }
     }
 
@@ -47,20 +60,21 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
             .cartesianProductOf(parameters.variables)
             .asSequence()
             .map { variables ->
-                executor.submit(Callable {
-                    // TODO: The type inference here is wrong, and should not consider Euclidean2DPosition
-                    val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, parameters, variables)
-                    simulation.play()
-                    simulation.run()
-                    simulation.error
-                })
+                executor.submit(
+                    Callable {
+                        val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, parameters, variables)
+                        simulation.play()
+                        simulation.run()
+                        simulation.error
+                    }
+                )
             }
             .map { it.get() }
             .filter { it.isPresent }
             .map { it.get() }
             .firstOrNull()
-            executor.shutdown()
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
+        executor.shutdown()
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
         if (exception != null) {
             throw exception
         }

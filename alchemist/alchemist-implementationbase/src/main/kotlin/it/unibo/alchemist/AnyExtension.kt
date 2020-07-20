@@ -31,16 +31,21 @@ fun <E> E.unfold(extractor: (E) -> Sequence<E>): Sequence<E> =
  */
 inline fun <T, reified P : Position<P>> T.toPosition(environment: Environment<T, P>): P = when (this) {
     is P -> this
-    is Iterable<*> -> environment.makePosition(*(
-        this.map {
+    is Iterable<*> -> {
+        val numbers = this.map {
             when (it) {
                 is Number -> it
-                else -> throw IllegalStateException(
-                    "The Iterable being converted to position must contain Numbers only" +
-                    "but $it has type ${it?.javaClass ?: "null"}"
-                )
+                else ->
+                    throw IllegalStateException(
+                        "The Iterable being converted to position must contain Numbers only" +
+                            "but $it has type ${it?.javaClass ?: "null"}"
+                    )
             }
-        }).toTypedArray())
-    else -> throw IllegalArgumentException(
-        "$this (type: ${if (this is Any) this.javaClass else null}) can't get converted to a Position")
+        }
+        environment.makePosition(*numbers.toTypedArray())
+    }
+    else ->
+        throw IllegalArgumentException(
+            "$this (type: ${if (this is Any) this.javaClass else null}) can't get converted to a Position"
+        )
 }

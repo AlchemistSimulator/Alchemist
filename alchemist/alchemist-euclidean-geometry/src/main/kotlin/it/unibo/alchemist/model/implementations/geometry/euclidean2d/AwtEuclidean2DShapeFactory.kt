@@ -22,8 +22,10 @@ internal class AwtEuclidean2DShapeFactory(
         shape: GeometricShape<*, *>
     ): GeometricShape<Euclidean2DPosition, Euclidean2DTransformation> {
         require(shape is AwtEuclidean2DShape || shape is AdimensionalShape) {
-            """"The given shape of type ${shape::class.simpleName} is not compatible with this environment, 
-                to avoid this make sure to use PhysicsEnvironment.shapeFactory to create shapes""".trimIndent()
+            """"
+                The given shape of type ${shape::class.simpleName} is not compatible with this environment, 
+                to avoid this make sure to use PhysicsEnvironment.shapeFactory to create shapes
+            """.trimIndent()
         }
         return shape as GeometricShape<Euclidean2DPosition, Euclidean2DTransformation>
     }

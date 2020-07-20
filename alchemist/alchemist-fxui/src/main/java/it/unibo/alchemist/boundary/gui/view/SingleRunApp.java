@@ -234,7 +234,6 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                 s.addOutputMonitor(this.stepMonitor);
             });
             final ButtonsBarController<P> buttonsBarController = new ButtonsBarController<>(displayMonitor, playPauseMonitor, timeMonitor, stepMonitor);
-
             final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
             bar.setPickOnBounds(false);
             main.widthProperty().addListener((observable, oldValue, newValue) -> bar.setPrefWidth(newValue.doubleValue()));
@@ -361,11 +360,9 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
         if (className == null || className.equals("")) {
             throw new IllegalArgumentException();
         }
-
         try {
             final Class<? extends AbstractFXDisplay<T, P>> clazz;
             clazz = (Class<? extends AbstractFXDisplay<T, P>>) Class.forName(className);
-
             final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
             Constructor<?> constructor = null;
             for (final Constructor<?> c : constructors) {
@@ -374,7 +371,6 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                     break;
                 }
             }
-
             if (constructor == null) {
                 throw new IllegalArgumentException();
             } else {

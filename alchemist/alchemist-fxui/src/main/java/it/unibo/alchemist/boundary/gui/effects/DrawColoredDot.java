@@ -57,15 +57,12 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
      */
     public DrawColoredDot(final String name) {
         super(name);
-
         final java.awt.Color awtColor = convertColor(super.getColor());
-
         // Set properties to default color of DrawDot
         red = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), awtColor.getRed());
         green = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), awtColor.getGreen());
         blue = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), awtColor.getBlue());
         alpha = PropertyFactory.getFXColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), super.getColor().getOpacity());
-
         // Update the color at each change
         red.addListener(this.updateColor());
         green.addListener(this.updateColor());

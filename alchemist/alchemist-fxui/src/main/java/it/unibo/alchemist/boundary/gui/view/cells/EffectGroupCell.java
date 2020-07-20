@@ -62,14 +62,10 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
      */
     public EffectGroupCell(final String groupName, final JFXDrawersStack stack) {
         super(new Label(groupName), new JFXToggleButton());
-
         this.stack = stack;
-
         setupLabel(getLabel(), (observable, oldValue, newValue) -> this.getItem().setName(newValue));
         setupToggle(getToggle(), (observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
-
         initDrawer();
-
         this.getPane().setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 // Drawer size is modified every time it's opened
@@ -82,7 +78,6 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
                 }
             }
         });
-
         final ContextMenu menu = new ContextMenu();
         final MenuItem rename = new MenuItem(getStringRes("menu_item_rename"));
         rename.setOnAction(event -> {
@@ -134,21 +129,17 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
     private void initDrawer() {
         effectDrawer = new JFXDrawer();
         effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-
         if (getDisplayMonitor().isPresent()) {
             effectBarController = new EffectBarController<>(getDisplayMonitor().get(), this, this.stack, this.effectDrawer);
         } else {
             effectBarController = new EffectBarController<>(this, this.stack, this.effectDrawer);
         }
-
         try {
             effectDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
         } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }
-
         effectBarController.groupNameProperty().bindBidirectional(this.getLabel().textProperty());
-
         effectDrawer.setOverLayVisible(false);
         effectDrawer.setResizableOnDrag(false);
     }
@@ -177,7 +168,6 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
     @Override
     public DataFormat getDataFormat() {
         final EffectGroup<P> item = this.getItem();
-
         if (item == null) {
             return DataFormatFactory.getDataFormat(EffectGroup.class);
         } else {
@@ -193,7 +183,6 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
     @Override
     protected void updateItem(final EffectGroup<P> item, final boolean empty) {
         super.updateItem(item, empty);
-
         if (empty || item == null) {
             setGraphic(null);
         } else {

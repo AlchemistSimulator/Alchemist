@@ -39,18 +39,13 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
      */
     public EffectCell(final String effectName, final JFXDrawersStack stack) {
         super(new Label(effectName), new JFXToggleButton());
-
         this.stack = stack;
-
         setupLabel(getLabel(), (observable, oldValue, newValue) -> this.getItem().setName(newValue));
         setupToggle(getToggle(), (observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
-
         final JFXDrawer propertiesDrawer = new JFXDrawer();
         propertiesDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-
         propertiesDrawer.setOverLayVisible(false);
         propertiesDrawer.setResizableOnDrag(false);
-
         this.getPane().setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 final EffectPropertiesController propertiesController = new EffectPropertiesController(this.getItem(), this.stack,
@@ -63,7 +58,6 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
                     throw new IllegalStateException(
                             "Could not initialize side pane for properties of effect " + this.getItem().toString() + ": ", e);
                 }
-
                 // Drawer size is modified every time it's opened
                 if (propertiesDrawer.isClosed() || propertiesDrawer.isClosing()) {
                     propertiesDrawer.setDefaultDrawerSize(stack.getWidth());
@@ -72,9 +66,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
 
             }
         });
-
         final ContextMenu menu = new ContextMenu();
-
         final MenuItem rename = new MenuItem(getStringRes("menu_item_rename"));
         rename.setOnAction(event -> {
             if (getItem() != null) {
@@ -82,13 +74,11 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
             }
             event.consume();
         });
-
         final MenuItem delete = new MenuItem(getStringRes("menu_item_delete"));
         delete.setOnAction(event -> {
             removeItself();
             event.consume();
         });
-
         menu.getItems().addAll(rename, delete);
         this.setContextMenu(menu);
     }
@@ -163,7 +153,6 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     @Override
     public DataFormat getDataFormat() {
         final EffectFX<P> item = this.getItem();
-
         if (item == null || !EffectFX.class.isAssignableFrom(item.getClass())) {
             return DataFormatFactory.getDataFormat(this.getClass());
         } else {
@@ -177,7 +166,6 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     @Override
     protected void updateItem(final EffectFX<P> item, final boolean empty) {
         super.updateItem(item, empty);
-
         if (empty || item == null) {
             setGraphic(null);
         } else {

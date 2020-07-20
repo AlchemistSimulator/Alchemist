@@ -123,30 +123,22 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
         Objects.requireNonNull(effectsList, FXResourceLoader.getInjectionErrorMessage("effectsList", EFFECT_BAR_LAYOUT));
         Objects.requireNonNull(groupName, FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT));
         Objects.requireNonNull(backToGroups, FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_BAR_LAYOUT));
-
         this.addEffect.setText("");
         this.addEffect.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
-
         this.backToGroups.setText("");
         this.backToGroups.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ARROW_BACK));
-
         this.effectBuilder = new EffectBuilderFX();
-
         this.addEffect.setOnAction(e -> addEffectToList());
-
         this.backToGroups.setOnAction(e -> this.stack.toggle(thisDrawer));
-
         this.groupName.setOnMouseClicked(click -> {
             if (click.getClickCount() == 2) {
                 final Object source = click.getSource();
                 final Label label;
-
                 if (source instanceof Label) {
                     label = (Label) source;
                 } else {
                     throw new IllegalStateException("EventHandler for label rename not associated to a label");
                 }
-
                 final TextInputDialog dialog = new TextInputDialog(label.getText());
                 dialog.setTitle(getStringRes("rename_group_dialog_title"));
                 dialog.setHeaderText(getStringRes("rename_group_dialog_msg"));
@@ -160,7 +152,6 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
                 dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
             }
         });
-
         this.topBar.widthProperty().addListener((observable, oldValue, newValue) -> this.groupName.setPrefWidth(newValue.doubleValue()));
     }
 

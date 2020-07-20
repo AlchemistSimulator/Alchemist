@@ -46,14 +46,12 @@ public class EffectGroupAdapter<P extends Position2D<? extends P>>  implements J
     @Override
     public EffectGroup<P> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
         final JsonObject jObj = json.getAsJsonObject();
-
         final String name = jObj.get(NAME).getAsString();
         final EffectGroup<P> group = new EffectStack<>(name);
         final boolean visibility = jObj.get(VISIBILITY).getAsBoolean();
         group.setVisibility(visibility);
         final List<EffectFX<P>> effects = context.deserialize(jObj.get(EFFECTS), effectsListType);
         group.addAll(effects);
-
         return group;
     }
 
@@ -63,14 +61,12 @@ public class EffectGroupAdapter<P extends Position2D<? extends P>>  implements J
     @Override
     public JsonElement serialize(final EffectGroup<P> src, final Type typeOfSrc, final JsonSerializationContext context) {
         final JsonObject jObj = new JsonObject();
-
         jObj.addProperty(NAME, src.getName());
         jObj.addProperty(VISIBILITY, src.isVisible());
         final List<EffectFX<P>> list = new ArrayList<>(src);
 //        list.addAll(src);
         final JsonElement effects = context.serialize(list, effectsListType);
         jObj.add(EFFECTS, effects);
-
         return jObj;
     }
 

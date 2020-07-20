@@ -62,14 +62,11 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      */
     public AbstractEffectCell(final Node... nodes) {
         super();
-
         pane = new GridPane();
-
         // Initializing drag'n'drop handle
         final Label handle = new Label();
         handle.setGraphic(FXResourceLoader.getColoredIcon(GoogleMaterialDesignIcons.DRAG_HANDLE, Color.BLACK));
         pane.add(handle, 0, 0);
-
         // Drag'n'Drop configurations
         handle.setOnDragDetected(this::startDragNDrop);
         setOnDragOver(this::dragNDropOver);
@@ -77,7 +74,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         setOnDragExited(this::dragNDropExited);
         setOnDragDropped(this::dropDragNDrop);
         setOnDragDone(DragEvent::consume);
-
         // Not show context menu in empty cells
         this.setOnContextMenuRequested(event -> {
             if (getItem() == null) {
@@ -87,7 +83,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             } */
             event.consume();
         });
-
         // Adding other nodes
         int i = DEFAULT_OFFSET;
         for (final Node node : nodes) {
@@ -117,7 +112,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
                 .getWindow())
                 .getIcons()
                 .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
-
         dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> toRename.set(s)));
     }
 
@@ -187,13 +181,11 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         if (getItem() == null) {
             throw new IllegalStateException("Empty cell: no item found");
         }
-
         final Dragboard dragboard = startDragAndDrop(TransferMode.MOVE);
         final ClipboardContent content = new ClipboardContent();
         content.put(getDataFormat(), getItem());
         dragboard.setDragView(this.snapshot(null, null));
         dragboard.setContent(content);
-
         event.consume();
     }
 
@@ -206,7 +198,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
             event.acceptTransferModes(TransferMode.MOVE);
         }
-
         event.consume();
     }
 
@@ -244,35 +235,26 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         if (getItem() == null) {
             throw new IllegalStateException("Empty cell: no item found");
         }
-
         final Dragboard dragboard = event.getDragboard();
-
         if (dragboard.hasContent(getDataFormat())) {
             final ObservableList<T> items = getListView().getItems();
             final T content = (T) dragboard.getContent(getDataFormat());
-
             final int draggedIndex = items.indexOf(content);
-
             if (draggedIndex < 0) {
                 throw new IllegalStateException("Can't find the dragged item in the ListView");
             }
-
             final int thisIndex = items.indexOf(getItem());
-
             if (thisIndex < 0) {
                 throw new IllegalStateException("Can't find the item of this cell in the ListView");
             }
-
             items.set(draggedIndex, getItem());
             items.set(thisIndex, content);
-
             final List<T> itemsCopy = new ArrayList<>(getListView().getItems());
             getListView().getItems().setAll(itemsCopy);
             event.setDropCompleted(true);
         } else {
             throw new IllegalStateException("No content found in DragBoard");
         }
-
         event.consume();
     }
 
@@ -287,7 +269,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         if (position < 0) {
             throw new IllegalArgumentException(WRONG_POS);
         }
-
         try {
             final int col, row;
             if (position == 0) {
@@ -297,7 +278,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
                 col = DEFAULT_OFFSET;
                 row = position;
             }
-
             for (final Node node : this.pane.getChildren()) {
                 if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
                     return node;
@@ -347,7 +327,6 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     @Override
     protected void updateItem(final T item, final boolean empty) {
         super.updateItem(item, empty);
-
         if (empty || item == null) {
             setGraphic(null);
         } else {

@@ -383,12 +383,10 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
             public RangedIntegerProperty deserialize(final JsonElement json, final Type typeOfT,
                     final JsonDeserializationContext context) {
                 final JsonObject jObj = json.getAsJsonObject();
-
                 final String name = jObj.get(NAME).getAsString();
                 final int value = jObj.get(VALUE).getAsInt();
                 final int lowerBound = jObj.get(LOWER_BOUND).getAsInt();
                 final int upperBound = jObj.get(UPPER_BOUND).getAsInt();
-
                 return new RangedIntegerProperty(name, value, lowerBound, upperBound);
             }
 
@@ -396,7 +394,6 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
             public JsonElement serialize(final RangedIntegerProperty src, final Type typeOfSrc,
                     final JsonSerializationContext context) {
                 final JsonObject jObj = new JsonObject();
-
                 final String name = src.getName();
                 jObj.addProperty(NAME, name);
                 final int value = src.getValue();
@@ -405,7 +402,6 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
                 jObj.addProperty(LOWER_BOUND, lowerBound);
                 final int upperBound = src.getUpperBound();
                 jObj.addProperty(UPPER_BOUND, upperBound);
-
                 return jObj;
             }
 

@@ -70,7 +70,6 @@ public final class FXResourceLoader {
      */
     public static String getInjectionErrorMessage(final String nodeName, final String layoutFileName) {
         return "fx:id=\"" + nodeName + "\" was not injected: check your FXML file \"" + layoutFileName + "\"";
-
     }
 
     /**
@@ -92,7 +91,6 @@ public final class FXResourceLoader {
      */
     public static IconNode getColoredIcon(final IconCode iconCode, final Color color) {
         IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
-
         final IconNode icon = new IconNode(iconCode);
         icon.setFill(color);
         return icon;

@@ -63,7 +63,6 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     @Override
     public <T> Queue<DrawCommand<P>> computeDrawCommands(final Environment<T, P> environment) {
         final CommandQueueBuilder<P> builder = new CommandQueueBuilder<>();
-
         if (isVisible()) {
             this.stream()
                     .map(effectFX -> effectFX.computeDrawCommands(environment))
@@ -158,9 +157,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
         final int currentPos = this.search(effect);
         final int newPos = currentPos + offset;
         final EffectFX<P> temp = this.effects.get(newPos);
-
         this.effects.set(newPos, effect);
-
         this.effects.set(currentPos, temp);
     }
 
@@ -278,14 +275,12 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     @Override
     public boolean retainAll(final Collection<?> c) {
         boolean b = false;
-
         for (final EffectFX effect : this.effects) {
             if (!c.contains(effect)) {
                 this.remove(effect);
                 b = true;
             }
         }
-
         return b;
     }
 

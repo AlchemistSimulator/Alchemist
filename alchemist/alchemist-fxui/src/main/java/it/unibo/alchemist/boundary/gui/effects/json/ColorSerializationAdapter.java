@@ -60,12 +60,10 @@ public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDes
     @Override
     public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
         final JsonObject jObj = json.getAsJsonObject();
-
         final double red = jObj.get(RED).getAsDouble();
         final double green = jObj.get(GREEN).getAsDouble();
         final double blue = jObj.get(BLUE).getAsDouble();
         final double alpha = jObj.get(ALPHA).getAsDouble();
-
         return new Color(red, green, blue, alpha);
     }
 
@@ -75,12 +73,10 @@ public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDes
     @Override
     public JsonElement serialize(final Color src, final Type typeOfSrc, final JsonSerializationContext context) {
         final JsonObject jObj = new JsonObject();
-
         jObj.addProperty(RED, src.getRed());
         jObj.addProperty(GREEN, src.getGreen());
         jObj.addProperty(BLUE, src.getBlue());
         jObj.addProperty(ALPHA, src.getOpacity());
-
         return jObj;
     }
 }

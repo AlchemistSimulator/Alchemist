@@ -108,11 +108,9 @@ public class EffectPropertiesController implements Initializable {
         if (thisDrawer == null) {
             throw new IllegalArgumentException("Drawer cannot be null!");
         }
-
         this.effect = effect;
         this.stack = stack;
         this.thisDrawer = thisDrawer;
-
     }
 
     /**
@@ -125,13 +123,10 @@ public class EffectPropertiesController implements Initializable {
         assert backToEffects != null : FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_PROPERTIES_LAYOUT);
         assert effectName != null : FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT);
         assert mainBox != null : FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT);
-
         final List<Field> properties = FieldUtils.getAllFieldsList(effect.getClass()).stream()
                 .filter(f -> Property.class.isAssignableFrom(f.getType())).collect(Collectors.toList());
-
         if (!properties.isEmpty()) {
             this.parseProperties(properties);
-
             if (!this.dynamicNodes.isEmpty()) {
                 this.dynamicNodes.forEach((key, value) -> {
                     final VBox row = new VBox(key, value);
@@ -144,22 +139,18 @@ public class EffectPropertiesController implements Initializable {
         } else {
             this.showNothing();
         }
-
         this.backToEffects.setText("");
         this.backToEffects.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ARROW_BACK));
         this.backToEffects.setOnAction(e -> this.stack.toggle(thisDrawer));
-
         this.effectName.setOnMouseClicked(click -> {
             if (click.getClickCount() == 2) {
                 final Object source = click.getSource();
                 final Label label;
-
                 if (source instanceof Label) {
                     label = (Label) source;
                 } else {
                     throw new IllegalStateException("EventHandler for label rename not associated to a label");
                 }
-
                 final TextInputDialog dialog = new TextInputDialog(label.getText());
                 dialog.setTitle(ResourceLoader.getStringRes("rename_effect_dialog_title"));
                 dialog.setHeaderText(ResourceLoader.getStringRes("rename_effect_dialog_msg"));
@@ -169,7 +160,6 @@ public class EffectPropertiesController implements Initializable {
                         .getWindow())
                         .getIcons()
                         .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
-
                 dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
             }
         });
@@ -187,7 +177,6 @@ public class EffectPropertiesController implements Initializable {
             final boolean isAccessible = f.isAccessible();
             try {
                 f.setAccessible(true);
-
                 if (RangedDoubleProperty.class.isAssignableFrom(f.getType())) {
                     buildSpinner((RangedDoubleProperty) f.get(this.effect));
                 } else if (RangedIntegerProperty.class.isAssignableFrom(f.getType())) {
@@ -202,7 +191,6 @@ public class EffectPropertiesController implements Initializable {
                         this.buildComboBox(enumProperty);
                     }
                 }
-
             } catch (final IllegalArgumentException | IllegalAccessException e) {
                 L.error(e.getMessage());
             } finally {
@@ -221,12 +209,9 @@ public class EffectPropertiesController implements Initializable {
      */
     private <T extends Enum<T>> void buildComboBox(final SerializableEnumProperty<T> enumProperty) {
         final ObservableList<T> list = FXCollections.observableArrayList(enumProperty.values());
-
         final ComboBox<T> comboBox = new ComboBox<>(list);
         comboBox.setValue(list.get(0));
-
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> enumProperty.setValue(newValue));
-
         this.dynamicNodes.put(buildLabel(enumProperty), comboBox);
     }
 
@@ -241,7 +226,6 @@ public class EffectPropertiesController implements Initializable {
         final CheckBox checkBox = new CheckBox();
         checkBox.setSelected(booleanProperty.get());
         checkBox.selectedProperty().bindBidirectional(booleanProperty);
-
         this.dynamicNodes.put(buildLabel(booleanProperty), checkBox);
     }
 
@@ -258,7 +242,6 @@ public class EffectPropertiesController implements Initializable {
         slider.setMin(integerProperty.getLowerBound());
         slider.setMax(integerProperty.getUpperBound());
         slider.valueProperty().bindBidirectional(integerProperty);
-
         this.dynamicNodes.put(buildLabel(integerProperty), slider);
     }
 
@@ -278,7 +261,6 @@ public class EffectPropertiesController implements Initializable {
         spinner.getEditor().setTextFormatter(formatter);
         factory.valueProperty().bindBidirectional(formatter.valueProperty());
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> doubleProperty.set(newValue));
-
         this.dynamicNodes.put(buildLabel(doubleProperty), spinner);
     }
 
@@ -292,7 +274,6 @@ public class EffectPropertiesController implements Initializable {
     private void buildTextField(final StringProperty stringProperty) {
         final TextField textField = new TextField(stringProperty.get());
         textField.textProperty().bindBidirectional(stringProperty);
-
         this.dynamicNodes.put(buildLabel(stringProperty), textField);
     }
 

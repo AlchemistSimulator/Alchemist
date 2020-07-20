@@ -122,15 +122,12 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         assert load != null : FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT);
         assert addGroup != null : FXResourceLoader.getInjectionErrorMessage("add", EFFECT_GROUP_BAR_LAYOUT);
         assert effectGroupsList != null : FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_GROUP_BAR_LAYOUT);
-
         this.save.setText("");
         this.save.setGraphic(getWhiteIcon(SAVE));
         this.save.setOnAction(e -> this.saveToFile());
-
         this.load.setText("");
         this.load.setGraphic(getWhiteIcon(FOLDER_OPEN));
         this.load.setOnAction(e -> this.loadFromFile());
-
         this.addGroup.setText("");
         this.addGroup.setGraphic(getWhiteIcon(ADD));
         this.addGroup.setOnAction(e -> addGroupToList(getStringRes("effect_group_default_name") + " " + (getObservableEffectsList().size() + 1)));
@@ -192,17 +189,13 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         });
         fileChooser.setInitialFileName("Effects" + DEFAULT_EXTENSION);
         fileChooser.setSelectedExtensionFilter(json);
-
         assert this.save != null;
-
         File selectedFile = fileChooser.showSaveDialog(this.save.getScene().getWindow());
-
         if (selectedFile != null) {
             if (FilenameUtils.getExtension(selectedFile.getAbsolutePath()).equals("")) {
                 selectedFile = new File(selectedFile.getAbsolutePath() + DEFAULT_EXTENSION);
             }
             this.lastPath = Optional.ofNullable(selectedFile.getParent());
-
             try {
                 EffectSerializer.effectGroupsToFile(selectedFile,
                         // we need to keep the EffectFX parameterized, so we cannot use arrays
@@ -230,14 +223,10 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter(getStringRes("json_extension_filter_description"), "*" + DEFAULT_EXTENSION),
                 new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*"));
-
         assert this.load != null;
-
         final File selectedFile = fileChooser.showOpenDialog(this.load.getScene().getWindow());
-
         if (selectedFile != null) {
             this.lastPath = Optional.ofNullable(selectedFile.getParent());
-
             try {
                 this.getObservableEffectsList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
             } catch (final IOException | JsonParseException e) {
@@ -259,31 +248,24 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(cause.toString());
-
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw);
         cause.printStackTrace(pw);
         final String exceptionText = sw.toString();
-
         final Label label = new Label(getStringRes("exception_error_dialog_msg"));
-
         final TextArea textArea = new TextArea(exceptionText);
         textArea.setEditable(false);
         textArea.setWrapText(true);
-
         textArea.setMaxWidth(Double.MAX_VALUE);
         textArea.setMaxHeight(Double.MAX_VALUE);
         GridPane.setVgrow(textArea, Priority.ALWAYS);
         GridPane.setHgrow(textArea, Priority.ALWAYS);
-
         final GridPane expContent = new GridPane();
         expContent.setMaxWidth(Double.MAX_VALUE);
         expContent.add(label, 0, 0);
         expContent.add(textArea, 0, 1);
-
         alert.getDialogPane().setExpandableContent(expContent);
         alert.getDialogPane().autosize();
-
         alert.showAndWait();
     }
 }

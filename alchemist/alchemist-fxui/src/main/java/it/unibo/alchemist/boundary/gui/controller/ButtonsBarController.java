@@ -83,7 +83,6 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
      */
     public ButtonsBarController() {
         super();
-
         pan = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL);
         select = FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.TAB_UNSELECTED);
     }
@@ -158,9 +157,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
         Objects.requireNonNull(framerateSlider, FXResourceLoader.getInjectionErrorMessage("framerateSlider", BUTTONS_BAR_LAYOUT));
         Objects.requireNonNull(controlType, FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT));
         Objects.requireNonNull(drawerStack, FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT));
-
         addMonitors();
-
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
         effectsGroupBarController = new EffectsGroupBarController<>(getDisplayMonitor().orElse(null), this.drawerStack);
         effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
@@ -185,7 +182,6 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
         });
         controlType.setText("");
         controlType.setGraphic(pan);
-
         controlType.setOnAction(event -> togglePopover());
     }
 
@@ -197,9 +193,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
             controlTypePopOver.get().hide();
         } else {
             assert controlType != null;
-
             final ControlTypePopoverController controlTypePopoverController = new ControlTypePopoverController();
-
             final Node popoverContent;
             try {
                 popoverContent = FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
@@ -207,9 +201,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
             } catch (final IOException e) {
                 throw new IllegalStateException("Could not initialize popover for control type change", e);
             }
-
             final PopOver pop = new PopOver(popoverContent);
-
             pop.setAutoHide(true);
             pop.setDetachable(false);
             pop.setDetached(false);
@@ -259,17 +251,14 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     private void addMonitors() {
         if (this.controlBar != null) {
             final ObservableList<Node> buttons = this.controlBar.getButtons();
-
             if (stepLabel != null && !buttons.contains(stepLabel)) {
                 ButtonBar.setButtonData(stepLabel, ButtonBar.ButtonData.RIGHT);
                 buttons.add(stepLabel);
             }
-
             if (timeLabel != null && !buttons.contains(timeLabel)) {
                 ButtonBar.setButtonData(timeLabel, ButtonBar.ButtonData.RIGHT);
                 buttons.add(timeLabel);
             }
-
             if (startStopButton != null && !buttons.contains(startStopButton)) {
                 ButtonBar.setButtonData(startStopButton, ButtonBar.ButtonData.RIGHT);
                 buttons.add(startStopButton);

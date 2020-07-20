@@ -140,7 +140,7 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
     private boolean startJFXThread() {
         try {
             // Starts JavaFX thread, if necessary
-            new JFXPanel(); // To avoid internal APIs in line above, use this to start JavaFX thread
+            new JFXPanel();
             return false;
         } catch (final IllegalStateException e) {
             return true;
@@ -162,7 +162,7 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
                 throw new IllegalStateException(e);
             }
         }
-        final Runnable lambda = () -> {
+        final Runnable appRunner = () -> {
             final SingleRunApp<T, P> app = new SingleRunApp<>();
             if (!effectGroups.isEmpty()) {
                 app.setEffectGroups(effectGroups);
@@ -173,9 +173,9 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
         };
 
         if (startJFXThread() && Platform.isFxApplicationThread()) {
-            lambda.run();
+            appRunner.run();
         } else {
-            Platform.runLater(lambda);
+            Platform.runLater(appRunner);
         }
     }
 }

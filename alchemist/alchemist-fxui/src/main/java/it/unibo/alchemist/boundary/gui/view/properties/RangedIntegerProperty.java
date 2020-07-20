@@ -380,8 +380,11 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
             private static final String UPPER_BOUND = "upper bound";
 
             @Override
-            public RangedIntegerProperty deserialize(final JsonElement json, final Type typeOfT,
-                    final JsonDeserializationContext context) {
+            public RangedIntegerProperty deserialize(
+                    final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context
+            ) {
                 final JsonObject jObj = json.getAsJsonObject();
                 final String name = jObj.get(NAME).getAsString();
                 final int value = jObj.get(VALUE).getAsInt();
@@ -391,8 +394,11 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
             }
 
             @Override
-            public JsonElement serialize(final RangedIntegerProperty src, final Type typeOfSrc,
-                    final JsonSerializationContext context) {
+            public JsonElement serialize(
+                    final RangedIntegerProperty src,
+                    final Type typeOfSrc,
+                    final JsonSerializationContext context
+            ) {
                 final JsonObject jObj = new JsonObject();
                 final String name = src.getName();
                 jObj.addProperty(NAME, name);

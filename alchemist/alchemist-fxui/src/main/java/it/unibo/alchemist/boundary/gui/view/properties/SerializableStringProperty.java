@@ -63,8 +63,11 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
         return new PropertyTypeAdapter<SerializableStringProperty>() {
 
             @Override
-            public SerializableStringProperty deserialize(final JsonElement json, final Type typeOfT,
-                                                          final JsonDeserializationContext context) {
+            public SerializableStringProperty deserialize(
+                    final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context
+            ) {
                 final JsonObject jObj = json.getAsJsonObject();
                 final String name = jObj.get(NAME).getAsString();
                 final String value = jObj.get(VALUE).getAsString();
@@ -72,8 +75,11 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
             }
 
             @Override
-            public JsonElement serialize(final SerializableStringProperty src, final Type typeOfSrc,
-                                         final JsonSerializationContext context) {
+            public JsonElement serialize(
+                    final SerializableStringProperty src,
+                    final Type typeOfSrc,
+                    final JsonSerializationContext context
+            ) {
                 final JsonObject jObj = new JsonObject();
                 final String name = src.getName();
                 jObj.addProperty(NAME, name);

@@ -192,8 +192,11 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
         return new PropertyTypeAdapter<SerializableBooleanProperty>() {
 
             @Override
-            public SerializableBooleanProperty deserialize(final JsonElement json, final Type typeOfT,
-                    final JsonDeserializationContext context) {
+            public SerializableBooleanProperty deserialize(
+                    final JsonElement json,
+                    final Type typeOfT,
+                    final JsonDeserializationContext context
+            ) {
                 final JsonObject jObj = json.getAsJsonObject();
                 final String name = jObj.get(NAME).getAsString();
                 final boolean value = jObj.get(VALUE).getAsBoolean();
@@ -201,8 +204,11 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
             }
 
             @Override
-            public JsonElement serialize(final SerializableBooleanProperty src, final Type typeOfSrc,
-                    final JsonSerializationContext context) {
+            public JsonElement serialize(
+                    final SerializableBooleanProperty src,
+                    final Type typeOfSrc,
+                    final JsonSerializationContext context
+            ) {
                 final JsonObject jObj = new JsonObject();
                 final String name = src.getName();
                 jObj.addProperty(NAME, name);

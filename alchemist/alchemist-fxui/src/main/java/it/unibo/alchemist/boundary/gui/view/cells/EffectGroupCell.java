@@ -176,7 +176,7 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
      */
     @Override
     public DataFormat getDataFormat() {
-        final EffectGroup item = this.getItem();
+        final EffectGroup<P> item = this.getItem();
 
         if (item == null) {
             return DataFormatFactory.getDataFormat(EffectGroup.class);

@@ -135,10 +135,8 @@ class InteractionManager<T, P : Position2D<P>>(
             it.heightProperty().bind(monitor.heightProperty())
             it.isMouseTransparent = true
         }
-
         highlighter.graphicsContext2D.globalAlpha = Alphas.highlight
         selector.graphicsContext2D.globalAlpha = Alphas.selection
-
         // delete
         val deleteNodes = { _: KeyEvent ->
             runMutex.acquireUninterruptibly()
@@ -155,7 +153,6 @@ class InteractionManager<T, P : Position2D<P>>(
         Keybinds[ActionFromKey.DELETE].ifPresent {
             keyboard[ActionOnKey.PRESSED with it] = deleteNodes
         }
-
         // keyboard-pan
         Keybinds[ActionFromKey.PAN_NORTH].ifPresent {
             keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.NORTH }
@@ -173,7 +170,6 @@ class InteractionManager<T, P : Position2D<P>>(
             keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.WEST }
             keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.WEST }
         }
-
         // move
         val enqueueMove = { _: Event ->
             mouse.setOnActionTemporary(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.PRIMARY)) { mouse ->
@@ -203,7 +199,6 @@ class InteractionManager<T, P : Position2D<P>>(
             keyboard[ActionOnKey.PRESSED with it] = enqueueMove
         }
         mouse[MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE)] = enqueueMove
-
         // forward one step
         Keybinds[ActionFromKey.ONE_STEP].ifPresent {
             keyboard[ActionOnKey.PRESSED with it] = {
@@ -214,13 +209,11 @@ class InteractionManager<T, P : Position2D<P>>(
                 }
             }
         }
-
         // select
         mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY)] = ::onSelectInitiated
         mouse[MouseButtonTriggerAction(ActionOnMouse.DRAGGED, MouseButton.SECONDARY)] = ::onSelecting
         mouse[MouseButtonTriggerAction(ActionOnMouse.RELEASED, MouseButton.SECONDARY)] = ::onSelected
         mouse[MouseButtonTriggerAction(ActionOnMouse.EXITED, MouseButton.SECONDARY)] = ::onSelectCanceled
-
         // primary mouse button
         mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.PRIMARY)] = {
             when (monitor.viewStatus) {
@@ -250,7 +243,6 @@ class InteractionManager<T, P : Position2D<P>>(
                 else -> { }
             }
         }
-
         // scroll
         monitor.setOnScroll {
             if (it.deltaY != 0.0) {
@@ -260,7 +252,6 @@ class InteractionManager<T, P : Position2D<P>>(
                 it.consume()
             }
         }
-
         selection.addListener(MapChangeListener {
             selection.map { paintHighlight(it.value, Colors.alreadySelected) }.let { highlighters ->
                 feedback = feedback + (Interaction.HIGHLIGHTED to highlighters)

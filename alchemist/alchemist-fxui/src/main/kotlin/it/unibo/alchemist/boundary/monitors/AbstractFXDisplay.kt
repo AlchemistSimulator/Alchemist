@@ -86,11 +86,9 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         }
         widthProperty().addListener(repaintOnResize)
         heightProperty().addListener(repaintOnResize)
-
         effectsCanvas.isMouseTransparent = true
         effectsCanvas.widthProperty().bind(widthProperty())
         effectsCanvas.heightProperty().bind(heightProperty())
-
         children.addAll(background, effectsCanvas, interactions.canvases)
     }
 
@@ -143,20 +141,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
         }
         mutex.release()
     }
-
-//    /**
-//     * Changes the background of the specified [GraphicsContext].
-//     *
-//     * @param graphicsContext the graphic component to draw on
-//     * @param environment the [Environment] that contains the data to pass to [Effects]
-//     * @return a function of what to do to draw the background
-//     * @see .repaint
-//     */
-//    private fun drawBackground(graphicsContext: GraphicsContext, environment: Environment<T, P>): () -> Unit {
-//        // TODO environment.dimensions is called to avoid the warning, because -werror registers it as an error
-//        environment.dimensions
-//        return { graphicsContext.clearRect(0.0, 0.0, width, height) }
-//    }
 
     override fun addEffects(effects: Collection<EffectGroup<P>>) {
         this.effectStack.addAll(effects)
@@ -245,9 +229,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      */
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", "False positive")
     private fun update(environment: Environment<T, P>, time: Time) {
-//            environment.simulation.schedule {
-//                environment.moveNodeToPosition(environment.getNodeByID(0), LatLongPosition(8, 8))
-//            }
         if (Thread.holdsLock(environment)) {
             time.toDouble()
             interactions.environment = environment
@@ -256,7 +237,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
 //            need to constantly regenerate the position map.
             interactions.nodes = environment.nodes.associateWith(environment::getPosition)
             val graphicsContext = effectsCanvas.graphicsContext2D
-//            val background = Stream.of(drawBackground(graphicsContext, environment))
             val clearEffects = Stream.of(effectsCanvas::clear)
             val drawEffects = effects
                 .stream()

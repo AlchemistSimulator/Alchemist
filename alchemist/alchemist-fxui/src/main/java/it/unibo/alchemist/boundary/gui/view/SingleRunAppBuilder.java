@@ -140,7 +140,6 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
     private boolean startJFXThread() {
         try {
             // Starts JavaFX thread, if necessary
-            // PlatformImpl.startup(() -> { });
             new JFXPanel(); // To avoid internal APIs in line above, use this to start JavaFX thread
             return false;
         } catch (final IllegalStateException e) {

@@ -247,8 +247,6 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                 System.exit(0);
             });
             primaryStage.getIcons().add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
-//            final Scene scene = new Scene(rootLayout);
-//            initKeybindings(scene);
             primaryStage.setScene(scene);
             initialized = true;
             primaryStage.show();

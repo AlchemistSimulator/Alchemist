@@ -78,9 +78,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         this.setOnContextMenuRequested(event -> {
             if (getItem() == null) {
                 getContextMenu().hide();
-            } /* else { // Not needed as it show context menu autonomously
-                getContextMenu().show(this, event.getScreenX(), event.getScreenY());
-            } */
+            }
             event.consume();
         });
         // Adding other nodes

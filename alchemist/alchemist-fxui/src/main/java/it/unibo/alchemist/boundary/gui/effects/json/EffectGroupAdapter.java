@@ -64,7 +64,6 @@ public class EffectGroupAdapter<P extends Position2D<? extends P>>  implements J
         jObj.addProperty(NAME, src.getName());
         jObj.addProperty(VISIBILITY, src.isVisible());
         final List<EffectFX<P>> list = new ArrayList<>(src);
-//        list.addAll(src);
         final JsonElement effects = context.serialize(list, effectsListType);
         jObj.add(EFFECTS, effects);
         return jObj;

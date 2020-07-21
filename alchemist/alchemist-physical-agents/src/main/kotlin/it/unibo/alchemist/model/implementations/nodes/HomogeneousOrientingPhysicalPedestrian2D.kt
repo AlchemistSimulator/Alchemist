@@ -9,12 +9,17 @@
 
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.interfaces.OrientingAgent2D
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
+import org.jgrapht.graph.DefaultEdge
 
 /**
  * A homogeneous [OrientingPedestrian2D] capable of physical interactions.
@@ -23,7 +28,16 @@ class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOver
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
     override val knowledgeDegree: Double,
-    group: PedestrianGroup2D<T>? = null,
-    orientation: OrientingAgent2D = HomogeneousOrientingPedestrian2D(environment, randomGenerator, knowledgeDegree)
+    group: PedestrianGroup2D<T>? = null
 ) : HomogeneousPhysicalPedestrian2D<T>(environment, randomGenerator, group),
-    OrientingAgent2D by orientation
+    OrientingPedestrian2D<T, Ellipse, DefaultEdge> {
+
+    private val orientation: OrientingPedestrian2D<T, Ellipse, DefaultEdge> =
+        HomogeneousOrientingPedestrian2D(environment, randomGenerator, knowledgeDegree)
+
+    override val cognitiveMap: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, Ellipse, DefaultEdge> =
+        orientation.cognitiveMap
+
+    override val volatileMemory: MutableMap<in Euclidean2DConvexShape, Int> =
+        orientation.volatileMemory
+}

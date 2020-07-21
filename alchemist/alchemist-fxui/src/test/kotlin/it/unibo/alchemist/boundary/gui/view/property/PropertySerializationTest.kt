@@ -125,11 +125,11 @@ class RangedDoublePropertySerializationTest : PropertySerializationTest() {
     }
 
     override val tester = PropertySerializationTester(
-            object : TypeToken<RangedDoubleProperty>() {}.type,
-            { this as RangedDoubleProperty },
-            RangedDoubleProperty(DOUBLE_PROPERTY, DOUBLE_INITIAL_VALUE, DOUBLE_LOWER_BOUND, DOUBLE_UPPER_BOUND),
-            PropertyFactory.getFXColorChannelProperty(DOUBLE_COLOR_NAME, DOUBLE_COLOR_INITIAL_VALUE),
-            PropertyFactory.getPercentageRangedProperty(DOUBLE_PERCENT_NAME, DOUBLE_PERCENT_INITIAL_VALUE)
+        object : TypeToken<RangedDoubleProperty>() {}.type,
+        { this as RangedDoubleProperty },
+        RangedDoubleProperty(DOUBLE_PROPERTY, DOUBLE_INITIAL_VALUE, DOUBLE_LOWER_BOUND, DOUBLE_UPPER_BOUND),
+        PropertyFactory.getFXColorChannelProperty(DOUBLE_COLOR_NAME, DOUBLE_COLOR_INITIAL_VALUE),
+        PropertyFactory.getPercentageRangedProperty(DOUBLE_PERCENT_NAME, DOUBLE_PERCENT_INITIAL_VALUE)
     )
 }
 
@@ -142,9 +142,9 @@ class RangedIntegerPropertySerializationTest : PropertySerializationTest() {
     }
 
     override val tester = PropertySerializationTester(
-            object : TypeToken<RangedIntegerProperty>() {}.type,
-            { this as RangedIntegerProperty },
-            RangedIntegerProperty(INTEGER_PROPERTY, INTEGER_INITIAL_VALUE, INTEGER_LOWER_BOUND, INTEGER_UPPER_BOUND)
+        object : TypeToken<RangedIntegerProperty>() {}.type,
+        { this as RangedIntegerProperty },
+        RangedIntegerProperty(INTEGER_PROPERTY, INTEGER_INITIAL_VALUE, INTEGER_LOWER_BOUND, INTEGER_UPPER_BOUND)
     )
 }
 
@@ -154,10 +154,10 @@ class SerializableBooleanPropertySerializationTest : PropertySerializationTest()
     }
 
     override val tester = PropertySerializationTester(
-            object : TypeToken<SerializableBooleanProperty>() {}.type,
-            { this as SerializableBooleanProperty },
-            SerializableBooleanProperty(BOOLEAN_PROPERTY, true),
-            SerializableBooleanProperty(BOOLEAN_PROPERTY, false)
+        object : TypeToken<SerializableBooleanProperty>() {}.type,
+        { this as SerializableBooleanProperty },
+        SerializableBooleanProperty(BOOLEAN_PROPERTY, true),
+        SerializableBooleanProperty(BOOLEAN_PROPERTY, false)
     )
 }
 

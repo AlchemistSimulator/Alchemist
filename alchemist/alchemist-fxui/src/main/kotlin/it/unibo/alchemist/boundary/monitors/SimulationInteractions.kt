@@ -255,7 +255,7 @@ class InteractionManager<T, P : Position2D<P>>(
             }
         }
         selection.addListener(
-                MapChangeListener {
+            MapChangeListener {
                 selection.map { paintHighlight(it.value, Colors.alreadySelected) }.let { highlighters ->
                     feedback = feedback + (Interaction.HIGHLIGHTED to highlighters)
                 }

@@ -169,7 +169,7 @@ class EditKeybindView : View() {
     override val root = vbox(SPACING_SMALL) {
         label(
             "${messages["label_key_rebind"]} ${toEdit.actionProperty.value}. " +
-            "${messages["label_key_current"]}: ${toEdit.keyProperty.value}"
+                "${messages["label_key_current"]}: ${toEdit.keyProperty.value}"
         )
         keyboard {
             addEventHandler(KeyEvent.KEY_PRESSED) {

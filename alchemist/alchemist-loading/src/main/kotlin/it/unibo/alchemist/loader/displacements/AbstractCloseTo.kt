@@ -42,8 +42,7 @@ abstract class AbstractCloseTo<T, P : Position<P>> constructor(
     protected abstract val sources: Sequence<DoubleArray>
 
     final override fun stream(): Stream<P> = (
-        displacement
-        ?: sources
+        displacement ?: sources
             .map { MultivariateNormalDistribution(randomGenerator, it, covarianceMatrix(it.size)) }
             .map { Pair(1.0, it) }
             .let { it.toList() }

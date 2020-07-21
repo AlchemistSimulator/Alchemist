@@ -25,8 +25,7 @@ interface NavigationGraph<
     V : Vector<V>,
     A : GeometricTransformation<V>,
     N : ConvexGeometricShape<V, A>,
-    E
-> : org.jgrapht.Graph<N, E> {
+    E> : org.jgrapht.Graph<N, E> {
 
     /**
      * @returns the first node containing the specified [position], or null if no node containing it could be found.

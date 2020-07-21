@@ -18,44 +18,52 @@ class TestAwtMutableConvexPolygon {
     @Test
     fun testCreation() {
         shouldNotThrow<IllegalArgumentException> {
-            AwtMutableConvexPolygon(mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(1.0, 0.0),
-                Euclidean2DPosition(1.0, 1.0),
-                Euclidean2DPosition(0.0, 1.0)
-            ))
+            AwtMutableConvexPolygon(
+                mutableListOf(
+                    Euclidean2DPosition(0.0, 0.0),
+                    Euclidean2DPosition(1.0, 0.0),
+                    Euclidean2DPosition(1.0, 1.0),
+                    Euclidean2DPosition(0.0, 1.0)
+                )
+            )
         }
         shouldThrow<IllegalArgumentException> {
-            AwtMutableConvexPolygon(mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(0.0, 6.0),
-                Euclidean2DPosition(3.0, 6.0),
-                Euclidean2DPosition(3.0, 3.0),
-                Euclidean2DPosition(-1.0, 3.0),
-                Euclidean2DPosition(-1.0, 8.0),
-                Euclidean2DPosition(6.0, 8.0),
-                Euclidean2DPosition(6.0, 0.0)
-            ))
+            AwtMutableConvexPolygon(
+                mutableListOf(
+                    Euclidean2DPosition(0.0, 0.0),
+                    Euclidean2DPosition(0.0, 6.0),
+                    Euclidean2DPosition(3.0, 6.0),
+                    Euclidean2DPosition(3.0, 3.0),
+                    Euclidean2DPosition(-1.0, 3.0),
+                    Euclidean2DPosition(-1.0, 8.0),
+                    Euclidean2DPosition(6.0, 8.0),
+                    Euclidean2DPosition(6.0, 0.0)
+                )
+            )
         }
         shouldNotThrow<IllegalArgumentException> {
-            AwtMutableConvexPolygon(mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(-1.0, 3.0),
-                Euclidean2DPosition(-1.0, 8.0),
-                Euclidean2DPosition(6.0, 8.0),
-                Euclidean2DPosition(6.0, 0.0)
-            ))
+            AwtMutableConvexPolygon(
+                mutableListOf(
+                    Euclidean2DPosition(0.0, 0.0),
+                    Euclidean2DPosition(-1.0, 3.0),
+                    Euclidean2DPosition(-1.0, 8.0),
+                    Euclidean2DPosition(6.0, 8.0),
+                    Euclidean2DPosition(6.0, 0.0)
+                )
+            )
         }
     }
 
     @Test
     fun testAddVertex() {
-        val p = AwtMutableConvexPolygon(mutableListOf(
-            Euclidean2DPosition(0.0, 0.0),
-            Euclidean2DPosition(1.0, 0.0),
-            Euclidean2DPosition(1.0, 1.0),
-            Euclidean2DPosition(0.0, 1.0)
-        ))
+        val p = AwtMutableConvexPolygon(
+            mutableListOf(
+                Euclidean2DPosition(0.0, 0.0),
+                Euclidean2DPosition(1.0, 0.0),
+                Euclidean2DPosition(1.0, 1.0),
+                Euclidean2DPosition(0.0, 1.0)
+            )
+        )
         Assertions.assertEquals(true, p.addVertex(2, 1.5, 0.5))
         Assertions.assertEquals(true, p.removeVertex(2))
         Assertions.assertEquals(false, p.addVertex(2, 0.5, 0.5))
@@ -63,12 +71,14 @@ class TestAwtMutableConvexPolygon {
 
     @Test
     fun testRemoveVertex() {
-        val p = AwtMutableConvexPolygon(mutableListOf(
-            Euclidean2DPosition(0.0, 0.0),
-            Euclidean2DPosition(1.0, 0.0),
-            Euclidean2DPosition(1.0, 1.0),
-            Euclidean2DPosition(0.0, 1.0)
-        ))
+        val p = AwtMutableConvexPolygon(
+            mutableListOf(
+                Euclidean2DPosition(0.0, 0.0),
+                Euclidean2DPosition(1.0, 0.0),
+                Euclidean2DPosition(1.0, 1.0),
+                Euclidean2DPosition(0.0, 1.0)
+            )
+        )
         Assertions.assertEquals(true, p.removeVertex(2))
         Assertions.assertEquals(false, p.removeVertex(2))
         Assertions.assertEquals(true, p.addVertex(0, 0.0, 0.0))
@@ -81,12 +91,14 @@ class TestAwtMutableConvexPolygon {
 
     @Test
     fun testMoveVertex() {
-        val p = AwtMutableConvexPolygon(mutableListOf(
-            Euclidean2DPosition(0.0, 0.0),
-            Euclidean2DPosition(1.0, 0.0),
-            Euclidean2DPosition(1.0, 1.0),
-            Euclidean2DPosition(0.0, 1.0)
-        ))
+        val p = AwtMutableConvexPolygon(
+            mutableListOf(
+                Euclidean2DPosition(0.0, 0.0),
+                Euclidean2DPosition(1.0, 0.0),
+                Euclidean2DPosition(1.0, 1.0),
+                Euclidean2DPosition(0.0, 1.0)
+            )
+        )
         Assertions.assertEquals(true, p.moveVertex(2, 3.0, 3.0))
         Assertions.assertEquals(false, p.moveVertex(2, -3.0, -3.0))
         Assertions.assertEquals(false, p.moveVertex(1, 0.5, 1.5))
@@ -94,12 +106,14 @@ class TestAwtMutableConvexPolygon {
 
     @Test
     fun testReplaceEdge() {
-        var p = AwtMutableConvexPolygon(mutableListOf(
-            Euclidean2DPosition(0.0, 0.0),
-            Euclidean2DPosition(1.0, 0.0),
-            Euclidean2DPosition(1.0, 1.0),
-            Euclidean2DPosition(0.0, 1.0)
-        ))
+        var p = AwtMutableConvexPolygon(
+            mutableListOf(
+                Euclidean2DPosition(0.0, 0.0),
+                Euclidean2DPosition(1.0, 0.0),
+                Euclidean2DPosition(1.0, 1.0),
+                Euclidean2DPosition(0.0, 1.0)
+            )
+        )
         var newEdge = Segment2DImpl(
             Euclidean2DPosition(1.5, -0.5),
             Euclidean2DPosition(1.5, 1.5)
@@ -120,14 +134,16 @@ class TestAwtMutableConvexPolygon {
             Euclidean2DPosition(0.5, 0.6)
         )
         Assertions.assertEquals(true, p.replaceEdge(1, newEdge))
-        p = AwtMutableConvexPolygon(mutableListOf(
-            Euclidean2DPosition(0.0, 0.0),
-            Euclidean2DPosition(3.0, 0.0),
-            Euclidean2DPosition(4.0, 1.0),
-            Euclidean2DPosition(4.0, 2.0),
-            Euclidean2DPosition(3.0, 3.0),
-            Euclidean2DPosition(0.0, 3.0)
-        ))
+        p = AwtMutableConvexPolygon(
+            mutableListOf(
+                Euclidean2DPosition(0.0, 0.0),
+                Euclidean2DPosition(3.0, 0.0),
+                Euclidean2DPosition(4.0, 1.0),
+                Euclidean2DPosition(4.0, 2.0),
+                Euclidean2DPosition(3.0, 3.0),
+                Euclidean2DPosition(0.0, 3.0)
+            )
+        )
         newEdge = Segment2DImpl(
             Euclidean2DPosition(-0.5, 1.0),
             Euclidean2DPosition(-0.5, 2.0)

@@ -117,8 +117,12 @@ interface Segment2D<P : Vector2D<P>> {
     @JvmDefault
     fun distanceTo(other: Segment2D<P>): Double = when {
         intersect(other) !is Intersection2D.None -> 0.0
-        else -> listOf(distanceTo(other.first), distanceTo(other.second), other.distanceTo(first),
-            other.distanceTo(second)).min() ?: Double.POSITIVE_INFINITY
+        else -> listOf(
+            distanceTo(other.first),
+            distanceTo(other.second),
+            other.distanceTo(first),
+            other.distanceTo(second)
+        ).min() ?: Double.POSITIVE_INFINITY
     }
 
     /**
@@ -159,17 +163,22 @@ interface Segment2D<P : Vector2D<P>> {
      */
     @JvmDefault
     fun intersect(other: Segment2D<P>): Intersection2D<P> = when {
-        isDegenerate -> Intersection2D.None.takeUnless { other.contains(first) } ?: Intersection2D.SinglePoint(first)
-        other.isDegenerate -> other.intersect(this)
-        isCollinearWith(other) && overlapsWith(other) -> endpointSharedWith(other)
-            ?.let { Intersection2D.SinglePoint(it) }
-            /*
-             * Overlapping and sharing more than one point means they share a portion of segment (= infinite points).
-             */
-            ?: Intersection2D.InfinitePoints
-        else -> Intersection2D.create(
-            toLine().intersect(other.toLine()).asList.filter { contains(it) && other.contains(it) }
-        )
+        isDegenerate ->
+            Intersection2D.None.takeUnless { other.contains(first) } ?: Intersection2D.SinglePoint(first)
+        other.isDegenerate ->
+            other.intersect(this)
+        isCollinearWith(other) && overlapsWith(other) ->
+            endpointSharedWith(other)
+                ?.let { Intersection2D.SinglePoint(it) }
+                /*
+                 * Overlapping and sharing more than one point means that
+                 * they share a portion of segment (= infinite points).
+                 */
+                ?: Intersection2D.InfinitePoints
+        else ->
+            Intersection2D.create(
+                toLine().intersect(other.toLine()).asList.filter { contains(it) && other.contains(it) }
+            )
     }
 
     /**
@@ -177,10 +186,12 @@ interface Segment2D<P : Vector2D<P>> {
      */
     @JvmDefault
     fun intersectCircle(center: P, radius: Double): Intersection2D<P> = when {
-        isDegenerate -> Intersection2D.None
-            .takeUnless { fuzzyEquals(first.distanceTo(center), radius) }
-            ?: Intersection2D.SinglePoint(first)
-        else -> Intersection2D.create(toLine().intersectCircle(center, radius).asList.filter { contains(it) })
+        isDegenerate ->
+            Intersection2D.None
+                .takeUnless { fuzzyEquals(first.distanceTo(center), radius) }
+                ?: Intersection2D.SinglePoint(first)
+        else ->
+            Intersection2D.create(toLine().intersectCircle(center, radius).asList.filter { contains(it) })
     }
 
     /**

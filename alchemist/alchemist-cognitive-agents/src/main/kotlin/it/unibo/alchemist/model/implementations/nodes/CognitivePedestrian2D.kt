@@ -35,14 +35,8 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     gender: Gender,
     danger: Molecule? = null,
     group: PedestrianGroup2D<T>? = null
-) : AbstractCognitivePedestrian2D<T>(
-    environment,
-    randomGenerator,
-    age,
-    gender,
-    danger,
-    group
-), Pedestrian2D<T> {
+) : AbstractCognitivePedestrian2D<T>(environment, randomGenerator, age, gender, danger, group),
+    Pedestrian2D<T> {
 
     override val shape by lazy { super.shape }
     override val fieldOfView by lazy { super.fieldOfView }

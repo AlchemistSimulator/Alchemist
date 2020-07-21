@@ -23,9 +23,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
  * @param R the type of edges of the [cognitiveMap], representing the [R]elations between landmarks.
  */
 interface OrientingAgent<V, A, L, R> where
-    V : Vector<V>,
-    A : GeometricTransformation<V>,
-    L : ConvexGeometricShape<V, A> {
+V : Vector<V>,
+A : GeometricTransformation<V>,
+L : ConvexGeometricShape<V, A> {
 
     /**
      * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the

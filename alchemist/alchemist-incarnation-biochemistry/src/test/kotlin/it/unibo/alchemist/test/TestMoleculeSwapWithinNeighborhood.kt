@@ -70,18 +70,18 @@ class TestMoleculeSwapWithinNeighborhood : StringSpec({
 
 private fun testSimulation() =
     environment.startSimulationWithoutParameters(
-            initialized = {
-                nodes.first.getConcentration(BIOMOLECULE) shouldBe 1.0
-                nodes.second.getConcentration(BIOMOLECULE) shouldBe 0.0
-                nodes.toList().stream().mapToInt { it.reactions.count() }.sum() shouldBe 1
-            },
-            stepDone = {
-                nodes.toList().stream().mapToDouble { it.getConcentration(BIOMOLECULE) }.sum() shouldBe 1.0
-            },
-            finished = {
-                nodes.first.getConcentration(BIOMOLECULE) shouldBe 0.0
-                nodes.second.getConcentration(BIOMOLECULE) shouldBe 1.0
-            }
+        initialized = {
+            nodes.first.getConcentration(BIOMOLECULE) shouldBe 1.0
+            nodes.second.getConcentration(BIOMOLECULE) shouldBe 0.0
+            nodes.toList().stream().mapToInt { it.reactions.count() }.sum() shouldBe 1
+        },
+        stepDone = {
+            nodes.toList().stream().mapToDouble { it.getConcentration(BIOMOLECULE) }.sum() shouldBe 1.0
+        },
+        finished = {
+            nodes.first.getConcentration(BIOMOLECULE) shouldBe 0.0
+            nodes.second.getConcentration(BIOMOLECULE) shouldBe 1.0
+        }
     )
 
 private val Int.conditions: Matcher<Reaction<Double>>

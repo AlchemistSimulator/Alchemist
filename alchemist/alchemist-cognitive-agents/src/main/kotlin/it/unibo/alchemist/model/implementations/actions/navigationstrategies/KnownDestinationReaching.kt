@@ -97,20 +97,23 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
             if (currRoom == null || destRoom == null) {
                 return emptyList()
             }
-            (buildSequence(currRoom, destRoom) + vertexSet().asSequence().let { landmarks ->
-                landmarks.cartesianProduct(landmarks).sortedBy { (start, end) ->
-                    start.centroid.distanceTo(currPos) + end.centroid.distanceTo(destination)
+            val sequence = buildSequence(currRoom, destRoom) +
+                vertexSet().asSequence().let { landmarks ->
+                    landmarks.cartesianProduct(landmarks).sortedBy { (start, end) ->
+                        start.centroid.distanceTo(currPos) + end.centroid.distanceTo(destination)
+                    }
                 }
-            })
-            .mapNotNull { (start, end) ->
-                /*
-                 * At present the cognitive map is a MST, so there's a single path between each pair of nodes,
-                 * in the future things may change and a policy deciding which path to pick may (need to) be
-                 * introduced.
-                 */
-                BFSShortestPath(this).getPath(start, end)?.vertexList
-            }
-            .firstOrNull() ?: emptyList()
+            sequence
+                .mapNotNull { (start, end) ->
+                    /*
+                     * At present the cognitive map is a MST, so there's a single path between each pair of nodes,
+                     * in the future things may change and a policy deciding which path to pick may (need to) be
+                     * introduced.
+                     */
+                    BFSShortestPath(this).getPath(start, end)?.vertexList
+                }
+                .firstOrNull()
+                ?: emptyList()
         }
     }
 
@@ -127,8 +130,8 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
         val landmarksIn: (room: ConvexPolygon) -> Sequence<L> = { room ->
             pedestrian.cognitiveMap.vertexSet().asSequence().filter { room.contains(it.centroid) }
         }
-        val landmarksInAny: (rooms: List<ConvexPolygon>) -> Sequence<L> = {
-                rooms -> rooms.asSequence().flatMap(landmarksIn)
+        val landmarksInAny: (rooms: List<ConvexPolygon>) -> Sequence<L> = { rooms ->
+            rooms.asSequence().flatMap(landmarksIn)
         }
         val landmarksInStartRoom = landmarksIn(startRoom)
         val landmarksInEndRoom = landmarksIn(endRoom)

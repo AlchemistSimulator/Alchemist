@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+
 /**
  * The class models a group of effects, stored as a stack. It can manage
  * priority of visualization and visibility of each effect inside it.
@@ -331,12 +333,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
 
     @Override
     public int hashCode() {
-        return Hashing.murmur3_32().newHasher()
-                .putString(effects.toString(), Charsets.UTF_8)
-                .putString(name, Charsets.UTF_8)
-                .putInt(topIndex)
-                .putBoolean(visibility)
-                .hash().asInt();
+        return murmur3Hash32(effects.toString(), name, topIndex, visibility);
     }
 
     @Override

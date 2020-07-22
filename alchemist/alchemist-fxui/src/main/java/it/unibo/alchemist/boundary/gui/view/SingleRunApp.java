@@ -170,7 +170,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
         final Optional<FXOutputMonitor<T, P>> optDisplayMonitor = Optional.ofNullable(this.displayMonitor);
         final Pane rootLayout;
         try {
-            rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
+            rootLayout = FXResourceLoader.getLayout(this, ROOT_LAYOUT);
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
             final Scene scene = new Scene(rootLayout);
             optDisplayMonitor.ifPresent(dm -> {
@@ -187,7 +187,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                 s.addOutputMonitor(this.stepMonitor);
             });
             final ButtonsBarController<P> buttonsBarController = new ButtonsBarController<>(displayMonitor, playPauseMonitor, timeMonitor, stepMonitor);
-            final BorderPane bar = FXResourceLoader.getLayout(BorderPane.class, buttonsBarController, BUTTONS_BAR_LAYOUT);
+            final BorderPane bar = FXResourceLoader.getLayout(buttonsBarController, BUTTONS_BAR_LAYOUT);
             bar.setPickOnBounds(false);
             main.widthProperty().addListener((observable, oldValue, newValue) -> bar.setPrefWidth(newValue.doubleValue()));
             main.getChildren().add(bar);

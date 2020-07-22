@@ -29,7 +29,6 @@ public final class FXResourceLoader {
      * Loads a layout FXML file returning the base pane defined by the layout.
      *
      * @param <T>          the generic type of pane
-     * @param paneInstance the class of pain to load
      * @param controller   the controller to associate to that layout
      * @param layoutName   the name of the layout; it should be the file name without
      *                     extension
@@ -37,8 +36,10 @@ public final class FXResourceLoader {
      * @throws IOException if it cannot load the file for some reason
      */
     @SuppressWarnings("unchecked") // Passing a wrong class would be stupid
-    public static <T extends Node> T getLayout(final Class<T> paneInstance, final Object controller,
-                                               final String layoutName) throws IOException {
+    public static <T extends Node> T getLayout(
+            final Object controller,
+            final String layoutName
+    ) throws IOException {
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(ResourceLoader.getResource(XML_RESOURCE_PATH + layoutName + LAYOUT_EXTENSION));
         loader.setController(controller);
@@ -50,15 +51,14 @@ public final class FXResourceLoader {
      * It doesn't set any controller.
      *
      * @param <T>          the generic type of pane
-     * @param paneInstance the class of pain to load
      * @param layoutName   the name of the layout; it should be the file name without
      *                     extension
      * @return the pane defined by the layout
      * @throws IOException if it cannot load the file for some reason
      */
-    public static <T extends Node> T getLayout(final Class<T> paneInstance, final String layoutName)
+    public static <T extends Node> T getLayout(final String layoutName)
             throws IOException {
-        return getLayout(paneInstance, null, layoutName);
+        return getLayout(null, layoutName);
     }
 
     /**

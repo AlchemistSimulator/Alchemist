@@ -159,7 +159,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
         effectsGroupBarController = new EffectsGroupBarController<>(getDisplayMonitor().orElse(null), this.drawerStack);
         effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
-            effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, effectsGroupBarController,
+            effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(effectsGroupBarController,
                     EffectsGroupBarController.EFFECT_GROUP_BAR_LAYOUT));
         } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
@@ -193,7 +193,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
             final ControlTypePopoverController controlTypePopoverController = new ControlTypePopoverController();
             final Node popoverContent;
             try {
-                popoverContent = FXResourceLoader.getLayout(AnchorPane.class, controlTypePopoverController,
+                popoverContent = FXResourceLoader.getLayout(controlTypePopoverController,
                         ControlTypePopoverController.CONTROL_TYPE_POPOVER_LAYOUT);
             } catch (final IOException e) {
                 throw new IllegalStateException("Could not initialize popover for control type change", e);

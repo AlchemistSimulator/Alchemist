@@ -26,7 +26,7 @@ public class TestApplication extends Application {
     public void start(final Stage primaryStage) throws Exception {
         // Do nothing
         primaryStage.setTitle("Test application");
-        final AnchorPane rootLayout = FXResourceLoader.getLayout(AnchorPane.class, this, ROOT_LAYOUT);
+        final AnchorPane rootLayout = FXResourceLoader.getLayout(this, ROOT_LAYOUT);
         final StackPane main = (StackPane) rootLayout.getChildren().get(0);
         final Button button = new Button("Open from another thread");
         button.setOnAction(event -> new Thread(() -> Platform.runLater(() -> {

@@ -51,7 +51,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
                 final EffectPropertiesController propertiesController = new EffectPropertiesController(this.getItem(), this.stack,
                         propertiesDrawer);
                 try {
-                    propertiesDrawer.setSidePane(FXResourceLoader.getLayout(BorderPane.class, propertiesController,
+                    propertiesDrawer.setSidePane(FXResourceLoader.getLayout(propertiesController,
                             EffectPropertiesController.EFFECT_PROPERTIES_LAYOUT));
                     propertiesController.effectNameProperty().bindBidirectional(this.getLabel().textProperty());
                 } catch (IOException e) {

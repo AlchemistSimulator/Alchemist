@@ -165,3 +165,7 @@ jobs:
         - <<: *deploy_reports_on_surge
           domain: alchemist-reports.surge.sh
           on: *on_tags
+
+notifications:
+  email:
+    on_success: never

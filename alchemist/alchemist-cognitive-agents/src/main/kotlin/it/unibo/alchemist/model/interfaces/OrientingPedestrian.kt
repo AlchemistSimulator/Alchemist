@@ -22,11 +22,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param L the type of landmarks stored in the pedestrian's [cognitiveMap].
  * @param R the type of edges of the [cognitiveMap], representing the [R]elations between landmarks.
  */
-interface OrientingPedestrian<
-    T,
-    V : Vector<V>,
-    A : GeometricTransformation<V>,
-    L : ConvexGeometricShape<V, A>,
-    R
-> : Pedestrian<T, V, A>,
-    OrientingAgent<V, A, L, R>
+interface OrientingPedestrian<T, V, A, L, R> : Pedestrian<T, V, A>, OrientingAgent<V, A, L, R>
+    where V : Vector<V>,
+        A : GeometricTransformation<V>,
+        L : ConvexGeometricShape<V, A>

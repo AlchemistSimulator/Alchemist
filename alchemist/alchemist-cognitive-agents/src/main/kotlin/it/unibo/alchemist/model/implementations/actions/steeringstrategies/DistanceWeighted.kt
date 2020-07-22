@@ -25,11 +25,17 @@ class DistanceWeighted<T>(
      * Default weight for steering actions without a defined target.
      */
     private val defaultWeight: Double = 1.0
-) : Weighted<T>(environment, pedestrian, {
-    if (this is SteeringActionWithTarget) {
-        this.targetDistanceTo(pedestrian, environment).let { if (it > 0.0) 1 / it else it }
-    } else defaultWeight
-})
+) : Weighted<T>(
+    environment,
+    pedestrian,
+    {
+        if (this is SteeringActionWithTarget) {
+            this.targetDistanceTo(pedestrian, environment).let { if (it > 0.0) 1 / it else it }
+        } else {
+            defaultWeight
+        }
+    }
+)
 
 /**
  * Computes the distance between this action's target and the given [node].

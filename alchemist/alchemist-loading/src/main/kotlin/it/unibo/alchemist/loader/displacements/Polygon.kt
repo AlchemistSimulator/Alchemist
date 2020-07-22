@@ -58,13 +58,15 @@ open class Polygon<P : Position2D<out P>>(
     /**
      * The polygon in which positions are generated.
      */
-    protected val polygon: Area = Area(Path2D.Double().apply {
-        moveTo(points.first().toPosition)
-        points.asSequence().drop(1).forEach {
-            lineTo(it.toPosition)
+    protected val polygon: Area = Area(
+        Path2D.Double().apply {
+            moveTo(points.first().toPosition)
+            points.asSequence().drop(1).forEach {
+                lineTo(it.toPosition)
+            }
+            closePath()
         }
-        closePath()
-    })
+    )
 
     /**
      * The rectangular bounds of the polygon.
@@ -77,8 +79,9 @@ open class Polygon<P : Position2D<out P>>(
 
     init {
         if (points.size < 3) {
-            throw IllegalArgumentException("At least three points are required for a polygonal displacement" +
-                "(provided: ${points.size}: $points)")
+            throw IllegalArgumentException(
+                "At least three points are required for a polygonal displacement (provided: ${points.size}: $points)"
+            )
         }
         if (!polygon.isPolygonal) {
             throw IllegalArgumentException("The provided points ($points) do not supply a valid polygon")

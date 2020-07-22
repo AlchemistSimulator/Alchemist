@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
  * @param <P> The position type
  */
 public final class EffectStack<P extends Position2D<? extends P>> implements EffectGroup<P> {
-    /** Default generated serial version UID. */
-    private static final long serialVersionUID = -3606828966321303483L;
+
+    private static final long serialVersionUID = 1L;
     /** Default IllegalArgumentException message. */
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name. */

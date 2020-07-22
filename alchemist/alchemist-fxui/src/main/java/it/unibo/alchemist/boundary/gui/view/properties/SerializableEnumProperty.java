@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 import javafx.beans.property.ObjectPropertyBase;
 
-import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur332;
+import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
 
 /**
  * {@link javafx.beans.property.Property} designed to wrap an {@link Enum enum}.
@@ -161,7 +161,7 @@ public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyB
      */
     @Override
     public int hashCode() {
-        return hashMurmur332(getValue(), getName());
+        return murmur3Hash32(getValue(), getName());
     }
 
     /**

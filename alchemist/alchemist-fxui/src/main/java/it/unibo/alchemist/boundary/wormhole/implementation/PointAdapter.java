@@ -75,7 +75,7 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = HashesKt.hashMurmur332(x, y);
+            hash = HashesKt.murmur3Hash32(x, y);
         }
         return hash;
     }

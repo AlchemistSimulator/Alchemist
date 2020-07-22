@@ -13,7 +13,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
-import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur332;
+import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
 
 /**
  * Simple effect that draws a colored dot for each {@link it.unibo.alchemist.model.interfaces.Node}.
@@ -292,7 +292,7 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
      */
     @Override
     public int hashCode() {
-        return hashMurmur332(alphaProperty(), blueProperty(), greenProperty(), getName(), redProperty(), getSize(), isVisible());
+        return murmur3Hash32(alphaProperty(), blueProperty(), greenProperty(), getName(), redProperty(), getSize(), isVisible());
     }
 
     /**

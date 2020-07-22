@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 
-import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur332;
+import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} line for each
@@ -175,7 +175,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
      */
     @Override
     public int hashCode() {
-        return hashMurmur332(getColor(), getName(), getSize(), isVisible());
+        return murmur3Hash32(getColor(), getName(), getSize(), isVisible());
     }
 
     /**

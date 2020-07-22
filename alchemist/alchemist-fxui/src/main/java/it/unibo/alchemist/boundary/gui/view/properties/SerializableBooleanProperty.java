@@ -13,7 +13,7 @@ import com.google.gson.JsonSerializationContext;
 
 import javafx.beans.property.BooleanPropertyBase;
 
-import static it.unibo.alchemist.kotlin.HashesKt.hashMurmur332;
+import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
 
 /**
  * {@link javafx.beans.property.SimpleBooleanProperty} that implements also {@link Serializable}.
@@ -146,7 +146,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
      */
     @Override
     public int hashCode() {
-        return hashMurmur332(getValue(), getName());
+        return murmur3Hash32(getValue(), getName());
     }
 
     /**

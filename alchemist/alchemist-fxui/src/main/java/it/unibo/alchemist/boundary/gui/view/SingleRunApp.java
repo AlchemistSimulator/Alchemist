@@ -27,11 +27,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javafx.application.Application;
@@ -82,8 +80,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      */
     private static final Logger L = LoggerFactory.getLogger(SingleRunApp.class);
 
-    private final Map<String, String> namedParams = new HashMap<>();
-    private final List<String> unnamedParams = new ArrayList<>();
+    private final Map<String, String> params = new HashMap<>();
     private ObservableList<EffectGroup<P>> effectGroups = FXCollections.observableArrayList();
     private boolean initialized;
     @Nullable
@@ -95,28 +92,15 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     private FXStepMonitor<T, P> stepMonitor;
 
     /**
-     * Getter method for the unnamed parameters.
-     *
-     * @return the unnamed params
-     * @see Parameters#getUnnamed()
-     */
-    private List<String> getUnnamedParams() {
-        if (unnamedParams.isEmpty()) {
-            Optional.ofNullable(getParameters()).ifPresent(p -> unnamedParams.addAll(p.getUnnamed()));
-        }
-        return this.unnamedParams;
-    }
-
-    /**
      * Getter method for the named parameters.
      *
      * @return the named params
      */
-    private Map<String, String> getNamedParams() {
-        if (namedParams.isEmpty()) {
-            Optional.ofNullable(getParameters()).ifPresent(p -> namedParams.putAll(p.getNamed()));
+    private Map<String, String> getParams() {
+        if (params.isEmpty()) {
+            Optional.ofNullable(getParameters()).ifPresent(p -> params.putAll(p.getNamed()));
         }
-        return this.namedParams;
+        return this.params;
     }
 
     /**
@@ -128,28 +112,12 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      * @throws IllegalStateException    if the application is already started
      * @see Parameters#getNamed()
      */
-    public void addNamedParam(final String name, final String value) {
+    public void addParam(final String name, final String value) {
         checkIfInitialized();
         if (value == null || value.equals("")) {
             throw new IllegalArgumentException("The given param is not named");
         }
-        namedParams.put(name, value);
-    }
-
-    /**
-     * The method adds a new named parameter.
-     *
-     * @param param the param name
-     * @throws IllegalArgumentException if the parameter is not valid, or if {@link Parameters#getNamed()} it's named}
-     * @throws IllegalStateException    if the application is already started
-     * @see Parameters#getUnnamed()
-     */
-    public void addUnnamedParam(final String param) {
-        checkIfInitialized();
-        if (param == null || param.equals("")) {
-            throw new IllegalArgumentException("The given param is not valid");
-        }
-        unnamedParams.add(param);
+        params.put(name, value);
     }
 
     /**
@@ -163,17 +131,14 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
         if (initialized) {
             throw new IllegalStateException("Application is already initialized");
         }
-        namedParams.clear();
-        unnamedParams.clear();
+        this.params.clear();
         Arrays.stream(params)
                 .forEach(p -> {
                     if (p.startsWith(PARAMETER_NAME_START)) {
                         final String param = p.substring(PARAMETER_NAME_START.length());
                         if (param.contains(PARAMETER_NAME_END)) {
                             final int splitterIndex = param.lastIndexOf(PARAMETER_NAME_END);
-                            addNamedParam(param.substring(0, splitterIndex), param.substring(splitterIndex));
-                        } else {
-                            addUnnamedParam(param);
+                            addParam(param.substring(0, splitterIndex), param.substring(splitterIndex));
                         }
                     } else {
                         throw new IllegalArgumentException("The parameter " + p + " is not valid");
@@ -188,8 +153,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     public void start(final Stage primaryStage) {
         // load the keybinds from file or classpath
         Keybinds.Companion.load();
-        parseNamedParams(getNamedParams());
-        parseUnnamedParams(getUnnamedParams());
+        parseParams(getParams());
         final Optional<Simulation<T, P>> optSim = getSimulation();
         optSim.ifPresent(sim -> {
             try {
@@ -293,7 +257,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      * @throws IllegalArgumentException if the value is not valid for the parameter
      * @see Parameters#getNamed()
      */
-    private void parseNamedParams(final Map<String, String> params) {
+    private void parseParams(final Map<String, String> params) {
         params.forEach((key, value) -> {
             if (USE_EFFECT_GROUPS_FROM_FILE.equals(key)) {
                 try {
@@ -305,31 +269,6 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             } else {
                 L.warn("Unexpected argument " + PARAMETER_NAME_START + key + PARAMETER_NAME_END + value);
             }
-        });
-    }
-
-    /**
-     * The method parses the given parameters from a list.
-     *
-     * @param params the list of parameters
-     * @see Parameters#getUnnamed()
-     */
-    private void parseUnnamedParams(final List<String> params) {
-        params.forEach(param -> {
-//            try {
-//                switch (param.startsWith(PARAMETER_NAME_START)
-//                        ? param.substring(PARAMETER_NAME_START.length())
-//                        : param) {
-//                    default:
-//                        L.warn("Unexpected argument " + PARAMETER_NAME_START + param);
-//                }
-//            } catch (final IllegalArgumentException e) {
-//                L.warn("Invalid argument: " + param, e);
-//            }
-            // TODO remove if and use the code commented above for new named parameters
-            L.warn("Unexpected argument " + PARAMETER_NAME_START + (param.startsWith(PARAMETER_NAME_START)
-                    ? param.substring(PARAMETER_NAME_START.length())
-                    : param));
         });
     }
 
@@ -406,7 +345,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      */
     public void addEffectGroups(final String path) {
         checkIfInitialized();
-        addNamedParam(USE_EFFECT_GROUPS_FROM_FILE, path);
+        addParam(USE_EFFECT_GROUPS_FROM_FILE, path);
     }
 
     /**

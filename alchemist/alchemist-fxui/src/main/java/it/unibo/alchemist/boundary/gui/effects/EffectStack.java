@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
-import com.google.common.hash.Hashing;
 import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectGroupAdapter;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
@@ -22,10 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
 
@@ -42,8 +38,6 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     private static final String CANNOT_FIND_EFFECT = "Cannot find the effect in the stack";
     /** Default effect group name. */
     private static final String DEFAULT_NAME = ResourceLoader.getStringRes("effect_stack_default_name");
-    /** Default logger. */
-    private static final Logger L = LoggerFactory.getLogger(EffectStack.class);
 
     private final List<EffectFX<P>> effects;
     private int topIndex;
@@ -60,7 +54,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     /**
      * Default constructor. It creates an empty stack of effects with a given
      * name.
-     * 
+     *
      * @param name
      *            the name of the group
      */
@@ -99,7 +93,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
      * <p>
      * Acts nearly the same than using {@link #add(EffectFX)} or
      * {@link #offer(EffectFX)}.
-     * 
+     *
      * @param effect
      *            the effect
      * @return the effect pushed
@@ -125,7 +119,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
      * Removes the effect with maximum priority and returns it.
      * <p>
      * Acts nearly the same than using {@link #remove()} or {@link #poll()}.
-     * 
+     *
      * @return the effect with maximum priority
      */
     public EffectFX<P> pop() {
@@ -213,14 +207,9 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     public boolean add(final EffectFX<P> e) {
         if (e == null || this.contains(e)) {
             return false;
-        } else {
-            try {
-                return this.push(e) != null;
-            } catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
-                L.debug(ex.toString());
-                return false;
-            }
         }
+        this.push(e);
+        return true;
     }
 
     @Override
@@ -231,14 +220,9 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
             final int index = this.search(effect);
             if (index == -1) {
                 return false;
-            } else {
-                try {
-                    this.topIndex--;
-                    return this.effects.remove(effect);
-                } catch (UnsupportedOperationException | IndexOutOfBoundsException ex) {
-                    return false;
-                }
             }
+            this.topIndex--;
+            return this.effects.remove(effect);
         } else {
             return false;
         }
@@ -260,16 +244,14 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
 
     @Override
     public boolean addAll(final Collection<? extends EffectFX<P>> c) {
-        try {
-            c.forEach(e -> {
-                if (this.push(e) == null) {
-                    throw new IllegalArgumentException();
-                }
-            });
-            return true;
-        } catch (UnsupportedOperationException | ClassCastException | IllegalArgumentException ex) {
-            return false;
+        boolean changed = false;
+        for (final EffectFX<P> effect : c) {
+            if (effect != null) {
+                this.push(effect);
+                changed = true;
+            }
         }
+        return changed;
     }
 
     @Override
@@ -286,7 +268,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
     @Override
     public boolean retainAll(final Collection<?> c) {
         boolean b = false;
-        for (final EffectFX effect : this.effects) {
+        for (final EffectFX<P> effect : this.effects) {
             if (!c.contains(effect)) {
                 this.remove(effect);
                 b = true;
@@ -302,11 +284,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
 
     @Override
     public boolean offer(final EffectFX<P> e) {
-        try {
-            return this.add(e);
-        } catch (UnsupportedOperationException | ClassCastException ex) {
-            return false;
-        }
+        return this.add(e);
     }
 
     @Override
@@ -318,7 +296,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
      * Returns the effect with maximum priority, without removing it.
      * <p>
      * See {@link Queue#peek()}.
-     * 
+     *
      * @return the effect with maximum priority
      */
     @Override
@@ -384,7 +362,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
      * Returns a {@link com.google.gson.JsonSerializer} and {@link com.google.gson.JsonDeserializer} combo class
      * to be used as a {@code TypeAdapter} for this
      * {@code EffectStack}.
-     * 
+     *
      * @return the {@code TypeAdapter} for this class
      */
     @NotNull

@@ -148,7 +148,6 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
                         .getWindow())
                         .getIcons()
                         .add(SVGImageUtils.getSvgImage(SVGImageUtils.DEFAULT_ALCHEMIST_ICON_PATH));
-
                 dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
             }
         });

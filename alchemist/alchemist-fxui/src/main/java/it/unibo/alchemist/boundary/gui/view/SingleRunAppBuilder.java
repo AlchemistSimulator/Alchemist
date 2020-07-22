@@ -171,7 +171,6 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
             final Stage stage = new Stage();
             app.start(stage);
         };
-
         if (startJFXThread() && Platform.isFxApplicationThread()) {
             appRunner.run();
         } else {

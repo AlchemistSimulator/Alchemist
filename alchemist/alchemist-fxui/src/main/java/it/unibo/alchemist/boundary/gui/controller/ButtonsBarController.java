@@ -45,7 +45,6 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     // Icons
     private final IconNode pan;
     private final IconNode select;
-
     // FXML components
     @FXML
     @Nullable
@@ -65,7 +64,6 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     @FXML
     @Nullable
     private JFXDrawersStack drawerStack; // Value injected by FXMLLoader
-
     // Other
     @Nullable
     private Button startStopButton;
@@ -73,7 +71,6 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     private Label timeLabel;
     @Nullable
     private Label stepLabel;
-
     private EffectsGroupBarController<P> effectsGroupBarController;
     private Optional<PopOver> controlTypePopOver = Optional.empty();
     private Optional<FXOutputMonitor<?, ?>> displayMonitor = Optional.empty();

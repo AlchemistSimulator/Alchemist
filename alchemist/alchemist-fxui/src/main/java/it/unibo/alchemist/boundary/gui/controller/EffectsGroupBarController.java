@@ -119,10 +119,10 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        assert save != null : FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT);
-        assert load != null : FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT);
-        assert addGroup != null : FXResourceLoader.getInjectionErrorMessage("add", EFFECT_GROUP_BAR_LAYOUT);
-        assert effectGroupsList != null : FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_GROUP_BAR_LAYOUT);
+        Objects.requireNonNull(save, FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT));
+        Objects.requireNonNull(load, FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT));
+        Objects.requireNonNull(addGroup, FXResourceLoader.getInjectionErrorMessage("add", EFFECT_GROUP_BAR_LAYOUT));
+        Objects.requireNonNull(effectGroupsList, FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_GROUP_BAR_LAYOUT));
         this.save.setText("");
         this.save.setGraphic(getWhiteIcon(SAVE));
         this.save.setOnAction(e -> this.saveToFile());

@@ -119,11 +119,11 @@ public class EffectPropertiesController implements Initializable {
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        assert effectsPane != null : FXResourceLoader.getInjectionErrorMessage("effectsPane", EFFECT_PROPERTIES_LAYOUT);
-        assert topBar != null : FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_PROPERTIES_LAYOUT);
-        assert backToEffects != null : FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_PROPERTIES_LAYOUT);
-        assert effectName != null : FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT);
-        assert mainBox != null : FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT);
+        Objects.requireNonNull(effectsPane, FXResourceLoader.getInjectionErrorMessage("effectsPane", EFFECT_PROPERTIES_LAYOUT));
+        Objects.requireNonNull(topBar, FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_PROPERTIES_LAYOUT));
+        Objects.requireNonNull(backToEffects, FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_PROPERTIES_LAYOUT));
+        Objects.requireNonNull(effectName, FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT));
+        Objects.requireNonNull(mainBox, FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT));
         final List<Field> properties = FieldUtils.getAllFieldsList(effect.getClass()).stream()
                 .filter(f -> Property.class.isAssignableFrom(f.getType())).collect(Collectors.toList());
         if (!properties.isEmpty()) {

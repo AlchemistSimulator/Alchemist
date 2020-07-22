@@ -3,6 +3,7 @@ package it.unibo.alchemist.boundary.gui.controller;
 import com.jfoenix.controls.JFXButton;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,8 +34,8 @@ public class ControlTypePopoverController implements Initializable {
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
-        assert panButton != null : FXResourceLoader.getInjectionErrorMessage("panButton", CONTROL_TYPE_POPOVER_LAYOUT);
-        assert selectButton != null : FXResourceLoader.getInjectionErrorMessage("selectButton", CONTROL_TYPE_POPOVER_LAYOUT);
+        Objects.requireNonNull(panButton, FXResourceLoader.getInjectionErrorMessage("panButton", CONTROL_TYPE_POPOVER_LAYOUT));
+        Objects.requireNonNull(selectButton, FXResourceLoader.getInjectionErrorMessage("selectButton", CONTROL_TYPE_POPOVER_LAYOUT));
         panButton.setText("");
         panButton.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL));
         selectButton.setText("");

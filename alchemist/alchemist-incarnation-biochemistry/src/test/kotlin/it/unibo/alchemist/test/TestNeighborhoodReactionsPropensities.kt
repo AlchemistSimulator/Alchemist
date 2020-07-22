@@ -70,10 +70,10 @@ class TestNeighborhoodReactionsPropensities : StringSpec({
         centralNode.setConcentration(BIOMOLECULE, 100.0)
         environment.addNode(centralNode, POSITION)
         neighbors = 1.rangeTo(10)
-                .map { Pair(it * 10.0, CellNodeImpl(environment)) }
-                .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
-                .map { it.second }
-                .onEach { environment.addNode(it, POSITION) }
+            .map { Pair(it * 10.0, CellNodeImpl(environment)) }
+            .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
+            .map { it.second }
+            .onEach { environment.addNode(it, POSITION) }
         environment.getNeighborhood(centralNode).neighbors shouldContainExactly neighbors
     }
 }
@@ -82,14 +82,14 @@ private fun testSimulation(reactionText: String) {
     val reaction = INCARNATION.createReaction(RANDOM, environment, centralNode, TIME, reactionText)
     centralNode.addReaction(reaction)
     environment.startSimulationWithoutParameters(
-            stepDone = {
-                val checks = reaction.conditions
-                        .filterIsInstance<AbstractNeighborCondition<Double>>()
-                        .flatMap { it.validNeighbors.map { (node, value) -> Container(it, node, value) } }
-                for (it in checks) {
-                    it shouldHave it.expectedPropensity
-                }
+        stepDone = {
+            val checks = reaction.conditions
+                .filterIsInstance<AbstractNeighborCondition<Double>>()
+                .flatMap { it.validNeighbors.map { (node, value) -> Container(it, node, value) } }
+            for (it in checks) {
+                it shouldHave it.expectedPropensity
             }
+        }
     )
 }
 

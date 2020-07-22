@@ -77,7 +77,8 @@ private class DummyRandomGenerator : RandomGenerator {
         value = seed.toDouble()
     }
 
-    override fun nextBytes(bytes: ByteArray) = bytes.forEachIndexed { idx, _ -> bytes[idx] = value.toByte()
+    override fun nextBytes(bytes: ByteArray) = bytes.forEachIndexed { idx, _ ->
+        bytes[idx] = value.toByte()
     }
 
     override fun nextInt() = value.toInt()

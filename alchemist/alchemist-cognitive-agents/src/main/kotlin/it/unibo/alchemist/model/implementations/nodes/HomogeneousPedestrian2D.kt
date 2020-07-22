@@ -23,11 +23,8 @@ class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
     override val environment: Physics2DEnvironment<T>,
     randomGenerator: RandomGenerator,
     group: PedestrianGroup2D<T>? = null
-) : AbstractHomogeneousPedestrian2D<T>(
-    environment,
-    randomGenerator,
-    group
-), Pedestrian2D<T> {
+) : AbstractHomogeneousPedestrian2D<T>(environment, randomGenerator, group),
+    Pedestrian2D<T> {
 
     override val shape by lazy { super.shape }
     override val fieldOfView by lazy { super.fieldOfView }

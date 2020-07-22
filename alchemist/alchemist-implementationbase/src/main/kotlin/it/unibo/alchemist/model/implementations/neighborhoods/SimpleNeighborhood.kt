@@ -57,51 +57,59 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 
     override fun hashCode(): Int = Hashes.hash32(environment, center, neighbors)
 
-    override fun add(node: Node<T>) = SimpleNeighborhood(environment, center, Iterable {
-        object : Iterator<Node<T>> {
-            val previousNodes = neighbors.iterator()
-            var nodeReady = true
-            override fun hasNext() = nodeReady
-            override fun next() = if (previousNodes.hasNext()) {
-                previousNodes.next()
-            } else {
-                if (nodeReady) {
-                    nodeReady = false
-                    node
-                } else {
-                    throw NoSuchElementException("No other elements.")
-                }
-            }
-        }
-    })
-
-    override fun remove(node: Node<T>) = if (this.contains(node)) {
-        SimpleNeighborhood(environment, center, Iterable {
+    override fun add(node: Node<T>) = SimpleNeighborhood(
+        environment,
+        center,
+        Iterable {
             object : Iterator<Node<T>> {
-                val base = neighbors.iterator()
-                var lookahead = updateLookAhead()
-                fun updateLookAhead(): Node<T>? =
-                    if (base.hasNext()) {
-                        val maybeNext = base.next()
-                        if (maybeNext == node) {
-                            updateLookAhead()
-                        } else {
-                            maybeNext
-                        }
-                    } else {
-                        null
-                    }
-                override fun hasNext() = lookahead !== null
-                override fun next() =
-                    if (hasNext()) {
-                        val result = lookahead!!
-                        lookahead = updateLookAhead()
-                        result
+                val previousNodes = neighbors.iterator()
+                var nodeReady = true
+                override fun hasNext() = nodeReady
+                override fun next() = if (previousNodes.hasNext()) {
+                    previousNodes.next()
+                } else {
+                    if (nodeReady) {
+                        nodeReady = false
+                        node
                     } else {
                         throw NoSuchElementException("No other elements.")
                     }
+                }
             }
-        })
+        }
+    )
+
+    override fun remove(node: Node<T>) = if (this.contains(node)) {
+        SimpleNeighborhood(
+            environment,
+            center,
+            Iterable {
+                object : Iterator<Node<T>> {
+                    val base = neighbors.iterator()
+                    var lookahead = updateLookAhead()
+                    fun updateLookAhead(): Node<T>? =
+                        if (base.hasNext()) {
+                            val maybeNext = base.next()
+                            if (maybeNext == node) {
+                                updateLookAhead()
+                            } else {
+                                maybeNext
+                            }
+                        } else {
+                            null
+                        }
+                    override fun hasNext() = lookahead !== null
+                    override fun next() =
+                        if (hasNext()) {
+                            val result = lookahead!!
+                            lookahead = updateLookAhead()
+                            result
+                        } else {
+                            throw NoSuchElementException("No other elements.")
+                        }
+                }
+            }
+        )
     } else {
         throw IllegalArgumentException("$node not in $this")
     }

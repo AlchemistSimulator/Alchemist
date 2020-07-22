@@ -38,15 +38,18 @@ object ClassPathScanner {
     @JvmOverloads
     @Suppress("UNCHECKED_CAST")
     fun <T> subTypesOf(superClass: Class<T>, inPackage: String? = null): List<Class<out T>> =
-        classGraphForPackage(inPackage).enableClassInfo().scan().let { scanResult ->
-            if (superClass.isInterface) {
-                scanResult.getClassesImplementing(superClass.name)
-            } else {
-                scanResult.getSubclasses(superClass.name)
-            }.filter { !it.isAbstract }
-            .loadClasses()
+        classGraphForPackage(inPackage)
+            .enableClassInfo()
+            .scan()
+            .let { scanResult ->
+                if (superClass.isInterface) {
+                    scanResult.getClassesImplementing(superClass.name)
+                } else {
+                    scanResult.getSubclasses(superClass.name)
+                }
+            }
+            .filter { !it.isAbstract }.loadClasses()
             .map { it as Class<out T> }
-        }
 
     inline fun <reified T> subTypesOf(inPackage: String? = null): List<Class<out T>> =
         subTypesOf(T::class.java, inPackage)

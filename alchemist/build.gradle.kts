@@ -250,12 +250,14 @@ allprojects {
     // Shadow Jar
     tasks.withType<ShadowJar> {
         manifest {
-            attributes(mapOf(
-                "Implementation-Title" to "Alchemist",
-                "Implementation-Version" to rootProject.version,
-                "Main-Class" to "it.unibo.alchemist.Alchemist",
-                "Automatic-Module-Name" to "it.unibo.alchemist"
-            ))
+            attributes(
+                mapOf(
+                    "Implementation-Title" to "Alchemist",
+                    "Implementation-Version" to rootProject.version,
+                    "Main-Class" to "it.unibo.alchemist.Alchemist",
+                    "Automatic-Module-Name" to "it.unibo.alchemist"
+                )
+            )
         }
         exclude("ant_tasks/")
         exclude("about_files/")
@@ -288,7 +290,7 @@ allprojects {
                                 """
                                 $illegalKeyword found while printing the help. Complete output:
                                 $text
-                            """.trimIndent()
+                                """.trimIndent()
                             }
                         }
                     }
@@ -348,7 +350,8 @@ orchid {
     // Determine whether it's a deployment or a dry run
     baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
     // Fetch the latest version of the website, if this one is more recent enable deploy
-    val versionRegex = """.*Currently\s*(.+)\.\s*Created""".toRegex()
+    val versionRegex =
+        """.*Currently\s*(.+)\.\s*Created""".toRegex()
     val matchedVersions: List<String> = runCatching {
         URL(baseUrl).openConnection().getInputStream().use { stream ->
             stream.bufferedReader().lineSequence()

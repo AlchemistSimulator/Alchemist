@@ -25,7 +25,7 @@ where P : Position<P>, P : Vector<P> {
      * moves towards some direction. The current implementation internally calls
      * {@link #moveNodeToPosition(Node, Position2D)}, as such, overriding that
      * method may suffice.
-    */
+     */
     fun moveNode(node: Node<T>, direction: P) {
         val oldcoord = getPosition(node)
         moveNodeToPosition(node, oldcoord.plus(direction))

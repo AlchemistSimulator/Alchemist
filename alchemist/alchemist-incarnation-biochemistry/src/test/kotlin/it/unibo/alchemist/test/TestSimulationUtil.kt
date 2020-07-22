@@ -29,7 +29,7 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulationWithoutParameters(
     stepDone: () -> Unit = { },
     finished: () -> Unit = { }
 ) = startSimulation(
-        { initialized.invoke() },
-        { _, _, _, _ -> stepDone.invoke() },
-        { _, _, _ -> finished.invoke() }
+    { initialized.invoke() },
+    { _, _, _, _ -> stepDone.invoke() },
+    { _, _, _ -> finished.invoke() }
 )

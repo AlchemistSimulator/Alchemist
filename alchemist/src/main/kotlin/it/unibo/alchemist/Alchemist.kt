@@ -50,8 +50,8 @@ object Alchemist {
             } else {
                 val instances = clazz.fields.filter {
                     it.name == "INSTANCE" &&
-                    it.canAccess(null) &&
-                    Launcher::class.java.isAssignableFrom(it.type)
+                        it.canAccess(null) &&
+                        Launcher::class.java.isAssignableFrom(it.type)
                 }
                 if (instances.size == 1) {
                     instances.first().get(null) as Launcher
@@ -115,8 +115,10 @@ object Alchemist {
                     if (sortedLaunchers.priorityOf(0) > sortedLaunchers.priorityOf(1)) {
                         sortedLaunchers.first().launch(options)
                     } else {
-                        L.error("Unable to select an execution strategy among {} with options {}",
-                            sortedLaunchers, options
+                        L.error(
+                            "Unable to select an execution strategy among {} with options {}",
+                            sortedLaunchers,
+                            options
                         )
                         exitWith(ExitStatus.INVALID_CLI)
                     }
@@ -165,7 +167,8 @@ object Alchemist {
     private fun setVerbosity(cmd: CommandLine) {
         val verbosity = logLevels.filterKeys { cmd.hasOption(it) }.values
         when {
-            verbosity.size > 1 -> exitBecause(
+            verbosity.size > 1 ->
+                exitBecause(
                     "Conflicting verbosity specification. Only one of ${logLevels.keys} can be specified.",
                     ExitStatus.MULTIPLE_VERBOSITY
                 )

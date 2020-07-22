@@ -47,11 +47,11 @@ open class GoalOrientedExploring<T, L : Euclidean2DConvexShape, R>(
             .filter { newRoom.contains(it) }
             .minBy { it.distanceTo(pedestrianPosition) }
             ?.let { moveToFinal(it) }
-            ?: (doorsInSight()
+            ?: doorsInSight()
                 .filter { it.leadsToUnknownDestination() }
                 .minBy { weightExit(it) }
                 ?.let { crossDoor(it) }
-                ?: orElse())
+            ?: orElse()
     }
 
     protected open fun Euclidean2DPassage.leadsToUnknownDestination(): Boolean =

@@ -37,7 +37,8 @@ class TestPolygon : StringSpec({
     }
 }) {
     companion object {
-        val points = Gson().fromJson<List<List<Double>>>("""[
+        val points = Gson().fromJson<List<List<Double>>>(
+            """[
                 [ 12.2504425, 45.2038121 ],
                 [ 12.2641754, 45.2207426 ],
                 [ 12.2806549, 45.2381516 ],
@@ -68,10 +69,10 @@ class TestPolygon : StringSpec({
                 [ 12.2346497, 45.2975921 ],
                 [ 12.2408295, 45.2802014 ],
                 [ 12.233963, 45.257972 ],
-                [ 12.2504425, 45.2038121 ]]""",
-                object : TypeToken<List<List<Double>>>() {}.type)
-            .map { listOf(it[1], it[0]) }
-
+                [ 12.2504425, 45.2038121 ]]
+            """,
+            object : TypeToken<List<List<Double>>>() {}.type
+        ).map { listOf(it[1], it[0]) }
         val pointsPair = points.map { Pair(it[1], it[0]) }
     }
 }

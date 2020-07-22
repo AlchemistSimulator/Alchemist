@@ -54,21 +54,26 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
         Fear::class to Fear(
             { characteristicLevel<DesireWalkRandomly>() },
             { characteristicLevel<DesireEvacuate>() },
-            { influencialPeople() }),
+            { influencialPeople() }
+        ),
         DesireEvacuate::class to DesireEvacuate(
             compliance,
             { characteristicLevel<BeliefDanger>() },
-            { characteristicLevel<Fear>() }),
+            { characteristicLevel<Fear>() }
+        ),
         DesireWalkRandomly::class to DesireWalkRandomly(
             compliance,
             { characteristicLevel<BeliefDanger>() },
-            { characteristicLevel<Fear>() }),
+            { characteristicLevel<Fear>() }
+        ),
         IntentionEvacuate::class to IntentionEvacuate(
             { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() }),
+            { characteristicLevel<DesireEvacuate>() }
+        ),
         IntentionWalkRandomly::class to IntentionWalkRandomly(
             { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() })
+            { characteristicLevel<DesireEvacuate>() }
+        )
     )
 
     override fun speed() =

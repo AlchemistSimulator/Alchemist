@@ -108,19 +108,24 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
     }
 
     override fun intersect(other: Line2D<P>): Intersection2D<P> = when {
-        coincidesWith(other) -> Intersection2D.InfinitePoints
+        coincidesWith(other) ->
+            Intersection2D.InfinitePoints
         /*
          * But not coincident.
          */
-        isParallelTo(other) -> Intersection2D.None
-        else -> Intersection2D.SinglePoint(when {
-            /*
-             * other can't be vertical as lines are not parallel at this point.
-             */
-            isVertical -> other.findPoint(xIntercept)
-            other.isVertical -> findPoint(other.xIntercept)
-            else -> findPoint((other.yIntercept - yIntercept) / (slope - other.slope))
-        })
+        isParallelTo(other) ->
+            Intersection2D.None
+        else ->
+            Intersection2D.SinglePoint(
+                when {
+                    /*
+                     * other can't be vertical as lines are not parallel at this point.
+                     */
+                    isVertical -> other.findPoint(xIntercept)
+                    other.isVertical -> findPoint(other.xIntercept)
+                    else -> findPoint((other.yIntercept - yIntercept) / (slope - other.slope))
+                }
+            )
     }
 
     /**
@@ -130,25 +135,29 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
      * Circle equation: (x - [center].x)^2 + (y - [center].y)^2 = r^2.
      * Line equation: y = [slope] * x + [yIntercept] unless [isVertical], x = [xIntercept] otherwise.
      */
-    override fun intersectCircle(center: P, radius: Double): Intersection2D<P> = Intersection2D.create(when {
-        radius <= 0.0 -> throw IllegalArgumentException("radius must be > 0")
-        isVertical -> solveQuadraticEquation(
-            1.0,
-            -2 * center.y,
-            center.y.pow(2) + (xIntercept - center.x).pow(2) - radius.pow(2))
-            /*
-             * The equation roots are y-coordinates.
-             */
-            .map { createPoint(xIntercept, it) }
-        else -> solveQuadraticEquation(
-            1 + slope.pow(2),
-            2 * slope * (yIntercept - center.y) - 2 * center.x,
-            center.x.pow(2) + (yIntercept - center.y).pow(2) - radius.pow(2))
-            /*
-             * The equation roots are x-coordinates.
-             */
-            .map { findPoint(it) }
-    })
+    override fun intersectCircle(center: P, radius: Double): Intersection2D<P> = Intersection2D.create(
+        when {
+            radius <= 0.0 -> throw IllegalArgumentException("radius must be > 0")
+            isVertical ->
+                /*
+                 * The equation roots are y-coordinates.
+                 */
+                solveQuadraticEquation(
+                    1.0,
+                    -2 * center.y,
+                    center.y.pow(2) + (xIntercept - center.x).pow(2) - radius.pow(2)
+                ).map { createPoint(xIntercept, it) }
+            else ->
+                /*
+                 * The equation roots are x-coordinates.
+                 */
+                solveQuadraticEquation(
+                    1 + slope.pow(2),
+                    2 * slope * (yIntercept - center.y) - 2 * center.x,
+                    center.x.pow(2) + (yIntercept - center.y).pow(2) - radius.pow(2)
+                ).map { findPoint(it) }
+        }
+    )
 
     /**
      * Checks if [other] is a [Line2D] and if it [coincidesWith] this one.

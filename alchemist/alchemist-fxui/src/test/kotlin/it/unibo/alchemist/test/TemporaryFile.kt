@@ -12,6 +12,10 @@ package it.unibo.alchemist.test
 import java.io.File
 
 object TemporaryFile {
+
+    /**
+     * Creates a temporary file named after the method that calls the function, for testing purposes only.
+     */
     @JvmStatic
     fun create() = File.createTempFile(
         StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk { stack ->

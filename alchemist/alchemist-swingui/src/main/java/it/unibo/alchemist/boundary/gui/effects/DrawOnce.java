@@ -51,7 +51,8 @@ public abstract class DrawOnce implements Effect {
             /*
              * if marker node is no longer in the environment or it is no longer displayed, we need to change it
              */
-            if (markerNode.isEmpty() || !wormhole.isInsideView(wormhole.getViewPoint(environment.getPosition(markerNode.get())))) {
+            if (markerNode.isEmpty()
+                    || !wormhole.isInsideView(wormhole.getViewPoint(environment.getPosition(markerNode.get())))) {
                 markerNodeID = null;
             }
         }

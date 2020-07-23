@@ -32,7 +32,12 @@ public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
      * @param random
      *            {@link RandomGenerator} used internally
      */
-    public WeibullDistributedWeibullTime(final double mean, final double deviceDeviation, final double networkDeviation, final RandomGenerator random) {
+    public WeibullDistributedWeibullTime(
+            final double mean,
+            final double deviceDeviation,
+            final double networkDeviation,
+            final RandomGenerator random
+    ) {
         this(mean, deviceDeviation, networkDeviation, new DoubleTime(random.nextDouble() * mean), random);
     }
 

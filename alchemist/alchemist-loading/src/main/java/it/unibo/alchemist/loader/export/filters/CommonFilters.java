@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.loader.export.filters;
 
+import it.unibo.alchemist.loader.export.FilteringPolicy;
+
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.DoubleStream;
-
-import it.unibo.alchemist.loader.export.FilteringPolicy;
 
 /**
  * Utilities with the most common filtering operations on values.
@@ -25,7 +25,9 @@ public enum CommonFilters {
     /**
      * Remove all values that match {@link Double#isInfinite(double)}  ({@link Double#NaN} don't get filtered).
      */
-    FILTERINFINITY((FilteringPolicy & java.io.Serializable) d -> Double.isInfinite(d) ? DoubleStream.empty() : DoubleStream.of(d)),
+    FILTERINFINITY((FilteringPolicy & java.io.Serializable) d -> Double.isInfinite(d)
+            ? DoubleStream.empty()
+            : DoubleStream.of(d)),
     /**
      * Keeps only finite values ({@link Double#isFinite(double)} returns true).
      */

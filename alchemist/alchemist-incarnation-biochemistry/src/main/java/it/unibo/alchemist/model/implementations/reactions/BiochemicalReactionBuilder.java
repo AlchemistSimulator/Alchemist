@@ -395,8 +395,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override 
-        public Reaction<Double> visitCustomCondition(final BiochemistrydslParser.CustomConditionContext ctx) {
-            conditionList.add(createObject(ctx.javaConstructor(), CONDITIONS_PACKAGE));
+        public Reaction<Double> visitCustomCondition(final BiochemistrydslParser.CustomConditionContext context) {
+            conditionList.add(createObject(context.javaConstructor(), CONDITIONS_PACKAGE));
             return reaction;
         }
 

@@ -205,8 +205,8 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                     }
                 } else {
                     illegalSpec(
-                            "not a sequence of valid conditions" +
-                            "(curly bracket enclosed LSAs, with optional '+' prefix)",
+                            "not a sequence of valid conditions"
+                                    + "(curly bracket enclosed LSAs, with optional '+' prefix)",
                             conditionsSpec
                     );
                 }
@@ -219,8 +219,8 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                         actions.add(createAction(randomGenerator, environment, node, timeDistribution, result, action));
                     }
                 } else {
-                    illegalSpec("not a sequence of valid conditions" +
-                            "(curly bracket enclosed LSAs, with optional '+' prefix)",
+                    illegalSpec("not a sequence of valid conditions"
+                                    + "(curly bracket enclosed LSAs, with optional '+' prefix)",
                             conditionsSpec
                     );
                 }

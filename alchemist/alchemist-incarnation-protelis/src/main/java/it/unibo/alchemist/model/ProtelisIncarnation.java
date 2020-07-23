@@ -195,7 +195,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    public Node<Object> createNode(final RandomGenerator randomGenerator, final Environment<Object, P> environment, final String param) {
+    public Node<Object> createNode(final RandomGenerator randomGenerator, final Environment<Object, P> environment, final String parameter) {
         return new ProtelisNode<>(environment);
     }
 

@@ -154,7 +154,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
     public ILsaNode createNode(
             final RandomGenerator randomGenerator,
             final Environment<List<ILsaMolecule>, P> environment,
-            final String param) {
+            final String parameter) {
         return new LsaNode(environment);
     }
 

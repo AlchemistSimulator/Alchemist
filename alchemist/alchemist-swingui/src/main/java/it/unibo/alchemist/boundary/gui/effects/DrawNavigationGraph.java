@@ -126,13 +126,13 @@ public class DrawNavigationGraph extends DrawOnce {
     }
 
     private <T, P extends Position2D<P>> Shape mapEnvConvexPolygonToAwtShape(
-            final ConvexPolygon p,
+            final ConvexPolygon polygon,
             final IWormhole2D<P> wormhole,
-            final Environment<T, P> env
+            final Environment<T, P> environment
     ) {
         final Path2D shape = new Path2D.Double();
-        for (int i = 0; i < p.vertices().size(); i++) {
-            final Point viewPoint = wormhole.getViewPoint(env.makePosition(p.vertices().get(i).getX(), p.vertices().get(i).getY()));
+        for (int i = 0; i < polygon.vertices().size(); i++) {
+            final Point viewPoint = wormhole.getViewPoint(environment.makePosition(polygon.vertices().get(i).getX(), polygon.vertices().get(i).getY()));
             if (i == 0) {
                 shape.moveTo(viewPoint.getX(), viewPoint.getY());
             } else {

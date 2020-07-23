@@ -67,8 +67,8 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      * {@inheritDoc}
      */
     @Override
-    public LsaRandomNeighborAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
-        return new LsaRandomNeighborAction((ILsaNode) n, getMolecule(), getEnvironment(), randomEngine);
+    public LsaRandomNeighborAction cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
+        return new LsaRandomNeighborAction((ILsaNode) node, getMolecule(), getEnvironment(), randomEngine);
     }
 
     /**

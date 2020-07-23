@@ -36,7 +36,7 @@ public final class Event<T> extends AbstractReaction<T> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<T, ?> env) {
+    protected void updateInternalStatus(final Time currentTime, final boolean hasBeenExecuted, final Environment<T, ?> environment) {
     }
 
     @Override
@@ -45,7 +45,7 @@ public final class Event<T> extends AbstractReaction<T> {
     }
 
     @Override
-    public Event<T> cloneOnNewNode(final Node<T> n, final Time currentTime) {
-        return makeClone(() -> new Event<>(n, getTimeDistribution().clone(currentTime)));
+    public Event<T> cloneOnNewNode(final Node<T> node, final Time currentTime) {
+        return makeClone(() -> new Event<>(node, getTimeDistribution().clone(currentTime)));
     }
 }

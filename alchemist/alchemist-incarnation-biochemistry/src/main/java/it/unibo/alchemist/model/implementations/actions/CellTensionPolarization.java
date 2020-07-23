@@ -45,12 +45,12 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
-    public CellTensionPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        if (n instanceof CircularDeformableCell) {
-            return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) n);
+    public CellTensionPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        if (node instanceof CircularDeformableCell) {
+            return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) node);
         }
-        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + n
-                + " of type: " + n.getClass());
+        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + node
+                + " of type: " + node.getClass());
     }
 
     @SuppressWarnings("unchecked")

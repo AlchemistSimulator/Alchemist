@@ -67,7 +67,12 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     private P mypos;
 
     private TIntObjectMap<P> positionCache = new TIntObjectHashMap<>();
-    private final TIntDoubleMap routecache = new TIntDoubleHashMap(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1, Double.NaN);
+    private final TIntDoubleMap routecache = new TIntDoubleHashMap(
+            Constants.DEFAULT_CAPACITY,
+            Constants.DEFAULT_LOAD_FACTOR,
+            -1,
+            Double.NaN
+    );
     private final ILsaMolecule source, gradient, gradientExpr, context;
     private List<? extends ILsaMolecule> sourceCache;
     private final double threshold;
@@ -75,9 +80,9 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     /**
      * Builds a new SAPERE Gradient.
      * 
-     * @param env
+     * @param environment
      *            the current environment
-     * @param n
+     * @param node
      *            the node where this reaction is scheduled
      * @param sourceTemplate
      *            a template ILsaMolecule representing the source
@@ -103,18 +108,28 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      * @param gradThreshold
      *            if the value of the gradient grows above this threshold, the
      *            gradient evaporates
-     * @param td
+     * @param timeDistribution
      *            Markovian Rate
      */
     @SuppressWarnings("unchecked")
-    public SAPEREGradient(final Environment<List<ILsaMolecule>, P> env, final ILsaNode n, final ILsaMolecule sourceTemplate, final ILsaMolecule gradientTemplate, final int valuePosition, final String expression, final ILsaMolecule contextTemplate, final double gradThreshold, final TimeDistribution<List<ILsaMolecule>> td) {
-        super(n, td);
+    public SAPEREGradient(
+            final Environment<List<ILsaMolecule>, P> environment,
+            final ILsaNode node,
+            final ILsaMolecule sourceTemplate,
+            final ILsaMolecule gradientTemplate,
+            final int valuePosition,
+            final String expression,
+            final ILsaMolecule contextTemplate,
+            final double gradThreshold,
+            final TimeDistribution<List<ILsaMolecule>> timeDistribution
+    ) {
+        super(node, timeDistribution);
         setInputContext(Context.NEIGHBORHOOD);
         setOutputContext(Context.LOCAL);
         gradient = Objects.requireNonNull(gradientTemplate);
         source = Objects.requireNonNull(sourceTemplate);
         context = contextTemplate;
-        environment = env;
+        this.environment = environment;
         if (valuePosition < 0) {
             throw new IllegalArgumentException("The position in the gradient LSA must be a positive integer");
         }
@@ -139,8 +154,10 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             addInboundDependency(context);
             fakeconds.add(new SGFakeConditionAction(context));
         }
-        final boolean usesRoutes = environment instanceof MapEnvironment && (gradientTemplate.toString().contains(LsaMolecule.SYN_ROUTE) || expression.contains(LsaMolecule.SYN_ROUTE));
-        mapenvironment = usesRoutes ? (MapEnvironment<List<ILsaMolecule>>) environment : null;
+        final boolean usesRoutes = this.environment instanceof MapEnvironment
+                && (gradientTemplate.toString().contains(LsaMolecule.SYN_ROUTE)
+                || expression.contains(LsaMolecule.SYN_ROUTE));
+        mapenvironment = usesRoutes ? (MapEnvironment<List<ILsaMolecule>>) this.environment : null;
     }
 
     /**
@@ -232,7 +249,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n, final Time currentTime) {
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> node, final Time currentTime) {
         throw new UnsupportedOperationException();
     }
 
@@ -247,7 +264,8 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         canRun = false;
         final Map<HashString, ITreeNode<?>> matches = new HashMap<>();
         matches.put(LsaMolecule.SYN_T, new NumTreeNode(getTau().toDouble()));
-        final List<ILsaMolecule> createdFromSource = cleanUpExistingAndRecomputeFromSource(matches); //NOPMD: there is a side effect
+        // PMD suppression: there is a side effect
+        final List<ILsaMolecule> createdFromSource = cleanUpExistingAndRecomputeFromSource(matches); //NOPMD
         /*
          * Context computation: if there are contexts matched, use the first.
          * Otherwise, assign zero to every variable not yet instanced (to allow
@@ -324,7 +342,11 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
+    protected void updateInternalStatus(
+            final Time currentTime,
+            final boolean hasBeenExecuted,
+            final Environment<List<ILsaMolecule>, ?> environment
+    ) {
         /*
          * It makes sense to reschedule the reaction if:
          * 
@@ -339,14 +361,16 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
          * my position is changed
          */
         final List<? extends ILsaMolecule> sourceCacheTemp = getNode().getConcentration(source);
-        final List<? extends ILsaMolecule> contextCacheTemp = context == null ? EMPTY_LIST : getNode().getConcentration(context);
+        final List<? extends ILsaMolecule> contextCacheTemp = context == null
+                ? EMPTY_LIST
+                : getNode().getConcentration(context);
         final TIntObjectMap<P> positionCacheTemp = new TIntObjectHashMap<>(positionCache.size());
         final TIntObjectMap<List<? extends ILsaMolecule>> gradCacheTemp = new TIntObjectHashMap<>(gradCache.size());
-        final P curPos = environment.getPosition(getNode());
+        final P curPos = this.environment.getPosition(getNode());
         final boolean positionChanged = !curPos.equals(mypos);
         boolean neighPositionChanged = false;
-        for (final Node<List<ILsaMolecule>> n : environment.getNeighborhood(getNode())) {
-            final P p = environment.getPosition(n);
+        for (final Node<List<ILsaMolecule>> n : this.environment.getNeighborhood(getNode())) {
+            final P p = this.environment.getPosition(n);
             final int nid = n.getId();
             positionCacheTemp.put(nid, p);
             gradCacheTemp.put(n.getId(), n.getConcentration(gradient));
@@ -358,7 +382,12 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
                 routecache.put(nid, mapenvironment.computeRoute(n, getNode()).length());
             }
         }
-        if (!sourceCacheTemp.equals(sourceCache) || !contextCacheTemp.equals(contextCache) || neighPositionChanged || !gradCacheTemp.equals(gradCache) || positionChanged) {
+        if (!sourceCacheTemp.equals(sourceCache)
+                || !contextCacheTemp.equals(contextCache)
+                || neighPositionChanged
+                || !gradCacheTemp.equals(gradCache)
+                || positionChanged
+        ) {
             sourceCache = sourceCacheTemp;
             contextCache = contextCacheTemp;
             positionCache = positionCacheTemp;
@@ -494,12 +523,18 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         }
 
         @Override
-        public Action<List<ILsaMolecule>> cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
+        public Action<List<ILsaMolecule>> cloneAction(
+                Node<List<ILsaMolecule>> node,
+                final Reaction<List<ILsaMolecule>> reaction
+        ) {
             return null;
         }
 
         @Override
-        public Condition<List<ILsaMolecule>> cloneCondition(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
+        public Condition<List<ILsaMolecule>> cloneCondition(
+                final Node<List<ILsaMolecule>> node,
+                final Reaction<List<ILsaMolecule>> reaction
+        ) {
             return null;
         }
 

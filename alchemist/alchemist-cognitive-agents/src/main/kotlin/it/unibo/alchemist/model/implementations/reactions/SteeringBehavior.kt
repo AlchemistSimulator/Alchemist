@@ -35,12 +35,12 @@ open class SteeringBehavior<T>(
     fun steerActions(): List<SteeringAction<T, Euclidean2DPosition>> =
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
-    override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) =
+    override fun cloneOnNewNode(node: Node<T>?, currentTime: Time?) =
         SteeringBehavior(env, node as Pedestrian2D<T>, timeDistribution, steerStrategy)
 
     override fun getRate() = timeDistribution.rate
 
-    override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) = Unit
+    override fun updateInternalStatus(currentTime: Time?, hasBeenExecuted: Boolean, environment: Environment<T, *>?) = Unit
 
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }

@@ -63,8 +63,8 @@ public final class GPSTraceWalker<T> extends MoveOnMapWithGPS<T> {
     }
 
     @Override
-    public GPSTraceWalker<T> cloneAction(final Node<T> n, final Reaction<T> r) {
-        return new GPSTraceWalker<>(getEnvironment(), n, r, getTrace());
+    public GPSTraceWalker<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+        return new GPSTraceWalker<>(getEnvironment(), node, reaction, getTrace());
     }
 
 }

@@ -74,7 +74,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     @Override 
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<Double, ?> env) {
+    protected void updateInternalStatus(final Time currentTime, final boolean hasBeenExecuted, final Environment<Double, ?> environment) {
         if (neighborConditionsPresent) {
             validNeighbors = getConditions().stream()
                 .filter(it -> it instanceof AbstractNeighborCondition)
@@ -88,7 +88,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
                         "At least a neighbor condition is present, but the mapping was empty"
                 ));
         }
-        super.updateInternalStatus(curTime, executed, env);
+        super.updateInternalStatus(currentTime, hasBeenExecuted, environment);
     }
 
     @Override 
@@ -114,9 +114,9 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     @Override
-    public void setConditions(final List<Condition<Double>> c) {
-        super.setConditions(c);
-        neighborConditionsPresent = c.stream().anyMatch(it -> it instanceof AbstractNeighborCondition);
+    public void setConditions(final List<Condition<Double>> conditions) {
+        super.setConditions(conditions);
+        neighborConditionsPresent = conditions.stream().anyMatch(it -> it instanceof AbstractNeighborCondition);
     }
 
     private static final class Container {

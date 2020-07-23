@@ -48,8 +48,8 @@ public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends Ab
     }
 
     @Override
-    public MoveForwardAndTeleport<T, P> cloneAction(final Node<T> n, final Reaction<T> r) {
-        return new MoveForwardAndTeleport<>(getEnvironment(), n, dx, minx, maxx);
+    public MoveForwardAndTeleport<T, P> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+        return new MoveForwardAndTeleport<>(getEnvironment(), node, dx, minx, maxx);
     }
 
     @Override

@@ -59,7 +59,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     }
 
     @Override
-    public abstract LsaAbstractCondition cloneCondition(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
+    public abstract LsaAbstractCondition cloneCondition(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
 
     /**
      * @param partialInstance

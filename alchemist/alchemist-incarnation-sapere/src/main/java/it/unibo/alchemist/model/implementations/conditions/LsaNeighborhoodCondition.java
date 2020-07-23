@@ -50,8 +50,8 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
     }
 
     @Override
-    public LsaNeighborhoodCondition cloneCondition(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
-        return new LsaNeighborhoodCondition((ILsaNode) n, getMolecule(), env);
+    public LsaNeighborhoodCondition cloneCondition(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> r) {
+        return new LsaNeighborhoodCondition((ILsaNode) node, getMolecule(), env);
     }
 
     @Override

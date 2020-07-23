@@ -66,8 +66,8 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     }
 
     @Override
-    public CellMove<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new CellMove<>(getEnvironment(), n, inPer, delta);
+    public CellMove<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new CellMove<>(getEnvironment(), node, inPer, delta);
     }
 
     @Override

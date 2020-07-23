@@ -39,6 +39,6 @@ open class RandomWalker<T>(
     RandomTarget<T>(environment, node, randomGenerator, distanceDistribution),
     GloballyConstantSpeed(reaction, speed)
 ) {
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        RandomWalker(n, r, environment, randomGenerator, speed, distanceDistribution)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+        RandomWalker(node, reaction, environment, randomGenerator, speed, distanceDistribution)
 }

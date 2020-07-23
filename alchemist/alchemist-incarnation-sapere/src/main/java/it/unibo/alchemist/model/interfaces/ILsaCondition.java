@@ -38,7 +38,7 @@ public interface ILsaCondition extends Condition<List<ILsaMolecule>> {
     );
 
     @Override
-    ILsaCondition cloneCondition(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
+    ILsaCondition cloneCondition(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
 
     @Override
     ILsaNode getNode();

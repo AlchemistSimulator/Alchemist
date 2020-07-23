@@ -117,15 +117,15 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n, final Time currentTime) {
-        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) n, rng, timedist.clone(currentTime));
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> node, final Time currentTime) {
+        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) node, rng, timedist.clone(currentTime));
         final ArrayList<Condition<List<ILsaMolecule>>> c = new ArrayList<>();
         for (final Condition<List<ILsaMolecule>> cond : getConditions()) {
-            c.add(cond.cloneCondition(n, res));
+            c.add(cond.cloneCondition(node, res));
         }
         final ArrayList<Action<List<ILsaMolecule>>> a = new ArrayList<>();
         for (final Action<List<ILsaMolecule>> act : getActions()) {
-            a.add(act.cloneAction(n, res));
+            a.add(act.cloneAction(node, res));
         }
         res.setActions(a);
         res.setConditions(c);
@@ -348,13 +348,13 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public void setActions(final List<Action<List<ILsaMolecule>>> a) {
-        setConditionsAndActions(getConditions(), a);
+    public void setActions(final List<Action<List<ILsaMolecule>>> actions) {
+        setConditionsAndActions(getConditions(), actions);
     }
 
     @Override
-    public void setConditions(final List<Condition<List<ILsaMolecule>>> a) {
-        setConditionsAndActions(a, getActions());
+    public void setConditions(final List<Condition<List<ILsaMolecule>>> conditions) {
+        setConditionsAndActions(conditions, getActions());
     }
 
     private void setConditionsAndActions(final List<? extends Condition<List<ILsaMolecule>>> c, final List<? extends Action<List<ILsaMolecule>>> a) {

@@ -48,8 +48,8 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     }
 
     @Override
-    public JunctionPresentInCell cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        return new JunctionPresentInCell(env, n, j);
+    public JunctionPresentInCell cloneCondition(final Node<Double> node, final Reaction<Double> r) {
+        return new JunctionPresentInCell(env, node, j);
     }
 
     @Override

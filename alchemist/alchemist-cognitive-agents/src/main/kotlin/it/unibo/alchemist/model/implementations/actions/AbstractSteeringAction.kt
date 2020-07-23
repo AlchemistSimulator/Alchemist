@@ -46,9 +46,9 @@ abstract class AbstractSteeringAction<T, P, A>(
 
     override fun getNode(): Pedestrian<T, P, A> = pedestrian
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, AbstractSteeringAction<T, P, A>>(n) {
-            cloneAction(it, r)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> =
+        requireNodeTypeAndProduce<Pedestrian<T, P, A>, AbstractSteeringAction<T, P, A>>(node) {
+            cloneAction(it, reaction)
         }
 
     protected abstract fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>): AbstractSteeringAction<T, P, A>

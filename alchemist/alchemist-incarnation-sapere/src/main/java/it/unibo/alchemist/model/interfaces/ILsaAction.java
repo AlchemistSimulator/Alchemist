@@ -8,12 +8,11 @@
 package it.unibo.alchemist.model.interfaces;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import org.danilopianini.lang.HashString;
+import org.danilopianini.util.ListSet;
 
 import java.util.List;
 import java.util.Map;
-
-import org.danilopianini.lang.HashString;
-import org.danilopianini.util.ListSet;
 
 /**
  */
@@ -33,6 +32,6 @@ public interface ILsaAction extends Action<List<ILsaMolecule>> {
     ListSet<? extends Dependency> getOutboundDependencies();
 
     @Override
-    ILsaAction cloneAction(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
+    ILsaAction cloneAction(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
 
 }

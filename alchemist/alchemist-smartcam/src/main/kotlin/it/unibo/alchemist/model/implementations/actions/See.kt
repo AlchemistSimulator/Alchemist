@@ -42,8 +42,8 @@ class See @JvmOverloads constructor(
         node.setConcentration(outputMolecule, emptyList<Any>())
     }
 
-    override fun cloneAction(n: Node<Any>, r: Reaction<Any>) =
-        See(n, env, distance, angle, outputMolecule, filterByMolecule)
+    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
+        See(node, env, distance, angle, outputMolecule, filterByMolecule)
 
     override fun execute() {
         var seen = fieldOfView.influentialNodes()

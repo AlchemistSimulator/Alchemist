@@ -99,7 +99,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the time distribution of the reaction
      * @param reaction
      *            the reaction hosting this object
-     * @param param
+     * @param additionalParameters
      *            a {@link String} describing the object
      * @return a new {@link Condition}
      */
@@ -109,13 +109,13 @@ public interface Incarnation<T, P extends Position<? extends P>> {
             Node<T> node,
             TimeDistribution<T> time,
             Reaction<T> reaction,
-            String param
+            String additionalParameters
     );
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param node
      *            the node that will host this object
@@ -123,17 +123,17 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the time distribution of the reaction
      * @param reaction
      *            the reaction hosting this object
-     * @param param
+     * @param additionalParameters
      *            a {@link String} describing the object
      * @return a new {@link Action}
      */
     Action<T> createAction(
-            RandomGenerator rand,
-            Environment<T, P> env,
+            RandomGenerator randomGenerator,
+            Environment<T, P> environment,
             Node<T> node,
             TimeDistribution<T> time,
             Reaction<T> reaction,
-            String param
+            String additionalParameters
     );
 
 }

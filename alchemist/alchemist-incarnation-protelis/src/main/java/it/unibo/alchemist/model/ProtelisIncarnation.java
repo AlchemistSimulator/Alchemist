@@ -103,13 +103,13 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     @SuppressWarnings("unchecked")
-    public Action<Object> createAction(final RandomGenerator rand, final Environment<Object, P> env,
-            final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
-            final String param) {
-        Objects.requireNonNull(param);
+    public Action<Object> createAction(final RandomGenerator randomGenerator, final Environment<Object, P> environment,
+                                       final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
+                                       final String additionalParameters) {
+        Objects.requireNonNull(additionalParameters);
         if (node instanceof ProtelisNode) {
             final ProtelisNode<P> pNode = (ProtelisNode<P>) node;
-            if (param.equalsIgnoreCase("send")) {
+            if (additionalParameters.equalsIgnoreCase("send")) {
                 final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
                     .parallelStream()
                     .flatMap(r -> r.getActions().parallelStream())
@@ -129,9 +129,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 return new SendToNeighbor(pNode, reaction, pList.get(0));
             } else {
                 try {
-                    return new RunProtelisProgram<>(env, pNode, reaction, rand, param);
+                    return new RunProtelisProgram<>(environment, pNode, reaction, randomGenerator, additionalParameters);
                 } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
-                    throw new IllegalArgumentException("Could not create the requested Protelis program: " + param, e);
+                    throw new IllegalArgumentException("Could not create the requested Protelis program: " + additionalParameters, e);
                 }
             }
         }
@@ -155,7 +155,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     @Override
     public Condition<Object> createCondition(final RandomGenerator randomGenerator, final Environment<Object, P> environment,
                                              final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
-                                             final String param) {
+                                             final String additionalParameters) {
         if (node instanceof ProtelisNode) {
             final ProtelisNode<?> pNode = (ProtelisNode<?>) node;
             /*

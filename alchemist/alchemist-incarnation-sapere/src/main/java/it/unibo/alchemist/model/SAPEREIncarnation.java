@@ -231,25 +231,25 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
     public Condition<List<ILsaMolecule>> createCondition(final RandomGenerator randomGenerator,
                                                          final Environment<List<ILsaMolecule>, P> environment, final Node<List<ILsaMolecule>> node,
                                                          final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
-                                                         final String param) {
-        if (param.startsWith("+")) {
-            return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(param.substring(1)), environment);
+                                                         final String additionalParameters) {
+        if (additionalParameters.startsWith("+")) {
+            return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment);
         }
-        return new LsaStandardCondition(createMolecule(param), (LsaNode) node);
+        return new LsaStandardCondition(createMolecule(additionalParameters), (LsaNode) node);
     }
 
     @Override
-    public Action<List<ILsaMolecule>> createAction(final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env, final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
-            final String param) {
-        if (param.startsWith("+")) {
-            return new LsaRandomNeighborAction((LsaNode) node, createMolecule(param.substring(1)), env, rand);
+    public Action<List<ILsaMolecule>> createAction(final RandomGenerator randomGenerator,
+                                                   final Environment<List<ILsaMolecule>, P> environment, final Node<List<ILsaMolecule>> node,
+                                                   final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
+                                                   final String additionalParameters) {
+        if (additionalParameters.startsWith("+")) {
+            return new LsaRandomNeighborAction((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment, randomGenerator);
         }
-        if (param.startsWith("*")) {
-            return new LsaAllNeighborsAction((LsaNode) node, createMolecule(param.substring(1)), env);
+        if (additionalParameters.startsWith("*")) {
+            return new LsaAllNeighborsAction((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment);
         }
-        return new LsaStandardAction(createMolecule(param), (LsaNode) node, rand);
+        return new LsaStandardAction(createMolecule(additionalParameters), (LsaNode) node, randomGenerator);
     }
 
     @Override

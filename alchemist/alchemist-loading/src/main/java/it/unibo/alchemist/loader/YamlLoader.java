@@ -413,7 +413,9 @@ public final class YamlLoader implements Loader {
                                 })
                     ), factory);
             extractors = Collections.unmodifiableList(((List<?>) extrObj).stream()
-                    .map(obj -> extractorBuilder.build(obj instanceof CharSequence ? ImmutableMap.of(NAME, obj.toString()) : obj))
+                    .map(obj -> extractorBuilder.build(obj instanceof CharSequence
+                            ? ImmutableMap.of(NAME, obj.toString())
+                            : obj))
                     .collect(Collectors.toList()));
         } else {
             throw new IllegalAlchemistYAMLException("Exports must be a YAML map.");

@@ -24,7 +24,7 @@ public final class FromGPSTrace implements Displacement {
     private final int numNode;
 
     /**
-     * @param numNode
+     * @param nodeCount
      *            number of node request
      * @param path
      *            path with the gps tracks
@@ -37,17 +37,17 @@ public final class FromGPSTrace implements Displacement {
      * @throws IOException if there are errors accessing the file system
      */
     public FromGPSTrace(
-            final int numNode,
+            final int nodeCount,
             final String path,
             final boolean cycle,
             final String normalizer,
             final Object... args
     ) throws IOException {
         traces = new TraceLoader(path, cycle, normalizer, args);
-        if (traces.size().map(size -> size < numNode).orElse(false)) {
-            throw new IllegalArgumentException(numNode + "traces required, " + traces.size().orElse(-1) + " traces available");
+        if (traces.size().map(size -> size < nodeCount).orElse(false)) {
+            throw new IllegalArgumentException(nodeCount + "traces required, " + traces.size().orElse(-1) + " traces available");
         }
-        this.numNode = numNode;
+        this.numNode = nodeCount;
     }
 
     @Override

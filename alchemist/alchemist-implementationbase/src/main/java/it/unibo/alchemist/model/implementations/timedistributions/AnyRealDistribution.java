@@ -32,7 +32,10 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the implementations of RealDistribution also implement Serializable")
+    @SuppressFBWarnings(
+            value = "SE_BAD_FIELD",
+            justification = "All the implementations of RealDistribution also implement Serializable"
+    )
     private final RealDistribution distribution;
 
     /**

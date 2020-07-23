@@ -72,7 +72,11 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
         /*
          * Check if there is actual intersection
          */
-        if (intersectionOutOfRange(xi, x1, x2) || intersectionOutOfRange(xi, x3, x4) || intersectionOutOfRange(yi, y1, y2) || intersectionOutOfRange(yi, y3, y4)) {
+        if (intersectionOutOfRange(xi, x1, x2)
+                || intersectionOutOfRange(xi, x3, x4)
+                || intersectionOutOfRange(yi, y1, y2)
+                || intersectionOutOfRange(yi, y3, y4)
+        ) {
             return new double[] { x2, y2 };
         }
         return new double[] { xi, yi };

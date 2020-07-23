@@ -44,7 +44,11 @@ public final class RealDistributionUtil {
      *             if the creation can't be completed for any reason
      */
     @SuppressWarnings("unchecked")
-    public static RealDistribution makeRealDistribution(final RandomGenerator rng, final String shortname, final double... args) {
+    public static RealDistribution makeRealDistribution(
+            final RandomGenerator rng,
+            final String shortname,
+            final double... args
+    ) {
         final String name = shortname + (shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution");
         return REAL_DISTRIBUTIONS.stream()
             .filter(stat -> stat.getSimpleName().equalsIgnoreCase(requireNonNull(name)))

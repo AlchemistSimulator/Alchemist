@@ -45,8 +45,13 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
      * @param environment the {@link Environment} where the node is located.
      * @param randomGen the random generator
      */
-    public ChangeBiomolConcentrationInEnv(final Environment<Double, ?> environment, final Node<Double> node, final Biomolecule biomolecule,
-            final double deltaCon, final RandomGenerator randomGen) {
+    public ChangeBiomolConcentrationInEnv(
+            final Environment<Double, ?> environment,
+            final Node<Double> node,
+            final Biomolecule biomolecule,
+            final double deltaCon,
+            final RandomGenerator randomGen
+    ) {
         super(node, randomGen);
         if (node instanceof EnvironmentNode || node instanceof CellNode) {
             this.biomolecule = biomolecule;

@@ -244,7 +244,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
              * If this node already has some modified molecule, copy them.
              * Otherwise, create a new list.
              */
-            final List<ILsaMolecule> newRetrieved = oldRetrieved == null ? new ArrayList<ILsaMolecule>() : new ArrayList<>(oldRetrieved);
+            final List<ILsaMolecule> newRetrieved = oldRetrieved == null ? new ArrayList<>() : new ArrayList<>(oldRetrieved);
             newRetrieved.add(instance);
             contentMap.put(node, newRetrieved);
             retrieved.add(contentMap);
@@ -303,7 +303,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                  * If this node already has some modified molecule, copy them.
                  * Otherwise, create a new list.
                  */
-                final List<ILsaMolecule> newRetrieved = oldRetrieved == null ? new ArrayList<ILsaMolecule>(node.getLsaSpace().size()) : new ArrayList<>(oldRetrieved);
+                final List<ILsaMolecule> newRetrieved = oldRetrieved == null ? new ArrayList<>(node.getLsaSpace().size()) : new ArrayList<>(oldRetrieved);
                 newRetrieved.add(instance);
                 contentMap.put(node, newRetrieved);
                 retrieved.add(contentMap);

@@ -55,8 +55,7 @@ public final class RealDistributionUtil {
         return REAL_DISTRIBUTIONS.stream()
             .filter(stat -> stat.getSimpleName().equalsIgnoreCase(requireNonNull(name)))
             .findAny()
-            .map(Stream::of)
-            .orElseGet(Stream::empty)
+            .stream()
             .map(Class::getConstructors)
             .flatMap(Arrays::stream)
             .map(c -> (Constructor<? extends RealDistribution>) c)
@@ -64,12 +63,12 @@ public final class RealDistributionUtil {
             .filter(c -> c.getParameterTypes()[0].isAssignableFrom(requireNonNull(randomGenerator).getClass()))
             .findAny()
             .map(c -> {
-                final Object[] arguments = Stream.concat(
+                final Object[] actualArguments = Stream.concat(
                         Stream.of(randomGenerator),
                         Arrays.stream(arguments).boxed()
                 ).toArray();
                 try {
-                    return c.newInstance(arguments);
+                    return c.newInstance(actualArguments);
                 } catch (
                         IllegalAccessException
                         | InstantiationException

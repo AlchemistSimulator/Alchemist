@@ -7,10 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import java.util.stream.Collectors;
-
-import org.danilopianini.util.ListSet;
-
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
@@ -18,6 +14,9 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.danilopianini.util.ListSet;
+
+import java.util.stream.Collectors;
 
 /**
  * This linking rule dynamically searches for the best radius for each device,
@@ -80,7 +79,14 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
      *            the amount of metres the range will be changed if out of the
      *            bounds
      */
-    public AdaptiveRange(final double radius, final double minrange, final double maxrange, final int num, final int tolerance, final double adjustment) {
+    public AdaptiveRange(
+            final double radius,
+            final double minrange,
+            final double maxrange,
+            final int num,
+            final int tolerance,
+            final double adjustment
+    ) {
         super(radius);
         n = Math.max(num, 0);
         t = tolerance;
@@ -120,7 +126,13 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
      *            the amount of metres the range will be changed if out of the
      *            bounds
      */
-    public AdaptiveRange(final double radius, final double minrange, final int num, final int tolerance, final double adjustment) {
+    public AdaptiveRange(
+            final double radius,
+            final double minrange,
+            final int num,
+            final int tolerance,
+            final double adjustment
+    ) {
         this(radius, minrange, DEFAULT_MAXRANGE, num, tolerance, adjustment);
     }
 
@@ -174,17 +186,29 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
     }
 
     /**
-     * Acts as a filter. It is called to test if the nodes in the computed neighborhood (namely, those nodes within the communication range of the current node) should be removed or not, and must return true if the node should not be inserted in the neighborhood. This implementation checks that the actual distance between the nodes is shorter than the communication range of the neighbor.
+     * Acts as a filter.
+     * It is called to test if the nodes in the computed neighborhood
+     * (namely, those nodes within the communication range of the current node)
+     * should be removed or not, and must return true if the node should not be inserted in the neighborhood.
+     *
+     * This implementation checks that the actual distance between the nodes is shorter
+     * than the communication range of the neighbor.
      * 
-     * @param env the current environment
+     * @param environment the current environment
      * @param center the current node
      * @param neighbor the neighbor to test
      * @param centerRange the communication range of the current node
      * @param neighRange the communication range of the neighbor
      * @return true if the node must be removed, false otherwise
      */
-    protected boolean conditionForRemoval(final Environment<T, P> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
-        return env.getDistanceBetweenNodes(center, neighbor) > neighRange;
+    protected boolean conditionForRemoval(
+            final Environment<T, P> environment,
+            final Node<T> center,
+            final Node<T> neighbor,
+            final double centerRange,
+            final double neighRange
+    ) {
+        return environment.getDistanceBetweenNodes(center, neighbor) > neighRange;
     }
 
 }

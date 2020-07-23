@@ -34,8 +34,8 @@ public final class FakeMove<T, P extends Position<P>> extends AbstractMoveNode<T
     }
 
     @Override
-    public Action<T> cloneAction(final Node<T> n, final Reaction<T> r) {
-        return new FakeMove<>(getEnvironment(), n);
+    public Action<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+        return new FakeMove<>(getEnvironment(), node);
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -65,7 +66,8 @@ public class TestGPSLoader {
     private static final String CLASS_TIME_NO_ALIGNMENT = "NoAlignment";
     private static final Set<String> CLASS_ALIGNMENT_NO_ARG = new HashSet<>();
     private static final GPSTimeAlignment ALIGNMENT = new AlignToFirstTrace();
-
+    private static final List<String> ERRORS =
+            ImmutableList.of(NO_SEGMENTS, EMPTY_SEGMENT, POINT_WITHOUT_TIME, WRONG_EXTENSION, UNRECOGNIZED_EXTENSION);
     private static final int NUM_MAX_TRACES = 6;
     private static final int TOTAL_POINTS = 12_196;
 
@@ -110,7 +112,7 @@ public class TestGPSLoader {
      */
     @Test
     public void testError() throws IOException {
-        for (final String error : ImmutableList.of(NO_SEGMENTS, EMPTY_SEGMENT, POINT_WITHOUT_TIME, WRONG_EXTENSION, UNRECOGNIZED_EXTENSION)) {
+        for (final String error : ERRORS) {
             try {
                 fail("Expected error during object creation for " + error + ", got: "
                         + new TraceLoader(error, CLASS_TIME_ALIGNMENT_TO_FIRST_TRACE));

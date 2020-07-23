@@ -82,7 +82,10 @@ public final class DrawShape implements Effect {
     @Nullable
     @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private transient Object molStringCached;
-    @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "If null, it gets reinitialized anyway if needed")
+    @SuppressFBWarnings(
+            value = "SE_TRANSIENT_FIELD_NOT_RESTORED",
+            justification = "If null, it gets reinitialized anyway if needed"
+    )
     private transient CollectionWithCurrentElement<String> prevIncarnation;
     private transient Incarnation<?, ?> incarnation;
     /**
@@ -93,7 +96,10 @@ public final class DrawShape implements Effect {
         if (availableIncarnations.isEmpty()) {
             throw new IllegalStateException(getClass().getSimpleName() + " can't work if no incarnation is available.");
         }
-        curIncarnation = new ImmutableCollectionWithCurrentElement<>(availableIncarnations, availableIncarnations.stream().findAny().get());
+        curIncarnation = new ImmutableCollectionWithCurrentElement<>(
+                availableIncarnations,
+                availableIncarnations.stream().findAny().get()
+        );
     }
 
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")

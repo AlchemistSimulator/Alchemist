@@ -20,14 +20,17 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 class Nearest<T>(
     environment: Euclidean2DEnvironment<T>,
     pedestrian: Pedestrian2D<T>
-) : Filtered<T, Euclidean2DPosition>(DistanceWeighted(environment, pedestrian), {
-    partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, otherActions) ->
-        listOfNotNull(
-            groupActions.pickNearestOrFirst(environment, pedestrian),
-            otherActions.pickNearestOrFirst(environment, pedestrian)
-        )
+) : Filtered<T, Euclidean2DPosition>(
+    DistanceWeighted(environment, pedestrian),
+    {
+        partition { it is GroupSteeringAction<T, Euclidean2DPosition> }.let { (groupActions, otherActions) ->
+            listOfNotNull(
+                groupActions.pickNearestOrFirst(environment, pedestrian),
+                otherActions.pickNearestOrFirst(environment, pedestrian)
+            )
+        }
     }
-})
+)
 
 /**
  * Picks the [SteeringActionWithTarget] whose target is nearest to the [pedestrian]'s current position, or the first

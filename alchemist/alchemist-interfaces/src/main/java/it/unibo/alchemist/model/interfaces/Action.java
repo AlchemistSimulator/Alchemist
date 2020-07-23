@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import java.io.Serializable;
-
 import org.danilopianini.util.ListSet;
+
+import java.io.Serializable;
 
 /**
  * @param <T>
@@ -26,13 +26,13 @@ public interface Action<T> extends Serializable {
      * useful to support runtime creation of nodes with the same reaction
      * programming, e.g. for morphogenesis.
      * 
-     * @param n
+     * @param node
      *            The node where to clone this {@link Action}
-     * @param r
+     * @param reaction
      *            The reaction to which the CURRENT action is assigned
      * @return the cloned action
      */
-    Action<T> cloneAction(Node<T> n, Reaction<T> r);
+    Action<T> cloneAction(Node<T> node, Reaction<T> reaction);
 
     /**
      * Effectively executes this action.

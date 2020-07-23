@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.interfaces;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @param <T>
@@ -24,13 +25,13 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * 
      * @param node
      *            the node
-     * @param mol
+     * @param molecule
      *            the molecule to analyze
-     * @param prop
+     * @param property
      *            the property to extract
      * @return a numeric value representing the property
      */
-    double getProperty(Node<T> node, Molecule mol, String prop);
+    double getProperty(Node<T> node, Molecule molecule, String property);
 
     /**
      * Parses a {@link String}, and provides a {@link Molecule}.
@@ -50,48 +51,59 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     T createConcentration(String s);
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
-     * @param param
+     * @param parameter
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    Node<T> createNode(RandomGenerator rand, Environment<T, P> env, String param);
+    Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> environment, @Nullable String parameter);
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param node
      *            the node that will host this object
-     * @param param
+     * @param parameter
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    TimeDistribution<T> createTimeDistribution(RandomGenerator rand, Environment<T, P> env, Node<T> node, String param);
+    TimeDistribution<T> createTimeDistribution(
+            RandomGenerator randomGenerator,
+            Environment<T, P> environment,
+            Node<T> node,
+            @Nullable String parameter
+    );
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param node
      *            the node that will host this object
-     * @param time
+     * @param timeDistribution
      *            the time distribution of the reaction
-     * @param param
+     * @param parameter
      *            a {@link String} describing the object
      * @return a new {@link Reaction}
      */
-    Reaction<T> createReaction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, String param);
+    Reaction<T> createReaction(
+            RandomGenerator randomGenerator,
+            Environment<T, P> environment,
+            Node<T> node,
+            TimeDistribution<T> timeDistribution,
+            String parameter
+    );
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param node
      *            the node that will host this object
@@ -99,16 +111,23 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the time distribution of the reaction
      * @param reaction
      *            the reaction hosting this object
-     * @param param
+     * @param additionalParameters
      *            a {@link String} describing the object
      * @return a new {@link Condition}
      */
-    Condition<T> createCondition(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
+    Condition<T> createCondition(
+            RandomGenerator randomGenerator,
+            Environment<T, P> environment,
+            Node<T> node,
+            TimeDistribution<T> time,
+            Reaction<T> reaction,
+            String additionalParameters
+    );
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param node
      *            the node that will host this object
@@ -116,10 +135,17 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the time distribution of the reaction
      * @param reaction
      *            the reaction hosting this object
-     * @param param
+     * @param additionalParameters
      *            a {@link String} describing the object
      * @return a new {@link Action}
      */
-    Action<T> createAction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
+    Action<T> createAction(
+            RandomGenerator randomGenerator,
+            Environment<T, P> environment,
+            Node<T> node,
+            TimeDistribution<T> time,
+            Reaction<T> reaction,
+            String additionalParameters
+    );
 
 }

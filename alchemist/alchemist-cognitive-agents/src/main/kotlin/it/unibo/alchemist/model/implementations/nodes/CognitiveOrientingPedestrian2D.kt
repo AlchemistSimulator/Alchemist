@@ -42,7 +42,8 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
     randomGenerator,
     knowledgeDegree = knowledgeDegree,
     group = group
-), CognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
+),
+    CognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
 
     /*
      * The cognitive part of the pedestrian.

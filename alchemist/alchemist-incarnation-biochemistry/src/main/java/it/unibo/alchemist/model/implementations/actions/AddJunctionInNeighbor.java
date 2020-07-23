@@ -31,26 +31,31 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     /**
      * 
      * @param junction the junction
-     * @param n the current node which contains this action. It is NOT the node where the junction will be created.
-     * @param e the environment
-     * @param rg the random generator
+     * @param node the current node which contains this action. It is NOT the node where the junction will be created.
+     * @param environment the environment
+     * @param randomGenerator the random generator
      */
-    public AddJunctionInNeighbor(final Environment<Double, P> e, final CellNode<P> n, final Junction junction, final RandomGenerator rg) {
-        super(n, e, rg);
+    public AddJunctionInNeighbor(
+            final Environment<Double, P> environment,
+            final CellNode<P> node,
+            final Junction junction,
+            final RandomGenerator randomGenerator
+    ) {
+        super(node, environment, randomGenerator);
         declareDependencyTo(junction);
         jun = junction;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public AddJunctionInNeighbor<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        if (n instanceof CellNode) {
+    public AddJunctionInNeighbor<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        if (node instanceof CellNode) {
             return new AddJunctionInNeighbor<>(
                     (Environment<Double, P>) getEnvironment(),
-                    (CellNode<P>) n,
+                    (CellNode<P>) node,
                     jun, getRandomGenerator());
         }
-        throw new IllegalArgumentException("Node must be CellNode, found " + n + " of type: " + n.getClass());
+        throw new IllegalArgumentException("Node must be CellNode, found " + node + " of type: " + node.getClass());
     }
 
     /**

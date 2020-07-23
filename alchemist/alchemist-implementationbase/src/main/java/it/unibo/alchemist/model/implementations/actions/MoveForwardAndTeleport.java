@@ -34,7 +34,13 @@ public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends Ab
      * @param minX minimum x point
      * @param maxX maximum x point
      */
-    public MoveForwardAndTeleport(final Environment<T, P> environment, final Node<T> node, final double deltaX, final double minX, final double maxX) {
+    public MoveForwardAndTeleport(
+            final Environment<T, P> environment,
+            final Node<T> node,
+            final double deltaX,
+            final double minX,
+            final double maxX
+    ) {
         super(environment, node, true);
         dx = deltaX;
         minx = minX;
@@ -42,8 +48,8 @@ public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends Ab
     }
 
     @Override
-    public MoveForwardAndTeleport<T, P> cloneAction(final Node<T> n, final Reaction<T> r) {
-        return new MoveForwardAndTeleport<>(getEnvironment(), n, dx, minx, maxx);
+    public MoveForwardAndTeleport<T, P> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+        return new MoveForwardAndTeleport<>(getEnvironment(), node, dx, minx, maxx);
     }
 
     @Override

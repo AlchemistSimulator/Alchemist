@@ -59,7 +59,12 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * @param m2
      *            The second molecule template it modifies
      */
-    public SAPERENeighborAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2) {
+    public SAPERENeighborAgent(
+            final Environment<List<ILsaMolecule>, P> env,
+            final ILsaNode node,
+            final ILsaMolecule m1,
+            final ILsaMolecule m2
+    ) {
         super(node, m1, m2);
         environment = env;
     }
@@ -80,7 +85,12 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * @param m3
      *            The third molecule template it modifies
      */
-    public SAPERENeighborAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule m1, final ILsaMolecule m2, final ILsaMolecule m3) {
+    public SAPERENeighborAgent(
+            final Environment<List<ILsaMolecule>, P> env,
+            final ILsaNode node, final ILsaMolecule m1,
+            final ILsaMolecule m2,
+            final ILsaMolecule m3
+    ) {
         super(node, m1, m2, m3);
         environment = env;
     }

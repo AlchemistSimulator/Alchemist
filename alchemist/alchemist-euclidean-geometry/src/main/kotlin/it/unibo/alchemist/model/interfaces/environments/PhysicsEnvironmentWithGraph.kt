@@ -19,7 +19,8 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * An [EnvironmentWithGraph] supporting physics.
  */
-interface PhysicsEnvironmentWithGraph<W, T, P, A, N, E, F> : EnvironmentWithGraph<W, T, P, A, N, E>,
+interface PhysicsEnvironmentWithGraph<W, T, P, A, N, E, F> :
+    EnvironmentWithGraph<W, T, P, A, N, E>,
     PhysicsEnvironment<T, P, A, F>
     where W : Obstacle<P>,
           P : Position<P>, P : Vector<P>,

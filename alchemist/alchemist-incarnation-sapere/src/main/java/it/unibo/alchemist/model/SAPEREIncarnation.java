@@ -32,8 +32,6 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -46,10 +44,10 @@ import java.util.regex.Pattern;
  *
  * @param <P> position type
  */
-public final class SAPEREIncarnation<P extends Position<? extends P>> implements Incarnation<List<ILsaMolecule>, P>, Serializable {
+public final class SAPEREIncarnation<P extends Position<? extends P>>
+        implements Incarnation<List<ILsaMolecule>, P>, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger L = LoggerFactory.getLogger(SAPEREIncarnation.class);
     private static final String CONDITION_GROUP = "condition";
     private static final String CONDITIONS_GROUP = "conditions";
     private static final String ACTION_GROUP = "action";
@@ -67,7 +65,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
     static {
         final String matchStart = "(?:\\s*(?<";
         final String condition = matchStart + CONDITION_GROUP + ">\\+";
-        final String action = matchStart + ACTION_GROUP + ">(?:\\+|\\*)";
+        final String action = matchStart + ACTION_GROUP + ">[+*]";
         final String matchEnd = "?\\{[^\\{\\}]+?\\}))";
         MATCH_CONDITION = Pattern.compile(condition + matchEnd);
         MATCH_ACTION = Pattern.compile(action + matchEnd);
@@ -80,22 +78,30 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
         MATCH_REACTION = Pattern.compile(REACTION_REGEX);
     }
 
-    @SuppressFBWarnings(value = "ES_COMPARING_PARAMETER_STRING_WITH_EQ", justification = "Pointer comparison is intentional")
+    @SuppressFBWarnings(
+            value = "ES_COMPARING_PARAMETER_STRING_WITH_EQ",
+            justification = "Pointer comparison is intentional"
+    )
     @Override
-    public double getProperty(final Node<List<ILsaMolecule>> node, final Molecule mol, final String prop) {
-        if (mol instanceof ILsaMolecule && node instanceof ILsaNode && node.contains(mol)) {
+    public double getProperty(final Node<List<ILsaMolecule>> node, final Molecule molecule, final String property) {
+        if (molecule instanceof ILsaMolecule && node instanceof ILsaNode && node.contains(molecule)) {
             boolean cacheUpdated = false;
-            if (!mol.equals(molCache) || prop != propCache) { // NOPMD: reference comparison is intentional
-                molCache = mol;
-                propCache = prop;
+            if (!molecule.equals(molCache) || property != propCache) { // NOPMD: reference comparison is intentional
+                molCache = molecule;
+                propCache = property;
                 cacheUpdated = true;
             }
-            return sapereProperty((ILsaNode) node, (ILsaMolecule) mol, prop, cacheUpdated);
+            return sapereProperty((ILsaNode) node, (ILsaMolecule) molecule, property, cacheUpdated);
         }
         return Double.NaN;
     }
 
-    private double sapereProperty(final ILsaNode node, final ILsaMolecule molecule, final String prop, final boolean cacheUpdated) {
+    private double sapereProperty(
+            final ILsaNode node,
+            final ILsaMolecule molecule,
+            final String prop,
+            final boolean cacheUpdated
+    ) {
         if (cacheUpdated) {
             saperePropertyNumber = -1;
             for (int i = 0; i < molecule.argsNumber() && saperePropertyNumber == -1; i++) {
@@ -116,8 +122,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
             }
         }
         if (saperePropertyNumber >= 0) {
-            final ILsaNode inode = (ILsaNode) node;
-            final List<ILsaMolecule> concentration = inode.getConcentration(molecule);
+            final List<ILsaMolecule> concentration = node.getConcentration(molecule);
             /*
              * Potential concurrency issue: a size check is mandatory
              */
@@ -147,10 +152,10 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
 
     @Override
     public ILsaNode createNode(
-            final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env,
-            final String param) {
-        return new LsaNode(env);
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
+            final String parameter) {
+        return new LsaNode(environment);
     }
 
     private static TimeDistribution<List<ILsaMolecule>> defaultTD(final RandomGenerator rand) {
@@ -159,36 +164,36 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
 
     @Override
     public TimeDistribution<List<ILsaMolecule>> createTimeDistribution(
-            final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env,
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
             final Node<List<ILsaMolecule>> node,
-            final String param) {
-        if (param == null || param.isEmpty()) {
-            return defaultTD(rand);
+            final String parameter) {
+        if (parameter == null || parameter.isEmpty()) {
+            return defaultTD(randomGenerator);
         }
-        final String[] actualArgs = param.split(",");
+        final String[] actualArgs = parameter.split(",");
         switch (actualArgs.length) {
         case 0:
-            return defaultTD(rand);
+            return defaultTD(randomGenerator);
         case 1:
-            return new SAPEREExponentialTime(actualArgs[0], rand);
+            return new SAPEREExponentialTime(actualArgs[0], randomGenerator);
         case 2:
-            return new SAPEREExponentialTime(actualArgs[0], new DoubleTime(Double.parseDouble(actualArgs[1])), rand);
+            return new SAPEREExponentialTime(actualArgs[0], new DoubleTime(Double.parseDouble(actualArgs[1])), randomGenerator);
         default:
-            throw new IllegalArgumentException(param + " could not be used");
+            throw new IllegalArgumentException(parameter + " could not be used");
         }
     }
 
     @Override
     public Reaction<List<ILsaMolecule>> createReaction(
-            final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env,
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
             final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> time,
-            final String param) {
-        final SAPEREReaction result = new SAPEREReaction(env, (LsaNode) node, rand, time);
-        if (param != null && !param.isEmpty()) {
-            final Matcher rMatcher = MATCH_REACTION.matcher(param);
+            final TimeDistribution<List<ILsaMolecule>> timeDistribution,
+            final String parameter) {
+        final SAPEREReaction result = new SAPEREReaction(environment, (LsaNode) node, randomGenerator, timeDistribution);
+        if (parameter != null && !parameter.isEmpty()) {
+            final Matcher rMatcher = MATCH_REACTION.matcher(parameter);
             if (rMatcher.matches()) {
                 final List<Condition<List<ILsaMolecule>>> conditions = new LinkedList<>();
                 final String conditionsSpec = rMatcher.group(CONDITIONS_GROUP);
@@ -196,10 +201,14 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
                     final Matcher condMatcher = MATCH_CONDITION.matcher(conditionsSpec);
                     while (condMatcher.find()) {
                         final String condition = condMatcher.group(CONDITION_GROUP);
-                        conditions.add(createCondition(rand, env, node, time, result, condition));
+                        conditions.add(createCondition(randomGenerator, environment, node, timeDistribution, result, condition));
                     }
                 } else {
-                    illegalSpec("not a sequence of valid conditions (curly bracket enclosed LSAs, with optional '+' prefix)", conditionsSpec);
+                    illegalSpec(
+                            "not a sequence of valid conditions"
+                                    + "(curly bracket enclosed LSAs, with optional '+' prefix)",
+                            conditionsSpec
+                    );
                 }
                 final List<Action<List<ILsaMolecule>>> actions = new LinkedList<>();
                 final String actionsSpec = rMatcher.group(ACTIONS_GROUP);
@@ -207,15 +216,18 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
                     final Matcher actMatcher = MATCH_ACTION.matcher(actionsSpec);
                     while (actMatcher.find()) {
                         final String action = actMatcher.group(ACTION_GROUP);
-                        actions.add(createAction(rand, env, node, time, result, action));
+                        actions.add(createAction(randomGenerator, environment, node, timeDistribution, result, action));
                     }
                 } else {
-                    illegalSpec("not a sequence of valid conditions (curly bracket enclosed LSAs, with optional '+' prefix)", conditionsSpec);
+                    illegalSpec("not a sequence of valid conditions"
+                                    + "(curly bracket enclosed LSAs, with optional '+' prefix)",
+                            conditionsSpec
+                    );
                 }
                 result.setConditions(conditions);
                 result.setActions(actions);
             } else {
-                illegalSpec("must match regex " + REACTION_REGEX, param);
+                illegalSpec("must match regex " + REACTION_REGEX, parameter);
             }
         }
         return result;
@@ -227,28 +239,45 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
     }
 
     @Override
-    public Condition<List<ILsaMolecule>> createCondition(final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env, final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
-            final String param) {
-        if (param.startsWith("+")) {
-            return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(param.substring(1)), env);
+    public Condition<List<ILsaMolecule>> createCondition(
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
+            final Node<List<ILsaMolecule>> node,
+            final TimeDistribution<List<ILsaMolecule>> time,
+            final Reaction<List<ILsaMolecule>> reaction,
+            final String additionalParameters
+    ) {
+        if (additionalParameters.startsWith("+")) {
+            return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment);
         }
-        return new LsaStandardCondition(createMolecule(param), (LsaNode) node);
+        return new LsaStandardCondition(createMolecule(additionalParameters), (LsaNode) node);
     }
 
     @Override
-    public Action<List<ILsaMolecule>> createAction(final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env, final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
-            final String param) {
-        if (param.startsWith("+")) {
-            return new LsaRandomNeighborAction((LsaNode) node, createMolecule(param.substring(1)), env, rand);
+    public Action<List<ILsaMolecule>> createAction(
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
+            final Node<List<ILsaMolecule>> node,
+            final TimeDistribution<List<ILsaMolecule>> time,
+            final Reaction<List<ILsaMolecule>> reaction,
+            final String additionalParameters
+    ) {
+        if (additionalParameters.startsWith("+")) {
+            return new LsaRandomNeighborAction(
+                    (LsaNode) node,
+                    createMolecule(additionalParameters.substring(1)),
+                    environment,
+                    randomGenerator
+            );
         }
-        if (param.startsWith("*")) {
-            return new LsaAllNeighborsAction((LsaNode) node, createMolecule(param.substring(1)), env);
+        if (additionalParameters.startsWith("*")) {
+            return new LsaAllNeighborsAction(
+                    (LsaNode) node,
+                    createMolecule(additionalParameters.substring(1)),
+                    environment
+            );
         }
-        return new LsaStandardAction(createMolecule(param), (LsaNode) node, rand);
+        return new LsaStandardAction(createMolecule(additionalParameters), (LsaNode) node, randomGenerator);
     }
 
     @Override

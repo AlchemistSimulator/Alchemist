@@ -44,8 +44,8 @@ public final class GenericMoleculeUnderLevel<T extends Number> extends
     }
 
     @Override
-    public GenericMoleculeUnderLevel<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
-        return new GenericMoleculeUnderLevel<T>(n, getMolecule(), getQuantity());
+    public GenericMoleculeUnderLevel<T> cloneCondition(final Node<T> node, final Reaction<T> r) {
+        return new GenericMoleculeUnderLevel<T>(node, getMolecule(), getQuantity());
     }
 
     /**

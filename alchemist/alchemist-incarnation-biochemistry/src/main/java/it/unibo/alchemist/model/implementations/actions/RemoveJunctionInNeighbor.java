@@ -57,8 +57,8 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
     }
 
     @Override
-    public RemoveJunctionInNeighbor cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new RemoveJunctionInNeighbor(getEnvironment(), n, jun, getRandomGenerator());
+    public RemoveJunctionInNeighbor cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new RemoveJunctionInNeighbor(getEnvironment(), node, jun, getRandomGenerator());
     }
 
     /**

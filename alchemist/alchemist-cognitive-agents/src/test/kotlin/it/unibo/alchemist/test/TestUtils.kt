@@ -41,11 +41,11 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
 ): EuclideanEnvironment<T, P> where P : Position<P>, P : Vector<P> =
     Engine(this, steps).apply {
         addOutputMonitor(object : OutputMonitor<T, P> {
-            override fun initialized(e: Environment<T, P>) =
+            override fun initialized(environment: Environment<T, P>) =
                 initialized.invoke(this@startSimulation)
-            override fun stepDone(e: Environment<T, P>, r: Reaction<T>, t: Time, s: Long) =
-                stepDone.invoke(this@startSimulation, r, t, s)
-            override fun finished(e: Environment<T, P>, t: Time, s: Long) =
+            override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>, t: Time, s: Long) =
+                stepDone.invoke(this@startSimulation, reaction, t, s)
+            override fun finished(environment: Environment<T, P>, t: Time, s: Long) =
                 finished.invoke(this@startSimulation, t, s)
         })
         play()

@@ -71,7 +71,10 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
             if (environment instanceof EuclideanEnvironment) {
                 ((EuclideanEnvironment) environment).moveNode(getNode(), getNextPosition());
             } else {
-                environment.moveNodeToPosition(getNode(), environment.getPosition(getNode()).plus(getNextPosition().getCoordinates()));
+                environment.moveNodeToPosition(
+                        getNode(),
+                        environment.getPosition(getNode()).plus(getNextPosition().getCoordinates())
+                );
             }
         }
     }

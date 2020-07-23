@@ -33,8 +33,8 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
     }
 
     @Override
-    public NeighborhoodPresent<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
-        return new NeighborhoodPresent<>(getEnvironment(), n);
+    public NeighborhoodPresent<T> cloneCondition(final Node<T> node, final Reaction<T> r) {
+        return new NeighborhoodPresent<>(getEnvironment(), node);
     }
 
     @Override

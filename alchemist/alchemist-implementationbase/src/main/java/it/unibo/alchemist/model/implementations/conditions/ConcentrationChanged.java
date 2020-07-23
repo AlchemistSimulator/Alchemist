@@ -45,8 +45,8 @@ public final class ConcentrationChanged<T> extends AbstractCondition<T> {
     }
 
     @Override
-    public ConcentrationChanged<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
-        return new ConcentrationChanged<>(n, target);
+    public ConcentrationChanged<T> cloneCondition(final Node<T> node, final Reaction<T> reaction) {
+        return new ConcentrationChanged<>(node, target);
     }
 
     @Override

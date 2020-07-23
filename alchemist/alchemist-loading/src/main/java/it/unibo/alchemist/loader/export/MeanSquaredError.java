@@ -89,7 +89,7 @@ public final class MeanSquaredError<T> implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
+    public double[] extractData(final Environment<?, ?> env, final Reaction<?> reaction, final Time time, final long step) {
         @SuppressWarnings("unchecked")
         final Environment<T, ?> environment = (Environment<T, ?>) env;
         final double value = statistic.evaluate(

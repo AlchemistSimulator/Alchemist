@@ -7,18 +7,6 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.util.List;
-
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import it.unibo.alchemist.model.SAPEREIncarnation;
 import it.unibo.alchemist.model.implementations.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.implementations.actions.LsaRandomNeighborAction;
@@ -32,6 +20,17 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test for the SAPERE Incarnation.
@@ -108,7 +107,14 @@ public final class TestIncarnation {
         return (int) target.stream().filter(o -> clazz.equals(o.getClass())).count();
     }
 
-    private void testR(final String param, final int ncond, final int nact, final int nneighcond, final int nneighact, final int nallneighact) {
+    private void testR(
+            final String param,
+            final int ncond,
+            final int nact,
+            final int nneighcond,
+            final int nneighact,
+            final int nallneighact
+    ) {
         final Reaction<List<ILsaMolecule>> r = incarnation.createReaction(rand, env, node, time, param);
         assertNotNull(r);
         assertEquals(ncond, r.getConditions().size());

@@ -42,14 +42,18 @@ public final class GeometricVariable extends PrintableVariable<Double> {
             throw new IllegalArgumentException("min (" + min + ") can't be bigger than max (" + max + ")");
         }
         if (min <= 0d || max <= 0) {
-            throw new IllegalArgumentException("Both minimum and maximum must be bigger than 0 for a geometric variable to work.");
+            throw new IllegalArgumentException(
+                    "Both minimum and maximum must be bigger than 0 for a geometric variable to work."
+            );
         }
         if (samples <= 0) {
             throw new IllegalArgumentException("At least one sample is required.");
         }
         if (min == max && samples != 1) {
-            throw new IllegalArgumentException("Only a single sample can be produced if min and max are exactly equal. (min="
-                    + min + ", max=" + max + ", samples=" + samples);
+            throw new IllegalArgumentException(
+                    "Only a single sample can be produced if min and max are exactly equal. (min="
+                    + min + ", max=" + max + ", samples=" + samples
+            );
         }
         this.def = def;
         this.min = min;

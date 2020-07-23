@@ -146,14 +146,20 @@ public final class YamlLoader implements Loader {
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
     private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
-    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
-            .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
-            .build();
-    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_OPTIONAL_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
-            .put(Variable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
-            .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
-            .put(Reaction.class, ImmutableMap.of(PARAMS, List.class, TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class))
-            .build();
+    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS =
+            ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
+                .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
+                .build();
+    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_OPTIONAL_PARAMETERS =
+            ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
+                .put(Variable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
+                .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
+                .put(Reaction.class, ImmutableMap.of(
+                        PARAMS, List.class,
+                        TIMEDISTRIBUTION, Object.class,
+                        ACTIONS, List.class,
+                        CONDITIONS, List.class))
+                .build();
     private static final Set<BuilderConfiguration<DependentVariable<?>>> DEPENDENT_VAR_CONFIG = ImmutableSet.of(
             new BuilderConfiguration<>(
                 ImmutableMap.of(FORMULA, CharSequence.class),
@@ -163,10 +169,17 @@ public final class YamlLoader implements Loader {
                     final Object formula = m.get(FORMULA);
                     return formula instanceof Number
                         ? new NumericConstant((Number) formula)
-                        : new JSR223Variable<>(m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase(Locale.ENGLISH), formula.toString());
+                        : new JSR223Variable<>(
+                                m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase(Locale.ENGLISH),
+                                formula.toString()
+                        );
                 }));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
-            ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
+            ImmutableMap.of(NAME, CharSequence.class),
+            ImmutableMap.of(),
+            makeBaseFactory(),
+            m -> CommonFilters.fromString(m.get(NAME).toString())
+    );
     private static final TypeToken<List<Number>> LIST_NUMBER = new TypeToken<List<Number>>() {
         private static final long serialVersionUID = 1L;
     };
@@ -253,7 +266,9 @@ public final class YamlLoader implements Loader {
         if (varObj != null && !(varObj instanceof Map)) {
             throw new IllegalAlchemistYAMLException("The " + VARIABLES + " section has an invalid format.");
         }
-        final Map<String, Map<String, Object>> originalVars = Optional.ofNullable((Map<String, Map<String, Object>>) varObj).orElse(emptyMap());
+        final Map<String, Map<String, Object>> originalVars = Optional
+                .ofNullable((Map<String, Map<String, Object>>) varObj)
+                .orElse(emptyMap());
         for (final Entry<String, Map<String, Object>> varEntry : originalVars.entrySet()) {
             if (varEntry.getValue() == null) {
                 throw new IllegalAlchemistYAMLException("The " + VARIABLES + " section has an invalid format."
@@ -263,7 +278,8 @@ public final class YamlLoader implements Loader {
             varEntry.getValue().put(NAME, varEntry.getKey());
         }
         L.debug("Variables: {}", originalVars);
-        final Map<Map<String, Object>, String> reverseLookupTable = originalVars.entrySet().stream().collect(Collectors.toMap(Entry::getValue, Entry::getKey));
+        final Map<Map<String, Object>, String> reverseLookupTable = originalVars.entrySet().stream()
+                .collect(Collectors.toMap(Entry::getValue, Entry::getKey));
         L.debug("Reverse lookup table: {}", reverseLookupTable);
         /*
          * Compute constants and dependent variables
@@ -271,7 +287,11 @@ public final class YamlLoader implements Loader {
         final Map<String, Object> constants = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
         final Map<String, DependentVariable<?>> depVariables = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
         final Factory factory = makeBaseFactory(incarnation);
-        final Builder<DependentVariable<?>> depVarBuilder = new Builder<>(DependentVariable.class, DEPENDENT_VAR_CONFIG, factory);
+        final Builder<DependentVariable<?>> depVarBuilder = new Builder<>(
+                DependentVariable.class,
+                DEPENDENT_VAR_CONFIG,
+                factory
+        );
         int previousConstants, previousDepVars;
         final Map<String, Map<String, Object>> originalClone = new LinkedHashMap<>(originalVars);
         do {
@@ -289,19 +309,33 @@ public final class YamlLoader implements Loader {
                         constants.put(name, value);
                         depVariables.remove(name);
                     } catch (IllegalStateException e) {
-                        L.debug("{} value could not be computed: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
+                        L.debug(
+                                "{} value could not be computed: maybe it depends on another,"
+                                        + "not yet initialized variable." + "\nReason: {}",
+                                name,
+                                e
+                        );
                         depVariables.put(name, dv);
                     }
                     L.debug("Constant intialized in {}", constants);
                 } catch (IllegalAlchemistYAMLException e) {
-                    L.debug("{} could not be created: its constructor may be requiring an uninitialized variable.\nReason: {}", name, e);
+                    L.debug(
+                            "{} could not be created: its constructor may be requiring an uninitialized variable."
+                                    + "\nReason: {}",
+                            name,
+                            e
+                    );
                 }
             }
         } while (previousConstants != constants.size() || previousDepVars != depVariables.size());
         assert constants.size() + depVariables.size() <= originalVars.size();
         this.constants = ImmutableMap.copyOf(constants);
         this.depVariables = ImmutableMap.copyOf(depVariables);
-        this.contents = ImmutableMap.copyOf((Map<String, Object>) recursivelyResolveVariables(rawContents, reverseLookupTable, this.constants));
+        this.contents = ImmutableMap.copyOf((Map<String, Object>) recursivelyResolveVariables(
+                rawContents,
+                reverseLookupTable,
+                this.constants
+        ));
         final Iterator<String> varNames = reverseLookupTable.values().iterator();
         while (varNames.hasNext() && !constants.isEmpty()) {
             final String var = varNames.next();
@@ -319,9 +353,26 @@ public final class YamlLoader implements Loader {
                 ImmutableMap.of(VALUES, List.class, DEFAULT, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
                 m -> new ArbitraryVariable(toDouble.apply(m, DEFAULT), factory.convertOrFail(List.class, m.get(VALUES))));
         final BuilderConfiguration<Variable<?>> linearVarConfig = new BuilderConfiguration<>(
-                ImmutableMap.of(DEFAULT, Number.class, MIN, Number.class, MAX, Number.class, STEP, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
-                m -> new LinearVariable(toDouble.apply(m, DEFAULT), toDouble.apply(m, MIN), toDouble.apply(m, MAX), toDouble.apply(m, STEP)));
-        final Builder<Variable<?>> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
+                ImmutableMap.of(
+                        DEFAULT, Number.class,
+                        MIN, Number.class,
+                        MAX, Number.class,
+                        STEP, Number.class
+                ),
+                ImmutableMap.of(NAME, CharSequence.class),
+                factory,
+                m -> new LinearVariable(
+                        toDouble.apply(m, DEFAULT),
+                        toDouble.apply(m, MIN),
+                        toDouble.apply(m, MAX),
+                        toDouble.apply(m, STEP)
+                )
+        );
+        final Builder<Variable<?>> varBuilder = new Builder<>(
+                Variable.class,
+                ImmutableSet.of(arbitraryVarConfig, linearVarConfig),
+                factory
+        );
         variables = originalVars.entrySet().stream()
                 .filter(e -> e != null && !e.getValue().containsKey(FORMULA))
                 .collect(ImmutableMap.toImmutableMap(Entry::getKey, e -> varBuilder.build(e.getValue())));
@@ -340,20 +391,33 @@ public final class YamlLoader implements Loader {
                             NAMED_EXTRACTOR_CONFIG,
                             new BuilderConfiguration<>(
                                 ImmutableMap.of(MOLECULE, CharSequence.class),
-                                ImmutableMap.of(PROPERTY, CharSequence.class, AGGREGATORS, List.class, VALUE_FILTER, Object.class),
+                                ImmutableMap.of(
+                                        PROPERTY, CharSequence.class,
+                                        AGGREGATORS, List.class,
+                                        VALUE_FILTER, Object.class
+                                ),
                                 factory,
                                 m -> {
                                     final Object filterObj = m.getOrDefault(VALUE_FILTER, "NoFilter");
                                     final FilteringPolicy filter = filterBuilder.build(filterObj instanceof CharSequence
                                             ? ImmutableMap.of(NAME, filterObj.toString()) : filterObj);
-                                    final List<String> aggregators = listCast(factory, m.get(AGGREGATORS), "aggregators").stream()
+                                    final List<String> aggregators = listCast(factory, m.get(AGGREGATORS), "aggregators")
+                                            .stream()
                                             .map(Object::toString)
                                             .collect(Collectors.toList());
-                                    return new MoleculeReader<>(m.get(MOLECULE).toString(), m.getOrDefault(PROPERTY, "").toString(), incarnation, filter, aggregators);
+                                    return new MoleculeReader<>(
+                                            m.get(MOLECULE).toString(),
+                                            m.getOrDefault(PROPERTY, "").toString(),
+                                            incarnation,
+                                            filter,
+                                            aggregators
+                                    );
                                 })
                     ), factory);
             extractors = Collections.unmodifiableList(((List<?>) extrObj).stream()
-                    .map(obj -> extractorBuilder.build(obj instanceof CharSequence ? ImmutableMap.of(NAME, obj.toString()) : obj))
+                    .map(obj -> extractorBuilder.build(obj instanceof CharSequence
+                            ? ImmutableMap.of(NAME, obj.toString())
+                            : obj))
                     .collect(Collectors.toList()));
         } else {
             throw new IllegalAlchemistYAMLException("Exports must be a YAML map.");
@@ -416,7 +480,10 @@ public final class YamlLoader implements Loader {
     @Override
     public <T, P extends Position<P>> Environment<T, P> getWith(final Map<String, ?> values) {
         if (values.size() > variables.size()) {
-            throw new IllegalArgumentException("Some variables do not exist in the environment, or are not overridable: " + Maps.difference(values, variables).entriesOnlyOnLeft());
+            throw new IllegalArgumentException(
+                    "Some variables do not exist in the environment, or are not overridable: "
+                        + Maps.difference(values, variables).entriesOnlyOnLeft()
+            );
         }
         final int expectedSize = constants.size() + variables.size() + depVariables.size();
         final Map<String, Object> actualVars = Maps.newLinkedHashMapWithExpectedSize(expectedSize);
@@ -447,12 +514,19 @@ public final class YamlLoader implements Loader {
                     actualVars.put(name, value);
                 } catch (IllegalStateException e) {
                     issues.add(e);
-                    L.debug("{} value could not be computed: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
+                    L.debug(
+                            "{} value could not be computed: maybe it depends on another, not yet initialized variable."
+                                    + "\nReason: {}",
+                            name,
+                            e
+                    );
                 }
             }
         } while (previousSize != depClone.size());
         if (!depClone.isEmpty()) {
-            final RuntimeException ex = new IllegalAlchemistYAMLException("One or more variables could not be initialized: " + depClone);
+            final RuntimeException ex = new IllegalAlchemistYAMLException(
+                    "One or more variables could not be initialized: " + depClone
+            );
             if (issues.size() == 1) {
                 ex.initCause(issues.get(0));
             } else {
@@ -463,7 +537,11 @@ public final class YamlLoader implements Loader {
         L.debug("Variable bindings: {}", actualVars);
         assert actualVars.size() == constants.size() + reverseLookupTable.size();
         @SuppressWarnings(UNCHECKED)
-        final Map<String, Object> contents = (Map<String, Object>) recursivelyResolveVariables(this.contents, reverseLookupTable, actualVars);
+        final Map<String, Object> contents = (Map<String, Object>) recursivelyResolveVariables(
+                this.contents,
+                reverseLookupTable,
+                actualVars
+        );
         /*
          * Factory
          */
@@ -475,20 +553,40 @@ public final class YamlLoader implements Loader {
          */
         final Object seedObj = contents.get(SEEDS);
         final RandomGenerator scenarioRng = rngBuilder(factory, SCENARIO_SEED).build(seedObj);
-        final RandomGenerator simRng = rngBuilder(factory, SIMULATION_SEED).build(seedObj);
+        final RandomGenerator simulationRandomGenerator = rngBuilder(factory, SIMULATION_SEED).build(seedObj);
         /*
          * Environment
          */
         @SuppressWarnings("unchecked")
-        final BuilderConfiguration<Environment<T, P>> envDefaultConfig = emptyConfig(factory, () -> (Environment<T, P>) new Continuous2DEnvironment<>());
-        final Builder<Environment<T, P>> envBuilder = new Builder<>(Environment.class, ImmutableSet.of(envDefaultConfig), factory);
-        factory.registerSingleton(RandomGenerator.class, simRng);
-        final Environment<T, P> env = envBuilder.build(contents.get(ENVIRONMENT));
-        env.setIncarnation(incarnation);
-        factory.registerSingleton(Environment.class, env);
-        factory.registerImplicit(List.class, Position.class, l -> env.makePosition(cast(factory, LIST_NUMBER, l, "position coordinates").toArray(new Number[l.size()])));
-        factory.registerImplicit(Number[].class, Position.class, env::makePosition);
-        final Builder<Molecule> molBuilder = new Builder<>(Molecule.class, singleParamConfig(factory, p -> incarnation.createMolecule(p.toString())), factory);
+        final BuilderConfiguration<Environment<T, P>> envDefaultConfig = emptyConfig(
+                factory,
+                () -> (Environment<T, P>) new Continuous2DEnvironment<>()
+        );
+        final Builder<Environment<T, P>> envBuilder = new Builder<>(
+                Environment.class,
+                ImmutableSet.of(envDefaultConfig),
+                factory
+        );
+        factory.registerSingleton(RandomGenerator.class, simulationRandomGenerator);
+        final Environment<T, P> environment = envBuilder.build(contents.get(ENVIRONMENT));
+        environment.setIncarnation(incarnation);
+        factory.registerSingleton(Environment.class, environment);
+        factory.registerImplicit(
+                List.class,
+                Position.class,
+                l -> environment.makePosition(
+                        cast(
+                                factory,
+                                LIST_NUMBER,
+                                l,
+                                "position coordinates"
+                        ).toArray(new Number[l.size()])));
+        factory.registerImplicit(Number[].class, Position.class, environment::makePosition);
+        final Builder<Molecule> molBuilder = new Builder<>(
+                Molecule.class,
+                singleParamConfig(factory, p -> incarnation.createMolecule(p.toString())),
+                factory
+        );
         /*
          * Layers
          */
@@ -498,15 +596,19 @@ public final class YamlLoader implements Loader {
             final Map<String, Object> layerMap = cast(factory, MAP_STRING_OBJECT, o, "layer");
             final Layer<T, P> layer = layerBuilder.build(layerMap);
             final Molecule molecule = molBuilder.build(layerMap.get(MOLECULE));
-            env.addLayer(molecule, layer);
+            environment.addLayer(molecule, layer);
         });
         /*
          * Linking rule
          */
         final BuilderConfiguration<LinkingRule<T, P>> linkingRuleConfig = emptyConfig(factory, NoLinks::new);
-        final Builder<LinkingRule<T, P>> linkingBuilder = new Builder<>(LinkingRule.class, ImmutableSet.of(linkingRuleConfig), factory);
+        final Builder<LinkingRule<T, P>> linkingBuilder = new Builder<>(
+                LinkingRule.class,
+                ImmutableSet.of(linkingRuleConfig),
+                factory
+        );
         final LinkingRule<T, P> linkingRule = linkingBuilder.build(contents.get(LINKING_RULE));
-        env.setLinkingRule(linkingRule);
+        environment.setLinkingRule(linkingRule);
         factory.registerSingleton(LinkingRule.class, linkingRule);
         /*
          * Termination conditions
@@ -514,26 +616,34 @@ public final class YamlLoader implements Loader {
         final Builder<Predicate<Environment<T, P>>> terminatorBuilder = new Builder<>(Predicate.class, emptySet(), factory);
         final Object terminatorsDesc = contents.get(TERMINATORS);
         for (final Object terminatorDescriptor: listCast(factory, terminatorsDesc, "terminator")) {
-            env.addTerminator(terminatorBuilder.build(terminatorDescriptor));
+            environment.addTerminator(terminatorBuilder.build(terminatorDescriptor));
         }
         /*
          * Displacements
          */
         final List<?> dispList = listCast(factory, contents.get(DISPLACEMENTS), "displacements");
         if (dispList.isEmpty()) {
-            L.warn("Your {} section is empty. No nodes will be placed in this scenario, making it pretty useless.", DISPLACEMENTS);
+            L.warn("Your {} section is empty. No nodes will be placed in this scenario, making it useless.", DISPLACEMENTS);
         } else {
             final Builder<Displacement<P>> displacementBuilder = new Builder<>(Displacement.class, emptySet(), factory);
-            final Builder<Node<T>> nodeBuilder = new Builder<>(Node.class, ImmutableSet.of(
-                    emptyConfig(factory, () -> incarnation.createNode(simRng, env, null)),
-                    singleParamConfig(factory, o -> incarnation.createNode(simRng, env, o.toString()))),
+            final Builder<Node<T>> nodeBuilder = new Builder<>(
+                    Node.class,
+                    ImmutableSet.of(
+                            emptyConfig(
+                                    factory,
+                                    () -> incarnation.createNode(simulationRandomGenerator, environment, null)
+                            ),
+                            singleParamConfig(
+                                    factory,
+                                    o -> incarnation.createNode(simulationRandomGenerator, environment, o.toString())
+                            )),
                     factory);
             final Builder<Shape<P>> shapeBuilder = new Builder<>(Shape.class, emptyConfig(factory, () -> p -> true), factory);
             for (final Object dispObj: dispList) {
                 final Map<String, Object> dispMap = cast(factory, MAP_STRING_OBJECT, dispObj, "displacement");
                 factory.registerSingleton(RandomGenerator.class,  scenarioRng);
                 final Displacement<P> displacement = displacementBuilder.build(dispMap.get(IN));
-                factory.registerSingleton(RandomGenerator.class,  simRng);
+                factory.registerSingleton(RandomGenerator.class,  simulationRandomGenerator);
                 factory.registerSingleton(Displacement.class, displacement);
                 /*
                  * Contents
@@ -550,7 +660,7 @@ public final class YamlLoader implements Loader {
                 /*
                  * Nodes
                  */
-                factory.registerSingleton(RandomGenerator.class, simRng);
+                factory.registerSingleton(RandomGenerator.class, simulationRandomGenerator);
                 for (@NotNull final P position: displacement) {
                     final Node<T> node = nodeBuilder.build(dispMap.get(NODE));
                     factory.registerSingleton(Node.class, node);
@@ -572,23 +682,57 @@ public final class YamlLoader implements Loader {
                      * Reactions
                      */
                     final List<?> poolsList = listCast(factory, dispMap.get(PROGRAMS), "program pools");
-                    final Builder<TimeDistribution<T>> tdBuilder = new Builder<>(TimeDistribution.class, ImmutableSet.of(
-                            emptyConfig(factory, () -> incarnation.createTimeDistribution(simRng, env, node, null)),
-                            singleParamConfig(factory, o -> incarnation.createTimeDistribution(simRng, env, node, o.toString()))),
-                            factory);
+                    final Builder<TimeDistribution<T>> tdBuilder = new Builder<>(
+                            TimeDistribution.class,
+                            ImmutableSet.of(
+                                    emptyConfig(
+                                            factory,
+                                            () -> incarnation.createTimeDistribution(
+                                                    simulationRandomGenerator,
+                                                    environment,
+                                                    node,
+                                                    null
+                                            )
+                                    ),
+                                    singleParamConfig(
+                                            factory,
+                                            o -> incarnation.createTimeDistribution(
+                                                    simulationRandomGenerator,
+                                                    environment,
+                                                    node,
+                                                    o.toString()
+                                            )
+                                    )
+                            ),
+                            factory
+                    );
                     for (final Object programsObj: poolsList) {
                         final List<?> programs = listCast(factory, programsObj, "programs");
                         for (final Object programObj: programs) {
                             final Map<String, Object> program = cast(factory, MAP_STRING_OBJECT, programObj, "program");
-                            final TimeDistribution<T> td = tdBuilder.build(program.get(TIMEDISTRIBUTION));
-                            factory.registerSingleton(TimeDistribution.class, td);
+                            final TimeDistribution<T> timeDistribution = tdBuilder.build(program.get(TIMEDISTRIBUTION));
+                            factory.registerSingleton(TimeDistribution.class, timeDistribution);
                             final Builder<Reaction<T>> reactionBuilder = new Builder<>(Reaction.class,
                                     new BuilderConfiguration<>(
                                             ImmutableMap.of(REACTION, CharSequence.class),
-                                            ImmutableMap.of(TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class),
+                                            ImmutableMap.of(
+                                                    TIMEDISTRIBUTION, Object.class,
+                                                    ACTIONS, List.class,
+                                                    CONDITIONS, List.class
+                                            ),
                                             factory,
-                                            m -> Objects.requireNonNull(incarnation.createReaction(simRng, env, node, td, m.get(REACTION).toString()), () ->
-                                                    incarnation + " created a null reaction for " + REACTION + ": " + m.get(REACTION))),
+                                            m -> Objects.requireNonNull(
+                                                    incarnation.createReaction(
+                                                            simulationRandomGenerator,
+                                                            environment,
+                                                            node,
+                                                            timeDistribution,
+                                                            m.get(REACTION).toString()
+                                                    ),
+                                                    () -> incarnation + " created a null reaction for "
+                                                            + REACTION + ": " + m.get(REACTION)
+                                            )
+                                    ),
                                     factory);
                             final Reaction<T> reaction = Objects.requireNonNull(reactionBuilder.build(program));
                             factory.registerSingleton(Reaction.class, reaction);
@@ -597,8 +741,21 @@ public final class YamlLoader implements Loader {
                              */
                             final List<?> actionsList = listCast(factory, program.get(ACTIONS), "actions list");
                             if (!actionsList.isEmpty()) {
-                                final Builder<Action<T>> actionBuilder = new Builder<>(Action.class, 
-                                        singleParamConfig(factory, o -> incarnation.createAction(simRng, env, node, td, reaction, o.toString())), factory);
+                                final Builder<Action<T>> actionBuilder = new Builder<>(
+                                        Action.class,
+                                        singleParamConfig(
+                                                factory,
+                                                o -> incarnation.createAction(
+                                                        simulationRandomGenerator,
+                                                        environment,
+                                                        node,
+                                                        timeDistribution,
+                                                        reaction,
+                                                        o.toString()
+                                                )
+                                        ),
+                                        factory
+                                );
                                 reaction.setActions(Stream.concat(
                                         actionsList.stream().map(actionBuilder::build),
                                         reaction.getActions().stream())
@@ -609,30 +766,49 @@ public final class YamlLoader implements Loader {
                              */
                             final List<?> conditionsList = listCast(factory, program.get(CONDITIONS), "conditions list");
                             if (!conditionsList.isEmpty()) {
-                                final Builder<Condition<T>> conditionBuilder = new Builder<>(Condition.class, 
-                                        singleParamConfig(factory, o -> incarnation.createCondition(simRng, env, node, td, reaction, o.toString())), factory);
+                                final Builder<Condition<T>> conditionBuilder = new Builder<>(
+                                        Condition.class,
+                                        singleParamConfig(
+                                                factory,
+                                                o -> incarnation.createCondition(
+                                                        simulationRandomGenerator,
+                                                        environment,
+                                                        node,
+                                                        timeDistribution,
+                                                        reaction,
+                                                        o.toString())
+
+                                        ),
+                                        factory
+                                );
                                 reaction.setConditions(Stream.concat(
                                         conditionsList.stream().map(conditionBuilder::build),
                                         reaction.getConditions().stream())
                                     .collect(Collectors.toList()));
                             }
                             node.addReaction(reaction);
-                            if (!(factory.deregisterSingleton(reaction) && factory.deregisterSingleton(td))) {
-                                throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
+                            if (!(factory.deregisterSingleton(reaction) && factory.deregisterSingleton(timeDistribution))) {
+                                throw new IllegalStateException(
+                                        "This is a bug in " + getClass() + ": singletons are not correctly cleared."
+                                );
                             }
                         }
                     }
                     if (!factory.deregisterSingleton(node)) {
-                        throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
+                        throw new IllegalStateException(
+                                "This is a bug in " + getClass() + ": singletons are not correctly cleared."
+                        );
                     }
-                    env.addNode(node, position);
+                    environment.addNode(node, position);
                 }
                 if (!factory.deregisterSingleton(displacement)) {
-                    throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
+                    throw new IllegalStateException(
+                            "This is a bug in " + getClass() + ": singletons are not correctly cleared."
+                    );
                 }
             }
         }
-        return env;
+        return environment;
     }
 
     private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -657,11 +833,8 @@ public final class YamlLoader implements Loader {
 
     @SuppressWarnings(UNCHECKED)
     private static <T> T cast(final Factory factory, final Class<? super T> clazz, final Object target, final String what) {
-        assert factory != null;
-        assert clazz != null;
-        assert target != null;
-        assert what != null;
-        return (T) factory.convert(clazz, target).orElseThrow(() -> new IllegalAlchemistYAMLException(target + " is not a valid " + what + " descriptor"));
+        return (T) Objects.requireNonNull(factory).convert(Objects.requireNonNull(clazz), Objects.requireNonNull(target))
+                .orElseThrow(() -> new IllegalAlchemistYAMLException(target + " is not a valid " + what + " descriptor"));
     }
 
     private static <T> T cast(final Factory factory, final TypeToken<T> clazz, final Object target, final String message) {
@@ -687,7 +860,11 @@ public final class YamlLoader implements Loader {
                 .build();
         factory.registerImplicit(Number.class, CharSequence.class, Number::toString);
         factory.registerImplicit(double.class, Time.class, DoubleTime::new);
-        factory.registerImplicit(List.class, Number[].class, l -> ((List<?>) l).stream().map(e -> factory.convertOrFail(Number.class, e)).toArray(Number[]::new));
+        factory.registerImplicit(
+                List.class,
+                Number[].class,
+                l -> ((List<?>) l).stream().map(e -> factory.convertOrFail(Number.class, e)).toArray(Number[]::new)
+        );
         factory.registerImplicit(CharSequence.class, FilteringPolicy.class, s -> CommonFilters.fromString(s.toString()));
         factory.registerImplicit(Number.class, double.class, Number::doubleValue);
         factory.registerImplicit(double.class, BigDecimal.class, BigDecimal::new);
@@ -732,12 +909,16 @@ public final class YamlLoader implements Loader {
         return factory;
     }
 
-    private static Object recursivelyResolveVariables(final Object o, final Map<Map<String, Object>, String> reverseLookupTable, final Map<String, Object> variables) {
+    private static Object recursivelyResolveVariables(
+            final Object yamlNode,
+            final Map<Map<String, Object>, String> reverseLookupTable,
+            final Map<String, Object> variables
+    ) {
         if (reverseLookupTable.isEmpty() || variables.isEmpty()) {
-            return o;
+            return yamlNode;
         }
-        if (o instanceof Collection) {
-            final Collection<?> collection = (Collection<?>) o;
+        if (yamlNode instanceof Collection) {
+            final Collection<?> collection = (Collection<?>) yamlNode;
             final int s = collection.size();
             return collection.stream()
                 .map(e -> recursivelyResolveVariables(e, reverseLookupTable, variables))
@@ -745,25 +926,28 @@ public final class YamlLoader implements Loader {
                         ? Sets.newLinkedHashSetWithExpectedSize(s)
                         : Lists.newArrayListWithCapacity(s)));
         }
-        if (o instanceof Map) {
-            final String varName = reverseLookupTable.get(o);
+        if (yamlNode instanceof Map) {
+            final String varName = reverseLookupTable.get(yamlNode);
             if (varName != null) {
                 final Object value = variables.get(varName);
                 if (value != null) {
                     return value;
                 }
             } else {
-                final Map<?, ?> oMap = (Map<?, ?>) o;
+                final Map<?, ?> oMap = (Map<?, ?>) yamlNode;
                 return oMap.entrySet().stream()
                         .collect(() -> Maps.newLinkedHashMapWithExpectedSize(oMap.size()),
-                            (m, p) -> m.put(p.getKey(), recursivelyResolveVariables(p.getValue(), reverseLookupTable, variables)),
+                            (m, p) -> m.put(
+                                    p.getKey(),
+                                    recursivelyResolveVariables(p.getValue(), reverseLookupTable, variables)
+                            ),
                             (m1, m2) -> {
                                 throw new IllegalStateException();
                             }
                         );
             }
         }
-        return o;
+        return yamlNode;
     }
     private static Function<Map<String, Object>, RandomGenerator> rngMaker(final Factory factory, final String seed) {
         return m -> Optional.ofNullable(m.get(seed))
@@ -772,7 +956,11 @@ public final class YamlLoader implements Loader {
     }
 
     private static <T> BuilderConfiguration<T> singleParamConfig(final Factory factory, final Function<Object, T> supplier) {
-        return new BuilderConfiguration<>(ImmutableMap.of(PARAMETER, Object.class), emptyMap(), factory, m -> supplier.apply(m.get(PARAMETER)));
+        return new BuilderConfiguration<>(
+                ImmutableMap.of(PARAMETER, Object.class),
+                emptyMap(),
+                factory, m -> supplier.apply(m.get(PARAMETER))
+        );
     }
 
     private static final class Builder<T> {
@@ -824,10 +1012,15 @@ public final class YamlLoader implements Loader {
             final Collection<BuilderConfiguration<T>> configs = supportedConfigs.stream()
                     .filter(c -> c.matches(realObj)).collect(Collectors.toList());
             if (configs.isEmpty()) {
-                throw new IllegalAlchemistYAMLException("No configuration among " + supportedConfigs + " is applicable for building a " + clazz.getName() + " with " + o);
+                throw new IllegalAlchemistYAMLException(
+                        "No configuration among " + supportedConfigs + " is applicable for building a "
+                                + clazz.getName() + " with " + o
+                );
             }
             if (configs.size() > 1) {
-                throw new IllegalAlchemistYAMLException("Ambiguous specification " + o + " matches all those in " + configs + " for " + clazz.getName());
+                throw new IllegalAlchemistYAMLException(
+                        "Ambiguous specification " + o + " matches all those in " + configs + " for " + clazz.getName()
+                );
             }
             return configs.iterator().next().build(realObj);
         }
@@ -850,7 +1043,9 @@ public final class YamlLoader implements Loader {
         public T build(@Nonnull final Object o) {
             assert matches(o);
             return ifMap(o, m -> {
-                    final Map<String, Object> args = Maps.newLinkedHashMapWithExpectedSize(mandatoryFields.size() + optionalFields.size());
+                    final Map<String, Object> args = Maps.newLinkedHashMapWithExpectedSize(
+                            mandatoryFields.size() + optionalFields.size()
+                    );
                     for (final Entry<String, Class<?>> arg: mandatoryFields.entrySet()) {
                         final String varName = arg.getKey();
                         assert m.containsKey(varName);

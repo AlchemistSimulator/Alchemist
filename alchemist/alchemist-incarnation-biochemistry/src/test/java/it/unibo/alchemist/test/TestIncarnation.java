@@ -144,9 +144,12 @@ public class TestIncarnation {
         testR("[] --> [2 A + 5B]", 0, 2, 0, 2, 0, 0, 0, 0);
         testR("[2A in neighbor] --> []", 1, 1, 0, 0, 1, 1, 0, 0);
         testR("[A + 3B in neighbor] --> []", 2, 2, 0, 0, 2, 2, 0, 0);
-        testR("[] --> [A in neighbor]", 1, 1, 0, 0, 1, 1, 0, 0); // neighborhoodPresent condition is present
-        testR("[A] + [B in neighbor] --> [C]", 2, 3, 1, 2, 1, 1, 0, 0); // neighborhoodPresent condition is present
-        testR("[A] --> [B] + [C + D in neighbor]", 2, 4, 1, 2, 1, 2, 0, 0); // neighborhoodPresent condition is present
+        // neighborhoodPresent condition is present
+        testR("[] --> [A in neighbor]", 1, 1, 0, 0, 1, 1, 0, 0);
+        // neighborhoodPresent condition is present
+        testR("[A] + [B in neighbor] --> [C]", 2, 3, 1, 2, 1, 1, 0, 0);
+        // neighborhoodPresent condition is present
+        testR("[A] --> [B] + [C + D in neighbor]", 2, 4, 1, 2, 1, 2, 0, 0);
         testR("[A in env] --> []", 1, 1, 0, 0, 0, 0, 1, 1);
         testR("[A + 3B in env] --> []", 2, 2, 0, 0, 0, 0, 2, 2);
         testR("[] --> [A in env]", 1, 1, 0, 0, 0, 0, 0, 1);
@@ -157,21 +160,33 @@ public class TestIncarnation {
         testR("[A] + [B in neighbor] --> [junction A-B]", 2, 4, 1, 2, 1, 2, 0, 0);
         testR("[A + 3B] + [C in neighbor] + [D in env] --> [junction A:3B-C] + [D in env]", 4, 7, 2, 3, 1, 2, 1, 2);
         testR("[junction A-B] + [A in cell] --> [A in env]", 2, 4, 2, 2, 0, 1, 0, 1);
-        testR("[A in env] + [B + 2C] + [junction A-B] --> [junction A-B] + [D in neighbor]", 4, 4, 3, 2, 0, 1, 1, 1); // the junction is not removed like a biomolecule if the same junction is present in the right side.
-        testR("[junction A-B] + [junction C-D] --> [A in env]", 2, 5, 2, 2, 0, 2, 0, 1); // the junctions will be removed, because they are not present in the right side.
+        // the junction is not removed like a biomolecule if the same junction is present in the right side.
+        testR("[A in env] + [B + 2C] + [junction A-B] --> [junction A-B] + [D in neighbor]", 4, 4, 3, 2, 0, 1, 1, 1);
+        // the junctions will be removed, because they are not present in the right side.
+        testR("[junction A-B] + [junction C-D] --> [A in env]", 2, 5, 2, 2, 0, 2, 0, 1);
         testR("[junction A-B] --> [junction A-B] + [A in cell]", 1, 1, 1, 1, 0, 0, 0, 0);
         testR("[A + B] --> [BrownianMove(0.1)]", 2, 3, 2, 2, 0, 0, 0, 0);
-        testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 2, 1, 1, 0, 0, 0, 0, 1); // if a custom condition is used the molecules present in the custom condition will NOT be removed.
-        testR("[A] + [B in neighbor] + [C in env] --> [D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)] if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
+        // if a custom condition is used the molecules present in the custom condition will NOT be removed.
+        testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 2, 1, 1, 0, 0, 0, 0, 1);
+        testR(
+                "[A] + [B in neighbor] + [C in env] "
+                        + "--> "
+                        + "[D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)]"
+                        + " if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
         // CHECKSTYLE: MagicNumber ON
         testNoR("[A] + [B in neighbor] --> [junction A-C]"); // C is not present in conditions
         testNoR("[A] + [B in neighbor] --> [junction A-2B]"); // only one molecule B is present in conditions
-        testNoR("[A] + [B in neighbor] --> [junction B-A]"); // A is in cell an B is in neighbor. Correct syntax is junction A-B
+        // A is in cell an B is in neighbor. Correct syntax is junction A-B
+        testNoR("[A] + [B in neighbor] --> [junction B-A]");
         testNoR("[A + B] + [C in neighbor] --> [junction AB-C]"); // AB is considered one molecule. Use A:B
-        testNoR("[A + 3B] + [C in neighbor] --> [junction 4B-C]"); // only 3 molecules of B can be used for create the junction
-        testNoR("[A] + [B in neighbor] + [C in env] --> [junction A-B:C]"); // molecules in environment cannot be included in junctions
-        testNoR("[junction A-B] --> [junction C-D]"); // cannot have a new junction in the right side if is present a junction in the left side
-        testNoR("[A] + [B in neighbor] + [junction X-Y] --> [junction A-B]"); // cannot create junctions with junctions conditions
+        // only 3 molecules of B can be used for create the junction
+        testNoR("[A + 3B] + [C in neighbor] --> [junction 4B-C]");
+        // molecules in environment cannot be included in junctions
+        testNoR("[A] + [B in neighbor] + [C in env] --> [junction A-B:C]");
+        // cannot have a new junction in the right side if is present a junction in the left side
+        testNoR("[junction A-B] --> [junction C-D]");
+        // cannot create junctions with junctions conditions
+        testNoR("[A] + [B in neighbor] + [junction X-Y] --> [junction A-B]");
         testNoR("[junction A-B] --> [junction B-A]"); // junction A-B != junction B-A
     }
 

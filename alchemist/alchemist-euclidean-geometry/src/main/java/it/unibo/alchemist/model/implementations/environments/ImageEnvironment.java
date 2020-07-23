@@ -89,7 +89,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
     }
 
     /**
-     * @param obs
+     * @param obstacleColor
      *            integer representing the RGB color to use as color for the
      *            obstacle detection in image. Encoding follows common Java
      *            rules: {@link Color#getRGB()}
@@ -105,13 +105,19 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      *             if image file cannot be found, or if you disconnected your
      *             hard drive while this method was running.
      */
-    public ImageEnvironment(final int obs, final String path, final double zoom, final double dx, final double dy) throws IOException {
+    public ImageEnvironment(
+            final int obstacleColor,
+            final String path,
+            final double zoom,
+            final double dx,
+            final double dy
+    ) throws IOException {
         super();
         final InputStream resource = ResourceLoader.getResourceAsStream(path);
         final BufferedImage img = resource == null 
                 ? ImageIO.read(new File(path))
                 : ImageIO.read(resource);
-        findMarkedRegions(obs, img).forEach(obstacle ->
+        findMarkedRegions(obstacleColor, img).forEach(obstacle ->
                 addObstacle(mapToEnv(obstacle, zoom, dx, dy, img.getHeight()))
         );
     }
@@ -198,7 +204,14 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
         return new int[] { x, y };
     }
 
-    private static boolean lineIsIncluded(final int y, final int xs, final int x, final int color, final BufferedImage img, final boolean[][] bmat) {
+    private static boolean lineIsIncluded(
+            final int y,
+            final int xs,
+            final int x,
+            final int color,
+            final BufferedImage img,
+            final boolean[][] bmat
+    ) {
         int i = xs;
         while (i < x && !bmat[i][y] && img.getRGB(i, y) == color) {
             i++;

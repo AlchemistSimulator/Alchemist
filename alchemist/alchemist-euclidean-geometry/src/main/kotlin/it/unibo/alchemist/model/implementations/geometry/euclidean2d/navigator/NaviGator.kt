@@ -229,7 +229,11 @@ private fun createSeed(
             Euclidean2DPosition(x + side, y),
             Euclidean2DPosition(x + side, y + side),
             Euclidean2DPosition(x, y + side)
-        ), origin, width, height, obstacles
+        ),
+        origin,
+        width,
+        height,
+        obstacles
     )
 
 /**

@@ -7,16 +7,16 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @param <T>
@@ -38,7 +38,9 @@ public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsist
         if (env instanceof MapEnvironment<?>) {
             final MapEnvironment<T> menv = (MapEnvironment<T>) env;
             final Stream<Node<T>> stream = menv.getNodesWithinRange(center, range).parallelStream();
-            final List<Node<T>> filtered = stream.filter(node -> menv.computeRoute(center, node).length() < range).collect(Collectors.toList());
+            final List<Node<T>> filtered = stream
+                    .filter(node -> menv.computeRoute(center, node).length() < range)
+                    .collect(Collectors.toList());
             return Neighborhoods.make(menv, center, filtered);
         }
         return Neighborhoods.make(env, center);

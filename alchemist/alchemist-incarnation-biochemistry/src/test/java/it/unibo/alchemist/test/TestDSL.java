@@ -135,17 +135,24 @@ public class TestDSL {
         testValidReaction("[MolA] + [MolC in neighbor] --> [junction MolA-MolC]");
         testValidReaction("[MolC  in neighbor] + [MolA] --> [junction MolA-MolC]");
         testValidReaction("[MolC in neighbor] + [MolE in env] + [MolA] --> [junction MolA-MolC]");
-        testValidReaction("[MolZ in env] + [4 MolT + MolR in neighbor] + [MolA+ MolB in env] + [MolH + 8 MolF] + [MolS in env] --> [junction MolH:5MolF-4MolT:MolR]");
+        testValidReaction(
+                "[MolZ in env] + [4 MolT + MolR in neighbor] + [MolA+ MolB in env] + [MolH + 8 MolF] + [MolS in env]"
+                        + " --> [junction MolH:5MolF-4MolT:MolR]"
+        );
         testValidReaction("[MolA] + [MolB in neighbor] --> [MolC in env] + [junction MolA-MolB]");
         testValidReaction("[MolA] + [MolB in neighbor] --> [junction MolA-MolB] + [MolB]");
         testValidReaction("[MolA + 3 MolB] + [2 MolC in neighbor] + [MolD in env] --> [junction MolA:2MolB-2MolC]");
-        testValidReaction("[2 MolC in neighbor] + [MolD in env] + [MolA + 3 MolB]  --> [MolS] + [junction MolA:3MolB-MolC] + [MolE]");
+        testValidReaction(
+                "[2 MolC in neighbor] + [MolD in env] + [MolA + 3 MolB]  --> [MolS] + [junction MolA:3MolB-MolC] + [MolE]"
+        );
         // use junctions
         testValidReaction("[junction A-B] --> []");
         testValidReaction("[3 MolA + MolB] + [junction A-B] --> []");
         testValidReaction("[3 MolA + MolB] + [junction A-B] --> [junction A-B]");
         testValidReaction("[3 MolA + MolB] + [junction A-B] + [MolC + 8 MolD in env] + [junction B-C] --> [junction A-B]");
-        testValidReaction("[3 MolA + MolB] + [junction A-B] --> [MolA] + [MolB in env] + [junction A-B] + [MolE] + [MolR in neighbor]");
+        testValidReaction(
+                "[3 MolA + MolB] + [junction A-B] --> [MolA] + [MolB in env] + [junction A-B] + [MolE] + [MolR in neighbor]"
+        );
         testValidReaction("[3 MolA + MolB] + [junction A-B] --> [junction A-B] + [MolA] + [MolC]");
         testValidReaction("[junction A-B] --> [MolB in env] + [MolB]");
         testValidReaction("[junction A-B] + [MolA in env] + [junction C-D] --> [MolB in env] + [junction C-D]");
@@ -160,11 +167,13 @@ public class TestDSL {
         testInvalidReaction("[] -> []"); // -> instead of -->
         testInvalidReaction("[] ---> []"); // ---> instead of -->
         testInvalidReaction("MolA --> MolB"); // conditions and actions must be surrounded by []
-        testInvalidReaction("[Mol@] --> [MolA]"); // in molecule name only numbers and letters from a to z (upper and lower case) are allowed
+        // in molecule name only numbers and letters from a to z (upper and lower case) are allowed
+        testInvalidReaction("[Mol@] --> [MolA]");
         testInvalidReaction("[@°§à°è] --> [^'ì+?§ù]");
         testInvalidReaction("[-3 MolA] --> [MolB]"); // concentration must be positive
         testInvalidReaction("[3 MolA + 2 MolB in env] --> [-5 MolB in cell]"); // concentration must be positive
-        testInvalidReaction("[2,1 MolA] --> [MolB]"); // if concentration is a real number use dot to separate integer part to decimals
+        // if concentration is a real number use dot to separate integer part to decimals
+        testInvalidReaction("[2,1 MolA] --> [MolB]");
         testInvalidReaction("[2 3molA] --> [MolB]"); // molecule name cannot begin with a number
         testInvalidReaction("[2 MolA * MolB] --> [MolC]"); // * instead of +
         testInvalidReaction("[MolA MolB] --> [MolC]");
@@ -175,39 +184,52 @@ public class TestDSL {
         testInvalidReaction("[MolA, MolB] --> [MolC]"); // , instead of +
         testInvalidReaction("[MolA in Cell] --> [MolB]"); // Cell instead of cell
         testInvalidReaction("[MolA in Neighbor] --> [MolB]"); // Neighbor instead of neighbor
-        testInvalidReaction("[MolA in neighbour] --> [MolB]"); // neighbour instead of neighbor (we use American spelling)
+        // neighbour instead of neighbor (we use American spelling)
+        testInvalidReaction("[MolA in neighbour] --> [MolB]");
         testInvalidReaction("[MolA in Env] --> [MolB]"); // Env instead of env
         testInvalidReaction("[MolA in environment] --> [MolB]"); // environment instead of env
         testInvalidReaction("[MolA cell] --> [MolB in env]"); // cell instead of in cell
         testInvalidReaction("[MolA in env in cell] --> [MolB]"); // duplicated context declaration
-        testInvalidReaction("[MolA in cell + MolB in neighbor] --> [MolB]"); // duplicated context declaration (use [.. in cell] + [.. in neighbor])
+        // duplicated context declaration (use [.. in cell] + [.. in neighbor])
+        testInvalidReaction("[MolA in cell + MolB in neighbor] --> [MolB]");
         testInvalidReaction("[MolA + MolB] --> MyCustomAction()"); // custom actions must be surrounded by []
         testInvalidReaction("[MolA + MolB] --> [MyCustomAction(), MyCustomAction()]"); // , instead of +
-        testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition"); // custom conditions must have brackets (MyCustomCondition())
+        // custom conditions must have brackets (MyCustomCondition())
+        testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition");
         testInvalidReaction("MyCustomCondition() --> [MolB]");
         testInvalidReaction("[MyCustomCondition()] --> [MolB]");
         testInvalidReaction("[MolB] if MyCustomCondition()");
-        testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition() + MyCustomCondition2()"); // use , to separate custom conditions
-        testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition(@)"); // only alphabetic letters or numbers can be passed as parameters
+        // use , to separate custom conditions
+        testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition() + MyCustomCondition2()");
+        // only alphabetic letters or numbers can be passed as parameters
+        testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition(@)");
         testInvalidReaction("[MolA] --> [MolB] if MyCustomCondition() if MyCustomCondition2()"); // duplicate if
-        testInvalidReaction("[MolA] --> [MolB] reaction type MyCustomReaction"); // custom reactions must have brackets (MyCustomReaction())
+        // custom reactions must have brackets (MyCustomReaction())
+        testInvalidReaction("[MolA] --> [MolB] reaction type MyCustomReaction");
         testInvalidReaction("[MolA] --> [MolB] reaction MyCustomReaction()"); // reaction instead reaction type
-        testInvalidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction1(), MyCustomReaction2(1.2, qwerty)"); // Multiple reaction types
+        // Multiple reaction types
+        testInvalidReaction("[3 MolA in env] "
+                + "--> [2 MolB] reaction type MyCustomReaction1(), MyCustomReaction2(1.2, qwerty)");
         //junctions
         testInvalidReaction("[Junction A-B] --> [MolA in env]"); // Junction instead of junction
-        testInvalidReaction("[junction AB] --> [MolB]"); // correct syntax for junction is biomolecule(:biomolecule)*-biomolecule(:biomolecule)*
+        // correct syntax for junction is biomolecule(:biomolecule)*-biomolecule(:biomolecule)*
+        testInvalidReaction("[junction AB] --> [MolB]");
         testInvalidReaction("[junction A,B-B] --> [MolB]"); // the biomolecule separator is ':'
         testInvalidReaction("[3 junction A-B] --> [2 MolA]"); // junctions cannot have concentration
         testInvalidReaction("[junction A-B in env] --> [2 MolA]"); // junctions cannot have context
         testInvalidReaction("[junction A-B in cell] --> [2 MolA]");
         testInvalidReaction("[junction A-B in neighbor] --> [2 MolA]");
-        testInvalidReaction("[MolA] --> [junction A-B]"); // the creation of a junction requires at least 1 molecule in cell and 1 molecule in neighbor
+        // the creation of a junction requires at least 1 molecule in cell and 1 molecule in neighbor
+        testInvalidReaction("[MolA] --> [junction A-B]");
         testInvalidReaction("[MolA in neighbor] --> [junction A-B]");
         testInvalidReaction("[MolA in neighbor] + [MolB in env] --> [junction A-B]");
         testInvalidReaction("[MolA] + [MolB in env] --> [junction A-B]");
-        testInvalidReaction("[MolA] + [MolB in neighbor] + [MolC in cell] --> [junction A-B]"); // the creation of a junction cannot have 2 cell contexts. Use [MolA + MolC].
-        testInvalidReaction("[MolA] + [MolB in neighbor] + [MolC in neighbor] --> [junction A-B]"); // the creation of a junction cannot have 2 neighbor contexts. Use [MolB + MolC in neighbor].
-        testInvalidReaction("[MolA] + [MolB in neighbor] --> [junction A-B] + [junction C-D]"); // cannot create 2 junction at the same time. Use 2 reactions
+        // the creation of a junction cannot have 2 cell contexts. Use [MolA + MolC].
+        testInvalidReaction("[MolA] + [MolB in neighbor] + [MolC in cell] --> [junction A-B]");
+        // the creation of a junction cannot have 2 neighbor contexts. Use [MolB + MolC in neighbor].
+        testInvalidReaction("[MolA] + [MolB in neighbor] + [MolC in neighbor] --> [junction A-B]");
+        // cannot create 2 junction at the same time. Use 2 reactions
+        testInvalidReaction("[MolA] + [MolB in neighbor] --> [junction A-B] + [junction C-D]");
         testInvalidReaction("[MolA] + [MolB in neighbor] --> [junction A-B] + [MolF in env] + [junction C-D]");
     }
 }

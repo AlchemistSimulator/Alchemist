@@ -8,17 +8,15 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.CellNode;
-
-import java.util.Map;
-
-import org.apache.commons.math3.random.RandomGenerator;
-
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
+import it.unibo.alchemist.model.interfaces.CellNode;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.random.RandomGenerator;
+
+import java.util.Map;
 
 /**
  * Represent the action of removing a junction between the current node and a neighbor. <br/>
@@ -37,27 +35,32 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     /**
      * 
      * @param junction the junction
-     * @param n the node where the action is performed
-     * @param e the environment
-     * @param rg the random generator
+     * @param node the node where the action is performed
+     * @param environment the environment
+     * @param randomGenerator the random generator
      */
-    public RemoveJunctionInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction, final RandomGenerator rg) {
-        super(n, e, rg);
-        if (n instanceof CellNode) {
+    public RemoveJunctionInCell(
+            final Environment<Double, ?> environment,
+            final Node<Double> node,
+            final Junction junction,
+            final RandomGenerator randomGenerator
+    ) {
+        super(node, environment, randomGenerator);
+        if (node instanceof CellNode) {
             declareDependencyTo(junction);
             for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
                 declareDependencyTo(entry.getKey());
             }
             jun = junction;
-            env = e;
+            env = environment;
         } else {
             throw new UnsupportedOperationException("This Action can be set only in CellNodes");
         }
     }
 
     @Override
-    public RemoveJunctionInCell cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new RemoveJunctionInCell(env, n, jun, getRandomGenerator());
+    public RemoveJunctionInCell cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new RemoveJunctionInCell(env, node, jun, getRandomGenerator());
     }
 
     /**

@@ -69,8 +69,16 @@ public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
      * @param normalizerArgs
      *            Args to build normalize
      */
-    public ReproduceGPSTrace(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction, final double speed,
-            final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
+    public ReproduceGPSTrace(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction,
+            final double speed,
+            final String path,
+            final boolean cycle,
+            final String normalizer,
+            final Object... normalizerArgs
+    ) {
         super(environment, node,
                 new IgnoreStreets<>(),
                 new ConstantSpeed<>(reaction, speed),

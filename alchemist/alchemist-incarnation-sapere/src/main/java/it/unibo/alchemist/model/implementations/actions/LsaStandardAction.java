@@ -43,7 +43,10 @@ public class LsaStandardAction extends LsaAbstractAction {
     private final boolean initRand, initNode;
     private final ILsaMolecule mol;
     private final ITreeNode<?> nodeId;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
+    @SuppressFBWarnings(
+            value = "SE_BAD_FIELD",
+            justification = "All provided RandomGenerator implementations are actually Serializable"
+    )
     private final RandomGenerator rand;
 
     /**
@@ -78,7 +81,8 @@ public class LsaStandardAction extends LsaAbstractAction {
         initRand = molString.contains(SYN_RAND);
         initNode = molString.contains(SYN_NODE_ID);
         if (initRand && random == null) {
-            L.warn(SYN_RAND + " is used in " + m + ", but the RandomGenerator has not been initialized. You know this WILL lead to problems, don't you?");
+            L.warn(SYN_RAND + " is used in " + m
+                    + ", but the RandomGenerator has not been initialized. This WILL lead to problems.");
         }
         nodeId = initNode ? new ConstTreeNode(new HashString("node" + n.getId())) : null;
     }
@@ -87,8 +91,8 @@ public class LsaStandardAction extends LsaAbstractAction {
      * {@inheritDoc}
      */
     @Override
-    public LsaStandardAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
-        return new LsaStandardAction(getMolecule(), (ILsaNode) n);
+    public LsaStandardAction cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
+        return new LsaStandardAction(getMolecule(), (ILsaNode) node);
     }
 
     /**

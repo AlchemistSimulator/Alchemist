@@ -76,8 +76,18 @@ public final class FileMenu extends AbstractMenu {
                     method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
                     method.setAccessible(true);
                     method.invoke(ClassLoader.getSystemClassLoader(), new Object[] { chosen.toURI().toURL() });
-                    GUIUtilities.alertMessage(getString("load_jar_file"), chosen + " " + getString("successfully_included_in_classpath"));
-                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | MalformedURLException e1) {
+                    GUIUtilities.alertMessage(
+                            getString("load_jar_file"),
+                            chosen + " " + getString("successfully_included_in_classpath")
+                    );
+                } catch (
+                        NoSuchMethodException
+                                | SecurityException
+                                | IllegalAccessException
+                                | IllegalArgumentException
+                                | InvocationTargetException
+                                | MalformedURLException e1
+                ) {
                     GUIUtilities.errorMessage(e1);
                     L.error(getString("cannot_load_jar"), e1);
                 }

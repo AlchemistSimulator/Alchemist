@@ -38,7 +38,8 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
     private static final LoadingCache<TraceRef, TraceLoader> TRACE_LOADER_CACHE = Caffeine.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(key -> new TraceLoader(key.path, key.cycle, key.normalizer, key.args));
-    private static final LoadingCache<MapEnvironment<?>, LoadingCache<TraceRef, Iterator<GPSTrace>>> LOADER = Caffeine.newBuilder()
+    private static final LoadingCache<MapEnvironment<?>, LoadingCache<TraceRef, Iterator<GPSTrace>>> LOADER = Caffeine
+            .newBuilder()
             .weakKeys()
             .build(e -> Caffeine.newBuilder().build(key -> requireNonNull(TRACE_LOADER_CACHE.get(key)).iterator()));
     private final GPSTrace trace;
@@ -125,7 +126,13 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      * @return the GPSTrace
      */
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-    public static GPSTrace traceFor(final MapEnvironment<?> environment, final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
+    public static GPSTrace traceFor(
+            final MapEnvironment<?> environment,
+            final String path,
+            final boolean cycle,
+            final String normalizer,
+            final Object... normalizerArgs
+    ) {
         final LoadingCache<TraceRef, Iterator<GPSTrace>> gpsTraceLoader = LOADER.get(requireNonNull(environment));
         if (gpsTraceLoader == null) {
             throw new IllegalStateException("Unable to load a GPS Trace mapping for: " + environment + " (null was returned)");

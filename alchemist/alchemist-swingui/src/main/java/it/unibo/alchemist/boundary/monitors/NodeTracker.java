@@ -59,22 +59,22 @@ public final class NodeTracker<T, P extends Position<? extends P>> extends JPane
     }
 
     @Override
-    public void finished(final Environment<T, P> env, final Time time, final long step) {
-        stepDone(env, null, time, step);
+    public void finished(final Environment<T, P> environment, final Time time, final long step) {
+        stepDone(environment, null, time, step);
     }
 
     @Override
-    public void initialized(final Environment<T, P> env) {
-        stepDone(env, null, null, 0L);
+    public void initialized(final Environment<T, P> environment) {
+        stepDone(environment, null, null, 0L);
     }
 
     @Override
-    public void stepDone(final Environment<T, P> env, final Reaction<T> exec, final Time time, final long step) {
-        if (exec == null || exec.getNode().equals(n)) {
+    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
+        if (reaction == null || reaction.getNode().equals(n)) {
             final StringBuilder sb = new StringBuilder(stringLength)
                 .append(POSITION)
                 .append('\n')
-                .append(env.getPosition(n))
+                .append(environment.getPosition(n))
                 .append("\n\n\n")
                 .append(CONTENT)
                 .append('\n')

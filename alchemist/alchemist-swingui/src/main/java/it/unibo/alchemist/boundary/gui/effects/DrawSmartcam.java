@@ -32,15 +32,20 @@ public final class DrawSmartcam implements Effect {
     private boolean alreadyLogged;
 
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> node, final Environment<T, P> environment, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void apply(
+            final Graphics2D graphics,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final IWormhole2D<P> wormhole
+    ) {
         final double zoom = wormhole.getZoom();
         final Point viewPoint = wormhole.getViewPoint(environment.getPosition(node));
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {
             final Physics2DEnvironment<T> env = (Physics2DEnvironment<T>) environment;
-            drawShape(g, node, env, zoom, x, y);
-            drawFieldOfView(g, node, env, zoom, x, y);
+            drawShape(graphics, node, env, zoom, x, y);
+            drawFieldOfView(graphics, node, env, zoom, x, y);
         } else {
             logOnce("DrawSmartcam only works with EuclideanPhysics2DEnvironment", Logger::warn);
         }
@@ -51,27 +56,41 @@ public final class DrawSmartcam implements Effect {
         return Color.GREEN;
     }
 
-    private <T> void drawShape(final Graphics2D g, final Node<T> node, final Physics2DEnvironment<T> env, final double zoom, final int x, final int y) {
+    private <T> void drawShape(
+            final Graphics2D graphics,
+            final Node<T> node,
+            final Physics2DEnvironment<T> environment,
+            final double zoom,
+            final int x,
+            final int y
+    ) {
         final GeometricShape<?, ?> geometricShape = node instanceof NodeWithShape
                 ? ((NodeWithShape<T, ?, ?>) node).getShape()
                 : null;
         if (geometricShape instanceof AwtShapeCompatible) {
-            final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
+            final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));
             final Shape shape = transform.createTransformedShape(((AwtShapeCompatible) geometricShape).asAwtShape());
             if (node.contains(WANTED)) {
-                g.setColor(Color.RED);
+                graphics.setColor(Color.RED);
             } else {
-                g.setColor(Color.GREEN);
+                graphics.setColor(Color.GREEN);
             }
-            g.draw(shape);
+            graphics.draw(shape);
         } else {
             logOnce("DrawSmartcam only works with shapes implementing AwtShapeCompatible", Logger::warn);
         }
     }
 
-    private <T> void drawFieldOfView(final Graphics2D g, final Node<T> node, final Physics2DEnvironment<T> env, final double zoom, final int x, final int y) {
-        final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
-        g.setColor(Color.BLUE);
+    private <T> void drawFieldOfView(
+            final Graphics2D graphics,
+            final Node<T> node,
+            final Physics2DEnvironment<T> environment,
+            final double zoom,
+            final int x,
+            final int y
+    ) {
+        final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));
+        graphics.setColor(Color.BLUE);
         node.getReactions()
             .stream()
             .flatMap(r -> r.getActions().stream())
@@ -82,7 +101,7 @@ public final class DrawSmartcam implements Effect {
                 final double startAngle = -angle / 2;
                 final double d = a.getDistance();
                 final Shape fov = new Arc2D.Double(-d, -d, d * 2, d * 2, startAngle, angle, Arc2D.PIE);
-                g.draw(transform.createTransformedShape(fov));
+                graphics.draw(transform.createTransformedShape(fov));
             });
     }
 

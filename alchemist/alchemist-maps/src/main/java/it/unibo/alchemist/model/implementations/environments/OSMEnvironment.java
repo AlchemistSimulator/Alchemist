@@ -69,11 +69,6 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     public static final String DEFAULT_ALGORITHM = "dijkstrabi";
 
     /**
-     * The default routing strategy.
-     */
-    public static final String ROUTING_STRATEGY = "fastest";
-
-    /**
      * The default value for approximating the positions comparison.
      */
     public static final int DEFAULT_APPROXIMATION = 0;
@@ -131,12 +126,8 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
      *            desired {@link it.unibo.alchemist.model.interfaces.Position}.
-     * @throws IOException
-     *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked your
-     *             hard drive while Alchemist was reading the map
      */
-    public OSMEnvironment(final String file, final boolean onStreets) throws IOException {
+    public OSMEnvironment(final String file, final boolean onStreets) {
         this(file, onStreets, DEFAULT_FORCE_STREETS);
     }
 
@@ -150,12 +141,8 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original
      *            position.
-     * @throws IOException
-     *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked your
-     *             hard drive while Alchemist was reading the map
      */
-    public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets) throws IOException {
+    public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets) {
         this(file, DEFAULT_APPROXIMATION, onStreets, onlyOnStreets);
 
     }
@@ -172,12 +159,8 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
      *            since the cache may already contain a similar route  which
      *            can be considered to be the same route, according to
      *            the level of precision determined by this value
-     * @throws IOException
-     *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked
-     *             your hard drive while Alchemist was reading the map
      */
-    public OSMEnvironment(final String file, final int approximation) throws IOException {
+    public OSMEnvironment(final String file, final int approximation) {
         this(file, approximation, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS);
     }
 
@@ -200,12 +183,13 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original
      *            position.
-     * @throws IOException
-     *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked your
-     *             hard drive while Alchemist was reading the map
      */
-    public OSMEnvironment(final String file, final int approximation, final boolean onStreets, final boolean onlyOnStreets) throws IOException {
+    public OSMEnvironment(
+            final String file,
+            final int approximation,
+            final boolean onStreets,
+            final boolean onlyOnStreets
+    ) {
         super();
         if (approximation < 0 || approximation > 64) {
             throw new IllegalArgumentException();
@@ -249,8 +233,12 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
                     final Vehicle vehicle1 = Objects.requireNonNull(key).v;
                     final GeoPosition p11 = key.start;
                     final GeoPosition p21 = key.end;
-                    final GHRequest req = new GHRequest(p11.getLatitude(), p11.getLongitude(), p21.getLatitude(), p21.getLongitude())
-                            .setAlgorithm(DEFAULT_ALGORITHM);
+                    final GHRequest req = new GHRequest(
+                            p11.getLatitude(),
+                            p11.getLongitude(),
+                            p21.getLatitude(),
+                            p21.getLongitude()
+                    ).setAlgorithm(DEFAULT_ALGORITHM);
                     final GraphHopperAPI gh = navigators.get(vehicle1);
                     if (gh != null) {
                         final GHResponse resp = gh.route(req);
@@ -409,7 +397,9 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     }
 
     private static String initDir(final URL mapfile) throws IOException {
-        final String code = Hex.encodeHexString(Hashing.sha256().hashBytes(IOUtils.toByteArray(mapfile.openStream())).asBytes());
+        final String code = Hex.encodeHexString(
+                Hashing.sha256().hashBytes(IOUtils.toByteArray(mapfile.openStream())).asBytes()
+        );
         final String append = SLASH + code;
         final String[] prefixes = { PERSISTENTPATH, System.getProperty("java.io.tmpdir"),
                 System.getProperty("user.dir"), "." };

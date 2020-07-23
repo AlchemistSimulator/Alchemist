@@ -40,7 +40,12 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
      *                  inPercent == false.
      * @param delta the distance at which the cell will be moved.
      */
-    public CellMove(final Environment<Double, P> environment, final Node<Double> node, final boolean inPercent, final double delta) {
+    public CellMove(
+            final Environment<Double, P> environment,
+            final Node<Double> node,
+            final boolean inPercent,
+            final double delta
+    ) {
         super(environment, node);
         this.inPer = inPercent;
         if (node instanceof CellNode) {
@@ -48,7 +53,9 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
                 if (node instanceof CellWithCircularArea && ((CellWithCircularArea<?>) node).getRadius() != 0) {
                     this.delta = ((CellWithCircularArea<?>) node).getDiameter() * delta;
                 } else {
-                    throw new IllegalArgumentException("Can't set distance in percent of the cell's diameter if cell has not a diameter");
+                    throw new IllegalArgumentException(
+                            "Can't set distance in percent of the cell's diameter if cell has not a diameter"
+                    );
                 }
             } else {
                 this.delta = delta;
@@ -59,8 +66,8 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     }
 
     @Override
-    public CellMove<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new CellMove<>(getEnvironment(), n, inPer, delta);
+    public CellMove<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new CellMove<>(getEnvironment(), node, inPer, delta);
     }
 
     @Override

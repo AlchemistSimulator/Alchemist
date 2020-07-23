@@ -25,7 +25,8 @@ class CloseToAlreadyDisplaced<T, P : Position<P>> (
 ) : AbstractCloseTo<T, P>(randomGenerator, environment, nodeCount, variance) {
     override val sources = environment.nodes.asSequence()
         .map { environment.getPosition(it) }
-        .map { when (it) {
+        .map {
+            when (it) {
                 is GeoPosition -> doubleArrayOf(it.latitude, it.longitude)
                 else -> it.coordinates
             }

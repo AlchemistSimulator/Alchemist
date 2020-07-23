@@ -34,40 +34,51 @@ public abstract class DrawOnce implements Effect {
      * {@inheritDoc}
      */
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void apply(
+            final Graphics2D graphics,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final IWormhole2D<P> wormhole
+    ) {
         if (markerNodeID != null) {
             /*
              * We want to check if the cached id belongs to a node still present in
              * the environment, thus we don't use getNodeByID to avoid exceptions
              */
-            final Optional<Node<T>> markerNode = env.getNodes().stream()
-                    .filter(node -> node.getId() == markerNodeID)
+            final Optional<Node<T>> markerNode = environment.getNodes().stream()
+                    .filter(it -> it.getId() == markerNodeID)
                     .findFirst();
             /*
              * if marker node is no longer in the environment or it is no longer displayed, we need to change it
              */
-            if (markerNode.isEmpty() || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition(markerNode.get())))) {
+            if (markerNode.isEmpty()
+                    || !wormhole.isInsideView(wormhole.getViewPoint(environment.getPosition(markerNode.get())))) {
                 markerNodeID = null;
             }
         }
         if (markerNodeID == null) {
-            markerNodeID = n.getId();
+            markerNodeID = node.getId();
         }
-        if (markerNodeID == n.getId()) {
-            draw(g, n, env, wormhole);
+        if (markerNodeID == node.getId()) {
+            draw(graphics, node, environment, wormhole);
         }
     }
 
     /**
      * Draws the effect, this method is called only for a single a node of the environment.
-     * @param g Graphics2D
-     * @param n Node
-     * @param env environment
+     * @param graphics2D Graphics2D
+     * @param node Node
+     * @param environment environment
      * @param wormhole wormhole
      * @param <T> concentration type
      * @param <P> position type
      */
-    protected abstract <T, P extends Position2D<P>> void draw(Graphics2D g, Node<T> n, Environment<T, P> env, IWormhole2D<P> wormhole);
+    protected abstract <T, P extends Position2D<P>> void draw(
+            Graphics2D graphics2D,
+            Node<T> node,
+            Environment<T, P> environment,
+            IWormhole2D<P> wormhole
+    );
 
     /**
      * @return the marker node id

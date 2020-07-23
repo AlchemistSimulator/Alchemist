@@ -20,7 +20,7 @@ class Spin<T>(
 
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) = Spin(n, r, env, angularSpeedDegrees)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = Spin(node, reaction, env, angularSpeedDegrees)
 
     /**
      * Spins the node around itself.

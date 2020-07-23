@@ -108,8 +108,10 @@ class SinglePrevalent<T, N : ConvexPolygon>(
                     !currRoom.containsBoundaryIncluded(pedestrianPosition + this)
                 }
             }
-            if (prevalentForce == environment.origin || currentRoom == null ||
-                prevalentForce.leadsOutsideCurrentRoom()) {
+            if (prevalentForce == environment.origin ||
+                currentRoom == null ||
+                prevalentForce.leadsOutsideCurrentRoom()
+            ) {
                 return prevalentForce
             }
             val otherForces = (actions - this).map { it.nextPosition() }

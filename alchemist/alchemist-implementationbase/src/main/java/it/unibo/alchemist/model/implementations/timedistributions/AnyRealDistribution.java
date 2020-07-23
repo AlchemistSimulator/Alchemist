@@ -32,7 +32,10 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the implementations of RealDistribution also implement Serializable")
+    @SuppressFBWarnings(
+            value = "SE_BAD_FIELD",
+            justification = "All the implementations of RealDistribution also implement Serializable"
+    )
     private final RealDistribution distribution;
 
     /**
@@ -57,7 +60,12 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      * @param parameters
      *            the parameters for the distribution
      */
-    public AnyRealDistribution(final Time start, final RandomGenerator rng, final String distribution, final double... parameters) {
+    public AnyRealDistribution(
+            final Time start,
+            final RandomGenerator rng,
+            final String distribution,
+            final double... parameters
+    ) {
         this(start, RealDistributionUtil.makeRealDistribution(rng, distribution, parameters));
     }
 
@@ -91,11 +99,16 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
 
     @SuppressFBWarnings(value = "FE_FLOATING_POINT_EQUALITY", justification = "We want to check for exact equality here")
     @Override
-    protected final void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
-        if (param != getRate()) {
+    protected final void updateStatus(
+            final Time currentTime,
+            final boolean hasBeenExecuted,
+            final double additionalParameter,
+            final Environment<T, ?> environment
+    ) {
+        if (additionalParameter != getRate()) {
             throw new IllegalStateException(getClass().getSimpleName() + " does not allow to dynamically tune the rate.");
         }
-        setTau(new DoubleTime(curTime.toDouble() + distribution.sample()));
+        setTau(new DoubleTime(currentTime.toDouble() + distribution.sample()));
     }
 
     /**

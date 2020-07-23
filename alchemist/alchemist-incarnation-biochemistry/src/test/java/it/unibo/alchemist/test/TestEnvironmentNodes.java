@@ -372,7 +372,10 @@ public class TestEnvironmentNodes {
         return testLoading(resource, Collections.emptyMap());
     }
 
-    private static <T, P extends Position<P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> Environment<T, P> testLoading(
+            final String resource,
+            final Map<String, Double> vars
+    ) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);

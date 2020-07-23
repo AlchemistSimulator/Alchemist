@@ -21,4 +21,4 @@ infix fun Double.fuzzyIn(range: ClosedRange<Double>): Boolean =
      * Tried to use fuzzyGreaterEquals and fuzzySmallerEquals, throws NoSuchMethodException at runtime, don't know why.
      */
     (MathUtils.fuzzyEquals(this, range.start) || this >= range.start) &&
-    (MathUtils.fuzzyEquals(this, range.endInclusive) || this <= range.endInclusive)
+        (MathUtils.fuzzyEquals(this, range.endInclusive) || this <= range.endInclusive)

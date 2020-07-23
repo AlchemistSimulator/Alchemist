@@ -7,8 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
-import java.util.Objects;
-
 import it.unibo.alchemist.model.implementations.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
@@ -17,6 +15,8 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
+
+import java.util.Objects;
 
 /**
  * This strategy dynamically tries to move the node adjusting its speed to
@@ -32,17 +32,17 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
     private final Node<T> node;
 
     /**
-     * @param e
+     * @param environment
      *            the environment
-     * @param n
+     * @param node
      *            the node
-     * @param r
+     * @param reaction
      *            the reaction
      */
-    public TraceDependantSpeed(final MapEnvironment<T> e, final Node<T> n, final Reaction<T> r) {
-        env = Objects.requireNonNull(e);
-        node = Objects.requireNonNull(n);
-        reaction = Objects.requireNonNull(r);
+    public TraceDependantSpeed(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
+        env = Objects.requireNonNull(environment);
+        this.node = Objects.requireNonNull(node);
+        this.reaction = Objects.requireNonNull(reaction);
     }
 
     @Override
@@ -62,12 +62,16 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
     /**
      * @param environment
      *            the environment
-     * @param curNode
+     * @param currentNode
      *            the node
      * @param targetPosition
      *            the target
      * @return an estimation of the distance between the node and the target
      *         position
      */
-    protected abstract double computeDistance(MapEnvironment<T> environment, Node<T> curNode, GeoPosition targetPosition);
+    protected abstract double computeDistance(
+            MapEnvironment<T> environment,
+            Node<T> currentNode,
+            GeoPosition targetPosition
+    );
 }

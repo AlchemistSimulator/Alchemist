@@ -82,8 +82,8 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
 
 
     @Override
-    public ChemotacticPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new ChemotacticPolarization<>(env, n, biomol.toString(), ascend ? "up" : "down");
+    public ChemotacticPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new ChemotacticPolarization<>(env, node, biomol.toString(), ascend ? "up" : "down");
     }
 
     @Override

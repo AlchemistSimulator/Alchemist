@@ -32,8 +32,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> implements Incarnation<Double, P> {
 
     @Override
-    public double getProperty(final Node<Double> node, final Molecule mol, final String prop) {
-        return node.getConcentration(mol);
+    public double getProperty(final Node<Double> node, final Molecule molecule, final String property) {
+        return node.getConcentration(molecule);
     }
 
     @Override
@@ -42,49 +42,68 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     }
 
     @Override
-    public CellNode<P> createNode(final RandomGenerator rand, final Environment<Double, P> env, final String param) {
-        if (param == null || param.isEmpty()) {
-            return new CellNodeImpl<>(env);
+    public CellNode<P> createNode(
+            final RandomGenerator randomGenerator,
+            final Environment<Double, P> environment,
+            final String parameter) {
+        if (parameter == null || parameter.isEmpty()) {
+            return new CellNodeImpl<>(environment);
         }
-        return new CellNodeImpl<>(env, Double.parseDouble(param));
+        return new CellNodeImpl<>(environment, Double.parseDouble(parameter));
     }
 
     @Override
-    public TimeDistribution<Double> createTimeDistribution(final RandomGenerator rand, final Environment<Double, P> env,
-            final Node<Double> node, final String param) {
-        if (param == null || param.isEmpty()) {
-            return new ExponentialTime<>(1.0, rand);
+    public TimeDistribution<Double> createTimeDistribution(
+            final RandomGenerator randomGenerator,
+            final Environment<Double, P> environment,
+            final Node<Double> node,
+            final String parameter
+    ) {
+        if (parameter == null || parameter.isEmpty()) {
+            return new ExponentialTime<>(1.0, randomGenerator);
         }
         try {
-            final double rate = Double.parseDouble(param);
-            return new ExponentialTime<>(rate, rand);
+            final double rate = Double.parseDouble(parameter);
+            return new ExponentialTime<>(rate, randomGenerator);
         } catch (NumberFormatException e) {
-            return new ExponentialTime<>(1.0, rand);
+            return new ExponentialTime<>(1.0, randomGenerator);
         }
     }
 
     @Override
-    public Reaction<Double> createReaction(final RandomGenerator rand, 
-            final Environment<Double, P> env, 
+    public Reaction<Double> createReaction(final RandomGenerator randomGenerator,
+            final Environment<Double, P> environment,
             final Node<Double> node,
-            final TimeDistribution<Double> time, 
-            final String param) {
-        return new BiochemicalReactionBuilder<>(this, node, env)
-                .randomGenerator(rand)
-                .timeDistribution(time)
-                .program(param)
+            final TimeDistribution<Double> timeDistribution,
+            final String parameter) {
+        return new BiochemicalReactionBuilder<>(this, node, environment)
+                .randomGenerator(randomGenerator)
+                .timeDistribution(timeDistribution)
+                .program(parameter)
                 .build();
     }
 
     @Override
-    public Condition<Double> createCondition(final RandomGenerator rand, final Environment<Double, P> env, final Node<Double> node,
-            final TimeDistribution<Double> time, final Reaction<Double> reaction, final String param) {
+    public Condition<Double> createCondition(
+            final RandomGenerator randomGenerator,
+            final Environment<Double, P> environment,
+            final Node<Double> node,
+            final TimeDistribution<Double> time,
+            final Reaction<Double> reaction,
+            final String additionalParameters
+    ) {
         return null;
     }
 
     @Override
-    public Action<Double> createAction(final RandomGenerator rand, final Environment<Double, P> env, final Node<Double> node,
-            final TimeDistribution<Double> time, final Reaction<Double> reaction, final String param) {
+    public Action<Double> createAction(
+            final RandomGenerator randomGenerator,
+            final Environment<Double, P> environment,
+            final Node<Double> node,
+            final TimeDistribution<Double> time,
+            final Reaction<Double> reaction,
+            final String additionalParameters
+    ) {
         return null;
     }
 

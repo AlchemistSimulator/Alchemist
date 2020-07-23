@@ -87,7 +87,11 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
      * @param currentNode the node where the reaction is placed.
      * @param environment the environment.
      */
-    public BiochemicalReactionBuilder(final BiochemistryIncarnation<P> inc, final Node<Double> currentNode, final Environment<Double, P> environment) {
+    public BiochemicalReactionBuilder(
+            final BiochemistryIncarnation<P> inc,
+            final Node<Double> currentNode,
+            final Environment<Double, P> environment
+    ) {
         incarnation = inc;
         node = currentNode;
         env = environment;
@@ -150,7 +154,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         return this;
     }
 
-    private static final class BiochemistryDSLVisitor<P extends Position<? extends P>> extends BiochemistrydslBaseVisitor<Reaction<Double>> {
+    private static final class BiochemistryDSLVisitor<P extends Position<? extends P>>
+            extends BiochemistrydslBaseVisitor<Reaction<Double>> {
+
         private static final String CONDITIONS_PACKAGE = "it.unibo.alchemist.model.implementations.conditions.";
         private static final String ACTIONS_PACKAGE = "it.unibo.alchemist.model.implementations.actions.";
 
@@ -196,17 +202,24 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @SuppressWarnings("unchecked")
-        private <O> O createObject(final BiochemistrydslParser.JavaConstructorContext ctx, final String packageName) {
-            String className = ctx.javaClass().getText();
+        private <O> O createObject(
+                final BiochemistrydslParser.JavaConstructorContext context,
+                final String packageName
+        ) {
+            String className = context.javaClass().getText();
             if (!className.contains(".")) {
                 className = packageName + className; // NOPMD UseStringBufferForStringAppends
             }
             try {
                 final Class<O> clazz = (Class<O>) ResourceLoader.classForName(className);
-                final ArgListContext lctx = ctx.argList();
+                final ArgListContext lctx = context.argList();
                 final List<Object> params = new ArrayList<>();
                 if (lctx != null) { // if null there are no parameters, so params must be an empty List (as it is, actually)
-                    lctx.arg().forEach(arg -> params.add((arg.decimal() != null) ? Double.parseDouble(arg.decimal().getText()) : arg.LITERAL().getText()));
+                    lctx.arg().forEach(arg ->
+                            params.add((arg.decimal() != null)
+                                    ? Double.parseDouble(arg.decimal().getText())
+                                    : arg.LITERAL().getText())
+                    );
                 }
                 return factory.build(clazz, params);
             } catch (ClassNotFoundException e) {
@@ -215,14 +228,14 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override 
-        public Reaction<Double> visitBiochemicalReaction(final BiochemistrydslParser.BiochemicalReactionContext ctx) { 
-            visit(ctx.biochemicalReactionLeft());
-            visit(ctx.biochemicalReactionRight());
-            if (ctx.customConditions() != null) {
-                visit(ctx.customConditions());
+        public Reaction<Double> visitBiochemicalReaction(final BiochemistrydslParser.BiochemicalReactionContext context) {
+            visit(context.biochemicalReactionLeft());
+            visit(context.biochemicalReactionRight());
+            if (context.customConditions() != null) {
+                visit(context.customConditions());
             }
-            if (ctx.customReactionType() != null) {
-                visit(ctx.customReactionType());
+            if (context.customReactionType() != null) {
+                visit(context.customReactionType());
             }
             /*
              * if the reaction has at least one neighbor action but no neighbor condition 
@@ -243,8 +256,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionLeftInCellContext(final BiochemistrydslParser.BiochemicalReactionLeftInCellContextContext ctx) {
-            for (final BiomoleculeContext b : ctx.biomolecule()) {
+        public Reaction<Double> visitBiochemicalReactionLeftInCellContext(
+                final BiochemistrydslParser.BiochemicalReactionLeftInCellContextContext context
+        ) {
+            for (final BiomoleculeContext b : context.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInCell, biomol, concentration);
@@ -255,7 +270,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionLeftInEnvContext(final BiochemistrydslParser.BiochemicalReactionLeftInEnvContextContext ctx) {
+        public Reaction<Double> visitBiochemicalReactionLeftInEnvContext(
+                final BiochemistrydslParser.BiochemicalReactionLeftInEnvContextContext ctx
+        ) {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
@@ -267,7 +284,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionLeftInNeighborContext(final BiochemistrydslParser.BiochemicalReactionLeftInNeighborContextContext ctx) {
+        public Reaction<Double> visitBiochemicalReactionLeftInNeighborContext(
+                final BiochemistrydslParser.BiochemicalReactionLeftInNeighborContextContext ctx
+        ) {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
@@ -279,7 +298,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionRightInCellContext(final BiochemistrydslParser.BiochemicalReactionRightInCellContextContext ctx) {
+        public Reaction<Double> visitBiochemicalReactionRightInCellContext(
+                final BiochemistrydslParser.BiochemicalReactionRightInCellContextContext ctx
+        ) {
             for (final BiochemicalReactionRightElemContext re : ctx.biochemicalReactionRightElem()) {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
@@ -293,8 +314,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionRightInEnvContext(final BiochemistrydslParser.BiochemicalReactionRightInEnvContextContext ctx) {
-            for (final BiochemicalReactionRightElemContext re : ctx.biochemicalReactionRightElem()) {
+        public Reaction<Double> visitBiochemicalReactionRightInEnvContext(
+                final BiochemistrydslParser.BiochemicalReactionRightInEnvContextContext context
+        ) {
+            for (final BiochemicalReactionRightElemContext re : context.biochemicalReactionRightElem()) {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
@@ -308,8 +331,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionRightInNeighborContext(final BiochemistrydslParser.BiochemicalReactionRightInNeighborContextContext ctx) {
-            for (final BiochemicalReactionRightElemContext re : ctx.biochemicalReactionRightElem()) {
+        public Reaction<Double> visitBiochemicalReactionRightInNeighborContext(
+                final BiochemistrydslParser.BiochemicalReactionRightInNeighborContextContext context
+        ) {
+            for (final BiochemicalReactionRightElemContext re : context.biochemicalReactionRightElem()) {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
@@ -323,14 +348,14 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitCreateJunction(final BiochemistrydslParser.CreateJunctionContext ctx) { 
-            visit(ctx.createJunctionLeft());
-            visit(ctx.createJunctionRight());
-            if (ctx.customConditions() != null) {
-                visit(ctx.customConditions());
+        public Reaction<Double> visitCreateJunction(final BiochemistrydslParser.CreateJunctionContext context) {
+            visit(context.createJunctionLeft());
+            visit(context.createJunctionRight());
+            if (context.customConditions() != null) {
+                visit(context.customConditions());
             }
-            if (ctx.customReactionType() != null) {
-                visit(ctx.customReactionType());
+            if (context.customReactionType() != null) {
+                visit(context.customReactionType());
             }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
@@ -338,50 +363,61 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
-        public Reaction<Double> visitCreateJunctionJunction(final BiochemistrydslParser.CreateJunctionJunctionContext ctx) {
-            final Junction j = createJunction(ctx.junction());
+        public Reaction<Double> visitCreateJunctionJunction(
+                final BiochemistrydslParser.CreateJunctionJunctionContext context
+        ) {
+            final Junction j = createJunction(context.junction());
             j.getMoleculesInCurrentNode().forEach((k, v) -> {
                 if (!biomolConditionsInCell.containsKey(k) || biomolConditionsInCell.get(k) < v) {
-                    throw new BiochemistryParseException("The creation of the junction " + j + " requires " + v + " " + k + " in the current node, specify a greater or equal value in conditions.");
+                    throw new BiochemistryParseException(
+                            "The creation of the junction " + j + " requires " + v + " " + k
+                            + " in the current node, specify a greater or equal value in conditions."
+                    );
                 }
             });
             j.getMoleculesInNeighborNode().forEach((k, v) -> {
                 if (!biomolConditionsInNeighbor.containsKey(k) || biomolConditionsInNeighbor.get(k) < v) {
-                    throw new BiochemistryParseException("The creation of the junction " + j + " requires " + v + " " + k + " in the neighbor node, specify a greater or equal value in conditions.");
+                    throw new BiochemistryParseException(
+                            "The creation of the junction " + j + " requires " + v + " " + k
+                            + " in the neighbor node, specify a greater or equal value in conditions."
+                    );
                 }
             });
             if (node instanceof CellNode) {
                 actionList.add(new AddJunctionInCell(env, node, j, rand));
                 actionList.add(new AddJunctionInNeighbor<>(env, (CellNode<P>) node, reverseJunction(j), rand));
             } else {
-                throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
+                throw new UnsupportedOperationException(
+                        "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                );
             }
             return reaction;
         }
 
         @Override 
-        public Reaction<Double> visitCustomCondition(final BiochemistrydslParser.CustomConditionContext ctx) {
-            conditionList.add(createObject(ctx.javaConstructor(), CONDITIONS_PACKAGE));
+        public Reaction<Double> visitCustomCondition(final BiochemistrydslParser.CustomConditionContext context) {
+            conditionList.add(createObject(context.javaConstructor(), CONDITIONS_PACKAGE));
             return reaction;
         }
 
         @Override
-        public Reaction<Double> visitJunctionReaction(final BiochemistrydslParser.JunctionReactionContext ctx) { 
-            visit(ctx.junctionReactionLeft());
-            visit(ctx.junctionReactionRight());
-            if (ctx.customConditions() != null) {
-                visit(ctx.customConditions());
+        public Reaction<Double> visitJunctionReaction(final BiochemistrydslParser.JunctionReactionContext context) {
+            visit(context.junctionReactionLeft());
+            visit(context.junctionReactionRight());
+            if (context.customConditions() != null) {
+                visit(context.customConditions());
             }
-            if (ctx.customReactionType() != null) {
-                visit(ctx.customReactionType());
+            if (context.customReactionType() != null) {
+                visit(context.customReactionType());
             }
             junctionList.forEach(j -> {
                 if (node instanceof CellNode) {
                     actionList.add(new RemoveJunctionInCell(env, node, j, rand));
                     actionList.add(new RemoveJunctionInNeighbor(env, node, reverseJunction(j), rand));
                 } else {
-                    throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
+                    throw new UnsupportedOperationException(
+                            "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                    );
                 }
             });
             reaction.setConditions(conditionList);
@@ -390,9 +426,16 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitJunctionReactionJunction(final BiochemistrydslParser.JunctionReactionJunctionContext ctx) {
-            final Junction j = createJunction(ctx.junction());
-            if (!junctionList.remove(j)) { // the junction is not present in the list, witch means that this junction is undefined (e.g. [junction A-B] --> [junction C-D]
+        public Reaction<Double> visitJunctionReactionJunction(
+                final BiochemistrydslParser.JunctionReactionJunctionContext context
+        ) {
+            final Junction j = createJunction(context.junction());
+            if (!junctionList.remove(j)) {
+                /*
+                 * the junction is not present in the list,
+                 * witch means that this junction is undefined
+                 * (e.g. [junction A-B] --> [junction C-D]
+                 */
                 throw new BiochemistryParseException("The junction " + j + " is not present in conditions.\n"
                         + "If you want to create the junction " + j + " do it on a separate reaction.");
             }
@@ -400,14 +443,18 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitJunctionReactionJunctionCondition(final BiochemistrydslParser.JunctionReactionJunctionConditionContext ctx) {
+        public Reaction<Double> visitJunctionReactionJunctionCondition(
+                final BiochemistrydslParser.JunctionReactionJunctionConditionContext context
+        ) {
             if (node instanceof CellNode) {
-                final Junction j = createJunction(ctx.junction());
+                final Junction j = createJunction(context.junction());
                 junctionList.add(j);
                 conditionList.add(new JunctionPresentInCell(env, node, j));
                 return reaction;
             } else {
-                throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
+                throw new UnsupportedOperationException(
+                        "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                );
             }
         }
 
@@ -425,16 +472,20 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             return (ctx.concentration() == null) ? 1.0 : Double.parseDouble(ctx.concentration().POSDOUBLE().getText());
         }
 
-        private static Junction createJunction(final BiochemistrydslParser.JunctionContext ctx) {
+        private static Junction createJunction(final BiochemistrydslParser.JunctionContext context) {
             final Map<Biomolecule, Double> currentNodeMolecules = new LinkedHashMap<>();
             final Map<Biomolecule, Double> neighborNodeMolecules = new LinkedHashMap<>();
-            for (final BiomoleculeContext b : ctx.junctionLeft().biomolecule()) {
+            for (final BiomoleculeContext b : context.junctionLeft().biomolecule()) {
                 insertInMap(currentNodeMolecules, createBiomolecule(b), createConcentration(b));
             }
-            for (final BiomoleculeContext b : ctx.junctionRight().biomolecule()) {
+            for (final BiomoleculeContext b : context.junctionRight().biomolecule()) {
                 insertInMap(neighborNodeMolecules, createBiomolecule(b), createConcentration(b));
             }
-            return new Junction(ctx.junctionLeft().getText() + "-" + ctx.junctionRight().getText(), currentNodeMolecules, neighborNodeMolecules);
+            return new Junction(
+                    context.junctionLeft().getText() + "-" + context.junctionRight().getText(),
+                    currentNodeMolecules,
+                    neighborNodeMolecules
+            );
         }
 
         private static void insertInMap(final Map<Biomolecule, Double> map, final Biomolecule mol, final double conc) {
@@ -495,9 +546,11 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final Object offendingSymbol, 
                 final int line,
                 final int charPositionInLine,
-                final String msg,
+                final String message,
                 final RecognitionException e) {
-            throw new BiochemistryParseException("Error in reaction: " + reaction + "at character " + charPositionInLine + "\n" + msg);
+            throw new BiochemistryParseException(
+                    "Error in reaction: " + reaction + "at character " + charPositionInLine + "\n" + message
+            );
         }
     }
 }

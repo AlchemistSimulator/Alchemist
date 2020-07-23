@@ -171,8 +171,8 @@ public class TestIncarnation {
         testR(
                 "[A] + [B in neighbor] + [C in env] "
                         + "--> "
-                        + "[D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)]" +
-                        " if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
+                        + "[D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)]"
+                        + " if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
         // CHECKSTYLE: MagicNumber ON
         testNoR("[A] + [B in neighbor] --> [junction A-C]"); // C is not present in conditions
         testNoR("[A] + [B in neighbor] --> [junction A-2B]"); // only one molecule B is present in conditions

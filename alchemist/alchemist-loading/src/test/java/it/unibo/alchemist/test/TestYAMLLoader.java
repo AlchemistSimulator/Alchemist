@@ -162,7 +162,10 @@ public class TestYAMLLoader {
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }
 
-    private static <T, P extends Position<P>> Environment<T, P> testLoading(final InputStream resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> Environment<T, P> testLoading(
+            final InputStream resource,
+            final Map<String, Double> vars
+    ) {
         assertNotNull(resource, "Missing test resource " + resource);
         final Environment<T, P> env = new YamlLoader(resource).getWith(vars);
         final Simulation<T, P> sim = new Engine<>(env, 10_000);

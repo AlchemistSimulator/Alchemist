@@ -25,26 +25,35 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
 public final class RoutingTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
 
     private static final long serialVersionUID = -2195494825891818353L;
-    private final Vehicle v;
+    private final Vehicle vehicle;
 
     /**
-     * @param e
+     * @param environment
      *            the environment
-     * @param n
+     * @param node
      *            the node
-     * @param r
+     * @param reaction
      *            the reaction
      * @param vehicle
      *            the vehicle
      */
-    public RoutingTraceDependantSpeed(final MapEnvironment<T> e, final Node<T> n, final Reaction<T> r, final Vehicle vehicle) {
-        super(e, n, r);
-        v = vehicle;
+    public RoutingTraceDependantSpeed(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction,
+            final Vehicle vehicle
+    ) {
+        super(environment, node, reaction);
+        this.vehicle = vehicle;
     }
 
     @Override
-    protected double computeDistance(final MapEnvironment<T> environment, final Node<T> currentNode, final GeoPosition targetPosition) {
-        return environment.computeRoute(currentNode, targetPosition, v).length();
+    protected double computeDistance(
+            final MapEnvironment<T> environment,
+            final Node<T> currentNode,
+            final GeoPosition targetPosition
+    ) {
+        return environment.computeRoute(currentNode, targetPosition, vehicle).length();
     }
 
 }

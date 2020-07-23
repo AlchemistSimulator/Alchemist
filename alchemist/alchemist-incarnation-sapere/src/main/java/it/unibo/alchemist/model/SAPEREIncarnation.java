@@ -215,7 +215,10 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                         actions.add(createAction(rand, env, node, time, result, action));
                     }
                 } else {
-                    illegalSpec("not a sequence of valid conditions (curly bracket enclosed LSAs, with optional '+' prefix)", conditionsSpec);
+                    illegalSpec("not a sequence of valid conditions" +
+                            "(curly bracket enclosed LSAs, with optional '+' prefix)",
+                            conditionsSpec
+                    );
                 }
                 result.setConditions(conditions);
                 result.setActions(actions);

@@ -301,7 +301,10 @@ public final class BioRect2DEnvironmentNoOverlap
                         }
                         if (diameterToCompare.getReturnType().equals(double.class)) {
                             try {
-                                return Double.compare((double) diameterToCompare.invoke(c1), (double) diameterToCompare.invoke(c2));
+                                return Double.compare(
+                                        (double) diameterToCompare.invoke(c1),
+                                        (double) diameterToCompare.invoke(c2)
+                                );
                             } catch (IllegalAccessException e) {
                                 L.error("Method not accessible");
                                 return 0;

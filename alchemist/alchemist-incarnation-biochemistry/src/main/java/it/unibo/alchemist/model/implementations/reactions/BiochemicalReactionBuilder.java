@@ -363,8 +363,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitCreateJunctionJunction(final BiochemistrydslParser.CreateJunctionJunctionContext ctx) {
-            final Junction j = createJunction(ctx.junction());
+        public Reaction<Double> visitCreateJunctionJunction(
+                final BiochemistrydslParser.CreateJunctionJunctionContext context
+        ) {
+            final Junction j = createJunction(context.junction());
             j.getMoleculesInCurrentNode().forEach((k, v) -> {
                 if (!biomolConditionsInCell.containsKey(k) || biomolConditionsInCell.get(k) < v) {
                     throw new BiochemistryParseException(

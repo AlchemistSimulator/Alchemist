@@ -195,7 +195,13 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
      * @param neighRange the communication range of the neighbor
      * @return true if the node must be removed, false otherwise
      */
-    protected boolean conditionForRemoval(final Environment<T, P> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
+    protected boolean conditionForRemoval(
+            final Environment<T, P> env,
+            final Node<T> center,
+            final Node<T> neighbor,
+            final double centerRange,
+            final double neighRange
+    ) {
         return env.getDistanceBetweenNodes(center, neighbor) > neighRange;
     }
 

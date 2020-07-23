@@ -927,7 +927,10 @@ public final class YamlLoader implements Loader {
                 final Map<?, ?> oMap = (Map<?, ?>) yamlNode;
                 return oMap.entrySet().stream()
                         .collect(() -> Maps.newLinkedHashMapWithExpectedSize(oMap.size()),
-                            (m, p) -> m.put(p.getKey(), recursivelyResolveVariables(p.getValue(), reverseLookupTable, variables)),
+                            (m, p) -> m.put(
+                                    p.getKey(),
+                                    recursivelyResolveVariables(p.getValue(), reverseLookupTable, variables)
+                            ),
                             (m1, m2) -> {
                                 throw new IllegalStateException();
                             }

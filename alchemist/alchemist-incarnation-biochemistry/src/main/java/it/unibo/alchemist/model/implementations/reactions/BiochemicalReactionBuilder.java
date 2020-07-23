@@ -352,7 +352,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             });
             j.getMoleculesInNeighborNode().forEach((k, v) -> {
                 if (!biomolConditionsInNeighbor.containsKey(k) || biomolConditionsInNeighbor.get(k) < v) {
-                    throw new BiochemistryParseException("The creation of the junction " + j + " requires " + v + " " + k + " in the neighbor node, specify a greater or equal value in conditions.");
+                    throw new BiochemistryParseException(
+                            "The creation of the junction " + j + " requires " + v + " " + k
+                            + " in the neighbor node, specify a greater or equal value in conditions."
+                    );
                 }
             });
             if (node instanceof CellNode) {

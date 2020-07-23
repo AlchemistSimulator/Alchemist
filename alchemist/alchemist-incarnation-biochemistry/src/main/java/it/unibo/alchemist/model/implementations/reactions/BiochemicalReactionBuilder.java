@@ -426,8 +426,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitJunctionReactionJunction(final BiochemistrydslParser.JunctionReactionJunctionContext ctx) {
-            final Junction j = createJunction(ctx.junction());
+        public Reaction<Double> visitJunctionReactionJunction(
+                final BiochemistrydslParser.JunctionReactionJunctionContext context
+        ) {
+            final Junction j = createJunction(context.junction());
             if (!junctionList.remove(j)) { // the junction is not present in the list, witch means that this junction is undefined (e.g. [junction A-B] --> [junction C-D]
                 throw new BiochemistryParseException("The junction " + j + " is not present in conditions.\n"
                         + "If you want to create the junction " + j + " do it on a separate reaction.");

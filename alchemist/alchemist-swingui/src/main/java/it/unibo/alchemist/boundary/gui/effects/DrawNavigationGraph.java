@@ -94,12 +94,18 @@ public class DrawNavigationGraph extends DrawOnce {
                         graphics.draw(r);
                     });
             graph.vertexSet().forEach(r -> {
-                final Point centroidFrom = wormhole.getViewPoint(environment.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
+                final Point centroidFrom = wormhole.getViewPoint(
+                        environment.makePosition(r.getCentroid().getX(), r.getCentroid().getY())
+                );
                 if (graph != null) {
                     graph.outgoingEdgesOf(r).forEach(e -> {
                         final Segment2D<Euclidean2DPosition> passage = e.getPassageShapeOnTail();
-                        final Point viewP1 = wormhole.getViewPoint(environment.makePosition(passage.getFirst().getX(), passage.getFirst().getY()));
-                        final Point viewP2 = wormhole.getViewPoint(environment.makePosition(passage.getSecond().getX(), passage.getSecond().getY()));
+                        final Point viewP1 = wormhole.getViewPoint(
+                                environment.makePosition(passage.getFirst().getX(), passage.getFirst().getY())
+                        );
+                        final Point viewP2 = wormhole.getViewPoint(
+                                environment.makePosition(passage.getSecond().getX(), passage.getSecond().getY())
+                        );
                         graphics.setColor(Color.GREEN);
                         graphics.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
                         final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);

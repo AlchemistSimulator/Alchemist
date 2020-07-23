@@ -419,7 +419,12 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             }
 
             @Override
-            public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
+            public void stepDone(
+                    final Environment<T, P> environment,
+                    final Reaction<T> reaction,
+                    final Time time,
+                    final long step
+            ) {
                 initialized(environment);
             }
         });

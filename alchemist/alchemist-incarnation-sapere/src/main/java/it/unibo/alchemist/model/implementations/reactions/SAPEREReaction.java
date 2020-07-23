@@ -273,7 +273,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             /*
              * Valid nodes must be re-initialized, as per issue #
              */
-            final Collection<? extends Node<List<ILsaMolecule>>> neighs = this.environment.getNeighborhood(getNode()).getNeighbors();
+            final Collection<? extends Node<List<ILsaMolecule>>> neighs =
+                    this.environment.getNeighborhood(getNode()).getNeighbors();
             validNodes = new ArrayList<>(neighs.size());
             for (final Node<List<ILsaMolecule>> neigh: neighs) {
                 validNodes.add((ILsaNode) neigh);

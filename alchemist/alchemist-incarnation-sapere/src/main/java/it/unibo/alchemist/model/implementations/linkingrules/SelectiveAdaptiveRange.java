@@ -191,7 +191,15 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
             final int tolerance,
             final double adjustment
     ) {
-        this(radius, DEFAULT_MINRANGE, DEFAULT_MAXRANGE, desiredNeighborsCount, tolerance, adjustment, DEFAULT_MOLECULETYPE);
+        this(
+                radius,
+                DEFAULT_MINRANGE,
+                DEFAULT_MAXRANGE,
+                desiredNeighborsCount,
+                tolerance,
+                adjustment,
+                DEFAULT_MOLECULETYPE
+        );
     }
 
     /**
@@ -212,7 +220,15 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
             final int tolerance,
             final String molType
     ) {
-        this(radius, DEFAULT_MINRANGE, DEFAULT_MAXRANGE, desiredNeighborsCount, tolerance, DEFAULT_ADJUSTMENT, molType);
+        this(
+                radius,
+                DEFAULT_MINRANGE,
+                DEFAULT_MAXRANGE,
+                desiredNeighborsCount,
+                tolerance,
+                DEFAULT_ADJUSTMENT,
+                molType
+        );
     }
 
     /**
@@ -243,6 +259,7 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
             final double centerRange,
             final double neighRange
     ) {
-        return !neighbor.contains(moleculeType) || super.conditionForRemoval(environment, center, neighbor, centerRange, neighRange);
+        return !neighbor.contains(moleculeType)
+                || super.conditionForRemoval(environment, center, neighbor, centerRange, neighRange);
     }
 }

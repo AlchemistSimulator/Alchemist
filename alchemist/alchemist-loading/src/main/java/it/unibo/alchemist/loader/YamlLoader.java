@@ -285,7 +285,11 @@ public final class YamlLoader implements Loader {
         final Map<String, Object> constants = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
         final Map<String, DependentVariable<?>> depVariables = Maps.newLinkedHashMapWithExpectedSize(originalVars.size());
         final Factory factory = makeBaseFactory(incarnation);
-        final Builder<DependentVariable<?>> depVarBuilder = new Builder<>(DependentVariable.class, DEPENDENT_VAR_CONFIG, factory);
+        final Builder<DependentVariable<?>> depVarBuilder = new Builder<>(
+                DependentVariable.class,
+                DEPENDENT_VAR_CONFIG,
+                factory
+        );
         int previousConstants, previousDepVars;
         final Map<String, Map<String, Object>> originalClone = new LinkedHashMap<>(originalVars);
         do {

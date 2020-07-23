@@ -33,7 +33,7 @@ public final class DrawSmartcam implements Effect {
 
     @Override
     public <T, P extends Position2D<P>> void apply(
-            final Graphics2D g,
+            final Graphics2D graphics,
             final Node<T> node,
             final Environment<T, P> environment,
             final IWormhole2D<P> wormhole
@@ -44,8 +44,8 @@ public final class DrawSmartcam implements Effect {
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {
             final Physics2DEnvironment<T> env = (Physics2DEnvironment<T>) environment;
-            drawShape(g, node, env, zoom, x, y);
-            drawFieldOfView(g, node, env, zoom, x, y);
+            drawShape(graphics, node, env, zoom, x, y);
+            drawFieldOfView(graphics, node, env, zoom, x, y);
         } else {
             logOnce("DrawSmartcam only works with EuclideanPhysics2DEnvironment", Logger::warn);
         }

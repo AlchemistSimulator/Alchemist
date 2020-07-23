@@ -64,7 +64,10 @@ public final class RealDistributionUtil {
             .filter(c -> c.getParameterTypes()[0].isAssignableFrom(requireNonNull(randomGenerator).getClass()))
             .findAny()
             .map(c -> {
-                final Object[] arguments = Stream.concat(Stream.of(randomGenerator), Arrays.stream(arguments).boxed()).toArray();
+                final Object[] arguments = Stream.concat(
+                        Stream.of(randomGenerator),
+                        Arrays.stream(arguments).boxed()
+                ).toArray();
                 try {
                     return c.newInstance(arguments);
                 } catch (

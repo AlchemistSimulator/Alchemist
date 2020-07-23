@@ -92,7 +92,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     @SuppressFBWarnings(value = "FE_FLOATING_POINT_EQUALITY", justification = "We want to check for exact equality here")
     @Override
     protected final void updateStatus(
-            final Time curTime,
+            final Time currentTime,
             final boolean executed,
             final double param,
             final Environment<T, ?> env
@@ -100,7 +100,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
         if (param != getRate()) {
             throw new IllegalStateException(getClass().getSimpleName() + " does not allow to dynamically tune the rate.");
         }
-        setTau(new DoubleTime(curTime.toDouble() + distribution.sample()));
+        setTau(new DoubleTime(currentTime.toDouble() + distribution.sample()));
     }
 
     /**

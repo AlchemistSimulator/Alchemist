@@ -398,7 +398,13 @@ public final class YamlLoader implements Loader {
                                     final List<String> aggregators = listCast(factory, m.get(AGGREGATORS), "aggregators").stream()
                                             .map(Object::toString)
                                             .collect(Collectors.toList());
-                                    return new MoleculeReader<>(m.get(MOLECULE).toString(), m.getOrDefault(PROPERTY, "").toString(), incarnation, filter, aggregators);
+                                    return new MoleculeReader<>(
+                                            m.get(MOLECULE).toString(),
+                                            m.getOrDefault(PROPERTY, "").toString(),
+                                            incarnation,
+                                            filter,
+                                            aggregators
+                                    );
                                 })
                     ), factory);
             extractors = Collections.unmodifiableList(((List<?>) extrObj).stream()

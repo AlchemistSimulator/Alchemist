@@ -49,7 +49,9 @@ public final class RealDistributionUtil {
             final String shortname,
             final double... arguments
     ) {
-        final String name = shortname + (shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution");
+        final String name = shortname + (
+                shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution"
+        );
         return REAL_DISTRIBUTIONS.stream()
             .filter(stat -> stat.getSimpleName().equalsIgnoreCase(requireNonNull(name)))
             .findAny()

@@ -91,7 +91,11 @@ public final class BioRect2DEnvironmentNoOverlap
         final double[] np = newPos.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
         if (node instanceof CellWithCircularArea) {
-            final Euclidean2DPosition nextPos = findNearestFreePosition((CellWithCircularArea<Euclidean2DPosition>) node, new Euclidean2DPosition(cur[0], cur[1]), nextWithinLimts);
+            final Euclidean2DPosition nextPos = findNearestFreePosition(
+                    (CellWithCircularArea<Euclidean2DPosition>) node,
+                    new Euclidean2DPosition(cur[0], cur[1]),
+                    nextWithinLimts
+            );
             super.moveNodeToPosition(node, nextPos);
         } else {
             super.moveNodeToPosition(node, nextWithinLimts);

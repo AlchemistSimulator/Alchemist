@@ -256,10 +256,19 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
             final String additionalParameters
     ) {
         if (additionalParameters.startsWith("+")) {
-            return new LsaRandomNeighborAction((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment, randomGenerator);
+            return new LsaRandomNeighborAction(
+                    (LsaNode) node,
+                    createMolecule(additionalParameters.substring(1)),
+                    environment,
+                    randomGenerator
+            );
         }
         if (additionalParameters.startsWith("*")) {
-            return new LsaAllNeighborsAction((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment);
+            return new LsaAllNeighborsAction(
+                    (LsaNode) node,
+                    createMolecule(additionalParameters.substring(1)),
+                    environment
+            );
         }
         return new LsaStandardAction(createMolecule(additionalParameters), (LsaNode) node, randomGenerator);
     }

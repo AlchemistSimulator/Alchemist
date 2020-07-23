@@ -89,9 +89,9 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     Reaction<T> createReaction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, String param);
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param node
      *            the node that will host this object
@@ -103,7 +103,14 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            a {@link String} describing the object
      * @return a new {@link Condition}
      */
-    Condition<T> createCondition(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
+    Condition<T> createCondition(
+            RandomGenerator randomGenerator,
+            Environment<T, P> environment,
+            Node<T> node,
+            TimeDistribution<T> time,
+            Reaction<T> reaction,
+            String param
+    );
 
     /**
      * @param rand

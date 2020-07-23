@@ -227,12 +227,12 @@ public final class SAPEREIncarnation<P extends Position<? extends P>> implements
     }
 
     @Override
-    public Condition<List<ILsaMolecule>> createCondition(final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env, final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
-            final String param) {
+    public Condition<List<ILsaMolecule>> createCondition(final RandomGenerator randomGenerator,
+                                                         final Environment<List<ILsaMolecule>, P> environment, final Node<List<ILsaMolecule>> node,
+                                                         final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
+                                                         final String param) {
         if (param.startsWith("+")) {
-            return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(param.substring(1)), env);
+            return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(param.substring(1)), environment);
         }
         return new LsaStandardCondition(createMolecule(param), (LsaNode) node);
     }

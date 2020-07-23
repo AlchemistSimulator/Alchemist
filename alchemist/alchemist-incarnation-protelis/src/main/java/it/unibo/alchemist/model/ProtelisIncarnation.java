@@ -153,9 +153,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    public Condition<Object> createCondition(final RandomGenerator rand, final Environment<Object, P> env,
-            final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
-            final String param) {
+    public Condition<Object> createCondition(final RandomGenerator randomGenerator, final Environment<Object, P> environment,
+                                             final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
+                                             final String param) {
         if (node instanceof ProtelisNode) {
             final ProtelisNode<?> pNode = (ProtelisNode<?>) node;
             /*

@@ -151,7 +151,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     public Generic2DDisplay(final int step) {
         super();
         if (!"true".equals(System.getProperty("sun.java2d.opengl"))) {
-            L.warn("OpenGL acceleration appears to be disabled on this system. This may impact performance negatively. Please enable it with -Dsun.java2d.opengl=true");
+            L.warn(
+                    "OpenGL acceleration appears to be disabled on this system. " +
+                    "This may impact performance negatively. " +
+                    "Please enable it with -Dsun.java2d.opengl=true"
+            );
         }
         setStep(step);
         setBackground(Color.WHITE);

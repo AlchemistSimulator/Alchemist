@@ -96,7 +96,8 @@ public final class TensionPresent extends AbstractCondition<Double> {
                 .anyMatch(n -> {
                     final double maxDN =  thisNode.getMaxRadius();
                     if (n instanceof CircularDeformableCell) {
-                        return env.getDistanceBetweenNodes(n, thisNode) < (maxDN + ((CircularDeformableCell<?>) n).getMaxRadius());
+                        return env.getDistanceBetweenNodes(n, thisNode)
+                                < (maxDN + ((CircularDeformableCell<?>) n).getMaxRadius());
                     } else {
                         return env.getDistanceBetweenNodes(n, thisNode) < (maxDN + n.getRadius());
                     }

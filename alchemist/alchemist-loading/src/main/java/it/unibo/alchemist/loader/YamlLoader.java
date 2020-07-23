@@ -778,7 +778,9 @@ public final class YamlLoader implements Loader {
                             }
                             node.addReaction(reaction);
                             if (!(factory.deregisterSingleton(reaction) && factory.deregisterSingleton(timeDistribution))) {
-                                throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
+                                throw new IllegalStateException(
+                                        "This is a bug in " + getClass() + ": singletons are not correctly cleared."
+                                );
                             }
                         }
                     }

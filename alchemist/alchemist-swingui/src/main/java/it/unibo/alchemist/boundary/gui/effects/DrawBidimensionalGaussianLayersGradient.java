@@ -10,7 +10,8 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 /**
- * Draw a gradient in the background of the gui for {@link  it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer}s
+ * Draw a gradient in the background of the gui for
+ * {@link  it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer}s
  * values. It ignores any other layer.
  */
 public class DrawBidimensionalGaussianLayersGradient extends DrawLayersGradient {

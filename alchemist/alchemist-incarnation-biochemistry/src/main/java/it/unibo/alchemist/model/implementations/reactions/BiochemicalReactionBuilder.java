@@ -344,7 +344,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             final Junction j = createJunction(ctx.junction());
             j.getMoleculesInCurrentNode().forEach((k, v) -> {
                 if (!biomolConditionsInCell.containsKey(k) || biomolConditionsInCell.get(k) < v) {
-                    throw new BiochemistryParseException("The creation of the junction " + j + " requires " + v + " " + k + " in the current node, specify a greater or equal value in conditions.");
+                    throw new BiochemistryParseException(
+                            "The creation of the junction " + j + " requires " + v + " " + k
+                            + " in the current node, specify a greater or equal value in conditions."
+                    );
                 }
             });
             j.getMoleculesInNeighborNode().forEach((k, v) -> {

@@ -236,7 +236,13 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      * @return true if the node must be removed, false otherwise
      */
     @Override
-    protected boolean conditionForRemoval(final Environment<T, P> environment, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
+    protected boolean conditionForRemoval(
+            final Environment<T, P> environment,
+            final Node<T> center,
+            final Node<T> neighbor,
+            final double centerRange,
+            final double neighRange
+    ) {
         return !neighbor.contains(moleculeType) || super.conditionForRemoval(environment, center, neighbor, centerRange, neighRange);
     }
 }

@@ -600,7 +600,11 @@ public final class YamlLoader implements Loader {
          * Linking rule
          */
         final BuilderConfiguration<LinkingRule<T, P>> linkingRuleConfig = emptyConfig(factory, NoLinks::new);
-        final Builder<LinkingRule<T, P>> linkingBuilder = new Builder<>(LinkingRule.class, ImmutableSet.of(linkingRuleConfig), factory);
+        final Builder<LinkingRule<T, P>> linkingBuilder = new Builder<>(
+                LinkingRule.class,
+                ImmutableSet.of(linkingRuleConfig),
+                factory
+        );
         final LinkingRule<T, P> linkingRule = linkingBuilder.build(contents.get(LINKING_RULE));
         environment.setLinkingRule(linkingRule);
         factory.registerSingleton(LinkingRule.class, linkingRule);

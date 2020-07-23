@@ -138,7 +138,15 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                             retrieved.remove(i);
                             matchesList.remove(i);
                         } else {
-                            incorporateNewMatches(n, otherMatches, matches, getMolecule(), matchesList, alreadyRemovedMap, retrieved);
+                            incorporateNewMatches(
+                                    n,
+                                    otherMatches,
+                                    matches,
+                                    getMolecule(),
+                                    matchesList,
+                                    alreadyRemovedMap,
+                                    retrieved
+                            );
                             matchesfound = true;
                             newValidNodes.add(n);
                         }

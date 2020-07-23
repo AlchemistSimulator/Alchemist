@@ -8,8 +8,8 @@
   -->
 
 <!DOCTYPE module PUBLIC
-          "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
-          "http://checkstyle.sourceforge.net/dtds/configuration_1_3.dtd">
+		"-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+		"http://checkstyle.sourceforge.net/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
 	<!-- If you set the basedir property below, then all reported file names 
@@ -27,6 +27,10 @@
 	<!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
 	<module name="NewlineAtEndOfFile">
 		<property name="lineSeparator" value="lf" />
+	</module>
+
+	<module name="LineLength">
+		<property name="max" value="130"/>
 	</module>
 
 	<property name="severity" value="error" />
@@ -62,35 +66,35 @@
 		<property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
 		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message"
-			value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+				  value="Don't use Math.random() inside Alchemist. Breaks stuff." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
 		<property name="format" value="class\s*\.\s*forName\s*\(" />
 		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message"
-			value="Use the library to load classes and resources. Breaks grid otherwise." />
+				  value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
 		<property name="format" value="class\s*\.\s*getResource" />
 		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message"
-			value="Use the library to load classes and resources. Breaks grid otherwise." />
+				  value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="error" />
 		<property name="format" value="class\s*\.\s*getClassLoader" />
 		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message"
-			value="Use the library to load classes and resources. Breaks grid otherwise." />
+				  value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="warning" />
 		<property name="format" value="@author" />
 		<property name="fileExtensions" value="java,xtend,scala,kt" />
 		<property name="message"
-			value="Do not use @author. Changes and authors are tracked by the content manager." />
+				  value="Do not use @author. Changes and authors are tracked by the content manager." />
 	</module>
 
 	<module name="TreeWalker">
@@ -141,7 +145,7 @@
 		<module name="MethodParamPad" />
 		<module name="NoWhitespaceAfter">
 			<property name="tokens"
-				value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS" />
+					  value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS" />
 		</module>
 		<module name="NoWhitespaceBefore" />
 		<module name="OperatorWrap" />
@@ -171,7 +175,7 @@
 		<module name="InnerAssignment" />
 		<module name="MagicNumber">
 			<property name="ignoreNumbers"
-				value="-0.5, -1, 0, 0.5, 1, 2, 3, 4, 8, 10, 16, 32, 64, 90, 100, 180, 360, 1000" />
+					  value="-0.5, -1, 0, 0.5, 1, 2, 3, 4, 8, 10, 16, 32, 64, 90, 100, 180, 360, 1000" />
 		</module>
 		<module name="MissingSwitchDefault" />
 		<module name="SimplifyBooleanExpression" />
@@ -182,7 +186,7 @@
 		<module name="DesignForExtension">
 		</module>
 		<module name="FinalClass">
-            <property name="severity" value="warning" />
+			<property name="severity" value="warning" />
 		</module>
 		<module name="HideUtilityClassConstructor" />
 		<module name="InterfaceIsType" />
@@ -193,8 +197,8 @@
 		<module name="ArrayTypeStyle" />
 		<module name="FinalParameters" />
 		<module name="TodoComment">
-            <property name="severity" value="info" />
-        </module>
+			<property name="severity" value="info" />
+		</module>
 		<module name="UpperEll" />
 	</module>
 </module>

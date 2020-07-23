@@ -389,7 +389,12 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 SELECTED_NODE_DRAWING_SIZE
         );
         g.setColor(c2);
-        g.fillOval(x - SELECTED_NODE_INTERNAL_SIZE / 2, y - SELECTED_NODE_INTERNAL_SIZE / 2, SELECTED_NODE_INTERNAL_SIZE, SELECTED_NODE_INTERNAL_SIZE);
+        g.fillOval(
+                x - SELECTED_NODE_INTERNAL_SIZE / 2,
+                y - SELECTED_NODE_INTERNAL_SIZE / 2,
+                SELECTED_NODE_INTERNAL_SIZE,
+                SELECTED_NODE_INTERNAL_SIZE
+        );
     }
 
     /**

@@ -124,7 +124,11 @@ public class DrawCognitiveMap extends DrawOnce {
         return colorCache;
     }
 
-    private <P extends Position2D<P>> Shape mapEnvEllipseToAwtShape(final Ellipse e, final IWormhole2D<P> wormhole, final Environment<?, P> env) {
+    private <P extends Position2D<P>> Shape mapEnvEllipseToAwtShape(
+            final Ellipse e,
+            final IWormhole2D<P> wormhole,
+            final Environment<?, P> env
+    ) {
         final Rectangle2D frame = e.asAwtShape().getFrame();
         final P startEnv = env.makePosition(frame.getMinX(), frame.getMinY());
         final P endEnv = env.makePosition(frame.getMaxX(), frame.getMaxY());

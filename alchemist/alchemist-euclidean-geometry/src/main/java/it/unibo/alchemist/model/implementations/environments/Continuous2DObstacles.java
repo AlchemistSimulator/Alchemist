@@ -143,7 +143,13 @@ public class Continuous2DObstacles<T>
         return makePosition(shortest.getX(), shortest.getY());
     }
 
-    private List<RectObstacle2D<Euclidean2DPosition>> query(final double ox, final double oy, final double nx, final double ny, final double tolerance) {
+    private List<RectObstacle2D<Euclidean2DPosition>> query(
+            final double ox,
+            final double oy,
+            final double nx,
+            final double ny,
+            final double tolerance
+    ) {
         double minx = Math.min(ox, nx);
         double miny = Math.min(oy, ny);
         double maxx = Math.max(ox, nx);

@@ -46,7 +46,12 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
      * {@inheritDoc}
      */
     @Override
-    public <T, P extends Position2D<P>> void drawFunction(final Function<? super P, ? extends Number> f, final Environment<T, P> env, final Graphics2D g, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void drawFunction(
+            final Function<? super P, ? extends Number> f,
+            final Environment<T, P> env,
+            final Graphics2D g,
+            final IWormhole2D<P> wormhole
+    ) {
         if (minOrMaxLayerValuesNeedsToBeUpdated()) {
             updateMinAndMaxLayerValues();
         }

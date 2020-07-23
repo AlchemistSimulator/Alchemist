@@ -74,7 +74,11 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     @Override 
-    protected void updateInternalStatus(final Time currentTime, final boolean hasBeenExecuted, final Environment<Double, ?> environment) {
+    protected void updateInternalStatus(
+            final Time currentTime,
+            final boolean hasBeenExecuted,
+            final Environment<Double, ?> environment
+    ) {
         if (neighborConditionsPresent) {
             validNeighbors = getConditions().stream()
                 .filter(it -> it instanceof AbstractNeighborCondition)

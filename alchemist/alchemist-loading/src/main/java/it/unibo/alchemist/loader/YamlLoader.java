@@ -475,19 +475,19 @@ public final class YamlLoader implements Loader {
          */
         final Object seedObj = contents.get(SEEDS);
         final RandomGenerator scenarioRng = rngBuilder(factory, SCENARIO_SEED).build(seedObj);
-        final RandomGenerator simRng = rngBuilder(factory, SIMULATION_SEED).build(seedObj);
+        final RandomGenerator simulationRandomGenerator = rngBuilder(factory, SIMULATION_SEED).build(seedObj);
         /*
          * Environment
          */
         @SuppressWarnings("unchecked")
         final BuilderConfiguration<Environment<T, P>> envDefaultConfig = emptyConfig(factory, () -> (Environment<T, P>) new Continuous2DEnvironment<>());
         final Builder<Environment<T, P>> envBuilder = new Builder<>(Environment.class, ImmutableSet.of(envDefaultConfig), factory);
-        factory.registerSingleton(RandomGenerator.class, simRng);
-        final Environment<T, P> env = envBuilder.build(contents.get(ENVIRONMENT));
-        env.setIncarnation(incarnation);
-        factory.registerSingleton(Environment.class, env);
-        factory.registerImplicit(List.class, Position.class, l -> env.makePosition(cast(factory, LIST_NUMBER, l, "position coordinates").toArray(new Number[l.size()])));
-        factory.registerImplicit(Number[].class, Position.class, env::makePosition);
+        factory.registerSingleton(RandomGenerator.class, simulationRandomGenerator);
+        final Environment<T, P> environment = envBuilder.build(contents.get(ENVIRONMENT));
+        environment.setIncarnation(incarnation);
+        factory.registerSingleton(Environment.class, environment);
+        factory.registerImplicit(List.class, Position.class, l -> environment.makePosition(cast(factory, LIST_NUMBER, l, "position coordinates").toArray(new Number[l.size()])));
+        factory.registerImplicit(Number[].class, Position.class, environment::makePosition);
         final Builder<Molecule> molBuilder = new Builder<>(Molecule.class, singleParamConfig(factory, p -> incarnation.createMolecule(p.toString())), factory);
         /*
          * Layers
@@ -498,7 +498,7 @@ public final class YamlLoader implements Loader {
             final Map<String, Object> layerMap = cast(factory, MAP_STRING_OBJECT, o, "layer");
             final Layer<T, P> layer = layerBuilder.build(layerMap);
             final Molecule molecule = molBuilder.build(layerMap.get(MOLECULE));
-            env.addLayer(molecule, layer);
+            environment.addLayer(molecule, layer);
         });
         /*
          * Linking rule
@@ -506,7 +506,7 @@ public final class YamlLoader implements Loader {
         final BuilderConfiguration<LinkingRule<T, P>> linkingRuleConfig = emptyConfig(factory, NoLinks::new);
         final Builder<LinkingRule<T, P>> linkingBuilder = new Builder<>(LinkingRule.class, ImmutableSet.of(linkingRuleConfig), factory);
         final LinkingRule<T, P> linkingRule = linkingBuilder.build(contents.get(LINKING_RULE));
-        env.setLinkingRule(linkingRule);
+        environment.setLinkingRule(linkingRule);
         factory.registerSingleton(LinkingRule.class, linkingRule);
         /*
          * Termination conditions
@@ -514,7 +514,7 @@ public final class YamlLoader implements Loader {
         final Builder<Predicate<Environment<T, P>>> terminatorBuilder = new Builder<>(Predicate.class, emptySet(), factory);
         final Object terminatorsDesc = contents.get(TERMINATORS);
         for (final Object terminatorDescriptor: listCast(factory, terminatorsDesc, "terminator")) {
-            env.addTerminator(terminatorBuilder.build(terminatorDescriptor));
+            environment.addTerminator(terminatorBuilder.build(terminatorDescriptor));
         }
         /*
          * Displacements
@@ -525,15 +525,15 @@ public final class YamlLoader implements Loader {
         } else {
             final Builder<Displacement<P>> displacementBuilder = new Builder<>(Displacement.class, emptySet(), factory);
             final Builder<Node<T>> nodeBuilder = new Builder<>(Node.class, ImmutableSet.of(
-                    emptyConfig(factory, () -> incarnation.createNode(simRng, env, null)),
-                    singleParamConfig(factory, o -> incarnation.createNode(simRng, env, o.toString()))),
+                    emptyConfig(factory, () -> incarnation.createNode(simulationRandomGenerator, environment, null)),
+                    singleParamConfig(factory, o -> incarnation.createNode(simulationRandomGenerator, environment, o.toString()))),
                     factory);
             final Builder<Shape<P>> shapeBuilder = new Builder<>(Shape.class, emptyConfig(factory, () -> p -> true), factory);
             for (final Object dispObj: dispList) {
                 final Map<String, Object> dispMap = cast(factory, MAP_STRING_OBJECT, dispObj, "displacement");
                 factory.registerSingleton(RandomGenerator.class,  scenarioRng);
                 final Displacement<P> displacement = displacementBuilder.build(dispMap.get(IN));
-                factory.registerSingleton(RandomGenerator.class,  simRng);
+                factory.registerSingleton(RandomGenerator.class,  simulationRandomGenerator);
                 factory.registerSingleton(Displacement.class, displacement);
                 /*
                  * Contents
@@ -550,7 +550,7 @@ public final class YamlLoader implements Loader {
                 /*
                  * Nodes
                  */
-                factory.registerSingleton(RandomGenerator.class, simRng);
+                factory.registerSingleton(RandomGenerator.class, simulationRandomGenerator);
                 for (@NotNull final P position: displacement) {
                     final Node<T> node = nodeBuilder.build(dispMap.get(NODE));
                     factory.registerSingleton(Node.class, node);
@@ -573,21 +573,21 @@ public final class YamlLoader implements Loader {
                      */
                     final List<?> poolsList = listCast(factory, dispMap.get(PROGRAMS), "program pools");
                     final Builder<TimeDistribution<T>> tdBuilder = new Builder<>(TimeDistribution.class, ImmutableSet.of(
-                            emptyConfig(factory, () -> incarnation.createTimeDistribution(simRng, env, node, null)),
-                            singleParamConfig(factory, o -> incarnation.createTimeDistribution(simRng, env, node, o.toString()))),
+                            emptyConfig(factory, () -> incarnation.createTimeDistribution(simulationRandomGenerator, environment, node, null)),
+                            singleParamConfig(factory, o -> incarnation.createTimeDistribution(simulationRandomGenerator, environment, node, o.toString()))),
                             factory);
                     for (final Object programsObj: poolsList) {
                         final List<?> programs = listCast(factory, programsObj, "programs");
                         for (final Object programObj: programs) {
                             final Map<String, Object> program = cast(factory, MAP_STRING_OBJECT, programObj, "program");
-                            final TimeDistribution<T> td = tdBuilder.build(program.get(TIMEDISTRIBUTION));
-                            factory.registerSingleton(TimeDistribution.class, td);
+                            final TimeDistribution<T> timeDistribution = tdBuilder.build(program.get(TIMEDISTRIBUTION));
+                            factory.registerSingleton(TimeDistribution.class, timeDistribution);
                             final Builder<Reaction<T>> reactionBuilder = new Builder<>(Reaction.class,
                                     new BuilderConfiguration<>(
                                             ImmutableMap.of(REACTION, CharSequence.class),
                                             ImmutableMap.of(TIMEDISTRIBUTION, Object.class, ACTIONS, List.class, CONDITIONS, List.class),
                                             factory,
-                                            m -> Objects.requireNonNull(incarnation.createReaction(simRng, env, node, td, m.get(REACTION).toString()), () ->
+                                            m -> Objects.requireNonNull(incarnation.createReaction(simulationRandomGenerator, environment, node, timeDistribution, m.get(REACTION).toString()), () ->
                                                     incarnation + " created a null reaction for " + REACTION + ": " + m.get(REACTION))),
                                     factory);
                             final Reaction<T> reaction = Objects.requireNonNull(reactionBuilder.build(program));
@@ -602,9 +602,10 @@ public final class YamlLoader implements Loader {
                                         singleParamConfig(
                                                 factory,
                                                 o -> incarnation.createAction(
-                                                        simRng,
-                                                        env, node,
-                                                        td,
+                                                        simulationRandomGenerator,
+                                                        environment,
+                                                        node,
+                                                        timeDistribution,
                                                         reaction,
                                                         o.toString()
                                                 )
@@ -622,14 +623,14 @@ public final class YamlLoader implements Loader {
                             final List<?> conditionsList = listCast(factory, program.get(CONDITIONS), "conditions list");
                             if (!conditionsList.isEmpty()) {
                                 final Builder<Condition<T>> conditionBuilder = new Builder<>(Condition.class, 
-                                        singleParamConfig(factory, o -> incarnation.createCondition(simRng, env, node, td, reaction, o.toString())), factory);
+                                        singleParamConfig(factory, o -> incarnation.createCondition(simulationRandomGenerator, environment, node, timeDistribution, reaction, o.toString())), factory);
                                 reaction.setConditions(Stream.concat(
                                         conditionsList.stream().map(conditionBuilder::build),
                                         reaction.getConditions().stream())
                                     .collect(Collectors.toList()));
                             }
                             node.addReaction(reaction);
-                            if (!(factory.deregisterSingleton(reaction) && factory.deregisterSingleton(td))) {
+                            if (!(factory.deregisterSingleton(reaction) && factory.deregisterSingleton(timeDistribution))) {
                                 throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
                             }
                         }
@@ -637,14 +638,14 @@ public final class YamlLoader implements Loader {
                     if (!factory.deregisterSingleton(node)) {
                         throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
                     }
-                    env.addNode(node, position);
+                    environment.addNode(node, position);
                 }
                 if (!factory.deregisterSingleton(displacement)) {
                     throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
                 }
             }
         }
-        return env;
+        return environment;
     }
 
     private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {

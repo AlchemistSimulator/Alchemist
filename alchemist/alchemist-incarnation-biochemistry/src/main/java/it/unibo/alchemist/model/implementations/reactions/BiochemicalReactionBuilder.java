@@ -310,7 +310,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionRightInNeighborContext(final BiochemistrydslParser.BiochemicalReactionRightInNeighborContextContext ctx) {
+        public Reaction<Double> visitBiochemicalReactionRightInNeighborContext(
+                final BiochemistrydslParser.BiochemicalReactionRightInNeighborContextContext ctx
+        ) {
             for (final BiochemicalReactionRightElemContext re : ctx.biochemicalReactionRightElem()) {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());

@@ -50,7 +50,11 @@ public class ChemicalReaction<T> extends AbstractReaction<T> {
      * Subclasses must call super.updateInternalStatus for the rate to get updated in case of method override.
      */
     @Override
-    protected void updateInternalStatus(final Time currentTime, final boolean hasBeenExecuted, final Environment<T, ?> environment) {
+    protected void updateInternalStatus(
+            final Time currentTime,
+            final boolean hasBeenExecuted,
+            final Environment<T, ?> environment
+    ) {
         currentRate = getTimeDistribution().getRate();
         for (final Condition<T> cond : getConditions()) {
             final double v = cond.getPropensityContribution();

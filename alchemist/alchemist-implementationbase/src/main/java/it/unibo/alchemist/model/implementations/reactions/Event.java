@@ -36,7 +36,11 @@ public final class Event<T> extends AbstractReaction<T> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time currentTime, final boolean hasBeenExecuted, final Environment<T, ?> environment) {
+    protected void updateInternalStatus(
+            final Time currentTime,
+            final boolean hasBeenExecuted,
+            final Environment<T, ?> environment
+    ) {
     }
 
     @Override

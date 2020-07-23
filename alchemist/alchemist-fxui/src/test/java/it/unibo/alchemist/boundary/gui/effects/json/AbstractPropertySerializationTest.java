@@ -54,8 +54,10 @@ public abstract class AbstractPropertySerializationTest {
             return "Deserialized property is null";
         }
 
-        return "Property \"" + origin.getName() + ": " + origin.getValue() + "\" is different from property \"" + deserialized.getName()
-                + ": " + deserialized.getValue() + "\"";
+        return "Property \""
+                + origin.getName() + ": " + origin.getValue()
+                + "\" is different from property \""
+                + deserialized.getName() + ": " + deserialized.getValue() + "\"";
     }
 
     /**

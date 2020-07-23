@@ -33,7 +33,8 @@ public final class DrawLinksSerializationTest extends AbstractEffectSerializatio
         final DrawLinks<Position2D<? extends Position2D<?>>> effect = new DrawLinks<>(TEST_NAME);
         effect.setSize(TEST_SIZE);
         EffectSerializer.effectToFile(file, effect);
-        final DrawLinks<Position2D<? extends Position2D<?>>> deserialized = (DrawLinks<Position2D<? extends Position2D<?>>>) EffectSerializer.effectFromFile(file);
+        final DrawLinks<Position2D<? extends Position2D<?>>> deserialized =
+                (DrawLinks<Position2D<? extends Position2D<?>>>) EffectSerializer.effectFromFile(file);
         assertEquals(effect, deserialized, getMessage(effect, deserialized));
     }
 

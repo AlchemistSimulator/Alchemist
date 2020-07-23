@@ -167,7 +167,10 @@ public final class YamlLoader implements Loader {
                     final Object formula = m.get(FORMULA);
                     return formula instanceof Number
                         ? new NumericConstant((Number) formula)
-                        : new JSR223Variable<>(m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase(Locale.ENGLISH), formula.toString());
+                        : new JSR223Variable<>(
+                                m.getOrDefault(LANGUAGE, "groovy").toString().toLowerCase(Locale.ENGLISH),
+                                formula.toString()
+                        );
                 }));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
             ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));

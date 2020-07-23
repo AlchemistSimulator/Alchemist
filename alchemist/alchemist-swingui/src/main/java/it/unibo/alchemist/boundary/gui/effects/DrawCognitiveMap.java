@@ -96,31 +96,31 @@ public class DrawCognitiveMap extends DrawOnce {
      */
     @Override
     protected <T, P extends Position2D<P>> void draw(
-            final Graphics2D g,
-            final Node<T> n,
-            final Environment<T, P> env,
+            final Graphics2D graphics2D,
+            final Node<T> node,
+            final Environment<T, P> environment,
             final IWormhole2D<P> wormhole
     ) {
         if (cognitiveMap != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-            g.setColor(Color.RED);
+            graphics2D.setColor(Color.RED);
             cognitiveMap.vertexSet().stream()
-                    .map(r -> mapEnvEllipseToAwtShape(r, wormhole, env))
+                    .map(r -> mapEnvEllipseToAwtShape(r, wormhole, environment))
                     .forEach(r -> {
-                        g.setColor(colorCache);
-                        g.fill(r);
-                        g.setColor(colorCache.brighter().brighter());
-                        g.draw(r);
+                        graphics2D.setColor(colorCache);
+                        graphics2D.fill(r);
+                        graphics2D.setColor(colorCache.brighter().brighter());
+                        graphics2D.draw(r);
                     });
             cognitiveMap.vertexSet().forEach(r -> {
-                final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
+                final Point centroidFrom = wormhole.getViewPoint(environment.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                 if (cognitiveMap != null) {
                     cognitiveMap.outgoingEdgesOf(r).forEach(e -> {
                         if (cognitiveMap != null) {
                             final Euclidean2DPosition head = cognitiveMap.getEdgeTarget(e).getCentroid();
-                            final Point centroidTo = wormhole.getViewPoint(env.makePosition(head.getX(), head.getY()));
-                            g.setColor(colorCache);
-                            g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
+                            final Point centroidTo = wormhole.getViewPoint(environment.makePosition(head.getX(), head.getY()));
+                            graphics2D.setColor(colorCache);
+                            graphics2D.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
                         }
                     });
                 }

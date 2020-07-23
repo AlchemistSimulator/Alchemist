@@ -508,7 +508,6 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                         final List<Action<List<ILsaMolecule>>> actions = reaction.getActions();
                         if (!actions.isEmpty()) {
                             final Action<List<ILsaMolecule>> action = actions.get(0);
-                            @SuppressWarnings("unchecked")
                             final SocialForceAgent<P> currAgent = (SocialForceAgent<P>) action;
                             if ((vx > 0 && currAgent.getSpeed().getCoordinates()[0] < 0 && vy > 0 && currAgent.getSpeed().getCoordinates()[1] < 0) || (vx < 0 && currAgent.getSpeed().getCoordinates()[0] > 0 && vy < 0 && currAgent.getSpeed().getCoordinates()[1] > 0)) {
                                 if (rs.nextDouble() >= turnRightProbability) {
@@ -572,9 +571,7 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                         final List<Action<List<ILsaMolecule>>> actions = reaction.getActions();
                         if (!actions.isEmpty()) {
                             final Action<List<ILsaMolecule>> action = actions.get(0);
-                            @SuppressWarnings("unchecked")
                             final SocialForceAgent<P> currAgent = (SocialForceAgent<P>) action;
-
                             vij = ((vx - currAgent.getSpeed().getCoordinates()[0]) * ex) + ((vy - currAgent.getSpeed().getCoordinates()[1]) * ey);
                             if (vij < 0) {
                                 vij = 0.0;
@@ -593,8 +590,9 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
                     }
                     // STEP 4
                     final double desired = Math.sqrt(Math.pow(desiredForce.getCoordinates()[0], 2) + Math.pow(desiredForce.getCoordinates()[1], 2));
-                    socialForceX += kij * (Math.pow(((eta * desired) + vij), 2) / (dist - interactionRange)) * ex;
-                    socialForceY += kij * (Math.pow(((eta * desired) + vij), 2) / (dist - interactionRange)) * ey;
+                    final double v = Math.pow(((eta * desired) + vij), 2) / (dist - interactionRange);
+                    socialForceX += kij * v * ex;
+                    socialForceY += kij * v * ey;
                 }
 
             }
@@ -623,9 +621,9 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
             final List<?> obstacles = obstacleEnv.getObstaclesInRange(myx, myy, obstacleInteractionRange);
             Rectangle2D bounds;
             double minDist = Double.MAX_VALUE;
-            Obstacle2D nearestObstacle = null;
+            Obstacle2D<?> nearestObstacle = null;
             for (final Object obObj : obstacles) {
-                final Obstacle2D ob = (Obstacle2D) obObj;
+                final Obstacle2D<?> ob = (Obstacle2D<?>) obObj;
                 bounds = ob.getBounds();
                 final Euclidean2DPosition[] edge = getNearestEdge(myx, myy, bounds);
                 P intersectionPoint = null;

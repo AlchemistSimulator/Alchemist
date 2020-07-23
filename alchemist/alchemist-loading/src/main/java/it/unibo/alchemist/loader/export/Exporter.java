@@ -70,7 +70,7 @@ public final class Exporter<T, P extends Position<? extends P>> implements Outpu
     }
 
     @Override
-    public void finished(final Environment<T, P> env, final Time time, final long step) {
+    public void finished(final Environment<T, P> environment, final Time time, final long step) {
         out.println(SEPARATOR);
         out.print("# End of data export. Simulation finished at: ");
         final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
@@ -82,7 +82,7 @@ public final class Exporter<T, P extends Position<? extends P>> implements Outpu
     }
 
     @Override
-    public void initialized(final Environment<T, P> env) {
+    public void initialized(final Environment<T, P> environment) {
         out.println(SEPARATOR);
         out.print("# Alchemist log file - simulation started at: ");
         final SimpleDateFormat isoTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US);
@@ -102,15 +102,15 @@ public final class Exporter<T, P extends Position<? extends P>> implements Outpu
                 out.print(" ");
             });
         out.println();
-        stepDone(env, null, new DoubleTime(), 0);
+        stepDone(environment, null, new DoubleTime(), 0);
     }
 
     @Override
-    public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time time, final long step) {
+    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
         final long curSample = (long) (time.toDouble() / sampleSpace);
         if (curSample > count) {
             count = curSample;
-            writeRow(env, r, time, step);
+            writeRow(environment, reaction, time, step);
         }
     }
 

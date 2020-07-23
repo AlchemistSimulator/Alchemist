@@ -67,16 +67,21 @@ public class TestBiomolLayer {
         sim.addOutputMonitor(new OutputMonitor<Double, Euclidean2DPosition>() {
             private static final long serialVersionUID = -8801751097767369325L;
             @Override
-            public void stepDone(final Environment<Double, Euclidean2DPosition> env, final Reaction<Double> r, final Time time, final long step) {
-                final Euclidean2DPosition curPos = env.getPosition(env.getNodeByID(0));
+            public void stepDone(
+                    final Environment<Double, Euclidean2DPosition> environment,
+                    final Reaction<Double> reaction,
+                    final Time time,
+                    final long step
+            ) {
+                final Euclidean2DPosition curPos = environment.getPosition(environment.getNodeByID(0));
                 assertEquals(curPos.getX() > 0 && curPos.getY() > 0, underTest.canExecute());
             }
             @Override
-            public void initialized(final Environment<Double, Euclidean2DPosition> env) {
-                stepDone(env, null, null, 0);
+            public void initialized(final Environment<Double, Euclidean2DPosition> environment) {
+                stepDone(environment, null, null, 0);
             }
             @Override
-            public void finished(final Environment<Double, Euclidean2DPosition> env, final Time time, final long step) { }
+            public void finished(final Environment<Double, Euclidean2DPosition> environment, final Time time, final long step) { }
         });
         sim.run();
         sim.getError().ifPresent(CheckedConsumer.unchecked(it -> {

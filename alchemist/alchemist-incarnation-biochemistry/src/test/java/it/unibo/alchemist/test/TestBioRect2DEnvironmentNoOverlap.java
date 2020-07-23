@@ -740,22 +740,22 @@ public class TestBioRect2DEnvironmentNoOverlap {
 
             @Override
             public void stepDone(
-                    final Environment<Double, Euclidean2DPosition> env,
-                    final Reaction<Double> r,
+                    final Environment<Double, Euclidean2DPosition> environment,
+                    final Reaction<Double> reaction,
                     final Time time,
                     final long step
             ) {
-                assertTrue(thereIsOverlap(env), "Fail at time: " + time);
+                assertTrue(thereIsOverlap(environment), "Fail at time: " + time);
             }
 
             @Override
-            public void initialized(final Environment<Double, Euclidean2DPosition> env) {
-                assertTrue(thereIsOverlap(env));
+            public void initialized(final Environment<Double, Euclidean2DPosition> environment) {
+                assertTrue(thereIsOverlap(environment));
             }
 
             @Override
-            public void finished(final Environment<Double, Euclidean2DPosition> env, final Time time, final long step) {
-                assertTrue(thereIsOverlap(env));
+            public void finished(final Environment<Double, Euclidean2DPosition> environment, final Time time, final long step) {
+                assertTrue(thereIsOverlap(environment));
             }
 
             @SuppressWarnings("unchecked")

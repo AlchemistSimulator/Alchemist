@@ -311,9 +311,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
         @Override
         public Reaction<Double> visitBiochemicalReactionRightInNeighborContext(
-                final BiochemistrydslParser.BiochemicalReactionRightInNeighborContextContext ctx
+                final BiochemistrydslParser.BiochemicalReactionRightInNeighborContextContext context
         ) {
-            for (final BiochemicalReactionRightElemContext re : ctx.biochemicalReactionRightElem()) {
+            for (final BiochemicalReactionRightElemContext re : context.biochemicalReactionRightElem()) {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
@@ -327,14 +327,14 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitCreateJunction(final BiochemistrydslParser.CreateJunctionContext ctx) { 
-            visit(ctx.createJunctionLeft());
-            visit(ctx.createJunctionRight());
-            if (ctx.customConditions() != null) {
-                visit(ctx.customConditions());
+        public Reaction<Double> visitCreateJunction(final BiochemistrydslParser.CreateJunctionContext context) {
+            visit(context.createJunctionLeft());
+            visit(context.createJunctionRight());
+            if (context.customConditions() != null) {
+                visit(context.customConditions());
             }
-            if (ctx.customReactionType() != null) {
-                visit(ctx.customReactionType());
+            if (context.customReactionType() != null) {
+                visit(context.customReactionType());
             }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);

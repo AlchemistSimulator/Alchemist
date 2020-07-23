@@ -74,7 +74,12 @@ public class DrawNavigationGraph extends DrawOnce {
     @SuppressWarnings({"PMD.CompareObjectsWithEquals"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+    protected <T, P extends Position2D<P>> void draw(
+            final Graphics2D g,
+            final Node<T> n,
+            final Environment<T, P> env,
+            final IWormhole2D<P> wormhole
+    ) {
         if (graph == null && env instanceof ImageEnvironmentWithGraph) {
             graph = ((ImageEnvironmentWithGraph<T>) env).getGraph();
         }

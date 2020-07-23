@@ -99,7 +99,10 @@ public class Continuous2DObstacles<T>
 
     @NotNull
     @Override
-    public final Euclidean2DPosition next(@NotNull final Euclidean2DPosition current, @NotNull final Euclidean2DPosition desired) {
+    public final Euclidean2DPosition next(
+            @NotNull final Euclidean2DPosition current,
+            @NotNull final Euclidean2DPosition desired
+    ) {
         return next(current.getX(), current.getY(), desired.getX(), desired.getY());
     }
 

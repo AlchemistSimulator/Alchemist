@@ -232,10 +232,14 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
     }
 
     @Override
-    public Condition<List<ILsaMolecule>> createCondition(final RandomGenerator randomGenerator,
-                                                         final Environment<List<ILsaMolecule>, P> environment, final Node<List<ILsaMolecule>> node,
-                                                         final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
-                                                         final String additionalParameters) {
+    public Condition<List<ILsaMolecule>> createCondition(
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
+            final Node<List<ILsaMolecule>> node,
+            final TimeDistribution<List<ILsaMolecule>> time,
+            final Reaction<List<ILsaMolecule>> reaction,
+            final String additionalParameters
+    ) {
         if (additionalParameters.startsWith("+")) {
             return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment);
         }

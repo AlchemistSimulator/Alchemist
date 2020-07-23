@@ -45,7 +45,16 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
      *
      * http://www.ahristov.com/tutorial/geometry-games/intersection-segments.html
      */
-    private static double[] intersection(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4) {
+    private static double[] intersection(
+            final double x1,
+            final double y1,
+            final double x2,
+            final double y2,
+            final double x3,
+            final double y3,
+            final double x4,
+            final double y4
+    ) {
         final double d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
         if (d == 0) {
             return new double[] { x2, y2 };

@@ -133,7 +133,7 @@ public class DrawNavigationGraph extends DrawOnce {
         final Path2D shape = new Path2D.Double();
         for (int i = 0; i < polygon.vertices().size(); i++) {
             final Point viewPoint = wormhole.getViewPoint(
-                    environment.makePosition(polygon.vertices().get(i).getX(),polygon.vertices().get(i).getY())
+                    environment.makePosition(polygon.vertices().get(i).getX(), polygon.vertices().get(i).getY())
             );
             if (i == 0) {
                 shape.moveTo(viewPoint.getX(), viewPoint.getY());

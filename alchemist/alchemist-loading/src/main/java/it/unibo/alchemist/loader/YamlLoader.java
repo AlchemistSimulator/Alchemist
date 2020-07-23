@@ -756,8 +756,21 @@ public final class YamlLoader implements Loader {
                              */
                             final List<?> conditionsList = listCast(factory, program.get(CONDITIONS), "conditions list");
                             if (!conditionsList.isEmpty()) {
-                                final Builder<Condition<T>> conditionBuilder = new Builder<>(Condition.class, 
-                                        singleParamConfig(factory, o -> incarnation.createCondition(simulationRandomGenerator, environment, node, timeDistribution, reaction, o.toString())), factory);
+                                final Builder<Condition<T>> conditionBuilder = new Builder<>(
+                                        Condition.class,
+                                        singleParamConfig(
+                                                factory,
+                                                o -> incarnation.createCondition(
+                                                        simulationRandomGenerator,
+                                                        environment,
+                                                        node,
+                                                        timeDistribution,
+                                                        reaction,
+                                                        o.toString())
+
+                                        ),
+                                        factory
+                                );
                                 reaction.setConditions(Stream.concat(
                                         conditionsList.stream().map(conditionBuilder::build),
                                         reaction.getConditions().stream())

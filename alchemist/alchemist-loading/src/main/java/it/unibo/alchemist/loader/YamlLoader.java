@@ -556,7 +556,10 @@ public final class YamlLoader implements Loader {
          * Environment
          */
         @SuppressWarnings("unchecked")
-        final BuilderConfiguration<Environment<T, P>> envDefaultConfig = emptyConfig(factory, () -> (Environment<T, P>) new Continuous2DEnvironment<>());
+        final BuilderConfiguration<Environment<T, P>> envDefaultConfig = emptyConfig(
+                factory,
+                () -> (Environment<T, P>) new Continuous2DEnvironment<>()
+        );
         final Builder<Environment<T, P>> envBuilder = new Builder<>(Environment.class, ImmutableSet.of(envDefaultConfig), factory);
         factory.registerSingleton(RandomGenerator.class, simulationRandomGenerator);
         final Environment<T, P> environment = envBuilder.build(contents.get(ENVIRONMENT));

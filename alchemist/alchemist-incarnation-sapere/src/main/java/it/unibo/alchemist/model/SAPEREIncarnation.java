@@ -46,7 +46,8 @@ import java.util.regex.Pattern;
  *
  * @param <P> position type
  */
-public final class SAPEREIncarnation<P extends Position<? extends P>> implements Incarnation<List<ILsaMolecule>, P>, Serializable {
+public final class SAPEREIncarnation<P extends Position<? extends P>>
+        implements Incarnation<List<ILsaMolecule>, P>, Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger L = LoggerFactory.getLogger(SAPEREIncarnation.class);

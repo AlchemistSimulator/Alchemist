@@ -48,7 +48,9 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
                 if (node instanceof CellWithCircularArea && ((CellWithCircularArea<?>) node).getRadius() != 0) {
                     this.delta = ((CellWithCircularArea<?>) node).getDiameter() * delta;
                 } else {
-                    throw new IllegalArgumentException("Can't set distance in percent of the cell's diameter if cell has not a diameter");
+                    throw new IllegalArgumentException(
+                            "Can't set distance in percent of the cell's diameter if cell has not a diameter"
+                    );
                 }
             } else {
                 this.delta = delta;

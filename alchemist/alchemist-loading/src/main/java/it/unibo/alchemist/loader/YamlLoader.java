@@ -478,7 +478,10 @@ public final class YamlLoader implements Loader {
     @Override
     public <T, P extends Position<P>> Environment<T, P> getWith(final Map<String, ?> values) {
         if (values.size() > variables.size()) {
-            throw new IllegalArgumentException("Some variables do not exist in the environment, or are not overridable: " + Maps.difference(values, variables).entriesOnlyOnLeft());
+            throw new IllegalArgumentException(
+                    "Some variables do not exist in the environment, or are not overridable: "
+                        + Maps.difference(values, variables).entriesOnlyOnLeft()
+            );
         }
         final int expectedSize = constants.size() + variables.size() + depVariables.size();
         final Map<String, Object> actualVars = Maps.newLinkedHashMapWithExpectedSize(expectedSize);

@@ -114,7 +114,7 @@ public class DrawCognitiveMap extends DrawOnce {
                     });
             cognitiveMap.vertexSet().forEach(r -> {
                 final Point centroidFrom = wormhole.getViewPoint(
-                        environment.makePosition(r.getCentroid().getX(),r.getCentroid().getY())
+                        environment.makePosition(r.getCentroid().getX(), r.getCentroid().getY())
                 );
                 if (cognitiveMap != null) {
                     cognitiveMap.outgoingEdgesOf(r).forEach(e -> {

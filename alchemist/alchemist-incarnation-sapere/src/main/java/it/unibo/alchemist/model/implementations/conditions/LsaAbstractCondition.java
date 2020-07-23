@@ -83,7 +83,8 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     ) {
         final List<ILsaMolecule> l = new ArrayList<>(lsaSpace.size() - alreadyRemoved.size());
         for (final ILsaMolecule matched : lsaSpace) {
-            if (matched.matches(partialInstance, duplicateVariables) && countElements(lsaSpace, matched) > countElements(alreadyRemoved, matched)) {
+            if (matched.matches(partialInstance, duplicateVariables)
+                    && countElements(lsaSpace, matched) > countElements(alreadyRemoved, matched)) {
                 l.add(matched);
             }
         }

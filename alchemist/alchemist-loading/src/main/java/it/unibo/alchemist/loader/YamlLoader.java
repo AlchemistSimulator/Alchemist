@@ -389,7 +389,11 @@ public final class YamlLoader implements Loader {
                             NAMED_EXTRACTOR_CONFIG,
                             new BuilderConfiguration<>(
                                 ImmutableMap.of(MOLECULE, CharSequence.class),
-                                ImmutableMap.of(PROPERTY, CharSequence.class, AGGREGATORS, List.class, VALUE_FILTER, Object.class),
+                                ImmutableMap.of(
+                                        PROPERTY, CharSequence.class,
+                                        AGGREGATORS, List.class,
+                                        VALUE_FILTER, Object.class
+                                ),
                                 factory,
                                 m -> {
                                     final Object filterObj = m.getOrDefault(VALUE_FILTER, "NoFilter");

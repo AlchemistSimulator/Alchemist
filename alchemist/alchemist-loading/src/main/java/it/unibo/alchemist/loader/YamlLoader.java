@@ -580,7 +580,11 @@ public final class YamlLoader implements Loader {
                                 "position coordinates"
                         ).toArray(new Number[l.size()])));
         factory.registerImplicit(Number[].class, Position.class, environment::makePosition);
-        final Builder<Molecule> molBuilder = new Builder<>(Molecule.class, singleParamConfig(factory, p -> incarnation.createMolecule(p.toString())), factory);
+        final Builder<Molecule> molBuilder = new Builder<>(
+                Molecule.class,
+                singleParamConfig(factory, p -> incarnation.createMolecule(p.toString())),
+                factory
+        );
         /*
          * Layers
          */

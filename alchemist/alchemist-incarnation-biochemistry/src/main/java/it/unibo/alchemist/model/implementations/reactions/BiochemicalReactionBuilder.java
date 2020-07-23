@@ -436,7 +436,11 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             for (final BiomoleculeContext b : ctx.junctionRight().biomolecule()) {
                 insertInMap(neighborNodeMolecules, createBiomolecule(b), createConcentration(b));
             }
-            return new Junction(ctx.junctionLeft().getText() + "-" + ctx.junctionRight().getText(), currentNodeMolecules, neighborNodeMolecules);
+            return new Junction(
+                    ctx.junctionLeft().getText() + "-" + ctx.junctionRight().getText(),
+                    currentNodeMolecules,
+                    neighborNodeMolecules
+            );
         }
 
         private static void insertInMap(final Map<Biomolecule, Double> map, final Biomolecule mol, final double conc) {

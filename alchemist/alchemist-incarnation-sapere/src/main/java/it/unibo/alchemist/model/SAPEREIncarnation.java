@@ -99,7 +99,12 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         return Double.NaN;
     }
 
-    private double sapereProperty(final ILsaNode node, final ILsaMolecule molecule, final String prop, final boolean cacheUpdated) {
+    private double sapereProperty(
+            final ILsaNode node,
+            final ILsaMolecule molecule,
+            final String prop,
+            final boolean cacheUpdated
+    ) {
         if (cacheUpdated) {
             saperePropertyNumber = -1;
             for (int i = 0; i < molecule.argsNumber() && saperePropertyNumber == -1; i++) {

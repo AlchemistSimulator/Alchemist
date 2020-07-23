@@ -35,7 +35,12 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
      * @param e the environment
      * @param rg the random generator
      */
-    public AddJunctionInNeighbor(final Environment<Double, P> e, final CellNode<P> n, final Junction junction, final RandomGenerator rg) {
+    public AddJunctionInNeighbor(
+            final Environment<Double, P> e,
+            final CellNode<P> n,
+            final Junction junction,
+            final RandomGenerator rg
+    ) {
         super(n, e, rg);
         declareDependencyTo(junction);
         jun = junction;

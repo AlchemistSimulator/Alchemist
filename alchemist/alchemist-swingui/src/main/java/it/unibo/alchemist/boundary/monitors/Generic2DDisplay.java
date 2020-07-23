@@ -382,7 +382,12 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     private void drawFriedEgg(final Graphics g, final int x, final int y, final Color c1, final Color c2) {
         g.setColor(c1);
-        g.fillOval(x - SELECTED_NODE_DRAWING_SIZE / 2, y - SELECTED_NODE_DRAWING_SIZE / 2, SELECTED_NODE_DRAWING_SIZE, SELECTED_NODE_DRAWING_SIZE);
+        g.fillOval(
+                x - SELECTED_NODE_DRAWING_SIZE / 2,
+                y - SELECTED_NODE_DRAWING_SIZE / 2,
+                SELECTED_NODE_DRAWING_SIZE,
+                SELECTED_NODE_DRAWING_SIZE
+        );
         g.setColor(c2);
         g.fillOval(x - SELECTED_NODE_INTERNAL_SIZE / 2, y - SELECTED_NODE_INTERNAL_SIZE / 2, SELECTED_NODE_INTERNAL_SIZE, SELECTED_NODE_INTERNAL_SIZE);
     }

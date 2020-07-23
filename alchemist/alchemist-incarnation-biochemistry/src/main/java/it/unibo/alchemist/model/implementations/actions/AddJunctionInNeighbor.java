@@ -48,14 +48,14 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
 
     @SuppressWarnings("unchecked")
     @Override
-    public AddJunctionInNeighbor<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        if (n instanceof CellNode) {
+    public AddJunctionInNeighbor<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        if (node instanceof CellNode) {
             return new AddJunctionInNeighbor<>(
                     (Environment<Double, P>) getEnvironment(),
-                    (CellNode<P>) n,
+                    (CellNode<P>) node,
                     jun, getRandomGenerator());
         }
-        throw new IllegalArgumentException("Node must be CellNode, found " + n + " of type: " + n.getClass());
+        throw new IllegalArgumentException("Node must be CellNode, found " + node + " of type: " + node.getClass());
     }
 
     /**

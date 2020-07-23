@@ -105,7 +105,13 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      *             if image file cannot be found, or if you disconnected your
      *             hard drive while this method was running.
      */
-    public ImageEnvironment(final int obs, final String path, final double zoom, final double dx, final double dy) throws IOException {
+    public ImageEnvironment(
+            final int obs,
+            final String path,
+            final double zoom,
+            final double dx,
+            final double dy
+    ) throws IOException {
         super();
         final InputStream resource = ResourceLoader.getResourceAsStream(path);
         final BufferedImage img = resource == null 

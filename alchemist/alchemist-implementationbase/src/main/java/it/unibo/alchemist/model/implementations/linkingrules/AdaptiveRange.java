@@ -186,7 +186,13 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
     }
 
     /**
-     * Acts as a filter. It is called to test if the nodes in the computed neighborhood (namely, those nodes within the communication range of the current node) should be removed or not, and must return true if the node should not be inserted in the neighborhood. This implementation checks that the actual distance between the nodes is shorter than the communication range of the neighbor.
+     * Acts as a filter.
+     * It is called to test if the nodes in the computed neighborhood
+     * (namely, those nodes within the communication range of the current node)
+     * should be removed or not, and must return true if the node should not be inserted in the neighborhood.
+     *
+     * This implementation checks that the actual distance between the nodes is shorter
+     * than the communication range of the neighbor.
      * 
      * @param environment the current environment
      * @param center the current node

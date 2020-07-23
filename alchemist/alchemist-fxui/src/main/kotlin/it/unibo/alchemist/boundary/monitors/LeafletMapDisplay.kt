@@ -21,11 +21,11 @@ import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
-import it.unibo.alchemist.kotlin.makePoint
-import it.unibo.alchemist.kotlin.minus
-import it.unibo.alchemist.kotlin.plus
-import it.unibo.alchemist.kotlin.runOnFXThread
-import it.unibo.alchemist.kotlin.syncRunOnFXThread
+import it.unibo.alchemist.boundary.makePoint
+import it.unibo.alchemist.boundary.minus
+import it.unibo.alchemist.boundary.plus
+import it.unibo.alchemist.boundary.runOnFXThread
+import it.unibo.alchemist.boundary.syncRunOnFXThread
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment

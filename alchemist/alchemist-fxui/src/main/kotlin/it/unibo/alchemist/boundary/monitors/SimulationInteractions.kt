@@ -26,10 +26,10 @@ import it.unibo.alchemist.input.MouseButtonTriggerAction
 import it.unibo.alchemist.input.NodeBoundMouseEventDispatcher
 import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.input.DynamicMouseEventDispatcher
-import it.unibo.alchemist.kotlin.clear
-import it.unibo.alchemist.kotlin.makePoint
-import it.unibo.alchemist.kotlin.minus
-import it.unibo.alchemist.kotlin.plus
+import it.unibo.alchemist.boundary.clear
+import it.unibo.alchemist.boundary.makePoint
+import it.unibo.alchemist.boundary.minus
+import it.unibo.alchemist.boundary.plus
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D

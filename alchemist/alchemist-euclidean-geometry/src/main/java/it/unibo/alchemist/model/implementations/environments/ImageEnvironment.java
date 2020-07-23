@@ -89,7 +89,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
     }
 
     /**
-     * @param obs
+     * @param obstacleColor
      *            integer representing the RGB color to use as color for the
      *            obstacle detection in image. Encoding follows common Java
      *            rules: {@link Color#getRGB()}
@@ -106,7 +106,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      *             hard drive while this method was running.
      */
     public ImageEnvironment(
-            final int obs,
+            final int obstacleColor,
             final String path,
             final double zoom,
             final double dx,
@@ -117,7 +117,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
         final BufferedImage img = resource == null 
                 ? ImageIO.read(new File(path))
                 : ImageIO.read(resource);
-        findMarkedRegions(obs, img).forEach(obstacle ->
+        findMarkedRegions(obstacleColor, img).forEach(obstacle ->
                 addObstacle(mapToEnv(obstacle, zoom, dx, dy, img.getHeight()))
         );
     }

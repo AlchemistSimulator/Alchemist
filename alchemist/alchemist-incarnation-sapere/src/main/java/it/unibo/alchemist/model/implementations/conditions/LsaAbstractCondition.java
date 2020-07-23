@@ -153,7 +153,11 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      * @param template
      *            : LsaMolecule template (contain variable names)
      */
-    protected static void updateMap(final Map<HashString, ITreeNode<?>> map, final Iterable<IExpression> instance, final ILsaMolecule template) {
+    protected static void updateMap(
+            final Map<HashString, ITreeNode<?>> map,
+            final Iterable<IExpression> instance,
+            final ILsaMolecule template
+    ) {
         /*
          * Iterate over inst
          */

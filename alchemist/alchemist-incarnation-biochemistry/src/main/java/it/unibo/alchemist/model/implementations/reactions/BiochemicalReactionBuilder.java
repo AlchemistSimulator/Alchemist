@@ -497,10 +497,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final Object offendingSymbol, 
                 final int line,
                 final int charPositionInLine,
-                final String msg,
+                final String message,
                 final RecognitionException e) {
             throw new BiochemistryParseException(
-                    "Error in reaction: " + reaction + "at character " + charPositionInLine + "\n" + msg
+                    "Error in reaction: " + reaction + "at character " + charPositionInLine + "\n" + message
             );
         }
     }

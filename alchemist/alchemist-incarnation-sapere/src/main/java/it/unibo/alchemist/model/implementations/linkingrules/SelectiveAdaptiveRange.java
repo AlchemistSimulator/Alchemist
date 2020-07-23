@@ -181,7 +181,7 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      * that the actual distance between the nodes is shorter than the
      * communication range of the neighbor.
      * 
-     * @param env
+     * @param environment
      *            the current environment
      * @param center
      *            the current node
@@ -194,7 +194,7 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      * @return true if the node must be removed, false otherwise
      */
     @Override
-    protected boolean conditionForRemoval(final Environment<T, P> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
-        return !neighbor.contains(moleculeType) || super.conditionForRemoval(env, center, neighbor, centerRange, neighRange);
+    protected boolean conditionForRemoval(final Environment<T, P> environment, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
+        return !neighbor.contains(moleculeType) || super.conditionForRemoval(environment, center, neighbor, centerRange, neighRange);
     }
 }

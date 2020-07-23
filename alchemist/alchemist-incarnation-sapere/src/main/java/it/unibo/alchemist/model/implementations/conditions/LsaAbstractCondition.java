@@ -284,7 +284,14 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            the list of all the maps that lists the molecules removed from
      *            each node
      */
-    protected static void incorporateNewMatches(final Map<ILsaNode, List<ILsaMolecule>> otherMatchesMap, final Map<HashString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<HashString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    protected static void incorporateNewMatches(
+            final Map<ILsaNode, List<ILsaMolecule>> otherMatchesMap,
+            final Map<HashString, ITreeNode<?>> oldMatches,
+            final ILsaMolecule template,
+            final List<Map<HashString, ITreeNode<?>>> matchesList,
+            final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved,
+            final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
         for (final Entry<ILsaNode, List<ILsaMolecule>> e : otherMatchesMap.entrySet()) {
             final ILsaNode node = e.getKey();
             final List<ILsaMolecule> otherMatches = e.getValue();

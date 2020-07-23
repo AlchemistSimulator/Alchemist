@@ -40,7 +40,11 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
      * @param mol 
      * @param environment 
      */
-    public LsaNeighborhoodCondition(final ILsaNode n, final ILsaMolecule mol, final Environment<List<ILsaMolecule>, ?> environment) {
+    public LsaNeighborhoodCondition(
+            final ILsaNode n,
+            final ILsaMolecule mol,
+            final Environment<List<ILsaMolecule>, ?> environment
+    ) {
         super(mol, n);
         env = environment;
     }

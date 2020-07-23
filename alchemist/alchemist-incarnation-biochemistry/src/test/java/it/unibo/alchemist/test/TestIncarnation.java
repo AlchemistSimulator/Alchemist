@@ -168,7 +168,11 @@ public class TestIncarnation {
         testR("[A + B] --> [BrownianMove(0.1)]", 2, 3, 2, 2, 0, 0, 0, 0);
         // if a custom condition is used the molecules present in the custom condition will NOT be removed.
         testR("[] --> [B in env] if BiomolPresentInCell(A, 2)", 2, 1, 1, 0, 0, 0, 0, 1);
-        testR("[A] + [B in neighbor] + [C in env] --> [D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)] if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
+        testR(
+                "[A] + [B in neighbor] + [C in env] "
+                        + "--> "
+                        + "[D in cell] + [E in neighbor] + [F in env] + [BrownianMove(1)]" +
+                        " if BiomolPresentInCell(A, 2)", 4, 7, 2, 2, 1, 2, 1, 2);
         // CHECKSTYLE: MagicNumber ON
         testNoR("[A] + [B in neighbor] --> [junction A-C]"); // C is not present in conditions
         testNoR("[A] + [B in neighbor] --> [junction A-2B]"); // only one molecule B is present in conditions

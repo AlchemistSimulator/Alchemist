@@ -57,7 +57,12 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
      * @param rng
      *            the random generator
      */
-    public BiochemicalReaction(final Node<Double> n, final TimeDistribution<Double> td, final Environment<Double, ?> env, final RandomGenerator rng) {
+    public BiochemicalReaction(
+            final Node<Double> n,
+            final TimeDistribution<Double> td,
+            final Environment<Double, ?> env,
+            final RandomGenerator rng
+    ) {
         super(n, td);
         environment = env;
         random = rng;

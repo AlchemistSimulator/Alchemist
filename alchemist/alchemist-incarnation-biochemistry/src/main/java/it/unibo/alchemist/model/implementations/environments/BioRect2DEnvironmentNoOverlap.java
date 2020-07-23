@@ -170,7 +170,9 @@ public final class BioRect2DEnvironmentNoOverlap
         final Euclidean2DPosition oppositeVersor = new Euclidean2DPosition(-xVer, -yVer);
         final Euclidean2DPosition nodeOrientationFromReq = new Euclidean2DPosition(nodePos.getX() - requestedPos.getX(), 
                 nodePos.getY() - requestedPos.getY());
-        final double scalarProductResult2 = oppositeVersor.getX() * nodeOrientationFromReq.getX() + oppositeVersor.getY() * nodeOrientationFromReq.getY();
+        final double scalarProductResult2 =
+                oppositeVersor.getX() * nodeOrientationFromReq.getX()
+                + oppositeVersor.getY() * nodeOrientationFromReq.getY();
         if (scalarProductResult2 <= 0) {
             return nodePos.distanceTo(requestedPos) < node.getRadius() + nodeToMove.getRadius()
                     && scalarProductResult1 >= 0;

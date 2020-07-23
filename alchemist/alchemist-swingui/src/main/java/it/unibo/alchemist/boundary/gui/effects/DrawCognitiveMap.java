@@ -74,10 +74,17 @@ public class DrawCognitiveMap extends DrawOnce {
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D graphics, final Node<T> node, final Environment<T, P> environment, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void apply(
+            final Graphics2D graphics,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final IWormhole2D<P> wormhole
+    ) {
         super.apply(graphics, node, environment, wormhole);
         final Integer markerNodeID = getMarkerNodeID();
-        if (cognitiveMap == null && markerNodeID != null && environment.getNodeByID(markerNodeID) instanceof OrientingPedestrian
+        if (cognitiveMap == null
+                && markerNodeID != null
+                && environment.getNodeByID(markerNodeID) instanceof OrientingPedestrian
                 && environment instanceof Environment2DWithObstacles
                 && environment.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
             cognitiveMap = ((OrientingPedestrian) environment.getNodeByID(markerNodeID)).getCognitiveMap();

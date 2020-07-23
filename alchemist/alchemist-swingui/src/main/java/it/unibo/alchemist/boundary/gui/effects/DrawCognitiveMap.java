@@ -134,9 +134,20 @@ public class DrawCognitiveMap extends DrawOnce {
         final P endEnv = environment.makePosition(frame.getMaxX(), frame.getMaxY());
         final Point startView = wormhole.getViewPoint(startEnv);
         final Point endView = wormhole.getViewPoint(endEnv);
-        final Point2D minPoint = new Point2D.Double(Math.min(startView.getX(), endView.getX()), Math.min(startView.getY(), endView.getY()));
-        final Point2D maxPoint = new Point2D.Double(Math.max(startView.getX(), endView.getX()), Math.max(startView.getY(), endView.getY()));
-        return new Ellipse2D.Double(minPoint.getX(), minPoint.getY(), maxPoint.getX() - minPoint.getX(), maxPoint.getY() - minPoint.getY());
+        final Point2D minPoint = new Point2D.Double(
+                Math.min(startView.getX(), endView.getX()),
+                Math.min(startView.getY(), endView.getY())
+        );
+        final Point2D maxPoint = new Point2D.Double(
+                Math.max(startView.getX(), endView.getX()),
+                Math.max(startView.getY(), endView.getY())
+        );
+        return new Ellipse2D.Double(
+                minPoint.getX(),
+                minPoint.getY(),
+                maxPoint.getX() - minPoint.getX(),
+                maxPoint.getY() - minPoint.getY()
+        );
     }
 
     /**

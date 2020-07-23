@@ -204,7 +204,14 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
         return new int[] { x, y };
     }
 
-    private static boolean lineIsIncluded(final int y, final int xs, final int x, final int color, final BufferedImage img, final boolean[][] bmat) {
+    private static boolean lineIsIncluded(
+            final int y,
+            final int xs,
+            final int x,
+            final int color,
+            final BufferedImage img,
+            final boolean[][] bmat
+    ) {
         int i = xs;
         while (i < x && !bmat[i][y] && img.getRGB(i, y) == color) {
             i++;

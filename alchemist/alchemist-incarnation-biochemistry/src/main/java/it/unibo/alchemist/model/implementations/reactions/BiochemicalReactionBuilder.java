@@ -362,7 +362,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 actionList.add(new AddJunctionInCell(env, node, j, rand));
                 actionList.add(new AddJunctionInNeighbor<>(env, (CellNode<P>) node, reverseJunction(j), rand));
             } else {
-                throw new UnsupportedOperationException("Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName());
+                throw new UnsupportedOperationException(
+                        "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                );
             }
             return reaction;
         }

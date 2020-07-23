@@ -5,17 +5,17 @@
  * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-
+ ""
 dependencies {
     implementation(rootProject)
     implementation(project(":alchemist-implementationbase"))
+    implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-maps"))
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {
         api("org.openjfx:javafx-base:$javaFXVersion:$platform")
         api("org.openjfx:javafx-graphics:$javaFXVersion:$platform")
     }
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }
 
 publishing.publications {

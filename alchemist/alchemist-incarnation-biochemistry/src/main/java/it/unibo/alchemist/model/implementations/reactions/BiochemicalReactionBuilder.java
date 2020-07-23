@@ -228,14 +228,14 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override 
-        public Reaction<Double> visitBiochemicalReaction(final BiochemistrydslParser.BiochemicalReactionContext ctx) { 
-            visit(ctx.biochemicalReactionLeft());
-            visit(ctx.biochemicalReactionRight());
-            if (ctx.customConditions() != null) {
-                visit(ctx.customConditions());
+        public Reaction<Double> visitBiochemicalReaction(final BiochemistrydslParser.BiochemicalReactionContext context) {
+            visit(context.biochemicalReactionLeft());
+            visit(context.biochemicalReactionRight());
+            if (context.customConditions() != null) {
+                visit(context.customConditions());
             }
-            if (ctx.customReactionType() != null) {
-                visit(ctx.customReactionType());
+            if (context.customReactionType() != null) {
+                visit(context.customReactionType());
             }
             /*
              * if the reaction has at least one neighbor action but no neighbor condition 

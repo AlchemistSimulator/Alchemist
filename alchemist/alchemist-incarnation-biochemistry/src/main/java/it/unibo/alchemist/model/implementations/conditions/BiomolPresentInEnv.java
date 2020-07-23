@@ -76,8 +76,8 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
     }
 
     @Override 
-    public BiomolPresentInEnv<P> cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        return new BiomolPresentInEnv<>(environment, n, getBiomolecule(), getQuantity());
+    public BiomolPresentInEnv<P> cloneCondition(final Node<Double> node, final Reaction<Double> r) {
+        return new BiomolPresentInEnv<>(environment, node, getBiomolecule(), getQuantity());
     }
 
     @Override

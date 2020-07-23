@@ -46,7 +46,10 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
  *
  * @param <P> the position type
  */
-@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Null checks are performed in the initialize function")
+@SuppressFBWarnings(
+        value = "NP_NULL_ON_SOME_PATH",
+        justification = "Null checks are performed in the initialize function"
+)
 public class EffectBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.
@@ -83,7 +86,11 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
      * @param thisDrawer the drawer the layout this controller is assigned to is loaded
      *                   into
      */
-    public EffectBarController(final EffectGroupCell<P> parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectBarController(
+            final EffectGroupCell<P> parentCell,
+            final JFXDrawersStack stack,
+            final JFXDrawer thisDrawer
+    ) {
         this.stack = stack;
         this.thisDrawer = thisDrawer;
         this.parentCell = parentCell;
@@ -99,7 +106,12 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
      * @param thisDrawer     the drawer the layout this controller is assigned to is loaded
      *                       into
      */
-    public EffectBarController(final @Nullable FXOutputMonitor<?, ?> displayMonitor, final EffectGroupCell<P> parentCell, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectBarController(
+            final @Nullable FXOutputMonitor<?, ?> displayMonitor,
+            final EffectGroupCell<P> parentCell,
+            final JFXDrawersStack stack,
+            final JFXDrawer thisDrawer
+    ) {
         this(parentCell, stack, thisDrawer);
         setDisplayMonitor(displayMonitor);
     }
@@ -116,7 +128,8 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
     /**
      * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set;
+     *                       if null, it will be {@link Optional#empty() unset}
      */
     public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
@@ -127,11 +140,26 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        Objects.requireNonNull(topBar, FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_BAR_LAYOUT));
-        Objects.requireNonNull(addEffect, FXResourceLoader.getInjectionErrorMessage("add", EFFECT_BAR_LAYOUT));
-        Objects.requireNonNull(effectsList, FXResourceLoader.getInjectionErrorMessage("effectsList", EFFECT_BAR_LAYOUT));
-        Objects.requireNonNull(groupName, FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT));
-        Objects.requireNonNull(backToGroups, FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_BAR_LAYOUT));
+        Objects.requireNonNull(
+                topBar,
+                FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                addEffect,
+                FXResourceLoader.getInjectionErrorMessage("add", EFFECT_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                effectsList,
+                FXResourceLoader.getInjectionErrorMessage("effectsList", EFFECT_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                groupName,
+                FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                backToGroups,
+                FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_BAR_LAYOUT)
+        );
         this.addEffect.setText("");
         this.addEffect.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.ADD));
         this.backToGroups.setText("");
@@ -160,11 +188,15 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
                 dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
             }
         });
-        this.topBar.widthProperty().addListener((observable, oldValue, newValue) -> this.groupName.setPrefWidth(newValue.doubleValue()));
+        this.topBar.widthProperty().addListener((observable, oldValue, newValue) ->
+                this.groupName.setPrefWidth(newValue.doubleValue())
+        );
     }
 
     /**
-     * Add the {@link EffectFX Effect} to the {@link ListView} controlled by this class and to the {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup} that the GUI controlled by this claass is representation of.
+     * Add the {@link EffectFX Effect} to the {@link ListView} controlled by this class and to
+     * the {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup} that the GUI
+     * controlled by this claass is representation of.
      *
      * @param effect the effect to add
      */
@@ -184,7 +216,9 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
         final EffectFX<P> choice = effectBuilder.chooseAndLoad();
         if (choice != null) {
             this.addEffectToGroup(choice);
-            this.getObservableList().get(this.getObservableList().size() - 1).setName(choice.getName() + " " + getObservableList().size());
+            this.getObservableList()
+                    .get(this.getObservableList().size() - 1)
+                    .setName(choice.getName() + " " + getObservableList().size());
         }
     }
 
@@ -218,7 +252,10 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
      * @return the name property
      */
     public StringProperty groupNameProperty() {
-        Objects.requireNonNull(this.groupName, FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT));
+        Objects.requireNonNull(
+                this.groupName,
+                FXResourceLoader.getInjectionErrorMessage("groupName", EFFECT_BAR_LAYOUT)
+        );
         return this.groupName.textProperty();
     }
 }

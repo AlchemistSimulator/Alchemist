@@ -34,6 +34,6 @@ class ZigZagMove<T>(
     ZigZagRandomTarget<T>(node, env, rng, distance),
     GloballyConstantSpeed(reaction, speed)
 ) {
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        ZigZagMove(n, r, env, rng, distance, speed)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+        ZigZagMove(node, reaction, env, rng, distance, speed)
 }

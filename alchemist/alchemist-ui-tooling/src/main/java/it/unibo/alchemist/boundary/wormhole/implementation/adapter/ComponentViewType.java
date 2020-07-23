@@ -16,7 +16,8 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
- * Adapter class that adapts the AWT {@link Component} class to a generic View Type for usage in {@link it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D}.
+ * Adapter class that adapts the AWT {@link Component} class to a generic View Type for usage in
+ * {@link it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D}.
  */
 public class ComponentViewType implements ViewType {
     private Component component;
@@ -76,7 +77,8 @@ public class ComponentViewType implements ViewType {
             return false;
         }
         final ComponentViewType nvt = (ComponentViewType) o;
-        return Math.abs(getWidth() - nvt.getWidth()) < Double.MIN_VALUE  && Math.abs(getHeight() - nvt.getHeight()) < Double.MIN_VALUE;
+        return Math.abs(getWidth() - nvt.getWidth()) < Double.MIN_VALUE
+                && Math.abs(getHeight() - nvt.getHeight()) < Double.MIN_VALUE;
     }
 
     /**

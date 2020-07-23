@@ -58,9 +58,9 @@ public class DrawPedestrianPath extends DrawOnce {
     private final List<Position2D> path = new ArrayList<>();
 
     /**
-     * @param g        graphics
-     * @param n        node
-     * @param env      environment
+     * @param graphics2D        graphics
+     * @param node        node
+     * @param environment      environment
      * @param wormhole the wormhole used to map environment's coords to screen coords
      * @param <T>      concentration type
      * @param <P>      position type
@@ -68,14 +68,19 @@ public class DrawPedestrianPath extends DrawOnce {
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final BidimensionalWormhole<P> wormhole) {
-        path.add(env.getPosition(n));
+    protected <T, P extends Position2D<P>> void draw(
+            final Graphics2D graphics2D,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final BidimensionalWormhole<P> wormhole
+    ) {
+        path.add(environment.getPosition(node));
         if (toBeDrawn) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-            g.setColor(colorCache);
+            graphics2D.setColor(colorCache);
             path.forEach(p -> {
                 final Point viewP = ((BidimensionalWormhole<Position2D<?>>) wormhole).getViewPoint(p);
-                g.fillOval(viewP.x, viewP.y, DIAMETER, DIAMETER);
+                graphics2D.fillOval(viewP.x, viewP.y, DIAMETER, DIAMETER);
             });
         }
     }

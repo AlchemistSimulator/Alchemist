@@ -23,7 +23,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * It models an abstract implementation of the {@link EffectFX effect} interface, implementing default name and visibility properties.
+ * It models an abstract implementation of the {@link EffectFX effect} interface,
+ * implementing default name and visibility properties.
  * <p>
  * The effect behavior can be implemented via {@link #computeDrawCommands(Environment)} template method.
  *
@@ -95,7 +96,10 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * @return true if the objects are both null or equal, false otherwise
      */
     @Contract("null, !null -> false")
-    protected static <T, P extends Property<T>> boolean checkEqualsProperties(final @Nullable P prop1, final @Nullable P prop2) {
+    protected static <T, P extends Property<T>> boolean checkEqualsProperties(
+            final @Nullable P prop1,
+            final @Nullable P prop2
+    ) {
         if (prop1 == null) {
             return prop2 == null;
         } else {
@@ -109,15 +113,19 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * @param anEffect    the first effect to check
      * @param otherEffect the other effect to check
      * @param <T>         the type of Effect
-     * @return true if the Effects have the same name and visibility and are assignable from same class or are both null, false otherwise
+     * @return true if the Effects have the same name and visibility and are assignable from
+     *      same class or are both null, false otherwise
      */
     @Contract("null, null -> true; null, !null -> false; !null, null -> false")
     @SuppressWarnings("unchecked")
-    protected static <T extends AbstractEffect<?>> boolean checkBasicProperties(final @Nullable T anEffect, final @Nullable Object otherEffect) {
+    protected static <T extends AbstractEffect<?>> boolean checkBasicProperties(
+            final @Nullable T anEffect,
+            final @Nullable Object otherEffect
+    ) {
         if (anEffect == null) {
             return otherEffect == null;
         } else if (otherEffect != null) {
-            if (anEffect == otherEffect) { // NOPMD - the comparison wants to check if the variables point to the same object
+            if (anEffect == otherEffect) { // NOPMD - the comparison checks if the variables point to the same object
                 return true;
             }
             if (!anEffect.getClass().isInstance(otherEffect)) {
@@ -151,7 +159,8 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     }
 
     /**
-     * The method is called to consume the data extrapolated from {@link Environment} by {@link #storeData(Environment)} method.
+     * The method is called to consume the data extrapolated from {@link Environment}
+     * by {@link #storeData(Environment)} method.
      *
      * @return the queue of command to be executed on JavaFX thread
      */
@@ -160,7 +169,8 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     /**
      * The method extrapolates data from environment.
      * <p>
-     * It is strongly recommended not to keep any reference to {@link Environment}- or {@link it.unibo.alchemist.core.interfaces.Simulation}-specific objects.
+     * It is strongly recommended not to keep any reference to {@link Environment}-
+     * or {@link it.unibo.alchemist.core.interfaces.Simulation}-specific objects.
      *
      * @param environment the {@link Environment} to extrapolate data from
      * @param <T>         the {@link it.unibo.alchemist.model.interfaces.Concentration} type
@@ -226,7 +236,8 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * primitive data types supported by {@code DataOutput}.</blockquote>
      *
      * @param stream the input stream
-     * @throws java.io.UTFDataFormatException if read bytes do not represent a valid modified UTF-8 encoding of a string
+     * @throws java.io.UTFDataFormatException if read bytes do not represent a
+     * valid modified UTF-8 encoding of a string
      * @throws java.io.EOFException   if the end of file is reached
      * @throws ClassNotFoundException if cannot find the class
      * @throws IOException            if other I/O error has occurred

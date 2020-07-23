@@ -37,7 +37,8 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
      * @param coordinates
      *            the array of coordinates
      */
-    protected AbstractPosition(final boolean copy, @NotNull final double... coordinates) { // NOPMD: array stored directly by purpose
+    protected AbstractPosition(final boolean copy, @NotNull final double... coordinates) { // NOPMD
+        // array stored directly by purpose here
         if (copy) {
             c = Arrays.copyOf(coordinates, coordinates.length);
         } else {

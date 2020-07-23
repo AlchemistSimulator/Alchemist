@@ -160,7 +160,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     public Generic2DDisplay(final int step) {
         super();
         if (!"true".equals(System.getProperty("sun.java2d.opengl"))) {
-            L.warn("OpenGL acceleration appears to be disabled on this system. This may impact performance negatively. Please enable it with -Dsun.java2d.opengl=true");
+            L.warn(
+                    "OpenGL acceleration appears to be disabled on this system. "
+                            + "This may impact performance negatively. "
+                            + "Please enable it with -Dsun.java2d.opengl=true"
+            );
         }
         setStep(step);
         setBackground(Color.WHITE);
@@ -360,7 +364,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     });
         }
         releaseData();
-        if (isDraggingMouse && status == ViewStatus.MOVING_SELECTED_NODES && originPoint.isPresent() && endingPoint.isPresent()) {
+        if (isDraggingMouse
+                && status == ViewStatus.MOVING_SELECTED_NODES
+                && originPoint.isPresent()
+                && endingPoint.isPresent()
+        ) {
             for (final Node<T> n : selectedNodes) {
                 if (onView.containsKey(n)) {
                     onView.put(n, new Point(onView.get(n).x + (endingPoint.get().x - originPoint.get().x),
@@ -412,9 +420,19 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     private void drawFriedEgg(final Graphics g, final int x, final int y, final Color c1, final Color c2) {
         g.setColor(c1);
-        g.fillOval(x - SELECTED_NODE_DRAWING_SIZE / 2, y - SELECTED_NODE_DRAWING_SIZE / 2, SELECTED_NODE_DRAWING_SIZE, SELECTED_NODE_DRAWING_SIZE);
+        g.fillOval(
+                x - SELECTED_NODE_DRAWING_SIZE / 2,
+                y - SELECTED_NODE_DRAWING_SIZE / 2,
+                SELECTED_NODE_DRAWING_SIZE,
+                SELECTED_NODE_DRAWING_SIZE
+        );
         g.setColor(c2);
-        g.fillOval(x - SELECTED_NODE_INTERNAL_SIZE / 2, y - SELECTED_NODE_INTERNAL_SIZE / 2, SELECTED_NODE_INTERNAL_SIZE, SELECTED_NODE_INTERNAL_SIZE);
+        g.fillOval(
+                x - SELECTED_NODE_INTERNAL_SIZE / 2,
+                y - SELECTED_NODE_INTERNAL_SIZE / 2,
+                SELECTED_NODE_INTERNAL_SIZE,
+                SELECTED_NODE_INTERNAL_SIZE
+        );
     }
 
     /**
@@ -620,7 +638,12 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     @Override
-    public final void stepDone(final Environment<T, P> environment, final Reaction<T> r, final Time time, final long step) {
+    public final void stepDone(
+            final Environment<T, P> environment,
+            final Reaction<T> reaction,
+            final Time time,
+            final long step
+    ) {
         if (firstTime) {
             synchronized (this) {
                 if (firstTime) {
@@ -697,19 +720,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      */
     protected static boolean envHasMobileObstacles(final Environment<?, ?> env) {
         return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?>) env).hasMobileObstacles();
-    }
-
-    private void bindKey(final int key, final Runnable fun) {
-        final Object binder = "Key: " + key;
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key, 0), binder);
-        getActionMap().put(binder, new AbstractAction() {
-            private static final long serialVersionUID = 7927420406960259675L;
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                fun.run();
-            }
-        });
     }
 
     /**
@@ -830,7 +840,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
          */
         @Override
         public void mousePressed(final MouseEvent e) {
-            if (SwingUtilities.isLeftMouseButton(e) && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)) {
+            if (SwingUtilities.isLeftMouseButton(e)
+                    && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)
+            ) {
                 isDraggingMouse = true;
                 originPoint = Optional.of(e.getPoint());
                 endingPoint = Optional.of(e.getPoint());
@@ -914,7 +926,25 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         return frame;
     }
 
-    private static boolean isInsideRectangle(final Point viewPoint, final int rx, final int ry, final int width, final int height) {
+    private void bindKey(final int key, final Runnable fun) {
+        final Object binder = "Key: " + key;
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key, 0), binder);
+        getActionMap().put(binder, new AbstractAction() {
+            private static final long serialVersionUID = 7927420406960259675L;
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                fun.run();
+            }
+        });
+    }
+
+    private static boolean isInsideRectangle(
+            final Point viewPoint,
+            final int rx,
+            final int ry,
+            final int width,
+            final int height
+    ) {
         final double x = viewPoint.getX();
         final double y = viewPoint.getY();
         return x >= rx && x <= rx + width && y >= ry && y <= ry + height;

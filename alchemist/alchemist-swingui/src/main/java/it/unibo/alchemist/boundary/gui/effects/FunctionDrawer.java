@@ -25,13 +25,18 @@ public interface FunctionDrawer {
     /**
      * Draw the provided function.
      *
-     * @param f        - the function
-     * @param env      - the environment (mainly used to make positions)
-     * @param g        - the Graphics2D (where to draw the function)
+     * @param function        - the function
+     * @param environment      - the environment (mainly used to make positions)
+     * @param graphics        - the Graphics2D (where to draw the function)
      * @param wormhole - the wormhole (to map env points to view points)
      * @param <T>      - concentration type
      * @param <P>      - position type
      */
-    <T, P extends Position2D<P>> void drawFunction(Function<? super P, ? extends Number> f, Environment<T, P> env, Graphics2D g, BidimensionalWormhole<P> wormhole);
+    <T, P extends Position2D<P>> void drawFunction(
+            Function<? super P, ? extends Number> function,
+            Environment<T, P> environment,
+            Graphics2D graphics,
+            BidimensionalWormhole<P> wormhole
+    );
 
 }

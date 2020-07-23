@@ -31,7 +31,8 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
      * @param coordinates
      *            the array of coordinates
      */
-    protected AbstractEuclideanPosition(final boolean copy, @NotNull final double... coordinates) { // NOPMD: array stored directly by purpose
+    protected AbstractEuclideanPosition(final boolean copy, @NotNull final double... coordinates) { // NOPMD
+        // array stored directly by purpose
         super(copy, coordinates);
     }
 

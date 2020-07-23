@@ -67,7 +67,10 @@ public class TestConcurrency {
      * @throws ExecutionException fails
      */
     @Test
-    @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "We don't need the status of the Runnable")
+    @SuppressFBWarnings(
+            value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE",
+            justification = "We don't need the status of the Runnable"
+    )
     public void testCommandInterleaving() throws InterruptedException, ExecutionException {
         final int inWaitCount = 100;
         final Simulation<?, ?> sim = new Engine<>(env, 10);

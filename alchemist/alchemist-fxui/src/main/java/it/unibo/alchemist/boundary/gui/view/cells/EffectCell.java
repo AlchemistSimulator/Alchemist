@@ -56,15 +56,21 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
         propertiesDrawer.setResizableOnDrag(false);
         this.getPane().setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                final EffectPropertiesController propertiesController = new EffectPropertiesController(this.getItem(), this.stack,
-                        propertiesDrawer);
+                final EffectPropertiesController propertiesController = new EffectPropertiesController(
+                        this.getItem(),
+                        this.stack,
+                        propertiesDrawer
+                );
                 try {
                     propertiesDrawer.setSidePane(FXResourceLoader.getLayout(propertiesController,
                             EffectPropertiesController.EFFECT_PROPERTIES_LAYOUT));
                     propertiesController.effectNameProperty().bindBidirectional(this.getLabel().textProperty());
                 } catch (IOException e) {
                     throw new IllegalStateException(
-                            "Could not initialize side pane for properties of effect " + this.getItem().toString() + ": ", e);
+                            "Could not initialize side pane for properties of effect "
+                                    + this.getItem().toString() + ": ",
+                            e
+                    );
                 }
                 // Drawer size is modified every time it's opened
                 if (propertiesDrawer.isClosed() || propertiesDrawer.isClosing()) {
@@ -78,7 +84,12 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
         final MenuItem rename = new MenuItem(getStringRes("menu_item_rename"));
         rename.setOnAction(event -> {
             if (getItem() != null) {
-                rename(getStringRes("rename_effect_dialog_title"), getStringRes("rename_effect_dialog_msg"), null, getLabel().textProperty());
+                rename(
+                        getStringRes("rename_effect_dialog_title"),
+                        getStringRes("rename_effect_dialog_msg"),
+                        null,
+                        getLabel().textProperty()
+                );
             }
             event.consume();
         });
@@ -109,7 +120,11 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
      * @param effectName the name of the effect
      * @param stack      the stack where to open the effect properties
      */
-    public EffectCell(final @Nullable FXOutputMonitor<?, ?> monitor, final String effectName, final JFXDrawersStack stack) {
+    public EffectCell(
+            final @Nullable FXOutputMonitor<?, ?> monitor,
+            final String effectName,
+            final JFXDrawersStack stack
+    ) {
         this(effectName, stack);
         setupDisplayMonitor(monitor);
     }
@@ -130,11 +145,13 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
      */
     private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);
-        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
-            if (!oldValue.equals(newValue)) {
-                d.repaint();
-            }
-        }));
+        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> {
+            this.getDisplayMonitor().ifPresent(d -> {
+                if (!oldValue.equals(newValue)) {
+                    d.repaint();
+                }
+            });
+        });
     }
 
     /**

@@ -68,10 +68,22 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
         super(name);
         final java.awt.Color awtColor = convertColor(super.getColor());
         // Set properties to default color of DrawDot
-        red = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_red"), awtColor.getRed());
-        green = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_green"), awtColor.getGreen());
-        blue = PropertyFactory.getAWTColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_blue"), awtColor.getBlue());
-        alpha = PropertyFactory.getFXColorChannelProperty(ResourceLoader.getStringRes("drawcoloreddot_alpha"), super.getColor().getOpacity());
+        red = PropertyFactory.getAWTColorChannelProperty(
+                ResourceLoader.getStringRes("drawcoloreddot_red"),
+                awtColor.getRed()
+        );
+        green = PropertyFactory.getAWTColorChannelProperty(
+                ResourceLoader.getStringRes("drawcoloreddot_green"),
+                awtColor.getGreen()
+        );
+        blue = PropertyFactory.getAWTColorChannelProperty(
+                ResourceLoader.getStringRes("drawcoloreddot_blue"),
+                awtColor.getBlue()
+        );
+        alpha = PropertyFactory.getFXColorChannelProperty(
+                ResourceLoader.getStringRes("drawcoloreddot_alpha"),
+                super.getColor().getOpacity()
+        );
         // Update the color at each change
         red.addListener(this.updateColor());
         green.addListener(this.updateColor());
@@ -256,7 +268,8 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
      *
      * @param stream the output stream
      * @throws java.io.InvalidClassException    if something is wrong with a class used by serialization.
-     * @throws java.io.NotSerializableException if some object to be serialized does not implement the java.io.Serializable interface.
+     * @throws java.io.NotSerializableException if some object to be serialized does not implement
+     *      the java.io.Serializable interface.
      * @throws IOException              if any exception thrown by the underlying OutputStream.
      */
     private void writeObject(final ObjectOutputStream stream) throws IOException {
@@ -301,7 +314,15 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
      */
     @Override
     public int hashCode() {
-        return murmur3Hash32(alphaProperty(), blueProperty(), greenProperty(), getName(), redProperty(), getSize(), isVisible());
+        return murmur3Hash32(
+                alphaProperty(),
+                blueProperty(),
+                greenProperty(),
+                getName(),
+                redProperty(),
+                getSize(),
+                isVisible()
+        );
     }
 
     /**

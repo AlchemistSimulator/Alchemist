@@ -33,7 +33,7 @@ class RandomRotate<T>(
     /**
      * {@inheritDoc}.
      */
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): Action<T> = RandomRotate(n, env, rng)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> = RandomRotate(node, env, rng)
 
     /**
      * Changes the heading of the node randomly.

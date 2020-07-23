@@ -31,7 +31,8 @@ import java.awt.Graphics2D;
 /**
  * This class collects the following responsibilities:
  * - it manages to draw layers only when necessary (as the apply method will be called for every node).
- * Every subclass must only define the {@link AbstractDrawLayers#drawLayers(Collection, Environment, Graphics2D, BidimensionalWormhole)}
+ * Every subclass must only define the
+ * {@link AbstractDrawLayers#drawLayers(Collection, Environment, Graphics2D, BidimensionalWormhole)}
  * method, which is guaranteed to be called only when necessary.
  * - it declares gui controls for the selection of the color to use
  * - it declares gui controls for the selection of a filter, used to filter the layers to draw.
@@ -75,21 +76,26 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
     @SuppressWarnings({"PMD.CompareObjectsWithEquals"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final BidimensionalWormhole<P> wormhole) {
+    protected <T, P extends Position2D<P>> void draw(
+            final Graphics2D graphics2D,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final BidimensionalWormhole<P> wormhole
+    ) {
         if (layerFilter && (molecule == null || molString != molStringCached)) {
             molStringCached = molString;
-            env.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
+            environment.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
         }
         colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-        g.setColor(colorCache);
+        graphics2D.setColor(colorCache);
         final List<Layer<T, P>> toDraw = new ArrayList<>();
-        if (layerFilter && molecule != null && env.getLayer(molecule).isPresent()) {
-            toDraw.add(env.getLayer(molecule).get());
+        if (layerFilter && molecule != null && environment.getLayer(molecule).isPresent()) {
+            toDraw.add(environment.getLayer(molecule).get());
         } else {
-            toDraw.addAll(env.getLayers());
+            toDraw.addAll(environment.getLayers());
         }
         if (!toDraw.isEmpty()) {
-            drawLayers(toDraw, env, g, wormhole);
+            drawLayers(toDraw, environment, graphics2D, wormhole);
         }
     }
 
@@ -105,7 +111,12 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
      * {@inheritDoc}
      */
     @Override
-    public abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> env, Graphics2D g, BidimensionalWormhole<P> wormhole);
+    public abstract <T, P extends Position2D<P>> void drawLayers(
+            Collection<Layer<T, P>> toDraw,
+            Environment<T, P> environment,
+            Graphics2D graphics,
+            BidimensionalWormhole<P> wormhole
+    );
 
     /**
      * @return a boolean representing whether or not layer filter is on

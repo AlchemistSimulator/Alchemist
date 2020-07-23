@@ -55,28 +55,28 @@ public final class SingleRunGUI {
     /**
      * Builds a single-use graphical interface.
      *
-     * @param sim the simulation for this GUI
-     * @param <T> concentration type
-     * @param <P> position type
+     * @param simulation the simulation for this GUI
+     * @param <T>        concentration type
+     * @param <P>        position type
      */
-    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim) {
-        make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> simulation) {
+        make(simulation, (File) null, JFrame.EXIT_ON_CLOSE);
     }
 
     /**
-     * @param sim            the simulation for this GUI
+     * @param simulation     the simulation for this GUI
      * @param closeOperation the type of close operation for this GUI
      * @param <T>            concentration type         concentration type
      * @param <P>            position type
      */
-    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final int closeOperation) {
-        make(sim, (File) null, closeOperation);
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> simulation, final int closeOperation) {
+        make(simulation, (File) null, closeOperation);
     }
 
     /**
      * Builds a single-use graphical interface.
      * 
-     * @param sim
+     * @param simulation
      *            the simulation for this GUI
      * @param effectsFile
      *            the effects file
@@ -85,14 +85,14 @@ public final class SingleRunGUI {
      * @param <P>
      *            position type
      */
-    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile) {
-        make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> simulation, final String effectsFile) {
+        make(simulation, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
     }
 
     /**
      * Builds a single-use graphical interface.
      *
-     * @param sim
+     * @param simulation
      *            the simulation for this GUI
      * @param effectsFile
      *            the effects file
@@ -103,8 +103,12 @@ public final class SingleRunGUI {
      * @param <P>
      *            position type
      */
-    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile, final int closeOperation) {
-        make(sim, new File(effectsFile), closeOperation);
+    public static <T, P extends Position2D<P>> void make(
+            final Simulation<T, P> simulation,
+            final String effectsFile,
+            final int closeOperation
+    ) {
+        make(simulation, new File(effectsFile), closeOperation);
     }
 
     /**
@@ -119,17 +123,22 @@ public final class SingleRunGUI {
     /**
      * Builds a single-use graphical interface.
      *
-     * @param sim            the simulation for this GUI
+     * @param simulation     the simulation for this GUI
      * @param effectsFile    the effects file
      * @param closeOperation the type of close operation for this GUI
      * @param <T>            concentration type
      * @param <P>            position type
      */
-    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final File effectsFile, final int closeOperation) {
+    public static <T, P extends Position2D<P>> void make(
+            final Simulation<T, P> simulation,
+            final File effectsFile,
+            final int closeOperation
+    ) {
         @SuppressWarnings("unchecked") // Actually safe: MapEnvironment uses the same P type of MapDisplay
-        final GraphicalOutputMonitor<T, P> main = Objects.requireNonNull(sim).getEnvironment() instanceof MapEnvironment
-                ? (GraphicalOutputMonitor<T, P>) new MapDisplay<>()
-                : new Generic2DDisplay<>();
+        final GraphicalOutputMonitor<T, P> main =
+                Objects.requireNonNull(simulation).getEnvironment() instanceof MapEnvironment
+                    ? (GraphicalOutputMonitor<T, P>) new MapDisplay<>()
+                    : new Generic2DDisplay<>();
         final JFrame frame = new JFrame("Alchemist Simulator");
         frame.setDefaultCloseOperation(closeOperation);
         final JPanel canvas = new JPanel();
@@ -152,7 +161,7 @@ public final class SingleRunGUI {
         }
         upper.add(effects);
         final TimeStepMonitor<T, P> time = new TimeStepMonitor<>();
-        sim.addOutputMonitor(time);
+        simulation.addOutputMonitor(time);
         upper.add(time);
         /*
          * Go on screen
@@ -167,9 +176,9 @@ public final class SingleRunGUI {
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
         /*
-         * OutputMonitor's add to the sim must be done as the last operation
+         * OutputMonitor's add to the simulation must be done as the last operation
          */
-        sim.addOutputMonitor(main);
+        simulation.addOutputMonitor(main);
     }
 
     private static double area(final Dimension d) {

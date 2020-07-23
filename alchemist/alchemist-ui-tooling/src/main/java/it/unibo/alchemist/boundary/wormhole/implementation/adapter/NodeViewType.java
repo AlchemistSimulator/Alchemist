@@ -13,7 +13,8 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import javafx.scene.Node;
 
 /**
- * Adapter class that adapts the JavaFX {@link Node} class to a generic View Type for usage in {@link Wormhole2D}.
+ * Adapter class that adapts the JavaFX {@link Node} class to a generic View Type for usage in
+ * {@link it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole}.
  */
 public class NodeViewType implements ViewType {
     private Node node;
@@ -73,7 +74,8 @@ public class NodeViewType implements ViewType {
             return false;
         }
         final NodeViewType nvt = (NodeViewType) o;
-        return Math.abs(getWidth() - nvt.getWidth()) < Double.MIN_VALUE && Math.abs(getHeight() - nvt.getHeight()) < Double.MIN_VALUE;
+        return Math.abs(getWidth() - nvt.getWidth()) < Double.MIN_VALUE
+                && Math.abs(getHeight() - nvt.getHeight()) < Double.MIN_VALUE;
     }
 
     /**

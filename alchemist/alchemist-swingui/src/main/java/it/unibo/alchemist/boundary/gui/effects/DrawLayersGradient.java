@@ -46,7 +46,12 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
      * {@inheritDoc}
      */
     @Override
-    public <T, P extends Position2D<P>> void drawFunction(final Function<? super P, ? extends Number> f, final Environment<T, P> env, final Graphics2D g, final BidimensionalWormhole<P> wormhole) {
+    public <T, P extends Position2D<P>> void drawFunction(
+            final Function<? super P, ? extends Number> function,
+            final Environment<T, P> environment,
+            final Graphics2D graphics,
+            final BidimensionalWormhole<P> wormhole
+    ) {
         if (minOrMaxLayerValuesNeedsToBeUpdated()) {
             updateMinAndMaxLayerValues();
         }
@@ -78,17 +83,22 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
                 final P envP3 = wormhole.getEnvPoint(p3);
                 final P envP4 = wormhole.getEnvPoint(p4);
                 // get the values
-                final double v1 = f.apply(envP1).doubleValue();
-                final double v2 = f.apply(envP2).doubleValue();
-                final double v3 = f.apply(envP3).doubleValue();
-                final double v4 = f.apply(envP4).doubleValue();
+                final double v1 = function.apply(envP1).doubleValue();
+                final double v2 = function.apply(envP2).doubleValue();
+                final double v3 = function.apply(envP3).doubleValue();
+                final double v4 = function.apply(envP4).doubleValue();
                 // interpolate such values
                 final double v = (v1 + v2 + v3 + v4) / 4;
                 // fill the cell with the color
                 if (v >= getMinLayerValueDouble()) {
                     final double newAlpha = map(v, getMinLayerValueDouble(), getMaxLayerValueDouble(), 0, getAlpha().getVal());
-                    g.setColor(new Color(getRed().getVal(), getGreen().getVal(), getBlue().getVal(), (int) Math.ceil(newAlpha)));
-                    g.fillRect(i1, j1, i2 - i1, j2 - j1);
+                    graphics.setColor(new Color(
+                            getRed().getVal(),
+                            getGreen().getVal(),
+                            getBlue().getVal(),
+                            (int) Math.ceil(newAlpha)
+                    ));
+                    graphics.fillRect(i1, j1, i2 - i1, j2 - j1);
                 }
             }
         }

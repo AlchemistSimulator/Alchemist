@@ -206,7 +206,16 @@ public class TargetWalker<T> extends MoveOnMap<T> {
             final double speed,
             final double interaction,
             final double range) {
-        this(environment, node, reaction, new SimpleMolecule(trackMolecule), new SimpleMolecule(interactingMolecule), speed, interaction, range);
+        this(
+                environment,
+                node,
+                reaction,
+                new SimpleMolecule(trackMolecule),
+                new SimpleMolecule(interactingMolecule),
+                speed,
+                interaction,
+                range
+        );
     }
 
     /**

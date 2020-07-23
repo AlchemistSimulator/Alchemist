@@ -54,7 +54,11 @@ public final class MapUtils {
      *            maximum walkable length
      * @return the actual destination
      */
-    public static LatLongPosition getDestinationLocation(final GeoPosition start, final double initialBearing, final double dist) {
+    public static LatLongPosition getDestinationLocation(
+            final GeoPosition start,
+            final double initialBearing,
+            final double dist
+    ) {
         return toLatLong(LatLngTool.travel(toLatLng(start), initialBearing, dist, LengthUnit.METER));
     }
 

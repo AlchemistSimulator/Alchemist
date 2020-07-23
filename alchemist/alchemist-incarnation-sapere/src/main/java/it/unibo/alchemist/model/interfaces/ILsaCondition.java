@@ -8,11 +8,10 @@
 package it.unibo.alchemist.model.interfaces;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import org.danilopianini.lang.HashString;
 
 import java.util.List;
 import java.util.Map;
-
-import org.danilopianini.lang.HashString;
 
 
 /**
@@ -32,10 +31,14 @@ public interface ILsaCondition extends Condition<List<ILsaMolecule>> {
      *            possible binding
      * @return true if the condition is valid, false otherwise
      */
-    boolean filter(List<Map<HashString, ITreeNode<?>>> matches, List<ILsaNode> validNodes, List<Map<ILsaNode, List<ILsaMolecule>>> retrieved);
+    boolean filter(
+            List<Map<HashString, ITreeNode<?>>> matches,
+            List<ILsaNode> validNodes,
+            List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    );
 
     @Override
-    ILsaCondition cloneCondition(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
+    ILsaCondition cloneCondition(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
 
     @Override
     ILsaNode getNode();

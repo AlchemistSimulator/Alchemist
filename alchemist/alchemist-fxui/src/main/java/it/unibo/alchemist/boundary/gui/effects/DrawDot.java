@@ -40,7 +40,10 @@ import static it.unibo.alchemist.HashesKt.murmur3Hash32;
  *
  * @param <P> the position type
  */
-@SuppressFBWarnings(value = "DMI_NONSERIALIZABLE_OBJECT_WRITTEN", justification = "The object that is written is actually serializable")
+@SuppressFBWarnings(
+        value = "DMI_NONSERIALIZABLE_OBJECT_WRITTEN",
+        justification = "The object that is written is actually serializable"
+)
 public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P> {
 
     /**
@@ -60,7 +63,10 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
     private final transient ConcurrentLinkedQueue<P> positions;
-    private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
+    private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(
+            ResourceLoader.getStringRes("drawdot_size"),
+            DEFAULT_SIZE
+    );
     private Color color = DEFAULT_COLOR;
 
     /**
@@ -92,7 +98,9 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
     @Override
     protected Queue<DrawCommand<P>> consumeData() {
         final double size = getSize();
-        return positions.stream().<DrawCommand<P>>map((P position) -> (GraphicsContext graphic, BidimensionalWormhole<P> wormhole) -> {
+        return positions
+                .stream()
+                .<DrawCommand<P>>map((P position) -> (GraphicsContext graphic, BidimensionalWormhole<P> wormhole) -> {
             final Point viewPoint = wormhole.getViewPoint(position);
             final double startX = viewPoint.getX() - size / 2;
             final double startY = viewPoint.getY() - size / 2;
@@ -102,7 +110,8 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
     }
 
     /**
-     * The method extracts {@link it.unibo.alchemist.model.interfaces.Position}s of each {@link it.unibo.alchemist.model.interfaces.Node} from the {@code Environment}.
+     * The method extracts {@link it.unibo.alchemist.model.interfaces.Position}s of each
+     * {@link it.unibo.alchemist.model.interfaces.Node} from the {@code Environment}.
      *
      * @param environment {@inheritDoc}
      * @param <T>         {@inheritDoc}
@@ -186,7 +195,8 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
      *
      * @param stream the output stream
      * @throws java.io.InvalidClassException    if something is wrong with a class used by serialization
-     * @throws java.io.NotSerializableException if some object to be serialized does not implement the java.io.Serializable interface
+     * @throws java.io.NotSerializableException if some object to be serialized does not implement the
+     *      java.io.Serializable interface
      * @throws IOException              if I/O errors occur while writing to the underlying stream
      */
     private void writeObject(final ObjectOutputStream stream) throws IOException {

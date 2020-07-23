@@ -111,7 +111,11 @@ public final class PropertyFactory {
      * @return the {@code ListProperty}
      */
     public static ListProperty<String> getIncarnationsListProperty(final String name) {
-        return new SimpleListProperty<>(null, name, FXCollections.observableArrayList(SupportedIncarnations.getAvailableIncarnations()));
+        return new SimpleListProperty<>(
+                null,
+                name,
+                FXCollections.observableArrayList(SupportedIncarnations.getAvailableIncarnations())
+        );
     }
 
     /**
@@ -122,6 +126,10 @@ public final class PropertyFactory {
      * @return the {@code SetProperty}
      */
     public static SetProperty<String> getIncarnationsSetProperty(final String name) {
-        return new SimpleSetProperty<>(null, name, FXCollections.observableSet(SupportedIncarnations.getAvailableIncarnations()));
+        return new SimpleSetProperty<>(
+                null,
+                name,
+                FXCollections.observableSet(SupportedIncarnations.getAvailableIncarnations())
+        );
     }
 }

@@ -31,8 +31,8 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
 /**
  * This ListView cell implements the {@link AbstractEffectCell} for containing
  * an {@link EffectGroup}. It has a name that identifies the EffectGroup and
- * when clicked should open a {@link javafx.scene.control.ListView} to show the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX
- * effects} the group is composed of.
+ * when clicked should open a {@link javafx.scene.control.ListView}
+ * to show the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX effects} the group is composed of.
  *
  * @param <P> the position type
  */
@@ -90,7 +90,12 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
         final MenuItem rename = new MenuItem(getStringRes("menu_item_rename"));
         rename.setOnAction(event -> {
             if (getItem() != null) {
-                rename(getStringRes("rename_group_dialog_title"), getStringRes("rename_group_dialog_msg"), null, getLabel().textProperty());
+                rename(
+                        getStringRes("rename_group_dialog_title"),
+                        getStringRes("rename_group_dialog_msg"),
+                        null,
+                        getLabel().textProperty()
+                );
             }
             event.consume();
         });
@@ -110,7 +115,11 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
      * @param groupName the name of the EffectGroup
      * @param stack     the stack where to open the effects lists
      */
-    public EffectGroupCell(final @Nullable FXOutputMonitor<?, ?> monitor, final String groupName, final JFXDrawersStack stack) {
+    public EffectGroupCell(
+            final @Nullable FXOutputMonitor<?, ?> monitor,
+            final String groupName,
+            final JFXDrawersStack stack
+    ) {
         this(groupName, stack);
         setupDisplayMonitor(monitor);
     }
@@ -122,11 +131,13 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
      */
     private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);
-        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> this.getDisplayMonitor().ifPresent(d -> {
-            if (!oldValue.equals(newValue)) {
-                d.repaint();
-            }
-        }));
+        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> {
+            this.getDisplayMonitor().ifPresent(d -> {
+                if (!oldValue.equals(newValue)) {
+                    d.repaint();
+                }
+            });
+        });
     }
 
     /**
@@ -138,12 +149,22 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
         effectDrawer = new JFXDrawer();
         effectDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         if (getDisplayMonitor().isPresent()) {
-            effectBarController = new EffectBarController<>(getDisplayMonitor().get(), this, this.stack, this.effectDrawer);
+            effectBarController = new EffectBarController<>(
+                    getDisplayMonitor().get(),
+                    this,
+                    this.stack,
+                    this.effectDrawer
+            );
         } else {
             effectBarController = new EffectBarController<>(this, this.stack, this.effectDrawer);
         }
         try {
-            effectDrawer.setSidePane(FXResourceLoader.getLayout(effectBarController, EffectBarController.EFFECT_BAR_LAYOUT));
+            effectDrawer.setSidePane(
+                    FXResourceLoader.getLayout(
+                            effectBarController,
+                            EffectBarController.EFFECT_BAR_LAYOUT
+                    )
+            );
         } catch (final IOException e) {
             throw new IllegalStateException("Could not initialize side pane for effects", e);
         }

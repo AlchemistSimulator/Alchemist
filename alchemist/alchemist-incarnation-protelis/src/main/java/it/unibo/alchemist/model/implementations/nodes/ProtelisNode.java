@@ -30,7 +30,9 @@ import java.util.Set;
  *
  * @param <P> Position type
  */
-public final class ProtelisNode<P extends Position<? extends P>> extends AbstractNode<Object> implements DeviceUID, ExecutionEnvironment {
+public final class ProtelisNode<P extends Position<? extends P>>
+        extends AbstractNode<Object>
+        implements DeviceUID, ExecutionEnvironment {
 
     private static final long serialVersionUID = 7411790948884770553L;
     private final Map<RunProtelisProgram<?>, AlchemistNetworkManager> netmgrs = new LinkedHashMap<>();

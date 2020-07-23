@@ -32,7 +32,11 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
      * @param environment the environment
      * @param randomGenerator the random generator
      */
-    protected AbstractNeighborAction(final Node<T> node, final Environment<T, ?> environment, final RandomGenerator randomGenerator) {
+    protected AbstractNeighborAction(
+            final Node<T> node,
+            final Environment<T, ?> environment,
+            final RandomGenerator randomGenerator
+    ) {
         super(node, randomGenerator);
         this.node = node;
         env = environment;

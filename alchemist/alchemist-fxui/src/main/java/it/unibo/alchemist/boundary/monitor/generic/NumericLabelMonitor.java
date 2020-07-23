@@ -21,13 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * {@code OutputMonitor} that monitors the current {@link it.unibo.alchemist.core.interfaces.Simulation#getStep() steps} of the {@code Simulation}.
+ * {@code OutputMonitor} that monitors the current
+ * {@link it.unibo.alchemist.core.interfaces.Simulation#getStep() steps} of the {@code Simulation}.
  *
  * @param <N> the numeric type
  * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule
  * @param <P> The position type
  */
-public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>> extends Label implements OutputMonitor<T, P> {
+public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
+        extends Label implements OutputMonitor<T, P> {
     /**
      * Default serial version UID.
      */
@@ -78,7 +80,11 @@ public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
             mayRender = false;
             Platform.runLater(() -> {
                 mayRender = true;
-                setText(getName().isPresent() ? getName().get() + current.toString() : String.valueOf(current.toString()));
+                setText(
+                        getName().isPresent()
+                                ? getName().get() + current.toString()
+                                : String.valueOf(current.toString())
+                );
             });
         }
     }

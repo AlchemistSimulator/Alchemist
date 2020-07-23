@@ -37,12 +37,12 @@ public final class TensionPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    public TensionPresent cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        if (n instanceof CircularDeformableCell) {
-            return new TensionPresent(env, (CircularDeformableCell<?>) n);
+    public TensionPresent cloneCondition(final Node<Double> node, final Reaction<Double> reaction) {
+        if (node instanceof CircularDeformableCell) {
+            return new TensionPresent(env, (CircularDeformableCell<?>) node);
         }
-        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + n
-                + " of type: " + n.getClass());
+        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + node
+                + " of type: " + node.getClass());
     }
 
     @Override
@@ -96,7 +96,8 @@ public final class TensionPresent extends AbstractCondition<Double> {
                 .anyMatch(n -> {
                     final double maxDN =  thisNode.getMaxRadius();
                     if (n instanceof CircularDeformableCell) {
-                        return env.getDistanceBetweenNodes(n, thisNode) < (maxDN + ((CircularDeformableCell<?>) n).getMaxRadius());
+                        return env.getDistanceBetweenNodes(n, thisNode)
+                                < (maxDN + ((CircularDeformableCell<?>) n).getMaxRadius());
                     } else {
                         return env.getDistanceBetweenNodes(n, thisNode) < (maxDN + n.getRadius());
                     }

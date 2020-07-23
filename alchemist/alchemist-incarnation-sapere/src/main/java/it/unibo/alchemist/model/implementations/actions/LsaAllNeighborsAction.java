@@ -31,11 +31,15 @@ public final class LsaAllNeighborsAction extends LsaRandomNeighborAction {
      *            the node in which the reaction is programmed
      * @param molecule
      *            the lsa which is involved
-     * @param env
+     * @param environment
      *            the current environment
      */
-    public LsaAllNeighborsAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<ILsaMolecule>, ?> env) {
-        this(node, molecule, env, null);
+    public LsaAllNeighborsAction(
+            final ILsaNode node,
+            final ILsaMolecule molecule,
+            final Environment<List<ILsaMolecule>, ?> environment
+    ) {
+        this(node, molecule, environment, null);
     }
 
     /**
@@ -43,13 +47,18 @@ public final class LsaAllNeighborsAction extends LsaRandomNeighborAction {
      *            the node in which the reaction is programmed
      * @param molecule
      *            the lsa which is involved
-     * @param env
+     * @param environment
      *            the current environment
-     * @param r
+     * @param randomGenerator
      *            unused. Can be null.
      */
-    public LsaAllNeighborsAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<ILsaMolecule>, ?> env, final RandomGenerator r) {
-        super(node, molecule, env, r);
+    public LsaAllNeighborsAction(
+            final ILsaNode node,
+            final ILsaMolecule molecule,
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final RandomGenerator randomGenerator
+    ) {
+        super(node, molecule, environment, randomGenerator);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
      * Fails, can't be cloned.
      */
     @Override
-    public MoveOnMap<T> cloneAction(final Node<T> n, final Reaction<T> r) {
+    public MoveOnMap<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
         /*
          * Routing strategies can not be cloned at the moment.
          */

@@ -39,7 +39,8 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
      */
     public BioRect2DEnvironment(final double minX, final double maxX, final double minY, final double maxY) {
         if (maxX <= minX || maxY <= minY) {
-            L.warn("A maximum bound for this environment is greather than the correspoding minimum bound. Falling back to -1, 1 for all bounds");
+            L.warn("A maximum bound for this environment is greather than the correspoding minimum bound. "
+                    + "Falling back to -1, 1 for all bounds");
             this.minX = -1;
             this.maxX = 1;
             this.minY = -1;
@@ -97,7 +98,8 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
             final Neighborhood<Double> neigh = getNeighborhood(nodeToMove);
             final Map<Junction, Map<CellNode<?>, Integer>> jun = nodeToMove.getJunctions();
             jun.forEach((key, value) -> value.forEach((key1, value1) -> {
-                if (!neigh.contains(key1)) { // there is a junction that links a node which isn't in the neighborhood after the movement
+                if (!neigh.contains(key1)) {
+                    // there is a junction that links a node which isn't in the neighborhood after the movement
                     for (int i = 0; i < value1; i++) {
                         nodeToMove.removeJunction(key, key1);
                         key1.removeJunction(key.reverse(), nodeToMove);

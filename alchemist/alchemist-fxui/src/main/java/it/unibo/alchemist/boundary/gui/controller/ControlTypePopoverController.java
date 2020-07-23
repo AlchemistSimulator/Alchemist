@@ -43,8 +43,14 @@ public class ControlTypePopoverController implements Initializable {
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
         IconFontFX.register(GoogleMaterialDesignIcons.getIconFont());
-        Objects.requireNonNull(panButton, FXResourceLoader.getInjectionErrorMessage("panButton", CONTROL_TYPE_POPOVER_LAYOUT));
-        Objects.requireNonNull(selectButton, FXResourceLoader.getInjectionErrorMessage("selectButton", CONTROL_TYPE_POPOVER_LAYOUT));
+        Objects.requireNonNull(
+                panButton,
+                FXResourceLoader.getInjectionErrorMessage("panButton", CONTROL_TYPE_POPOVER_LAYOUT)
+        );
+        Objects.requireNonNull(
+                selectButton,
+                FXResourceLoader.getInjectionErrorMessage("selectButton", CONTROL_TYPE_POPOVER_LAYOUT)
+        );
         panButton.setText("");
         panButton.setGraphic(FXResourceLoader.getWhiteIcon(GoogleMaterialDesignIcons.PAN_TOOL));
         selectButton.setText("");

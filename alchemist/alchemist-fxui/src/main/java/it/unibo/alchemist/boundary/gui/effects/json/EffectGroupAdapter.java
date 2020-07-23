@@ -30,7 +30,8 @@ import java.util.List;
  *
  * @param <P> The position type
  */
-public class EffectGroupAdapter<P extends Position2D<? extends P>>  implements JsonSerializer<EffectGroup<P>>, JsonDeserializer<EffectGroup<P>> {
+public class EffectGroupAdapter<P extends Position2D<? extends P>>
+        implements JsonSerializer<EffectGroup<P>>, JsonDeserializer<EffectGroup<P>> {
     /**
      * Name given to {@code name} field in JSON file.
      */
@@ -53,7 +54,11 @@ public class EffectGroupAdapter<P extends Position2D<? extends P>>  implements J
      * @inheritDocs
      */
     @Override
-    public EffectGroup<P> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
+    public EffectGroup<P> deserialize(
+            final JsonElement json,
+            final Type typeOfT,
+            final JsonDeserializationContext context
+    ) {
         final JsonObject jObj = json.getAsJsonObject();
         final String name = jObj.get(NAME).getAsString();
         final EffectGroup<P> group = new EffectStack<>(name);
@@ -68,7 +73,11 @@ public class EffectGroupAdapter<P extends Position2D<? extends P>>  implements J
      * @inheritDocs
      */
     @Override
-    public JsonElement serialize(final EffectGroup<P> src, final Type typeOfSrc, final JsonSerializationContext context) {
+    public JsonElement serialize(
+            final EffectGroup<P> src,
+            final Type typeOfSrc,
+            final JsonSerializationContext context
+    ) {
         final JsonObject jObj = new JsonObject();
         jObj.addProperty(NAME, src.getName());
         jObj.addProperty(VISIBILITY, src.isVisible());

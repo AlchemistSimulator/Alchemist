@@ -42,7 +42,10 @@ public class TestConfig {
         final Loader l = this.getLoader(yaml);
         final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, Time.INFINITY);
         Assertions.assertEquals(gsc.getDependencies().size(), 2);
-        Assertions.assertArrayEquals(gsc.getDependencies().get(DEPENDENCY_FILE), Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI())));
+        Assertions.assertArrayEquals(
+                gsc.getDependencies().get(DEPENDENCY_FILE),
+                Files.readAllBytes(Paths.get(ResourceLoader.getResource(DEPENDENCY_FILE).toURI()))
+        );
     }
 
     /**

@@ -71,8 +71,8 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
     }
 
     @Override
-    public RandomPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new RandomPolarization<>(environment, n, getRandomGenerator());
+    public RandomPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new RandomPolarization<>(environment, node, getRandomGenerator());
     }
 
     @Override

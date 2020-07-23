@@ -22,10 +22,11 @@ import org.jetbrains.annotations.NotNull;
  * The DataFormat is cached to return only one per class and avoid
  * {@code IllegalArgumentException: DataFormat 'xxx' already exists}.
  * <p>
- * 
+ *
  * @see <a href=
- *      "https://bugs.openjdk.java.net/browse/JDK-8118672?focusedCommentId=13730400&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-13730400">Issue
- *      JDK-8118672</a>
+ *      "https://bugs.openjdk.java.net/browse/JDK-8118672
+?focusedCommentId=13730400&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-13730400">
+ *      Issue JDK-8118672</a>
  * 
  */
 public final class DataFormatFactory {

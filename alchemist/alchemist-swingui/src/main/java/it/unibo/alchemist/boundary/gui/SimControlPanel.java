@@ -89,7 +89,11 @@ public final class SimControlPanel extends JTapeGroup {
         }
     }
 
-    private static synchronized void setButtonEnabled(final SimControlPanel pan, final SimControlCommand cmd, final boolean enabled) {
+    private static synchronized void setButtonEnabled(
+            final SimControlPanel pan,
+            final SimControlCommand cmd,
+            final boolean enabled
+    ) {
         for (final SimControlPanel scp : getSiblings(pan)) {
             scp.map.get(cmd).setEnabled(enabled);
         }

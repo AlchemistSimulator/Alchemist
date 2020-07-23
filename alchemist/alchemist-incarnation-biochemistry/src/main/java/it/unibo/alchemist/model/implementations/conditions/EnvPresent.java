@@ -36,8 +36,8 @@ public final class EnvPresent extends AbstractCondition<Double> {
     }
 
     @Override
-    public EnvPresent cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        return new EnvPresent(environment, n);
+    public EnvPresent cloneCondition(final Node<Double> node, final Reaction<Double> reaction) {
+        return new EnvPresent(environment, node);
     }
 
     @Override

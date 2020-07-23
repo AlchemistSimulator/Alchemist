@@ -94,8 +94,13 @@ public abstract class SAPEREAgent extends LsaAbstractAction {
      * {@inheritDoc}
      */
     @Override
-    public SAPEREAgent cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
-        throw new UnsupportedOperationException("SAPERE Agents are not meant to be cloned. If you want, implement cloneOnNewNode yourself.");
+    public SAPEREAgent cloneAction(
+            final Node<List<ILsaMolecule>> node,
+            final Reaction<List<ILsaMolecule>> reaction
+    ) {
+        throw new UnsupportedOperationException(
+                "SAPERE Agents are not meant to be cloned. If you want, implement cloneOnNewNode yourself."
+        );
     }
 
 }

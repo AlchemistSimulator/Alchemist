@@ -23,7 +23,8 @@ import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 
 /**
- * Builder class for {@link SingleRunApp}, meant to be used to build and run the single run gui along with another (already started) JavaFX {@link javafx.application.Application}.
+ * Builder class for {@link SingleRunApp}, meant to be used to build and run
+ * the single run gui along with another (already started) JavaFX {@link javafx.application.Application}.
  *
  * @param <T> the concentration type
  * @param <P> the position type
@@ -59,7 +60,8 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
     }
 
     /**
-     * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
+     * Set a {@link Collection} of {@link EffectGroup}s to the effects
+     * to show at first start loading it from a {@link File} at a given path.
      * <p>
      * Removes all previously added {@code EffectGroups}.
      *
@@ -73,7 +75,8 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
     }
 
     /**
-     * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
+     * Set a {@link Collection} of {@link EffectGroup}s to the effects
+     * to show at first start loading it from a {@link File} at a given path.
      * <p>
      * Removes all previously added {@code EffectGroups}.
      *
@@ -91,7 +94,8 @@ public class SingleRunAppBuilder<T, P extends Position2D<P>> {
     }
 
     /**
-     * Set a {@link Collection} of {@link EffectGroup}s to the effects to show at first start loading it from a {@link File} at a given path.
+     * Set a {@link Collection} of {@link EffectGroup}s to the effects
+     * to show at first start loading it from a {@link File} at a given path.
      * <p>
      * Removes all previously added {@code EffectGroups}.
      *

@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import org.danilopianini.util.ListSet;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.danilopianini.util.ListSet;
 
 /**
  * @param <T>
@@ -32,13 +32,13 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * useful to support runtime creation of nodes with the same reaction
      * programming, e.g. for morphogenesis.
      * 
-     * @param n
+     * @param node
      *            The node where to clone this Reaction
      * @param currentTime
      *            the time at which the clone is created (required to correctly clone the {@link TimeDistribution}s)
      * @return the cloned action
      */
-    Reaction<T> cloneOnNewNode(Node<T> n, Time currentTime);
+    Reaction<T> cloneOnNewNode(Node<T> node, Time currentTime);
 
     /**
      * Executes the reactions.
@@ -51,13 +51,13 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * execution time - in case such computation requires an inspection of the
      * environment.
      * 
-     * @param t
+     * @param atTime
      *            the time at which the initialization of this reaction was
      *            accomplished
-     * @param env
+     * @param environment
      *            the environment
      */
-    void initializationComplete(Time t, Environment<T, ?> env);
+    void initializationComplete(Time atTime, Environment<T, ?> environment);
 
     /**
      * @return The list of {@link Action}s of the {@link Reaction}. There is no
@@ -131,32 +131,32 @@ public interface Reaction<T> extends Comparable<Reaction<T>>, Serializable {
      * Sets the {@link Action}s list. Some implementations may not allow to
      * change it at runtime.
      * 
-     * @param a
+     * @param actions
      *            the list of actions for this reaction
      */
-    void setActions(List<Action<T>> a);
+    void setActions(List<Action<T>> actions);
 
     /**
      * Sets the {@link Condition}s list. Some implementations may not allow to
      * change it at runtime.
      * 
-     * @param c
+     * @param conditions
      *            the list of conditions for this action
      */
-    void setConditions(List<Condition<T>> c);
+    void setConditions(List<Condition<T>> conditions);
 
     /**
      * Updates the scheduling of this reaction.
      * 
-     * @param executed
+     * @param hasBeenExecuted
      *            true if the reaction have just been executed.
-     * @param curTime
+     * @param currentTime
      *            the current {@link Time} of execution. This is mandatory in
      *            order to correctly compute the time shift of an
      *            already-scheduled reaction
-     * @param env
+     * @param environment
      *            the current environment
      */
-    void update(Time curTime, boolean executed, Environment<T, ?> env);
+    void update(Time currentTime, boolean hasBeenExecuted, Environment<T, ?> environment);
 
 }

@@ -70,7 +70,10 @@ import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
  * on the effect specified in {@link #EffectPropertiesController(EffectFX, JFXDrawersStack, JFXDrawer) constructor}
  * it builds up the other effect-specific controls.
  */
-@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Using assert to null-check avoids the possibility of null references")
+@SuppressFBWarnings(
+        value = "NP_NULL_ON_SOME_PATH",
+        justification = "Using assert to null-check avoids the possibility of null references"
+)
 public class EffectPropertiesController implements Initializable {
     /**
      * Layout path.
@@ -128,11 +131,26 @@ public class EffectPropertiesController implements Initializable {
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        Objects.requireNonNull(effectsPane, FXResourceLoader.getInjectionErrorMessage("effectsPane", EFFECT_PROPERTIES_LAYOUT));
-        Objects.requireNonNull(topBar, FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_PROPERTIES_LAYOUT));
-        Objects.requireNonNull(backToEffects, FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_PROPERTIES_LAYOUT));
-        Objects.requireNonNull(effectName, FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT));
-        Objects.requireNonNull(mainBox, FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT));
+        Objects.requireNonNull(
+                effectsPane,
+                FXResourceLoader.getInjectionErrorMessage("effectsPane", EFFECT_PROPERTIES_LAYOUT)
+        );
+        Objects.requireNonNull(
+                topBar,
+                FXResourceLoader.getInjectionErrorMessage("topBar", EFFECT_PROPERTIES_LAYOUT)
+        );
+        Objects.requireNonNull(
+                backToEffects,
+                FXResourceLoader.getInjectionErrorMessage("backToGroups", EFFECT_PROPERTIES_LAYOUT)
+        );
+        Objects.requireNonNull(
+                effectName,
+                FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT)
+        );
+        Objects.requireNonNull(
+                mainBox,
+                FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT)
+        );
         final List<Field> properties = FieldUtils.getAllFieldsList(effect.getClass()).stream()
                 .filter(f -> Property.class.isAssignableFrom(f.getType())).collect(Collectors.toList());
         if (!properties.isEmpty()) {
@@ -173,7 +191,9 @@ public class EffectPropertiesController implements Initializable {
                 dialog.showAndWait().ifPresent(s -> Platform.runLater(() -> label.setText(s)));
             }
         });
-        this.topBar.widthProperty().addListener((observable, oldValue, newValue) -> this.effectName.setPrefWidth(newValue.doubleValue()));
+        this.topBar.widthProperty().addListener((observable, oldValue, newValue) ->
+                this.effectName.setPrefWidth(newValue.doubleValue())
+        );
     }
 
     /**
@@ -263,8 +283,12 @@ public class EffectPropertiesController implements Initializable {
      * @param doubleProperty the model of the spinner
      */
     private void buildSpinner(final RangedDoubleProperty doubleProperty) {
-        final SpinnerValueFactory<Double> factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(doubleProperty.getLowerBound(),
-                doubleProperty.getUpperBound(), doubleProperty.get(), 0.01);
+        final SpinnerValueFactory<Double> factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(
+                doubleProperty.getLowerBound(),
+                doubleProperty.getUpperBound(),
+                doubleProperty.get(),
+                0.01
+        );
         final Spinner<Double> spinner = new Spinner<>(factory);
         spinner.setEditable(true);
         final TextFormatter<Double> formatter = new TextFormatter<>(factory.getConverter(), factory.getValue());
@@ -315,7 +339,10 @@ public class EffectPropertiesController implements Initializable {
      * Shows a {@link Label} that tell the user that there is nothing to tune in that effect.
      */
     private void showNothing() {
-        Objects.requireNonNull(mainBox, FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT));
+        Objects.requireNonNull(
+                this.mainBox,
+                FXResourceLoader.getInjectionErrorMessage("mainBox", EFFECT_PROPERTIES_LAYOUT)
+        );
         L.debug("Effect " + effect.toString() + " does not have tunable properties");
         final Label nothingHere = new Label(ResourceLoader.getStringRes("nothing_to_tune"));
         nothingHere.setTextAlignment(TextAlignment.CENTER);
@@ -328,7 +355,10 @@ public class EffectPropertiesController implements Initializable {
      * @return the property
      */
     public StringProperty effectNameProperty() {
-        Objects.requireNonNull(this.effectName, FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT));
+        Objects.requireNonNull(
+                this.effectName,
+                FXResourceLoader.getInjectionErrorMessage("effectName", EFFECT_PROPERTIES_LAYOUT)
+        );
         return this.effectName.textProperty();
     }
 }

@@ -55,8 +55,10 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     void setRealTime(boolean realTime);
 
     /**
-     * Repaints this {@link javafx.scene.canvas.Canvas}' {@link javafx.scene.canvas.GraphicsContext} by drawing all the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effect}s of each
-     * {@link it.unibo.alchemist.model.interfaces.Node} of the specified {@link it.unibo.alchemist.model.interfaces.Environment}.
+     * Repaints this {@link javafx.scene.canvas.Canvas}' {@link javafx.scene.canvas.GraphicsContext}
+     * by drawing all the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effect}s of each
+     * {@link it.unibo.alchemist.model.interfaces.Node} of the specified
+     * {@link it.unibo.alchemist.model.interfaces.Environment}.
      */
     void repaint();
 
@@ -77,7 +79,8 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     void setEffects(Collection<EffectGroup<P>> effects);
 
     /**
-     * Add all the {@link EffectGroup}s in the collection to the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effects} to draw.
+     * Add all the {@link EffectGroup}s in the collection to the
+     * {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effects} to draw.
      *
      * @param effects the {@link EffectGroup}s to draw
      * @see Collection#addAll(Collection)
@@ -85,7 +88,8 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     void addEffects(Collection<EffectGroup<P>> effects);
 
     /**
-     * Add the {@link EffectGroup} in the collection to the {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effects} to draw.
+     * Add the {@link EffectGroup} in the collection to the
+     * {@link it.unibo.alchemist.boundary.gui.effects.EffectFX Effects} to draw.
      *
      * @param effects the {@link EffectGroup} to draw
      * @see Collection#add(Object)

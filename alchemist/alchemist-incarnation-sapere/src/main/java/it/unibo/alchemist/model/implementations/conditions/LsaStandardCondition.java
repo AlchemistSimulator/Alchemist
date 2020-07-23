@@ -50,8 +50,8 @@ public class LsaStandardCondition extends LsaAbstractCondition {
      * {@inheritDoc}
      */
     @Override
-    public LsaStandardCondition cloneCondition(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
-        return new LsaStandardCondition(molecule, (ILsaNode) n);
+    public LsaStandardCondition cloneCondition(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> r) {
+        return new LsaStandardCondition(molecule, (ILsaNode) node);
     }
 
     /**

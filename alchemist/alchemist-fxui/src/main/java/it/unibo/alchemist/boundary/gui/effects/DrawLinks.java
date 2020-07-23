@@ -58,7 +58,8 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
      */
     private static final Color DEFAULT_COLOR = Color.BLACK;
     private final transient ConcurrentHashMap<P, ConcurrentLinkedQueue<P>> positions;
-    private RangedDoubleProperty size = PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
+    private RangedDoubleProperty size =
+            PropertyFactory.getPercentageRangedProperty(ResourceLoader.getStringRes("drawdot_size"), DEFAULT_SIZE);
     private Color color = DEFAULT_COLOR;
 
     /**

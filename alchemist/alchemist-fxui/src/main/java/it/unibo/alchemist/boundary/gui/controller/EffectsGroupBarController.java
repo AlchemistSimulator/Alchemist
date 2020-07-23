@@ -100,7 +100,10 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
      * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      * @param stack          the stack where to open the effects lists
      */
-    public EffectsGroupBarController(final @Nullable FXOutputMonitor<?, ?> displayMonitor, final JFXDrawersStack stack) {
+    public EffectsGroupBarController(
+            final @Nullable FXOutputMonitor<?, ?> displayMonitor,
+            final JFXDrawersStack stack
+    ) {
         this(stack);
         setDisplayMonitor(displayMonitor);
     }
@@ -117,7 +120,8 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     /**
      * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set;
+     *                       if null, it will be {@link Optional#empty() unset}
      */
     public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
@@ -128,10 +132,22 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        Objects.requireNonNull(save, FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT));
-        Objects.requireNonNull(load, FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT));
-        Objects.requireNonNull(addGroup, FXResourceLoader.getInjectionErrorMessage("add", EFFECT_GROUP_BAR_LAYOUT));
-        Objects.requireNonNull(effectGroupsList, FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_GROUP_BAR_LAYOUT));
+        Objects.requireNonNull(
+                save,
+                FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                load,
+                FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                addGroup,
+                FXResourceLoader.getInjectionErrorMessage("add", EFFECT_GROUP_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                effectGroupsList,
+                FXResourceLoader.getInjectionErrorMessage("effectGroupsList", EFFECT_GROUP_BAR_LAYOUT)
+        );
         this.save.setText("");
         this.save.setGraphic(getWhiteIcon(SAVE));
         this.save.setOnAction(e -> this.saveToFile());
@@ -140,7 +156,13 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         this.load.setOnAction(e -> this.loadFromFile());
         this.addGroup.setText("");
         this.addGroup.setGraphic(getWhiteIcon(ADD));
-        this.addGroup.setOnAction(e -> addGroupToList(getStringRes("effect_group_default_name") + " " + (getObservableEffectsList().size() + 1)));
+        this.addGroup.setOnAction(e ->
+                addGroupToList(
+                        getStringRes("effect_group_default_name")
+                                + " "
+                                + (getObservableEffectsList().size() + 1)
+                )
+        );
     }
 
     /**
@@ -187,10 +209,14 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     private void saveToFile() {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(getStringRes("save_effect_groups_dialog_title"));
-        final ExtensionFilter json = new ExtensionFilter(getStringRes("json_extension_filter_description"), "*" + DEFAULT_EXTENSION);
+        final ExtensionFilter json = new ExtensionFilter(
+                getStringRes("json_extension_filter_description"),
+                "*" + DEFAULT_EXTENSION
+        );
         fileChooser.getExtensionFilters().addAll(
                 json,
-                new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*"));
+                new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*")
+        );
         lastPath.ifPresent(path -> {
             final File folder = new File(path);
             if (folder.isDirectory()) {
@@ -199,7 +225,10 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         });
         fileChooser.setInitialFileName("Effects" + DEFAULT_EXTENSION);
         fileChooser.setSelectedExtensionFilter(json);
-        Objects.requireNonNull(this.save, FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT));
+        Objects.requireNonNull(
+                this.save,
+                FXResourceLoader.getInjectionErrorMessage("save", EFFECT_GROUP_BAR_LAYOUT)
+        );
         File selectedFile = fileChooser.showSaveDialog(this.save.getScene().getWindow());
         if (selectedFile != null) {
             if (FilenameUtils.getExtension(selectedFile.getAbsolutePath()).equals("")) {
@@ -207,13 +236,19 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
             }
             this.lastPath = Optional.ofNullable(selectedFile.getParent());
             try {
-                EffectSerializer.effectGroupsToFile(selectedFile,
-                        // we need to keep the EffectFX parameterized, so we cannot use arrays
-                        // Arrays.asList(getObservableEffectsList().toArray(new EffectGroup[getObservableEffectsList().size()])));
-                        new ArrayList<>(getObservableEffectsList()));
+                // we need to keep the EffectFX parameterized, so we cannot use arrays
+                EffectSerializer.effectGroupsToFile(
+                        selectedFile,
+                        new ArrayList<>(getObservableEffectsList())
+                );
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't save Effect Groups to file: " + e.getMessage());
-                this.errorDialog(getStringRes("save_effect_groups_error_dialog_title"), getStringRes("save_effect_groups_error_dialog_msg"), e);
+                this.errorDialog(
+                        getStringRes(
+                        "save_effect_groups_error_dialog_title"),
+                        getStringRes("save_effect_groups_error_dialog_msg"),
+                        e
+                );
             }
         }
     }
@@ -231,9 +266,16 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
             }
         });
         fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter(getStringRes("json_extension_filter_description"), "*" + DEFAULT_EXTENSION),
-                new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*"));
-        Objects.requireNonNull(this.load, FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT));
+                new ExtensionFilter(
+                        getStringRes("json_extension_filter_description"),
+                        "*" + DEFAULT_EXTENSION
+                ),
+                new ExtensionFilter(getStringRes("all_files_extension_filter_description"), "*.*")
+        );
+        Objects.requireNonNull(
+                this.load,
+                FXResourceLoader.getInjectionErrorMessage("load", EFFECT_GROUP_BAR_LAYOUT)
+        );
         final File selectedFile = fileChooser.showOpenDialog(this.load.getScene().getWindow());
         if (selectedFile != null) {
             this.lastPath = Optional.ofNullable(selectedFile.getParent());
@@ -241,7 +283,11 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
                 this.getObservableEffectsList().addAll(EffectSerializer.effectGroupsFromFile(selectedFile));
             } catch (final IOException | JsonParseException e) {
                 L.error("Can't load Effect Groups from file: " + e.getMessage());
-                this.errorDialog(getStringRes("load_effect_groups_error_dialog_title"), getStringRes("load_effect_groups_error_dialog_msg"), e);
+                this.errorDialog(
+                        getStringRes("load_effect_groups_error_dialog_title"),
+                        getStringRes("load_effect_groups_error_dialog_msg"),
+                        e
+                );
             }
         }
     }

@@ -28,8 +28,8 @@ class RandomlyToggleMoleculeWithDuration<T>(
 
     private var duration = 0.0
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        RandomlyToggleMoleculeWithDuration(n, r, rng, molecule, concentration, odds, minDuration, maxDuration)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+        RandomlyToggleMoleculeWithDuration(node, reaction, rng, molecule, concentration, odds, minDuration, maxDuration)
 
     override fun execute() {
         duration -= 1 / reaction.rate

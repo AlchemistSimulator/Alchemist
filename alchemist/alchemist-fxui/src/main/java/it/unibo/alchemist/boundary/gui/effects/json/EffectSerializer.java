@@ -68,24 +68,29 @@ public final class EffectSerializer {
     /**
      * Set of available {@link EffectFX effect}s found by reflection.
      */
-    private static final List<Class<? extends EffectFX>> EFFECTS = ClassPathScanner.subTypesOf(EffectFX.class, "it.unibo.alchemist");
+    private static final List<Class<? extends EffectFX>> EFFECTS =
+            ClassPathScanner.subTypesOf(EffectFX.class, "it.unibo.alchemist");
     /**
      * Set of available {@link EffectGroup group}s found by reflection.
      */
-    private static final List<Class<? extends EffectGroup>> GROUPS = ClassPathScanner.subTypesOf(EffectGroup.class, "it.unibo.alchemist");
+    private static final List<Class<? extends EffectGroup>> GROUPS =
+            ClassPathScanner.subTypesOf(EffectGroup.class, "it.unibo.alchemist");
     /**
      * Set of available {@link Property Properties} found by reflection.
      */
     @SuppressWarnings("rawtypes") // Needed to make the compiler accept the constant
-    private static final List<Class<? extends Property>> PROPERTIES = ClassPathScanner.subTypesOf(Property.class, "it.unibo.alchemist");
+    private static final List<Class<? extends Property>> PROPERTIES =
+            ClassPathScanner.subTypesOf(Property.class, "it.unibo.alchemist");
     /**
      * {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectFX effects} properly.
      */
-    private static final RuntimeTypeAdapterFactory<EffectFX> RTA_EFFECT = RuntimeTypeAdapterFactory.of(EffectFX.class);
+    private static final RuntimeTypeAdapterFactory<EffectFX> RTA_EFFECT =
+            RuntimeTypeAdapterFactory.of(EffectFX.class);
     /**
      * {@link RuntimeTypeAdapterFactory} to serialize and deserialize {@link EffectGroup effect groups} properly.
      */
-    private static final RuntimeTypeAdapterFactory<EffectGroup> RTA_GROUP = RuntimeTypeAdapterFactory.of(EffectGroup.class);
+    private static final RuntimeTypeAdapterFactory<EffectGroup> RTA_GROUP =
+            RuntimeTypeAdapterFactory.of(EffectGroup.class);
     /**
      * Target method that will return the {@code TypeAdapter} for the property.
      */
@@ -126,11 +131,16 @@ public final class EffectSerializer {
      * <p>
      * The class must have a method called {@value #TARGET_METHOD_NAME}.
      *
-     * @param builder the {@code GsonBuilder} to {@link GsonBuilder#registerTypeAdapter(java.lang.reflect.Type, Object) register TypeAdapter} to
-     * @param classes the class to {@link GsonBuilder#registerTypeAdapter(java.lang.reflect.Type, Object) register TypeAdapter} for
+     * @param builder the {@code GsonBuilder} to {@link GsonBuilder#registerTypeAdapter(java.lang.reflect.Type, Object)
+     *      register TypeAdapter} to
+     * @param classes the class to {@link GsonBuilder#registerTypeAdapter(java.lang.reflect.Type, Object)
+     *      register TypeAdapter} for
      * @param <T>     the type of class
      */
-    private static <T> void registerTypeAdaptersFor(final GsonBuilder builder, final Collection<Class<? extends T>> classes) {
+    private static <T> void registerTypeAdaptersFor(
+            final GsonBuilder builder,
+            final Collection<Class<? extends T>> classes
+    ) {
         classes.stream()
                 .filter(c -> Arrays.stream(c.getMethods())
                         .filter(m -> Modifier.isStatic(m.getModifiers()))
@@ -138,8 +148,8 @@ public final class EffectSerializer {
                 .forEach(c -> {
                     try {
                         builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));
-                    } catch (final NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                            | SecurityException e) {
+                    } catch (final NoSuchMethodException | IllegalAccessException
+                            | IllegalArgumentException | InvocationTargetException | SecurityException e) {
                         throw new IllegalStateException(e);
                     }
                 });
@@ -191,7 +201,9 @@ public final class EffectSerializer {
      * @throws com.google.gson.JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> EffectFX<P> effectFromFile(final File effectFile) throws IOException {
+    public static <P extends Position2D<? extends P>> EffectFX<P> effectFromFile(
+            final File effectFile
+    ) throws IOException {
         return load(new FileReader(effectFile, DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
@@ -209,8 +221,13 @@ public final class EffectSerializer {
      * @throws com.google.gson.JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> EffectFX<P> effectFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<>() { });
+    public static <P extends Position2D<? extends P>> EffectFX<P> effectFromResources(
+            final String resource
+    ) throws IOException {
+        return load(
+                new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET),
+                new TypeToken<>() { }
+                );
     }
 
     /**
@@ -224,7 +241,10 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> void effectToFile(final File effectFile, final EffectFX<P> effect) throws IOException {
+    public static <P extends Position2D<? extends P>> void effectToFile(
+            final File effectFile,
+            final EffectFX<P> effect
+    ) throws IOException {
         save(new FileWriter(effectFile, DEFAULT_CHARSET), effect, new TypeToken<>() { });
     }
 
@@ -242,7 +262,9 @@ public final class EffectSerializer {
      * @throws com.google.gson.JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromFile(final File effectFile) throws IOException {
+    public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromFile(
+            final File effectFile
+    ) throws IOException {
         return load(new FileReader(effectFile, DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
@@ -260,8 +282,13 @@ public final class EffectSerializer {
      * @throws com.google.gson.JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<>() { });
+    public static <P extends Position2D<? extends P>> EffectGroup<P> effectsFromResources(
+            final String resource
+    ) throws IOException {
+        return load(
+                new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET),
+                new TypeToken<>() { }
+                );
     }
 
     /**
@@ -275,7 +302,10 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> void effectsToFile(final File effectFile, final EffectGroup<P> effects) throws IOException {
+    public static <P extends Position2D<? extends P>> void effectsToFile(
+            final File effectFile,
+            final EffectGroup<P> effects
+    ) throws IOException {
         save(new FileWriter(effectFile, DEFAULT_CHARSET), effects, new TypeToken<>() { });
     }
 
@@ -293,7 +323,9 @@ public final class EffectSerializer {
      * @throws com.google.gson.JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromFile(final File effectFile) throws IOException {
+    public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromFile(
+            final File effectFile
+    ) throws IOException {
         return load(new FileReader(effectFile, DEFAULT_CHARSET), new TypeToken<>() { });
     }
 
@@ -311,8 +343,13 @@ public final class EffectSerializer {
      * @throws com.google.gson.JsonSyntaxException   If JSON is not a valid representation for an object of type
      * @throws IOException           If some other I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromResources(final String resource) throws IOException {
-        return load(new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET), new TypeToken<>() { });
+    public static <P extends Position2D<? extends P>> List<EffectGroup<P>> effectGroupsFromResources(
+            final String resource
+    ) throws IOException {
+        return load(
+                new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET),
+                new TypeToken<>() { }
+                );
     }
 
     /**
@@ -326,7 +363,10 @@ public final class EffectSerializer {
      *                         file, does not exist but cannot be created, cannot be opened
      *                         for any other reason, or another I/O error occurs
      */
-    public static <P extends Position2D<? extends P>> void effectGroupsToFile(final File effectFile, final List<EffectGroup<P>> effects) throws IOException {
+    public static <P extends Position2D<? extends P>> void effectGroupsToFile(
+            final File effectFile,
+            final List<EffectGroup<P>> effects
+    ) throws IOException {
         save(new FileWriter(effectFile, DEFAULT_CHARSET), effects, new TypeToken<>() { });
     }
 

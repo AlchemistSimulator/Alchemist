@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import java.io.Serializable;
-
 import org.danilopianini.util.ListSet;
+
+import java.io.Serializable;
 
 /**
  * @param <T>
@@ -26,13 +26,13 @@ public interface Condition<T> extends Serializable {
      * useful to support runtime creation of nodes with the same reaction
      * programming, e.g. for morphogenesis.
      * 
-     * @param n
+     * @param node
      *            The node where to clone this {@link Condition}
-     * @param r
+     * @param reaction
      *            The {@link Reaction} where to clone this {@link Condition}
      * @return the cloned action
      */
-    Condition<T> cloneCondition(Node<T> n, Reaction<T> r);
+    Condition<T> cloneCondition(Node<T> node, Reaction<T> reaction);
 
     /**
      * @return The context for this condition.

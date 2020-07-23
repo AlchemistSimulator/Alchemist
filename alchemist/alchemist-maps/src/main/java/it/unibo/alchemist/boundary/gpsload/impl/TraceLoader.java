@@ -148,7 +148,9 @@ public final class TraceLoader implements Iterable<GPSTrace> {
             final String[] pathSplit = path.split("\\.");
             final String extensionFile = pathSplit[pathSplit.length - 1].toLowerCase(Locale.US);
             if (!LOADER.containsKey(extensionFile)) {
-                throw new IllegalArgumentException("no loader defined for file with extension: " + extensionFile + " (file: " + path + ")");
+                throw new IllegalArgumentException(
+                        "no loader defined for file with extension: " + extensionFile + " (file: " + path + ")"
+                );
             }
             final GPSFileLoader fileLoader = LOADER.get(extensionFile);
             try {
@@ -157,7 +159,11 @@ public final class TraceLoader implements Iterable<GPSTrace> {
                  */
                 return fileLoader.readTrace(ResourceLoader.getResource(path));
             }  catch (FileFormatException e) {
-                throw new IllegalStateException("the loader: " + LOADER.get(extensionFile).getClass().getSimpleName() + " can't load the file: " + path + ", sure is a " + extensionFile + "file?", e);
+                throw new IllegalStateException(
+                        "Loader: " + LOADER.get(extensionFile).getClass().getSimpleName()
+                        + " can't load file: " + path + ", plese make sure it is a " + extensionFile + "file?",
+                        e
+                );
             } 
         }
     }
@@ -171,13 +177,17 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
-        final String fullName = clazzName.contains(".") ? clazzName : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
+        final String fullName = clazzName.contains(".")
+                ? clazzName
+                : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
         try {
             final Class<?> targetClass = ResourceLoader.classForName(fullName);
             if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
                 return (GPSTimeAlignment) FACTORY.build(targetClass, args);
             }
-            throw new IllegalArgumentException(fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName());
+            throw new IllegalArgumentException(
+                    fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName()
+            );
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(fullName + " could not be found", e);
         }

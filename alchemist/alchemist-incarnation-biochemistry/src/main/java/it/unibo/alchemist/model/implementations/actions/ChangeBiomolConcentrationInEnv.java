@@ -9,14 +9,6 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
-
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.CellNode;
@@ -25,6 +17,13 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Action implementing the changing of the concentration of a given biomolecule in environment.
@@ -46,8 +45,13 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
      * @param environment the {@link Environment} where the node is located.
      * @param randomGen the random generator
      */
-    public ChangeBiomolConcentrationInEnv(final Environment<Double, ?> environment, final Node<Double> node, final Biomolecule biomolecule,
-            final double deltaCon, final RandomGenerator randomGen) {
+    public ChangeBiomolConcentrationInEnv(
+            final Environment<Double, ?> environment,
+            final Node<Double> node,
+            final Biomolecule biomolecule,
+            final double deltaCon,
+            final RandomGenerator randomGen
+    ) {
         super(node, randomGen);
         if (node instanceof EnvironmentNode || node instanceof CellNode) {
             this.biomolecule = biomolecule;
@@ -66,14 +70,18 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
      * @param environment environment the {@link Environment} where the node is located.
      * @param randomGen the random generator
      */
-    public ChangeBiomolConcentrationInEnv(final Node<Double> node, final Biomolecule biomolecule,
-            final Environment<Double, ?> environment, final RandomGenerator randomGen) {
+    public ChangeBiomolConcentrationInEnv(
+            final Node<Double> node,
+            final Biomolecule biomolecule,
+            final Environment<Double, ?> environment,
+            final RandomGenerator randomGen
+    ) {
         this(environment, node, biomolecule, -1, randomGen);
     }
 
     @Override
-    public Action<Double> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInEnv(n, biomolecule, env, getRandomGenerator());
+    public Action<Double> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new ChangeBiomolConcentrationInEnv(node, biomolecule, env, getRandomGenerator());
     }
 
     @Override
@@ -139,7 +147,8 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
                 if (nodeConcentration >= FastMath.abs(deltaTemp)) {
                     n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
                     break;
-                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than node concentration
+                    // else, remove all molecules of that species from that node and go on
+                    // till deltaTemp is smaller than node concentration
                 } else {
                     deltaTemp = deltaTemp + nodeConcentration;
                     n.removeConcentration(biomolecule);
@@ -163,7 +172,10 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
                 if (nodeConcentration >= FastMath.abs(deltaTemp)) {
                     pickedNode.setConcentration(biomolecule, nodeConcentration + deltaTemp);
                     break;
-                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than node concentration
+                    /*
+                     * else, remove all molecule of that species from that node
+                     * and go on till deltaTemp is smaller than node concentration
+                     */
                 } else {
                     deltaTemp = deltaTemp + nodeConcentration;
                     pickedNode.removeConcentration(biomolecule);

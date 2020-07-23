@@ -43,7 +43,10 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <P> the position type
  */
-@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "Null checks are performed in the initialize function")
+@SuppressFBWarnings(
+        value = "NP_NULL_ON_SOME_PATH",
+        justification = "Null checks are performed in the initialize function"
+)
 public class ButtonsBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.
@@ -93,9 +96,11 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * Same as {@link #ButtonsBarController() default constructor}, but lets specify an {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to display the effects.
+     * Same as {@link #ButtonsBarController() default constructor}, but lets specify an
+     *      {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to display the effects.
      * <p>
-     * Useful to pass to {@link EffectsGroupBarController}, {@link EffectBarController} and {@link EffectPropertiesController}.
+     * Useful to pass to {@link EffectsGroupBarController}, {@link EffectBarController}
+     * and {@link EffectPropertiesController}.
      *
      * @param displayMonitor the graphical {@code OutputMonitor}
      */
@@ -105,11 +110,15 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * Same as {@link #ButtonsBarController() default constructor}, but lets specify the play/pause {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
+     * Same as {@link #ButtonsBarController() default constructor}, but lets specify the play/pause
+     * {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
      *
-     * @param playPauseButton the play/pause {@code Button}; should probably be a {@link it.unibo.alchemist.boundary.monitor.PlayPauseMonitor}
-     * @param timeLabel       the {@code Label} for the steps; should probably be a {@link it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor}
-     * @param stepLabel       the {@code Label} for the time; should probably be a {@link it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor}
+     * @param playPauseButton the play/pause {@code Button}; should probably
+     *                        be a {@link it.unibo.alchemist.boundary.monitor.PlayPauseMonitor}
+     * @param timeLabel       the {@code Label} for the steps; should probably
+     *                        be a {@link it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor}
+     * @param stepLabel       the {@code Label} for the time; should probably
+     *                        be a {@link it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor}
      */
     public ButtonsBarController(final Button playPauseButton, final Label timeLabel, final Label stepLabel) {
         this();
@@ -119,16 +128,27 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * Same as {@link #ButtonsBarController() default constructor}, but lets specify an {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to display the effects, the play/pause {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
+     * Same as {@link #ButtonsBarController() default constructor}, but lets specify
+     * an {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to display the effects,
+     * the play/pause {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
      * <p>
-     * Useful to pass to {@link EffectsGroupBarController}, {@link EffectBarController} and {@link EffectPropertiesController}.
+     * Useful to pass to {@link EffectsGroupBarController}, {@link EffectBarController}
+     * and {@link EffectPropertiesController}.
      *
      * @param displayMonitor  the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
-     * @param playPauseButton the play/pause {@code Button}; should probably be a {@link it.unibo.alchemist.boundary.monitor.PlayPauseMonitor}
-     * @param timeLabel       the {@code Label} for the steps; should probably be a {@link it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor}
-     * @param stepLabel       the {@code Label} for the time; should probably be a {@link it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor}
+     * @param playPauseButton the play/pause {@code Button}; should probably
+     *                        be a {@link it.unibo.alchemist.boundary.monitor.PlayPauseMonitor}
+     * @param timeLabel       the {@code Label} for the steps; should probably
+     *                        be a {@link it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor}
+     * @param stepLabel       the {@code Label} for the time; should probably
+     *                        be a {@link it.unibo.alchemist.boundary.monitor.generic.NumericLabelMonitor}
      */
-    public ButtonsBarController(final @Nullable FXOutputMonitor<?, ?> displayMonitor, final Button playPauseButton, final Label timeLabel, final Label stepLabel) {
+    public ButtonsBarController(
+            final @Nullable FXOutputMonitor<?, ?> displayMonitor,
+            final Button playPauseButton,
+            final Label timeLabel,
+            final Label stepLabel
+    ) {
         this(playPauseButton, timeLabel, stepLabel);
         setDisplayMonitor(displayMonitor);
     }
@@ -145,7 +165,8 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     /**
      * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set; if null, it will be {@link Optional#empty() unset}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
+     *                       to set; if null, it will be {@link Optional#empty() unset}
      */
     public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
         this.displayMonitor = Optional.ofNullable(displayMonitor);
@@ -156,15 +177,36 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
-        Objects.requireNonNull(controlPane, FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT));
-        Objects.requireNonNull(controlBar, FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT));
-        Objects.requireNonNull(effectsButton, FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT));
-        Objects.requireNonNull(framerateSlider, FXResourceLoader.getInjectionErrorMessage("framerateSlider", BUTTONS_BAR_LAYOUT));
-        Objects.requireNonNull(controlType, FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT));
-        Objects.requireNonNull(drawerStack, FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT));
+        Objects.requireNonNull(
+                controlPane,
+                FXResourceLoader.getInjectionErrorMessage("controlPane", BUTTONS_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                controlBar,
+                FXResourceLoader.getInjectionErrorMessage("controlBar", BUTTONS_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                effectsButton,
+                FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                framerateSlider,
+                FXResourceLoader.getInjectionErrorMessage("framerateSlider", BUTTONS_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                controlType,
+                FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
+                drawerStack,
+                FXResourceLoader.getInjectionErrorMessage("drawerStack", BUTTONS_BAR_LAYOUT)
+        );
         addMonitors();
         final JFXDrawer effectGroupsDrawer = new JFXDrawer();
-        effectsGroupBarController = new EffectsGroupBarController<>(getDisplayMonitor().orElse(null), this.drawerStack);
+        effectsGroupBarController = new EffectsGroupBarController<>(
+                getDisplayMonitor().orElse(null),
+                this.drawerStack
+        );
         effectGroupsDrawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         try {
             effectGroupsDrawer.setSidePane(FXResourceLoader.getLayout(effectsGroupBarController,
@@ -197,7 +239,10 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
         if (controlTypePopOver.isPresent() && controlTypePopOver.get().isShowing()) {
             controlTypePopOver.get().hide();
         } else {
-            Objects.requireNonNull(controlType, FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT));
+            Objects.requireNonNull(
+                    controlType,
+                    FXResourceLoader.getInjectionErrorMessage("controlType", BUTTONS_BAR_LAYOUT)
+            );
             final ControlTypePopoverController controlTypePopoverController = new ControlTypePopoverController();
             final Node popoverContent;
             try {
@@ -282,7 +327,8 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * Getter method for the {@code List} of groups of {@link it.unibo.alchemist.boundary.gui.effects.EffectFX effects} in the side drawer.
+     * Getter method for the {@code List} of groups of
+     * {@link it.unibo.alchemist.boundary.gui.effects.EffectFX effects} in the side drawer.
      *
      * @return an {@code ObservableList} of {@code EffectGroup}
      */

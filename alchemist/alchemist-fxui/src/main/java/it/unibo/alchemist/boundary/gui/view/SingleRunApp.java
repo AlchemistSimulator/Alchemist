@@ -65,7 +65,10 @@ import static it.unibo.alchemist.boundary.gui.controller.ButtonsBarController.BU
  * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
  * @param <P> the position type
  */
-@SuppressFBWarnings(value = "DM_EXIT", justification = "The program needs to exit when the user clicks on the exit button")
+@SuppressFBWarnings(
+        value = "DM_EXIT",
+        justification = "The program needs to exit when the user clicks on the exit button"
+)
 public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     /**
      * Main layout without nested layouts. Must inject eventual other nested layouts.
@@ -116,7 +119,8 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      *
      * @param name  the param name
      * @param value the param value
-     * @throws IllegalArgumentException if the parameter is not valid, or if {@link Parameters#getUnnamed()} it's not named}
+     * @throws IllegalArgumentException if the parameter is not valid,
+     *      or if {@link Parameters#getUnnamed()} it's not named}
      * @throws IllegalStateException    if the application is already started
      * @see Parameters#getNamed()
      */
@@ -194,10 +198,17 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);
             });
-            final ButtonsBarController<P> buttonsBarController = new ButtonsBarController<>(displayMonitor, playPauseMonitor, timeMonitor, stepMonitor);
+            final ButtonsBarController<P> buttonsBarController = new ButtonsBarController<>(
+                    displayMonitor,
+                    playPauseMonitor,
+                    timeMonitor,
+                    stepMonitor
+            );
             final BorderPane bar = FXResourceLoader.getLayout(buttonsBarController, BUTTONS_BAR_LAYOUT);
             bar.setPickOnBounds(false);
-            main.widthProperty().addListener((observable, oldValue, newValue) -> bar.setPrefWidth(newValue.doubleValue()));
+            main.widthProperty().addListener((observable, oldValue, newValue) ->
+                    bar.setPrefWidth(newValue.doubleValue())
+            );
             main.getChildren().add(bar);
             buttonsBarController.getObservableEffectsList().addAll(this.effectGroups);
             effectGroups = buttonsBarController.getObservableEffectsList();
@@ -212,7 +223,14 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             initialized = true;
             primaryStage.show();
             // The initialization of the monitors MUST be done AFTER the Stage is shown
-            optSim.ifPresent(s -> initMonitors(s, optDisplayMonitor.orElse(null), stepMonitor, timeMonitor, playPauseMonitor));
+            optSim.ifPresent(s ->
+                    initMonitors(s,
+                            optDisplayMonitor.orElse(null),
+                            stepMonitor,
+                            timeMonitor,
+                            playPauseMonitor
+                    )
+            );
         } catch (final IOException e) {
             L.error("I/O Exception loading FXML layout files", e);
             throw new UncheckedIOException(e);
@@ -220,15 +238,22 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     }
 
     /**
-     * The method schedules on the {@link Simulation} thread the initialization of given {@link OutputMonitor OutputMonitors}.
+     * The method schedules on the {@link Simulation} thread the
+     * initialization of given {@link OutputMonitor OutputMonitors}.
      *
-     * @param simulation the simulation to {@link Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable) schedule} initialization to and to take {@link it.unibo.alchemist.model.interfaces.Environment} from
-     * @param monitors   the {@code OutputMonitors} to {@link OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment) initialize}
+     * @param simulation the simulation to
+     *      {@link Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable) schedule} initialization and to take
+     *      {@link it.unibo.alchemist.model.interfaces.Environment} from
+     * @param monitors   the {@code OutputMonitors} to
+     *      {@link OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment) initialize}
      * @see Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable)
      * @see OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment)
      */
     @SafeVarargs
-    private final void initMonitors(final @NotNull Simulation<T, P> simulation, final @Nullable OutputMonitor<T, P>... monitors) { // NOPMD - UnnecessaryFinalModifier - necessary to @SafeVarargs tag
+    private final void initMonitors(
+            final @NotNull Simulation<T, P> simulation,
+            final @Nullable OutputMonitor<T, P>... monitors
+    ) { // NOPMD - UnnecessaryFinalModifier - necessary to @SafeVarargs tag
         if (monitors != null) {
             for (final OutputMonitor<T, P> m : monitors) {
                 if (m != null) {
@@ -248,7 +273,9 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      */
     protected void initKeybindings(final Scene scene, final KeyboardActionListener listener) {
         scene.setOnKeyPressed(e -> {
-            if (Keybinds.Companion.get(ActionFromKey.PLAY_AND_PAUSE).filter(key -> key.equals(e.getCode())).isPresent()) {
+            if (Keybinds.Companion.get(ActionFromKey.PLAY_AND_PAUSE)
+                    .filter(key -> key.equals(e.getCode())).isPresent()
+            ) {
                 playPauseMonitor.fireEvent(new ActionEvent(e.getSource(), playPauseMonitor));
                 e.consume();
                 return;

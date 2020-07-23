@@ -48,9 +48,13 @@ import org.jetbrains.annotations.Nullable;
  * {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup}s.
  *
  * @param <T> the generic class that will be inside the cell; it should be
- *            {@link it.unibo.alchemist.boundary.gui.effects.EffectFX} or {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup}
+ *            {@link it.unibo.alchemist.boundary.gui.effects.EffectFX} or
+ *            {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup}
  */
-@SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE", justification = "A ChoiceDialog is always in its own stage")
+@SuppressFBWarnings(
+        value = "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE",
+        justification = "A ChoiceDialog is always in its own stage"
+)
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
     /**
      * Default offset of the first injected node.
@@ -109,7 +113,12 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param toRename      the {@code Property} to rename
      * @see TextInputDialog
      */
-    protected static void rename(final @Nullable String dialogTitle, final @Nullable String dialogMessage, final @Nullable String dialogContent, final @NotNull StringProperty toRename) {
+    protected static void rename(
+            final @Nullable String dialogTitle,
+            final @Nullable String dialogMessage,
+            final @Nullable String dialogContent,
+            final @NotNull StringProperty toRename
+    ) {
         final TextInputDialog dialog = new TextInputDialog(toRename.get());
         dialog.setTitle(dialogTitle);
         dialog.setHeaderText(dialogMessage);
@@ -123,7 +132,8 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
-     * Configures the label that would probably show the element name and adds an optional listener to the {@link Label#textProperty() text property}.
+     * Configures the label that would probably show the element
+     * name and adds an optional listener to the {@link Label#textProperty() text property}.
      *
      * @param label    the label to setup
      * @param listener the optional listener to add to the label
@@ -140,7 +150,10 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param toggle   the toggle to setup
      * @param listener the optional listener to add to the toggle
      */
-    protected static void setupToggle(final @NotNull JFXToggleButton toggle, final @Nullable ChangeListener<Boolean> listener) {
+    protected static void setupToggle(
+            final @NotNull JFXToggleButton toggle,
+            final @Nullable ChangeListener<Boolean> listener
+    ) {
         Optional.ofNullable(listener).ifPresent(toggle.selectedProperty()::addListener);
     }
 

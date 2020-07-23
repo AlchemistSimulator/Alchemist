@@ -23,14 +23,14 @@ import java.util.List;
 public final class SAPEREChemotaxis<P extends Position<P>> extends SAPERENeighborAgent<P> {
 
     private static final long serialVersionUID = -4845100315774422690L;
-    private final int o;
-    private final ILsaMolecule resp;
-    private final ILsaMolecule grad;
+    private final int idPosition;
+    private final ILsaMolecule response;
+    private final ILsaMolecule gradient;
 
     /**
      * Builds a new SAPEREChemotaxis.
      * 
-     * @param env
+     * @param environment
      *            the environment
      * @param node
      *            the node
@@ -39,25 +39,31 @@ public final class SAPEREChemotaxis<P extends Position<P>> extends SAPERENeighbo
      * @param gradient
      *            the molecule template that, once matched, will contain the
      *            node ID where move the molecule
-     * @param oPos
+     * @param idPosition
      *            the argument number where to search for the node ID
      */
-    public SAPEREChemotaxis(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule response, final ILsaMolecule gradient, final int oPos) {
-        super(env, node, response);
+    public SAPEREChemotaxis(
+            final Environment<List<ILsaMolecule>, P> environment,
+            final ILsaNode node,
+            final ILsaMolecule response,
+            final ILsaMolecule gradient,
+            final int idPosition
+    ) {
+        super(environment, node, response);
         /*
          * Thanks Java, for not having unsigned primitives! -.-
          */
-        assert oPos >= 0 : "Argument number must be positive";
-        resp = response;
-        grad = gradient;
-        o = oPos;
+        assert idPosition >= 0 : "Argument number must be positive";
+        this.response = response;
+        this.gradient = gradient;
+        this.idPosition = idPosition;
     }
 
     @Override
     public void execute() {
-        final int nodeId = getLSAArgumentAsInt(grad, o);
+        final int nodeId = getLSAArgumentAsInt(gradient, idPosition);
         final ILsaNode dest = (ILsaNode) getEnvironment().getNodeByID(nodeId);
-        allocateAndInject(resp, dest);
+        allocateAndInject(response, dest);
     }
 
 }

@@ -52,7 +52,12 @@ public interface Effect extends Serializable {
      * @param wormhole the wormhole used to map environment's coords to screen coords
      */
     @SuppressWarnings("deprecation")
-    default <T, P extends Position2D<P>> void apply(Graphics2D g, Node<T> n, Environment<T, P> env, BidimensionalWormhole<P> wormhole) {
+    default <T, P extends Position2D<P>> void apply(
+            Graphics2D g,
+            Node<T> n,
+            Environment<T, P> env,
+            BidimensionalWormhole<P> wormhole
+    ) {
         final Point viewPoint = wormhole.getViewPoint(env.getPosition(n));
         apply(g, n, viewPoint.x, viewPoint.y); // preserve backward compatibility
     }

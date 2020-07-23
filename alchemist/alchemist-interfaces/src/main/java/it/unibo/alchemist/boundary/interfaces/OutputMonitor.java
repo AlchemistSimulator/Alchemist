@@ -7,12 +7,12 @@
  */
 package it.unibo.alchemist.boundary.interfaces;
 
-import java.io.Serializable;
-
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+
+import java.io.Serializable;
 
 /**
  * 
@@ -31,14 +31,14 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * the same flow of the simulation may execute this method. This depends on the
      * specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
      * 
-     * @param env
+     * @param environment
      *            The current environment
      * @param time
      *            The time at which the simulation ended
      * @param step
      *            The last step number
      */
-    void finished(Environment<T, P> env, Time time, long step);
+    void finished(Environment<T, P> environment, Time time, long step);
 
     /**
      * This method will be called by the simulation as soon as the initialization
@@ -47,10 +47,10 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * spawned or the same flow of the simulation may execute this method. This
      * depends on the specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
      *
-     * @param env
+     * @param environment
      *            the environment
      */
-    void initialized(Environment<T, P> env);
+    void initialized(Environment<T, P> environment);
 
     /**
      * This method will be called by the simulation every time a simulation step is
@@ -59,15 +59,15 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * same flow of the simulation may execute this method. This depends on the
      * specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
      * 
-     * @param env
+     * @param environment
      *            The current environment
-     * @param r
+     * @param reaction
      *            The last reaction executed
      * @param time
      *            The time at this simulation point
      * @param step
      *            The current simulation step
      */
-    void stepDone(Environment<T, P> env, Reaction<T> r, Time time, long step);
+    void stepDone(Environment<T, P> environment, Reaction<T> reaction, Time time, long step);
 
 }

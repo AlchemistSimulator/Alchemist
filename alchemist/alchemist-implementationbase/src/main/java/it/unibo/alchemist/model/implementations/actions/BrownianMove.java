@@ -47,8 +47,8 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
     }
 
     @Override
-    public Action<T> cloneAction(final Node<T> n, final Reaction<T> reaction) {
-        return new BrownianMove<>(getEnvironment(), n, rng, r);
+    public Action<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+        return new BrownianMove<>(getEnvironment(), node, rng, r);
     }
 
     @Override

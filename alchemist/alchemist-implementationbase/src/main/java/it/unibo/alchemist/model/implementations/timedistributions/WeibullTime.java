@@ -125,7 +125,11 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
      *            the random generator
      * @return a new {@link WeibullDistribution}
      */
-    protected static WeibullDistribution weibullFromMean(final double mean, final double deviation, final RandomGenerator random) {
+    protected static WeibullDistribution weibullFromMean(
+            final double mean,
+            final double deviation,
+            final RandomGenerator random
+    ) {
         final double t = FastMath.log((deviation * deviation) / (mean * mean) + 1);
         double kmin = 0, kmax = 1;
         while (Gamma.logGamma(1 + 2 * kmax) - 2 * Gamma.logGamma(1 + kmax) < t) {

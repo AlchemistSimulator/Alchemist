@@ -53,7 +53,8 @@ public final class BiomolGradientLayer<P extends Position2D<P>> implements Layer
     /**
      * Initialize a gradient layer which grows in concentration proportionally in space.
      * 
-     * @param direction the {@link Position2D} representing the direction in which the gradient grows (here the positions is considered as a vector)
+     * @param direction the {@link Position2D} representing the direction
+     *                  in which the gradient grows (here the positions is considered as a vector)
      * @param unitVariation unit variation of the gradient
      * @param offset minimum value of concentration reached by this spatial distribution
      */

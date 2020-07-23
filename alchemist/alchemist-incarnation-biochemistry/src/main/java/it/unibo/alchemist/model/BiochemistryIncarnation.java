@@ -50,8 +50,12 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     }
 
     @Override
-    public TimeDistribution<Double> createTimeDistribution(final RandomGenerator rand, final Environment<Double, P> env,
-            final Node<Double> node, final String param) {
+    public TimeDistribution<Double> createTimeDistribution(
+            final RandomGenerator rand,
+            final Environment<Double, P> env,
+            final Node<Double> node,
+            final String param
+    ) {
         if (param == null || param.isEmpty()) {
             return new ExponentialTime<>(1.0, rand);
         }

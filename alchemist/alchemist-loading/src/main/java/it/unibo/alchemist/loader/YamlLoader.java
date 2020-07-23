@@ -366,7 +366,11 @@ public final class YamlLoader implements Loader {
                         toDouble.apply(m, STEP)
                 )
         );
-        final Builder<Variable<?>> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
+        final Builder<Variable<?>> varBuilder = new Builder<>(
+                Variable.class,
+                ImmutableSet.of(arbitraryVarConfig, linearVarConfig),
+                factory
+        );
         variables = originalVars.entrySet().stream()
                 .filter(e -> e != null && !e.getValue().containsKey(FORMULA))
                 .collect(ImmutableMap.toImmutableMap(Entry::getKey, e -> varBuilder.build(e.getValue())));

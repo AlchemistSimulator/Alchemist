@@ -7,21 +7,20 @@
  */
 package it.unibo.alchemist.grid.cluster;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCompute;
-import org.apache.ignite.cluster.ClusterGroup;
-
 import it.unibo.alchemist.grid.config.RemoteGeneralSimulationConfig;
 import it.unibo.alchemist.grid.simulation.RemoteResult;
 import it.unibo.alchemist.grid.simulation.RemoteSimulation;
 import it.unibo.alchemist.grid.simulation.RemoteSimulationImpl;
 import it.unibo.alchemist.grid.simulation.SimulationSet;
+import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCompute;
+import org.apache.ignite.cluster.ClusterGroup;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link WorkerSet} which uses Apache Ignite.
@@ -45,7 +44,10 @@ public final class WorkerSetImpl implements WorkerSet {
     @Override
     public Set<RemoteResult> distributeSimulations(final SimulationSet simulationsSet) {
         final IgniteCompute compute = this.ignite.compute(this.grp);
-        try (RemoteGeneralSimulationConfig gc = new RemoteGeneralSimulationConfig(simulationsSet.getGeneralSimulationConfig(), this.ignite)) {
+        try (RemoteGeneralSimulationConfig gc = new RemoteGeneralSimulationConfig(
+                simulationsSet.getGeneralSimulationConfig(),
+                this.ignite
+        )) {
             final List<RemoteSimulation<?>> jobs = simulationsSet.getSimulationConfigs().stream()
                     .map(e -> new RemoteSimulationImpl<>(gc, e, ignite.cluster().localNode().id()))
                     .collect(Collectors.toList());

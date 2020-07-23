@@ -43,7 +43,10 @@ public class LsaStandardAction extends LsaAbstractAction {
     private final boolean initRand, initNode;
     private final ILsaMolecule mol;
     private final ITreeNode<?> nodeId;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
+    @SuppressFBWarnings(
+            value = "SE_BAD_FIELD",
+            justification = "All provided RandomGenerator implementations are actually Serializable"
+    )
     private final RandomGenerator rand;
 
     /**

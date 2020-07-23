@@ -7,19 +7,18 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.List;
-import java.util.Map;
-
-import it.unibo.alchemist.model.interfaces.Dependency;
-import org.danilopianini.lang.HashString;
-
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaAction;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.danilopianini.lang.HashString;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -38,9 +37,6 @@ public final class LsaDeleteNodeAction extends RemoveNode<List<ILsaMolecule>> im
         declareDependencyTo(Dependency.MOVEMENT);
     }
 
-    /* (non-Javadoc)
-     * @see alice.alchemist.model.implementations.actions.LsaAbstractAction#cloneOnNewNode(alice.alchemist.model.interfaces.Node, alice.alchemist.model.interfaces.Reaction)
-     */
     @Override
     public LsaDeleteNodeAction cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
         return new LsaDeleteNodeAction(getEnvironment(), (ILsaNode) node);

@@ -178,7 +178,8 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                         map.put(molarg.getLeftChildren().toHashString(), instarg.getRootNode());
                     }
                 } else if (molarg.getRootNodeType() == Type.LISTCOMPARATOR) {
-                    if (molarg.getAST().getRoot().getLeftChild().getType() == Type.VAR && instarg.getRootNodeData() instanceof Set<?>) {
+                    if (molarg.getAST().getRoot().getLeftChild().getType() == Type.VAR
+                            && instarg.getRootNodeData() instanceof Set<?>) {
                         map.put(molarg.getLeftChildren().toHashString(), instarg.getRootNode());
 
                     }

@@ -124,7 +124,9 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         int pow = 0;
         int exp = 0;
         for (int i = 0; i < tree.size(); i++) {
-            final int tabulars = (int) (Math.floor(Math.log(tree.size()) / Math.log(2)) - Math.floor(Math.log(i + 1) / Math.log(2))) + 1;
+            final int tabulars = (int) (
+                Math.floor(Math.log(tree.size()) / Math.log(2)) - Math.floor(Math.log(i + 1) / Math.log(2))
+            ) + 1;
             for (int t = 0; t < tabulars; t++) {
                 sb.append('\t');
             }

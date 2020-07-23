@@ -745,12 +745,16 @@ public final class YamlLoader implements Loader {
         return factory;
     }
 
-    private static Object recursivelyResolveVariables(final Object o, final Map<Map<String, Object>, String> reverseLookupTable, final Map<String, Object> variables) {
+    private static Object recursivelyResolveVariables(
+            final Object yamlNode,
+            final Map<Map<String, Object>, String> reverseLookupTable,
+            final Map<String, Object> variables
+    ) {
         if (reverseLookupTable.isEmpty() || variables.isEmpty()) {
-            return o;
+            return yamlNode;
         }
-        if (o instanceof Collection) {
-            final Collection<?> collection = (Collection<?>) o;
+        if (yamlNode instanceof Collection) {
+            final Collection<?> collection = (Collection<?>) yamlNode;
             final int s = collection.size();
             return collection.stream()
                 .map(e -> recursivelyResolveVariables(e, reverseLookupTable, variables))
@@ -758,15 +762,15 @@ public final class YamlLoader implements Loader {
                         ? Sets.newLinkedHashSetWithExpectedSize(s)
                         : Lists.newArrayListWithCapacity(s)));
         }
-        if (o instanceof Map) {
-            final String varName = reverseLookupTable.get(o);
+        if (yamlNode instanceof Map) {
+            final String varName = reverseLookupTable.get(yamlNode);
             if (varName != null) {
                 final Object value = variables.get(varName);
                 if (value != null) {
                     return value;
                 }
             } else {
-                final Map<?, ?> oMap = (Map<?, ?>) o;
+                final Map<?, ?> oMap = (Map<?, ?>) yamlNode;
                 return oMap.entrySet().stream()
                         .collect(() -> Maps.newLinkedHashMapWithExpectedSize(oMap.size()),
                             (m, p) -> m.put(p.getKey(), recursivelyResolveVariables(p.getValue(), reverseLookupTable, variables)),
@@ -776,7 +780,7 @@ public final class YamlLoader implements Loader {
                         );
             }
         }
-        return o;
+        return yamlNode;
     }
     private static Function<Map<String, Object>, RandomGenerator> rngMaker(final Factory factory, final String seed) {
         return m -> Optional.ofNullable(m.get(seed))

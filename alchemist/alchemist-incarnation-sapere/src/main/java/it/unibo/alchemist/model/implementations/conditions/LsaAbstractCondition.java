@@ -104,7 +104,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     /**
      * @param template
      *            the template molecule
-     * @param n
+     * @param node
      *            the node on which this function is working
      * @param matchesList
      *            the list of matches to populate (theoretically, it should
@@ -116,11 +116,11 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      */
     protected static void createMatches(
             final ILsaMolecule template,
-            final ILsaNode n,
+            final ILsaNode node,
             final List<Map<HashString, ITreeNode<?>>> matchesList,
             final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
     ) {
-        final List<ILsaMolecule> lsaSpace = n.getLsaSpace();
+        final List<ILsaMolecule> lsaSpace = node.getLsaSpace();
         for (final ILsaMolecule matched : lsaSpace) {
             if (template.matches(matched)) {
                 /*
@@ -136,7 +136,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                 final List<ILsaMolecule> modifiedSpace = new ArrayList<>(lsaSpace.size());
                 modifiedSpace.add(matched);
                 final Map<ILsaNode, List<ILsaMolecule>> retrievedInThisNode = new HashMap<>(lsaSpace.size(), 1f);
-                retrievedInThisNode.put(n, modifiedSpace);
+                retrievedInThisNode.put(node, modifiedSpace);
                 retrieved.add(retrievedInThisNode);
             }
         }

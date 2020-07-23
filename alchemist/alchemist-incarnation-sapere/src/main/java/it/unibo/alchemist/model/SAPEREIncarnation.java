@@ -50,7 +50,6 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         implements Incarnation<List<ILsaMolecule>, P>, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger L = LoggerFactory.getLogger(SAPEREIncarnation.class);
     private static final String CONDITION_GROUP = "condition";
     private static final String CONDITIONS_GROUP = "conditions";
     private static final String ACTION_GROUP = "action";
@@ -68,7 +67,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
     static {
         final String matchStart = "(?:\\s*(?<";
         final String condition = matchStart + CONDITION_GROUP + ">\\+";
-        final String action = matchStart + ACTION_GROUP + ">(?:\\+|\\*)";
+        final String action = matchStart + ACTION_GROUP + ">[+*]";
         final String matchEnd = "?\\{[^\\{\\}]+?\\}))";
         MATCH_CONDITION = Pattern.compile(condition + matchEnd);
         MATCH_ACTION = Pattern.compile(action + matchEnd);
@@ -125,8 +124,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
             }
         }
         if (saperePropertyNumber >= 0) {
-            final ILsaNode inode = (ILsaNode) node;
-            final List<ILsaMolecule> concentration = inode.getConcentration(molecule);
+            final List<ILsaMolecule> concentration = node.getConcentration(molecule);
             /*
              * Potential concurrency issue: a size check is mandatory
              */

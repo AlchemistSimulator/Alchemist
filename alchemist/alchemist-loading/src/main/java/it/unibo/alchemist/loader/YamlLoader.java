@@ -569,7 +569,16 @@ public final class YamlLoader implements Loader {
         final Environment<T, P> environment = envBuilder.build(contents.get(ENVIRONMENT));
         environment.setIncarnation(incarnation);
         factory.registerSingleton(Environment.class, environment);
-        factory.registerImplicit(List.class, Position.class, l -> environment.makePosition(cast(factory, LIST_NUMBER, l, "position coordinates").toArray(new Number[l.size()])));
+        factory.registerImplicit(
+                List.class,
+                Position.class,
+                l -> environment.makePosition(
+                        cast(
+                                factory,
+                                LIST_NUMBER,
+                                l,
+                                "position coordinates"
+                        ).toArray(new Number[l.size()])));
         factory.registerImplicit(Number[].class, Position.class, environment::makePosition);
         final Builder<Molecule> molBuilder = new Builder<>(Molecule.class, singleParamConfig(factory, p -> incarnation.createMolecule(p.toString())), factory);
         /*

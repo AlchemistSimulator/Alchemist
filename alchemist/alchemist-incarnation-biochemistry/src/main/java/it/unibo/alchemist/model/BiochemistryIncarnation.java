@@ -32,7 +32,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> implements Incarnation<Double, P> {
 
     @Override
-    public double getProperty(final Node<Double> node, final Molecule molecule, final String prop) {
+    public double getProperty(final Node<Double> node, final Molecule molecule, final String property) {
         return node.getConcentration(molecule);
     }
 
@@ -42,7 +42,7 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     }
 
     @Override
-    public CellNode<P> createNode(final RandomGenerator rand, final Environment<Double, P> env, final String param) {
+    public CellNode<P> createNode(final RandomGenerator randomGenerator, final Environment<Double, P> env, final String param) {
         if (param == null || param.isEmpty()) {
             return new CellNodeImpl<>(env);
         }

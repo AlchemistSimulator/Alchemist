@@ -26,11 +26,11 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the node
      * @param molecule
      *            the molecule to analyze
-     * @param prop
+     * @param property
      *            the property to extract
      * @return a numeric value representing the property
      */
-    double getProperty(Node<T> node, Molecule molecule, String prop);
+    double getProperty(Node<T> node, Molecule molecule, String property);
 
     /**
      * Parses a {@link String}, and provides a {@link Molecule}.
@@ -50,7 +50,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     T createConcentration(String s);
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
      * @param env
      *            the environment that will host this object
@@ -58,7 +58,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    Node<T> createNode(RandomGenerator rand, Environment<T, P> env, String param);
+    Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> env, String param);
 
     /**
      * @param rand

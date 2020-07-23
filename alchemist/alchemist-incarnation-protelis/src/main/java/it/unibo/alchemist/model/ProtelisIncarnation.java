@@ -195,7 +195,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    public Node<Object> createNode(final RandomGenerator rand, final Environment<Object, P> env, final String param) {
+    public Node<Object> createNode(final RandomGenerator randomGenerator, final Environment<Object, P> env, final String param) {
         return new ProtelisNode<>(env);
     }
 
@@ -234,9 +234,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    public double getProperty(final Node<Object> node, final Molecule molecule, final String prop) {
+    public double getProperty(final Node<Object> node, final Molecule molecule, final String property) {
         try {
-            final SynchronizedVM vm = cache.get(new CacheKey(Objects.requireNonNull(node), Objects.requireNonNull(molecule), Objects.requireNonNull(prop)));
+            final SynchronizedVM vm = cache.get(new CacheKey(Objects.requireNonNull(node), Objects.requireNonNull(molecule), Objects.requireNonNull(property)));
             final Object val = vm.runCycle();
             if (val instanceof Number) {
                 return ((Number) val).doubleValue();
@@ -244,7 +244,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 try {
                     return Double.parseDouble(val.toString());
                 } catch (final NumberFormatException e) {
-                    if (val.equals(prop)) {
+                    if (val.equals(property)) {
                         return 1;
                     }
                     return 0;

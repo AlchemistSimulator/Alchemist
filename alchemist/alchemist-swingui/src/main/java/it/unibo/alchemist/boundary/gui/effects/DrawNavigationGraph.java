@@ -64,9 +64,9 @@ public class DrawNavigationGraph extends DrawOnce {
     private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, Euclidean2DPassage> graph;
 
     /**
-     * @param g        graphics
-     * @param n        node
-     * @param env      environment
+     * @param graphics        graphics
+     * @param node        node
+     * @param environment      environment
      * @param wormhole the wormhole used to map environment's coords to screen coords
      * @param <T>      concentration type
      * @param <P>      position type
@@ -75,36 +75,36 @@ public class DrawNavigationGraph extends DrawOnce {
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(
-            final Graphics2D g,
-            final Node<T> n,
-            final Environment<T, P> env,
+            final Graphics2D graphics,
+            final Node<T> node,
+            final Environment<T, P> environment,
             final IWormhole2D<P> wormhole
     ) {
-        if (graph == null && env instanceof ImageEnvironmentWithGraph) {
-            graph = ((ImageEnvironmentWithGraph<T>) env).getGraph();
+        if (graph == null && environment instanceof ImageEnvironmentWithGraph) {
+            graph = ((ImageEnvironmentWithGraph<T>) environment).getGraph();
         }
         if (graph != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             graph.vertexSet().stream()
-                    .map(r -> mapEnvConvexPolygonToAwtShape(r, wormhole, env))
+                    .map(r -> mapEnvConvexPolygonToAwtShape(r, wormhole, environment))
                     .forEach(r -> {
-                        g.setColor(colorCache);
-                        g.fill(r);
-                        g.setColor(colorCache.brighter().brighter());
-                        g.draw(r);
+                        graphics.setColor(colorCache);
+                        graphics.fill(r);
+                        graphics.setColor(colorCache.brighter().brighter());
+                        graphics.draw(r);
                     });
             graph.vertexSet().forEach(r -> {
-                final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
+                final Point centroidFrom = wormhole.getViewPoint(environment.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
                 if (graph != null) {
                     graph.outgoingEdgesOf(r).forEach(e -> {
                         final Segment2D<Euclidean2DPosition> passage = e.getPassageShapeOnTail();
-                        final Point viewP1 = wormhole.getViewPoint(env.makePosition(passage.getFirst().getX(), passage.getFirst().getY()));
-                        final Point viewP2 = wormhole.getViewPoint(env.makePosition(passage.getSecond().getX(), passage.getSecond().getY()));
-                        g.setColor(Color.GREEN);
-                        g.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
+                        final Point viewP1 = wormhole.getViewPoint(environment.makePosition(passage.getFirst().getX(), passage.getFirst().getY()));
+                        final Point viewP2 = wormhole.getViewPoint(environment.makePosition(passage.getSecond().getX(), passage.getSecond().getY()));
+                        graphics.setColor(Color.GREEN);
+                        graphics.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
                         final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
-                        g.setColor(colorCache);
-                        g.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
+                        graphics.setColor(colorCache);
+                        graphics.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
                     });
                 }
             });

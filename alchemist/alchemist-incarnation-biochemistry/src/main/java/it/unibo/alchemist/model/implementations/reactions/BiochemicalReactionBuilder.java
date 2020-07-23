@@ -257,9 +257,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
         @Override
         public Reaction<Double> visitBiochemicalReactionLeftInCellContext(
-                final BiochemistrydslParser.BiochemicalReactionLeftInCellContextContext ctx
+                final BiochemistrydslParser.BiochemicalReactionLeftInCellContextContext context
         ) {
-            for (final BiomoleculeContext b : ctx.biomolecule()) {
+            for (final BiomoleculeContext b : context.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInCell, biomol, concentration);

@@ -143,7 +143,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         getNodes().forEach(action);
     }
 
-    private Stream<Operation> foundNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+    private Stream<Operation> foundNeighbors(
+            final Node<T> center,
+            final Neighborhood<T> oldNeighborhood,
+            final Neighborhood<T> newNeighborhood
+    ) {
         return newNeighborhood.getNeighbors().stream()
                 .filter(neigh -> oldNeighborhood == null || !oldNeighborhood.contains(neigh))
                 .filter(neigh -> !getNeighborhood(neigh).contains(center))

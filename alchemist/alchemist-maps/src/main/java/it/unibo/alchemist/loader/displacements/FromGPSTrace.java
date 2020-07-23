@@ -36,7 +36,13 @@ public final class FromGPSTrace implements Displacement {
      *            args to use to create GPSTimeNormalizer
      * @throws IOException if there are errors accessing the file system
      */
-    public FromGPSTrace(final int numNode, final String path, final boolean cycle, final String normalizer, final Object... args) throws IOException {
+    public FromGPSTrace(
+            final int numNode,
+            final String path,
+            final boolean cycle,
+            final String normalizer,
+            final Object... args
+    ) throws IOException {
         traces = new TraceLoader(path, cycle, normalizer, args);
         if (traces.size().map(size -> size < numNode).orElse(false)) {
             throw new IllegalArgumentException(numNode + "traces required, " + traces.size().orElse(-1) + " traces available");

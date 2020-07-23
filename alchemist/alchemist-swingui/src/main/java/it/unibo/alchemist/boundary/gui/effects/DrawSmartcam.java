@@ -81,7 +81,14 @@ public final class DrawSmartcam implements Effect {
         }
     }
 
-    private <T> void drawFieldOfView(final Graphics2D g, final Node<T> node, final Physics2DEnvironment<T> env, final double zoom, final int x, final int y) {
+    private <T> void drawFieldOfView(
+            final Graphics2D g,
+            final Node<T> node,
+            final Physics2DEnvironment<T> env,
+            final double zoom,
+            final int x,
+            final int y
+    ) {
         final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
         g.setColor(Color.BLUE);
         node.getReactions()

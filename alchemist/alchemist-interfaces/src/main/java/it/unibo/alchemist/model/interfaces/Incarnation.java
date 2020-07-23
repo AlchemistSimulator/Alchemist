@@ -24,13 +24,13 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * 
      * @param node
      *            the node
-     * @param mol
+     * @param molecule
      *            the molecule to analyze
      * @param prop
      *            the property to extract
      * @return a numeric value representing the property
      */
-    double getProperty(Node<T> node, Molecule mol, String prop);
+    double getProperty(Node<T> node, Molecule molecule, String prop);
 
     /**
      * Parses a {@link String}, and provides a {@link Molecule}.

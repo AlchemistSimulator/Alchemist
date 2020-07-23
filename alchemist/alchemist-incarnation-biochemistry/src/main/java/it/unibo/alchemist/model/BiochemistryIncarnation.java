@@ -32,8 +32,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> implements Incarnation<Double, P> {
 
     @Override
-    public double getProperty(final Node<Double> node, final Molecule mol, final String prop) {
-        return node.getConcentration(mol);
+    public double getProperty(final Node<Double> node, final Molecule molecule, final String prop) {
+        return node.getConcentration(molecule);
     }
 
     @Override

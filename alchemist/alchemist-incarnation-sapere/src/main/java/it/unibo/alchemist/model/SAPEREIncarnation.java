@@ -83,15 +83,15 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
             justification = "Pointer comparison is intentional"
     )
     @Override
-    public double getProperty(final Node<List<ILsaMolecule>> node, final Molecule mol, final String prop) {
-        if (mol instanceof ILsaMolecule && node instanceof ILsaNode && node.contains(mol)) {
+    public double getProperty(final Node<List<ILsaMolecule>> node, final Molecule molecule, final String prop) {
+        if (molecule instanceof ILsaMolecule && node instanceof ILsaNode && node.contains(molecule)) {
             boolean cacheUpdated = false;
-            if (!mol.equals(molCache) || prop != propCache) { // NOPMD: reference comparison is intentional
-                molCache = mol;
+            if (!molecule.equals(molCache) || prop != propCache) { // NOPMD: reference comparison is intentional
+                molCache = molecule;
                 propCache = prop;
                 cacheUpdated = true;
             }
-            return sapereProperty((ILsaNode) node, (ILsaMolecule) mol, prop, cacheUpdated);
+            return sapereProperty((ILsaNode) node, (ILsaMolecule) molecule, prop, cacheUpdated);
         }
         return Double.NaN;
     }

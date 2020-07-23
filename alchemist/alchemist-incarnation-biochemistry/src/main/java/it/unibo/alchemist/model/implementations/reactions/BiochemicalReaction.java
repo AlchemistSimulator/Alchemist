@@ -48,24 +48,24 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     private boolean neighborConditionsPresent;
 
     /**
-     * @param n
+     * @param node
      *            node
-     * @param td
+     * @param timeDistribution
      *            time distribution
-     * @param env
+     * @param environment
      *            the environment
-     * @param rng
+     * @param randomGenerator
      *            the random generator
      */
     public BiochemicalReaction(
-            final Node<Double> n,
-            final TimeDistribution<Double> td,
-            final Environment<Double, ?> env,
-            final RandomGenerator rng
+            final Node<Double> node,
+            final TimeDistribution<Double> timeDistribution,
+            final Environment<Double, ?> environment,
+            final RandomGenerator randomGenerator
     ) {
-        super(n, td);
-        environment = env;
-        random = rng;
+        super(node, timeDistribution);
+        this.environment = environment;
+        random = randomGenerator;
     }
 
     @Override

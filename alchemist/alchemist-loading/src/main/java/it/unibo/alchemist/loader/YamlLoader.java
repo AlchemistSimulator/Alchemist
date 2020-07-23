@@ -395,7 +395,8 @@ public final class YamlLoader implements Loader {
                                     final Object filterObj = m.getOrDefault(VALUE_FILTER, "NoFilter");
                                     final FilteringPolicy filter = filterBuilder.build(filterObj instanceof CharSequence
                                             ? ImmutableMap.of(NAME, filterObj.toString()) : filterObj);
-                                    final List<String> aggregators = listCast(factory, m.get(AGGREGATORS), "aggregators").stream()
+                                    final List<String> aggregators = listCast(factory, m.get(AGGREGATORS), "aggregators")
+                                            .stream()
                                             .map(Object::toString)
                                             .collect(Collectors.toList());
                                     return new MoleculeReader<>(

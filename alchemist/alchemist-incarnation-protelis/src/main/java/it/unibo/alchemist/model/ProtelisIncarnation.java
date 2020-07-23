@@ -81,8 +81,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 }
             });
 
-    private static List<RunProtelisProgram<?>> getIncomplete(final ProtelisNode<?> pNode, final List<RunProtelisProgram<?>> alreadyDone) {
-        return pNode.getReactions().parallelStream()
+    private static List<RunProtelisProgram<?>> getIncomplete(
+            final ProtelisNode<?> protelisNode,
+            final List<RunProtelisProgram<?>> alreadyDone
+    ) {
+        return protelisNode.getReactions().parallelStream()
                 /*
                  * Get the actions
                  */

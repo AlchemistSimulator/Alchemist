@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.kotlin
+package it.unibo.alchemist
 
 import com.google.common.hash.Hasher
 import com.google.common.hash.Hashing

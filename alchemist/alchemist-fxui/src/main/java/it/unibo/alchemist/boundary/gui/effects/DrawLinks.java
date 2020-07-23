@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 
-import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} line for each

@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import org.jetbrains.annotations.NotNull;
 
-import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * The class models a group of effects, stored as a stack. It can manage

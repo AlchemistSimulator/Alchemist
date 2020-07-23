@@ -22,7 +22,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
-import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * Simple effect that draws a colored dot for each {@link it.unibo.alchemist.model.interfaces.Node}.

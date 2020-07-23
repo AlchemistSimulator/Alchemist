@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
  * listed in the main project's alchemist/build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -7,10 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.kotlin
+package it.unibo.alchemist.test
 
 import com.google.common.hash.HashFunction
 import com.google.common.hash.Hashing
+import it.unibo.alchemist.murmur3Hash32
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test

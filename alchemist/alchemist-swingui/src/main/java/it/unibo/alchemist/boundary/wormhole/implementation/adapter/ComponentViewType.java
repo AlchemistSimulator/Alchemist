@@ -4,7 +4,7 @@ import java.awt.Component;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 
-import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * Adapter class that adapts the AWT {@link Component} class to a generic View Type for usage in {@link it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D}.

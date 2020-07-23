@@ -16,7 +16,7 @@ import java.io.Serializable;
 
 import javafx.beans.property.ObjectPropertyBase;
 
-import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * {@link javafx.beans.property.Property} designed to wrap an {@link Enum enum}.

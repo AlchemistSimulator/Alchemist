@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import javafx.beans.property.StringPropertyBase;
 
-import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * {@link javafx.beans.property.SimpleStringProperty} that implements also {@link Serializable}.

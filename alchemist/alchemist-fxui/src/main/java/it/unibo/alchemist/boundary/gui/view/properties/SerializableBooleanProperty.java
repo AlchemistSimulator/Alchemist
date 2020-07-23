@@ -22,7 +22,7 @@ import com.google.gson.JsonSerializationContext;
 
 import javafx.beans.property.BooleanPropertyBase;
 
-import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * {@link javafx.beans.property.SimpleBooleanProperty} that implements also {@link Serializable}.

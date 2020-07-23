@@ -22,7 +22,7 @@ import com.google.gson.JsonSerializationContext;
 
 import javafx.beans.property.IntegerPropertyBase;
 
-import static it.unibo.alchemist.kotlin.HashesKt.murmur3Hash32;
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * This {@link javafx.beans.property.IntegerProperty} is designed to have a range for the wrapped

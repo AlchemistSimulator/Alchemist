@@ -131,7 +131,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 try {
                     return new RunProtelisProgram<>(environment, pNode, reaction, randomGenerator, additionalParameters);
                 } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
-                    throw new IllegalArgumentException("Could not create the requested Protelis program: " + additionalParameters, e);
+                    throw new IllegalArgumentException(
+                            "Could not create the requested Protelis program: " + additionalParameters,
+                            e
+                    );
                 }
             }
         }

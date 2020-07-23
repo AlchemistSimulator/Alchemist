@@ -247,10 +247,14 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
     }
 
     @Override
-    public Action<List<ILsaMolecule>> createAction(final RandomGenerator randomGenerator,
-                                                   final Environment<List<ILsaMolecule>, P> environment, final Node<List<ILsaMolecule>> node,
-                                                   final TimeDistribution<List<ILsaMolecule>> time, final Reaction<List<ILsaMolecule>> reaction,
-                                                   final String additionalParameters) {
+    public Action<List<ILsaMolecule>> createAction(
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
+            final Node<List<ILsaMolecule>> node,
+            final TimeDistribution<List<ILsaMolecule>> time,
+            final Reaction<List<ILsaMolecule>> reaction,
+            final String additionalParameters
+    ) {
         if (additionalParameters.startsWith("+")) {
             return new LsaRandomNeighborAction((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment, randomGenerator);
         }

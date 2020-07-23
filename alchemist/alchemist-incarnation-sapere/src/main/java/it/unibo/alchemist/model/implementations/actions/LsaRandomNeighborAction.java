@@ -45,12 +45,17 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      * @param molecule
      *            The IlsaMolecule instance you want to add to neighbor lsa
      *            space.
-     * @param random
+     * @param randomGenerator
      *            the random engine
      * 
      */
     @SuppressWarnings("unchecked")
-    public LsaRandomNeighborAction(final ILsaNode node, final ILsaMolecule molecule, final Environment<List<ILsaMolecule>, ?> environment, final RandomGenerator random) {
+    public LsaRandomNeighborAction(
+            final ILsaNode node,
+            final ILsaMolecule molecule,
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final RandomGenerator randomGenerator
+    ) {
         super(molecule, node);
         final String molString = molecule.toString();
         initO = molString.contains(LsaMolecule.SYN_O);
@@ -60,14 +65,17 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         env = environment;
         mapEnv = environment instanceof MapEnvironment;
         menv = mapEnv ? (MapEnvironment<List<ILsaMolecule>>) env : null;
-        randomEngine = random;
+        randomEngine = randomGenerator;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public LsaRandomNeighborAction cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
+    public LsaRandomNeighborAction cloneAction(
+            final Node<List<ILsaMolecule>> node,
+            final Reaction<List<ILsaMolecule>> reaction
+    ) {
         return new LsaRandomNeighborAction((ILsaNode) node, getMolecule(), getEnvironment(), randomEngine);
     }
 

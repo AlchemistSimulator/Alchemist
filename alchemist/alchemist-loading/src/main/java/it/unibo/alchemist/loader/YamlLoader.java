@@ -535,7 +535,11 @@ public final class YamlLoader implements Loader {
         L.debug("Variable bindings: {}", actualVars);
         assert actualVars.size() == constants.size() + reverseLookupTable.size();
         @SuppressWarnings(UNCHECKED)
-        final Map<String, Object> contents = (Map<String, Object>) recursivelyResolveVariables(this.contents, reverseLookupTable, actualVars);
+        final Map<String, Object> contents = (Map<String, Object>) recursivelyResolveVariables(
+                this.contents,
+                reverseLookupTable,
+                actualVars
+        );
         /*
          * Factory
          */

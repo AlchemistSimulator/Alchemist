@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.interfaces;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @param <T>
@@ -58,7 +59,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> environment, String parameter);
+    Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> environment, @Nullable String parameter);
 
     /**
      * @param rand

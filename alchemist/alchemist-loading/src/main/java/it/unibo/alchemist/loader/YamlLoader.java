@@ -307,7 +307,12 @@ public final class YamlLoader implements Loader {
                         constants.put(name, value);
                         depVariables.remove(name);
                     } catch (IllegalStateException e) {
-                        L.debug("{} value could not be computed: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
+                        L.debug("{} value could not be computed: maybe it depends on another," +
+                                "not yet initialized variable." +
+                                "\nReason: {}",
+                                name,
+                                e
+                        );
                         depVariables.put(name, dv);
                     }
                     L.debug("Constant intialized in {}", constants);

@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":alchemist-engine"))
     implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-implementationbase"))
+    implementation(project(":alchemist-ui-tooling"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-smartcam"))

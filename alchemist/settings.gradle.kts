@@ -24,6 +24,7 @@ include(
     "alchemist-maps",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",
+    "alchemist-ui-tooling",
     "alchemist-swingui",
     "alchemist-fxui"
 )

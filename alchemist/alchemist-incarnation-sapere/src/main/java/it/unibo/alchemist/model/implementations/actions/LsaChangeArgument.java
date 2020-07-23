@@ -50,16 +50,22 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
      *            The source node
      * @param listTarget
      *            Gradients list
-     * @param targetVariab
+     * @param targetVariable
      *            Variable name
      * @param random
      *            Random engine
      */
-    public LsaChangeArgument(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node, final String[] listTarget, final String targetVariab, final RandomGenerator random) {
+    public LsaChangeArgument(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node,
+            final String[] listTarget,
+            final String targetVariable,
+            final RandomGenerator random
+    ) {
         super(node);
         rnd = random;
         env = environment;
-        newTargetVar = new HashString(targetVariab);
+        newTargetVar = new HashString(targetVariable);
         listT = Arrays.copyOf(listTarget, listTarget.length);
     }
 

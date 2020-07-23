@@ -340,7 +340,6 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public Reaction<Double> visitCreateJunctionJunction(final BiochemistrydslParser.CreateJunctionJunctionContext ctx) {
             final Junction j = createJunction(ctx.junction());
             j.getMoleculesInCurrentNode().forEach((k, v) -> {

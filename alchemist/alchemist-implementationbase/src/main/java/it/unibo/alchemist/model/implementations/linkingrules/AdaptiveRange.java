@@ -7,10 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import java.util.stream.Collectors;
-
-import org.danilopianini.util.ListSet;
-
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
@@ -18,6 +14,9 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.danilopianini.util.ListSet;
+
+import java.util.stream.Collectors;
 
 /**
  * This linking rule dynamically searches for the best radius for each device,
@@ -80,7 +79,14 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
      *            the amount of metres the range will be changed if out of the
      *            bounds
      */
-    public AdaptiveRange(final double radius, final double minrange, final double maxrange, final int num, final int tolerance, final double adjustment) {
+    public AdaptiveRange(
+            final double radius,
+            final double minrange,
+            final double maxrange,
+            final int num,
+            final int tolerance,
+            final double adjustment
+    ) {
         super(radius);
         n = Math.max(num, 0);
         t = tolerance;

@@ -243,7 +243,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionLeftInCellContext(final BiochemistrydslParser.BiochemicalReactionLeftInCellContextContext ctx) {
+        public Reaction<Double> visitBiochemicalReactionLeftInCellContext(
+                final BiochemistrydslParser.BiochemicalReactionLeftInCellContextContext ctx
+        ) {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
@@ -255,7 +257,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionLeftInEnvContext(final BiochemistrydslParser.BiochemicalReactionLeftInEnvContextContext ctx) {
+        public Reaction<Double> visitBiochemicalReactionLeftInEnvContext(
+                final BiochemistrydslParser.BiochemicalReactionLeftInEnvContextContext ctx
+        ) {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
@@ -267,7 +271,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionLeftInNeighborContext(final BiochemistrydslParser.BiochemicalReactionLeftInNeighborContextContext ctx) {
+        public Reaction<Double> visitBiochemicalReactionLeftInNeighborContext(
+                final BiochemistrydslParser.BiochemicalReactionLeftInNeighborContextContext ctx
+        ) {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
@@ -279,7 +285,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitBiochemicalReactionRightInCellContext(final BiochemistrydslParser.BiochemicalReactionRightInCellContextContext ctx) {
+        public Reaction<Double> visitBiochemicalReactionRightInCellContext(
+                final BiochemistrydslParser.BiochemicalReactionRightInCellContextContext ctx
+        ) {
             for (final BiochemicalReactionRightElemContext re : ctx.biochemicalReactionRightElem()) {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());

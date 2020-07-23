@@ -21,7 +21,10 @@ public abstract class AbstractRandomizableAction<T> extends AbstractAction<T> {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
+    @SuppressFBWarnings(
+            value = "SE_BAD_FIELD",
+            justification = "All provided RandomGenerator implementations are actually Serializable"
+    )
     private final RandomGenerator rand;
 
     /**

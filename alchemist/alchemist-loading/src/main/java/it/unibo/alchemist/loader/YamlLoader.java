@@ -785,12 +785,16 @@ public final class YamlLoader implements Loader {
                         }
                     }
                     if (!factory.deregisterSingleton(node)) {
-                        throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
+                        throw new IllegalStateException(
+                                "This is a bug in " + getClass() + ": singletons are not correctly cleared."
+                        );
                     }
                     environment.addNode(node, position);
                 }
                 if (!factory.deregisterSingleton(displacement)) {
-                    throw new IllegalStateException("This is a bug in " + getClass() + ": singletons are not correctly cleared.");
+                    throw new IllegalStateException(
+                            "This is a bug in " + getClass() + ": singletons are not correctly cleared."
+                    );
                 }
             }
         }

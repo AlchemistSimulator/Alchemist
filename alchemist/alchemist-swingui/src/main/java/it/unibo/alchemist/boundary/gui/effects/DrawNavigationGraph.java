@@ -64,7 +64,7 @@ public class DrawNavigationGraph extends DrawOnce {
     private transient NavigationGraph<Euclidean2DPosition, ?, ConvexPolygon, Euclidean2DPassage> graph;
 
     /**
-     * @param graphics        graphics
+     * @param graphics2D        graphics
      * @param node        node
      * @param environment      environment
      * @param wormhole the wormhole used to map environment's coords to screen coords
@@ -75,7 +75,7 @@ public class DrawNavigationGraph extends DrawOnce {
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(
-            final Graphics2D graphics,
+            final Graphics2D graphics2D,
             final Node<T> node,
             final Environment<T, P> environment,
             final IWormhole2D<P> wormhole
@@ -88,10 +88,10 @@ public class DrawNavigationGraph extends DrawOnce {
             graph.vertexSet().stream()
                     .map(r -> mapEnvConvexPolygonToAwtShape(r, wormhole, environment))
                     .forEach(r -> {
-                        graphics.setColor(colorCache);
-                        graphics.fill(r);
-                        graphics.setColor(colorCache.brighter().brighter());
-                        graphics.draw(r);
+                        graphics2D.setColor(colorCache);
+                        graphics2D.fill(r);
+                        graphics2D.setColor(colorCache.brighter().brighter());
+                        graphics2D.draw(r);
                     });
             graph.vertexSet().forEach(r -> {
                 final Point centroidFrom = wormhole.getViewPoint(
@@ -106,11 +106,11 @@ public class DrawNavigationGraph extends DrawOnce {
                         final Point viewP2 = wormhole.getViewPoint(
                                 environment.makePosition(passage.getSecond().getX(), passage.getSecond().getY())
                         );
-                        graphics.setColor(Color.GREEN);
-                        graphics.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
+                        graphics2D.setColor(Color.GREEN);
+                        graphics2D.drawLine(viewP1.x, viewP1.y, viewP2.x, viewP2.y);
                         final Point midPoint = new Point((viewP1.x + viewP2.x) / 2, (viewP1.y + viewP2.y) / 2);
-                        graphics.setColor(colorCache);
-                        graphics.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
+                        graphics2D.setColor(colorCache);
+                        graphics2D.drawLine(centroidFrom.x, centroidFrom.y, midPoint.x, midPoint.y);
                     });
                 }
             });

@@ -58,7 +58,7 @@ public class DrawPedestrianPath extends DrawOnce {
     private final List<Position2D> path = new ArrayList<>();
 
     /**
-     * @param graphics        graphics
+     * @param graphics2D        graphics
      * @param node        node
      * @param environment      environment
      * @param wormhole the wormhole used to map environment's coords to screen coords
@@ -69,7 +69,7 @@ public class DrawPedestrianPath extends DrawOnce {
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(
-            final Graphics2D graphics,
+            final Graphics2D graphics2D,
             final Node<T> node,
             final Environment<T, P> environment,
             final IWormhole2D<P> wormhole
@@ -77,10 +77,10 @@ public class DrawPedestrianPath extends DrawOnce {
         path.add(environment.getPosition(node));
         if (toBeDrawn) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-            graphics.setColor(colorCache);
+            graphics2D.setColor(colorCache);
             path.forEach(p -> {
                 final Point viewP = ((IWormhole2D<Position2D<?>>) wormhole).getViewPoint(p);
-                graphics.fillOval(viewP.x, viewP.y, DIAMETER, DIAMETER);
+                graphics2D.fillOval(viewP.x, viewP.y, DIAMETER, DIAMETER);
             });
         }
     }

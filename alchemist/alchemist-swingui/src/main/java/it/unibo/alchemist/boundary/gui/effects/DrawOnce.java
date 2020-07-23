@@ -66,14 +66,19 @@ public abstract class DrawOnce implements Effect {
 
     /**
      * Draws the effect, this method is called only for a single a node of the environment.
-     * @param g Graphics2D
-     * @param n Node
-     * @param env environment
+     * @param graphics2D Graphics2D
+     * @param node Node
+     * @param environment environment
      * @param wormhole wormhole
      * @param <T> concentration type
      * @param <P> position type
      */
-    protected abstract <T, P extends Position2D<P>> void draw(Graphics2D g, Node<T> n, Environment<T, P> env, IWormhole2D<P> wormhole);
+    protected abstract <T, P extends Position2D<P>> void draw(
+            Graphics2D graphics2D,
+            Node<T> node,
+            Environment<T, P> environment,
+            IWormhole2D<P> wormhole
+    );
 
     /**
      * @return the marker node id

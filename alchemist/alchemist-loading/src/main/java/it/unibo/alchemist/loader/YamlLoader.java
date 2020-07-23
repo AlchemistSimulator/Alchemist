@@ -329,7 +329,11 @@ public final class YamlLoader implements Loader {
         assert constants.size() + depVariables.size() <= originalVars.size();
         this.constants = ImmutableMap.copyOf(constants);
         this.depVariables = ImmutableMap.copyOf(depVariables);
-        this.contents = ImmutableMap.copyOf((Map<String, Object>) recursivelyResolveVariables(rawContents, reverseLookupTable, this.constants));
+        this.contents = ImmutableMap.copyOf((Map<String, Object>) recursivelyResolveVariables(
+                rawContents,
+                reverseLookupTable,
+                this.constants
+        ));
         final Iterator<String> varNames = reverseLookupTable.values().iterator();
         while (varNames.hasNext() && !constants.isEmpty()) {
             final String var = varNames.next();

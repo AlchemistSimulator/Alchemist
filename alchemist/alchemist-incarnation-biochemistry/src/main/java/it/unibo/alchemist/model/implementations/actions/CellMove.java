@@ -40,7 +40,12 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
      *                  inPercent == false.
      * @param delta the distance at which the cell will be moved.
      */
-    public CellMove(final Environment<Double, P> environment, final Node<Double> node, final boolean inPercent, final double delta) {
+    public CellMove(
+            final Environment<Double, P> environment,
+            final Node<Double> node,
+            final boolean inPercent,
+            final double delta
+    ) {
         super(environment, node);
         this.inPer = inPercent;
         if (node instanceof CellNode) {

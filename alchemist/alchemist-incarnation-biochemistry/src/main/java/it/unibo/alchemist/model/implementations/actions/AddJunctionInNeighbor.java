@@ -31,17 +31,17 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     /**
      * 
      * @param junction the junction
-     * @param n the current node which contains this action. It is NOT the node where the junction will be created.
-     * @param e the environment
-     * @param rg the random generator
+     * @param node the current node which contains this action. It is NOT the node where the junction will be created.
+     * @param environment the environment
+     * @param randomGenerator the random generator
      */
     public AddJunctionInNeighbor(
-            final Environment<Double, P> e,
-            final CellNode<P> n,
+            final Environment<Double, P> environment,
+            final CellNode<P> node,
             final Junction junction,
-            final RandomGenerator rg
+            final RandomGenerator randomGenerator
     ) {
-        super(n, e, rg);
+        super(node, environment, randomGenerator);
         declareDependencyTo(junction);
         jun = junction;
     }

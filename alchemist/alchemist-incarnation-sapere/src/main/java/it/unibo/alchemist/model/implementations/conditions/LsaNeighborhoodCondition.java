@@ -55,7 +55,11 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
     }
 
     @Override
-    public boolean filter(final List<Map<HashString, ITreeNode<?>>> matchesList, final List<ILsaNode> validNodes, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    public boolean filter(
+            final List<Map<HashString, ITreeNode<?>>> matchesList,
+            final List<ILsaNode> validNodes,
+            final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
         if (validNodes.isEmpty()) {
             return false;
         }

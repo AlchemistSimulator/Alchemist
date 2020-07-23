@@ -46,11 +46,13 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
         implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice {
 
     /**
-     * Put this {@link Molecule} inside nodes that should compute distances using routes. It only makes sense in case the environment is a {@link MapEnvironment}
+     * Put this {@link Molecule} inside nodes that should compute distances using routes.
+     * It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule USE_ROUTES_AS_DISTANCES = new SimpleMolecule("ROUTES_AS_DISTANCE");
     /**
-     * Put this {@link Molecule} inside nodes that should compute distances using routes approximating them. It only makes sense in case the environment is a {@link MapEnvironment}
+     * Put this {@link Molecule} inside nodes that should compute distances using routes approximating them.
+     * It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule APPROXIMATE_NBR_RANGE = new SimpleMolecule("APPROXIMATE_NBR_RANGE");
     private final LoadingCache<P, Double> cache = CacheBuilder.newBuilder()

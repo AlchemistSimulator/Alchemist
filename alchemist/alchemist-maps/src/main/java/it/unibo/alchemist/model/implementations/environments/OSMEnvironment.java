@@ -233,8 +233,12 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
                     final Vehicle vehicle1 = Objects.requireNonNull(key).v;
                     final GeoPosition p11 = key.start;
                     final GeoPosition p21 = key.end;
-                    final GHRequest req = new GHRequest(p11.getLatitude(), p11.getLongitude(), p21.getLatitude(), p21.getLongitude())
-                            .setAlgorithm(DEFAULT_ALGORITHM);
+                    final GHRequest req = new GHRequest(
+                            p11.getLatitude(),
+                            p11.getLongitude(),
+                            p21.getLatitude(),
+                            p21.getLongitude()
+                    ).setAlgorithm(DEFAULT_ALGORITHM);
                     final GraphHopperAPI gh = navigators.get(vehicle1);
                     if (gh != null) {
                         final GHResponse resp = gh.route(req);

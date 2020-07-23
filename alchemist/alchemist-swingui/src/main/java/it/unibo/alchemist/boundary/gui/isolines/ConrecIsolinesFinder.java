@@ -42,8 +42,15 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Isoline> findIsolines(final BidimensionalFunction f, final Number x1, final Number y1, final Number x2, final Number y2, final Collection<Number> levels) {
-        Objects.requireNonNull(f);
+    public Collection<Isoline> findIsolines(
+            final BidimensionalFunction function,
+            final Number x1,
+            final Number y1,
+            final Number x2,
+            final Number y2,
+            final Collection<Number> levels
+    ) {
+        Objects.requireNonNull(function);
         Objects.requireNonNull(x1);
         Objects.requireNonNull(y1);
         Objects.requireNonNull(x2);
@@ -86,7 +93,7 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
         final double[][] d = new double[iub + 1][jub + 1];
         for (int i = ilb; i <= iub; i++) {
             for (int j = jlb; j <= jub; j++) {
-                d[i][j] = f.apply(x[i], y[j]).doubleValue();
+                d[i][j] = function.apply(x[i], y[j]).doubleValue();
             }
         }
         // finding the isolines

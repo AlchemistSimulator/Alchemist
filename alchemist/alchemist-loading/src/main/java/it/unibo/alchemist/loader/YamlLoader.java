@@ -173,7 +173,11 @@ public final class YamlLoader implements Loader {
                         );
                 }));
     private static final BuilderConfiguration<FilteringPolicy> FILTERING_CONFIG = new BuilderConfiguration<>(
-            ImmutableMap.of(NAME, CharSequence.class), ImmutableMap.of(), makeBaseFactory(), m -> CommonFilters.fromString(m.get(NAME).toString()));
+            ImmutableMap.of(NAME, CharSequence.class),
+            ImmutableMap.of(),
+            makeBaseFactory(),
+            m -> CommonFilters.fromString(m.get(NAME).toString())
+    );
     private static final TypeToken<List<Number>> LIST_NUMBER = new TypeToken<List<Number>>() {
         private static final long serialVersionUID = 1L;
     };

@@ -450,7 +450,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return getNodes().spliterator();
     }
 
-    private Queue<Operation> toQueue(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+    private Queue<Operation> toQueue(
+            final Node<T> center,
+            final Neighborhood<T> oldNeighborhood,
+            final Neighborhood<T> newNeighborhood
+    ) {
         return Stream.concat(
                 lostNeighbors(center, oldNeighborhood, newNeighborhood),
                 foundNeighbors(center, oldNeighborhood, newNeighborhood))

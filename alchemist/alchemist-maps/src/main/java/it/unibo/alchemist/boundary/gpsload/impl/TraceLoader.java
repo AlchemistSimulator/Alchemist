@@ -185,7 +185,9 @@ public final class TraceLoader implements Iterable<GPSTrace> {
             if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
                 return (GPSTimeAlignment) FACTORY.build(targetClass, args);
             }
-            throw new IllegalArgumentException(fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName());
+            throw new IllegalArgumentException(
+                    fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName()
+            );
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(fullName + " could not be found", e);
         }

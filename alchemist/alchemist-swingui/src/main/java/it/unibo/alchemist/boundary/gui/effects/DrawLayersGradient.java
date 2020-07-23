@@ -92,8 +92,8 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
                 // fill the cell with the color
                 if (v >= getMinLayerValueDouble()) {
                     final double newAlpha = map(v, getMinLayerValueDouble(), getMaxLayerValueDouble(), 0, getAlpha().getVal());
-                    graphics2.setColor(new Color(getRed().getVal(), getGreen().getVal(), getBlue().getVal(), (int) Math.ceil(newAlpha)));
-                    graphics2.fillRect(i1, j1, i2 - i1, j2 - j1);
+                    graphics.setColor(new Color(getRed().getVal(), getGreen().getVal(), getBlue().getVal(), (int) Math.ceil(newAlpha)));
+                    graphics.fillRect(i1, j1, i2 - i1, j2 - j1);
                 }
             }
         }

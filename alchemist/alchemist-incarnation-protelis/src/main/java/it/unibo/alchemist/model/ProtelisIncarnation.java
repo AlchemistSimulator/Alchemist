@@ -261,7 +261,13 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     @Override
     public double getProperty(final Node<Object> node, final Molecule molecule, final String property) {
         try {
-            final SynchronizedVM vm = cache.get(new CacheKey(Objects.requireNonNull(node), Objects.requireNonNull(molecule), Objects.requireNonNull(property)));
+            final SynchronizedVM vm = cache.get(
+                    new CacheKey(
+                            Objects.requireNonNull(node),
+                            Objects.requireNonNull(molecule),
+                            Objects.requireNonNull(property)
+                    )
+            );
             final Object val = vm.runCycle();
             if (val instanceof Number) {
                 return ((Number) val).doubleValue();

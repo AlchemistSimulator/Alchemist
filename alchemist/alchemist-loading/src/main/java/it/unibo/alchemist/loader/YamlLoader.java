@@ -351,8 +351,21 @@ public final class YamlLoader implements Loader {
                 ImmutableMap.of(VALUES, List.class, DEFAULT, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
                 m -> new ArbitraryVariable(toDouble.apply(m, DEFAULT), factory.convertOrFail(List.class, m.get(VALUES))));
         final BuilderConfiguration<Variable<?>> linearVarConfig = new BuilderConfiguration<>(
-                ImmutableMap.of(DEFAULT, Number.class, MIN, Number.class, MAX, Number.class, STEP, Number.class), ImmutableMap.of(NAME, CharSequence.class), factory,
-                m -> new LinearVariable(toDouble.apply(m, DEFAULT), toDouble.apply(m, MIN), toDouble.apply(m, MAX), toDouble.apply(m, STEP)));
+                ImmutableMap.of(
+                        DEFAULT, Number.class,
+                        MIN, Number.class,
+                        MAX, Number.class,
+                        STEP, Number.class
+                ),
+                ImmutableMap.of(NAME, CharSequence.class),
+                factory,
+                m -> new LinearVariable(
+                        toDouble.apply(m, DEFAULT),
+                        toDouble.apply(m, MIN),
+                        toDouble.apply(m, MAX),
+                        toDouble.apply(m, STEP)
+                )
+        );
         final Builder<Variable<?>> varBuilder = new Builder<>(Variable.class, ImmutableSet.of(arbitraryVarConfig, linearVarConfig), factory);
         variables = originalVars.entrySet().stream()
                 .filter(e -> e != null && !e.getValue().containsKey(FORMULA))

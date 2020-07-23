@@ -143,7 +143,12 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
         }
         final double shapeParameter = 1 / k;
         final double scaleParameter = mean / FastMath.exp(Gamma.logGamma(1 + k));
-        return new WeibullDistribution(random, shapeParameter, scaleParameter, WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+        return new WeibullDistribution(
+                random,
+                shapeParameter,
+                scaleParameter,
+                WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY
+        );
     }
 
     /**

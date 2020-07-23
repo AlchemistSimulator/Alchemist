@@ -28,7 +28,9 @@ import java.util.stream.Collectors;
 /**
  * @param <T>
  */
-public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T> {
+public class Continuous2DObstacles<T>
+        extends LimitedContinuos2D<T>
+        implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
     private static final long serialVersionUID = 69931743897405107L;

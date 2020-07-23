@@ -324,7 +324,9 @@ public final class BioRect2DEnvironmentNoOverlap
                             );
                         }
                     } catch (NoSuchMethodException e) {
-                        L.error("Method " + (isDeformable ? "getMaxDiameter" : "getDiameter") + "not foung in class " + cellClass.getName());
+                        L.error("Method "
+                                + (isDeformable ? "getMaxDiameter" : "getDiameter")
+                                + "not foung in class " + cellClass.getName());
                         return 0;
                     }
                 })

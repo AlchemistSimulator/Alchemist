@@ -127,6 +127,13 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            a {@link String} describing the object
      * @return a new {@link Action}
      */
-    Action<T> createAction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, Reaction<T> reaction, String param);
+    Action<T> createAction(
+            RandomGenerator rand,
+            Environment<T, P> env,
+            Node<T> node,
+            TimeDistribution<T> time,
+            Reaction<T> reaction,
+            String param
+    );
 
 }

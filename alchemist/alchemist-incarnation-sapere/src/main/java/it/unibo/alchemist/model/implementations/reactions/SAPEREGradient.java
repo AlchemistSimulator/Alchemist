@@ -524,7 +524,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
 
         @Override
         public Action<List<ILsaMolecule>> cloneAction(
-                Node<List<ILsaMolecule>> node,
+                final Node<List<ILsaMolecule>> node,
                 final Reaction<List<ILsaMolecule>> reaction
         ) {
             return null;

@@ -340,7 +340,9 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
              * different atoms) or the passed is a variable (and consequently,
              * more generic), then return false
              */
-            if (!args.get(i).mayMatch(mol.getArg(i)) || (a.getRootNodeType() != Type.VAR && tomatch.getRootNodeType() == Type.VAR)) {
+            if (!args.get(i).mayMatch(mol.getArg(i))
+                    || (a.getRootNodeType() != Type.VAR && tomatch.getRootNodeType() == Type.VAR)
+            ) {
                 return false;
             }
         }

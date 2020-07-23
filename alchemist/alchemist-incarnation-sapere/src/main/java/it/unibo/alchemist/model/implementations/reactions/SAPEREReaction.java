@@ -51,7 +51,10 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     private static final long serialVersionUID = -7264856859267079626L;
 
     private final Environment<List<ILsaMolecule>, ?> environment;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
+    @SuppressFBWarnings(
+            value = "SE_BAD_FIELD",
+            justification = "All provided RandomGenerator implementations are actually Serializable"
+    )
     private final RandomGenerator rng;
     private final SAPERETimeDistribution timedist;
 
@@ -96,24 +99,29 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     /**
-     * @param env
+     * @param environment
      *            the current environment
-     * @param n
+     * @param node
      *            the current node
-     * @param random
+     * @param randomGenerator
      *            the random engine to use
-     * @param timeDist
+     * @param timeDistribution
      *            Time Distribution
      */
-    public SAPEREReaction(final Environment<List<ILsaMolecule>, ?> env, final ILsaNode n, final RandomGenerator random, final TimeDistribution<List<ILsaMolecule>> timeDist) {
-        super(n, timeDist);
+    public SAPEREReaction(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node,
+            final RandomGenerator randomGenerator,
+            final TimeDistribution<List<ILsaMolecule>> timeDistribution
+    ) {
+        super(node, timeDistribution);
         if (getTimeDistribution() instanceof SAPERETimeDistribution) {
             timedist = (SAPERETimeDistribution) getTimeDistribution();
         } else {
             timedist = null;
         }
-        rng = random;
-        environment = env;
+        rng = randomGenerator;
+        this.environment = environment;
     }
 
     @Override
@@ -156,7 +164,9 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             return;
         }
         final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
-        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getLsaNode().getLsaSpace()) : null;
+        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally
+                ? new ArrayList<>(getLsaNode().getLsaSpace())
+                : null;
         Map<HashString, ITreeNode<?>> matches = null;
         Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
         /*
@@ -357,7 +367,10 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         setConditionsAndActions(conditions, getActions());
     }
 
-    private void setConditionsAndActions(final List<? extends Condition<List<ILsaMolecule>>> c, final List<? extends Action<List<ILsaMolecule>>> a) {
+    private void setConditionsAndActions(
+            final List<? extends Condition<List<ILsaMolecule>>> c,
+            final List<? extends Action<List<ILsaMolecule>>> a
+    ) {
         super.setConditions((List<Condition<List<ILsaMolecule>>>) c);
         super.setActions((List<Action<List<ILsaMolecule>>>) a);
         modifiesOnlyLocally = getOutputContext() == Context.LOCAL;

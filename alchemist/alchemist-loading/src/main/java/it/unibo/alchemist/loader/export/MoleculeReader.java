@@ -67,7 +67,9 @@ public final class MoleculeReader<T> implements Extractor {
                 .collect(Collectors.toList());
         this.columns = Collections.unmodifiableList(
                 this.aggregators.isEmpty()
-                    ? Lists.newArrayList((property == null || property.isEmpty() ? "" : property + "@") + molecule + "@every_node")
+                    ? Lists.newArrayList(
+                            (property == null || property.isEmpty() ? "" : property + "@") + molecule + "@every_node"
+                        )
                     : this.aggregators.stream()
                         .map(a -> 
                             (property == null || property.isEmpty() ? "" : property + "@")
@@ -77,7 +79,12 @@ public final class MoleculeReader<T> implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?, ?> environment, final Reaction<?> reaction, final Time time, final long step) {
+    public double[] extractData(
+            final Environment<?, ?> environment,
+            final Reaction<?> reaction,
+            final Time time,
+            final long step
+    ) {
         @SuppressWarnings("unchecked")
         final DoubleStream values = ((Environment<T, ?>) environment).getNodes().stream()
                 .mapToDouble(node -> incarnation.getProperty(node, mol, property));

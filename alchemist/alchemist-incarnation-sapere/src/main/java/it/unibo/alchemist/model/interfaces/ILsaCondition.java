@@ -8,11 +8,10 @@
 package it.unibo.alchemist.model.interfaces;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import org.danilopianini.lang.HashString;
 
 import java.util.List;
 import java.util.Map;
-
-import org.danilopianini.lang.HashString;
 
 
 /**

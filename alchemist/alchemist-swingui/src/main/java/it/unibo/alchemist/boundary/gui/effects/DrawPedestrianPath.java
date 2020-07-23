@@ -68,7 +68,12 @@ public class DrawPedestrianPath extends DrawOnce {
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+    protected <T, P extends Position2D<P>> void draw(
+            final Graphics2D g,
+            final Node<T> n,
+            final Environment<T, P> env,
+            final IWormhole2D<P> wormhole
+    ) {
         path.add(env.getPosition(n));
         if (toBeDrawn) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());

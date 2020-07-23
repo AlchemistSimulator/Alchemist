@@ -1002,10 +1002,15 @@ public final class YamlLoader implements Loader {
             final Collection<BuilderConfiguration<T>> configs = supportedConfigs.stream()
                     .filter(c -> c.matches(realObj)).collect(Collectors.toList());
             if (configs.isEmpty()) {
-                throw new IllegalAlchemistYAMLException("No configuration among " + supportedConfigs + " is applicable for building a " + clazz.getName() + " with " + o);
+                throw new IllegalAlchemistYAMLException(
+                        "No configuration among " + supportedConfigs + " is applicable for building a "
+                                + clazz.getName() + " with " + o
+                );
             }
             if (configs.size() > 1) {
-                throw new IllegalAlchemistYAMLException("Ambiguous specification " + o + " matches all those in " + configs + " for " + clazz.getName());
+                throw new IllegalAlchemistYAMLException(
+                        "Ambiguous specification " + o + " matches all those in " + configs + " for " + clazz.getName()
+                );
             }
             return configs.iterator().next().build(realObj);
         }

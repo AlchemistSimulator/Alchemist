@@ -147,7 +147,8 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
                 if (nodeConcentration >= FastMath.abs(deltaTemp)) {
                     n.setConcentration(biomolecule, nodeConcentration + deltaTemp);
                     break;
-                    // else, remove all molecule of that species from that node and go on till deltaTemp is smaller than node concentration
+                    // else, remove all molecules of that species from that node and go on
+                    // till deltaTemp is smaller than node concentration
                 } else {
                     deltaTemp = deltaTemp + nodeConcentration;
                     n.removeConcentration(biomolecule);

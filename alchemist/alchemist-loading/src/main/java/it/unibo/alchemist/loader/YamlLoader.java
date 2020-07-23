@@ -1033,7 +1033,9 @@ public final class YamlLoader implements Loader {
         public T build(@Nonnull final Object o) {
             assert matches(o);
             return ifMap(o, m -> {
-                    final Map<String, Object> args = Maps.newLinkedHashMapWithExpectedSize(mandatoryFields.size() + optionalFields.size());
+                    final Map<String, Object> args = Maps.newLinkedHashMapWithExpectedSize(
+                            mandatoryFields.size() + optionalFields.size()
+                    );
                     for (final Entry<String, Class<?>> arg: mandatoryFields.entrySet()) {
                         final String varName = arg.getKey();
                         assert m.containsKey(varName);

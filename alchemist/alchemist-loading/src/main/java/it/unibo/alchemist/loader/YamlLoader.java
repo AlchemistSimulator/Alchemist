@@ -276,7 +276,8 @@ public final class YamlLoader implements Loader {
             varEntry.getValue().put(NAME, varEntry.getKey());
         }
         L.debug("Variables: {}", originalVars);
-        final Map<Map<String, Object>, String> reverseLookupTable = originalVars.entrySet().stream().collect(Collectors.toMap(Entry::getValue, Entry::getKey));
+        final Map<Map<String, Object>, String> reverseLookupTable = originalVars.entrySet().stream()
+                .collect(Collectors.toMap(Entry::getValue, Entry::getKey));
         L.debug("Reverse lookup table: {}", reverseLookupTable);
         /*
          * Compute constants and dependent variables

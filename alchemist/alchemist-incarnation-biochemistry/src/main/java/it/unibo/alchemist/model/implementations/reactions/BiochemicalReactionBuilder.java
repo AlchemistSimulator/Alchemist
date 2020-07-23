@@ -154,7 +154,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         return this;
     }
 
-    private static final class BiochemistryDSLVisitor<P extends Position<? extends P>> extends BiochemistrydslBaseVisitor<Reaction<Double>> {
+    private static final class BiochemistryDSLVisitor<P extends Position<? extends P>>
+            extends BiochemistrydslBaseVisitor<Reaction<Double>> {
+
         private static final String CONDITIONS_PACKAGE = "it.unibo.alchemist.model.implementations.conditions.";
         private static final String ACTIONS_PACKAGE = "it.unibo.alchemist.model.implementations.actions.";
 

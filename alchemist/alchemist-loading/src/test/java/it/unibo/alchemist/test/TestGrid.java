@@ -86,7 +86,21 @@ public class TestGrid {
     }
 
     private void test(final long expected, final double x, final double y) {
-        assertEquals(expected, new Grid(new Continuous2DEnvironment<>(), new MersenneTwister(), 0, 0, x, y, 1, 1, 0, 0).stream().count());
+        assertEquals(
+                expected,
+                new Grid(
+                        new Continuous2DEnvironment<>(),
+                        new MersenneTwister(),
+                        0,
+                        0,
+                        x,
+                        y,
+                        1,
+                        1,
+                        0,
+                        0
+                ).stream().count()
+        );
     }
 
 }

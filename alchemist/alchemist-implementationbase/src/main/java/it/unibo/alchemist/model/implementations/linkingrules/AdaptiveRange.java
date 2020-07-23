@@ -126,7 +126,13 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
      *            the amount of metres the range will be changed if out of the
      *            bounds
      */
-    public AdaptiveRange(final double radius, final double minrange, final int num, final int tolerance, final double adjustment) {
+    public AdaptiveRange(
+            final double radius,
+            final double minrange,
+            final int num,
+            final int tolerance,
+            final double adjustment
+    ) {
         this(radius, minrange, DEFAULT_MAXRANGE, num, tolerance, adjustment);
     }
 

@@ -200,7 +200,11 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                         conditions.add(createCondition(rand, env, node, time, result, condition));
                     }
                 } else {
-                    illegalSpec("not a sequence of valid conditions (curly bracket enclosed LSAs, with optional '+' prefix)", conditionsSpec);
+                    illegalSpec(
+                            "not a sequence of valid conditions" +
+                            "(curly bracket enclosed LSAs, with optional '+' prefix)",
+                            conditionsSpec
+                    );
                 }
                 final List<Action<List<ILsaMolecule>>> actions = new LinkedList<>();
                 final String actionsSpec = rMatcher.group(ACTIONS_GROUP);

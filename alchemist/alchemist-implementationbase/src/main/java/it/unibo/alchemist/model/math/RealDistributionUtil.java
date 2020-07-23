@@ -61,10 +61,23 @@ public final class RealDistributionUtil {
                 final Object[] arguments = Stream.concat(Stream.of(rng), Arrays.stream(args).boxed()).toArray();
                 try {
                     return c.newInstance(arguments);
-                } catch (IllegalAccessException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
-                    throw new IllegalArgumentException("Could not initialize " + name + " with " + c + " and arguments " + Arrays.toString(arguments), e);
+                } catch (
+                        IllegalAccessException
+                        | InstantiationException
+                        | IllegalArgumentException
+                        | InvocationTargetException e
+                ) {
+                    throw new IllegalArgumentException(
+                            "Could not initialize " + name + " with "
+                            + c + " and arguments " + Arrays.toString(arguments),
+                            e
+                    );
                 }
-            }).orElseThrow(() -> new IllegalArgumentException("Could not initialize " + name + " with " + rng + " and " + Arrays.toString(args)));
+            }).orElseThrow(
+                    () -> new IllegalArgumentException(
+                        "Could not initialize " + name + " with " + rng + " and " + Arrays.toString(args)
+                    )
+            );
     }
 
 }

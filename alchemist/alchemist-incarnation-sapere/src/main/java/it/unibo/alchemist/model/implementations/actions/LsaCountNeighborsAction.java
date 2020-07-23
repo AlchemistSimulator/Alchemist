@@ -54,7 +54,13 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      * @param rand
      *            Random engine
      */
-    public LsaCountNeighborsAction(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node, final ILsaMolecule molToCount, final HashString countVar, final RandomGenerator rand) {
+    public LsaCountNeighborsAction(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node,
+            final ILsaMolecule molToCount,
+            final HashString countVar,
+            final RandomGenerator rand
+    ) {
         super(node);
         rnd = rand;
         env = environment;
@@ -81,7 +87,13 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      * @param rand
      *            Random engine
      */
-    public LsaCountNeighborsAction(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node, final ILsaMolecule molToCount, final String countVar, final RandomGenerator rand) {
+    public LsaCountNeighborsAction(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node,
+            final ILsaMolecule molToCount,
+            final String countVar,
+            final RandomGenerator rand
+    ) {
         this(environment, node, molToCount, new HashString(countVar), rand);
     }
 

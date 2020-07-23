@@ -711,8 +711,18 @@ public final class YamlLoader implements Loader {
                                                     CONDITIONS, List.class
                                             ),
                                             factory,
-                                            m -> Objects.requireNonNull(incarnation.createReaction(simulationRandomGenerator, environment, node, timeDistribution, m.get(REACTION).toString()), () ->
-                                                    incarnation + " created a null reaction for " + REACTION + ": " + m.get(REACTION))),
+                                            m -> Objects.requireNonNull(
+                                                    incarnation.createReaction(
+                                                            simulationRandomGenerator,
+                                                            environment,
+                                                            node,
+                                                            timeDistribution,
+                                                            m.get(REACTION).toString()
+                                                    ),
+                                                    () -> incarnation + " created a null reaction for "
+                                                            + REACTION + ": " + m.get(REACTION)
+                                            )
+                                    ),
                                     factory);
                             final Reaction<T> reaction = Objects.requireNonNull(reactionBuilder.build(program));
                             factory.registerSingleton(Reaction.class, reaction);

@@ -261,7 +261,11 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
+    protected void updateInternalStatus(
+            final Time curTime,
+            final boolean executed,
+            final Environment<List<ILsaMolecule>, ?> env
+    ) {
         if (emptyExecution) {
             emptyExecution = false;
             totalPropensity = 0;

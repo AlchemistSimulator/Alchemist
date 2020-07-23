@@ -207,7 +207,9 @@ public class TestDSL {
         // custom reactions must have brackets (MyCustomReaction())
         testInvalidReaction("[MolA] --> [MolB] reaction type MyCustomReaction");
         testInvalidReaction("[MolA] --> [MolB] reaction MyCustomReaction()"); // reaction instead reaction type
-        testInvalidReaction("[3 MolA in env] --> [2 MolB] reaction type MyCustomReaction1(), MyCustomReaction2(1.2, qwerty)"); // Multiple reaction types
+        // Multiple reaction types
+        testInvalidReaction("[3 MolA in env] "
+                + "--> [2 MolB] reaction type MyCustomReaction1(), MyCustomReaction2(1.2, qwerty)");
         //junctions
         testInvalidReaction("[Junction A-B] --> [MolA in env]"); // Junction instead of junction
         // correct syntax for junction is biomolecule(:biomolecule)*-biomolecule(:biomolecule)*

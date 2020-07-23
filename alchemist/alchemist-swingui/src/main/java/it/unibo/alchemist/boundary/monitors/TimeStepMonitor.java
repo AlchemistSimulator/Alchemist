@@ -106,7 +106,12 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     }
 
     @Override
-    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time curTime, final long curStep) {
+    public void stepDone(
+            final Environment<T, P> environment,
+            final Reaction<T> reaction,
+            final Time curTime,
+            final long curStep
+    ) {
         if (updater == null) {
             updater = new Updater();
             new Thread(updater, TimeStepMonitor.class.getSimpleName() + " updater thread").start();

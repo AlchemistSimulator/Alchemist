@@ -35,7 +35,7 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      *            minimum radius in metres
      * @param maxrange
      *            maximum radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
      *            if the number of neighbors is smaller than num-tolerance, the
@@ -46,10 +46,10 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
             final double radius,
             final double minrange,
             final double maxrange,
-            final int num,
+            final int desiredNeighborsCount,
             final int tolerance
     ) {
-        this(radius, minrange, maxrange, num, tolerance, DEFAULT_ADJUSTMENT, DEFAULT_MOLECULETYPE);
+        this(radius, minrange, maxrange, desiredNeighborsCount, tolerance, DEFAULT_ADJUSTMENT, DEFAULT_MOLECULETYPE);
     }
 
     /**

@@ -26,7 +26,8 @@ import java.util.function.Function;
  *
  * Normally, drawing a layer's values only makes sense for "numerical" layers
  * (i.e. layers for which the values are {@link Number}s). However, one could have
- * a "non-numerical" layer whose {@link it.unibo.alchemist.model.interfaces.Layer#getValue(it.unibo.alchemist.model.interfaces.Position)}
+ * a "non-numerical" layer whose
+ * {@link it.unibo.alchemist.model.interfaces.Layer#getValue(it.unibo.alchemist.model.interfaces.Position)}
  * return type is an object from which a value can be extracted somehow. In the end,
  * drawing a layer's values makes sense as long as there is a way to map
  * those values to Numbers. More generally, a {@link LayerToFunctionMapper} is needed.
@@ -53,7 +54,12 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
      * {@inheritDoc}
      */
     @Override
-    public <T, P extends Position2D<P>> void drawLayers(final Collection<Layer<T, P>> toDraw, final Environment<T, P> environment, final Graphics2D graphics, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void drawLayers(
+            final Collection<Layer<T, P>> toDraw,
+            final Environment<T, P> environment,
+            final Graphics2D graphics,
+            final IWormhole2D<P> wormhole
+    ) {
         if (mapper == null) {
             mapper = createMapper();
         }

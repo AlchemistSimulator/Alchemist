@@ -95,7 +95,12 @@ public class DrawCognitiveMap extends DrawOnce {
      * {@inheritDoc}
      */
     @Override
-    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+    protected <T, P extends Position2D<P>> void draw(
+            final Graphics2D g,
+            final Node<T> n,
+            final Environment<T, P> env,
+            final IWormhole2D<P> wormhole
+    ) {
         if (cognitiveMap != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             g.setColor(Color.RED);

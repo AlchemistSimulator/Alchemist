@@ -119,12 +119,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final ProtelisNode<P> pNode = (ProtelisNode<P>) node;
             if (additionalParameters.equalsIgnoreCase("send")) {
                 final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
-                    .parallelStream()
-                    .flatMap(r -> r.getActions().parallelStream())
-                    .filter(a -> a instanceof SendToNeighbor)
-                    .map(c -> (SendToNeighbor) c)
-                    .map(SendToNeighbor::getProtelisProgram)
-                    .collect(Collectors.toList());
+                        .parallelStream()
+                        .flatMap(r -> r.getActions().parallelStream())
+                        .filter(a -> a instanceof SendToNeighbor)
+                        .map(c -> (SendToNeighbor) c)
+                        .map(SendToNeighbor::getProtelisProgram)
+                        .collect(Collectors.toList());
                 final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
                 if (pList.isEmpty()) {
                     throw new IllegalStateException("There is no program requiring a "
@@ -177,16 +177,15 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
-            @SuppressWarnings("unchecked")
-            final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
-                .parallelStream()
-                .flatMap(r -> r.getConditions().stream())
-                .filter(c -> c instanceof ComputationalRoundComplete)
-                .map(c -> (ComputationalRoundComplete) c)
-                .flatMap(crc -> crc.getInboundDependencies().stream())
-                .filter(mol -> mol instanceof RunProtelisProgram)
-                .map(mol -> (RunProtelisProgram<P>) mol)
-                .collect(Collectors.toList());
+            @SuppressWarnings("unchecked") final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
+                    .parallelStream()
+                    .flatMap(r -> r.getConditions().stream())
+                    .filter(c -> c instanceof ComputationalRoundComplete)
+                    .map(c -> (ComputationalRoundComplete) c)
+                    .flatMap(crc -> crc.getInboundDependencies().stream())
+                    .filter(mol -> mol instanceof RunProtelisProgram)
+                    .map(mol -> (RunProtelisProgram<P>) mol)
+                    .collect(Collectors.toList());
             final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
             if (pList.isEmpty()) {
                 throw new IllegalStateException("There is no program requiring a "
@@ -217,8 +216,13 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    public Reaction<Object> createReaction(final RandomGenerator randomGenerator, final Environment<Object, P> environment,
-                                           final Node<Object> node, final TimeDistribution<Object> timeDistribution, final String parameter) {
+    public Reaction<Object> createReaction(
+            final RandomGenerator randomGenerator,
+            final Environment<Object, P> environment,
+            final Node<Object> node,
+            final TimeDistribution<Object> timeDistribution,
+            final String parameter
+    ) {
         final boolean isSend = "send".equalsIgnoreCase(parameter);
         final Reaction<Object> result = isSend
                 ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(timeDistribution))
@@ -290,12 +294,14 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         private final WeakReference<Node<Object>> node;
         private final String property;
         private final int hash;
+
         private CacheKey(final Node<Object> node, final Molecule mol, final String prop) {
             this.node = new WeakReference<>(node);
             molecule = mol;
             property = prop;
             hash = molecule.hashCode() ^ property.hashCode() ^ (node == null ? 0 : node.hashCode());
         }
+
         @Override
         public boolean equals(final Object obj) {
             return obj instanceof CacheKey
@@ -303,6 +309,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     && ((CacheKey) obj).molecule.equals(molecule)
                     && ((CacheKey) obj).property.equals(property);
         }
+
         @Override
         public int hashCode() {
             return hash;
@@ -324,12 +331,14 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             }
         };
         private final Node<?> node;
+
         private DummyContext(final Node<?> node) {
             super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
                 @Override
                 public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
                     return Collections.emptyMap();
                 }
+
                 @Override
                 public void shareState(final Map<CodePath, Object> toSend) {
                 }
@@ -341,6 +350,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         public Number getCurrentTime() {
             return 0;
         }
+
         @Override
         public DeviceUID getDeviceUID() {
             if (node instanceof ProtelisNode) {
@@ -348,10 +358,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             }
             return NO_NODE_ID;
         }
+
         @Override
         protected DummyContext instance() {
             return this;
         }
+
         @Override
         public double nextRandomDouble() {
             final double result;
@@ -382,26 +394,32 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         public void commit() {
         }
+
         @Override
         public Object get(final String id) {
             return shadow.get(id, node.getConcentration(new SimpleMolecule(id)));
         }
+
         @Override
         public Object get(final String id, final Object defaultValue) {
             return Optional.ofNullable(get(id)).orElse(defaultValue);
         }
+
         @Override
         public boolean has(final String id) {
             return shadow.has(id) || node.contains(new SimpleMolecule(id));
         }
+
         @Override
         public boolean put(final String id, final Object v) {
             return shadow.put(id, v);
         }
+
         @Override
         public Object remove(final String id) {
             return shadow.remove(id);
         }
+
         @Override
         public void setup() {
         }
@@ -416,6 +434,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         private final CacheKey key;
         private final Semaphore mutex = new Semaphore(1);
         private final Optional<ProtelisVM> vm;
+
         private SynchronizedVM(final CacheKey key) {
             this.key = key;
             ProtelisVM myVM = null;
@@ -432,6 +451,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             }
             vm = Optional.ofNullable(myVM);
         }
+
         public Object runCycle() {
             final Node<Object> node = key.node.get();
             if (node == null) {
@@ -458,62 +478,78 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         private <A> A notImplemented() {
             throw new UnsupportedOperationException("Method can't be invoked in this context.");
         }
-        @Override @NotNull
+
+        @Override
+        @NotNull
         public Iterator<Reaction<Object>> iterator() {
             return notImplemented();
         }
+
         @Override
         public int compareTo(@NotNull final Node<Object> o) {
             return notImplemented();
         }
+
         @Override
         public void addReaction(final Reaction<Object> r) {
             notImplemented();
         }
+
         @Override
         public boolean contains(final Molecule mol) {
             return notImplemented();
         }
+
         @Override
         public int getChemicalSpecies() {
             return notImplemented();
         }
+
         @Override
         public Object getConcentration(final Molecule mol) {
             return notImplemented();
         }
+
         @Override
         public Map<Molecule, Object> getContents() {
             return notImplemented();
         }
+
         @Override
         public int getId() {
             return notImplemented();
         }
+
         @Override
         public List<Reaction<Object>> getReactions() {
             return null;
         }
+
         @Override
         public void removeConcentration(final Molecule mol) {
             notImplemented();
         }
+
         @Override
         public void removeReaction(final Reaction<Object> r) {
             notImplemented();
         }
+
         @Override
         public void setConcentration(final Molecule mol, final Object c) {
             notImplemented();
         }
+
         @Override
         public Node<Object> cloneNode(final Time t) {
             return notImplemented();
         }
+
         @Override
         public boolean equals(final Object obj) {
             return obj instanceof NoNode;
         }
+
         @Override
         public int hashCode() {
             return -1;

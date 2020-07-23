@@ -32,7 +32,11 @@ public interface ILsaCondition extends Condition<List<ILsaMolecule>> {
      *            possible binding
      * @return true if the condition is valid, false otherwise
      */
-    boolean filter(List<Map<HashString, ITreeNode<?>>> matches, List<ILsaNode> validNodes, List<Map<ILsaNode, List<ILsaMolecule>>> retrieved);
+    boolean filter(
+            List<Map<HashString, ITreeNode<?>>> matches,
+            List<ILsaNode> validNodes,
+            List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    );
 
     @Override
     ILsaCondition cloneCondition(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);

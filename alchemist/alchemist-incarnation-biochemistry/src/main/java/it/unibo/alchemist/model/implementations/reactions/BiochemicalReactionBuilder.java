@@ -443,7 +443,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitJunctionReactionJunctionCondition(final BiochemistrydslParser.JunctionReactionJunctionConditionContext ctx) {
+        public Reaction<Double> visitJunctionReactionJunctionCondition(
+                final BiochemistrydslParser.JunctionReactionJunctionConditionContext ctx
+        ) {
             if (node instanceof CellNode) {
                 final Junction j = createJunction(ctx.junction());
                 junctionList.add(j);

@@ -35,9 +35,9 @@ public abstract class DrawOnce implements Effect {
      */
     @Override
     public <T, P extends Position2D<P>> void apply(
-            final Graphics2D g,
-            final Node<T> n,
-            final Environment<T, P> env,
+            final Graphics2D graphics,
+            final Node<T> node,
+            final Environment<T, P> environment,
             final IWormhole2D<P> wormhole
     ) {
         if (markerNodeID != null) {
@@ -45,21 +45,21 @@ public abstract class DrawOnce implements Effect {
              * We want to check if the cached id belongs to a node still present in
              * the environment, thus we don't use getNodeByID to avoid exceptions
              */
-            final Optional<Node<T>> markerNode = env.getNodes().stream()
-                    .filter(node -> node.getId() == markerNodeID)
+            final Optional<Node<T>> markerNode = environment.getNodes().stream()
+                    .filter(it -> it.getId() == markerNodeID)
                     .findFirst();
             /*
              * if marker node is no longer in the environment or it is no longer displayed, we need to change it
              */
-            if (markerNode.isEmpty() || !wormhole.isInsideView(wormhole.getViewPoint(env.getPosition(markerNode.get())))) {
+            if (markerNode.isEmpty() || !wormhole.isInsideView(wormhole.getViewPoint(environment.getPosition(markerNode.get())))) {
                 markerNodeID = null;
             }
         }
         if (markerNodeID == null) {
-            markerNodeID = n.getId();
+            markerNodeID = node.getId();
         }
-        if (markerNodeID == n.getId()) {
-            draw(g, n, env, wormhole);
+        if (markerNodeID == node.getId()) {
+            draw(graphics, node, environment, wormhole);
         }
     }
 

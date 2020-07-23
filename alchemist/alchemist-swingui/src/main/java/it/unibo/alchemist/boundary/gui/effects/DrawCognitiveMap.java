@@ -64,9 +64,9 @@ public class DrawCognitiveMap extends DrawOnce {
     private transient NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap;
 
     /**
-     * @param g        graphics
-     * @param n        node
-     * @param env      environment
+     * @param graphics        graphics
+     * @param node        node
+     * @param environment      environment
      * @param wormhole the wormhole used to map environment's coords to screen coords
      * @param <T>      concentration type
      * @param <P>      position type
@@ -74,13 +74,13 @@ public class DrawCognitiveMap extends DrawOnce {
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
-        super.apply(g, n, env, wormhole);
+    public <T, P extends Position2D<P>> void apply(final Graphics2D graphics, final Node<T> node, final Environment<T, P> environment, final IWormhole2D<P> wormhole) {
+        super.apply(graphics, node, environment, wormhole);
         final Integer markerNodeID = getMarkerNodeID();
-        if (cognitiveMap == null && markerNodeID != null && env.getNodeByID(markerNodeID) instanceof OrientingPedestrian
-                && env instanceof Environment2DWithObstacles
-                && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            cognitiveMap = ((OrientingPedestrian) env.getNodeByID(markerNodeID)).getCognitiveMap();
+        if (cognitiveMap == null && markerNodeID != null && environment.getNodeByID(markerNodeID) instanceof OrientingPedestrian
+                && environment instanceof Environment2DWithObstacles
+                && environment.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
+            cognitiveMap = ((OrientingPedestrian) environment.getNodeByID(markerNodeID)).getCognitiveMap();
         }
     }
 

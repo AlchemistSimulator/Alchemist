@@ -125,13 +125,13 @@ public class DrawCognitiveMap extends DrawOnce {
     }
 
     private <P extends Position2D<P>> Shape mapEnvEllipseToAwtShape(
-            final Ellipse e,
+            final Ellipse ellipse,
             final IWormhole2D<P> wormhole,
-            final Environment<?, P> env
+            final Environment<?, P> environment
     ) {
-        final Rectangle2D frame = e.asAwtShape().getFrame();
-        final P startEnv = env.makePosition(frame.getMinX(), frame.getMinY());
-        final P endEnv = env.makePosition(frame.getMaxX(), frame.getMaxY());
+        final Rectangle2D frame = ellipse.asAwtShape().getFrame();
+        final P startEnv = environment.makePosition(frame.getMinX(), frame.getMinY());
+        final P endEnv = environment.makePosition(frame.getMaxX(), frame.getMaxY());
         final Point startView = wormhole.getViewPoint(startEnv);
         final Point endView = wormhole.getViewPoint(endEnv);
         final Point2D minPoint = new Point2D.Double(Math.min(startView.getX(), endView.getX()), Math.min(startView.getY(), endView.getY()));

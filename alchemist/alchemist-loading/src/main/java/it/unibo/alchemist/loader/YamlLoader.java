@@ -560,7 +560,11 @@ public final class YamlLoader implements Loader {
                 factory,
                 () -> (Environment<T, P>) new Continuous2DEnvironment<>()
         );
-        final Builder<Environment<T, P>> envBuilder = new Builder<>(Environment.class, ImmutableSet.of(envDefaultConfig), factory);
+        final Builder<Environment<T, P>> envBuilder = new Builder<>(
+                Environment.class,
+                ImmutableSet.of(envDefaultConfig),
+                factory
+        );
         factory.registerSingleton(RandomGenerator.class, simulationRandomGenerator);
         final Environment<T, P> environment = envBuilder.build(contents.get(ENVIRONMENT));
         environment.setIncarnation(incarnation);

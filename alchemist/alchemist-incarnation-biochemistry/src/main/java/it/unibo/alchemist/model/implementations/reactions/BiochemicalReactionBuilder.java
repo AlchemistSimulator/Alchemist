@@ -202,17 +202,24 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @SuppressWarnings("unchecked")
-        private <O> O createObject(final BiochemistrydslParser.JavaConstructorContext ctx, final String packageName) {
-            String className = ctx.javaClass().getText();
+        private <O> O createObject(
+                final BiochemistrydslParser.JavaConstructorContext context,
+                final String packageName
+        ) {
+            String className = context.javaClass().getText();
             if (!className.contains(".")) {
                 className = packageName + className; // NOPMD UseStringBufferForStringAppends
             }
             try {
                 final Class<O> clazz = (Class<O>) ResourceLoader.classForName(className);
-                final ArgListContext lctx = ctx.argList();
+                final ArgListContext lctx = context.argList();
                 final List<Object> params = new ArrayList<>();
                 if (lctx != null) { // if null there are no parameters, so params must be an empty List (as it is, actually)
-                    lctx.arg().forEach(arg -> params.add((arg.decimal() != null) ? Double.parseDouble(arg.decimal().getText()) : arg.LITERAL().getText()));
+                    lctx.arg().forEach(arg ->
+                            params.add((arg.decimal() != null)
+                                    ? Double.parseDouble(arg.decimal().getText())
+                                    : arg.LITERAL().getText())
+                    );
                 }
                 return factory.build(clazz, params);
             } catch (ClassNotFoundException e) {

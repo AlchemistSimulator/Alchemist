@@ -228,10 +228,14 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(timeDistribution))
                 : new Event<>(node, timeDistribution);
         if (parameter != null) {
-            result.setActions(Lists.newArrayList(createAction(randomGenerator, environment, node, timeDistribution, result, parameter)));
+            result.setActions(Lists.newArrayList(
+                    createAction(randomGenerator, environment, node, timeDistribution, result, parameter))
+            );
         }
         if (isSend) {
-            result.setConditions(Lists.newArrayList(createCondition(randomGenerator, environment, node, timeDistribution, result, null)));
+            result.setConditions(Lists.newArrayList(
+                    createCondition(randomGenerator, environment, node, timeDistribution, result, null))
+            );
         }
         return result;
     }

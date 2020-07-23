@@ -126,7 +126,13 @@ public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {
      * @return the GPSTrace
      */
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-    public static GPSTrace traceFor(final MapEnvironment<?> environment, final String path, final boolean cycle, final String normalizer, final Object... normalizerArgs) {
+    public static GPSTrace traceFor(
+            final MapEnvironment<?> environment,
+            final String path,
+            final boolean cycle,
+            final String normalizer,
+            final Object... normalizerArgs
+    ) {
         final LoadingCache<TraceRef, Iterator<GPSTrace>> gpsTraceLoader = LOADER.get(requireNonNull(environment));
         if (gpsTraceLoader == null) {
             throw new IllegalStateException("Unable to load a GPS Trace mapping for: " + environment + " (null was returned)");

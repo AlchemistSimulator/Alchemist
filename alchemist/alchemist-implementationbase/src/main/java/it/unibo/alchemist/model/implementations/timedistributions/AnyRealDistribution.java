@@ -60,7 +60,12 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      * @param parameters
      *            the parameters for the distribution
      */
-    public AnyRealDistribution(final Time start, final RandomGenerator rng, final String distribution, final double... parameters) {
+    public AnyRealDistribution(
+            final Time start,
+            final RandomGenerator rng,
+            final String distribution,
+            final double... parameters
+    ) {
         this(start, RealDistributionUtil.makeRealDistribution(rng, distribution, parameters));
     }
 

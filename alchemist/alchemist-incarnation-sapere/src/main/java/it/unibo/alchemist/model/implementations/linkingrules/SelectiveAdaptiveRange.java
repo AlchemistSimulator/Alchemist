@@ -185,7 +185,12 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      *            the amount of metres the range will be changed if out of the
      *            bounds
      */
-    public SelectiveAdaptiveRange(final double radius, final int desiredNeighborsCount, final int tolerance, final double adjustment) {
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final int desiredNeighborsCount,
+            final int tolerance,
+            final double adjustment
+    ) {
         this(radius, DEFAULT_MINRANGE, DEFAULT_MAXRANGE, desiredNeighborsCount, tolerance, adjustment, DEFAULT_MOLECULETYPE);
     }
 

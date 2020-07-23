@@ -827,7 +827,8 @@ public final class YamlLoader implements Loader {
         assert clazz != null;
         assert target != null;
         assert what != null;
-        return (T) factory.convert(clazz, target).orElseThrow(() -> new IllegalAlchemistYAMLException(target + " is not a valid " + what + " descriptor"));
+        return (T) factory.convert(clazz, target)
+                .orElseThrow(() -> new IllegalAlchemistYAMLException(target + " is not a valid " + what + " descriptor"));
     }
 
     private static <T> T cast(final Factory factory, final TypeToken<T> clazz, final Object target, final String message) {

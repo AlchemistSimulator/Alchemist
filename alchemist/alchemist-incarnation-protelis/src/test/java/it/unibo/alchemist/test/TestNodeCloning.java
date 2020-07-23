@@ -91,7 +91,12 @@ public class TestNodeCloning<P extends Position<P>> {
         sim.addOutputMonitor(new OutputMonitor<>() {
             private static final long serialVersionUID = 1L;
             @Override
-            public void stepDone(final Environment<Object, P> environment, final Reaction<Object> reaction, final Time time, final long step) {
+            public void stepDone(
+                    final Environment<Object, P> environment,
+                    final Reaction<Object> reaction,
+                    final Time time,
+                    final long step
+            ) {
                 final ImmutableMap<Node<Object>, Double> expectations = ImmutableMap.of(
                         nid.apply(2), 0d,
                         nid.apply(1), dist.apply(2, 1),

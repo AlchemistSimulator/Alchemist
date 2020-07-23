@@ -120,7 +120,9 @@ public class DrawCognitiveMap extends DrawOnce {
                     cognitiveMap.outgoingEdgesOf(r).forEach(e -> {
                         if (cognitiveMap != null) {
                             final Euclidean2DPosition head = cognitiveMap.getEdgeTarget(e).getCentroid();
-                            final Point centroidTo = wormhole.getViewPoint(environment.makePosition(head.getX(), head.getY()));
+                            final Point centroidTo = wormhole.getViewPoint(
+                                    environment.makePosition(head.getX(), head.getY())
+                            );
                             graphics2D.setColor(colorCache);
                             graphics2D.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
                         }

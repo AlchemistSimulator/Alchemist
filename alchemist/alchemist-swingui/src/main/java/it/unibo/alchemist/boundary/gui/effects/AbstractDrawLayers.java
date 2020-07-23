@@ -75,7 +75,12 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
     @SuppressWarnings({"PMD.CompareObjectsWithEquals"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    protected <T, P extends Position2D<P>> void draw(final Graphics2D graphics2D, final Node<T> node, final Environment<T, P> environment, final IWormhole2D<P> wormhole) {
+    protected <T, P extends Position2D<P>> void draw(
+            final Graphics2D graphics2D,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final IWormhole2D<P> wormhole
+    ) {
         if (layerFilter && (molecule == null || molString != molStringCached)) {
             molStringCached = molString;
             environment.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
@@ -105,7 +110,12 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
      * {@inheritDoc}
      */
     @Override
-    public abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> environment, Graphics2D graphics, IWormhole2D<P> wormhole);
+    public abstract <T, P extends Position2D<P>> void drawLayers(
+            Collection<Layer<T, P>> toDraw,
+            Environment<T, P> environment,
+            Graphics2D graphics,
+            IWormhole2D<P> wormhole
+    );
 
     /**
      * @return a boolean representing whether or not layer filter is on

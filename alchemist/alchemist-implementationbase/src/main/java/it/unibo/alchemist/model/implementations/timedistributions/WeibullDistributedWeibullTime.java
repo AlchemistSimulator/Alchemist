@@ -66,8 +66,20 @@ public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
      * @param random
      *            {@link RandomGenerator} used internally
      */
-    public WeibullDistributedWeibullTime(final double mean, final double deviceDeviation, final double networkDeviation, final double deviationDeviation, final Time start, final RandomGenerator random) {
-        super(weibullValue(mean, networkDeviation, random), weibullValue(deviceDeviation, deviationDeviation, random), start, random);
+    public WeibullDistributedWeibullTime(
+        final double mean,
+        final double deviceDeviation,
+        final double networkDeviation,
+        final double deviationDeviation,
+        final Time start,
+        final RandomGenerator random
+    ) {
+        super(
+            weibullValue(mean, networkDeviation, random),
+            weibullValue(deviceDeviation, deviationDeviation, random),
+            start,
+            random
+        );
     }
 
     private static double weibullValue(final double mean, final double deviation, final RandomGenerator random) {

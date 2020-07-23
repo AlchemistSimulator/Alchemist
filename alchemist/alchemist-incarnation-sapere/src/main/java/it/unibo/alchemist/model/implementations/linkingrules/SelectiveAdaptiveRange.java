@@ -99,7 +99,15 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      * @param molType
      *            the molecule whose presence will allow links to be created
      */
-    public SelectiveAdaptiveRange(final double radius, final double minrange, final double maxrange, final int desiredNeighborsCount, final int tolerance, final double adjustment, final String molType) {
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final double minrange,
+            final double maxrange,
+            final int desiredNeighborsCount,
+            final int tolerance,
+            final double adjustment,
+            final String molType
+    ) {
         super(radius, minrange, maxrange, desiredNeighborsCount, tolerance, adjustment);
         moleculeType = new LsaMolecule(molType);
     }

@@ -105,7 +105,7 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
      * {@inheritDoc}
      */
     @Override
-    public abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
+    public abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> environment, Graphics2D graphics, IWormhole2D<P> wormhole);
 
     /**
      * @return a boolean representing whether or not layer filter is on

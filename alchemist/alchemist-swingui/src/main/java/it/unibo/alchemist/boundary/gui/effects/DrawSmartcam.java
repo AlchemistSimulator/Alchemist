@@ -82,15 +82,15 @@ public final class DrawSmartcam implements Effect {
     }
 
     private <T> void drawFieldOfView(
-            final Graphics2D g,
+            final Graphics2D graphics,
             final Node<T> node,
-            final Physics2DEnvironment<T> env,
+            final Physics2DEnvironment<T> environment,
             final double zoom,
             final int x,
             final int y
     ) {
-        final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
-        g.setColor(Color.BLUE);
+        final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));
+        graphics.setColor(Color.BLUE);
         node.getReactions()
             .stream()
             .flatMap(r -> r.getActions().stream())
@@ -101,7 +101,7 @@ public final class DrawSmartcam implements Effect {
                 final double startAngle = -angle / 2;
                 final double d = a.getDistance();
                 final Shape fov = new Arc2D.Double(-d, -d, d * 2, d * 2, startAngle, angle, Arc2D.PIE);
-                g.draw(transform.createTransformedShape(fov));
+                graphics.draw(transform.createTransformedShape(fov));
             });
     }
 

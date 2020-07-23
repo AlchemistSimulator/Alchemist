@@ -150,15 +150,16 @@ public final class YamlLoader implements Loader {
             ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
                 .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
                 .build();
-    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_OPTIONAL_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
-            .put(Variable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
-            .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
-            .put(Reaction.class, ImmutableMap.of(
-                    PARAMS, List.class,
-                    TIMEDISTRIBUTION, Object.class,
-                    ACTIONS, List.class,
-                    CONDITIONS, List.class))
-            .build();
+    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_OPTIONAL_PARAMETERS =
+            ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
+                .put(Variable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
+                .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
+                .put(Reaction.class, ImmutableMap.of(
+                        PARAMS, List.class,
+                        TIMEDISTRIBUTION, Object.class,
+                        ACTIONS, List.class,
+                        CONDITIONS, List.class))
+                .build();
     private static final Set<BuilderConfiguration<DependentVariable<?>>> DEPENDENT_VAR_CONFIG = ImmutableSet.of(
             new BuilderConfiguration<>(
                 ImmutableMap.of(FORMULA, CharSequence.class),

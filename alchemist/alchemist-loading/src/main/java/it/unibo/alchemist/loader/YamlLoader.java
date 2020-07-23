@@ -823,11 +823,7 @@ public final class YamlLoader implements Loader {
 
     @SuppressWarnings(UNCHECKED)
     private static <T> T cast(final Factory factory, final Class<? super T> clazz, final Object target, final String what) {
-        assert factory != null;
-        assert clazz != null;
-        assert target != null;
-        assert what != null;
-        return (T) factory.convert(clazz, target)
+        return (T) Objects.requireNonNull(factory).convert(Objects.requireNonNull(clazz), Objects.requireNonNull(target))
                 .orElseThrow(() -> new IllegalAlchemistYAMLException(target + " is not a valid " + what + " descriptor"));
     }
 

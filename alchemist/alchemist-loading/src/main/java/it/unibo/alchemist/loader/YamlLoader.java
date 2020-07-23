@@ -946,7 +946,11 @@ public final class YamlLoader implements Loader {
     }
 
     private static <T> BuilderConfiguration<T> singleParamConfig(final Factory factory, final Function<Object, T> supplier) {
-        return new BuilderConfiguration<>(ImmutableMap.of(PARAMETER, Object.class), emptyMap(), factory, m -> supplier.apply(m.get(PARAMETER)));
+        return new BuilderConfiguration<>(
+                ImmutableMap.of(PARAMETER, Object.class),
+                emptyMap(),
+                factory, m -> supplier.apply(m.get(PARAMETER))
+        );
     }
 
     private static final class Builder<T> {

@@ -436,7 +436,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         @Override
         public Set<String> keySet() {
-            return Sets.union(node.getContents().keySet().stream().map(Molecule::getName).collect(Collectors.toSet()), shadow.keySet());
+            return Sets.union(
+                    node.getContents().keySet().stream()
+                            .map(Molecule::getName)
+                            .collect(Collectors.toSet()), shadow.keySet()
+            );
         }
     }
 

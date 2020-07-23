@@ -106,9 +106,14 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     @SuppressWarnings("unchecked")
-    public Action<Object> createAction(final RandomGenerator randomGenerator, final Environment<Object, P> environment,
-                                       final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
-                                       final String additionalParameters) {
+    public Action<Object> createAction(
+            final RandomGenerator randomGenerator,
+            final Environment<Object, P> environment,
+            final Node<Object> node,
+            final TimeDistribution<Object> time,
+            final Reaction<Object> reaction,
+            final String additionalParameters
+    ) {
         Objects.requireNonNull(additionalParameters);
         if (node instanceof ProtelisNode) {
             final ProtelisNode<P> pNode = (ProtelisNode<P>) node;

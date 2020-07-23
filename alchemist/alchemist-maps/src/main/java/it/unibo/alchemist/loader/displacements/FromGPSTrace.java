@@ -45,7 +45,9 @@ public final class FromGPSTrace implements Displacement {
     ) throws IOException {
         traces = new TraceLoader(path, cycle, normalizer, args);
         if (traces.size().map(size -> size < nodeCount).orElse(false)) {
-            throw new IllegalArgumentException(nodeCount + "traces required, " + traces.size().orElse(-1) + " traces available");
+            throw new IllegalArgumentException(
+                    nodeCount + "traces required, " + traces.size().orElse(-1) + " traces available"
+            );
         }
         this.numNode = nodeCount;
     }

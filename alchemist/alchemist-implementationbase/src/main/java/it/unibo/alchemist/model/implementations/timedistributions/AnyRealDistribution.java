@@ -95,7 +95,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
             final Time currentTime,
             final boolean hasBeenExecuted,
             final double additionalParameter,
-            final Environment<T, ?> env
+            final Environment<T, ?> environment
     ) {
         if (additionalParameter != getRate()) {
             throw new IllegalStateException(getClass().getSimpleName() + " does not allow to dynamically tune the rate.");

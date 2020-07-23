@@ -849,15 +849,27 @@ public abstract class SocialForceAgent<P extends Position<P>> extends SAPEREMove
 
         if (myx > minX && myx < maxX) {
             if (myy > maxY) { // above the obstacle
-                nearest = new Euclidean2DPosition[] { new Euclidean2DPosition(bounds.getMinX(), bounds.getMaxY()), new Euclidean2DPosition(bounds.getMaxX(), bounds.getMaxY()) };
+                nearest = new Euclidean2DPosition[] {
+                        new Euclidean2DPosition(bounds.getMinX(), bounds.getMaxY()),
+                        new Euclidean2DPosition(bounds.getMaxX(), bounds.getMaxY())
+                };
             } else if (myy < minY) { // under the obstacle
-                nearest = new Euclidean2DPosition[] { new Euclidean2DPosition(bounds.getMinX(), bounds.getMinY()), new Euclidean2DPosition(bounds.getMaxX(), bounds.getMinY()) };
+                nearest = new Euclidean2DPosition[] {
+                        new Euclidean2DPosition(bounds.getMinX(), bounds.getMinY()),
+                        new Euclidean2DPosition(bounds.getMaxX(), bounds.getMinY())
+                };
             }
         } else if (myy > minY && myy < maxY) {
             if (myx < minX) { // to the left the obstacle
-                nearest = new Euclidean2DPosition[] { new Euclidean2DPosition(bounds.getMinX(), bounds.getMaxY()), new Euclidean2DPosition(bounds.getMinX(), bounds.getMinY()) };
+                nearest = new Euclidean2DPosition[] {
+                        new Euclidean2DPosition(bounds.getMinX(), bounds.getMaxY()),
+                        new Euclidean2DPosition(bounds.getMinX(), bounds.getMinY())
+                };
             } else if (myx > maxX) { // to the right the obstacle
-                nearest = new Euclidean2DPosition[] { new Euclidean2DPosition(bounds.getMaxX(), bounds.getMaxY()), new Euclidean2DPosition(bounds.getMaxX(), bounds.getMinY()) };
+                nearest = new Euclidean2DPosition[] {
+                        new Euclidean2DPosition(bounds.getMaxX(), bounds.getMaxY()),
+                        new Euclidean2DPosition(bounds.getMaxX(), bounds.getMinY())
+                };
             }
         }
 

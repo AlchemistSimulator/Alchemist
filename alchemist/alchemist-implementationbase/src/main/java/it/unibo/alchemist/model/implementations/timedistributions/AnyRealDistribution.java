@@ -93,7 +93,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     @Override
     protected final void updateStatus(
             final Time currentTime,
-            final boolean executed,
+            final boolean hasBeenExecuted,
             final double param,
             final Environment<T, ?> env
     ) {

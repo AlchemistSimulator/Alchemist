@@ -126,7 +126,8 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                             alreadyRemoved = new ArrayList<>();
                             alreadyRemovedMap.put(n, alreadyRemoved);
                         }
-                        final List<ILsaMolecule> otherMatches = calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
+                        final List<ILsaMolecule> otherMatches =
+                                calculateMatches(partialInstance, dups, n.getLsaSpace(), alreadyRemoved);
                         if (otherMatches.isEmpty()) {
                             /*
                              * This match should be removed, but there might be

@@ -110,7 +110,10 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
          * Check if the point is somehow inside the obstacle, and reply
          * accordingly
          */
-        if (fuzzyGreaterEquals(starty, minY) && fuzzyGreaterEquals(maxY, starty) && fuzzyGreaterEquals(startx, minX) && fuzzyGreaterEquals(maxX, startx)) {
+        if (fuzzyGreaterEquals(starty, minY)
+                && fuzzyGreaterEquals(maxY, starty)
+                && fuzzyGreaterEquals(startx, minX)
+                && fuzzyGreaterEquals(maxX, startx)) {
             final double[] res = { endx, endy };
             final boolean startIsVertex = (fuzzyEquals(startx, minX) || fuzzyEquals(startx, maxX))
                     && (fuzzyEquals(starty, minY) || fuzzyEquals(starty, maxY));

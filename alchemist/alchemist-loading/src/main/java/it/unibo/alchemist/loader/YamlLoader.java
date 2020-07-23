@@ -621,7 +621,7 @@ public final class YamlLoader implements Loader {
          */
         final List<?> dispList = listCast(factory, contents.get(DISPLACEMENTS), "displacements");
         if (dispList.isEmpty()) {
-            L.warn("Your {} section is empty. No nodes will be placed in this scenario, making it pretty useless.", DISPLACEMENTS);
+            L.warn("Your {} section is empty. No nodes will be placed in this scenario, making it useless.", DISPLACEMENTS);
         } else {
             final Builder<Displacement<P>> displacementBuilder = new Builder<>(Displacement.class, emptySet(), factory);
             final Builder<Node<T>> nodeBuilder = new Builder<>(Node.class, ImmutableSet.of(
@@ -672,10 +672,30 @@ public final class YamlLoader implements Loader {
                      * Reactions
                      */
                     final List<?> poolsList = listCast(factory, dispMap.get(PROGRAMS), "program pools");
-                    final Builder<TimeDistribution<T>> tdBuilder = new Builder<>(TimeDistribution.class, ImmutableSet.of(
-                            emptyConfig(factory, () -> incarnation.createTimeDistribution(simulationRandomGenerator, environment, node, null)),
-                            singleParamConfig(factory, o -> incarnation.createTimeDistribution(simulationRandomGenerator, environment, node, o.toString()))),
-                            factory);
+                    final Builder<TimeDistribution<T>> tdBuilder = new Builder<>(
+                            TimeDistribution.class,
+                            ImmutableSet.of(
+                                    emptyConfig(
+                                            factory,
+                                            () -> incarnation.createTimeDistribution(
+                                                    simulationRandomGenerator,
+                                                    environment,
+                                                    node,
+                                                    null
+                                            )
+                                    ),
+                                    singleParamConfig(
+                                            factory,
+                                            o -> incarnation.createTimeDistribution(
+                                                    simulationRandomGenerator,
+                                                    environment,
+                                                    node,
+                                                    o.toString()
+                                            )
+                                    )
+                            ),
+                            factory
+                    );
                     for (final Object programsObj: poolsList) {
                         final List<?> programs = listCast(factory, programsObj, "programs");
                         for (final Object programObj: programs) {

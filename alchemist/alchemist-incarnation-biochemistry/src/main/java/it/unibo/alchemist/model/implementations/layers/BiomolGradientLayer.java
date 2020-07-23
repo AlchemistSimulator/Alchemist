@@ -37,7 +37,12 @@ public final class BiomolGradientLayer<P extends Position2D<P>> implements Layer
      * @param unitVariation unit variation of the gradient
      * @param offset minimum value of concentration reached by this spatial distribution
      */
-    public BiomolGradientLayer(final double directionX, final double directionY, final double unitVariation, final double offset) {
+    public BiomolGradientLayer(
+            final double directionX,
+            final double directionY,
+            final double unitVariation,
+            final double offset
+    ) {
         final double dirModule = FastMath.sqrt(FastMath.pow(directionX, 2) + FastMath.pow(directionY, 2));
         steep = unitVariation;
         // versor coordinates

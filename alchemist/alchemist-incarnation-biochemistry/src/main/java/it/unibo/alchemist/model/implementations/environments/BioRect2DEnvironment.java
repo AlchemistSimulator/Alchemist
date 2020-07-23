@@ -39,8 +39,8 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
      */
     public BioRect2DEnvironment(final double minX, final double maxX, final double minY, final double maxY) {
         if (maxX <= minX || maxY <= minY) {
-            L.warn("A maximum bound for this environment is greather than the correspoding minimum bound. " +
-                    "Falling back to -1, 1 for all bounds");
+            L.warn("A maximum bound for this environment is greather than the correspoding minimum bound. "
+                    + "Falling back to -1, 1 for all bounds");
             this.minX = -1;
             this.maxX = 1;
             this.minY = -1;

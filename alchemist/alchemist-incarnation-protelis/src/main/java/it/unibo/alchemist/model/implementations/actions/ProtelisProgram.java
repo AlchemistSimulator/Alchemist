@@ -32,27 +32,27 @@ public class ProtelisProgram<P extends Position<P>> extends RunProtelisProgram<P
     /**
      * @see RunProtelisProgram
      * 
-     * @param env
+     * @param environment
      *            the environment
-     * @param n
+     * @param node
      *            the node
-     * @param r
+     * @param reaction
      *            the reaction
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param prog
+     * @param program
      *            the Protelis program
      * @throws SecurityException
      *             if you are not authorized to load required classes
      */
     public ProtelisProgram(
-            final Environment<Object, P> env,
-            final ProtelisNode<P> n,
-            final Reaction<Object> r,
-            final RandomGenerator rand,
-            final String prog
+            final Environment<Object, P> environment,
+            final ProtelisNode<P> node,
+            final Reaction<Object> reaction,
+            final RandomGenerator randomGenerator,
+            final String program
     ) {
-        super(env, n, r, rand, prog, r.getRate());
+        super(environment, node, reaction, randomGenerator, program, reaction.getRate());
         LOGGER.warn("{} is deprecated and should be replaced by {}", getClass(), RunProtelisProgram.class);
     }
 

@@ -161,8 +161,8 @@ public final class TraceLoader implements Iterable<GPSTrace> {
             }  catch (FileFormatException e) {
                 throw new IllegalStateException(
                         "Loader: " + LOADER.get(extensionFile).getClass().getSimpleName()
-                        + " can't load file: " + path + ", plese make sure it is a " + extensionFile + "file?"
-                        , e
+                        + " can't load file: " + path + ", plese make sure it is a " + extensionFile + "file?",
+                        e
                 );
             } 
         }

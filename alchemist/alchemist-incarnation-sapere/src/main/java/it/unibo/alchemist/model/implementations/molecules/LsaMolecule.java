@@ -104,11 +104,16 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
         this(listArgs, hash, selfVariableUsed(listArgs), computeInstance(listArgs));
     }
 
-    private LsaMolecule(final List<IExpression> listArgs, final HashString hash, final boolean dup, final boolean isInstance) {
+    private LsaMolecule(
+            final List<IExpression> argumentList,
+            final HashString hash,
+            final boolean duplicateVariables,
+            final boolean isInstance
+    ) {
         super(hash);
         this.repr = hash;
-        args = Collections.unmodifiableList(listArgs);
-        duplicateVars = dup;
+        args = Collections.unmodifiableList(argumentList);
+        duplicateVars = duplicateVariables;
         instance = isInstance;
     }
 
@@ -252,9 +257,17 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     @Override
     public boolean isIdenticalTo(final ILsaMolecule mol) {
         for (int i = 0; i < argsNumber(); i++) {
-            if (args.get(i).getRootNodeType() == Type.COMPARATOR && args.get(i).getLeftChildren().getData().equals(mol.getArg(i).getRootNodeData()) || mol.getArg(i).getRootNodeType() == Type.COMPARATOR && mol.getArg(i).getLeftChildren().getData().equals(args.get(i).getRootNodeData())) {
+            final IExpression argument = args.get(i);
+            final IExpression molArgument = mol.getArg(i);
+            final boolean isComparator = argument.getRootNodeType() == Type.COMPARATOR;
+            if (isComparator && argument.getLeftChildren().getData().equals(molArgument.getRootNodeData())
+                    || molArgument.getRootNodeType() == Type.COMPARATOR
+                        && molArgument.getLeftChildren().getData().equals(argument.getRootNodeData())
+            ) {
                 return true; // case <def:N > 5> == <N>
-            } else if (args.get(i).getRootNodeType() != mol.getArg(i).getRootNodeType() || !(args.get(i).getRootNodeData().equals(mol.getArg(i).getRootNodeData()))) {
+            } else if (argument.getRootNodeType() != molArgument.getRootNodeType()
+                    || !(argument.getRootNodeData().equals(molArgument.getRootNodeData()))
+            ) {
                 return false;
             }
         }

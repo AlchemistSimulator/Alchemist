@@ -522,7 +522,9 @@ public final class YamlLoader implements Loader {
             }
         } while (previousSize != depClone.size());
         if (!depClone.isEmpty()) {
-            final RuntimeException ex = new IllegalAlchemistYAMLException("One or more variables could not be initialized: " + depClone);
+            final RuntimeException ex = new IllegalAlchemistYAMLException(
+                    "One or more variables could not be initialized: " + depClone
+            );
             if (issues.size() == 1) {
                 ex.initCause(issues.get(0));
             } else {

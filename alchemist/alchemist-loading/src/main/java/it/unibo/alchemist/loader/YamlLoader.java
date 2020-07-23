@@ -307,9 +307,9 @@ public final class YamlLoader implements Loader {
                         constants.put(name, value);
                         depVariables.remove(name);
                     } catch (IllegalStateException e) {
-                        L.debug("{} value could not be computed: maybe it depends on another," +
-                                "not yet initialized variable." +
-                                "\nReason: {}",
+                        L.debug(
+                                "{} value could not be computed: maybe it depends on another,"
+                                        + "not yet initialized variable." + "\nReason: {}",
                                 name,
                                 e
                         );
@@ -317,7 +317,12 @@ public final class YamlLoader implements Loader {
                     }
                     L.debug("Constant intialized in {}", constants);
                 } catch (IllegalAlchemistYAMLException e) {
-                    L.debug("{} could not be created: its constructor may be requiring an uninitialized variable.\nReason: {}", name, e);
+                    L.debug(
+                            "{} could not be created: its constructor may be requiring an uninitialized variable."
+                                    + "\nReason: {}",
+                            name,
+                            e
+                    );
                 }
             }
         } while (previousConstants != constants.size() || previousDepVars != depVariables.size());

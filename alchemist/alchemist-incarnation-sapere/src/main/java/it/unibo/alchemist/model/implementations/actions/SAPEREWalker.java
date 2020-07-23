@@ -7,11 +7,6 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.List;
-import java.util.Map;
-
-import org.danilopianini.lang.HashString;
-
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
@@ -24,6 +19,10 @@ import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Vehicle;
+import org.danilopianini.lang.HashString;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  */
@@ -49,7 +48,13 @@ public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements
      * @param range
      *            the interaction range
      */
-    public SAPEREWalker(final MapEnvironment<List<ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction, final double speed, final double interaction, final double range) {
+    public SAPEREWalker(
+            final MapEnvironment<List<ILsaMolecule>> environment,
+            final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction,
+            final double speed,
+            final double interaction,
+            final double range
+    ) {
         this(environment, node, reaction, DEFAULT_INTERACTING_TAG, speed, interaction, range);
     }
 
@@ -69,7 +74,15 @@ public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements
      * @param range
      *            the interaction range
      */
-    public SAPEREWalker(final MapEnvironment<List<ILsaMolecule>> environment, final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction, final ILsaMolecule tag, final double speed, final double interaction, final double range) {
+    public SAPEREWalker(
+            final MapEnvironment<List<ILsaMolecule>> environment,
+            final ILsaNode node,
+            final Reaction<List<ILsaMolecule>> reaction,
+            final ILsaMolecule tag,
+            final double speed,
+            final double interaction,
+            final double range
+    ) {
         super(environment, node,
                 new OnStreets<>(environment, Vehicle.FOOT),
                 new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),

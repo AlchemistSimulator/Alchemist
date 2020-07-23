@@ -264,7 +264,9 @@ public final class YamlLoader implements Loader {
         if (varObj != null && !(varObj instanceof Map)) {
             throw new IllegalAlchemistYAMLException("The " + VARIABLES + " section has an invalid format.");
         }
-        final Map<String, Map<String, Object>> originalVars = Optional.ofNullable((Map<String, Map<String, Object>>) varObj).orElse(emptyMap());
+        final Map<String, Map<String, Object>> originalVars = Optional
+                .ofNullable((Map<String, Map<String, Object>>) varObj)
+                .orElse(emptyMap());
         for (final Entry<String, Map<String, Object>> varEntry : originalVars.entrySet()) {
             if (varEntry.getValue() == null) {
                 throw new IllegalAlchemistYAMLException("The " + VARIABLES + " section has an invalid format."

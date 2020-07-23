@@ -181,7 +181,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         if (this.incarnation == null) {
             this.incarnation = Objects.requireNonNull(incarnation);
         } else {
-            throw new IllegalStateException("The Environment has already been equipeed with an incarnation: " + this.incarnation);
+            throw new IllegalStateException(
+                    "The Environment has already been equipeed with an incarnation: " + this.incarnation
+            );
         }
     }
 

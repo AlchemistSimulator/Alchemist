@@ -512,7 +512,12 @@ public final class YamlLoader implements Loader {
                     actualVars.put(name, value);
                 } catch (IllegalStateException e) {
                     issues.add(e);
-                    L.debug("{} value could not be computed: maybe it depends on another, not yet initialized variable.\nReason: {}", name, e);
+                    L.debug(
+                            "{} value could not be computed: maybe it depends on another, not yet initialized variable."
+                                    + "\nReason: {}",
+                            name,
+                            e
+                    );
                 }
             }
         } while (previousSize != depClone.size());

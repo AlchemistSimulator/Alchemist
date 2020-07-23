@@ -49,7 +49,10 @@ public class Continuous2DObstacles<T>
     }
 
     @Override
-    public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(@NotNull final Euclidean2DPosition center, final double range) {
+    public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(
+            @NotNull final Euclidean2DPosition center,
+            final double range
+    ) {
         return getObstaclesInRange(center.getX(), center.getY(), range);
     }
 

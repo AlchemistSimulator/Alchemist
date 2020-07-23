@@ -206,7 +206,12 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      * @param molType
      *            the molecule whose presence will allow links to be created
      */
-    public SelectiveAdaptiveRange(final double radius, final int desiredNeighborsCount, final int tolerance, final String molType) {
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final int desiredNeighborsCount,
+            final int tolerance,
+            final String molType
+    ) {
         this(radius, DEFAULT_MINRANGE, DEFAULT_MAXRANGE, desiredNeighborsCount, tolerance, DEFAULT_ADJUSTMENT, molType);
     }
 

@@ -135,7 +135,10 @@ public class TestDSL {
         testValidReaction("[MolA] + [MolC in neighbor] --> [junction MolA-MolC]");
         testValidReaction("[MolC  in neighbor] + [MolA] --> [junction MolA-MolC]");
         testValidReaction("[MolC in neighbor] + [MolE in env] + [MolA] --> [junction MolA-MolC]");
-        testValidReaction("[MolZ in env] + [4 MolT + MolR in neighbor] + [MolA+ MolB in env] + [MolH + 8 MolF] + [MolS in env] --> [junction MolH:5MolF-4MolT:MolR]");
+        testValidReaction(
+                "[MolZ in env] + [4 MolT + MolR in neighbor] + [MolA+ MolB in env] + [MolH + 8 MolF] + [MolS in env]"
+                        + " --> [junction MolH:5MolF-4MolT:MolR]"
+        );
         testValidReaction("[MolA] + [MolB in neighbor] --> [MolC in env] + [junction MolA-MolB]");
         testValidReaction("[MolA] + [MolB in neighbor] --> [junction MolA-MolB] + [MolB]");
         testValidReaction("[MolA + 3 MolB] + [2 MolC in neighbor] + [MolD in env] --> [junction MolA:2MolB-2MolC]");

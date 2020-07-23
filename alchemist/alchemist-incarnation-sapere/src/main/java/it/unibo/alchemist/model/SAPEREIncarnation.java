@@ -81,7 +81,10 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         MATCH_REACTION = Pattern.compile(REACTION_REGEX);
     }
 
-    @SuppressFBWarnings(value = "ES_COMPARING_PARAMETER_STRING_WITH_EQ", justification = "Pointer comparison is intentional")
+    @SuppressFBWarnings(
+            value = "ES_COMPARING_PARAMETER_STRING_WITH_EQ",
+            justification = "Pointer comparison is intentional"
+    )
     @Override
     public double getProperty(final Node<List<ILsaMolecule>> node, final Molecule mol, final String prop) {
         if (mol instanceof ILsaMolecule && node instanceof ILsaNode && node.contains(mol)) {

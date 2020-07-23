@@ -100,7 +100,11 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
         try {
             t.inverseTransform(vp, vp);
         } catch (final NoninvertibleTransformException e) {
-            L.error("Unable to perform the transformation from view point to env point. Please check if this method has been called after making the UI visible", e);
+            L.error(
+                    "Unable to perform the transformation from view point to env point." +
+                    "Please check if this method has been called after making the UI visible",
+                    e
+            );
         }
         return from(vp);
     }

@@ -57,9 +57,9 @@ public final class DrawSmartcam implements Effect {
     }
 
     private <T> void drawShape(
-            final Graphics2D g,
+            final Graphics2D graphics,
             final Node<T> node,
-            final Physics2DEnvironment<T> env,
+            final Physics2DEnvironment<T> environment,
             final double zoom,
             final int x,
             final int y
@@ -68,14 +68,14 @@ public final class DrawSmartcam implements Effect {
                 ? ((NodeWithShape<T, ?, ?>) node).getShape()
                 : null;
         if (geometricShape instanceof AwtShapeCompatible) {
-            final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, env));
+            final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));
             final Shape shape = transform.createTransformedShape(((AwtShapeCompatible) geometricShape).asAwtShape());
             if (node.contains(WANTED)) {
-                g.setColor(Color.RED);
+                graphics.setColor(Color.RED);
             } else {
-                g.setColor(Color.GREEN);
+                graphics.setColor(Color.GREEN);
             }
-            g.draw(shape);
+            graphics.draw(shape);
         } else {
             logOnce("DrawSmartcam only works with shapes implementing AwtShapeCompatible", Logger::warn);
         }

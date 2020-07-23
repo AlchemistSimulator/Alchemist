@@ -222,7 +222,10 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
                             assert !Double.isNaN(precalcdRoutingDistance);
                             return precalcdRoutingDistance;
                         } catch (final ClassCastException e) {
-                            throw new IllegalStateException(APPROXIMATE_NBR_RANGE + " should be associated with a double concentration", e);
+                            throw new IllegalStateException(
+                                    APPROXIMATE_NBR_RANGE + " should be associated with a double concentration",
+                                    e
+                            );
                         }
                     }
                     return routingDistance(destination);

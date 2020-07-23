@@ -42,7 +42,13 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      *            radius is increased; if the number of neighbors is higher than
      *            num+tolerance, the radius is decreased
      */
-    public SelectiveAdaptiveRange(final double radius, final double minrange, final double maxrange, final int num, final int tolerance) {
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final double minrange,
+            final double maxrange,
+            final int num,
+            final int tolerance
+    ) {
         this(radius, minrange, maxrange, num, tolerance, DEFAULT_ADJUSTMENT, DEFAULT_MOLECULETYPE);
     }
 

@@ -234,7 +234,11 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
 
     @Override
     @SuppressWarnings(UNCHECKED)
-    protected void nodeAdded(final Node<Double> node, final Euclidean2DPosition position, final Neighborhood<Double> neighborhood) {
+    protected void nodeAdded(
+            final Node<Double> node,
+            final Euclidean2DPosition position,
+            final Neighborhood<Double> neighborhood
+    ) {
         super.nodeAdded(node, position, neighborhood);
         if (node instanceof CellWithCircularArea) {
             final CellWithCircularArea<Euclidean2DPosition> cell = (CellWithCircularArea<Euclidean2DPosition>) node;

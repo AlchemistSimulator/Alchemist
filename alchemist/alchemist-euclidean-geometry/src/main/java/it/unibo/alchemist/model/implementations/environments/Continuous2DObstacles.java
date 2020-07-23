@@ -160,7 +160,11 @@ public class Continuous2DObstacles<T>
         maxx += dx;
         miny -= dy;
         maxy += dy;
-        return rtree.search(Geometries.rectangle(minx, miny, maxx, maxy)).map(Entry::value).toList().toBlocking().single();
+        return rtree.search(Geometries.rectangle(minx, miny, maxx, maxy))
+                .map(Entry::value)
+                .toList()
+                .toBlocking()
+                .single();
     }
 
     @Override

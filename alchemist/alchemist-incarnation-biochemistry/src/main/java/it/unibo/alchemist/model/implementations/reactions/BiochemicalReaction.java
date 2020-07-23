@@ -79,7 +79,9 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
                         .map(it -> new Container(it.getKey(), it.getValue(), m2.get(it.getKey())))
                         .filter(it -> it.propensity2 != null)
                         .collect(toMap(e -> e.node, e -> e.propensity1 * e.propensity2)))
-                .orElseThrow(() -> new IllegalStateException("At least a neighbor condition is present, but the mapping was empty"));
+                .orElseThrow(() -> new IllegalStateException(
+                        "At least a neighbor condition is present, but the mapping was empty"
+                ));
         }
         super.updateInternalStatus(curTime, executed, env);
     }

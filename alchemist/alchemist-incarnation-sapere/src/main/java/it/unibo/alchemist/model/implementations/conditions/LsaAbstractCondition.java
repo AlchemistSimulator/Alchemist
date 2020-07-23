@@ -114,7 +114,12 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            (theoretically, it should always be empty when calling this
      *            method)
      */
-    protected static void createMatches(final ILsaMolecule template, final ILsaNode n, final List<Map<HashString, ITreeNode<?>>> matchesList, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    protected static void createMatches(
+            final ILsaMolecule template,
+            final ILsaNode n,
+            final List<Map<HashString, ITreeNode<?>>> matchesList,
+            final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
         final List<ILsaMolecule> lsaSpace = n.getLsaSpace();
         for (final ILsaMolecule matched : lsaSpace) {
             if (template.matches(matched)) {

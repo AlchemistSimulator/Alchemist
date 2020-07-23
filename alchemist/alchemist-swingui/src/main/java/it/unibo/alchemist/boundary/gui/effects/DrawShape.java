@@ -96,7 +96,10 @@ public final class DrawShape implements Effect {
         if (availableIncarnations.isEmpty()) {
             throw new IllegalStateException(getClass().getSimpleName() + " can't work if no incarnation is available.");
         }
-        curIncarnation = new ImmutableCollectionWithCurrentElement<>(availableIncarnations, availableIncarnations.stream().findAny().get());
+        curIncarnation = new ImmutableCollectionWithCurrentElement<>(
+                availableIncarnations,
+                availableIncarnations.stream().findAny().get()
+        );
     }
 
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")

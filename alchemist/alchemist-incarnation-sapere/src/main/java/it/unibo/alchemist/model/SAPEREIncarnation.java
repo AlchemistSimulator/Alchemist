@@ -164,36 +164,36 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
 
     @Override
     public TimeDistribution<List<ILsaMolecule>> createTimeDistribution(
-            final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env,
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
             final Node<List<ILsaMolecule>> node,
-            final String param) {
-        if (param == null || param.isEmpty()) {
-            return defaultTD(rand);
+            final String parameter) {
+        if (parameter == null || parameter.isEmpty()) {
+            return defaultTD(randomGenerator);
         }
-        final String[] actualArgs = param.split(",");
+        final String[] actualArgs = parameter.split(",");
         switch (actualArgs.length) {
         case 0:
-            return defaultTD(rand);
+            return defaultTD(randomGenerator);
         case 1:
-            return new SAPEREExponentialTime(actualArgs[0], rand);
+            return new SAPEREExponentialTime(actualArgs[0], randomGenerator);
         case 2:
-            return new SAPEREExponentialTime(actualArgs[0], new DoubleTime(Double.parseDouble(actualArgs[1])), rand);
+            return new SAPEREExponentialTime(actualArgs[0], new DoubleTime(Double.parseDouble(actualArgs[1])), randomGenerator);
         default:
-            throw new IllegalArgumentException(param + " could not be used");
+            throw new IllegalArgumentException(parameter + " could not be used");
         }
     }
 
     @Override
     public Reaction<List<ILsaMolecule>> createReaction(
-            final RandomGenerator rand,
-            final Environment<List<ILsaMolecule>, P> env,
+            final RandomGenerator randomGenerator,
+            final Environment<List<ILsaMolecule>, P> environment,
             final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> time,
-            final String param) {
-        final SAPEREReaction result = new SAPEREReaction(env, (LsaNode) node, rand, time);
-        if (param != null && !param.isEmpty()) {
-            final Matcher rMatcher = MATCH_REACTION.matcher(param);
+            final TimeDistribution<List<ILsaMolecule>> timeDistribution,
+            final String parameter) {
+        final SAPEREReaction result = new SAPEREReaction(environment, (LsaNode) node, randomGenerator, timeDistribution);
+        if (parameter != null && !parameter.isEmpty()) {
+            final Matcher rMatcher = MATCH_REACTION.matcher(parameter);
             if (rMatcher.matches()) {
                 final List<Condition<List<ILsaMolecule>>> conditions = new LinkedList<>();
                 final String conditionsSpec = rMatcher.group(CONDITIONS_GROUP);
@@ -201,7 +201,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                     final Matcher condMatcher = MATCH_CONDITION.matcher(conditionsSpec);
                     while (condMatcher.find()) {
                         final String condition = condMatcher.group(CONDITION_GROUP);
-                        conditions.add(createCondition(rand, env, node, time, result, condition));
+                        conditions.add(createCondition(randomGenerator, environment, node, timeDistribution, result, condition));
                     }
                 } else {
                     illegalSpec(
@@ -216,7 +216,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                     final Matcher actMatcher = MATCH_ACTION.matcher(actionsSpec);
                     while (actMatcher.find()) {
                         final String action = actMatcher.group(ACTION_GROUP);
-                        actions.add(createAction(rand, env, node, time, result, action));
+                        actions.add(createAction(randomGenerator, environment, node, timeDistribution, result, action));
                     }
                 } else {
                     illegalSpec("not a sequence of valid conditions" +
@@ -227,7 +227,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
                 result.setConditions(conditions);
                 result.setActions(actions);
             } else {
-                illegalSpec("must match regex " + REACTION_REGEX, param);
+                illegalSpec("must match regex " + REACTION_REGEX, parameter);
             }
         }
         return result;

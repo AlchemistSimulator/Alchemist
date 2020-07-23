@@ -200,37 +200,37 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object, P> env,
-            final Node<Object> node, final TimeDistribution<Object> time, final String param) {
-        final boolean isSend = "send".equalsIgnoreCase(param);
+    public Reaction<Object> createReaction(final RandomGenerator randomGenerator, final Environment<Object, P> environment,
+                                           final Node<Object> node, final TimeDistribution<Object> timeDistribution, final String parameter) {
+        final boolean isSend = "send".equalsIgnoreCase(parameter);
         final Reaction<Object> result = isSend
-                ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(time))
-                : new Event<>(node, time);
-        if (param != null) {
-            result.setActions(Lists.newArrayList(createAction(rand, env, node, time, result, param)));
+                ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(timeDistribution))
+                : new Event<>(node, timeDistribution);
+        if (parameter != null) {
+            result.setActions(Lists.newArrayList(createAction(randomGenerator, environment, node, timeDistribution, result, parameter)));
         }
         if (isSend) {
-            result.setConditions(Lists.newArrayList(createCondition(rand, env, node, time, result, null)));
+            result.setConditions(Lists.newArrayList(createCondition(randomGenerator, environment, node, timeDistribution, result, null)));
         }
         return result;
     }
 
     @Override
     public TimeDistribution<Object> createTimeDistribution(
-            final RandomGenerator rand,
-            final Environment<Object, P> env,
+            final RandomGenerator randomGenerator,
+            final Environment<Object, P> environment,
             final Node<Object> node,
-            final String param) {
-        if (param == null) {
-            return new ExponentialTime<>(Double.POSITIVE_INFINITY, rand);
+            final String parameter) {
+        if (parameter == null) {
+            return new ExponentialTime<>(Double.POSITIVE_INFINITY, randomGenerator);
         }
         double frequency;
         try {
-            frequency = Double.parseDouble(param);
+            frequency = Double.parseDouble(parameter);
         } catch (final NumberFormatException e) {
             frequency = 1;
         }
-        return new DiracComb<>(new DoubleTime(rand.nextDouble() / frequency), frequency);
+        return new DiracComb<>(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
     }
 
     @Override

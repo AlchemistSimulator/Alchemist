@@ -62,32 +62,43 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> environment, @Nullable String parameter);
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param node
      *            the node that will host this object
-     * @param param
+     * @param parameter
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    TimeDistribution<T> createTimeDistribution(RandomGenerator rand, Environment<T, P> env, Node<T> node, String param);
+    TimeDistribution<T> createTimeDistribution(
+            RandomGenerator randomGenerator,
+            Environment<T, P> environment,
+            Node<T> node,
+            @Nullable String parameter
+    );
 
     /**
-     * @param rand
+     * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param node
      *            the node that will host this object
-     * @param time
+     * @param timeDistribution
      *            the time distribution of the reaction
-     * @param param
+     * @param parameter
      *            a {@link String} describing the object
      * @return a new {@link Reaction}
      */
-    Reaction<T> createReaction(RandomGenerator rand, Environment<T, P> env, Node<T> node, TimeDistribution<T> time, String param);
+    Reaction<T> createReaction(
+            RandomGenerator randomGenerator,
+            Environment<T, P> environment,
+            Node<T> node,
+            TimeDistribution<T> timeDistribution,
+            String parameter
+    );
 
     /**
      * @param randomGenerator

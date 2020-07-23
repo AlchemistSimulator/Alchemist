@@ -77,9 +77,9 @@ public final class MoleculeReader<T> implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
+    public double[] extractData(final Environment<?, ?> environment, final Reaction<?> reaction, final Time time, final long step) {
         @SuppressWarnings("unchecked")
-        final DoubleStream values = ((Environment<T, ?>) env).getNodes().stream()
+        final DoubleStream values = ((Environment<T, ?>) environment).getNodes().stream()
                 .mapToDouble(node -> incarnation.getProperty(node, mol, property));
         if (aggregators.isEmpty()) {
             return values.toArray();

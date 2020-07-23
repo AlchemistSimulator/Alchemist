@@ -27,8 +27,8 @@ public final class NumberOfNodes implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?, ?> env, final Reaction<?> r, final it.unibo.alchemist.model.interfaces.Time time, final long step) {
-        return new double[]{env.getNodesNumber()};
+    public double[] extractData(final Environment<?, ?> environment, final Reaction<?> reaction, final it.unibo.alchemist.model.interfaces.Time time, final long step) {
+        return new double[]{environment.getNodesNumber()};
     }
 
     @Override

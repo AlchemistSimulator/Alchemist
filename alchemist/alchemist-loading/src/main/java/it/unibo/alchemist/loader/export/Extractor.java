@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.loader.export;
 
-import java.util.List;
-
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+
+import java.util.List;
 
 /**
  * An object that is able to extract numeric informations from an Alchemist
@@ -24,9 +24,9 @@ public interface Extractor {
     /**
      * Extracts numeric properties from an environment.
      * 
-     * @param env
+     * @param environment
      *            the {@link Environment}
-     * @param r
+     * @param reaction
      *            the last executed {@link Reaction}
      * @param time
      *            the current {@link Time}
@@ -34,7 +34,7 @@ public interface Extractor {
      *            the simulation step
      * @return the extracted properties
      */
-    double[] extractData(Environment<?, ?> env, Reaction<?> r, Time time, long step);
+    double[] extractData(Environment<?, ?> environment, Reaction<?> reaction, Time time, long step);
 
     /**
      * @return the name of the properties that this {@link Extractor} can

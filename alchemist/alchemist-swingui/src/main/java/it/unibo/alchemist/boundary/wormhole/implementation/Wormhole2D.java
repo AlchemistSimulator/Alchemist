@@ -71,7 +71,13 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
                     getZoom(),  0d,                       0d,
                     -getZoom(), getViewPosition().getX(), getViewPosition().getY());
         } else {
-            t = new AffineTransform(getZoom() * getHRate(), 0d, 0d, -getZoom() * getVRate(), getViewPosition().getX(), getViewPosition().getY());
+            t = new AffineTransform(
+                    getZoom() * getHRate(),
+                    0d,
+                    0d,
+                    -getZoom() * getVRate(),
+                    getViewPosition().getX(), getViewPosition().getY()
+            );
         }
         t.concatenate(AffineTransform.getRotateInstance(getRotation()));
         return t;
@@ -101,8 +107,8 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
             t.inverseTransform(vp, vp);
         } catch (final NoninvertibleTransformException e) {
             L.error(
-                    "Unable to perform the transformation from view point to env point." +
-                    "Please check if this method has been called after making the UI visible",
+                    "Unable to perform the transformation from view point to env point."
+                            + "Please check if this method has been called after making the UI visible",
                     e
             );
         }
@@ -292,12 +298,12 @@ public class Wormhole2D<P extends Position2D<? extends P>> implements IWormhole2
     /**
      * Allows child-classes to modify the {@link #mode} field.
      * 
-     * @param m
+     * @param mode
      *            is the new {@link #mode}
      */
-    protected void setMode(final Mode m) {
-        mode = m;
-        if (m == Mode.ADAPT_TO_VIEW) {
+    protected void setMode(final Mode mode) {
+        this.mode = mode;
+        if (mode == Mode.ADAPT_TO_VIEW) {
             vRate = getNIVerticalRatio();
             hRate = getNIHorizontalRatio();
         }

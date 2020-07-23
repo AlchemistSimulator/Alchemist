@@ -75,7 +75,12 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *         partialInstance, excluding all those which have been already
      *         removed.
      */
-    protected static List<ILsaMolecule> calculateMatches(final List<IExpression> partialInstance, final boolean duplicateVariables, final List<ILsaMolecule> lsaSpace, final List<ILsaMolecule> alreadyRemoved) {
+    protected static List<ILsaMolecule> calculateMatches(
+            final List<IExpression> partialInstance,
+            final boolean duplicateVariables,
+            final List<ILsaMolecule> lsaSpace,
+            final List<ILsaMolecule> alreadyRemoved
+    ) {
         final List<ILsaMolecule> l = new ArrayList<>(lsaSpace.size() - alreadyRemoved.size());
         for (final ILsaMolecule matched : lsaSpace) {
             if (matched.matches(partialInstance, duplicateVariables) && countElements(lsaSpace, matched) > countElements(alreadyRemoved, matched)) {

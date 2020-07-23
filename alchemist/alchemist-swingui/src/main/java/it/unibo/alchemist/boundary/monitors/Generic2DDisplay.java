@@ -768,7 +768,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
         @Override
         public void mousePressed(final MouseEvent e) {
-            if (SwingUtilities.isLeftMouseButton(e) && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)) {
+            if (SwingUtilities.isLeftMouseButton(e)
+                    && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)
+            ) {
                 isDraggingMouse = true;
                 originPoint = Optional.of(e.getPoint());
                 endingPoint = Optional.of(e.getPoint());

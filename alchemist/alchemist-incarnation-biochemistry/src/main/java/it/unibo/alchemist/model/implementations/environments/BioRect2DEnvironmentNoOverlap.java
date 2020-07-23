@@ -319,7 +319,9 @@ public final class BioRect2DEnvironmentNoOverlap
                                 return 0;
                             }
                         } else {
-                            throw new ClassFormatException("Return type of method " + diameterToCompare.getName() + " should be double");
+                            throw new ClassFormatException(
+                                    "Return type of method " + diameterToCompare.getName() + " should be double"
+                            );
                         }
                     } catch (NoSuchMethodException e) {
                         L.error("Method " + (isDeformable ? "getMaxDiameter" : "getDiameter") + "not foung in class " + cellClass.getName());

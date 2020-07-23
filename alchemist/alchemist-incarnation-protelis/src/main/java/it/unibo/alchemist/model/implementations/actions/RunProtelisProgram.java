@@ -136,7 +136,14 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     public final RunProtelisProgram<P> cloneAction(final Node<Object> n, final Reaction<Object> r) {
         if (n instanceof ProtelisNode) {
             try {
-                return new RunProtelisProgram<>(getEnvironment(), (ProtelisNode<P>) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
+                return new RunProtelisProgram<>(
+                        getEnvironment(),
+                        (ProtelisNode<P>) n,
+                        r,
+                        getRandomGenerator(),
+                        originalProgram,
+                        getRetentionTime()
+                );
             } catch (SecurityException e) {
                 throw new IllegalStateException(e);
             }

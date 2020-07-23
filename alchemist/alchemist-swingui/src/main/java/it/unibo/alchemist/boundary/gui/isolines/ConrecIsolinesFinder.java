@@ -9,18 +9,18 @@
 
 package it.unibo.alchemist.boundary.gui.isolines;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-
+import conrec.Conrec;
 import it.unibo.alchemist.boundary.gui.effects.DrawShape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import conrec.Conrec;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Conrec algorithm adapter to IsolinesFinder interface.
@@ -106,20 +106,35 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
                     isolines.put(flooredValue, new ArrayList<>());
                 }
                 isolines.get(flooredValue).add(segment);
-            }).contour(d, ilb, iub, jlb, jub, x, y, levels.size(), levels.stream().mapToDouble(Number::doubleValue).toArray());
+            }).contour(
+                    d,
+                    ilb,
+                    iub,
+                    jlb,
+                    jub,
+                    x,
+                    y,
+                    levels.size(),
+                    levels.stream().mapToDouble(Number::doubleValue).toArray()
+            );
         } catch (Exception e) { // NOPMD
             // this is horrible but necessary
             L.warn("couldn't find isolines, conrec threw an exception: " + e.getMessage());
         }
-        return isolines.entrySet().stream().map(entry -> factory.makeIsoline(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+        return isolines.entrySet().stream()
+                .map(entry -> factory.makeIsoline(entry.getKey(), entry.getValue())).collect(Collectors.toList());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<Isoline> findIsolines(final BidimensionalFunction f, final Segment2D diagonal, final Collection<Number> levels) {
+    public Collection<Isoline> findIsolines(
+            final BidimensionalFunction function,
+            final Segment2D diagonal,
+            final Collection<Number> levels
+    ) {
         Objects.requireNonNull(diagonal);
-        return this.findIsolines(f, diagonal.getX1(), diagonal.getY1(), diagonal.getX2(), diagonal.getY2(), levels);
+        return this.findIsolines(function, diagonal.getX1(), diagonal.getY1(), diagonal.getX2(), diagonal.getY2(), levels);
     }
 }

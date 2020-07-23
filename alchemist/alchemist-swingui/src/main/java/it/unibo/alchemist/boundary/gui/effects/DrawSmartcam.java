@@ -56,7 +56,14 @@ public final class DrawSmartcam implements Effect {
         return Color.GREEN;
     }
 
-    private <T> void drawShape(final Graphics2D g, final Node<T> node, final Physics2DEnvironment<T> env, final double zoom, final int x, final int y) {
+    private <T> void drawShape(
+            final Graphics2D g,
+            final Node<T> node,
+            final Physics2DEnvironment<T> env,
+            final double zoom,
+            final int x,
+            final int y
+    ) {
         final GeometricShape<?, ?> geometricShape = node instanceof NodeWithShape
                 ? ((NodeWithShape<T, ?, ?>) node).getShape()
                 : null;

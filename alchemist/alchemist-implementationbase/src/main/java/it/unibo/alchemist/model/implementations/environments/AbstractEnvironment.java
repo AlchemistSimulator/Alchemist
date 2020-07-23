@@ -317,7 +317,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return getNodes().iterator();
     }
 
-    private Stream<Operation> lostNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+    private Stream<Operation> lostNeighbors(
+            final Node<T> center,
+            final Neighborhood<T> oldNeighborhood,
+            final Neighborhood<T> newNeighborhood
+    ) {
         return Optional.ofNullable(oldNeighborhood)
                 .map(Neighborhood::getNeighbors)
                 .orElse(ListSets.emptyListSet())

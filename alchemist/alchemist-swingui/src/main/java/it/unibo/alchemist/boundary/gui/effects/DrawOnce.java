@@ -34,7 +34,12 @@ public abstract class DrawOnce implements Effect {
      * {@inheritDoc}
      */
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void apply(
+            final Graphics2D g,
+            final Node<T> n,
+            final Environment<T, P> env,
+            final IWormhole2D<P> wormhole
+    ) {
         if (markerNodeID != null) {
             /*
              * We want to check if the cached id belongs to a node still present in

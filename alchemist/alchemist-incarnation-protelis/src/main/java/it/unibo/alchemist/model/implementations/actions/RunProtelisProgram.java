@@ -209,7 +209,8 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     /**
-     * @return true if the Program has finished its last computation, and is ready to send a new message (used for dependency management)
+     * @return true if the Program has finished its last computation,
+     * and is ready to send a new message (used for dependency management)
      */
     public boolean isComputationalCycleComplete() {
         return computationalCycleComplete;

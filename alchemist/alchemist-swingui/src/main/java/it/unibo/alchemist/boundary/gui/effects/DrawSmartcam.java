@@ -32,7 +32,12 @@ public final class DrawSmartcam implements Effect {
     private boolean alreadyLogged;
 
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> node, final Environment<T, P> environment, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void apply(
+            final Graphics2D g,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final IWormhole2D<P> wormhole
+    ) {
         final double zoom = wormhole.getZoom();
         final Point viewPoint = wormhole.getViewPoint(environment.getPosition(node));
         final int x = viewPoint.x;

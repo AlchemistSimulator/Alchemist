@@ -326,7 +326,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 });
         }
         releaseData();
-        if (isDraggingMouse && status == ViewStatus.MOVING_SELECTED_NODES && originPoint.isPresent() && endingPoint.isPresent()) {
+        if (isDraggingMouse
+                && status == ViewStatus.MOVING_SELECTED_NODES
+                && originPoint.isPresent()
+                && endingPoint.isPresent()
+        ) {
             for (final Node<T> n : selectedNodes) {
                 if (onView.containsKey(n)) {
                     onView.put(n, new Point(onView.get(n).x + (endingPoint.get().x - originPoint.get().x), 

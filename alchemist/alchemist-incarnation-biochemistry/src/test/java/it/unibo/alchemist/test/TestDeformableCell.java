@@ -290,8 +290,8 @@ public class TestDeformableCell {
         assertEquals(
                 cellNode1.getPolarizationVersor().getCoordinate(0),
                 -cellNode1.getPolarizationVersor().getCoordinate(1),
-                PRECISION)
-        ;
+                PRECISION
+        );
     }
 
     /**

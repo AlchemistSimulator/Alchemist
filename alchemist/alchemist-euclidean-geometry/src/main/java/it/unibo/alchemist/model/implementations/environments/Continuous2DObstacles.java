@@ -58,7 +58,11 @@ public class Continuous2DObstacles<T>
 
     @NotNull
     @Override
-    public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(final double centerx, final double centery, final double range) {
+    public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(
+            final double centerx,
+            final double centery,
+            final double range
+    ) {
         return rtree.search(Geometries.circle(centerx, centery, range)).map(Entry::value).toList().toBlocking().single();
     }
 

@@ -87,7 +87,11 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
      * @param currentNode the node where the reaction is placed.
      * @param environment the environment.
      */
-    public BiochemicalReactionBuilder(final BiochemistryIncarnation<P> inc, final Node<Double> currentNode, final Environment<Double, P> environment) {
+    public BiochemicalReactionBuilder(
+            final BiochemistryIncarnation<P> inc,
+            final Node<Double> currentNode,
+            final Environment<Double, P> environment
+    ) {
         incarnation = inc;
         node = currentNode;
         env = environment;

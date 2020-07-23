@@ -53,7 +53,12 @@ public final class Exporter<T, P extends Position<? extends P>> implements Outpu
      * @param columns the extractors to use
      * @throws FileNotFoundException if the file can not be opened for writing
      */
-    public Exporter(final String target, final double space, final String header, final List<Extractor> columns) throws FileNotFoundException {
+    public Exporter(
+            final String target,
+            final double space,
+            final String header,
+            final List<Extractor> columns
+    ) throws FileNotFoundException {
         this.sampleSpace = space;
         try {
             out = new PrintStream(target, Charsets.UTF_8.name());

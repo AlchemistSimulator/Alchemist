@@ -401,14 +401,14 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         }
 
         @Override
-        public Reaction<Double> visitJunctionReaction(final BiochemistrydslParser.JunctionReactionContext ctx) { 
-            visit(ctx.junctionReactionLeft());
-            visit(ctx.junctionReactionRight());
-            if (ctx.customConditions() != null) {
-                visit(ctx.customConditions());
+        public Reaction<Double> visitJunctionReaction(final BiochemistrydslParser.JunctionReactionContext context) {
+            visit(context.junctionReactionLeft());
+            visit(context.junctionReactionRight());
+            if (context.customConditions() != null) {
+                visit(context.customConditions());
             }
-            if (ctx.customReactionType() != null) {
-                visit(ctx.customReactionType());
+            if (context.customReactionType() != null) {
+                visit(context.customReactionType());
             }
             junctionList.forEach(j -> {
                 if (node instanceof CellNode) {

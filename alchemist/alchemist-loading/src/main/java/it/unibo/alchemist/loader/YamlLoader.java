@@ -597,8 +597,20 @@ public final class YamlLoader implements Loader {
                              */
                             final List<?> actionsList = listCast(factory, program.get(ACTIONS), "actions list");
                             if (!actionsList.isEmpty()) {
-                                final Builder<Action<T>> actionBuilder = new Builder<>(Action.class, 
-                                        singleParamConfig(factory, o -> incarnation.createAction(simRng, env, node, td, reaction, o.toString())), factory);
+                                final Builder<Action<T>> actionBuilder = new Builder<>(
+                                        Action.class,
+                                        singleParamConfig(
+                                                factory,
+                                                o -> incarnation.createAction(
+                                                        simRng,
+                                                        env, node,
+                                                        td,
+                                                        reaction,
+                                                        o.toString()
+                                                )
+                                        ),
+                                        factory
+                                );
                                 reaction.setActions(Stream.concat(
                                         actionsList.stream().map(actionBuilder::build),
                                         reaction.getActions().stream())

@@ -427,17 +427,17 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             return (ctx.concentration() == null) ? 1.0 : Double.parseDouble(ctx.concentration().POSDOUBLE().getText());
         }
 
-        private static Junction createJunction(final BiochemistrydslParser.JunctionContext ctx) {
+        private static Junction createJunction(final BiochemistrydslParser.JunctionContext context) {
             final Map<Biomolecule, Double> currentNodeMolecules = new LinkedHashMap<>();
             final Map<Biomolecule, Double> neighborNodeMolecules = new LinkedHashMap<>();
-            for (final BiomoleculeContext b : ctx.junctionLeft().biomolecule()) {
+            for (final BiomoleculeContext b : context.junctionLeft().biomolecule()) {
                 insertInMap(currentNodeMolecules, createBiomolecule(b), createConcentration(b));
             }
-            for (final BiomoleculeContext b : ctx.junctionRight().biomolecule()) {
+            for (final BiomoleculeContext b : context.junctionRight().biomolecule()) {
                 insertInMap(neighborNodeMolecules, createBiomolecule(b), createConcentration(b));
             }
             return new Junction(
-                    ctx.junctionLeft().getText() + "-" + ctx.junctionRight().getText(),
+                    context.junctionLeft().getText() + "-" + context.junctionRight().getText(),
                     currentNodeMolecules,
                     neighborNodeMolecules
             );

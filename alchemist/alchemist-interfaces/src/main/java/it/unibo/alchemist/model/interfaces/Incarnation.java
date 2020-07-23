@@ -52,13 +52,13 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     /**
      * @param randomGenerator
      *            the random engine
-     * @param env
+     * @param environment
      *            the environment that will host this object
      * @param param
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
      */
-    Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> env, String param);
+    Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> environment, String param);
 
     /**
      * @param rand

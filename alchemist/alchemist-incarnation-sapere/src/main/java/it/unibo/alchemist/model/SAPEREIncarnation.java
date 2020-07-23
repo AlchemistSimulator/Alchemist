@@ -153,9 +153,9 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
     @Override
     public ILsaNode createNode(
             final RandomGenerator randomGenerator,
-            final Environment<List<ILsaMolecule>, P> env,
+            final Environment<List<ILsaMolecule>, P> environment,
             final String param) {
-        return new LsaNode(env);
+        return new LsaNode(environment);
     }
 
     private static TimeDistribution<List<ILsaMolecule>> defaultTD(final RandomGenerator rand) {

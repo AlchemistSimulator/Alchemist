@@ -42,11 +42,11 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     }
 
     @Override
-    public CellNode<P> createNode(final RandomGenerator randomGenerator, final Environment<Double, P> env, final String param) {
+    public CellNode<P> createNode(final RandomGenerator randomGenerator, final Environment<Double, P> environment, final String param) {
         if (param == null || param.isEmpty()) {
-            return new CellNodeImpl<>(env);
+            return new CellNodeImpl<>(environment);
         }
-        return new CellNodeImpl<>(env, Double.parseDouble(param));
+        return new CellNodeImpl<>(environment, Double.parseDouble(param));
     }
 
     @Override

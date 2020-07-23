@@ -94,10 +94,10 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     protected final void updateStatus(
             final Time currentTime,
             final boolean hasBeenExecuted,
-            final double param,
+            final double additionalParameter,
             final Environment<T, ?> env
     ) {
-        if (param != getRate()) {
+        if (additionalParameter != getRate()) {
             throw new IllegalStateException(getClass().getSimpleName() + " does not allow to dynamically tune the rate.");
         }
         setTau(new DoubleTime(currentTime.toDouble() + distribution.sample()));

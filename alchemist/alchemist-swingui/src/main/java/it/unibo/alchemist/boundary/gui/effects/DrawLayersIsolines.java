@@ -82,7 +82,10 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
         final Point viewEnd = new Point(viewEndX, viewEndY);
         final P envStart = wormhole.getEnvPoint(viewStart);
         final P envEnd = wormhole.getEnvPoint(viewEnd);
-        if (nOfIsolinesCached != nOfIsolines.getVal() || minOrMaxLayerValuesNeedsToBeUpdated() || distributionCached != distribution) {
+        if (nOfIsolinesCached != nOfIsolines.getVal()
+                || minOrMaxLayerValuesNeedsToBeUpdated()
+                || distributionCached != distribution
+        ) {
             nOfIsolinesCached = nOfIsolines.getVal();
             updateMinAndMaxLayerValues();
             distributionCached = distribution;

@@ -146,9 +146,10 @@ public final class YamlLoader implements Loader {
     private static final String VALUE_FILTER = SYNTAX.getString("value-filter");
     private static final String VALUES = SYNTAX.getString("values");
     private static final String VARIABLES = SYNTAX.getString("variables");
-    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
-            .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
-            .build();
+    private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_MANDATORY_PARAMETERS =
+            ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
+                .put(Layer.class, ImmutableMap.of(TYPE, CharSequence.class, MOLECULE, CharSequence.class))
+                .build();
     private static final Map<Class<?>, Map<String, Class<?>>> DEFAULT_OPTIONAL_PARAMETERS = ImmutableMap.<Class<?>, Map<String, Class<?>>>builder()
             .put(Variable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))
             .put(DependentVariable.class, ImmutableMap.of(PARAMS, List.class, NAME, CharSequence.class))

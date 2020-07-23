@@ -852,7 +852,13 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         });
     }
 
-    private static boolean isInsideRectangle(final Point viewPoint, final int rx, final int ry, final int width, final int height) {
+    private static boolean isInsideRectangle(
+            final Point viewPoint,
+            final int rx,
+            final int ry,
+            final int width,
+            final int height
+    ) {
         final double x = viewPoint.getX();
         final double y = viewPoint.getY();
         return x >= rx && x <= rx + width && y >= ry && y <= ry + height;

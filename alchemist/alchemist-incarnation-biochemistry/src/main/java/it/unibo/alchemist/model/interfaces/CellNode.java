@@ -66,7 +66,7 @@ public interface CellNode<P extends Position<? extends P>> extends Node<Double> 
 
     /**
      * set the polarization versor, e.g. a versor indicating the direction in which the cell will move the next time.
-     * 
+     *
      * @param v The {@link Position} representing the new polarization versor.
      *          Note: v MUST be a versor, so a vector with module = 1.
      */

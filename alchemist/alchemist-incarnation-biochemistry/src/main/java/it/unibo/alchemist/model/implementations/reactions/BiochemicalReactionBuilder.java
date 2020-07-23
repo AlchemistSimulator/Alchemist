@@ -499,7 +499,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final int charPositionInLine,
                 final String msg,
                 final RecognitionException e) {
-            throw new BiochemistryParseException("Error in reaction: " + reaction + "at character " + charPositionInLine + "\n" + msg);
+            throw new BiochemistryParseException(
+                    "Error in reaction: " + reaction + "at character " + charPositionInLine + "\n" + msg
+            );
         }
     }
 }

@@ -7,19 +7,20 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  */
 public class TestLsaMolecule {
 
-    private static final String ABSURD_DESCRIPTION = "Q|\\!\"£$%&/()=?^[]@ł€¶ŧ←↓→øþæßðđŋħł@«»¢“”ñµŁ¢®Ŧ¥↑ıØÞ{}&ŊªÐ§Æ»<>©‘’Ñº×";
+    private static final String ABSURD_DESCRIPTION =
+            "Q|\\!\"£$%&/()=?^[]@ł€¶ŧ←↓→øþæßðđŋħł@«»¢“”ñµŁ¢®Ŧ¥↑ıØÞ{}&ŊªÐ§Æ»<>©‘’Ñº×";
 
     /**
      * 

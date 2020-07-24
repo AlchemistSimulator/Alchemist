@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -112,62 +113,51 @@ public class TestEnvironmentNodes {
         assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
     }
 
+    private Node<Double>[] populateWithNodes(int count) {
+        final Node<Double>[] result = new EnvironmentNodeImpl[count];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new EnvironmentNodeImpl(env);
+        }
+        return result;
+    }
+
+    private Node<Double>[] populateSurroundingOrigin() {
+        final Node<Double>[] nodes = populateWithNodes(4);
+        env.addNode(nodes[0], new Euclidean2DPosition(0, 1));
+        env.addNode(nodes[1], new Euclidean2DPosition(1, 0));
+        env.addNode(nodes[2], new Euclidean2DPosition(-1, 0));
+        env.addNode(nodes[3], new Euclidean2DPosition(0, -1));
+        return nodes;
+    }
+
+    private void testDiffusion(Node<Double> center) {
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
+        env.addNode(center, new Euclidean2DPosition(0, 0));
+        final Node<Double>[] nodes = populateSurroundingOrigin();
+        final Molecule a = new Biomolecule("A");
+        injectAInEnvReaction(center, 1);
+        center.setConcentration(a, 1000.0);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
+        sim.play();
+        sim.run();
+        assertTrue(center.getConcentration(a) == 0);
+        assertTrue(Arrays.stream(nodes).noneMatch(it -> it.getConcentration(a) == 0));
+    }
+
     /**
      * Test if env nodes are selected randomly.
      */
     @Test
-    public void test3() {
-        final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode4 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode5 = new EnvironmentNodeImpl(env);
-        final Molecule a = new Biomolecule("A");
-        injectAInEnvReaction(envNode1, 1);
-        envNode1.setConcentration(a, 1000.0);
-        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
-        env.addNode(envNode1, new Euclidean2DPosition(0, 0));
-        env.addNode(envNode2, new Euclidean2DPosition(0, 1));
-        env.addNode(envNode3, new Euclidean2DPosition(1, 0));
-        env.addNode(envNode4, new Euclidean2DPosition(-1, 0));
-        env.addNode(envNode5, new Euclidean2DPosition(0, -1));
-        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
-        sim.play();
-        sim.run();
-        assertTrue(envNode2.getConcentration(a) != 0 
-                && envNode1.getConcentration(a) == 0 
-                && envNode3.getConcentration(a) != 0 
-                && envNode4.getConcentration(a) != 0 
-                && envNode5.getConcentration(a) != 0);
+    public void testDiffusionWithEnvironmentNodes() {
+        testDiffusion(new EnvironmentNodeImpl(env));
     }
 
     /**
      * Test if env nodes with same concentration are selected randomly.
      */
     @Test
-    public void test4() {
-        final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
-        final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode4 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode5 = new EnvironmentNodeImpl(env);
-        final Molecule a = new Biomolecule("A");
-        injectAInEnvReaction(cellNode, 1);
-        cellNode.setConcentration(a, 1000.0);
-        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
-        env.addNode(cellNode, new Euclidean2DPosition(0, 0));
-        env.addNode(envNode2, new Euclidean2DPosition(0, 1));
-        env.addNode(envNode3, new Euclidean2DPosition(1, 0));
-        env.addNode(envNode4, new Euclidean2DPosition(-1, 0));
-        env.addNode(envNode5, new Euclidean2DPosition(0, -1));
-        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
-        sim.play();
-        sim.run();
-        assertTrue(envNode2.getConcentration(a) != 0 
-                && cellNode.getConcentration(a) == 0 
-                && envNode3.getConcentration(a) != 0 
-                && envNode4.getConcentration(a) != 0 
-                && envNode5.getConcentration(a) != 0);
+    public void testDiffusionWithCellNodes() {
+        testDiffusion(new CellNodeImpl<>(env));
     }
  
     /**

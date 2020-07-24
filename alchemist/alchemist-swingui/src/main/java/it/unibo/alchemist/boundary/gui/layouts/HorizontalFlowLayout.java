@@ -40,7 +40,7 @@ import java.awt.Insets;
  *         Homepage:www.kagi.com/equitysoft - Based on 'FlexLayout' in Java
  *         class libraries Vol 2 Chan/Lee Addison-Wesley 1998
  */
-
+@SuppressWarnings("CPD-START")
 public final class HorizontalFlowLayout extends AFlowLayout {
 
     /**
@@ -171,12 +171,9 @@ public final class HorizontalFlowLayout extends AFlowLayout {
                 final Component c = parent.getComponent(i);
                 if (c.isVisible()) {
                     d = minimum ? c.getMinimumSize() : c.getPreferredSize();
-                    // dim.width = Math.max(dim.width, d.width);
-                    // dim.height += d.height;
-                    dim.height = Math.max(dim.height, dim.height);
+                    dim.height = Math.max(dim.height, d.height);
                     dim.width += d.width;
                     if (i > 0) {
-                        // dim.height += getGap();
                         dim.width += getGap();
                     }
                 }

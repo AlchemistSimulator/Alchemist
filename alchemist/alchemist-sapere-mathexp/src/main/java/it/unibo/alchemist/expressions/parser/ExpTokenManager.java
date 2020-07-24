@@ -19,7 +19,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * 
  */
 @SuppressFBWarnings
-@SuppressWarnings("PMD")
+@SuppressWarnings({"PMD", "CPD-START"})
 public class ExpTokenManager implements ExpConstants {
 
     /** Debug output. */

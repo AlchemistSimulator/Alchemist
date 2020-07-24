@@ -47,24 +47,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 
 @SuppressWarnings("ALL")
-public class TestEnvironmentNodes {
+public final class TestEnvironmentNodes {
 
     private static final double PRECISION = 1e-12;
     private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
     private Environment<Double, Euclidean2DPosition> env;
     private RandomGenerator rand;
 
-    private void injectReaction(String reaction, Node<Double> destination, double rate) {
+    private void injectReaction(final String reaction, final Node<Double> destination, final double rate) {
         destination.addReaction(INCARNATION.createReaction(
                 rand,
                 env,
                 destination,
-                new ExponentialTime<>(1, rand),
-                "[A] --> [A in env]"
+                new ExponentialTime<>(rate, rand),
+                reaction
         ));
     }
 
-    private void injectAInEnvReaction(Node<Double> destination, double rate) {
+    private void injectAInEnvReaction(final Node<Double> destination, final double rate) {
         injectReaction("[A] --> [A in env]", destination, rate);
     }
 
@@ -113,7 +113,7 @@ public class TestEnvironmentNodes {
         assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
     }
 
-    private Node<Double>[] populateWithNodes(int count) {
+    private Node<Double>[] populateWithNodes(final int count) {
         final Node<Double>[] result = new EnvironmentNodeImpl[count];
         for (int i = 0; i < result.length; i++) {
             result[i] = new EnvironmentNodeImpl(env);
@@ -130,7 +130,7 @@ public class TestEnvironmentNodes {
         return nodes;
     }
 
-    private void testDiffusion(Node<Double> center) {
+    private void testDiffusion(final Node<Double> center) {
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         env.addNode(center, new Euclidean2DPosition(0, 0));
         final Node<Double>[] nodes = populateSurroundingOrigin();
@@ -140,7 +140,7 @@ public class TestEnvironmentNodes {
         final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();
-        assertTrue(center.getConcentration(a) == 0);
+        assertEquals(0, center.getConcentration(a));
         assertTrue(Arrays.stream(nodes).noneMatch(it -> it.getConcentration(a) == 0));
     }
 

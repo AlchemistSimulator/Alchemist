@@ -18,6 +18,11 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import org.apache.commons.math3.random.MersenneTwister
 
+/**
+ * Tests that pedestrians can detect other objects in the environment.
+ *
+ * @param T used internally
+ */
 class TestSensory<T> : StringSpec({
 
     "field of view" {

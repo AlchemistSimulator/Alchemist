@@ -486,7 +486,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
          * normally considered global. This because for each node which is
          * detached, all the dependencies are updated, ensuring the soundness.
          */
-        if (Objects.requireNonNull(rule).isLocallyConsistent()) {
+        if (Objects.requireNonNull(rule, "No linking rule / network model set.").isLocallyConsistent()) {
             final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(node), this);
             final Neighborhood<T> oldNeighborhood = neighCache.put(node.getId(), newNeighborhood);
             /*

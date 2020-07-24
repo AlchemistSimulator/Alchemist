@@ -20,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestLsaMolecule {
 
     private static final String ABSURD_DESCRIPTION =
-            "Q|\\!\"£$%&/()=?^[]@ł€¶ŧ←↓→øþæßðđŋħł@«»¢“”ñµŁ¢®Ŧ¥↑ıØÞ{}&ŊªÐ§Æ»<>©‘’Ñº×";
+        "Q|\\!\"£$%&/()=?^[]@ł€¶ŧ←↓→øþæßðđŋħł@"
+            + "«»¢“”ñµŁ¢®Ŧ¥↑ıØÞ{}&ŊªÐ§Æ»<>©‘’Ñº×";
 
     /**
      * 

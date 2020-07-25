@@ -1,20 +1,20 @@
 /*
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2020, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.monitors
+package it.unibo.alchemist.boundary.interactions
 
 import com.google.common.collect.ImmutableMap
 import it.unibo.alchemist.boundary.clear
+import it.unibo.alchemist.boundary.createDrawCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.makePoint
-import it.unibo.alchemist.boundary.minus
-import it.unibo.alchemist.boundary.plus
+import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.core.interfaces.Simulation
@@ -45,14 +45,7 @@ import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
-import javafx.scene.shape.Rectangle
-import java.awt.Point
-import java.util.Timer
 import java.util.concurrent.Semaphore
-import kotlin.concurrent.fixedRateTimer
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -100,7 +93,8 @@ class InteractionManager<T, P : Position2D<P>>(
     private lateinit var mousePan: AnalogPan
     private val highlighter = Canvas()
     private val selector = Canvas()
-    private val selectionHelper: SelectionHelper<T, P> = SelectionHelper()
+    private val selectionHelper: SelectionHelper<T, P> =
+        SelectionHelper()
     private val selection: ObservableMap<Node<T>, P> = FXCollections.observableHashMap()
     private val selectionCandidates: ObservableMap<Node<T>, P> = FXCollections.observableHashMap()
     private val selectedElements: ImmutableMap<Node<T>, P>
@@ -131,8 +125,10 @@ class InteractionManager<T, P : Position2D<P>>(
             it.heightProperty().bind(monitor.heightProperty())
             it.isMouseTransparent = true
         }
-        highlighter.graphicsContext2D.globalAlpha = Alphas.highlight
-        selector.graphicsContext2D.globalAlpha = Alphas.selection
+        highlighter.graphicsContext2D.globalAlpha =
+            Alphas.highlight
+        selector.graphicsContext2D.globalAlpha =
+            Alphas.selection
         // delete
         val deleteNodes = { _: KeyEvent ->
             runMutex.acquireUninterruptibly()
@@ -252,7 +248,9 @@ class InteractionManager<T, P : Position2D<P>>(
         }
         selection.addListener(
             MapChangeListener {
-                selection.map { paintHighlight(it.value, Colors.alreadySelected) }.let { highlighters ->
+                selection.map { paintHighlight(it.value,
+                    Colors.alreadySelected
+                ) }.let { highlighters ->
                     feedback = feedback + (Interaction.HIGHLIGHTED to highlighters)
                 }
                 repaint()
@@ -260,7 +258,9 @@ class InteractionManager<T, P : Position2D<P>>(
         )
         selectionCandidates.addListener(
             MapChangeListener {
-                selectionCandidates.map { paintHighlight(it.value, Colors.selecting) }.let { highlighters ->
+                selectionCandidates.map { paintHighlight(it.value,
+                    Colors.selecting
+                ) }.let { highlighters ->
                     feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters)
                 }
                 repaint()
@@ -317,7 +317,9 @@ class InteractionManager<T, P : Position2D<P>>(
     private fun onSelecting(event: MouseEvent) {
         selectionHelper.let { helper: SelectionHelper<T, P> ->
             helper.update(makePoint(event.x, event.y))
-            listOf(selector.createDrawCommand(helper.rectangle, Colors.selectionBox)).let { drawCommands ->
+            listOf(selector.createDrawCommand(helper.rectangle,
+                Colors.selectionBox
+            )).let { drawCommands ->
                 feedback = feedback + (Interaction.SELECTION_BOX to drawCommands)
             }
             addNodesToSelectionCandidates()
@@ -380,7 +382,9 @@ class InteractionManager<T, P : Position2D<P>>(
             wormhole.getViewPoint(position).let {
                 graphics.fillOval(
                     it.x - highlightSize / 2,
-                    it.y - highlightSize / 2, highlightSize, highlightSize
+                    it.y - highlightSize / 2,
+                    highlightSize,
+                    highlightSize
                 )
             }
         }
@@ -469,281 +473,3 @@ class InteractionManager<T, P : Position2D<P>>(
         }
     }
 }
-
-/**
- * Cardinal and intercardinal directions indicating a movement.
- * @param x the X-value. Grows positively towards the "right".
- * @param y the Y-value. Grows positively upwards.
- */
-enum class Direction2D(val x: Int, val y: Int) {
-    NONE(0, 0),
-    NORTH(0, 1),
-    SOUTH(0, -1),
-    EAST(1, 0),
-    WEST(-1, 0),
-    NORTHEAST(1, 1),
-    SOUTHEAST(1, -1),
-    SOUTHWEST(-1, -1),
-    NORTHWEST(-1, 1);
-
-    private fun flip(xFlip: Boolean = true, yFlip: Boolean = true): Direction2D =
-        values().find {
-            it.x == (if (xFlip) -x else x) && it.y == if (yFlip) -y else y
-        } ?: NONE
-
-    /**
-     * Flips the direction horizontally and vertically.
-     */
-    val flipped: Direction2D
-        get() = flip()
-
-    /**
-     * Flips the direction's X-values.
-     */
-    val flippedX: Direction2D
-        get() = flip(yFlip = false)
-
-    /**
-     * Flips the direction's Y-values.
-     */
-    val flippedY: Direction2D
-        get() = flip(xFlip = false)
-
-    private fun Int.limited(): Int = min(1, max(this, -1))
-
-    /**
-     * Sums with a direction.
-     */
-    operator fun plus(other: Direction2D): Direction2D =
-        values().find {
-            it.x == (x + other.x).limited() && it.y == (y + other.y).limited()
-        } ?: NONE
-
-    /**
-     * Subtracts with a direction.
-     */
-    operator fun minus(other: Direction2D): Direction2D =
-        values().find {
-            it.x == (x - other.x).limited() && it.y == (y - other.y).limited()
-        } ?: NONE
-
-    /**
-     * Multiplies by a scalar.
-     */
-    operator fun times(scalar: Int): Point = makePoint(x * scalar, y * scalar)
-
-    /**
-     * Returns whether this direction contains [other].
-     * Specifically, a direction "D" contains another if D [Direction2D.plus] [other] equals D.
-     * For example, [NORTHEAST] contains [NORTH] and [EAST], but not [WEST].
-     * All directions contain [NONE]. [NONE] contains only [NONE].
-     */
-    operator fun contains(other: Direction2D): Boolean {
-        return this + other == this
-    }
-}
-
-/**
- * Manages panning towards a cardinal (N, S, E, W) or intercardinal (NE, NW, SE, SW) direction.
- * When a direction is added, panning towards it begins and doesn't stop until the given direction is removed.
- * @param speed The speed of each movement.
- * @param period Amount of time (milliseconds) between each movement.
- * @param wormhole The wormhole used to pan.
- * @param updates A runnable which will be called whenever a panning movement occurs.
- */
-class DigitalPan<P : Position2D<P>>(
-    private val speed: Int = 5,
-    private val period: Long = 15,
-    private val wormhole: BidimensionalWormhole<P>,
-    private val updates: () -> Unit
-) {
-    private var timer: Timer = Timer()
-    private var currentDirection: Direction2D = Direction2D.NONE
-
-    /**
-     * Inputs a movement towards a certain direction.
-     */
-    operator fun plusAssign(direction: Direction2D) {
-        if (direction !in currentDirection) {
-            redirect(currentDirection + direction)
-        }
-    }
-
-    /**
-     * Stops moving towards a certain direction.
-     */
-    operator fun minusAssign(direction: Direction2D) {
-        if (direction in currentDirection) {
-            redirect(currentDirection - direction)
-        }
-    }
-
-    /**
-     * Redirects the movement towards a given direction,
-     * potentially stopping the movement altogether if the given direction is [Direction2D.NONE].
-     */
-    private fun redirect(direction: Direction2D) {
-        if (direction == Direction2D.NONE) {
-            timer.cancel()
-            currentDirection = Direction2D.NONE
-        } else {
-            if (direction != currentDirection) {
-                timer.cancel()
-                currentDirection = direction
-                // the X-axis seems to be flipped... (grows positively towards the "left")
-                // so we flip the X-values of the directions
-                direction.flippedX.let {
-                    timer = fixedRateTimer(period = period) {
-                        wormhole.viewPosition += it * speed
-                        updates()
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
- * Manages panning.
- */
-class AnalogPan(private var current: Point) {
-    /**
-     * Returns whether this [AnalogPan] is still valid.
-     * Invalidation happens when [close] is called, for example when the mouse goes out of bounds.
-     */
-    var valid: Boolean = true
-        private set
-
-    /**
-     * Updates the panning position and returns it.
-     * @param next the destination point
-     * @param view the position of the view
-     */
-    fun update(next: Point, view: Point): Point = if (valid) {
-        (view + next - current).also { current = next }
-    } else {
-        throw IllegalStateException("Unable to pan after finalizing the PanHelper")
-    }
-
-    /**
-     * Closes the helper. This invalidates the [AnalogPan]
-     */
-    fun close() {
-        valid = false
-    }
-}
-
-/**
- * Manages multi-element selection and click-selection.
- */
-class SelectionHelper<T, P : Position2D<P>> {
-
-    /**
-     * Allows basic multi-element box selections.
-     * @param anchorPoint the starting and unchanging [Point] of the selection
-     */
-    class SelectionBox(val anchorPoint: Point, private val movingPoint: Point = anchorPoint) {
-        /**
-         * The rectangle representing the box.
-         * If the rectangle's dimensions are (0, 0), the rectangle is to be considered non-existing.
-         */
-        val rectangle
-            get() = anchorPoint.makeRectangleWith(movingPoint)
-
-        override fun toString(): String = "[$anchorPoint, $movingPoint]"
-    }
-
-    private var box: SelectionBox? = null
-    private var selectionPoint: Point? = null
-    private var isSelecting = false
-
-    /**
-     * The rectangle representing the box.
-     * If the rectangle's dimensions are (0, 0), the rectangle is to be considered non-existing.
-     */
-    val rectangle
-        get() = box?.rectangle ?: makePoint(0, 0).let { it.makeRectangleWith(it) }
-
-    /**
-     * Begins a new selection at the given point.
-     */
-    fun begin(point: Point): SelectionHelper<T, P> = apply {
-        isSelecting = true
-        selectionPoint = point
-        box = SelectionBox(point)
-    }
-
-    /**
-     * Updates the selection with a new point.
-     */
-    fun update(point: Point): SelectionHelper<T, P> = apply {
-        if (isSelecting) {
-            box?.let {
-                box = SelectionBox(it.anchorPoint, point)
-            }
-            selectionPoint = null
-        }
-    }
-
-    /**
-     * Closes the selection.
-     */
-    fun close() {
-        box = null
-        selectionPoint = null
-        isSelecting = false
-    }
-
-    /**
-     * Retrieves the element selected by clicking. If selection was not done by clicking, null.
-     */
-    fun clickSelection(
-        nodes: Map<Node<T>, P>,
-        wormhole: BidimensionalWormhole<P>
-    ): Pair<Node<T>, P>? =
-        selectionPoint?.let { point ->
-            nodes.minBy { nodes[it.key]!!.distanceTo(wormhole.getEnvPoint(point)) }?.let {
-                Pair(it.key, it.value)
-            }
-        }
-
-    /**
-     * Retrieves the elements selected by box selection, thus possibly empty.
-     */
-    fun boxSelection(
-        nodes: Map<Node<T>, P>,
-        wormhole: BidimensionalWormhole<P>
-    ): Map<Node<T>, P> =
-        box?.let {
-            rectangle.intersectingNodes(nodes, wormhole)
-        } ?: emptyMap()
-}
-
-/**
- * Returns a command for drawing the given rectangle on the caller canvas.
- */
-private fun Canvas.createDrawCommand(rectangle: Rectangle, colour: Paint): () -> Unit = {
-    graphicsContext2D.let {
-        it.fill = colour
-        it.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
-    }
-}
-
-/**
- * Returns the nodes intersecting with the caller rectangle.
- */
-private fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
-    nodes: Map<Node<T>, P>,
-    wormhole: BidimensionalWormhole<P>
-): Map<Node<T>, P> = let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
-
-private operator fun Rectangle.contains(point: Point): Boolean =
-    point.x.toDouble() in x..x + width &&
-        point.y.toDouble() in y..y + height
-
-private fun Point.makeRectangleWith(other: Point): Rectangle = Rectangle(
-    min(this.x, other.x).toDouble(),
-    min(this.y, other.y).toDouble(),
-    abs(this.x - other.x).toDouble(),
-    abs(this.y - other.y).toDouble()
-)

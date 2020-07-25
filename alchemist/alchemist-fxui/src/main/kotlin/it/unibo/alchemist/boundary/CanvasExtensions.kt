@@ -10,8 +10,20 @@
 package it.unibo.alchemist.boundary
 
 import javafx.scene.canvas.Canvas
+import javafx.scene.paint.Paint
+import javafx.scene.shape.Rectangle
 
 /**
  * Clears a given canvas.
  */
 fun Canvas.clear() = graphicsContext2D.clearRect(0.0, 0.0, width, height)
+
+/**
+ * Returns a command for drawing the given rectangle on the caller canvas.
+ */
+fun Canvas.createDrawCommand(rectangle: Rectangle, colour: Paint): () -> Unit = {
+    graphicsContext2D.let {
+        it.fill = colour
+        it.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+    }
+}

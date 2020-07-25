@@ -20,6 +20,7 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.input.KeyboardActionListener
 import it.unibo.alchemist.boundary.clear
+import it.unibo.alchemist.boundary.interactions.InteractionManager
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
@@ -71,7 +72,11 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     private var viewStatus = DEFAULT_VIEW_STATUS
     private lateinit var wormhole: BidimensionalWormhole<P>
     private lateinit var zoomManager: ZoomManager
-    private val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
+    private val interactions: InteractionManager<T, P> by lazy {
+        InteractionManager(
+            this
+        )
+    }
     private val effectsCanvas = Canvas()
     /**
      * Group dedicated for painting the background.

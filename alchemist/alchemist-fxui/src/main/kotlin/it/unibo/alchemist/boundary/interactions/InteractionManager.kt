@@ -248,9 +248,12 @@ class InteractionManager<T, P : Position2D<P>>(
         }
         selection.addListener(
             MapChangeListener {
-                selection.map { paintHighlight(it.value,
-                    Colors.alreadySelected
-                ) }.let { highlighters ->
+                selection.map {
+                    paintHighlight(
+                        it.value,
+                        Colors.alreadySelected
+                    )
+                }.let { highlighters ->
                     feedback = feedback + (Interaction.HIGHLIGHTED to highlighters)
                 }
                 repaint()
@@ -258,9 +261,12 @@ class InteractionManager<T, P : Position2D<P>>(
         )
         selectionCandidates.addListener(
             MapChangeListener {
-                selectionCandidates.map { paintHighlight(it.value,
-                    Colors.selecting
-                ) }.let { highlighters ->
+                selectionCandidates.map {
+                    paintHighlight(
+                        it.value,
+                        Colors.selecting
+                    )
+                }.let { highlighters ->
                     feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters)
                 }
                 repaint()
@@ -317,9 +323,12 @@ class InteractionManager<T, P : Position2D<P>>(
     private fun onSelecting(event: MouseEvent) {
         selectionHelper.let { helper: SelectionHelper<T, P> ->
             helper.update(makePoint(event.x, event.y))
-            listOf(selector.createDrawCommand(helper.rectangle,
-                Colors.selectionBox
-            )).let { drawCommands ->
+            listOf(
+                selector.createDrawCommand(
+                    helper.rectangle,
+                    Colors.selectionBox
+                )
+            ).let { drawCommands ->
                 feedback = feedback + (Interaction.SELECTION_BOX to drawCommands)
             }
             addNodesToSelectionCandidates()

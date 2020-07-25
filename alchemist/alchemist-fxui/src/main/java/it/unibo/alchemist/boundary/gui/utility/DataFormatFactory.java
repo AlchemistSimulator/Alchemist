@@ -23,10 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * {@code IllegalArgumentException: DataFormat 'xxx' already exists}.
  * <p>
  *
- * @see <a href=
- *      "https://bugs.openjdk.java.net/browse/JDK-8118672
-?focusedCommentId=13730400&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-13730400">
- *      Issue JDK-8118672</a>
+ * @see <a href="shorturl.at/AFUV0">Issue JDK-8118672</a>
  * 
  */
 public final class DataFormatFactory {

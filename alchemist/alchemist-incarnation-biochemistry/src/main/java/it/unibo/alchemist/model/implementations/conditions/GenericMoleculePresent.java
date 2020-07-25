@@ -75,8 +75,8 @@ public class GenericMoleculePresent<T extends Number> extends
      * {@inheritDoc}
      */
     @Override
-    public GenericMoleculePresent<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
-        return new GenericMoleculePresent<T>(n, molecule, qty);
+    public GenericMoleculePresent<T> cloneCondition(final Node<T> node, final Reaction<T> reaction) {
+        return new GenericMoleculePresent<T>(node, molecule, qty);
     }
 
     /**

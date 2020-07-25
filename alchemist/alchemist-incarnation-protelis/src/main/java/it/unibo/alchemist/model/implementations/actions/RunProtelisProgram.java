@@ -133,10 +133,17 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
 
     @Override
     @SuppressWarnings("unchecked")
-    public final RunProtelisProgram<P> cloneAction(final Node<Object> n, final Reaction<Object> r) {
-        if (n instanceof ProtelisNode) {
+    public final RunProtelisProgram<P> cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
+        if (node instanceof ProtelisNode) {
             try {
-                return new RunProtelisProgram<>(getEnvironment(), (ProtelisNode<P>) n, r, getRandomGenerator(), originalProgram, getRetentionTime());
+                return new RunProtelisProgram<>(
+                        getEnvironment(),
+                        (ProtelisNode<P>) node,
+                        reaction,
+                        getRandomGenerator(),
+                        originalProgram,
+                        getRetentionTime()
+                );
             } catch (SecurityException e) {
                 throw new IllegalStateException(e);
             }
@@ -209,7 +216,8 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     }
 
     /**
-     * @return true if the Program has finished its last computation, and is ready to send a new message (used for dependency management)
+     * @return true if the Program has finished its last computation,
+     * and is ready to send a new message (used for dependency management)
      */
     public boolean isComputationalCycleComplete() {
         return computationalCycleComplete;

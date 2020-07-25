@@ -64,9 +64,9 @@ public class DrawCognitiveMap extends DrawOnce {
     private transient NavigationGraph<? extends Euclidean2DPosition, ?, Ellipse, DefaultEdge> cognitiveMap;
 
     /**
-     * @param g        graphics
-     * @param n        node
-     * @param env      environment
+     * @param graphics        graphics
+     * @param node        node
+     * @param environment      environment
      * @param wormhole the wormhole used to map environment's coords to screen coords
      * @param <T>      concentration type
      * @param <P>      position type
@@ -74,13 +74,20 @@ public class DrawCognitiveMap extends DrawOnce {
     @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    public <T, P extends Position2D<P>> void apply(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
-        super.apply(g, n, env, wormhole);
+    public <T, P extends Position2D<P>> void apply(
+            final Graphics2D graphics,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final IWormhole2D<P> wormhole
+    ) {
+        super.apply(graphics, node, environment, wormhole);
         final Integer markerNodeID = getMarkerNodeID();
-        if (cognitiveMap == null && markerNodeID != null && env.getNodeByID(markerNodeID) instanceof OrientingPedestrian
-                && env instanceof Environment2DWithObstacles
-                && env.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            cognitiveMap = ((OrientingPedestrian) env.getNodeByID(markerNodeID)).getCognitiveMap();
+        if (cognitiveMap == null
+                && markerNodeID != null
+                && environment.getNodeByID(markerNodeID) instanceof OrientingPedestrian
+                && environment instanceof Environment2DWithObstacles
+                && environment.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
+            cognitiveMap = ((OrientingPedestrian) environment.getNodeByID(markerNodeID)).getCognitiveMap();
         }
     }
 
@@ -88,27 +95,36 @@ public class DrawCognitiveMap extends DrawOnce {
      * {@inheritDoc}
      */
     @Override
-    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+    protected <T, P extends Position2D<P>> void draw(
+            final Graphics2D graphics2D,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final IWormhole2D<P> wormhole
+    ) {
         if (cognitiveMap != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-            g.setColor(Color.RED);
+            graphics2D.setColor(Color.RED);
             cognitiveMap.vertexSet().stream()
-                    .map(r -> mapEnvEllipseToAwtShape(r, wormhole, env))
+                    .map(r -> mapEnvEllipseToAwtShape(r, wormhole, environment))
                     .forEach(r -> {
-                        g.setColor(colorCache);
-                        g.fill(r);
-                        g.setColor(colorCache.brighter().brighter());
-                        g.draw(r);
+                        graphics2D.setColor(colorCache);
+                        graphics2D.fill(r);
+                        graphics2D.setColor(colorCache.brighter().brighter());
+                        graphics2D.draw(r);
                     });
             cognitiveMap.vertexSet().forEach(r -> {
-                final Point centroidFrom = wormhole.getViewPoint(env.makePosition(r.getCentroid().getX(), r.getCentroid().getY()));
+                final Point centroidFrom = wormhole.getViewPoint(
+                        environment.makePosition(r.getCentroid().getX(), r.getCentroid().getY())
+                );
                 if (cognitiveMap != null) {
                     cognitiveMap.outgoingEdgesOf(r).forEach(e -> {
                         if (cognitiveMap != null) {
                             final Euclidean2DPosition head = cognitiveMap.getEdgeTarget(e).getCentroid();
-                            final Point centroidTo = wormhole.getViewPoint(env.makePosition(head.getX(), head.getY()));
-                            g.setColor(colorCache);
-                            g.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
+                            final Point centroidTo = wormhole.getViewPoint(
+                                    environment.makePosition(head.getX(), head.getY())
+                            );
+                            graphics2D.setColor(colorCache);
+                            graphics2D.drawLine(centroidFrom.x, centroidFrom.y, centroidTo.x, centroidTo.y);
                         }
                     });
                 }
@@ -124,15 +140,30 @@ public class DrawCognitiveMap extends DrawOnce {
         return colorCache;
     }
 
-    private <P extends Position2D<P>> Shape mapEnvEllipseToAwtShape(final Ellipse e, final IWormhole2D<P> wormhole, final Environment<?, P> env) {
-        final Rectangle2D frame = e.asAwtShape().getFrame();
-        final P startEnv = env.makePosition(frame.getMinX(), frame.getMinY());
-        final P endEnv = env.makePosition(frame.getMaxX(), frame.getMaxY());
+    private <P extends Position2D<P>> Shape mapEnvEllipseToAwtShape(
+            final Ellipse ellipse,
+            final IWormhole2D<P> wormhole,
+            final Environment<?, P> environment
+    ) {
+        final Rectangle2D frame = ellipse.asAwtShape().getFrame();
+        final P startEnv = environment.makePosition(frame.getMinX(), frame.getMinY());
+        final P endEnv = environment.makePosition(frame.getMaxX(), frame.getMaxY());
         final Point startView = wormhole.getViewPoint(startEnv);
         final Point endView = wormhole.getViewPoint(endEnv);
-        final Point2D minPoint = new Point2D.Double(Math.min(startView.getX(), endView.getX()), Math.min(startView.getY(), endView.getY()));
-        final Point2D maxPoint = new Point2D.Double(Math.max(startView.getX(), endView.getX()), Math.max(startView.getY(), endView.getY()));
-        return new Ellipse2D.Double(minPoint.getX(), minPoint.getY(), maxPoint.getX() - minPoint.getX(), maxPoint.getY() - minPoint.getY());
+        final Point2D minPoint = new Point2D.Double(
+                Math.min(startView.getX(), endView.getX()),
+                Math.min(startView.getY(), endView.getY())
+        );
+        final Point2D maxPoint = new Point2D.Double(
+                Math.max(startView.getX(), endView.getX()),
+                Math.max(startView.getY(), endView.getY())
+        );
+        return new Ellipse2D.Double(
+                minPoint.getX(),
+                minPoint.getY(),
+                maxPoint.getX() - minPoint.getX(),
+                maxPoint.getY() - minPoint.getY()
+        );
     }
 
     /**

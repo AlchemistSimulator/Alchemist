@@ -28,7 +28,9 @@ import java.util.stream.Collectors;
 /**
  * @param <T>
  */
-public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T> {
+public class Continuous2DObstacles<T>
+        extends LimitedContinuos2D<T>
+        implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
     private static final long serialVersionUID = 69931743897405107L;
@@ -47,13 +49,20 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
     }
 
     @Override
-    public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(@NotNull final Euclidean2DPosition center, final double range) {
+    public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(
+            @NotNull final Euclidean2DPosition center,
+            final double range
+    ) {
         return getObstaclesInRange(center.getX(), center.getY(), range);
     }
 
     @NotNull
     @Override
-    public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(final double centerx, final double centery, final double range) {
+    public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(
+            final double centerx,
+            final double centery,
+            final double range
+    ) {
         return rtree.search(Geometries.circle(centerx, centery, range)).map(Entry::value).toList().toBlocking().single();
     }
 
@@ -90,7 +99,10 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
 
     @NotNull
     @Override
-    public final Euclidean2DPosition next(@NotNull final Euclidean2DPosition current, @NotNull final Euclidean2DPosition desired) {
+    public final Euclidean2DPosition next(
+            @NotNull final Euclidean2DPosition current,
+            @NotNull final Euclidean2DPosition desired
+    ) {
         return next(current.getX(), current.getY(), desired.getX(), desired.getY());
     }
 
@@ -131,7 +143,13 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
         return makePosition(shortest.getX(), shortest.getY());
     }
 
-    private List<RectObstacle2D<Euclidean2DPosition>> query(final double ox, final double oy, final double nx, final double ny, final double tolerance) {
+    private List<RectObstacle2D<Euclidean2DPosition>> query(
+            final double ox,
+            final double oy,
+            final double nx,
+            final double ny,
+            final double tolerance
+    ) {
         double minx = Math.min(ox, nx);
         double miny = Math.min(oy, ny);
         double maxx = Math.max(ox, nx);
@@ -142,7 +160,11 @@ public class Continuous2DObstacles<T> extends LimitedContinuos2D<T> implements E
         maxx += dx;
         miny -= dy;
         maxy += dy;
-        return rtree.search(Geometries.rectangle(minx, miny, maxx, maxy)).map(Entry::value).toList().toBlocking().single();
+        return rtree.search(Geometries.rectangle(minx, miny, maxx, maxy))
+                .map(Entry::value)
+                .toList()
+                .toBlocking()
+                .single();
     }
 
     @Override

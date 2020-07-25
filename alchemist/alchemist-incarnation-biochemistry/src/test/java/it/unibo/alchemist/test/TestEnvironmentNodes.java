@@ -25,10 +25,13 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -44,24 +47,43 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 
 @SuppressWarnings("ALL")
-public class TestEnvironmentNodes {
+public final class TestEnvironmentNodes {
 
     private static final double PRECISION = 1e-12;
     private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
+    private Environment<Double, Euclidean2DPosition> env;
+    private RandomGenerator rand;
+
+    private void injectReaction(final String reaction, final Node<Double> destination, final double rate) {
+        destination.addReaction(INCARNATION.createReaction(
+                rand,
+                env,
+                destination,
+                new ExponentialTime<>(rate, rand),
+                reaction
+        ));
+    }
+
+    private void injectAInEnvReaction(final Node<Double> destination, final double rate) {
+        injectReaction("[A] --> [A in env]", destination, rate);
+    }
+
+
+    @BeforeEach
+    public void setUp() {
+        env = new BioRect2DEnvironment();
+        rand = new MersenneTwister();
+    }
 
     /**
      * test a simple reaction "[A] --> [A in env]".
      */
     @Test
     public void test1() {
-        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
         final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
         final EnvironmentNode envNode = new EnvironmentNodeImpl(env);
-        final MersenneTwister rand = new MersenneTwister();
         final Molecule a = new Biomolecule("A");
-        cellNode.addReaction(INCARNATION.createReaction(
-                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]" //NOPMD
-                ));
+        injectAInEnvReaction(cellNode, 1);
         cellNode.setConcentration(a, 1000.0);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         env.addNode(cellNode, new Euclidean2DPosition(0, 0));
@@ -77,14 +99,10 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void test2() {
-        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
         final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
         final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
-        final MersenneTwister rand = new MersenneTwister();
         final Molecule a = new Biomolecule("A");
-        envNode1.addReaction(INCARNATION.createReaction(
-                rand, env, envNode1, new ExponentialTime<>(1, rand), "[A] --> [A in env]"
-                ));
+        injectAInEnvReaction(envNode1, 1);
         envNode1.setConcentration(a, 1000.0);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         env.addNode(envNode1, new Euclidean2DPosition(0, 0));
@@ -95,70 +113,51 @@ public class TestEnvironmentNodes {
         assertTrue(envNode2.getConcentration(a) == 1000 && envNode1.getConcentration(a) == 0);
     }
 
+    private Node<Double>[] populateWithNodes(final int count) {
+        final Node<Double>[] result = new EnvironmentNodeImpl[count];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new EnvironmentNodeImpl(env);
+        }
+        return result;
+    }
+
+    private Node<Double>[] populateSurroundingOrigin() {
+        final Node<Double>[] nodes = populateWithNodes(4);
+        env.addNode(nodes[0], new Euclidean2DPosition(0, 1));
+        env.addNode(nodes[1], new Euclidean2DPosition(1, 0));
+        env.addNode(nodes[2], new Euclidean2DPosition(-1, 0));
+        env.addNode(nodes[3], new Euclidean2DPosition(0, -1));
+        return nodes;
+    }
+
+    private void testDiffusion(final Node<Double> center) {
+        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
+        env.addNode(center, new Euclidean2DPosition(0, 0));
+        final Node<Double>[] nodes = populateSurroundingOrigin();
+        final Molecule a = new Biomolecule("A");
+        injectAInEnvReaction(center, 1);
+        center.setConcentration(a, 1000.0);
+        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
+        sim.play();
+        sim.run();
+        assertEquals(0, center.getConcentration(a));
+        assertTrue(Arrays.stream(nodes).noneMatch(it -> it.getConcentration(a) == 0));
+    }
+
     /**
      * Test if env nodes are selected randomly.
      */
     @Test
-    public void test3() {
-        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
-        final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode4 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode5 = new EnvironmentNodeImpl(env);
-        final MersenneTwister rand = new MersenneTwister();
-        final Molecule a = new Biomolecule("A");
-        envNode1.addReaction(INCARNATION.createReaction(
-                rand, env, envNode1, new ExponentialTime<>(1, rand), "[A] --> [A in env]"
-                ));
-        envNode1.setConcentration(a, 1000.0);
-        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
-        env.addNode(envNode1, new Euclidean2DPosition(0, 0));
-        env.addNode(envNode2, new Euclidean2DPosition(0, 1));
-        env.addNode(envNode3, new Euclidean2DPosition(1, 0));
-        env.addNode(envNode4, new Euclidean2DPosition(-1, 0));
-        env.addNode(envNode5, new Euclidean2DPosition(0, -1));
-        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
-        sim.play();
-        sim.run();
-        assertTrue(envNode2.getConcentration(a) != 0 
-                && envNode1.getConcentration(a) == 0 
-                && envNode3.getConcentration(a) != 0 
-                && envNode4.getConcentration(a) != 0 
-                && envNode5.getConcentration(a) != 0);
+    public void testDiffusionWithEnvironmentNodes() {
+        testDiffusion(new EnvironmentNodeImpl(env));
     }
 
     /**
      * Test if env nodes with same concentration are selected randomly.
      */
     @Test
-    public void test4() {
-        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
-        final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
-        final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode4 = new EnvironmentNodeImpl(env);
-        final EnvironmentNode envNode5 = new EnvironmentNodeImpl(env);
-        final MersenneTwister rand = new MersenneTwister();
-        final Molecule a = new Biomolecule("A");
-        cellNode.addReaction(INCARNATION.createReaction(
-                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]"
-                ));
-        cellNode.setConcentration(a, 1000.0);
-        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
-        env.addNode(cellNode, new Euclidean2DPosition(0, 0));
-        env.addNode(envNode2, new Euclidean2DPosition(0, 1));
-        env.addNode(envNode3, new Euclidean2DPosition(1, 0));
-        env.addNode(envNode4, new Euclidean2DPosition(-1, 0));
-        env.addNode(envNode5, new Euclidean2DPosition(0, -1));
-        final Simulation<?, ?> sim = new Engine<>(env, 10_000);
-        sim.play();
-        sim.run();
-        assertTrue(envNode2.getConcentration(a) != 0 
-                && cellNode.getConcentration(a) == 0 
-                && envNode3.getConcentration(a) != 0 
-                && envNode4.getConcentration(a) != 0 
-                && envNode5.getConcentration(a) != 0);
+    public void testDiffusionWithCellNodes() {
+        testDiffusion(new CellNodeImpl<>(env));
     }
  
     /**
@@ -166,20 +165,15 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void test5() {
-        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
         final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
         final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
         final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
         final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
         final EnvironmentNode envNode4 = new EnvironmentNodeImpl(env);
-        final MersenneTwister rand = new MersenneTwister();
         final Molecule a = new Biomolecule("A");
-        cellNode.addReaction(INCARNATION.createReaction(
-                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]"));
-        envNode1.addReaction(INCARNATION.createReaction(
-                rand, env, envNode1, new ExponentialTime<>(1000, rand), "[A] --> [A in env]"));
-        envNode2.addReaction(INCARNATION.createReaction(
-                rand, env, envNode2, new ExponentialTime<>(1000, rand), "[A] --> [A in env]"));
+        injectAInEnvReaction(cellNode, 1);
+        injectAInEnvReaction(envNode1, 1000);
+        injectAInEnvReaction(envNode2, 1000);
         final double total = 1000.0;
         cellNode.setConcentration(a, 1000.0);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(1));
@@ -205,13 +199,9 @@ public class TestEnvironmentNodes {
      */
     @Test
     public void test6() {
-        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
         final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
-        final MersenneTwister rand = new MersenneTwister();
         final Molecule a = new Biomolecule("A");
-        cellNode.addReaction(INCARNATION.createReaction(
-                rand, env, cellNode, new ExponentialTime<>(1, rand), "[A] --> [A in env]" //NOPMD
-                ));
+        injectAInEnvReaction(cellNode, 1);
         cellNode.setConcentration(a, 1000.0);
         env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         env.addNode(cellNode, new Euclidean2DPosition(0, 0));
@@ -372,7 +362,10 @@ public class TestEnvironmentNodes {
         return testLoading(resource, Collections.emptyMap());
     }
 
-    private static <T, P extends Position<P>> Environment<T, P> testLoading(final String resource, final Map<String, Double> vars) {
+    private static <T, P extends Position<P>> Environment<T, P> testLoading(
+            final String resource,
+            final Map<String, Double> vars
+    ) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(res);
         final Environment<T, P> env = new YamlLoader(res).getWith(vars);

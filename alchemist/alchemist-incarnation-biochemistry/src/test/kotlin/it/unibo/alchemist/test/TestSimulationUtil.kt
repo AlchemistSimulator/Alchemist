@@ -14,9 +14,9 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
 ) {
     with(Engine(this, Time.INFINITY)) {
         addOutputMonitor(object : OutputMonitor<T, P> {
-            override fun initialized(e: Environment<T, P>) = initialized.invoke(e)
-            override fun stepDone(e: Environment<T, P>, r: Reaction<T>, t: Time, s: Long) = stepDone.invoke(e, r, t, s)
-            override fun finished(e: Environment<T, P>, t: Time, s: Long) = finished.invoke(e, t, s)
+            override fun initialized(environment: Environment<T, P>) = initialized.invoke(environment)
+            override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>, t: Time, s: Long) = stepDone.invoke(environment, reaction, t, s)
+            override fun finished(environment: Environment<T, P>, t: Time, s: Long) = finished.invoke(environment, t, s)
         })
         play()
         run()

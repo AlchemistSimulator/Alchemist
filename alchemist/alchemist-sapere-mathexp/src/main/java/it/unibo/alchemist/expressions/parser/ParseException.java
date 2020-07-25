@@ -23,7 +23,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * long as you retain the public fields.
  */
 @SuppressFBWarnings
-@SuppressWarnings("PMD")
+@SuppressWarnings({"PMD", "CPD-START"})
 public class ParseException extends RuntimeException {
 
     /**

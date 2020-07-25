@@ -75,21 +75,26 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
     @SuppressWarnings({"PMD.CompareObjectsWithEquals"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
-    protected <T, P extends Position2D<P>> void draw(final Graphics2D g, final Node<T> n, final Environment<T, P> env, final IWormhole2D<P> wormhole) {
+    protected <T, P extends Position2D<P>> void draw(
+            final Graphics2D graphics2D,
+            final Node<T> node,
+            final Environment<T, P> environment,
+            final IWormhole2D<P> wormhole
+    ) {
         if (layerFilter && (molecule == null || molString != molStringCached)) {
             molStringCached = molString;
-            env.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
+            environment.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
         }
         colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
-        g.setColor(colorCache);
+        graphics2D.setColor(colorCache);
         final List<Layer<T, P>> toDraw = new ArrayList<>();
-        if (layerFilter && molecule != null && env.getLayer(molecule).isPresent()) {
-            toDraw.add(env.getLayer(molecule).get());
+        if (layerFilter && molecule != null && environment.getLayer(molecule).isPresent()) {
+            toDraw.add(environment.getLayer(molecule).get());
         } else {
-            toDraw.addAll(env.getLayers());
+            toDraw.addAll(environment.getLayers());
         }
         if (!toDraw.isEmpty()) {
-            drawLayers(toDraw, env, g, wormhole);
+            drawLayers(toDraw, environment, graphics2D, wormhole);
         }
     }
 
@@ -105,7 +110,12 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
      * {@inheritDoc}
      */
     @Override
-    public abstract <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
+    public abstract <T, P extends Position2D<P>> void drawLayers(
+            Collection<Layer<T, P>> toDraw,
+            Environment<T, P> environment,
+            Graphics2D graphics,
+            IWormhole2D<P> wormhole
+    );
 
     /**
      * @return a boolean representing whether or not layer filter is on

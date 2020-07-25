@@ -70,7 +70,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      * How to override: create a new action of your concrete subtype.
      */
     @Override
-    public Condition<T> cloneCondition(final Node<T> n, final Reaction<T> r) {
+    public Condition<T> cloneCondition(final Node<T> node, final Reaction<T> reaction) {
         throw new UnsupportedOperationException(getClass().getSimpleName() + " has no support for cloning.");
     }
 

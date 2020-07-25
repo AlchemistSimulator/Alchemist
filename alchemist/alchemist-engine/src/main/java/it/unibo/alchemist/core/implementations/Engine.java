@@ -408,19 +408,24 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private void pauseWhen(final BooleanSupplier condition) {
         addOutputMonitor(new OutputMonitor<>() {
             @Override
-            public void finished(final Environment<T, P> env, final Time time, final long step) {
+            public void finished(final Environment<T, P> environment, final Time time, final long step) {
             }
 
             @Override
-            public void initialized(final Environment<T, P> env) {
+            public void initialized(final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
                     pause();
                 }
             }
 
             @Override
-            public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time time, final long step) {
-                initialized(env);
+            public void stepDone(
+                    final Environment<T, P> environment,
+                    final Reaction<T> reaction,
+                    final Time time,
+                    final long step
+            ) {
+                initialized(environment);
             }
         });
     }

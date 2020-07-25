@@ -32,12 +32,17 @@ public interface DrawLayers extends Effect {
      * Effectively draw the layers.
      *
      * @param toDraw   - the layers to draw
-     * @param env      - the environment (mainly used to create positions)
-     * @param g        - the graphics2D
+     * @param environment      - the environment (mainly used to create positions)
+     * @param graphics        - the graphics2D
      * @param wormhole - the wormhole
      * @param <T>      - node concentration type
      * @param <P>      - position type
      */
-    <T, P extends Position2D<P>> void drawLayers(Collection<Layer<T, P>> toDraw, Environment<T, P> env, Graphics2D g, IWormhole2D<P> wormhole);
+    <T, P extends Position2D<P>> void drawLayers(
+            Collection<Layer<T, P>> toDraw,
+            Environment<T, P> environment,
+            Graphics2D graphics,
+            IWormhole2D<P> wormhole
+    );
 
 }

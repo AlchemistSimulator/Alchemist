@@ -23,11 +23,11 @@ class CognitiveBehavior<T, V, A>(
     where V : Vector<V>, A : GeometricTransformation<V> {
 
     @Suppress("UNCHECKED_CAST")
-    override fun cloneOnNewNode(n: Node<T>?, currentTime: Time?) =
-        CognitiveBehavior(n as CognitivePedestrian<T, V, A>, timeDistribution)
+    override fun cloneOnNewNode(node: Node<T>?, currentTime: Time?) =
+        CognitiveBehavior(node as CognitivePedestrian<T, V, A>, timeDistribution)
 
     override fun getRate() = timeDistribution.rate
 
-    override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) =
+    override fun updateInternalStatus(currentTime: Time?, hasBeenExecuted: Boolean, environment: Environment<T, *>?) =
         pedestrian.cognitiveCharacteristics().forEach { it.update(rate) }
 }

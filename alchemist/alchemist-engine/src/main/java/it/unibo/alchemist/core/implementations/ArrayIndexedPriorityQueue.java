@@ -6,9 +6,6 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-/**
- * 
- */
 package it.unibo.alchemist.core.implementations;
 
 import gnu.trove.impl.Constants;
@@ -30,7 +27,8 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private static final long serialVersionUID = 8064379974084348391L;
 
-    private final TObjectIntMap<Reaction<T>> indexes = new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
+    private final TObjectIntMap<Reaction<T>> indexes =
+            new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
     private final List<Time> times = new ArrayList<>();
     private final List<Reaction<T>> tree = new ArrayList<>();
 
@@ -123,10 +121,10 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         int pow = 0;
         int exp = 0;
         for (int i = 0; i < tree.size(); i++) {
-            final int tabulars = (int) (Math.floor(Math.log(tree.size()) / Math.log(2)) - Math.floor(Math.log(i + 1) / Math.log(2))) + 1;
-            for (int t = 0; t < tabulars; t++) {
-                sb.append('\t');
-            }
+            final int tabulars = (int) (
+                Math.floor(Math.log(tree.size()) / Math.log(2)) - Math.floor(Math.log(i + 1) / Math.log(2))
+            ) + 1;
+            sb.append("\t".repeat(Math.max(0, tabulars)));
             sb.append(times.get(i));
             if (i == pow) {
                 exp++;

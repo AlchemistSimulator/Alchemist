@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,9 @@ import java.util.stream.Stream;
  * 
  * 
  */
-public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment implements EnvironmentSupportingDeformableCells<Euclidean2DPosition> {
+public final class BioRect2DEnvironmentNoOverlap
+        extends BioRect2DEnvironment
+        implements EnvironmentSupportingDeformableCells<Euclidean2DPosition> {
 
     private static final long serialVersionUID = 1L;
     private static final String UNCHECKED = "unchecked";
@@ -89,7 +92,11 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
         final double[] np = newPos.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
         if (node instanceof CellWithCircularArea) {
-            final Euclidean2DPosition nextPos = findNearestFreePosition((CellWithCircularArea<Euclidean2DPosition>) node, new Euclidean2DPosition(cur[0], cur[1]), nextWithinLimts);
+            final Euclidean2DPosition nextPos = findNearestFreePosition(
+                    (CellWithCircularArea<Euclidean2DPosition>) node,
+                    new Euclidean2DPosition(cur[0], cur[1]),
+                    nextWithinLimts
+            );
             super.moveNodeToPosition(node, nextPos);
         } else {
             super.moveNodeToPosition(node, nextWithinLimts);
@@ -164,7 +171,9 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
         final Euclidean2DPosition oppositeVersor = new Euclidean2DPosition(-xVer, -yVer);
         final Euclidean2DPosition nodeOrientationFromReq = new Euclidean2DPosition(nodePos.getX() - requestedPos.getX(), 
                 nodePos.getY() - requestedPos.getY());
-        final double scalarProductResult2 = oppositeVersor.getX() * nodeOrientationFromReq.getX() + oppositeVersor.getY() * nodeOrientationFromReq.getY();
+        final double scalarProductResult2 =
+                oppositeVersor.getX() * nodeOrientationFromReq.getX()
+                + oppositeVersor.getY() * nodeOrientationFromReq.getY();
         if (scalarProductResult2 <= 0) {
             return nodePos.distanceTo(requestedPos) < node.getRadius() + nodeToMove.getRadius()
                     && scalarProductResult1 >= 0;
@@ -234,7 +243,11 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
 
     @Override
     @SuppressWarnings(UNCHECKED)
-    protected void nodeAdded(final Node<Double> node, final Euclidean2DPosition position, final Neighborhood<Double> neighborhood) {
+    protected void nodeAdded(
+            final @NotNull Node<Double> node,
+            final @NotNull Euclidean2DPosition position,
+            final @NotNull Neighborhood<Double> neighborhood
+    ) {
         super.nodeAdded(node, position, neighborhood);
         if (node instanceof CellWithCircularArea) {
             final CellWithCircularArea<Euclidean2DPosition> cell = (CellWithCircularArea<Euclidean2DPosition>) node;
@@ -252,7 +265,7 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
 
     @SuppressWarnings(UNCHECKED)
     @Override
-    protected void nodeRemoved(final Node<Double> node, final Neighborhood<Double> neighborhood) {
+    protected void nodeRemoved(final @NotNull Node<Double> node, final @NotNull Neighborhood<Double> neighborhood) {
         if (node instanceof CellWithCircularArea) {
             if (biggestCircularDeformableCell.isPresent() && biggestCircularDeformableCell.get().equals(node)) {
                 biggestCircularDeformableCell = getBiggest(CircularDeformableCell.class)
@@ -288,7 +301,10 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
                         }
                         if (diameterToCompare.getReturnType().equals(double.class)) {
                             try {
-                                return Double.compare((double) diameterToCompare.invoke(c1), (double) diameterToCompare.invoke(c2));
+                                return Double.compare(
+                                        (double) diameterToCompare.invoke(c1),
+                                        (double) diameterToCompare.invoke(c2)
+                                );
                             } catch (IllegalAccessException e) {
                                 L.error("Method not accessible");
                                 return 0;
@@ -303,10 +319,14 @@ public final class BioRect2DEnvironmentNoOverlap extends BioRect2DEnvironment im
                                 return 0;
                             }
                         } else {
-                            throw new ClassFormatException("Return type of method " + diameterToCompare.getName() + " should be double");
+                            throw new ClassFormatException(
+                                    "Return type of method " + diameterToCompare.getName() + " should be double"
+                            );
                         }
                     } catch (NoSuchMethodException e) {
-                        L.error("Method " + (isDeformable ? "getMaxDiameter" : "getDiameter") + "not foung in class " + cellClass.getName());
+                        L.error("Method "
+                                + (isDeformable ? "getMaxDiameter" : "getDiameter")
+                                + "not foung in class " + cellClass.getName());
                         return 0;
                     }
                 })

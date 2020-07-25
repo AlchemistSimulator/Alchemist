@@ -91,22 +91,27 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     }
 
     @Override
-    public void finished(final Environment<T, P> env, final Time tt, final long cs) {
+    public void finished(final Environment<T, P> environment, final Time tt, final long cs) {
         isFinished = true;
-        stepDone(env, null, tt, cs);
+        stepDone(environment, null, tt, cs);
         updater.stop();
         updater.update();
         updater = null;
     }
 
     @Override
-    public void initialized(final Environment<T, P> env) {
+    public void initialized(final Environment<T, P> environment) {
         isFinished = false;
-        stepDone(env, null, new DoubleTime(), 0);
+        stepDone(environment, null, new DoubleTime(), 0);
     }
 
     @Override
-    public void stepDone(final Environment<T, P> env, final Reaction<T> r, final Time curTime, final long curStep) {
+    public void stepDone(
+            final Environment<T, P> environment,
+            final Reaction<T> reaction,
+            final Time curTime,
+            final long curStep
+    ) {
         if (updater == null) {
             updater = new Updater();
             new Thread(updater, TimeStepMonitor.class.getSimpleName() + " updater thread").start();

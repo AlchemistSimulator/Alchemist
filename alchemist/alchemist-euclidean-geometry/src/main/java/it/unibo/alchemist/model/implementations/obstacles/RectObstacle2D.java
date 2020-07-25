@@ -45,7 +45,16 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
      *
      * http://www.ahristov.com/tutorial/geometry-games/intersection-segments.html
      */
-    private static double[] intersection(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4) {
+    private static double[] intersection(
+            final double x1,
+            final double y1,
+            final double x2,
+            final double y2,
+            final double x3,
+            final double y3,
+            final double x4,
+            final double y4
+    ) {
         final double d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
         if (d == 0) {
             return new double[] { x2, y2 };
@@ -63,7 +72,11 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
         /*
          * Check if there is actual intersection
          */
-        if (intersectionOutOfRange(xi, x1, x2) || intersectionOutOfRange(xi, x3, x4) || intersectionOutOfRange(yi, y1, y2) || intersectionOutOfRange(yi, y3, y4)) {
+        if (intersectionOutOfRange(xi, x1, x2)
+                || intersectionOutOfRange(xi, x3, x4)
+                || intersectionOutOfRange(yi, y1, y2)
+                || intersectionOutOfRange(yi, y3, y4)
+        ) {
             return new double[] { x2, y2 };
         }
         return new double[] { xi, yi };
@@ -110,7 +123,10 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
          * Check if the point is somehow inside the obstacle, and reply
          * accordingly
          */
-        if (fuzzyGreaterEquals(starty, minY) && fuzzyGreaterEquals(maxY, starty) && fuzzyGreaterEquals(startx, minX) && fuzzyGreaterEquals(maxX, startx)) {
+        if (fuzzyGreaterEquals(starty, minY)
+                && fuzzyGreaterEquals(maxY, starty)
+                && fuzzyGreaterEquals(startx, minX)
+                && fuzzyGreaterEquals(maxX, startx)) {
             final double[] res = { endx, endy };
             final boolean startIsVertex = (fuzzyEquals(startx, minX) || fuzzyEquals(startx, maxX))
                     && (fuzzyEquals(starty, minY) || fuzzyEquals(starty, maxY));

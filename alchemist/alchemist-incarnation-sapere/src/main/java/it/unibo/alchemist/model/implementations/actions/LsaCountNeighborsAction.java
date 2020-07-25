@@ -54,7 +54,13 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      * @param rand
      *            Random engine
      */
-    public LsaCountNeighborsAction(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node, final ILsaMolecule molToCount, final HashString countVar, final RandomGenerator rand) {
+    public LsaCountNeighborsAction(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node,
+            final ILsaMolecule molToCount,
+            final HashString countVar,
+            final RandomGenerator rand
+    ) {
         super(node);
         rnd = rand;
         env = environment;
@@ -81,7 +87,13 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      * @param rand
      *            Random engine
      */
-    public LsaCountNeighborsAction(final Environment<List<ILsaMolecule>, ?> environment, final ILsaNode node, final ILsaMolecule molToCount, final String countVar, final RandomGenerator rand) {
+    public LsaCountNeighborsAction(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node,
+            final ILsaMolecule molToCount,
+            final String countVar,
+            final RandomGenerator rand
+    ) {
         this(environment, node, molToCount, new HashString(countVar), rand);
     }
 
@@ -94,8 +106,8 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      * alice.alchemist.model.interfaces.Reaction)
      */
     @Override
-    public LsaCountNeighborsAction cloneAction(final Node<List<ILsaMolecule>> n, final Reaction<List<ILsaMolecule>> r) {
-        return new LsaCountNeighborsAction(getEnvironment(), (ILsaNode) n, mol, countVarName, rnd);
+    public LsaCountNeighborsAction cloneAction(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> reaction) {
+        return new LsaCountNeighborsAction(getEnvironment(), (ILsaNode) node, mol, countVarName, rnd);
     }
 
     @Override

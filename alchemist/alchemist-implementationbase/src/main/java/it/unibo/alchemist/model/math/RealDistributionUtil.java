@@ -32,39 +32,60 @@ public final class RealDistributionUtil {
     }
 
     /**
-     * @param rng
+     * @param randomGenerator
      *            the {@link RandomGenerator}
      * @param shortname
      *            the distribution name (case insensitive). Must be mappable to
      *            an entity implementing {@link RealDistribution}
-     * @param args
+     * @param arguments
      *            the parameters for the distribution
      * @return the created {@link RealDistribution}
      * @throws IllegalArgumentException
      *             if the creation can't be completed for any reason
      */
     @SuppressWarnings("unchecked")
-    public static RealDistribution makeRealDistribution(final RandomGenerator rng, final String shortname, final double... args) {
-        final String name = shortname + (shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution");
+    public static RealDistribution makeRealDistribution(
+            final RandomGenerator randomGenerator,
+            final String shortname,
+            final double... arguments
+    ) {
+        final String name = shortname + (
+                shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution"
+        );
         return REAL_DISTRIBUTIONS.stream()
             .filter(stat -> stat.getSimpleName().equalsIgnoreCase(requireNonNull(name)))
             .findAny()
-            .map(Stream::of)
-            .orElseGet(Stream::empty)
+            .stream()
             .map(Class::getConstructors)
             .flatMap(Arrays::stream)
             .map(c -> (Constructor<? extends RealDistribution>) c)
-            .filter(c -> c.getParameterTypes().length == 1 + requireNonNull(args).length)
-            .filter(c -> c.getParameterTypes()[0].isAssignableFrom(requireNonNull(rng).getClass()))
+            .filter(c -> c.getParameterTypes().length == 1 + requireNonNull(arguments).length)
+            .filter(c -> c.getParameterTypes()[0].isAssignableFrom(requireNonNull(randomGenerator).getClass()))
             .findAny()
             .map(c -> {
-                final Object[] arguments = Stream.concat(Stream.of(rng), Arrays.stream(args).boxed()).toArray();
+                final Object[] actualArguments = Stream.concat(
+                        Stream.of(randomGenerator),
+                        Arrays.stream(arguments).boxed()
+                ).toArray();
                 try {
-                    return c.newInstance(arguments);
-                } catch (IllegalAccessException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
-                    throw new IllegalArgumentException("Could not initialize " + name + " with " + c + " and arguments " + Arrays.toString(arguments), e);
+                    return c.newInstance(actualArguments);
+                } catch (
+                        IllegalAccessException
+                        | InstantiationException
+                        | IllegalArgumentException
+                        | InvocationTargetException e
+                ) {
+                    throw new IllegalArgumentException(
+                            "Could not initialize " + name + " with "
+                            + c + " and arguments " + Arrays.toString(arguments),
+                            e
+                    );
                 }
-            }).orElseThrow(() -> new IllegalArgumentException("Could not initialize " + name + " with " + rng + " and " + Arrays.toString(args)));
+            }).orElseThrow(
+                    () -> new IllegalArgumentException(
+                        "Could not initialize " + name + " with " + randomGenerator + " and " + Arrays.toString(arguments)
+                    )
+            );
     }
 
 }

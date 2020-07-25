@@ -24,6 +24,10 @@ checkstyle {
     isIgnoreFailures = true
 }
 
+tasks.withType<de.aaschmid.gradle.plugins.cpd.Cpd> {
+    ignoreFailures = true
+}
+
 publishing.publications {
     withType<MavenPublication> {
         pom {

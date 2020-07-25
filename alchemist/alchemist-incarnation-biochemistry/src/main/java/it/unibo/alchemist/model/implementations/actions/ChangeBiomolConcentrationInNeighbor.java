@@ -49,8 +49,8 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
     }
 
     @Override
-    public ChangeBiomolConcentrationInNeighbor cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        return new ChangeBiomolConcentrationInNeighbor(getEnvironment(), n, mol, getRandomGenerator(), delta);
+    public ChangeBiomolConcentrationInNeighbor cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new ChangeBiomolConcentrationInNeighbor(getEnvironment(), node, mol, getRandomGenerator(), delta);
     }
 
     @Override

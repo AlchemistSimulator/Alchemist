@@ -59,7 +59,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     }
 
     @Override
-    public abstract LsaAbstractCondition cloneCondition(Node<List<ILsaMolecule>> n, Reaction<List<ILsaMolecule>> r);
+    public abstract LsaAbstractCondition cloneCondition(Node<List<ILsaMolecule>> node, Reaction<List<ILsaMolecule>> reaction);
 
     /**
      * @param partialInstance
@@ -75,10 +75,16 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *         partialInstance, excluding all those which have been already
      *         removed.
      */
-    protected static List<ILsaMolecule> calculateMatches(final List<IExpression> partialInstance, final boolean duplicateVariables, final List<ILsaMolecule> lsaSpace, final List<ILsaMolecule> alreadyRemoved) {
+    protected static List<ILsaMolecule> calculateMatches(
+            final List<IExpression> partialInstance,
+            final boolean duplicateVariables,
+            final List<ILsaMolecule> lsaSpace,
+            final List<ILsaMolecule> alreadyRemoved
+    ) {
         final List<ILsaMolecule> l = new ArrayList<>(lsaSpace.size() - alreadyRemoved.size());
         for (final ILsaMolecule matched : lsaSpace) {
-            if (matched.matches(partialInstance, duplicateVariables) && countElements(lsaSpace, matched) > countElements(alreadyRemoved, matched)) {
+            if (matched.matches(partialInstance, duplicateVariables)
+                    && countElements(lsaSpace, matched) > countElements(alreadyRemoved, matched)) {
                 l.add(matched);
             }
         }
@@ -98,7 +104,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
     /**
      * @param template
      *            the template molecule
-     * @param n
+     * @param node
      *            the node on which this function is working
      * @param matchesList
      *            the list of matches to populate (theoretically, it should
@@ -108,8 +114,13 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            (theoretically, it should always be empty when calling this
      *            method)
      */
-    protected static void createMatches(final ILsaMolecule template, final ILsaNode n, final List<Map<HashString, ITreeNode<?>>> matchesList, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
-        final List<ILsaMolecule> lsaSpace = n.getLsaSpace();
+    protected static void createMatches(
+            final ILsaMolecule template,
+            final ILsaNode node,
+            final List<Map<HashString, ITreeNode<?>>> matchesList,
+            final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
+        final List<ILsaMolecule> lsaSpace = node.getLsaSpace();
         for (final ILsaMolecule matched : lsaSpace) {
             if (template.matches(matched)) {
                 /*
@@ -125,7 +136,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                 final List<ILsaMolecule> modifiedSpace = new ArrayList<>(lsaSpace.size());
                 modifiedSpace.add(matched);
                 final Map<ILsaNode, List<ILsaMolecule>> retrievedInThisNode = new HashMap<>(lsaSpace.size(), 1f);
-                retrievedInThisNode.put(n, modifiedSpace);
+                retrievedInThisNode.put(node, modifiedSpace);
                 retrieved.add(retrievedInThisNode);
             }
         }
@@ -142,7 +153,11 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      * @param template
      *            : LsaMolecule template (contain variable names)
      */
-    protected static void updateMap(final Map<HashString, ITreeNode<?>> map, final Iterable<IExpression> instance, final ILsaMolecule template) {
+    protected static void updateMap(
+            final Map<HashString, ITreeNode<?>> map,
+            final Iterable<IExpression> instance,
+            final ILsaMolecule template
+    ) {
         /*
          * Iterate over inst
          */
@@ -163,7 +178,8 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                         map.put(molarg.getLeftChildren().toHashString(), instarg.getRootNode());
                     }
                 } else if (molarg.getRootNodeType() == Type.LISTCOMPARATOR) {
-                    if (molarg.getAST().getRoot().getLeftChild().getType() == Type.VAR && instarg.getRootNodeData() instanceof Set<?>) {
+                    if (molarg.getAST().getRoot().getLeftChild().getType() == Type.VAR
+                            && instarg.getRootNodeData() instanceof Set<?>) {
                         map.put(molarg.getLeftChildren().toHashString(), instarg.getRootNode());
 
                     }
@@ -204,7 +220,14 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            the list of all the maps that lists the molecules removed from
      *            each node
      */
-    protected static void incorporateNewMatches(final ILsaNode node, final List<ILsaMolecule> otherMatches, final Map<HashString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<HashString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    protected static void incorporateNewMatches(
+            final ILsaNode node, final List<ILsaMolecule> otherMatches,
+            final Map<HashString, ITreeNode<?>> oldMatches,
+            final ILsaMolecule template,
+            final List<Map<HashString, ITreeNode<?>>> matchesList,
+            final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved,
+            final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
         for (int j = 1; j < otherMatches.size(); j++) {
             final ILsaMolecule instance = otherMatches.get(j);
             /*
@@ -221,7 +244,7 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
              * If this node already has some modified molecule, copy them.
              * Otherwise, create a new list.
              */
-            final List<ILsaMolecule> newRetrieved = oldRetrieved == null ? new ArrayList<ILsaMolecule>() : new ArrayList<>(oldRetrieved);
+            final List<ILsaMolecule> newRetrieved = oldRetrieved == null ? new ArrayList<>() : new ArrayList<>(oldRetrieved);
             newRetrieved.add(instance);
             contentMap.put(node, newRetrieved);
             retrieved.add(contentMap);
@@ -261,7 +284,14 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
      *            the list of all the maps that lists the molecules removed from
      *            each node
      */
-    protected static void incorporateNewMatches(final Map<ILsaNode, List<ILsaMolecule>> otherMatchesMap, final Map<HashString, ITreeNode<?>> oldMatches, final ILsaMolecule template, final List<Map<HashString, ITreeNode<?>>> matchesList, final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved, final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+    protected static void incorporateNewMatches(
+            final Map<ILsaNode, List<ILsaMolecule>> otherMatchesMap,
+            final Map<HashString, ITreeNode<?>> oldMatches,
+            final ILsaMolecule template,
+            final List<Map<HashString, ITreeNode<?>>> matchesList,
+            final Map<ILsaNode, List<ILsaMolecule>> alreadyRemoved,
+            final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
         for (final Entry<ILsaNode, List<ILsaMolecule>> e : otherMatchesMap.entrySet()) {
             final ILsaNode node = e.getKey();
             final List<ILsaMolecule> otherMatches = e.getValue();
@@ -280,7 +310,9 @@ public abstract class LsaAbstractCondition extends AbstractCondition<List<ILsaMo
                  * If this node already has some modified molecule, copy them.
                  * Otherwise, create a new list.
                  */
-                final List<ILsaMolecule> newRetrieved = oldRetrieved == null ? new ArrayList<ILsaMolecule>(node.getLsaSpace().size()) : new ArrayList<>(oldRetrieved);
+                final List<ILsaMolecule> newRetrieved = oldRetrieved == null
+                        ? new ArrayList<>(node.getLsaSpace().size())
+                        : new ArrayList<>(oldRetrieved);
                 newRetrieved.add(instance);
                 contentMap.put(node, newRetrieved);
                 retrieved.add(contentMap);

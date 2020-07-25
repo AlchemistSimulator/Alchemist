@@ -40,7 +40,7 @@ import java.awt.Insets;
  *         Homepage:www.kagi.com/equitysoft - Based on 'FlexLayout' in Java
  *         class libraries Vol 2 Chan/Lee Addison-Wesley 1998
  */
-
+@SuppressWarnings("CPD-START")
 public final class VerticalFlowLayout extends AFlowLayout {
     /**
      * 
@@ -158,10 +158,7 @@ public final class VerticalFlowLayout extends AFlowLayout {
         synchronized (parent.getTreeLock()) {
             final int n = parent.getComponentCount();
             for (int i = 0; i < n; i++) {
-                final Component c = /*
-                                     * isOrdered() ? getCompOrder().get(i) :
-                                     * parent.getComponent(i);
-                                     */parent.getComponent(i);
+                final Component c = parent.getComponent(i);
                 if (c.isVisible()) {
                     d = minimum ? c.getMinimumSize() : c.getPreferredSize();
                     dim.width = Math.max(dim.width, d.width);

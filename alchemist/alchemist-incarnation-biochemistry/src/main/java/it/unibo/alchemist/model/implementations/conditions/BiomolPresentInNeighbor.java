@@ -63,8 +63,8 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
     }
 
     @Override
-    public BiomolPresentInNeighbor cloneCondition(final Node<Double> n, final Reaction<Double> r) {
-        return new BiomolPresentInNeighbor(getEnvironment(), n, mol, conc);
+    public BiomolPresentInNeighbor cloneCondition(final Node<Double> node, final Reaction<Double> r) {
+        return new BiomolPresentInNeighbor(getEnvironment(), node, mol, conc);
     }
 
     @Override

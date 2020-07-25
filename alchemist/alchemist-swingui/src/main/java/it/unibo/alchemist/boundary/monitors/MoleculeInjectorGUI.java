@@ -7,6 +7,23 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Node;
+import org.danilopianini.lang.CollectionWithCurrentElement;
+import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.plaf.basic.BasicBorders;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -20,25 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.plaf.basic.BasicBorders;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.ClassPathScanner;
-import org.danilopianini.lang.CollectionWithCurrentElement;
-import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  * This class raises a new JPanel which allows to graphically inject a new molecule
@@ -109,7 +107,11 @@ public class MoleculeInjectorGUI<T> extends JPanel {
             nodesPanel.add(l, nodesCnst);
             nodesCnst.gridy++;
         }
-        final JScrollPane jsp = new JScrollPane(nodesPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        final JScrollPane jsp = new JScrollPane(
+                nodesPanel,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        );
         jsp.setPreferredSize(new Dimension(jsp.getPreferredSize().width * 2, jsp.getPreferredSize().height));
         jsp.setAutoscrolls(true);
         add(jsp);
@@ -160,6 +162,8 @@ public class MoleculeInjectorGUI<T> extends JPanel {
                 }
             }
         });
-        selectedIncr.addActionListener((event) -> incarnation.setCurrent((Incarnation<T, ?>) (selectedIncr.getSelectedItem())));
+        selectedIncr.addActionListener(
+                (event) -> incarnation.setCurrent((Incarnation<T, ?>) (selectedIncr.getSelectedItem()))
+        );
     }
 }

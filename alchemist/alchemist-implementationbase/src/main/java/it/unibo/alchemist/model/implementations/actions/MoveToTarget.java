@@ -62,8 +62,8 @@ public final class MoveToTarget<T, P extends Position2D<P>> extends AbstractConf
     }
 
     @Override
-    public MoveToTarget<T, P> cloneAction(final Node<T> n, final Reaction<T> r) {
-        return new MoveToTarget<>(getEnvironment(), n, r, trackMolecule, speed);
+    public MoveToTarget<T, P> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+        return new MoveToTarget<>(getEnvironment(), node, reaction, trackMolecule, speed);
     }
 
     @Override

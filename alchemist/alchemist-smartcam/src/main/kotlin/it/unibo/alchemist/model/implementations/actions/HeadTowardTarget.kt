@@ -27,8 +27,8 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
 
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        HeadTowardTarget(n, environment, r, target, angularSpeedDegrees)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+        HeadTowardTarget(node, environment, reaction, target, angularSpeedDegrees)
 
     /**
      * Sets the heading of the node according to the target molecule.

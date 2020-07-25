@@ -22,23 +22,31 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  */
 public final class StraightLineTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
 
-    private static final long serialVersionUID = 539968590628143027L;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * @param e
+     * @param environment
      *            the environment
-     * @param n
+     * @param node
      *            the node
-     * @param r
+     * @param reaction
      *            the reaction
      */
-    public StraightLineTraceDependantSpeed(final MapEnvironment<T> e, final Node<T> n, final Reaction<T> r) {
-        super(e, n, r);
+    public StraightLineTraceDependantSpeed(
+            final MapEnvironment<T> environment,
+            final Node<T> node,
+            final Reaction<T> reaction
+    ) {
+        super(environment, node, reaction);
     }
 
     @Override
-    protected double computeDistance(final MapEnvironment<T> environment, final Node<T> curNode, final GeoPosition targetPosition) {
-        return environment.getPosition(curNode).distanceTo(targetPosition);
+    protected double computeDistance(
+            final MapEnvironment<T> environment,
+            final Node<T> currentNode,
+            final GeoPosition targetPosition
+    ) {
+        return environment.getPosition(currentNode).distanceTo(targetPosition);
     }
 
 }

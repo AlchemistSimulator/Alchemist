@@ -51,7 +51,10 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     private static final long serialVersionUID = -7264856859267079626L;
 
     private final Environment<List<ILsaMolecule>, ?> environment;
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All provided RandomGenerator implementations are actually Serializable")
+    @SuppressFBWarnings(
+            value = "SE_BAD_FIELD",
+            justification = "All provided RandomGenerator implementations are actually Serializable"
+    )
     private final RandomGenerator rng;
     private final SAPERETimeDistribution timedist;
 
@@ -96,36 +99,41 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     /**
-     * @param env
+     * @param environment
      *            the current environment
-     * @param n
+     * @param node
      *            the current node
-     * @param random
+     * @param randomGenerator
      *            the random engine to use
-     * @param timeDist
+     * @param timeDistribution
      *            Time Distribution
      */
-    public SAPEREReaction(final Environment<List<ILsaMolecule>, ?> env, final ILsaNode n, final RandomGenerator random, final TimeDistribution<List<ILsaMolecule>> timeDist) {
-        super(n, timeDist);
+    public SAPEREReaction(
+            final Environment<List<ILsaMolecule>, ?> environment,
+            final ILsaNode node,
+            final RandomGenerator randomGenerator,
+            final TimeDistribution<List<ILsaMolecule>> timeDistribution
+    ) {
+        super(node, timeDistribution);
         if (getTimeDistribution() instanceof SAPERETimeDistribution) {
             timedist = (SAPERETimeDistribution) getTimeDistribution();
         } else {
             timedist = null;
         }
-        rng = random;
-        environment = env;
+        rng = randomGenerator;
+        this.environment = environment;
     }
 
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> n, final Time currentTime) {
-        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) n, rng, timedist.clone(currentTime));
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> node, final Time currentTime) {
+        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) node, rng, timedist.clone(currentTime));
         final ArrayList<Condition<List<ILsaMolecule>>> c = new ArrayList<>();
         for (final Condition<List<ILsaMolecule>> cond : getConditions()) {
-            c.add(cond.cloneCondition(n, res));
+            c.add(cond.cloneCondition(node, res));
         }
         final ArrayList<Action<List<ILsaMolecule>>> a = new ArrayList<>();
         for (final Action<List<ILsaMolecule>> act : getActions()) {
-            a.add(act.cloneAction(n, res));
+            a.add(act.cloneAction(node, res));
         }
         res.setActions(a);
         res.setConditions(c);
@@ -156,7 +164,9 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             return;
         }
         final Position<?> nodePosCache = modifiesOnlyLocally ? environment.getPosition(getNode()) : null;
-        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally ? new ArrayList<>(getLsaNode().getLsaSpace()) : null;
+        final List<? extends ILsaMolecule> localContentCache = modifiesOnlyLocally
+                ? new ArrayList<>(getLsaNode().getLsaSpace())
+                : null;
         Map<HashString, ITreeNode<?>> matches = null;
         Map<ILsaNode, List<ILsaMolecule>> toRemove = null;
         /*
@@ -261,7 +271,11 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    protected void updateInternalStatus(final Time curTime, final boolean executed, final Environment<List<ILsaMolecule>, ?> env) {
+    protected void updateInternalStatus(
+            final Time currentTime,
+            final boolean hasBeenExecuted,
+            final Environment<List<ILsaMolecule>, ?> environment
+    ) {
         if (emptyExecution) {
             emptyExecution = false;
             totalPropensity = 0;
@@ -269,7 +283,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             /*
              * Valid nodes must be re-initialized, as per issue #
              */
-            final Collection<? extends Node<List<ILsaMolecule>>> neighs = environment.getNeighborhood(getNode()).getNeighbors();
+            final Collection<? extends Node<List<ILsaMolecule>>> neighs =
+                    this.environment.getNeighborhood(getNode()).getNeighbors();
             validNodes = new ArrayList<>(neighs.size());
             for (final Node<List<ILsaMolecule>> neigh: neighs) {
                 validNodes.add((ILsaNode) neigh);
@@ -343,16 +358,19 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public void setActions(final List<Action<List<ILsaMolecule>>> a) {
-        setConditionsAndActions(getConditions(), a);
+    public void setActions(final List<Action<List<ILsaMolecule>>> actions) {
+        setConditionsAndActions(getConditions(), actions);
     }
 
     @Override
-    public void setConditions(final List<Condition<List<ILsaMolecule>>> a) {
-        setConditionsAndActions(a, getActions());
+    public void setConditions(final List<Condition<List<ILsaMolecule>>> conditions) {
+        setConditionsAndActions(conditions, getActions());
     }
 
-    private void setConditionsAndActions(final List<? extends Condition<List<ILsaMolecule>>> c, final List<? extends Action<List<ILsaMolecule>>> a) {
+    private void setConditionsAndActions(
+            final List<? extends Condition<List<ILsaMolecule>>> c,
+            final List<? extends Action<List<ILsaMolecule>>> a
+    ) {
         super.setConditions((List<Condition<List<ILsaMolecule>>>) c);
         super.setActions((List<Action<List<ILsaMolecule>>>) a);
         modifiesOnlyLocally = getOutputContext() == Context.LOCAL;

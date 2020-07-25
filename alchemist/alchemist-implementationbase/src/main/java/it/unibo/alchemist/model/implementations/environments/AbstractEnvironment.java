@@ -7,6 +7,30 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.google.common.collect.Sets;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
+import it.unibo.alchemist.SupportedIncarnations;
+import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Layer;
+import it.unibo.alchemist.model.interfaces.LinkingRule;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Neighborhood;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.danilopianini.util.ArrayListSet;
+import org.danilopianini.util.LinkedListSet;
+import org.danilopianini.util.ListSet;
+import org.danilopianini.util.ListSets;
+import org.danilopianini.util.SpatialIndex;
+
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -27,33 +51,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.danilopianini.util.ArrayListSet;
-import org.danilopianini.util.LinkedListSet;
-import org.danilopianini.util.ListSet;
-import org.danilopianini.util.ListSets;
-import org.danilopianini.util.SpatialIndex;
-
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.google.common.collect.Sets;
-
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
-import it.unibo.alchemist.SupportedIncarnations;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.LinkingRule;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 
 /**
  * Very generic and basic implementation for an environment. Basically, only
@@ -143,7 +140,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         getNodes().forEach(action);
     }
 
-    private Stream<Operation> foundNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+    private Stream<Operation> foundNeighbors(
+            final Node<T> center,
+            final Neighborhood<T> oldNeighborhood,
+            final Neighborhood<T> newNeighborhood
+    ) {
         return newNeighborhood.getNeighbors().stream()
                 .filter(neigh -> oldNeighborhood == null || !oldNeighborhood.contains(neigh))
                 .filter(neigh -> !getNeighborhood(neigh).contains(center))
@@ -177,7 +178,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         if (this.incarnation == null) {
             this.incarnation = Objects.requireNonNull(incarnation);
         } else {
-            throw new IllegalStateException("The Environment has already been equipeed with an incarnation: " + this.incarnation);
+            throw new IllegalStateException(
+                    "The Environment has already been equipeed with an incarnation: " + this.incarnation
+            );
         }
     }
 
@@ -206,7 +209,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         final Neighborhood<T> result = neighCache.get(Objects.requireNonNull(center).getId());
         if (result == null) {
             if (getNodes().contains(center)) {
-                throw new IllegalStateException("The environment state is inconsistent. " + center + " is among the nodes, but apparently has no position.");
+                throw new IllegalStateException("The environment state is inconsistent. "
+                        + center + " is among the nodes, but apparently has no position.");
             }
             throw new IllegalArgumentException(center + " is not part of the environment.");
         }
@@ -313,7 +317,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return getNodes().iterator();
     }
 
-    private Stream<Operation> lostNeighbors(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+    private Stream<Operation> lostNeighbors(
+            final Node<T> center,
+            final Neighborhood<T> oldNeighborhood,
+            final Neighborhood<T> newNeighborhood
+    ) {
         return Optional.ofNullable(oldNeighborhood)
                 .map(Neighborhood::getNeighbors)
                 .orElse(ListSets.emptyListSet())
@@ -442,7 +450,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return getNodes().spliterator();
     }
 
-    private Queue<Operation> toQueue(final Node<T> center, final Neighborhood<T> oldNeighborhood, final Neighborhood<T> newNeighborhood) {
+    private Queue<Operation> toQueue(
+            final Node<T> center,
+            final Neighborhood<T> oldNeighborhood,
+            final Neighborhood<T> newNeighborhood
+    ) {
         return Stream.concat(
                 lostNeighbors(center, oldNeighborhood, newNeighborhood),
                 foundNeighbors(center, oldNeighborhood, newNeighborhood))
@@ -474,7 +486,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
          * normally considered global. This because for each node which is
          * detached, all the dependencies are updated, ensuring the soundness.
          */
-        if (Objects.requireNonNull(rule).isLocallyConsistent()) {
+        if (Objects.requireNonNull(rule, "No linking rule / network model set.").isLocallyConsistent()) {
             final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(node), this);
             final Neighborhood<T> oldNeighborhood = neighCache.put(node.getId(), newNeighborhood);
             /*

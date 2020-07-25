@@ -24,8 +24,8 @@ class ExtractClosestVisibleNodeAtDistance(
     private val visionMolecule: Molecule,
     private val targetMolecule: Molecule
 ) : AbstractAction<Any>(node) {
-    override fun cloneAction(n: Node<Any>, r: Reaction<Any>) =
-        ExtractClosestVisibleNodeAtDistance(n, env, distance, visionMolecule, targetMolecule)
+    override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
+        ExtractClosestVisibleNodeAtDistance(node, env, distance, visionMolecule, targetMolecule)
 
     override fun execute() {
         if (node.contains(visionMolecule)) {

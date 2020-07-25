@@ -26,13 +26,17 @@ public final class ChangeBiomolConcentrationInCell extends AbstractActionOnSingl
      * @param deltaConcentration the change in concentration
      * @param node the node
      */
-    public ChangeBiomolConcentrationInCell(final Node<Double> node, final Biomolecule biomolecule, final double deltaConcentration) {
+    public ChangeBiomolConcentrationInCell(
+            final Node<Double> node,
+            final Biomolecule biomolecule,
+            final double deltaConcentration
+    ) {
         super(node, biomolecule);
         this.deltaC = deltaConcentration;
     }
 
     @Override
-    public ChangeBiomolConcentrationInCell cloneAction(final Node<Double> n, final Reaction<Double> r) {
+    public ChangeBiomolConcentrationInCell cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
         throw new UnsupportedOperationException("cloneOnNewNode(Node, Reaction) has to be implemented in: " + getClass());
     }
 

@@ -32,27 +32,43 @@ public interface IsolinesFinder {
      * extracted. Isolines will be calculated within a rectangular region defined by two opposite vertexes.
      * This means that the algorithm will not consider the space outside the given region at all.
      *
-     * @param f      - the function for which to calculate the isolines
-     * @param x1     - x coordinate of vertex 1, defining the rectangular space within which isolines will be calculated
-     * @param y1     - y coordinate of vertex 1, defining the rectangular space within which isolines will be calculated
-     * @param x2     - x coordinate of vertex 2, defining the rectangular space within which isolines will be calculated
-     * @param y2     - y coordinate of vertex 2, defining the rectangular space within which isolines will be calculated
+     * @param function      - the function for which to calculate the isolines
+     * @param x1     - x coordinate of vertex 1, defining the rectangular space within which isolines
+     *               will be calculated
+     * @param y1     - y coordinate of vertex 1, defining the rectangular space within which isolines
+     *              will be calculated
+     * @param x2     - x coordinate of vertex 2, defining the rectangular space within which isolines
+     *              will be calculated
+     * @param y2     - y coordinate of vertex 2, defining the rectangular space within which isolines
+     *              will be calculated
      * @param levels - collection containing the levels of the isolines that will be calculated
      *
      * @return the isolines
      */
-    Collection<Isoline> findIsolines(BidimensionalFunction f, Number x1, Number y1, Number x2, Number y2, Collection<Number> levels);
+    Collection<Isoline> findIsolines(
+            BidimensionalFunction function,
+            Number x1,
+            Number y1,
+            Number x2,
+            Number y2,
+            Collection<Number> levels
+    );
 
     /**
-     * Find the isolines of the given function. This method is equivalent to {@link IsolinesFinder#findIsolines(BidimensionalFunction, Number, Number, Number, Number, Collection)},
+     * Find the isolines of the given function. This method is equivalent to
+     * {@link IsolinesFinder#findIsolines(BidimensionalFunction, Number, Number, Number, Number, Collection)},
      * with the difference that it allows you to specify the diagonal of the rectangular region, instead of the four
      * vertexes separately.
-     * @param f        - the function for which to calculate the isolines
+     * @param function        - the function for which to calculate the isolines
      * @param diagonal - the diagonal of the rectangular space within which isolines will be calculated
      * @param levels   - collection containing the levels of the isolines that will be calculated
      *
      * @return the isolines
      */
-    Collection<Isoline> findIsolines(BidimensionalFunction f, Segment2D diagonal, Collection<Number> levels);
+    Collection<Isoline> findIsolines(
+            BidimensionalFunction function,
+            Segment2D diagonal,
+            Collection<Number> levels
+    );
 
 }

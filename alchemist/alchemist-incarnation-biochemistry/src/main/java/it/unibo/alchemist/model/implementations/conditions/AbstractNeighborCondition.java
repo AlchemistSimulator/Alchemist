@@ -43,7 +43,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
     }
 
     @Override
-    public abstract AbstractNeighborCondition<T> cloneCondition(Node<T> n, Reaction<T> r);
+    public abstract AbstractNeighborCondition<T> cloneCondition(Node<T> node, Reaction<T> reaction);
 
     @Override
     public final Context getContext() {

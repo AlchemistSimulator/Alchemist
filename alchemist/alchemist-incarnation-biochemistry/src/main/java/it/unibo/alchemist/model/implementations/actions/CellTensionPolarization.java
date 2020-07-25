@@ -34,20 +34,23 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     /**
      * 
      * @param node the node
-     * @param env the environment
+     * @param environment the environment
      */
-    public CellTensionPolarization(final EnvironmentSupportingDeformableCells<P> env, final CircularDeformableCell<P> node) {
+    public CellTensionPolarization(
+            final EnvironmentSupportingDeformableCells<P> environment,
+            final CircularDeformableCell<P> node
+    ) {
         super(node);
-        this.env = env;
+        this.env = environment;
     }
 
     @Override
-    public CellTensionPolarization<P> cloneAction(final Node<Double> n, final Reaction<Double> r) {
-        if (n instanceof CircularDeformableCell) {
-            return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) n);
+    public CellTensionPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        if (node instanceof CircularDeformableCell) {
+            return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) node);
         }
-        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + n
-                + " of type: " + n.getClass());
+        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + node
+                + " of type: " + node.getClass());
     }
 
     @SuppressWarnings("unchecked")
@@ -104,19 +107,26 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                         localNodeMinRadius = localNodeMaxRadius;
                     }
                     // if both cells has no difference between maxRad and minRad intensity must be 1
-                    if (MathUtils.fuzzyEquals(localNodeMaxRadius, localNodeMinRadius) && MathUtils.fuzzyEquals(nodeMaxRadius, nodeMinRadius)) {
+                    if (MathUtils.fuzzyEquals(localNodeMaxRadius, localNodeMinRadius)
+                            && MathUtils.fuzzyEquals(nodeMaxRadius, nodeMinRadius)
+                    ) {
                         intensity = 1;
                     } else {
                         final double maxRadiusSum = localNodeMaxRadius + nodeMaxRadius;
-                        intensity = (maxRadiusSum - env.getDistanceBetweenNodes(n, thisNode)) / (maxRadiusSum - localNodeMinRadius - nodeMinRadius);
+                        intensity = (maxRadiusSum - env.getDistanceBetweenNodes(n, thisNode))
+                                / (maxRadiusSum - localNodeMinRadius - nodeMinRadius);
                     }
                     if (intensity != 0) {
                         double[] propensityVect = {nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
-                        final double module = FastMath.sqrt(FastMath.pow(propensityVect[0], 2) + FastMath.pow(propensityVect[1], 2));
+                        final double module = FastMath.sqrt(FastMath.pow(propensityVect[0], 2)
+                                + FastMath.pow(propensityVect[1], 2));
                         if (module == 0) {
                             return env.makePosition(0, 0);
                         }
-                        propensityVect = new double[]{intensity * (propensityVect[0] / module), intensity * (propensityVect[1] / module)};
+                        propensityVect = new double[]{
+                                intensity * (propensityVect[0] / module),
+                                intensity * (propensityVect[1] / module)
+                        };
                         return env.makePosition(propensityVect[0], propensityVect[1]);
                     } else {
                         return env.makePosition(0, 0);

@@ -72,7 +72,12 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
      * {@inheritDoc}
      */
     @Override
-    public <T, P extends Position2D<P>> void drawFunction(final Function<? super P, ? extends Number> f, final Environment<T, P> env, final Graphics2D g, final IWormhole2D<P> wormhole) {
+    public <T, P extends Position2D<P>> void drawFunction(
+            final Function<? super P, ? extends Number> function,
+            final Environment<T, P> environment,
+            final Graphics2D graphics,
+            final IWormhole2D<P> wormhole
+    ) {
         final Dimension2D viewSize = wormhole.getViewSize();
         final int viewStartX = 0;
         final int viewStartY = 0;
@@ -82,7 +87,10 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
         final Point viewEnd = new Point(viewEndX, viewEndY);
         final P envStart = wormhole.getEnvPoint(viewStart);
         final P envEnd = wormhole.getEnvPoint(viewEnd);
-        if (nOfIsolinesCached != nOfIsolines.getVal() || minOrMaxLayerValuesNeedsToBeUpdated() || distributionCached != distribution) {
+        if (nOfIsolinesCached != nOfIsolines.getVal()
+                || minOrMaxLayerValuesNeedsToBeUpdated()
+                || distributionCached != distribution
+        ) {
             nOfIsolinesCached = nOfIsolines.getVal();
             updateMinAndMaxLayerValues();
             distributionCached = distribution;
@@ -93,26 +101,26 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
                             : linspace(getMinLayerValueDouble(), getMaxLayerValueDouble(), nOfIsolines.getVal())
             ).boxed().collect(Collectors.toList());
         }
-        algorithm.findIsolines((x, y) -> f.apply(env.makePosition(x, y)),
+        algorithm.findIsolines((x, y) -> function.apply(environment.makePosition(x, y)),
                 envStart.getX(), envStart.getY(), envEnd.getX(), envEnd.getY(), levels).forEach(isoline -> {
             if (drawValues) {
                 // draw isoline value
                 isoline.getSegments().stream().findAny().ifPresent(segment -> {
-                    final Point viewPoint = wormhole.getViewPoint(env.makePosition(segment.getX1(), segment.getY1()));
+                    final Point viewPoint = wormhole.getViewPoint(environment.makePosition(segment.getX1(), segment.getY1()));
                     final int x = (int) Math.ceil(viewPoint.getX());
                     final int y = (int) Math.ceil(viewPoint.getY());
-                    g.drawString(isoline.getValue().toString(), x, y);
+                    graphics.drawString(isoline.getValue().toString(), x, y);
                 });
             }
             // draw isoline
             isoline.getSegments().forEach(segment -> {
-                final Point start = wormhole.getViewPoint(env.makePosition(segment.getX1(), segment.getY1()));
-                final Point end = wormhole.getViewPoint(env.makePosition(segment.getX2(), segment.getY2()));
+                final Point start = wormhole.getViewPoint(environment.makePosition(segment.getX1(), segment.getY1()));
+                final Point end = wormhole.getViewPoint(environment.makePosition(segment.getX2(), segment.getY2()));
                 final int x1 = (int) Math.ceil(start.getX());
                 final int y1 = (int) Math.ceil(start.getY());
                 final int x2 = (int) Math.ceil(end.getX());
                 final int y2 = (int) Math.ceil(end.getY());
-                g.drawLine(x1, y1, x2, y2);
+                graphics.drawLine(x1, y1, x2, y2);
             });
         });
     }

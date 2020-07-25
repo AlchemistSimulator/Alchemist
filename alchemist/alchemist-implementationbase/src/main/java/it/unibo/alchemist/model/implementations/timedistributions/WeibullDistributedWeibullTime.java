@@ -32,7 +32,12 @@ public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
      * @param random
      *            {@link RandomGenerator} used internally
      */
-    public WeibullDistributedWeibullTime(final double mean, final double deviceDeviation, final double networkDeviation, final RandomGenerator random) {
+    public WeibullDistributedWeibullTime(
+            final double mean,
+            final double deviceDeviation,
+            final double networkDeviation,
+            final RandomGenerator random
+    ) {
         this(mean, deviceDeviation, networkDeviation, new DoubleTime(random.nextDouble() * mean), random);
     }
 
@@ -48,7 +53,13 @@ public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
      * @param random
      *            {@link RandomGenerator} used internally
      */
-    public WeibullDistributedWeibullTime(final double mean, final double deviceDeviation, final double networkDeviation, final Time start, final RandomGenerator random) {
+    public WeibullDistributedWeibullTime(
+            final double mean,
+            final double deviceDeviation,
+            final double networkDeviation,
+            final Time start,
+            final RandomGenerator random
+    ) {
         this(mean, deviceDeviation, networkDeviation, 0, start, random);
     }
 
@@ -66,8 +77,20 @@ public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
      * @param random
      *            {@link RandomGenerator} used internally
      */
-    public WeibullDistributedWeibullTime(final double mean, final double deviceDeviation, final double networkDeviation, final double deviationDeviation, final Time start, final RandomGenerator random) {
-        super(weibullValue(mean, networkDeviation, random), weibullValue(deviceDeviation, deviationDeviation, random), start, random);
+    public WeibullDistributedWeibullTime(
+        final double mean,
+        final double deviceDeviation,
+        final double networkDeviation,
+        final double deviationDeviation,
+        final Time start,
+        final RandomGenerator random
+    ) {
+        super(
+            weibullValue(mean, networkDeviation, random),
+            weibullValue(deviceDeviation, deviationDeviation, random),
+            start,
+            random
+        );
     }
 
     private static double weibullValue(final double mean, final double deviation, final RandomGenerator random) {

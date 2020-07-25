@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.model.implementations.reactions;
 
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
+import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -17,6 +17,12 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.danilopianini.util.ArrayListSet;
+import org.danilopianini.util.Hashes;
+import org.danilopianini.util.ImmutableListSet;
+import org.danilopianini.util.LinkedListSet;
+import org.danilopianini.util.ListSet;
+import org.danilopianini.util.ListSets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,13 +31,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import org.danilopianini.util.ArrayListSet;
-import org.danilopianini.util.Hashes;
-import org.danilopianini.util.ImmutableListSet;
-import org.danilopianini.util.LinkedListSet;
-import org.danilopianini.util.ListSet;
-import org.danilopianini.util.ListSets;
 
 /**
  * The type which describes the concentration of a molecule
@@ -57,21 +56,21 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     private ListSet<Dependency> outbound = new LinkedListSet<>();
     private ListSet<Dependency> inbound = new LinkedListSet<>();
     private int stringLength = Byte.MAX_VALUE;
-    private final TimeDistribution<T> dist;
+    private final TimeDistribution<T> timeDistribution;
     private final Node<T> node;
 
     /**
      * Builds a new reaction, starting at time t.
      * 
-     * @param n
+     * @param node
      *            the node this reaction belongs to
-     * @param pd
+     * @param timeDistribution
      *            the time distribution this reaction should follow
      */
-    public AbstractReaction(final Node<T> n, final TimeDistribution<T> pd) {
-        hash = Hashes.hash32(n.hashCode(), n.getChemicalSpecies(), n.getReactions().size());
-        dist = pd;
-        node = n;
+    public AbstractReaction(final Node<T> node, final TimeDistribution<T> timeDistribution) {
+        hash = Hashes.hash32(node.hashCode(), node.getChemicalSpecies(), node.getReactions().size());
+        this.timeDistribution = timeDistribution;
+        this.node = node;
     }
 
     /**
@@ -177,7 +176,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @return a {@link String} representation of the rate
      */
     protected String getRateAsString() {
-        return Double.toString(dist.getRate());
+        return Double.toString(timeDistribution.getRate());
     }
 
     /**
@@ -191,12 +190,12 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     @Override
     public final Time getTau() {
-        return dist.getNextOccurence();
+        return timeDistribution.getNextOccurence();
     }
 
     @Override
     public final TimeDistribution<T> getTimeDistribution() {
-        return dist;
+        return timeDistribution;
     }
 
     @Override
@@ -205,7 +204,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public void initializationComplete(final Time t, final Environment<T, ?> env) { }
+    public void initializationComplete(final Time atTime, final Environment<T, ?> environment) { }
 
     /**
      * This method provides facility to clone reactions. Given a constructor in
@@ -259,26 +258,26 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * This should get overridden only if very tricky behaviours are implemented, such that the default Alchemist
      * action addition model is no longer usable. Must be overridden along with {@link #getActions()}.
      *
-     * @param a the actions to set
+     * @param actions the actions to set
      */
     @Override
-    public void setActions(final List<Action<T>> a) {
-        actions = Objects.requireNonNull(a, "The actions list can't be null");
-        setOutputContext(a.stream().map(Action::getContext).reduce(Context.LOCAL, Context::getWider));
-        outbound = computeDependencies(a.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
+    public void setActions(final List<Action<T>> actions) {
+        this.actions = Objects.requireNonNull(actions, "The actions list can't be null");
+        setOutputContext(actions.stream().map(Action::getContext).reduce(Context.LOCAL, Context::getWider));
+        outbound = computeDependencies(actions.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
     }
 
     /**
      * This should get overridden only if very tricky behaviours are implemented, such that the default Alchemist
      * condition addition model is no longer usable. Must be overridden along with {@link #getConditions()}.
      *
-     * @param c the actions to set
+     * @param conditions the actions to set
      */
     @Override
-    public void setConditions(final List<Condition<T>> c) {
-        conditions = Objects.requireNonNull(c, "The conditions list can't be null");
-        setInputContext(c.stream().map(Condition::getContext).reduce(Context.LOCAL, Context::getWider));
-        inbound = computeDependencies(c.stream().map(Condition::getInboundDependencies).flatMap(List::stream));
+    public void setConditions(final List<Condition<T>> conditions) {
+        this.conditions = Objects.requireNonNull(conditions, "The conditions list can't be null");
+        setInputContext(conditions.stream().map(Condition::getContext).reduce(Context.LOCAL, Context::getWider));
+        inbound = computeDependencies(conditions.stream().map(Condition::getInboundDependencies).flatMap(List::stream));
     }
 
     /**
@@ -322,9 +321,13 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public final void update(final Time curTime, final boolean executed, final Environment<T, ?> env) {
-        updateInternalStatus(curTime, executed, env);
-        dist.update(curTime, executed, getRate(), env);
+    public final void update(
+            final Time currentTime,
+            final boolean hasBeenExecuted,
+            final Environment<T, ?> environment
+    ) {
+        updateInternalStatus(currentTime, hasBeenExecuted, environment);
+        timeDistribution.update(currentTime, hasBeenExecuted, getRate(), environment);
     }
 
     /**
@@ -332,15 +335,19 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * {@link #update(Time, boolean, Environment)} is called. It is useful to
      * update the internal status of the reaction.
      * 
-     * @param curTime
+     * @param currentTime
      *            the current simulation time
-     * @param executed
+     * @param hasBeenExecuted
      *            true if this reaction has just been executed, false if the
      *            update has been triggered due to a dependency
-     * @param env
+     * @param environment
      *            the current environment
      */
-    protected abstract void updateInternalStatus(Time curTime, boolean executed, Environment<T, ?> env);
+    protected abstract void updateInternalStatus(
+            Time currentTime,
+            boolean hasBeenExecuted,
+            Environment<T, ?> environment
+    );
 
     @Override
     public final Node<T> getNode() {

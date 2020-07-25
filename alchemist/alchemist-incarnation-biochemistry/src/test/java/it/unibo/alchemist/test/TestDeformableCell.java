@@ -119,18 +119,26 @@ public class TestDeformableCell {
         env.addNode(cellNode2, CELL_POS2_2);
         env.addNode(cellNode3, CELL_POS2_3);
         env.addNode(cellNode4, CELL_POS2_4);
-        assertEquals(3d, ((EnvironmentSupportingDeformableCells<Euclidean2DPosition>) env).getMaxDiameterAmongCircularDeformableCells(), PRECISION);
+        assertEquals(
+                3d,
+                ((EnvironmentSupportingDeformableCells<Euclidean2DPosition>) env).getMaxDiameterAmongCircularDeformableCells(),
+                PRECISION
+        );
         env.removeNode(cellNode1);
         env.removeNode(cellNode2);
         env.removeNode(cellNode3);
         env.removeNode(cellNode4);
-        assertEquals(0d, ((EnvironmentSupportingDeformableCells<Euclidean2DPosition>) env).getMaxDiameterAmongCircularDeformableCells(), PRECISION);
+        assertEquals(0d,
+                ((EnvironmentSupportingDeformableCells<Euclidean2DPosition>) env).getMaxDiameterAmongCircularDeformableCells(),
+                PRECISION
+        );
     }
 
     /**
      * Testing {@link TensionPresent}.
      */
     @Test
+    @SuppressWarnings("CPD-START")
     public void testTensionPresent1() {
         env.addNode(cellNode1, CELL_POS_TENSPRES1_1);
         env.addNode(cellNode2, CELL_POS_TENSPRES1_2);
@@ -269,14 +277,22 @@ public class TestDeformableCell {
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
-        assertEquals(cellNode1.getPolarizationVersor().getCoordinate(0), cellNode1.getPolarizationVersor().getCoordinate(0), PRECISION);
+        assertEquals(
+                cellNode1.getPolarizationVersor().getCoordinate(0),
+                cellNode1.getPolarizationVersor().getCoordinate(0),
+                PRECISION
+        );
         env.moveNodeToPosition(cellNode3, new Euclidean2DPosition(-1, 1));
         env.moveNodeToPosition(cellNode5, MOVE_TO_POS_TENSPOL3_3);
         cellNode1.setPolarization(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .get().execute();
-        assertEquals(cellNode1.getPolarizationVersor().getCoordinate(0), -cellNode1.getPolarizationVersor().getCoordinate(1), PRECISION);
+        assertEquals(
+                cellNode1.getPolarizationVersor().getCoordinate(0),
+                -cellNode1.getPolarizationVersor().getCoordinate(1),
+                PRECISION
+        );
     }
 
     /**
@@ -335,6 +351,10 @@ public class TestDeformableCell {
         env.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode2, CELL_POS_MOV1);
         env.moveNodeToPosition(cellNode1, new Euclidean2DPosition(0, 10));
-        assertEquals(env.getPosition(cellNode1), EXPECTED_POS_MOV1, "Position of cellNode1 = " + env.getPosition(cellNode1));
+        assertEquals(
+                env.getPosition(cellNode1),
+                EXPECTED_POS_MOV1,
+                "Position of cellNode1 = " + env.getPosition(cellNode1)
+        );
     }
 }

@@ -42,7 +42,7 @@ public class TestGenericNode {
      */
     @Test
     public void testConcurrentAccess() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         @SuppressWarnings("serial")
         final AbstractNode<Object> node = new AbstractNode<>(env) {
             @Override

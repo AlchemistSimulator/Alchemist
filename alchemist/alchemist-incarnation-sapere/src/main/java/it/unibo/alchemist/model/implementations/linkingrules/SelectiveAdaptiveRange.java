@@ -35,15 +35,21 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      *            minimum radius in metres
      * @param maxrange
      *            maximum radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
      *            if the number of neighbors is smaller than num-tolerance, the
      *            radius is increased; if the number of neighbors is higher than
      *            num+tolerance, the radius is decreased
      */
-    public SelectiveAdaptiveRange(final double radius, final double minrange, final double maxrange, final int num, final int tolerance) {
-        this(radius, minrange, maxrange, num, tolerance, DEFAULT_ADJUSTMENT, DEFAULT_MOLECULETYPE);
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final double minrange,
+            final double maxrange,
+            final int desiredNeighborsCount,
+            final int tolerance
+    ) {
+        this(radius, minrange, maxrange, desiredNeighborsCount, tolerance, DEFAULT_ADJUSTMENT, DEFAULT_MOLECULETYPE);
     }
 
     /**
@@ -53,18 +59,25 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      *            minimum radius in metres
      * @param maxrange
      *            maximum radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
-     *            if the number of neighbors is smaller than num-tolerance, the
+     *            if the number of neighbors is smaller than desiredNeighborsCount-tolerance, the
      *            radius is increased; if the number of neighbors is higher than
-     *            num+tolerance, the radius is decreased
+     *            desiredNeighborsCount+tolerance, the radius is decreased
      * @param adjustment
      *            the amount of metres the range will be changed if out of the
      *            bounds
      */
-    public SelectiveAdaptiveRange(final double radius, final double minrange, final double maxrange, final int num, final int tolerance, final double adjustment) {
-        this(radius, minrange, maxrange, num, tolerance, adjustment, DEFAULT_MOLECULETYPE);
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final double minrange,
+            final double maxrange,
+            final int desiredNeighborsCount,
+            final int tolerance,
+            final double adjustment
+    ) {
+        this(radius, minrange, maxrange, desiredNeighborsCount, tolerance, adjustment, DEFAULT_MOLECULETYPE);
     }
 
     /**
@@ -74,20 +87,28 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      *            minimum radius in metres
      * @param maxrange
      *            maximum radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
-     *            if the number of neighbors is smaller than num-tolerance, the
+     *            if the number of neighbors is smaller than desiredNeighborsCount-tolerance, the
      *            radius is increased; if the number of neighbors is higher than
-     *            num+tolerance, the radius is decreased
+     *            desiredNeighborsCount+tolerance, the radius is decreased
      * @param adjustment
      *            the amount of metres the range will be changed if out of the
      *            bounds
      * @param molType
      *            the molecule whose presence will allow links to be created
      */
-    public SelectiveAdaptiveRange(final double radius, final double minrange, final double maxrange, final int num, final int tolerance, final double adjustment, final String molType) {
-        super(radius, minrange, maxrange, num, tolerance, adjustment);
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final double minrange,
+            final double maxrange,
+            final int desiredNeighborsCount,
+            final int tolerance,
+            final double adjustment,
+            final String molType
+    ) {
+        super(radius, minrange, maxrange, desiredNeighborsCount, tolerance, adjustment);
         moleculeType = new LsaMolecule(molType);
     }
 
@@ -96,15 +117,20 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      *            default radius in metres
      * @param minrange
      *            minimum radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
-     *            if the number of neighbors is smaller than num-tolerance, the
+     *            if the number of neighbors is smaller than desiredNeighborsCount-tolerance, the
      *            radius is increased; if the number of neighbors is higher than
-     *            num+tolerance, the radius is decreased
+     *            desiredNeighborsCount+tolerance, the radius is decreased
      */
-    public SelectiveAdaptiveRange(final double radius, final double minrange, final int num, final int tolerance) {
-        this(radius, minrange, DEFAULT_MAXRANGE, num, tolerance, DEFAULT_ADJUSTMENT, DEFAULT_MOLECULETYPE);
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final double minrange,
+            final int desiredNeighborsCount,
+            final int tolerance
+    ) {
+        this(radius, minrange, DEFAULT_MAXRANGE, desiredNeighborsCount, tolerance, DEFAULT_ADJUSTMENT, DEFAULT_MOLECULETYPE);
     }
 
     /**
@@ -112,65 +138,97 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      *            default radius in metres
      * @param minrange
      *            minimum radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
-     *            if the number of neighbors is smaller than num-tolerance, the
+     *            if the number of neighbors is smaller than desiredNeighborsCount-tolerance, the
      *            radius is increased; if the number of neighbors is higher than
-     *            num+tolerance, the radius is decreased
+     *            desiredNeighborsCount+tolerance, the radius is decreased
      * @param adjustment
      *            the amount of metres the range will be changed if out of the
      *            bounds
      */
-    public SelectiveAdaptiveRange(final double radius, final double minrange, final int num, final int tolerance, final double adjustment) {
-        this(radius, minrange, DEFAULT_MAXRANGE, num, tolerance, adjustment, DEFAULT_MOLECULETYPE);
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final double minrange,
+            final int desiredNeighborsCount,
+            final int tolerance,
+            final double adjustment
+    ) {
+        this(radius, minrange, DEFAULT_MAXRANGE, desiredNeighborsCount, tolerance, adjustment, DEFAULT_MOLECULETYPE);
     }
 
     /**
      * @param radius
      *            default radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
-     *            if the number of neighbors is smaller than num-tolerance, the
+     *            if the number of neighbors is smaller than desiredNeighborsCount-tolerance, the
      *            radius is increased; if the number of neighbors is higher than
-     *            num+tolerance, the radius is decreased
+     *            desiredNeighborsCount+tolerance, the radius is decreased
      */
-    public SelectiveAdaptiveRange(final double radius, final int num, final int tolerance) {
-        this(radius, DEFAULT_MINRANGE, num, tolerance);
+    public SelectiveAdaptiveRange(final double radius, final int desiredNeighborsCount, final int tolerance) {
+        this(radius, DEFAULT_MINRANGE, desiredNeighborsCount, tolerance);
     }
 
     /**
      * @param radius
      *            default radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
-     *            if the number of neighbors is smaller than num-tolerance, the
+     *            if the number of neighbors is smaller than desiredNeighborsCount-tolerance, the
      *            radius is increased; if the number of neighbors is higher than
-     *            num+tolerance, the radius is decreased
+     *            desiredNeighborsCount+tolerance, the radius is decreased
      * @param adjustment
      *            the amount of metres the range will be changed if out of the
      *            bounds
      */
-    public SelectiveAdaptiveRange(final double radius, final int num, final int tolerance, final double adjustment) {
-        this(radius, DEFAULT_MINRANGE, DEFAULT_MAXRANGE, num, tolerance, adjustment, DEFAULT_MOLECULETYPE);
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final int desiredNeighborsCount,
+            final int tolerance,
+            final double adjustment
+    ) {
+        this(
+                radius,
+                DEFAULT_MINRANGE,
+                DEFAULT_MAXRANGE,
+                desiredNeighborsCount,
+                tolerance,
+                adjustment,
+                DEFAULT_MOLECULETYPE
+        );
     }
 
     /**
      * @param radius
      *            default radius in metres
-     * @param num
+     * @param desiredNeighborsCount
      *            preferred number of neighbors
      * @param tolerance
-     *            if the number of neighbors is smaller than num-tolerance, the
+     *            if the number of neighbors is smaller than desiredNeighborsCount-tolerance, the
      *            radius is increased; if the number of neighbors is higher than
-     *            num+tolerance, the radius is decreased
+     *            desiredNeighborsCount+tolerance, the radius is decreased
      * @param molType
      *            the molecule whose presence will allow links to be created
      */
-    public SelectiveAdaptiveRange(final double radius, final int num, final int tolerance, final String molType) {
-        this(radius, DEFAULT_MINRANGE, DEFAULT_MAXRANGE, num, tolerance, DEFAULT_ADJUSTMENT, molType);
+    public SelectiveAdaptiveRange(
+            final double radius,
+            final int desiredNeighborsCount,
+            final int tolerance,
+            final String molType
+    ) {
+        this(
+                radius,
+                DEFAULT_MINRANGE,
+                DEFAULT_MAXRANGE,
+                desiredNeighborsCount,
+                tolerance,
+                DEFAULT_ADJUSTMENT,
+                molType
+        );
     }
 
     /**
@@ -181,7 +239,7 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      * that the actual distance between the nodes is shorter than the
      * communication range of the neighbor.
      * 
-     * @param env
+     * @param environment
      *            the current environment
      * @param center
      *            the current node
@@ -194,7 +252,14 @@ public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRa
      * @return true if the node must be removed, false otherwise
      */
     @Override
-    protected boolean conditionForRemoval(final Environment<T, P> env, final Node<T> center, final Node<T> neighbor, final double centerRange, final double neighRange) {
-        return !neighbor.contains(moleculeType) || super.conditionForRemoval(env, center, neighbor, centerRange, neighRange);
+    protected boolean conditionForRemoval(
+            final Environment<T, P> environment,
+            final Node<T> center,
+            final Node<T> neighbor,
+            final double centerRange,
+            final double neighRange
+    ) {
+        return !neighbor.contains(moleculeType)
+                || super.conditionForRemoval(environment, center, neighbor, centerRange, neighRange);
     }
 }

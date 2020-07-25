@@ -23,8 +23,8 @@ open class RandomlyToggleMolecule<T>(
     private val odds: Double
 ) : ToggleMolecule<T>(node, molecule, concentration) {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        RandomlyToggleMolecule(n, rng, molecule, concentration, odds)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+        RandomlyToggleMolecule(node, rng, molecule, concentration, odds)
 
     /**
      * Rolls the dice and toggles the molecule.

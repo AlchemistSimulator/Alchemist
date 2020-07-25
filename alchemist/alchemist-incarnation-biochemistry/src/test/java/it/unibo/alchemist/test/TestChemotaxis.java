@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * 
  */
+@SuppressWarnings("CPD-START")
 public class TestChemotaxis {
 
     private static final double CONCENTRATION1 = 5;

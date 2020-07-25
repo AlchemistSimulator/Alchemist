@@ -227,7 +227,7 @@ public final class EffectSerializer {
         return load(
                 new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET),
                 new TypeToken<>() { }
-                );
+            );
     }
 
     /**
@@ -288,7 +288,7 @@ public final class EffectSerializer {
         return load(
                 new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET),
                 new TypeToken<>() { }
-                );
+            );
     }
 
     /**
@@ -349,7 +349,7 @@ public final class EffectSerializer {
         return load(
                 new InputStreamReader(ResourceLoader.getResourceAsStream(resource), DEFAULT_CHARSET),
                 new TypeToken<>() { }
-                );
+            );
     }
 
     /**

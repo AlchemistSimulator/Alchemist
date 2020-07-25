@@ -114,7 +114,11 @@ class InteractionManager<T, P : Position2D<P>>(
     val canvases = Group().apply { listOf(highlighter, selector).forEach { children.add(it) } }
 
     /**
-     * Invokes a given command on the simulation.
+     * Wraps the given command on the simulation to run through [Simulation.schedule]
+     * in order to properly run the call on the simulation.
+     *
+     * For instance, deleting a node:
+     * <code>invokeOnSimulation { environment.removeNode(someNode) }</code>
      */
     private val invokeOnSimulation: (Simulation<T, P>.() -> Unit) -> Unit
         get() =

@@ -224,7 +224,8 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             primaryStage.show();
             // The initialization of the monitors MUST be done AFTER the Stage is shown
             optSim.ifPresent(s ->
-                    initMonitors(s,
+                    initMonitors(
+                            s,
                             optDisplayMonitor.orElse(null),
                             stepMonitor,
                             timeMonitor,

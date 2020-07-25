@@ -83,14 +83,14 @@ class InteractionManager<T, P : Position2D<P>>(
     private lateinit var wormhole: BidimensionalWormhole<P>
     private lateinit var zoomManager: ZoomManager
     private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
-    private val keyboardPan: DigitalPan<P> by lazy {
-        DigitalPan(wormhole = wormhole) {
+    private val keyboardPanManager: DigitalPanManager<P> by lazy {
+        DigitalPanManager(wormhole = wormhole) {
             monitor.repaint()
             repaint()
         }
     }
     private val mouse: DynamicMouseEventDispatcher = NodeBoundMouseEventDispatcher(monitor)
-    private lateinit var mousePan: AnalogPan
+    private lateinit var mousePanHelper: AnalogPanHelper
     private val highlighter = Canvas()
     private val selector = Canvas()
     private val selectionHelper: SelectionHelper<T, P> =
@@ -147,20 +147,20 @@ class InteractionManager<T, P : Position2D<P>>(
         }
         // keyboard-pan
         Keybinds[ActionFromKey.PAN_NORTH].ifPresent {
-            keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.NORTH }
-            keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.NORTH }
+            keyboard[ActionOnKey.PRESSED with it] = { keyboardPanManager += Direction2D.NORTH }
+            keyboard[ActionOnKey.RELEASED with it] = { keyboardPanManager -= Direction2D.NORTH }
         }
         Keybinds[ActionFromKey.PAN_SOUTH].ifPresent {
-            keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.SOUTH }
-            keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.SOUTH }
+            keyboard[ActionOnKey.PRESSED with it] = { keyboardPanManager += Direction2D.SOUTH }
+            keyboard[ActionOnKey.RELEASED with it] = { keyboardPanManager -= Direction2D.SOUTH }
         }
         Keybinds[ActionFromKey.PAN_EAST].ifPresent {
-            keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.EAST }
-            keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.EAST }
+            keyboard[ActionOnKey.PRESSED with it] = { keyboardPanManager += Direction2D.EAST }
+            keyboard[ActionOnKey.RELEASED with it] = { keyboardPanManager -= Direction2D.EAST }
         }
         Keybinds[ActionFromKey.PAN_WEST].ifPresent {
-            keyboard[ActionOnKey.PRESSED with it] = { keyboardPan += Direction2D.WEST }
-            keyboard[ActionOnKey.RELEASED with it] = { keyboardPan -= Direction2D.WEST }
+            keyboard[ActionOnKey.PRESSED with it] = { keyboardPanManager += Direction2D.WEST }
+            keyboard[ActionOnKey.RELEASED with it] = { keyboardPanManager -= Direction2D.WEST }
         }
         // move
         val enqueueMove = { _: Event ->
@@ -273,7 +273,7 @@ class InteractionManager<T, P : Position2D<P>>(
      * @param event the caller
      */
     private fun onPanInitiated(event: MouseEvent) {
-        mousePan = AnalogPan(makePoint(event.x, event.y))
+        mousePanHelper = AnalogPanHelper(makePoint(event.x, event.y))
     }
 
     /**
@@ -281,8 +281,8 @@ class InteractionManager<T, P : Position2D<P>>(
      * @param event the caller
      */
     private fun onPanning(event: MouseEvent) {
-        if (mousePan.valid) {
-            wormhole.viewPosition = mousePan.update(makePoint(event.x, event.y), wormhole.viewPosition)
+        if (mousePanHelper.valid) {
+            wormhole.viewPosition = mousePanHelper.update(makePoint(event.x, event.y), wormhole.viewPosition)
             monitor.repaint()
         }
         event.consume()
@@ -292,7 +292,7 @@ class InteractionManager<T, P : Position2D<P>>(
      * Called when a pan gesture finishes.
      */
     private fun onPanned(event: MouseEvent) {
-        mousePan.close()
+        mousePanHelper.close()
         event.consume()
     }
 
@@ -300,7 +300,7 @@ class InteractionManager<T, P : Position2D<P>>(
      * Called when a pan gesture is canceled.
      */
     private fun onPanCanceled(event: MouseEvent) {
-        mousePan.close()
+        mousePanHelper.close()
         event.consume()
     }
 

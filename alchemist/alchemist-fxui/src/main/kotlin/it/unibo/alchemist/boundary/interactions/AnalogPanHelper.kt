@@ -14,11 +14,14 @@ import it.unibo.alchemist.boundary.plus
 import java.awt.Point
 
 /**
- * Manages panning.
+ * Helps manage panning done through the mouse,
+ * therefore analog in the sense that the
+ * panning can go towards any direction.
+ * @param current the current position of the mouse.
  */
-class AnalogPan(private var current: Point) {
+class AnalogPanHelper(private var current: Point) {
     /**
-     * Returns whether this [AnalogPan] is still valid.
+     * Returns whether this [AnalogPanHelper] is still valid.
      * Invalidation happens when [close] is called, for example when the mouse goes out of bounds.
      */
     var valid: Boolean = true
@@ -36,7 +39,7 @@ class AnalogPan(private var current: Point) {
     }
 
     /**
-     * Closes the helper. This invalidates the [AnalogPan]
+     * Closes the helper. This invalidates the [AnalogPanHelper]
      */
     fun close() {
         valid = false

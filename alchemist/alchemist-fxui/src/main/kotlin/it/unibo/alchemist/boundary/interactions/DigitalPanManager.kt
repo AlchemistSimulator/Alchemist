@@ -23,7 +23,7 @@ import kotlin.concurrent.fixedRateTimer
  * @param wormhole The wormhole used to pan.
  * @param updates A runnable which will be called whenever a panning movement occurs.
  */
-class DigitalPan<P : Position2D<P>>(
+class DigitalPanManager<P : Position2D<P>>(
     private val speed: Int = 5,
     private val period: Long = 15,
     private val wormhole: BidimensionalWormhole<P>,

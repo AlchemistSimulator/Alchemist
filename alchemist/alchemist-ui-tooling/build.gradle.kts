@@ -5,7 +5,7 @@
  * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
- ""
+
 dependencies {
     implementation(rootProject)
     implementation(project(":alchemist-implementationbase"))

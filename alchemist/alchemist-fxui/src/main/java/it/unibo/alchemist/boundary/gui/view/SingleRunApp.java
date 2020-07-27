@@ -251,10 +251,10 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      * @see OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment)
      */
     @SafeVarargs
-    private final void initMonitors(
+    private void initMonitors(
             final @NotNull Simulation<T, P> simulation,
             final @Nullable OutputMonitor<T, P>... monitors
-    ) { // NOPMD - UnnecessaryFinalModifier - necessary to @SafeVarargs tag
+    ) {
         if (monitors != null) {
             for (final OutputMonitor<T, P> m : monitors) {
                 if (m != null) {

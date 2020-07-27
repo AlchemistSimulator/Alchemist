@@ -167,20 +167,12 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     override fun getKeyboardListener(): KeyboardActionListener = interactions.keyboardListener
 
     override fun initialized(environment: Environment<T, P>) {
+        init(environment)
         stepDone(environment, null, DoubleTime(), 0)
     }
 
     override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        if (firstTime) {
-            synchronized(this) {
-                if (firstTime) {
-                    init(environment)
-                    update(environment, time)
-                }
-            }
-        } else {
-            update(environment, time)
-        }
+        update(environment, time)
     }
 
     /**

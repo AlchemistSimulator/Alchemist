@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.interactions
 
 import com.google.common.collect.ImmutableMap
 import it.unibo.alchemist.boundary.clear
-import it.unibo.alchemist.boundary.createDrawCommand
+import it.unibo.alchemist.boundary.createDrawRectangleCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.makePoint
 import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay
@@ -332,7 +332,7 @@ class InteractionManager<T, P : Position2D<P>>(
         selectionHelper.let { helper: SelectionHelper<T, P> ->
             helper.update(makePoint(event.x, event.y))
             listOf(
-                selector.createDrawCommand(
+                selector.createDrawRectangleCommand(
                     helper.rectangle,
                     Colors.selectionBox
                 )

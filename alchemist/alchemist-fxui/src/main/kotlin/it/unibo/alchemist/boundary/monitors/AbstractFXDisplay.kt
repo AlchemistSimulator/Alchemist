@@ -18,7 +18,7 @@ import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManage
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
-import it.unibo.alchemist.input.KeyboardActionListener
+import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener
 import it.unibo.alchemist.boundary.clear
 import it.unibo.alchemist.boundary.interactions.InteractionManager
 import it.unibo.alchemist.model.implementations.times.DoubleTime

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.interfaces;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
-import it.unibo.alchemist.input.KeyboardActionListener;
+import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import javafx.scene.Node;
 

@@ -20,15 +20,15 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.input.ActionFromKey
-import it.unibo.alchemist.input.ActionOnKey
-import it.unibo.alchemist.input.ActionOnMouse
-import it.unibo.alchemist.input.DynamicMouseEventDispatcher
+import it.unibo.alchemist.boundary.jfx.events.keyboard.ActionOnKey
+import it.unibo.alchemist.boundary.jfx.events.mouse.ActionOnMouse
+import it.unibo.alchemist.boundary.jfx.events.mouse.DynamicMouseEventDispatcher
 import it.unibo.alchemist.input.Keybinds
-import it.unibo.alchemist.input.KeyboardActionListener
-import it.unibo.alchemist.input.KeyboardEventDispatcher
-import it.unibo.alchemist.input.MouseButtonTriggerAction
-import it.unibo.alchemist.input.NodeBoundMouseEventDispatcher
-import it.unibo.alchemist.input.SimpleKeyboardEventDispatcher
+import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener
+import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardEventDispatcher
+import it.unibo.alchemist.boundary.jfx.events.mouse.MouseButtonTriggerAction
+import it.unibo.alchemist.boundary.jfx.events.mouse.NodeBoundMouseEventDispatcher
+import it.unibo.alchemist.boundary.jfx.events.keyboard.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
@@ -172,7 +172,7 @@ class InteractionManager<T, P : Position2D<P>>(
         }
         // move
         val enqueueMove = { _: Event ->
-            mouse.setOnActionTemporary(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.PRIMARY)) { mouse ->
+            mouse.setDynamicAction(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.PRIMARY)) { mouse ->
                 runMutex.acquireUninterruptibly()
                 if (selection.isNotEmpty()) {
                     val nodesToMove: Map<Node<T>, P> = selectedElements

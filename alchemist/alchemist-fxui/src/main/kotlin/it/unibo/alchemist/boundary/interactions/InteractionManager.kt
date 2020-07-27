@@ -101,7 +101,7 @@ class InteractionManager<T, P : Position2D<P>>(
         get() = ImmutableMap.copyOf(selection)
     private val selectionCandidatesMutex: Semaphore = Semaphore(1)
     private val runMutex: Semaphore = Semaphore(1)
-    
+
     /**
      * Once a new feedback is added, it should be rendered as quickly as possible.
      * For this reason, [repaint] is called whenever a new feedback is added to the map.
@@ -469,17 +469,17 @@ class InteractionManager<T, P : Position2D<P>>(
             /**
              * The colour of the highlights for the already selected nodes.
              */
-            val alreadySelected = "#1f70f2".color()
+            val alreadySelected = "#1f70f2".toColor()
             /**
              * The colour of the highlights for the nodes that are candidates for selection.
              */
-            val selecting = "#ff5400".color()
+            val selecting = "#ff5400".toColor()
             /**
              *
              */
-            val selectionBox = "#8e99f3".color()
+            val selectionBox = "#8e99f3".toColor()
 
-            private fun String.color(): Paint = Color.valueOf(this)
+            private fun String.toColor(): Paint = Color.valueOf(this)
         }
     }
 

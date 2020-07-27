@@ -21,7 +21,7 @@ import java.awt.Point
 fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
     nodes: Map<Node<T>, P>,
     wormhole: BidimensionalWormhole<P>
-): Map<Node<T>, P> = let { area -> nodes.filterValues { wormhole.getViewPoint(it) in area } }
+): Map<Node<T>, P> = nodes.filterValues { wormhole.getViewPoint(it) in this }
 
 /**
  * Returns whether the [Rectangle] [this] contains [point].

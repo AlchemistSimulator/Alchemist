@@ -17,25 +17,25 @@ import javafx.scene.Node
 open class NodeBoundMouseEventDispatcher(node: Node) : DynamicMouseEventDispatcher() {
     init {
         node.setOnMouseClicked {
-            listener.action(MouseButtonTriggerAction(ActionOnMouse.CLICKED,it.button),it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.CLICKED, it.button), it)
         }
         node.setOnMouseDragged {
-            listener.action(MouseButtonTriggerAction(ActionOnMouse.DRAGGED,it.button),it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.DRAGGED, it.button), it)
         }
         node.setOnMouseEntered {
-            listener.action(MouseButtonTriggerAction(ActionOnMouse.ENTERED,it.button),it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.ENTERED, it.button), it)
         }
         node.setOnMouseExited {
-            listener.action(MouseButtonTriggerAction(ActionOnMouse.EXITED,it.button), it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.EXITED, it.button), it)
         }
         node.setOnMouseMoved {
-            listener.action(MouseButtonTriggerAction(ActionOnMouse.MOVED,it.button),it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.MOVED, it.button), it)
         }
         node.setOnMousePressed {
-            listener.action(MouseButtonTriggerAction(ActionOnMouse.PRESSED,it.button),it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.PRESSED, it.button), it)
         }
         node.setOnMouseReleased {
-            listener.action(MouseButtonTriggerAction(ActionOnMouse.RELEASED, it.button),it)
+            listener.action(MouseButtonTriggerAction(ActionOnMouse.RELEASED, it.button), it)
         }
         node.setOnMouseMoved {
             listener.action(BasicMouseTriggerAction.MOVEMENT, it)

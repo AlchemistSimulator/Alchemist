@@ -100,8 +100,16 @@ class InteractionManager<T, P : Position2D<P>>(
     private val selectedElements: ImmutableMap<Node<T>, P>
         get() = ImmutableMap.copyOf(selection)
     private val selectionCandidatesMutex: Semaphore = Semaphore(1)
-    @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
     private val runMutex: Semaphore = Semaphore(1)
+    
+    /**
+     * Once a new feedback is added, it should be rendered as quickly as possible.
+     * For this reason, [repaint] is called whenever a new feedback is added to the map.
+     * [Volatile] ensures that the JavaFX thread will see the changes to [feedback]
+     * as soon as possible.
+     */
+    @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
+
     /**
      * The canvases used for input/output.
      */

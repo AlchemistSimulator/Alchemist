@@ -11,11 +11,6 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-maps"))
-    val javaFXVersion = "11"
-    for (platform in listOf("linux", "mac", "win")) {
-        api("org.openjfx:javafx-base:$javaFXVersion:$platform")
-        api("org.openjfx:javafx-graphics:$javaFXVersion:$platform")
-    }
 }
 
 publishing.publications {

@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.boundary.wormhole.implementation.adapter;
+package it.unibo.alchemist.wormhole.implementation.adapter;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import javafx.scene.Node;

@@ -21,6 +21,8 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener
 import it.unibo.alchemist.boundary.clear
 import it.unibo.alchemist.boundary.interactions.InteractionManager
+import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
+import it.unibo.alchemist.wormhole.implementation.adapter.NodeViewType
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
@@ -40,6 +42,7 @@ import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Function
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -201,7 +204,13 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      * @returns the wormhole.
      */
     protected open fun createWormhole(environment: Environment<T, P>): Wormhole2D<P> =
-        Wormhole2D(environment, this)
+        Wormhole2D(
+            environment,
+            NodeViewType(this),
+            Function<NodeViewType, PointAdapter<P>> {
+                PointAdapter.from(it.node.boundsInLocal.width / 2, it.node.boundsInLocal.height / 2)
+            }
+        )
 
     /**
      * Creates a zoom manager for this monitor.

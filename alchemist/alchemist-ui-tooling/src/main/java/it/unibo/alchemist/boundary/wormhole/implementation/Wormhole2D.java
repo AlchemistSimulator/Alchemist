@@ -8,15 +8,12 @@
 
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
-import it.unibo.alchemist.boundary.wormhole.implementation.adapter.NodeViewType;
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.awt.Component;
-import java.awt.geom.Dimension2D;
-import javafx.scene.Node;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+import java.awt.geom.Dimension2D;
+import java.util.function.Function;
 
 /**
  * Partial implementation for the class {@link it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole}.<br>
@@ -27,41 +24,28 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
  */
 public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormhole2D<P> {
 
-    //private static final Logger L = LoggerFactory.getLogger(Wormhole2D.class);
-
     /**
-     * Bidimensional wormhole constructor for an AWT/Swing {@link Component} class.
+     * Bidimensional wormhole constructor for any {@link ViewType}.
      * <br/>
      * Initializes a new instance directly setting the size of both view and
      * environment, and the offset too.
      *
      * @param env  the {@link Environment}
-     * @param comp the controlled {@code Component}
+     * @param viewType the {@link ViewType} of the UI used for implementing the wormhole.
+     * @param viewTypeToPointAdapter a {@link Function} used to create the initial position of the wormhole.
      */
-    public Wormhole2D(final Environment<?, P> env, final Component comp) {
+    public <T extends ViewType> Wormhole2D(
+            final Environment<?, P> env,
+            final T viewType,
+            final Function<T, PointAdapter<P>> viewTypeToPointAdapter
+    ) {
         super(
                 env,
-                new ComponentViewType(comp),
-                from(comp.getWidth() / 2.0, comp.getHeight() / 2.0)
+                viewType,
+                viewTypeToPointAdapter.apply(viewType)
         );
     }
 
-    /**
-     * Bidimensional wormhole constructor for an AWT/Swing {@link Node} class.
-     * <br/>
-     * Initializes a new instance directly setting the size of both view and
-     * environment, and the offset too.
-     *
-     * @param env         the {@code Environment}
-     * @param view        the controlled {@code Node}
-     */
-    public Wormhole2D(final Environment<?, P> env, final Node view) {
-        super(
-                env,
-                new NodeViewType(view),
-                from(view.getBoundsInLocal().getWidth() / 2, view.getBoundsInLocal().getHeight() / 2)
-        );
-    }
     @Override
     public final Dimension2D getViewSize() {
         return new DoubleDimension(getView().getWidth(), getView().getHeight());

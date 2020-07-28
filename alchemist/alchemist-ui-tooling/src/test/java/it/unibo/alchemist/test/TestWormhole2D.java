@@ -9,12 +9,15 @@ package it.unibo.alchemist.test;
 
 import java.awt.Component;
 
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import org.junit.jupiter.api.Test;
 
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
+
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
  * Test for bugs in {@link Wormhole2D}.
@@ -28,9 +31,21 @@ public class TestWormhole2D {
     @Test
     public void testZeroSizeEnvironment() {
         final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>();
-        final Wormhole2D<Euclidean2DPosition> worm = new Wormhole2D<>(env, new Component() {
-            private static final long serialVersionUID = 1L;
-        });
+        final Wormhole2D<Euclidean2DPosition> worm = new Wormhole2D<>(
+                env,
+                new ViewType() {
+                    @Override
+                    public double getWidth() {
+                        return 0;
+                    }
+
+                    @Override
+                    public double getHeight() {
+                        return 0;
+                    }
+                },
+                viewType -> from(viewType.getWidth() / 2.0, viewType.getHeight() / 2.0)
+        );
         worm.center();
     }
 }

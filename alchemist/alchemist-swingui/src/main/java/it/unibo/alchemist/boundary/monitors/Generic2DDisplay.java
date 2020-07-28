@@ -17,6 +17,7 @@ import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManage
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole.Mode;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
@@ -75,6 +76,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+
+import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
 /**
  * Base-class for each display able a graphically represent a 2D space
@@ -487,7 +490,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * Initializes all the internal data.
      */
     private void initAll(final Environment<T, P> env) {
-        wormhole = new Wormhole2D<>(env, this);
+        wormhole = new Wormhole2D<>(
+                env,
+                new ComponentViewType(this),
+                viewType -> from(viewType.getWidth() / 2.0, viewType.getHeight() / 2.0)
+        );
         wormhole.center();
         wormhole.optimalZoom();
         angleManager = new AngleManagerImpl(AngleManagerImpl.DEF_DEG_PER_PIXEL);

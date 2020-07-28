@@ -49,11 +49,9 @@ public abstract class AbstractPropertySerializationTest {
         if (origin == null) {
             return "Original property is null";
         }
-
         if (deserialized == null) {
             return "Deserialized property is null";
         }
-
         return "Property \""
                 + origin.getName() + ": " + origin.getValue()
                 + "\" is different from property \""

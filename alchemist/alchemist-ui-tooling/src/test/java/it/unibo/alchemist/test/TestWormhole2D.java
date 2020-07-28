@@ -7,15 +7,12 @@
  */
 package it.unibo.alchemist.test;
 
-import java.awt.Component;
-
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
-import org.junit.jupiter.api.Test;
-
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
+import org.junit.jupiter.api.Test;
 
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 

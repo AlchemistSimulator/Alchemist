@@ -30,6 +30,7 @@ public class Wormhole2D<P extends Position2D<? extends P>> extends AbstractWormh
      * Initializes a new instance directly setting the size of both view and
      * environment, and the offset too.
      *
+     * @param <T> the type of the viewType
      * @param env  the {@link Environment}
      * @param viewType the {@link ViewType} of the UI used for implementing the wormhole.
      * @param viewTypeToPointAdapter a {@link Function} used to create the initial position of the wormhole.

@@ -14,7 +14,6 @@ import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
-import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
@@ -38,6 +37,7 @@ import org.danilopianini.lang.LangUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -75,7 +75,6 @@ import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
@@ -802,8 +801,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 if (hooked.isEmpty() && isNotInteracting()) {
                     final Point previous = wormhole.getViewPosition();
                     wormhole.setViewPosition(
-                            PointAdapter.from(previous)
-                                    .sum(PointAdapter.from(mouseMovement.getVariation())).toPoint());
+                            from(previous)
+                                    .sum(from(mouseMovement.getVariation())).toPoint());
                 }
             } else if (SwingUtilities.isRightMouseButton(e) && angleManager != null && wormhole.getMode() != Mode.MAP) {
                 angleManager.inc(mouseMovement.getVariation().getX());

@@ -17,7 +17,7 @@ import it.unibo.alchemist.boundary.monitors.CustomLeafletMapView.Companion.MAX_Z
 import it.unibo.alchemist.boundary.monitors.CustomLeafletMapView.Companion.MIN_ZOOM_VALUE
 import it.unibo.alchemist.boundary.monitors.CustomLeafletMapView.Companion.ZOOM_RATE
 import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.boundary.makePoint
 import it.unibo.alchemist.runOnFXThread
 import it.unibo.alchemist.model.interfaces.Concentration
@@ -59,7 +59,7 @@ class LeafletMapDisplay<T>
     override fun createWormhole(environment: Environment<T, GeoPosition>) =
         LeafletMapWormhole(environment, this, map)
 
-    override fun createZoomManager(wormhole: BidimensionalWormhole<GeoPosition>) =
+    override fun createZoomManager(wormhole: Wormhole2D<GeoPosition>) =
         LinearZoomManager(
             MAX_ZOOM_VALUE.toDouble(),
             ZOOM_RATE.toDouble(),

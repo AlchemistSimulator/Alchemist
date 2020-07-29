@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -76,7 +76,7 @@ public class DrawCognitiveMap extends DrawOnce {
             final Graphics2D graphics,
             final Node<T> node,
             final Environment<T, P> environment,
-            final BidimensionalWormhole<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         super.apply(graphics, node, environment, wormhole);
         final Integer markerNodeID = getMarkerNodeID();
@@ -97,7 +97,7 @@ public class DrawCognitiveMap extends DrawOnce {
             final Graphics2D graphics2D,
             final Node<T> node,
             final Environment<T, P> environment,
-            final BidimensionalWormhole<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         if (cognitiveMap != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
@@ -140,7 +140,7 @@ public class DrawCognitiveMap extends DrawOnce {
 
     private <P extends Position2D<P>> Shape mapEnvEllipseToAwtShape(
             final Ellipse ellipse,
-            final BidimensionalWormhole<P> wormhole,
+            final Wormhole2D<P> wormhole,
             final Environment<?, P> environment
     ) {
         final Rectangle2D frame = ellipse.asAwtShape().getFrame();

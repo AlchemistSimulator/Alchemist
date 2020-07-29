@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.implementations.actions.See;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
@@ -36,7 +36,7 @@ public final class DrawSmartcam implements Effect {
             final Graphics2D graphics,
             final Node<T> node,
             final Environment<T, P> environment,
-            final BidimensionalWormhole<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         final double zoom = wormhole.getZoom();
         final Point viewPoint = wormhole.getViewPoint(environment.getPosition(node));

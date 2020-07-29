@@ -16,8 +16,8 @@ import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.WormholeSwing;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole.Mode;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D.Mode;
 import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
@@ -139,7 +139,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private boolean realTime;
     private int st;
     private long timeInit = System.currentTimeMillis();
-    private transient BidimensionalWormhole<P> wormhole;
+    private transient Wormhole2D<P> wormhole;
     private transient ZoomManager zoomManager;
     private boolean isPreviousStateMarking = true;
     private ViewStatus status = ViewStatus.VIEW_WITH_MARKER;
@@ -469,9 +469,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     /**
      * Lets child-classes access the wormhole.
      *
-     * @return an {@link BidimensionalWormhole}
+     * @return an {@link Wormhole2D}
      */
-    protected final BidimensionalWormhole<P> getWormhole() {
+    protected final Wormhole2D<P> getWormhole() {
         return wormhole;
     }
 
@@ -625,9 +625,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     /**
      * Lets child-classes change the wormhole.
      *
-     * @param w an {@link BidimensionalWormhole}
+     * @param w an {@link Wormhole2D}
      */
-    protected void setWormhole(final BidimensionalWormhole<P> w) {
+    protected void setWormhole(final Wormhole2D<P> w) {
         Objects.requireNonNull(w);
         wormhole = w;
     }

@@ -14,7 +14,7 @@ import it.unibo.alchemist.boundary.minus
 import it.unibo.alchemist.boundary.monitors.CustomLeafletMapView
 import it.unibo.alchemist.boundary.plus
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
@@ -35,7 +35,7 @@ class LeafletMapWormhole(
     node
 ) {
     init {
-        mode = BidimensionalWormhole.Mode.MAP
+        mode = Wormhole2D.Mode.MAP
     }
 
     override fun getEnvPoint(viewPoint: Point): GeoPosition =

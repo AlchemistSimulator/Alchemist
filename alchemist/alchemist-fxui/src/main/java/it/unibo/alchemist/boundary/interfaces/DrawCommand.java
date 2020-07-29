@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.interfaces;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -23,23 +23,23 @@ import javafx.scene.canvas.GraphicsContext;
  */
 @FunctionalInterface
 public interface DrawCommand<P extends Position2D<? extends P>>
-        extends BiConsumer<GraphicsContext, BidimensionalWormhole<P>> {
+        extends BiConsumer<GraphicsContext, Wormhole2D<P>> {
 
     /**
      * The method consumes a graphic and a wormhole to draw something.
      *
      * @param graphic  the {@link GraphicsContext} of a JavaFX {@link javafx.scene.canvas.Canvas}
-     * @param wormhole the {@link BidimensionalWormhole Wormhole} that maps
+     * @param wormhole the {@link Wormhole2D Wormhole} that maps
      * {@link it.unibo.alchemist.model.interfaces.Environment}
      * {@link it.unibo.alchemist.model.interfaces.Position positions}
      *                 to GUI positions
      */
     @Override
-    void accept(GraphicsContext graphic, BidimensionalWormhole<P> wormhole);
+    void accept(GraphicsContext graphic, Wormhole2D<P> wormhole);
 
     /**
      * Wrapper method that wraps this {@link DrawCommand} into another that checks
-     * if should execute or not the {@link #accept(GraphicsContext, BidimensionalWormhole)} method.
+     * if should execute or not the {@link #accept(GraphicsContext, Wormhole2D)} method.
      *
      * @param booleanSupplier a condition checker {@link Boolean} {@link Supplier}
      * @return a new {@link DrawCommand} that wraps this one around the if checking

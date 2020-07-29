@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -34,7 +34,7 @@ public interface Effect extends Serializable {
      *            x screen position
      * @param y
      *            y screen position
-     * @deprecated use {@link #apply(Graphics2D, Node, Environment, BidimensionalWormhole)} instead.
+     * @deprecated use {@link #apply(Graphics2D, Node, Environment, Wormhole2D)} instead.
      */
     @Deprecated
     default void apply(Graphics2D graphic, Node<?> node, int x, int y) {
@@ -56,7 +56,7 @@ public interface Effect extends Serializable {
             Graphics2D g,
             Node<T> n,
             Environment<T, P> env,
-            BidimensionalWormhole<P> wormhole
+            Wormhole2D<P> wormhole
     ) {
         final Point viewPoint = wormhole.getViewPoint(env.getPosition(n));
         apply(g, n, viewPoint.x, viewPoint.y); // preserve backward compatibility

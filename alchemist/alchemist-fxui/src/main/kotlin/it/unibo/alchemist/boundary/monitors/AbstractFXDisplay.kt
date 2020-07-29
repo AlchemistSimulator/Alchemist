@@ -18,7 +18,7 @@ import it.unibo.alchemist.boundary.interfaces.DrawCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
@@ -70,7 +70,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     private var realTime: Boolean = false
     @Volatile private var commandQueue: ConcurrentLinkedQueue<() -> Unit> = ConcurrentLinkedQueue()
     private var viewStatus = DEFAULT_VIEW_STATUS
-    private lateinit var wormhole: BidimensionalWormhole<P>
+    private lateinit var wormhole: Wormhole2D<P>
     private lateinit var zoomManager: ZoomManager
     private val interactions: InteractionManager<T, P> by lazy {
         InteractionManager(
@@ -210,7 +210,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      * @param wormhole the current wormhole.
      * @returns the zoom manager.
      */
-    protected open fun createZoomManager(wormhole: BidimensionalWormhole<P>): ZoomManager =
+    protected open fun createZoomManager(wormhole: Wormhole2D<P>): ZoomManager =
         ExponentialZoomManager(wormhole.zoom, ExponentialZoomManager.DEF_BASE)
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {

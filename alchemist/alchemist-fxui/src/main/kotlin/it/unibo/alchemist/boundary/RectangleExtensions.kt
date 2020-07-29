@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import javafx.scene.shape.Rectangle
@@ -20,7 +20,7 @@ import java.awt.Point
  */
 fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
     nodes: Map<Node<T>, P>,
-    wormhole: BidimensionalWormhole<P>
+    wormhole: Wormhole2D<P>
 ): Map<Node<T>, P> = nodes.filterValues { wormhole.getViewPoint(it) in this }
 
 /**

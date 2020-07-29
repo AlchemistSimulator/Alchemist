@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.implementations.environments.ImageEnvironmentWithGraph;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -78,7 +78,7 @@ public class DrawNavigationGraph extends DrawOnce {
             final Graphics2D graphics2D,
             final Node<T> node,
             final Environment<T, P> environment,
-            final BidimensionalWormhole<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         if (graph == null && environment instanceof ImageEnvironmentWithGraph) {
             graph = ((ImageEnvironmentWithGraph<T>) environment).getGraph();
@@ -127,7 +127,7 @@ public class DrawNavigationGraph extends DrawOnce {
 
     private <T, P extends Position2D<P>> Shape mapEnvConvexPolygonToAwtShape(
             final ConvexPolygon polygon,
-            final BidimensionalWormhole<P> wormhole,
+            final Wormhole2D<P> wormhole,
             final Environment<T, P> environment
     ) {
         final Path2D shape = new Path2D.Double();

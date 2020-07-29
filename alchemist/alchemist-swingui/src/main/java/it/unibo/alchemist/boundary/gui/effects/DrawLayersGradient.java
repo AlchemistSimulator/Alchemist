@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import org.danilopianini.lang.RangedInteger;
@@ -50,7 +50,7 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
             final Function<? super P, ? extends Number> function,
             final Environment<T, P> environment,
             final Graphics2D graphics,
-            final BidimensionalWormhole<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         if (minOrMaxLayerValuesNeedsToBeUpdated()) {
             updateMinAndMaxLayerValues();

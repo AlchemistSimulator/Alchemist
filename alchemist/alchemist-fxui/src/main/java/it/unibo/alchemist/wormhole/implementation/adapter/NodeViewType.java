@@ -14,7 +14,7 @@ import javafx.scene.Node;
 
 /**
  * Adapter class that adapts the JavaFX {@link Node} class to a generic View Type for usage in
- * {@link it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole}.
+ * {@link it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D}.
  */
 public class NodeViewType implements ViewType {
     private Node node;

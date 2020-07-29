@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.interactions
 
 import it.unibo.alchemist.boundary.plus
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.model.interfaces.Position2D
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
@@ -26,7 +26,7 @@ import kotlin.concurrent.fixedRateTimer
 class DigitalPanManager<P : Position2D<P>>(
     private val speed: Int = 5,
     private val period: Long = 15,
-    private val wormhole: BidimensionalWormhole<P>,
+    private val wormhole: Wormhole2D<P>,
     private val updates: () -> Unit
 ) {
     private var timer: Timer = Timer()

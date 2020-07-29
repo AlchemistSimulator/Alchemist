@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.interactions
 import it.unibo.alchemist.boundary.intersectingNodes
 import it.unibo.alchemist.boundary.makePoint
 import it.unibo.alchemist.boundary.makeRectangleWith
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import java.awt.Point
@@ -86,7 +86,7 @@ class SelectionHelper<T, P : Position2D<P>> {
      */
     fun clickSelection(
         nodes: Map<Node<T>, P>,
-        wormhole: BidimensionalWormhole<P>
+        wormhole: Wormhole2D<P>
     ): Pair<Node<T>, P>? =
         selectionPoint?.let { point ->
             nodes.minBy { nodes[it.key]!!.distanceTo(wormhole.getEnvPoint(point)) }?.let {
@@ -99,7 +99,7 @@ class SelectionHelper<T, P : Position2D<P>> {
      */
     fun boxSelection(
         nodes: Map<Node<T>, P>,
-        wormhole: BidimensionalWormhole<P>
+        wormhole: Wormhole2D<P>
     ): Map<Node<T>, P> =
         box?.let {
             rectangle.intersectingNodes(nodes, wormhole)

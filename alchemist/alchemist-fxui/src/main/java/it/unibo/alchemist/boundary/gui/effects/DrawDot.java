@@ -16,7 +16,7 @@ import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.awt.Point;
@@ -100,7 +100,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
         final double size = getSize();
         return positions
                 .stream()
-                .<DrawCommand<P>>map((P position) -> (GraphicsContext graphic, BidimensionalWormhole<P> wormhole) -> {
+                .<DrawCommand<P>>map((P position) -> (GraphicsContext graphic, Wormhole2D<P> wormhole) -> {
             final Point viewPoint = wormhole.getViewPoint(position);
             final double startX = viewPoint.getX() - size / 2;
             final double startY = viewPoint.getY() - size / 2;

@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -38,7 +38,7 @@ public abstract class DrawOnce implements Effect {
             final Graphics2D graphics,
             final Node<T> node,
             final Environment<T, P> environment,
-            final BidimensionalWormhole<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         if (markerNodeID != null) {
             /*
@@ -77,7 +77,7 @@ public abstract class DrawOnce implements Effect {
             Graphics2D graphics2D,
             Node<T> node,
             Environment<T, P> environment,
-            BidimensionalWormhole<P> wormhole
+            Wormhole2D<P> wormhole
     );
 
     /**

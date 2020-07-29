@@ -15,7 +15,7 @@ import it.unibo.alchemist.boundary.createDrawRectangleCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
 import it.unibo.alchemist.boundary.makePoint
 import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.core.interfaces.Status
@@ -80,7 +80,7 @@ class InteractionManager<T, P : Position2D<P>>(
     val keyboardListener: KeyboardActionListener
         get() = keyboard.listener
 
-    private lateinit var wormhole: BidimensionalWormhole<P>
+    private lateinit var wormhole: Wormhole2D<P>
     private lateinit var zoomManager: ZoomManager
     private val keyboard: KeyboardEventDispatcher = SimpleKeyboardEventDispatcher()
     private val keyboardPanManager: DigitalPanManager<P> by lazy {
@@ -435,7 +435,7 @@ class InteractionManager<T, P : Position2D<P>>(
     /**
      * Sets the wormhole.
      */
-    fun setWormhole(wormhole: BidimensionalWormhole<P>) {
+    fun setWormhole(wormhole: Wormhole2D<P>) {
         this.wormhole = wormhole
     }
 

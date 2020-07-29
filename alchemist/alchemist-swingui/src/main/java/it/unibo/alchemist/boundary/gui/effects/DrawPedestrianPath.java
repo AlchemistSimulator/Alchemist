@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -72,14 +72,14 @@ public class DrawPedestrianPath extends DrawOnce {
             final Graphics2D graphics2D,
             final Node<T> node,
             final Environment<T, P> environment,
-            final BidimensionalWormhole<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         path.add(environment.getPosition(node));
         if (toBeDrawn) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
             graphics2D.setColor(colorCache);
             path.forEach(p -> {
-                final Point viewP = ((BidimensionalWormhole<Position2D<?>>) wormhole).getViewPoint(p);
+                final Point viewP = ((Wormhole2D<Position2D<?>>) wormhole).getViewPoint(p);
                 graphics2D.fillOval(viewP.x, viewP.y, DIAMETER, DIAMETER);
             });
         }

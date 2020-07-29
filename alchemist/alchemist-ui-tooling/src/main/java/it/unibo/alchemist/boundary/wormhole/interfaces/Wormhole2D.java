@@ -41,7 +41,7 @@ import java.awt.geom.Dimension2D;
  *
  * @param <P> position type
  */
-public interface BidimensionalWormhole<P extends Position2D<? extends P>> {
+public interface Wormhole2D<P extends Position2D<? extends P>> {
 
     /**
      * Wormhole mode.
@@ -80,7 +80,7 @@ public interface BidimensionalWormhole<P extends Position2D<? extends P>> {
     /**
      * Gets the rendering mode.
      * 
-     * @return a {@link BidimensionalWormhole.Mode} value
+     * @return a {@link Wormhole2D.Mode} value
      */
     Mode getMode();
 

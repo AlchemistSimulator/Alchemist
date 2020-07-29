@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Layer
@@ -34,7 +34,7 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
         toDraw: Collection<Layer<T, P>>,
         env: Environment<T, P>,
         g: Graphics2D,
-        wormhole: BidimensionalWormhole<P>
+        wormhole: Wormhole2D<P>
     ) {
         if (minAndMaxToBeSet) {
             val maxLayerValue = toDraw.stream()

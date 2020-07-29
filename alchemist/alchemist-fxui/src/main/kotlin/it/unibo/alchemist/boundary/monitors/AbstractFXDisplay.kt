@@ -77,7 +77,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     /**
      * Group dedicated for painting the background.
      */
-    val background = Group()
+    protected val background = Group()
 
     init {
         firstTime = true

@@ -72,11 +72,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     private var viewStatus = DEFAULT_VIEW_STATUS
     private lateinit var wormhole: Wormhole2D<P>
     private lateinit var zoomManager: ZoomManager
-    private val interactions: InteractionManager<T, P> by lazy {
-        InteractionManager(
-            this
-        )
-    }
+    private val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
     private val effectsCanvas = Canvas()
     /**
      * Group dedicated for painting the background.
@@ -132,18 +128,14 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
 
     override fun repaint() {
         mutex.acquireUninterruptibly()
-        try {
-            if (mayRender.get() && isVisible && !isDisabled) {
-                mayRender.set(false)
-                Platform.runLater {
-                    commandQueue.forEach { it() }
-                    mayRender.set(true)
-                }
+        if (mayRender.get() && isVisible && !isDisabled) {
+            mayRender.set(false)
+            Platform.runLater {
+                commandQueue.forEach { it() }
+                mayRender.set(true)
             }
-            interactions.repaint()
-        } catch (e: UninitializedPropertyAccessException) {
-            // wormhole hasn't been initialized
         }
+        interactions.repaint()
         mutex.release()
     }
 

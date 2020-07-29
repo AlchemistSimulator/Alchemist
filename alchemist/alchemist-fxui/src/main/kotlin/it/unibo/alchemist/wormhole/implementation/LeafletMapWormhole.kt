@@ -14,8 +14,6 @@ import it.unibo.alchemist.boundary.minus
 import it.unibo.alchemist.boundary.monitors.CustomLeafletMapView
 import it.unibo.alchemist.boundary.plus
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D
-import it.unibo.alchemist.wormhole.implementation.adapter.NodeViewType
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.interfaces.Environment
@@ -24,7 +22,6 @@ import it.unibo.alchemist.runOnFXThread
 import it.unibo.alchemist.syncRunOnFXThread
 import javafx.scene.Node
 import java.awt.Point
-import java.util.function.Function
 
 /**
  * The wormhole used for managing a [CustomLeafletMapView].
@@ -33,12 +30,9 @@ class LeafletMapWormhole(
     environment: Environment<*, GeoPosition>,
     node: Node,
     private val map: CustomLeafletMapView
-) : Wormhole2D<GeoPosition>(
+) : WormholeFX<GeoPosition>(
     environment,
-    NodeViewType(node),
-    Function<NodeViewType, PointAdapter<GeoPosition>> {
-        PointAdapter.from(it.node.boundsInLocal.width / 2, it.node.boundsInLocal.height / 2)
-    }
+    node
 ) {
     init {
         mode = BidimensionalWormhole.Mode.MAP

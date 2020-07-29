@@ -13,11 +13,13 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
+
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.util.function.Function;
 
 import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
 
@@ -43,19 +45,24 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     private PointAdapter<P> effectCenter = from(0, 0);
 
     /**
-     * Default constructor.
+     * Wormhole constructor for any {@link ViewType}.
      * <br/>
      * Initializes a new instance directly setting the size of both view and
      * environment, and the offset too.
      *
-     * @param environment the {@code Environment}
-     * @param view        the controlled view
-     * @param position    the position
+     * @param <T>                    the type of the viewType
+     * @param environment            the {@link Environment}
+     * @param view                   the {@link ViewType} of the UI used for implementing the wormhole.
+     * @param viewTypeToPointAdapter a {@link Function} used to create the initial position of the wormhole.
      */
-    public AbstractWormhole2D(final Environment<?, P> environment, final ViewType view, final PointAdapter<P> position) {
+    public <T extends ViewType> AbstractWormhole2D(
+            final Environment<?, P> environment,
+            final T view,
+            final Function<T, PointAdapter<P>> viewTypeToPointAdapter
+    ) {
         this.environment = environment;
         this.view = view;
-        this.position = position;
+        this.position = viewTypeToPointAdapter.apply(view);
     }
 
     /**
@@ -129,7 +136,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
      * @inheritDoc
      */
     @Override
-    public abstract Dimension2D getViewSize();
+    public Dimension2D getViewSize() {
+        return new DoubleDimension(getView().getWidth(), getView().getHeight());
+    }
 
     /**
      * @inheritDoc
@@ -204,7 +213,13 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
      * @inheritDoc
      */
     @Override
-    public abstract void optimalZoom();
+    public void optimalZoom() {
+        if (getEnvRatio() <= getViewRatio()) {
+            setZoom(Math.max(1, getView().getHeight()) / getEnvironment().getSize()[1]);
+        } else {
+            setZoom(Math.max(1, getView().getWidth()) / getEnvironment().getSize()[0]);
+        }
+    }
 
     /**
      * @inheritDoc
@@ -356,7 +371,9 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
      *
      * @return the dimensions ratio
      */
-    protected abstract double getViewRatio();
+    protected double getViewRatio() {
+        return Math.max(1, getView().getWidth()) / Math.max(1, getView().getHeight());
+    }
 
     /**
      * Gets the viewWidth / envWidth ratio.

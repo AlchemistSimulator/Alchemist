@@ -7,7 +7,6 @@
  */
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
@@ -25,7 +24,7 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
  * Wormhole used for maps rendering.
  *
  */
-public final class MapWormhole extends Wormhole2D<GeoPosition> {
+public final class MapWormhole extends WormholeSwing<GeoPosition> {
     private final IMapViewPosition mapModel;
     /**
      * Maximum zoom.
@@ -45,11 +44,7 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
      *            the {@link IMapViewPosition}
      */
     public MapWormhole(final Environment<?, GeoPosition> env, final Component comp, final IMapViewPosition m) {
-        super(
-                env,
-                new ComponentViewType(comp),
-                viewType -> from(viewType.getWidth() / 2.0, viewType.getHeight() / 2.0)
-        );
+        super(env, comp);
         mapModel = m;
         super.setMode(Mode.MAP);
     }

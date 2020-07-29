@@ -10,19 +10,16 @@
 package it.unibo.alchemist.boundary.monitors
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+import it.unibo.alchemist.boundary.clear
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory
+import it.unibo.alchemist.boundary.interactions.InteractionManager
 import it.unibo.alchemist.boundary.interfaces.DrawCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
+import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
-import it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D
 import it.unibo.alchemist.boundary.wormhole.interfaces.BidimensionalWormhole
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
-import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener
-import it.unibo.alchemist.boundary.clear
-import it.unibo.alchemist.boundary.interactions.InteractionManager
-import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
-import it.unibo.alchemist.wormhole.implementation.adapter.NodeViewType
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
@@ -30,6 +27,7 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.wormhole.implementation.WormholeFX
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections
@@ -42,7 +40,6 @@ import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.function.Function
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -203,14 +200,8 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
      * @param environment the current environment.
      * @returns the wormhole.
      */
-    protected open fun createWormhole(environment: Environment<T, P>): Wormhole2D<P> =
-        Wormhole2D(
-            environment,
-            NodeViewType(this),
-            Function<NodeViewType, PointAdapter<P>> {
-                PointAdapter.from(it.node.boundsInLocal.width / 2, it.node.boundsInLocal.height / 2)
-            }
-        )
+    protected open fun createWormhole(environment: Environment<T, P>): WormholeFX<P> =
+        WormholeFX(environment, this)
 
     /**
      * Creates a zoom manager for this monitor.

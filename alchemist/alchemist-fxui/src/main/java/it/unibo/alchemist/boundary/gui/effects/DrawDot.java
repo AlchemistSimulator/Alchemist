@@ -250,8 +250,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
         if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        final boolean check = checkBasicProperties(this, obj);
-        if (check) {
+        if (checkBasicProperties(this, obj)) {
             final DrawDot other = (DrawDot) obj;
             final Color thisColor = getColor();
             final Color otherColor = other.getColor();

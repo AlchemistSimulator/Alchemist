@@ -257,8 +257,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
             final Color otherColor = other.getColor();
             return checkEqualsProperties(sizeProperty(), other.sizeProperty())
                     && thisColor == null ? otherColor == null : thisColor.equals(otherColor);
-        } else {
-            return false;
         }
+        return false;
     }
 }

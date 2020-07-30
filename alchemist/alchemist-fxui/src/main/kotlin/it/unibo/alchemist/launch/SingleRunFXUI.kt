@@ -47,10 +47,9 @@ object SingleRunFXUI : SimulationLauncher() {
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
         prepareSimulation<Any, GeoPosition>(loader, parameters, emptyMap<String, Any>()).let { simulation ->
             // fetches default effects if graphics is null, otherwise loads from graphics
-            val effects: EffectGroup<GeoPosition> = when (parameters.graphics) {
-                null -> EffectSerializer.effectsFromResources(DEFAULT_EFFECTS)
-                else -> EffectSerializer.effectsFromFile(File(parameters.graphics!!))
-            }
+            val effects: EffectGroup<GeoPosition> = parameters.graphics?.let {
+                EffectSerializer.effectsFromFile<GeoPosition>(File(it))
+            } ?: EffectSerializer.effectsFromResources(DEFAULT_EFFECTS)
             // launches the JavaFX application thread
             JFXPanel()
             // runs the UI

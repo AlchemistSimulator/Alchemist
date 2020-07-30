@@ -16,7 +16,6 @@ import it.unibo.alchemist.boundary.gui.view.SingleRunApp
 import it.unibo.alchemist.launch.Validation.Invalid
 import it.unibo.alchemist.launch.Validation.OK
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.runOnFXThread
 import javafx.embed.swing.JFXPanel
 import javafx.stage.Stage

@@ -41,7 +41,7 @@ object SingleRunSwingUI : SimulationLauncher() {
     }
 
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
-        val simulation = prepareSimulation<Any, GeoPosition>(loader, parameters, emptyMap<String, Any>())
+        val simulation = prepareSimulation<Any, Nothing>(loader, parameters, emptyMap<String, Any>())
         when {
             parameters.graphics == null -> SingleRunGUI.make(simulation, JFrame.EXIT_ON_CLOSE)
             else -> SingleRunGUI.make(simulation, parameters.graphics, JFrame.EXIT_ON_CLOSE)

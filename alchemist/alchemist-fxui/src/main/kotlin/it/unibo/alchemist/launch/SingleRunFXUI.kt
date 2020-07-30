@@ -45,16 +45,16 @@ object SingleRunFXUI : SimulationLauncher() {
     }
 
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
-        prepareSimulation<Any, GeoPosition>(loader, parameters, emptyMap<String, Any>()).let { simulation ->
+        prepareSimulation<Any, Nothing>(loader, parameters, emptyMap<String, Any>()).let { simulation ->
             // fetches default effects if graphics is null, otherwise loads from graphics
-            val effects: EffectGroup<GeoPosition> = parameters.graphics?.let {
-                EffectSerializer.effectsFromFile<GeoPosition>(File(it))
+            val effects: EffectGroup<Nothing> = parameters.graphics?.let {
+                EffectSerializer.effectsFromFile<Nothing>(File(it))
             } ?: EffectSerializer.effectsFromResources(DEFAULT_EFFECTS)
             // launches the JavaFX application thread
             JFXPanel()
             // runs the UI
             runOnFXThread {
-                SingleRunApp<Any, GeoPosition>().apply {
+                SingleRunApp<Any, Nothing>().apply {
                     setEffectGroups(listOf(effects))
                     setSimulation(simulation)
                 }.start(Stage())

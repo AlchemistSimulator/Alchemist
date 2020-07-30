@@ -144,18 +144,17 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             throw new IllegalStateException("Application is already initialized");
         }
         this.params.clear();
-        Arrays.stream(params)
-                .forEach(p -> {
-                    if (p.startsWith(PARAMETER_NAME_START)) {
-                        final String param = p.substring(PARAMETER_NAME_START.length());
-                        if (param.contains(PARAMETER_NAME_END)) {
-                            final int splitterIndex = param.lastIndexOf(PARAMETER_NAME_END);
-                            addParam(param.substring(0, splitterIndex), param.substring(splitterIndex));
-                        }
-                    } else {
-                        throw new IllegalArgumentException("The parameter " + p + " is not valid");
-                    }
-                });
+        for (final String p : params) {
+            if (p.startsWith(PARAMETER_NAME_START)) {
+                final String param = p.substring(PARAMETER_NAME_START.length());
+                if (param.contains(PARAMETER_NAME_END)) {
+                    final int splitterIndex = param.lastIndexOf(PARAMETER_NAME_END);
+                    addParam(param.substring(0, splitterIndex), param.substring(splitterIndex));
+                }
+            } else {
+                throw new IllegalArgumentException("The parameter " + p + " is not valid");
+            }
+        }
     }
 
     /**

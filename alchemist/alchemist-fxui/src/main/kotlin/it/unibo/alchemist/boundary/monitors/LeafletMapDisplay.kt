@@ -34,8 +34,7 @@ import java.util.concurrent.CompletableFuture
  *
  * @param <T> The type which describes the [Concentration] of a molecule
  */
-class LeafletMapDisplay<T>
-@JvmOverloads constructor(step: Int = DEFAULT_NUMBER_OF_STEPS) : AbstractFXDisplay<T, GeoPosition>(step) {
+class LeafletMapDisplay<T> : AbstractFXDisplay<T, GeoPosition>() {
     private val map = CustomLeafletMapView()
     private val mapLoading: CompletableFuture<Worker.State>
 

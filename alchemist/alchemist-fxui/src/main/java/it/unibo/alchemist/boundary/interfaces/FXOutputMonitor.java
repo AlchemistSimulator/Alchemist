@@ -25,21 +25,6 @@ import java.util.Collection;
 public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends OutputMonitor<T, P> {
 
     /**
-     * Getter method for the steps.
-     *
-     * @return how many simulation steps this monitor updates the graphics
-     */
-    int getStep();
-
-    /**
-     * Setter method fo the steps.
-     *
-     * @param step How many steps should be computed by the engine for the
-     *             display to update the graphics
-     */
-    void setStep(int step);
-
-    /**
      * @return true if this monitor is trying to draw in realtime
      */
     boolean isRealTime();

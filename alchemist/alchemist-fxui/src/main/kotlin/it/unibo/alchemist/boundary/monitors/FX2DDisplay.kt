@@ -17,5 +17,4 @@ import it.unibo.alchemist.model.interfaces.Position2D
  *
  * @param <T> The type which describes the [Concentration] of a molecule
 </T> */
-class FX2DDisplay<T, P : Position2D<P>>
-@JvmOverloads constructor(step: Int = AbstractFXDisplay.DEFAULT_NUMBER_OF_STEPS) : AbstractFXDisplay<T, P>(step)
+class FX2DDisplay<T, P : Position2D<P>> : AbstractFXDisplay<T, P>()

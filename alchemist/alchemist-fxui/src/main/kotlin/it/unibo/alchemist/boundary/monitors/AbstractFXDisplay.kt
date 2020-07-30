@@ -53,19 +53,11 @@ import java.util.stream.Stream
     "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
     "Field is initialized in the initialize function"
 )
-abstract class AbstractFXDisplay<T, P : Position2D<P>>
-/**
- * Main constructor. It lets the developer specify the number of steps.
- *
- * @param steps the number of steps
- * @see .setStep
- */
-@JvmOverloads constructor(steps: Int = DEFAULT_NUMBER_OF_STEPS) : Pane(), FXOutputMonitor<T, P> {
+abstract class AbstractFXDisplay<T, P : Position2D<P>> : Pane(), FXOutputMonitor<T, P> {
 
     private val effectStack: ObservableList<EffectGroup<P>> = FXCollections.observableArrayList()
     private val mutex = Semaphore(1)
     private val mayRender = AtomicBoolean(true)
-    private var step: Int = 0
     @Volatile private var firstTime: Boolean = false
     private var realTime: Boolean = false
     @Volatile private var commandQueue: ConcurrentLinkedQueue<() -> Unit> = ConcurrentLinkedQueue()
@@ -81,7 +73,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
 
     init {
         firstTime = true
-        setStep(steps)
         val repaintOnResize = ChangeListener<Number> { _, _, _ ->
             repaint()
         }
@@ -99,23 +90,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
 
     override fun setViewStatus(viewStatus: FXOutputMonitor.ViewStatus) {
         this.viewStatus = viewStatus
-    }
-
-    override fun getStep(): Int {
-        return this.step
-    }
-
-    /**
-     * {@inheritDoc}.
-     *
-     * @throws IllegalArgumentException if the step is not bigger than 0
-     */
-    @Throws(IllegalArgumentException::class)
-    override fun setStep(step: Int) {
-        if (step <= 0) {
-            throw IllegalArgumentException("The parameter must be a positive integer")
-        }
-        this.step = step
     }
 
     override fun isRealTime(): Boolean {
@@ -243,18 +217,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>>
     }
 
     companion object {
-        /**
-         * The default frame rate.
-         */
-        const val DEFAULT_FRAME_RATE: Byte = 60
-        /**
-         * The default time per frame.
-         */
-        const val DEFAULT_TIME_STEP = (1 / DEFAULT_FRAME_RATE).toDouble()
-        /**
-         * Default number of steps.
-         */
-        const val DEFAULT_NUMBER_OF_STEPS = 1
         /**
          * Position `DataFormat`.
          */

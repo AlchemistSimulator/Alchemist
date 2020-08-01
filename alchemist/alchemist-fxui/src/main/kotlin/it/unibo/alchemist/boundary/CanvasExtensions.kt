@@ -22,8 +22,6 @@ fun Canvas.clear() = graphicsContext2D.clearRect(0.0, 0.0, width, height)
  * Returns a command for drawing the given rectangle on the caller canvas.
  */
 fun Canvas.createDrawRectangleCommand(rectangle: Rectangle, colour: Paint): () -> Unit = {
-    graphicsContext2D.let {
-        it.fill = colour
-        it.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
-    }
+    graphicsContext2D.fill = colour
+    graphicsContext2D.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
 }

@@ -16,7 +16,7 @@ import javafx.event.Event
  * @param T the type of the action this dispatcher models
  * @param E the type of event that triggers this dispatcher
  */
-interface EventDispatcher<T : TriggerAction, E : Event> {
+interface EventDispatcher<in T : TriggerAction, E : Event> {
 
     /**
      * The listener bound to this dispatcher.

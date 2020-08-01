@@ -16,7 +16,7 @@ import javafx.event.Event
  * @param T the type of triggers
  * @param E the type of events that trigger the triggers
  */
-interface ActionListener<T : TriggerAction, E : Event> {
+interface ActionListener<in T : TriggerAction, in E : Event> {
 
     /**
      * To be called whenever a certain action happens.

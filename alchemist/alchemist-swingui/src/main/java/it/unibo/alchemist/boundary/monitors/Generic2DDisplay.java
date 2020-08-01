@@ -524,7 +524,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      *
      * @return a <code>boolean</code> value
      */
-    protected boolean isInitilized() {
+    protected boolean isInitialized() {
         return init;
     }
 

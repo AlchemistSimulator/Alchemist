@@ -38,7 +38,7 @@ open class NodeBoundMouseEventDispatcher(node: Node) : DynamicMouseEventDispatch
             listener.action(MouseButtonTriggerAction(ActionOnMouse.RELEASED, it.button), it)
         }
         node.setOnMouseMoved {
-            listener.action(BasicMouseTriggerAction.MOVEMENT, it)
+            listener.action(MouseMovement, it)
         }
     }
 }

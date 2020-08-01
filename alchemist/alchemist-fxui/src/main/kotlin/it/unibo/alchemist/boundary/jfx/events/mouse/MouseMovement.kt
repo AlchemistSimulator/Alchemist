@@ -12,6 +12,4 @@ package it.unibo.alchemist.boundary.jfx.events.mouse
 /**
  * Simple mouse actions.
  */
-enum class BasicMouseTriggerAction : MouseTriggerAction {
-    MOVEMENT
-}
+object MouseMovement : MouseTriggerAction

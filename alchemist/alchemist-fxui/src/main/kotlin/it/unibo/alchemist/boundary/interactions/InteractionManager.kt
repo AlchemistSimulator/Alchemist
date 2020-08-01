@@ -464,29 +464,25 @@ class InteractionManager<T, P : Position2D<P>>(
         private const val ZOOM_SCALE = 40.0
     }
 
-    private class Colors private constructor() {
-        companion object {
-            /**
-             * The colour of the highlights for the already selected nodes.
-             */
-            val alreadySelected = "#1f70f2".toColor()
-            /**
-             * The colour of the highlights for the nodes that are candidates for selection.
-             */
-            val selecting = "#ff5400".toColor()
-            /**
-             *
-             */
-            val selectionBox = "#8e99f3".toColor()
+    private object Colors {
+        /**
+         * The colour of the highlights for the already selected nodes.
+         */
+        val alreadySelected = "#1f70f2".toColor()
+        /**
+         * The colour of the highlights for the nodes that are candidates for selection.
+         */
+        val selecting = "#ff5400".toColor()
+        /**
+         *
+         */
+        val selectionBox = "#8e99f3".toColor()
 
-            private fun String.toColor(): Paint = Color.valueOf(this)
-        }
+        private fun String.toColor(): Paint = Color.valueOf(this)
     }
 
-    private class Alphas private constructor() {
-        companion object {
-            const val highlight = 0.5
-            const val selection = 0.4
-        }
+    private object Alphas {
+        const val highlight = 0.5
+        const val selection = 0.4
     }
 }

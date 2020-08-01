@@ -72,10 +72,10 @@ class LeafletMapWormhole(
         val env = environment as Environment<Any?, GeoPosition>
         while (
             zoom > CustomLeafletMapView.MIN_ZOOM_VALUE &&
-            !env.nodes.parallelStream()
+            !env.nodes
                 .map(env::getPosition)
                 .map(::getViewPoint)
-                .allMatch(::isInsideView)
+                .all(::isInsideView)
         ) {
             zoom--
         }

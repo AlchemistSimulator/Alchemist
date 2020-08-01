@@ -12,6 +12,8 @@ package it.unibo.alchemist.wormhole.implementation.adapter;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
 import javafx.scene.Node;
 
+import static it.unibo.alchemist.HashesKt.murmur3Hash32;
+
 /**
  * Adapter class that adapts the JavaFX {@link Node} class to a generic View Type for usage in
  * {@link it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D}.
@@ -83,10 +85,6 @@ public class NodeViewType implements ViewType {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Double.valueOf(getWidth()).hashCode();
-        result = prime * result + Double.valueOf(getHeight()).hashCode();
-        return result;
+        return murmur3Hash32(getWidth(), getHeight());
     }
 }

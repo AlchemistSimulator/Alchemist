@@ -10,8 +10,8 @@
 package it.unibo.alchemist.wormhole.implementation
 
 import de.saring.leafletmap.LatLong
+import it.unibo.alchemist.boundary.CustomLeafletMapView
 import it.unibo.alchemist.boundary.minus
-import it.unibo.alchemist.boundary.monitors.CustomLeafletMapView
 import it.unibo.alchemist.boundary.plus
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D

@@ -24,9 +24,5 @@ enum class ActionOnKey {
      *
      * @param [key] the [KeyCode] used to initialize the [KeyboardTriggerAction].
      */
-    infix fun with(key: KeyCode): KeyboardTriggerAction =
-        KeyboardTriggerAction(
-            this,
-            key
-        )
+    infix fun with(key: KeyCode): KeyboardTriggerAction = KeyboardTriggerAction(this, key)
 }

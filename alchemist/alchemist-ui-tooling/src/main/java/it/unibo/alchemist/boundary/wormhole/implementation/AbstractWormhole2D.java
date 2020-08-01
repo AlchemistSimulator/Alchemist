@@ -309,11 +309,22 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
         final AffineTransform t;
         if (getMode() == Mode.ISOMETRIC) {
             t = new AffineTransform(
-                    getZoom(), 0d, 0d,
-                    -getZoom(), getViewPosition().getX(), getViewPosition().getY());
+                    getZoom(),
+                    0d,
+                    0d,
+                    -getZoom(),
+                    getViewPosition().getX(),
+                    getViewPosition().getY()
+            );
         } else {
-            t = new AffineTransform(getZoom() * getHRate(), 0d, 0d,
-                    -getZoom() * getVRate(), getViewPosition().getX(), getViewPosition().getY());
+            t = new AffineTransform(
+                    getZoom() * getHRate(),
+                    0d,
+                    0d,
+                    -getZoom() * getVRate(),
+                    getViewPosition().getX(),
+                    getViewPosition().getY()
+            );
         }
         t.concatenate(AffineTransform.getRotateInstance(getRotation()));
         return t;

@@ -29,9 +29,6 @@ open class WormholeFX<P : Position2D<P>>(
     environment,
     NodeViewType(node),
     Function<NodeViewType, PointAdapter<P>> {
-        PointAdapter.from(
-            it.node.boundsInLocal.width / 2,
-            it.node.boundsInLocal.height / 2
-        )
+        PointAdapter.from(it.node.boundsInLocal.width / 2, it.node.boundsInLocal.height / 2)
     }
 )

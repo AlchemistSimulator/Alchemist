@@ -47,10 +47,7 @@ public class TestWormhole2D {
                             return 0;
                         }
                     },
-                    viewType -> PointAdapter.from(
-                            viewType.getWidth() / 2.0,
-                            viewType.getHeight() / 2.0
-                    )
+                    viewType -> PointAdapter.from(viewType.getWidth() / 2.0, viewType.getHeight() / 2.0)
             );
         }
     }

@@ -488,10 +488,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * Initializes all the internal data.
      */
     private void initAll(final Environment<T, P> env) {
-        wormhole = new WormholeSwing<>(
-                env,
-                this
-        );
+        wormhole = new WormholeSwing<>(env, this);
         wormhole.center();
         wormhole.optimalZoom();
         angleManager = new AngleManagerImpl(AngleManagerImpl.DEF_DEG_PER_PIXEL);

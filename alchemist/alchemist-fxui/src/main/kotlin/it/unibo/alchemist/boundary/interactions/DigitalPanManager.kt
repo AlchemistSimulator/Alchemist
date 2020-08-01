@@ -30,8 +30,7 @@ class DigitalPanManager<P : Position2D<P>>(
     private val updates: () -> Unit
 ) {
     private var timer: Timer = Timer()
-    private var currentDirection: Direction2D =
-        Direction2D.NONE
+    private var currentDirection: Direction2D = Direction2D.NONE
 
     /**
      * Inputs a movement towards a certain direction.

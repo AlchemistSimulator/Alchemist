@@ -92,10 +92,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> : Pane(), FXOutputMonitor
         this.viewStatus = viewStatus
     }
 
-    override fun isRealTime(): Boolean {
-        return this.realTime
-    }
-
     override fun setRealTime(realTime: Boolean) {
         this.realTime = realTime
     }

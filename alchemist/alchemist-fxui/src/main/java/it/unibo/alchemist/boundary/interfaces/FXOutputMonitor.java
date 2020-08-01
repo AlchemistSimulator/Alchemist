@@ -25,11 +25,6 @@ import java.util.Collection;
 public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends OutputMonitor<T, P> {
 
     /**
-     * @return true if this monitor is trying to draw in realtime
-     */
-    boolean isRealTime();
-
-    /**
      * If enabled, the monitor tries to synchronize the simulation time with the
      * real time, slowing down the simulator if needed. If the simulation is
      * slower than the real time, then the display refreshes fast enough to keep

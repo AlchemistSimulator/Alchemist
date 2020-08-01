@@ -351,20 +351,20 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         if (paintLinks) {
             g.setColor(Color.GRAY);
             onView.keySet().parallelStream()
-                    .map(neighbors::get)
-                    .flatMap(neigh -> neigh.getNeighbors().parallelStream()
-                            .map(node -> node.compareTo(neigh.getCenter()) > 0
-                                    ? new Pair<>(neigh.getCenter(), node)
-                                    : new Pair<>(node, neigh.getCenter())))
-                    .distinct()
-                    .map(pair -> mapPair(pair, node ->
-                            Optional.ofNullable(onView.get(node))
-                                    .orElse(wormhole.getViewPoint(positions.get(node)))))
-                    .forEachOrdered(line -> {
-                        final Point p1 = line.getFirst();
-                        final Point p2 = line.getSecond();
-                        g.drawLine(p1.x, p1.y, p2.x, p2.y);
-                    });
+                .map(neighbors::get)
+                .flatMap(neigh -> neigh.getNeighbors().parallelStream()
+                        .map(node -> node.compareTo(neigh.getCenter()) > 0
+                                ? new Pair<>(neigh.getCenter(), node)
+                                : new Pair<>(node, neigh.getCenter())))
+                .distinct()
+                .map(pair -> mapPair(pair, node ->
+                        Optional.ofNullable(onView.get(node))
+                                .orElse(wormhole.getViewPoint(positions.get(node)))))
+                .forEachOrdered(line -> {
+                    final Point p1 = line.getFirst();
+                    final Point p2 = line.getSecond();
+                    g.drawLine(p1.x, p1.y, p2.x, p2.y);
+                });
         }
         releaseData();
         if (isDraggingMouse
@@ -415,10 +415,10 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     .collect(Collectors.toSet());
         }
         selectedNodes.parallelStream()
-                .map(e -> Optional.ofNullable(onView.get(e)))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .forEachOrdered(p -> drawFriedEgg(g, p.x, p.y, Color.BLUE, Color.CYAN));
+            .map(e -> Optional.ofNullable(onView.get(e)))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .forEachOrdered(p -> drawFriedEgg(g, p.x, p.y, Color.BLUE, Color.CYAN));
     }
 
     private void drawFriedEgg(final Graphics g, final int x, final int y, final Color c1, final Color c2) {

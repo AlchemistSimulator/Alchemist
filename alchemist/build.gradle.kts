@@ -82,9 +82,19 @@ allprojects {
         }
 
         // for tornadofx 2.0.0 snapshot release
-        maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+        maven {
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+            content {
+                includeGroup("no.tornado")
+            }
+        }
         // for LeafletMap
-        maven(url = "https://jitpack.io")
+        maven {
+            url = uri("https://jitpack.io")
+            content {
+                includeGroup("com.github.ssaring.sportstracker")
+            }
+        }
     }
 
     dependencies {

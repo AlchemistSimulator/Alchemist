@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 
@@ -35,7 +35,7 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
  */
 public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> implements Wormhole2D<P> {
     private final Environment<?, P> environment;
-    private final ViewType view;
+    private final ViewPort view;
     private PointAdapter<P> position;
     private double zoom = 1d;
     private double hRate = 1d;
@@ -45,17 +45,17 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     private PointAdapter<P> effectCenter = from(0, 0);
 
     /**
-     * Wormhole constructor for any {@link ViewType}.
+     * Wormhole constructor for any {@link ViewPort}.
      * <br/>
      * Initializes a new instance directly setting the size of both view and
      * environment, and the offset too.
      *
      * @param <T>                    the type of the viewType
      * @param environment            the {@link Environment}
-     * @param view                   the {@link ViewType} of the UI used for implementing the wormhole.
+     * @param view                   the {@link ViewPort} of the UI used for implementing the wormhole.
      * @param viewTypeToPointAdapter a {@link Function} used to create the initial position of the wormhole.
      */
-    public <T extends ViewType> AbstractWormhole2D(
+    public <T extends ViewPort> AbstractWormhole2D(
             final Environment<?, P> environment,
             final T view,
             final Function<T, PointAdapter<P>> viewTypeToPointAdapter
@@ -259,7 +259,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
      *
      * @return the controlled View
      */
-    protected final ViewType getView() {
+    protected final ViewPort getView() {
         return this.view;
     }
 

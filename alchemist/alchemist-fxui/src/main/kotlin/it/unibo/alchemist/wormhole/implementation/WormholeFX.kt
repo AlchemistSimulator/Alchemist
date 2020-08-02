@@ -13,7 +13,7 @@ import it.unibo.alchemist.boundary.wormhole.implementation.AbstractWormhole2D
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.wormhole.implementation.adapter.NodeViewType
+import it.unibo.alchemist.wormhole.implementation.adapter.NodeViewPort
 import javafx.scene.Node
 import java.util.function.Function
 
@@ -27,8 +27,8 @@ open class WormholeFX<P : Position2D<P>>(
     node: Node
 ) : AbstractWormhole2D<P>(
     environment,
-    NodeViewType(node),
-    Function<NodeViewType, PointAdapter<P>> {
+    NodeViewPort(node),
+    Function<NodeViewPort, PointAdapter<P>> {
         PointAdapter.from(it.node.boundsInLocal.width / 2, it.node.boundsInLocal.height / 2)
     }
 )

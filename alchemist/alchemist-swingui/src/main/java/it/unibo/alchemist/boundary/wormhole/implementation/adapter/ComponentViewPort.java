@@ -7,45 +7,46 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.wormhole.implementation.adapter;
+package it.unibo.alchemist.boundary.wormhole.implementation.adapter;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
-import javafx.scene.Node;
+import java.awt.Component;
+
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
 
 import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
- * Adapter class that adapts the JavaFX {@link Node} class to a generic View Type for usage in
- * {@link it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D}.
+ * Adapter class that adapts the AWT {@link Component} class to a generic ViewPort for usage in
+ * {@link it.unibo.alchemist.boundary.wormhole.implementation.AbstractWormhole2D}.
  */
-public class NodeViewType implements ViewType {
-    private Node node;
+public class ComponentViewPort implements ViewPort {
+    private Component component;
 
     /**
      * Default  constructor.
      *
-     * @param node the node to adapt
+     * @param component the component to adapt
      */
-    public NodeViewType(final Node node) {
-        this.node = node;
+    public ComponentViewPort(final Component component) {
+        this.component = component;
     }
 
     /**
-     * Getter method for the node to be adapted.
+     * Getter method for the component to be adapted.
      *
-     * @return the node
+     * @return the component
      */
-    public Node getNode() {
-        return node;
+    public Component getComponent() {
+        return component;
     }
 
     /**
-     * Setter method for the node to be adapted.
+     * Setter method for the component to be adapted.
      *
-     * @param node the node
+     * @param component the component
      */
-    public void setNode(final Node node) {
-        this.node = node;
+    public void setComponent(final Component component) {
+        this.component = component;
     }
 
     /**
@@ -53,7 +54,7 @@ public class NodeViewType implements ViewType {
      */
     @Override
     public double getWidth() {
-        return node.getBoundsInParent().getWidth();
+        return component.getWidth();
     }
 
     /**
@@ -61,7 +62,7 @@ public class NodeViewType implements ViewType {
      */
     @Override
     public double getHeight() {
-        return node.getBoundsInParent().getHeight();
+        return component.getHeight();
     }
 
     /**
@@ -75,7 +76,7 @@ public class NodeViewType implements ViewType {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final NodeViewType nvt = (NodeViewType) o;
+        final ComponentViewPort nvt = (ComponentViewPort) o;
         return Math.abs(getWidth() - nvt.getWidth()) < Double.MIN_VALUE
                 && Math.abs(getHeight() - nvt.getHeight()) < Double.MIN_VALUE;
     }

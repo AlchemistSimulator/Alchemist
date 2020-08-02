@@ -9,7 +9,7 @@ package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.boundary.wormhole.implementation.AbstractWormhole2D;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewType;
+import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -36,7 +36,7 @@ public class TestWormhole2D {
         TestPurposeWormhole(final Environment<?, P> env) {
             super(
                     env,
-                    new ViewType() {
+                    new ViewPort() {
                         @Override
                         public double getWidth() {
                             return 0;

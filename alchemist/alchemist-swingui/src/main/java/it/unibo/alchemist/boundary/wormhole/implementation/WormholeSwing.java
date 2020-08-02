@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewType;
+import it.unibo.alchemist.boundary.wormhole.implementation.adapter.ComponentViewPort;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 
@@ -27,7 +27,7 @@ public class WormholeSwing<P extends Position2D<? extends P>> extends AbstractWo
     public WormholeSwing(final Environment<?, P> environment, final Component component) {
         super(
                 environment,
-                new ComponentViewType(component),
+                new ComponentViewPort(component),
                 viewType -> from(viewType.getWidth() / 2.0, viewType.getHeight() / 2.0)
         );
     }

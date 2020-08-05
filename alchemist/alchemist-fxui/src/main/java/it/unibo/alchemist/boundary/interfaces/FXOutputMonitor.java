@@ -116,5 +116,5 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
      * Returns the JavaFX Node that is this monitor.
      * @return the node
      */
-    Node getNode();
+    Node asJavaFXNode();
 }

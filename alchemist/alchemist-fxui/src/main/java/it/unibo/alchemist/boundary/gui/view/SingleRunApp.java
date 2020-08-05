@@ -185,7 +185,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             final StackPane main = (StackPane) rootLayout.getChildren().get(0);
             final Scene scene = new Scene(rootLayout);
             optDisplayMonitor.ifPresent(dm -> {
-                main.getChildren().add(dm.getNode());
+                main.getChildren().add(dm.asJavaFXNode());
                 initKeybindings(scene, dm.getKeyboardListener());
             });
             this.timeMonitor = new FXTimeMonitor<>();

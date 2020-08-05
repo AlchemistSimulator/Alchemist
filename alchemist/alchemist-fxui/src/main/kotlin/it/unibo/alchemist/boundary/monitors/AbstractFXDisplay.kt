@@ -230,5 +230,5 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> : Pane(), FXOutputMonitor
     /**
      * @inheritDoc.
      */
-    override fun getNode() = this as Node
+    override fun asJavaFXNode() = this as Node
 }

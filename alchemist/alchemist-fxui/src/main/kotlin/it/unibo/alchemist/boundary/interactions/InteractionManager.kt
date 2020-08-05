@@ -93,8 +93,7 @@ class InteractionManager<T, P : Position2D<P>>(
     private lateinit var mousePanHelper: AnalogPanHelper
     private val highlighter = Canvas()
     private val selector = Canvas()
-    private val selectionHelper: SelectionHelper<T, P> =
-        SelectionHelper()
+    private val selectionHelper: SelectionHelper<T, P> = SelectionHelper()
     private val selection: ObservableMap<Node<T>, P> = FXCollections.observableHashMap()
     private val selectionCandidates: ObservableMap<Node<T>, P> = FXCollections.observableHashMap()
     private val selectedElements: ImmutableMap<Node<T>, P>
@@ -123,9 +122,9 @@ class InteractionManager<T, P : Position2D<P>>(
      * <code>invokeOnSimulation { environment.removeNode(someNode) }</code>
      */
     private val invokeOnSimulation: (Simulation<T, P>.() -> Unit) -> Unit
-        get() =
-            environment?.simulation?.let { { exec: Simulation<T, P>.() -> Unit -> it.schedule { exec.invoke(it) } } }
-                ?: throw IllegalStateException("Uninitialized environment or simulation")
+        get() = environment?.simulation
+            ?.let { { exec: Simulation<T, P>.() -> Unit -> it.schedule { exec.invoke(it) } } }
+            ?: throw IllegalStateException("Uninitialized environment or simulation")
 
     init {
         listOf(selector, highlighter).forEach {
@@ -133,10 +132,8 @@ class InteractionManager<T, P : Position2D<P>>(
             it.heightProperty().bind(monitor.heightProperty())
             it.isMouseTransparent = true
         }
-        highlighter.graphicsContext2D.globalAlpha =
-            Alphas.highlight
-        selector.graphicsContext2D.globalAlpha =
-            Alphas.selection
+        highlighter.graphicsContext2D.globalAlpha = Alphas.highlight
+        selector.graphicsContext2D.globalAlpha = Alphas.selection
         // delete
         val deleteNodes = { _: KeyEvent ->
             runMutex.acquireUninterruptibly()
@@ -180,9 +177,7 @@ class InteractionManager<T, P : Position2D<P>>(
                     val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
                     invokeOnSimulation {
                         nodesToMove.values.maxWith(
-                            Comparator { a, b ->
-                                (b - a.coordinates).let { it.x + it.y }.roundToInt()
-                            }
+                            Comparator { a, b -> (b - a.coordinates).let { it.x + it.y }.roundToInt() }
                         )?.let {
                             mousePosition - it.coordinates
                         }?.let { offset ->
@@ -256,27 +251,17 @@ class InteractionManager<T, P : Position2D<P>>(
         }
         selection.addListener(
             MapChangeListener {
-                selection.map {
-                    paintHighlight(
-                        it.value,
-                        Colors.alreadySelected
-                    )
-                }.let { highlighters ->
-                    feedback = feedback + (Interaction.HIGHLIGHTED to highlighters)
-                }
+                selection
+                    .map { paintHighlight(it.value, Colors.alreadySelected) }
+                    .let { highlighters -> feedback = feedback + (Interaction.HIGHLIGHTED to highlighters) }
                 repaint()
             }
         )
         selectionCandidates.addListener(
             MapChangeListener {
-                selectionCandidates.map {
-                    paintHighlight(
-                        it.value,
-                        Colors.selecting
-                    )
-                }.let { highlighters ->
-                    feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters)
-                }
+                selectionCandidates
+                    .map { paintHighlight(it.value, Colors.selecting) }
+                    .let { highlighters -> feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters) }
                 repaint()
             }
         )
@@ -331,14 +316,8 @@ class InteractionManager<T, P : Position2D<P>>(
     private fun onSelecting(event: MouseEvent) {
         selectionHelper.let { helper: SelectionHelper<T, P> ->
             helper.update(makePoint(event.x, event.y))
-            listOf(
-                selector.createDrawRectangleCommand(
-                    helper.rectangle,
-                    Colors.selectionBox
-                )
-            ).let { drawCommands ->
-                feedback = feedback + (Interaction.SELECTION_BOX to drawCommands)
-            }
+            listOf(selector.createDrawRectangleCommand(helper.rectangle, Colors.selectionBox))
+                .let { drawCommands -> feedback = feedback + (Interaction.SELECTION_BOX to drawCommands) }
             addNodesToSelectionCandidates()
             repaint()
         }

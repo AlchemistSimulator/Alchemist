@@ -88,13 +88,6 @@ allprojects {
                 includeGroup("no.tornado")
             }
         }
-        // for LeafletMap
-        maven {
-            url = uri("https://jitpack.io")
-            content {
-                includeGroup("com.github.ssaring.sportstracker")
-            }
-        }
     }
 
     dependencies {

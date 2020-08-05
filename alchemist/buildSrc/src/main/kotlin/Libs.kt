@@ -232,5 +232,5 @@ object Libs {
     /**
      * https://github.com/ssaring/sportstracker/tree/master/leafletmap
      */
-    const val ssaring_sportstracker_leafletmap: String = "com.github.ssaring.sportstracker:leafletmap:d33b2144f0c9710ead111a90c61cda62580cd0ac"
+    const val ssaring_sportstracker_leafletmap: String = "org.danilopianini:de.saring.leafletmap:_"
 }

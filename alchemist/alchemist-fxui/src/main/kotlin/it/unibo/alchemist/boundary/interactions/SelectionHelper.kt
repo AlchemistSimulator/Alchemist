@@ -15,6 +15,7 @@ import it.unibo.alchemist.boundary.makeRectangleWith
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
+import javafx.scene.shape.Rectangle
 import java.awt.Point
 
 /**
@@ -26,18 +27,34 @@ class SelectionHelper<T, P : Position2D<P>> {
      * Allows basic multi-element box selections.
      * @param anchorPoint the starting and unchanging [Point] of the selection
      */
-    class SelectionBox(val anchorPoint: Point, private val movingPoint: Point = anchorPoint) {
+    class SelectionBox(val anchorPoint: Point = Point(0, 0), private val movingPoint: Point = anchorPoint) {
         /**
          * The rectangle representing the box.
          * If the rectangle's dimensions are (0, 0), the rectangle is to be considered non-existing.
          */
         val rectangle
-            get() = anchorPoint.makeRectangleWith(movingPoint)
+            get() = when {
+                closed -> Rectangle(0.0, 0.0, 0.0, 0.0)
+                else -> anchorPoint.makeRectangleWith(movingPoint)
+            }
+
+        /**
+         * Returns whether the SelectionBox has been closed.
+         */
+        var closed = false
+            private set
+
+        /**
+         * Closes this SelectionBox.
+         */
+        fun close() {
+            closed = true
+        }
 
         override fun toString(): String = "[$anchorPoint, $movingPoint]"
     }
 
-    private var box: SelectionBox? = null
+    private var box = SelectionBox().apply { close() }
     private var selectionPoint: Point? = null
     private var isSelecting = false
 
@@ -46,7 +63,10 @@ class SelectionHelper<T, P : Position2D<P>> {
      * If the rectangle's dimensions are (0, 0), the rectangle is to be considered non-existing.
      */
     val rectangle
-        get() = box?.rectangle ?: makePoint(0, 0).let { it.makeRectangleWith(it) }
+        get() = when {
+            box.closed -> makePoint(0, 0).let { it.makeRectangleWith(it) }
+            else -> box.rectangle
+        }
 
     /**
      * Begins a new selection at the given point.
@@ -61,13 +81,8 @@ class SelectionHelper<T, P : Position2D<P>> {
      * Updates the selection with a new point.
      */
     fun update(point: Point): SelectionHelper<T, P> = apply {
-        if (isSelecting) {
-            box?.let {
-                box = SelectionBox(
-                    it.anchorPoint,
-                    point
-                )
-            }
+        if (isSelecting && !box.closed) {
+            box = SelectionBox(box.anchorPoint, point)
             selectionPoint = null
         }
     }
@@ -76,7 +91,7 @@ class SelectionHelper<T, P : Position2D<P>> {
      * Closes the selection.
      */
     fun close() {
-        box = null
+        box.close()
         selectionPoint = null
         isSelecting = false
     }
@@ -102,7 +117,8 @@ class SelectionHelper<T, P : Position2D<P>> {
         nodes: Map<Node<T>, P>,
         wormhole: Wormhole2D<P>
     ): Map<Node<T>, P> =
-        box?.let {
-            rectangle.intersectingNodes(nodes, wormhole)
-        } ?: emptyMap()
+        when {
+            box.closed -> emptyMap()
+            else -> rectangle.intersectingNodes(nodes, wormhole)
+        }
 }

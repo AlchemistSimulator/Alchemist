@@ -179,11 +179,11 @@ class InteractionManager<T, P : Position2D<P>>(
                         nodesToMove.values.maxWith(
                             Comparator { a, b -> (b - a.coordinates).let { it.x + it.y }.roundToInt() }
                         )?.let {
-                            mousePosition - it.coordinates
+                            (mousePosition - it.coordinates).coordinates
                         }?.let { offset ->
                             environment?.let { env ->
                                 nodesToMove.forEach {
-                                    env.moveNodeToPosition(it.key, offset)
+                                    env.moveNodeToPosition(it.key, it.value + offset)
                                 }
                             }
                         }

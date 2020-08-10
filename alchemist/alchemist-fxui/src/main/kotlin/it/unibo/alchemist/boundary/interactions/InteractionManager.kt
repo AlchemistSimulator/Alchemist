@@ -9,10 +9,18 @@
 
 package it.unibo.alchemist.boundary.interactions
 
-import com.google.common.collect.ImmutableMap
+import com.google.common.collect.ImmutableSet
 import it.unibo.alchemist.boundary.clear
 import it.unibo.alchemist.boundary.createDrawRectangleCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
+import it.unibo.alchemist.boundary.jfx.events.keyboard.ActionOnKey
+import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener
+import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardEventDispatcher
+import it.unibo.alchemist.boundary.jfx.events.keyboard.SimpleKeyboardEventDispatcher
+import it.unibo.alchemist.boundary.jfx.events.mouse.ActionOnMouse
+import it.unibo.alchemist.boundary.jfx.events.mouse.DynamicMouseEventDispatcher
+import it.unibo.alchemist.boundary.jfx.events.mouse.MouseButtonTriggerAction
+import it.unibo.alchemist.boundary.jfx.events.mouse.NodeBoundMouseEventDispatcher
 import it.unibo.alchemist.boundary.makePoint
 import it.unibo.alchemist.boundary.monitors.AbstractFXDisplay
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
@@ -20,22 +28,14 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.input.ActionFromKey
-import it.unibo.alchemist.boundary.jfx.events.keyboard.ActionOnKey
-import it.unibo.alchemist.boundary.jfx.events.mouse.ActionOnMouse
-import it.unibo.alchemist.boundary.jfx.events.mouse.DynamicMouseEventDispatcher
 import it.unibo.alchemist.input.Keybinds
-import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardActionListener
-import it.unibo.alchemist.boundary.jfx.events.keyboard.KeyboardEventDispatcher
-import it.unibo.alchemist.boundary.jfx.events.mouse.MouseButtonTriggerAction
-import it.unibo.alchemist.boundary.jfx.events.mouse.NodeBoundMouseEventDispatcher
-import it.unibo.alchemist.boundary.jfx.events.keyboard.SimpleKeyboardEventDispatcher
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import javafx.application.Platform
 import javafx.collections.FXCollections
-import javafx.collections.MapChangeListener
-import javafx.collections.ObservableMap
+import javafx.collections.ObservableSet
+import javafx.collections.SetChangeListener
 import javafx.event.Event
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
@@ -94,10 +94,10 @@ class InteractionManager<T, P : Position2D<P>>(
     private val highlighter = Canvas()
     private val selector = Canvas()
     private val selectionHelper: SelectionHelper<T, P> = SelectionHelper()
-    private val selection: ObservableMap<Node<T>, P> = FXCollections.observableHashMap()
-    private val selectionCandidates: ObservableMap<Node<T>, P> = FXCollections.observableHashMap()
-    private val selectedElements: ImmutableMap<Node<T>, P>
-        get() = ImmutableMap.copyOf(selection)
+    private val selection: ObservableSet<Node<T>> = FXCollections.observableSet()
+    private val selectionCandidates: ObservableSet<Node<T>> = FXCollections.observableSet()
+    private val selectedElements: ImmutableSet<Node<T>>
+        get() = ImmutableSet.copyOf(selection)
     private val selectionCandidatesMutex: Semaphore = Semaphore(1)
     private val runMutex: Semaphore = Semaphore(1)
 
@@ -138,7 +138,7 @@ class InteractionManager<T, P : Position2D<P>>(
         val deleteNodes = { _: KeyEvent ->
             runMutex.acquireUninterruptibly()
             if (selection.isNotEmpty()) {
-                val nodesToRemove: Set<Node<T>> = selectedElements.keys
+                val nodesToRemove = ImmutableSet.copyOf(selectedElements)
                 selection.clear()
                 invokeOnSimulation {
                     nodesToRemove.forEach { environment?.removeNode(it) }
@@ -172,22 +172,23 @@ class InteractionManager<T, P : Position2D<P>>(
             mouse.setDynamicAction(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.PRIMARY)) { mouse ->
                 runMutex.acquireUninterruptibly()
                 if (selection.isNotEmpty()) {
-                    val nodesToMove: Map<Node<T>, P> = selectedElements
-                    selection.clear()
+                    val nodesToMove: Set<Node<T>> = ImmutableSet.copyOf(selectedElements)
                     val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
-                    invokeOnSimulation {
-                        nodesToMove.values.maxWith(
-                            Comparator { a, b -> (b - a.coordinates).let { it.x + it.y }.roundToInt() }
-                        )?.let {
-                            (mousePosition - it.coordinates).coordinates
-                        }?.let { offset ->
-                            environment?.let { env ->
-                                nodesToMove.forEach {
-                                    env.moveNodeToPosition(it.key, it.value + offset)
+                    selection.clear()
+                    nodesToMove
+                        .mapNotNull { nodes[it] }
+                        .maxWith(Comparator { a, b -> (b - a.coordinates).run { x + y }.roundToInt() })
+                        ?.run { (mousePosition - coordinates).coordinates }
+                        ?.let { offset ->
+                            invokeOnSimulation {
+                                environment::moveNodeToPosition.let { move ->
+                                    nodes
+                                        .filterKeys { it in nodesToMove }
+                                        .mapValues { it.value + offset }
+                                        .forEach { move(it.key, it.value) }
                                 }
                             }
                         }
-                    }
                 }
                 runMutex.release()
             }
@@ -250,17 +251,17 @@ class InteractionManager<T, P : Position2D<P>>(
             }
         }
         selection.addListener(
-            MapChangeListener {
+            SetChangeListener {
                 selection
-                    .map { paintHighlight(it.value, Colors.alreadySelected) }
+                    .map { paintHighlight(it, Colors.alreadySelected) }
                     .let { highlighters -> feedback = feedback + (Interaction.HIGHLIGHTED to highlighters) }
                 repaint()
             }
         )
         selectionCandidates.addListener(
-            MapChangeListener {
+            SetChangeListener {
                 selectionCandidates
-                    .map { paintHighlight(it.value, Colors.selecting) }
+                    .map { paintHighlight(it, Colors.selecting) }
                     .let { highlighters -> feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters) }
                 repaint()
             }
@@ -331,20 +332,15 @@ class InteractionManager<T, P : Position2D<P>>(
         if (Keybinds[ActionFromKey.MODIFIER_CONTROL].filter { key: KeyCode -> keyboard.isHeld(key).not() }.isPresent) {
             selection.clear()
         }
-        selectionHelper.clickSelection(nodes, wormhole)?.let { clickedNode: Pair<Node<T>, P> ->
-            if (clickedNode.first in selection) {
-                selection -= clickedNode.first
-            } else {
-                selection[clickedNode.first] = clickedNode.second
-            }
+        var selectedNodes = selectionHelper.boxSelection(nodes, wormhole).keys
+        selectionHelper.clickSelection(nodes, wormhole)?.first?.let {
+            selectedNodes = selectedNodes.plusElement(it)
         }
-        selectionHelper.boxSelection(nodes, wormhole).let { boxedNodes: Map<Node<T>, P> ->
-            boxedNodes.forEach { node: Map.Entry<Node<T>, P> ->
-                if (node.key in selection) {
-                    selection -= node.key
-                } else {
-                    selection[node.key] = node.value
-                }
+        selectedNodes.forEach { node ->
+            if (node in selection) {
+                selection -= node
+            } else {
+                selection += node
             }
         }
         selectionCandidatesMutex.acquireUninterruptibly()
@@ -369,13 +365,13 @@ class InteractionManager<T, P : Position2D<P>>(
 
     /**
      * Returns a lambda which paints a highlight when called.
-     * @param position the position of the highlight
+     * @param node the node to highlight
      * @param paint the colour of the highlight
      */
-    private fun paintHighlight(position: P, paint: Paint): () -> Unit = {
+    private fun paintHighlight(node: Node<T>, paint: Paint): () -> Unit = {
         highlighter.graphicsContext2D.let { graphics ->
             graphics.fill = paint
-            wormhole.getViewPoint(position).let {
+            nodes[node]?.run(wormhole::getViewPoint)?.let {
                 graphics.fillOval(
                     it.x - highlightSize / 2,
                     it.y - highlightSize / 2,
@@ -391,8 +387,8 @@ class InteractionManager<T, P : Position2D<P>>(
      */
     private fun addNodesToSelectionCandidates() {
         selectionCandidatesMutex.acquireUninterruptibly()
-        selectionHelper.boxSelection(nodes, wormhole).let {
-            if (it.entries != selectionCandidates.entries) {
+        selectionHelper.boxSelection(nodes, wormhole).keys.let {
+            if (it != selectionCandidates) {
                 selectionCandidates.clear()
                 selectionCandidates += it
             }

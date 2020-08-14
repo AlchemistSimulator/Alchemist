@@ -36,11 +36,9 @@ import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableSet
 import javafx.collections.SetChangeListener
-import javafx.event.Event
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
@@ -135,20 +133,8 @@ class InteractionManager<T, P : Position2D<P>>(
         highlighter.graphicsContext2D.globalAlpha = Alphas.highlight
         selector.graphicsContext2D.globalAlpha = Alphas.selection
         // delete
-        val deleteNodes = { _: KeyEvent ->
-            runMutex.acquireUninterruptibly()
-            if (selection.isNotEmpty()) {
-                val nodesToRemove = ImmutableSet.copyOf(selectedElements)
-                selection.clear()
-                invokeOnSimulation {
-                    nodesToRemove.forEach { environment?.removeNode(it) }
-                }
-                repaint()
-            }
-            runMutex.release()
-        }
         Keybinds[ActionFromKey.DELETE].ifPresent {
-            keyboard[ActionOnKey.PRESSED with it] = deleteNodes
+            keyboard[ActionOnKey.PRESSED with it] = { deleteNodes() }
         }
         // keyboard-pan
         Keybinds[ActionFromKey.PAN_NORTH].ifPresent {
@@ -168,44 +154,13 @@ class InteractionManager<T, P : Position2D<P>>(
             keyboard[ActionOnKey.RELEASED with it] = { keyboardPanManager -= Direction2D.WEST }
         }
         // move
-        val enqueueMove = { _: Event ->
-            mouse.setDynamicAction(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.PRIMARY)) { mouse ->
-                runMutex.acquireUninterruptibly()
-                if (selection.isNotEmpty()) {
-                    val nodesToMove: Set<Node<T>> = ImmutableSet.copyOf(selectedElements)
-                    val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
-                    selection.clear()
-                    nodesToMove
-                        .mapNotNull { nodes[it] }
-                        .maxWith(Comparator { a, b -> (b - a.coordinates).run { x + y }.roundToInt() })
-                        ?.run { (mousePosition - coordinates).coordinates }
-                        ?.let { offset ->
-                            invokeOnSimulation {
-                                environment::moveNodeToPosition.let { move ->
-                                    nodes
-                                        .filterKeys { it in nodesToMove }
-                                        .mapValues { it.value + offset }
-                                        .forEach { move(it.key, it.value) }
-                                }
-                            }
-                        }
-                }
-                runMutex.release()
-            }
-        }
         Keybinds[ActionFromKey.MOVE].ifPresent {
-            keyboard[ActionOnKey.PRESSED with it] = enqueueMove
+            keyboard[ActionOnKey.PRESSED with it] = { enqueueMove() }
         }
-        mouse[MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE)] = enqueueMove
+        mouse[MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.MIDDLE)] = { enqueueMove() }
         // forward one step
         Keybinds[ActionFromKey.ONE_STEP].ifPresent {
-            keyboard[ActionOnKey.PRESSED with it] = {
-                invokeOnSimulation {
-                    if (status == Status.PAUSED) {
-                        goToStep(step + 1)
-                    }
-                }
-            }
+            keyboard[ActionOnKey.PRESSED with it] = { stepForward() }
         }
         // select
         mouse[MouseButtonTriggerAction(ActionOnMouse.PRESSED, MouseButton.SECONDARY)] = ::onSelectInitiated
@@ -394,6 +349,53 @@ class InteractionManager<T, P : Position2D<P>>(
             }
         }
         selectionCandidatesMutex.release()
+    }
+
+    private fun enqueueMove() {
+        mouse.setDynamicAction(MouseButtonTriggerAction(ActionOnMouse.CLICKED, MouseButton.PRIMARY)) { mouse ->
+            runMutex.acquireUninterruptibly()
+            if (selection.isNotEmpty()) {
+                val nodesToMove: Set<Node<T>> = ImmutableSet.copyOf(selectedElements)
+                val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
+                selection.clear()
+                nodesToMove
+                    .mapNotNull { nodes[it] }
+                    .maxWith(Comparator { a, b -> (b - a.coordinates).run { x + y }.roundToInt() })
+                    ?.run { (mousePosition - coordinates).coordinates }
+                    ?.let { offset ->
+                        invokeOnSimulation {
+                            environment::moveNodeToPosition.let { move ->
+                                nodes
+                                    .filterKeys { it in nodesToMove }
+                                    .mapValues { it.value + offset }
+                                    .forEach { move(it.key, it.value) }
+                            }
+                        }
+                    }
+            }
+            runMutex.release()
+        }
+    }
+
+    private fun deleteNodes() {
+        runMutex.acquireUninterruptibly()
+        if (selection.isNotEmpty()) {
+            val nodesToRemove = ImmutableSet.copyOf(selectedElements)
+            selection.clear()
+            invokeOnSimulation {
+                nodesToRemove.forEach { environment?.removeNode(it) }
+            }
+            repaint()
+        }
+        runMutex.release()
+    }
+
+    private fun stepForward() {
+        invokeOnSimulation {
+            if (status == Status.PAUSED) {
+                goToStep(step + 1)
+            }
+        }
     }
 
     /**

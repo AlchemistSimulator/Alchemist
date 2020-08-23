@@ -71,11 +71,11 @@ public final class ReactivityPanel extends JTapeGroup implements ItemListener {
         slider.setPreferredSize(new Dimension(SLIDE_SIZE, slider.getHeight()));
         // setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         // button = new JButton(max);
-        final Icon max = loadScaledImage("/oxygen/status/user-online.png");
+        final Icon max = loadScaledImage("/status/user-online.png");
         btnMax = new JToggleButton(MAX_REACTIVITY, max, true);
-        final Icon real = loadScaledImage("/oxygen/status/user-invisible.png");
+        final Icon real = loadScaledImage("/status/user-invisible.png");
         btnReal = new JToggleButton(REALTIME, real, false);
-        final Icon user = loadScaledImage("/oxygen/status/user-offline.png");
+        final Icon user = loadScaledImage("/status/user-offline.png");
         btnUser = new JToggleButton(USER_SELECTED, user, false);
         /*
          * add(button); add(slider); button.addActionListener(this);

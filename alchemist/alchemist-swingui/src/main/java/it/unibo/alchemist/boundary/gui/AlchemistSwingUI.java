@@ -40,8 +40,12 @@ public final class AlchemistSwingUI extends JFrame {
      */
     public static ImageIcon loadScaledImage(final String p) {
         ImageIcon res = GUIUtilities.loadScaledImage(p, DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
+        final String iconSize = DEFAULT_ICON_SIZE + "x" + DEFAULT_ICON_SIZE;
         if (res == null) {
-            res = GUIUtilities.loadScaledImage("/resources" + p, DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
+            res = GUIUtilities.loadScaledImage(
+                    "/icons/oxygen/32x32" + p,
+                    DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE
+            );
         }
         return res;
     }
@@ -60,7 +64,10 @@ public final class AlchemistSwingUI extends JFrame {
     public static ImageIcon loadScaledImage(final String p, final int size) {
         ImageIcon res = GUIUtilities.loadScaledImage(p, size, size);
         if (res == null) {
-            res = GUIUtilities.loadScaledImage("/resources" + p, size, size);
+            res = GUIUtilities.loadScaledImage(
+                    "/icons/oxygen/32x32" + p,
+                    size, size
+            );
         }
         return res;
     }

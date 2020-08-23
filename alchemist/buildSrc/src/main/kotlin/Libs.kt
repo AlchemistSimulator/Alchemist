@@ -233,4 +233,9 @@ object Libs {
      * https://github.com/ssaring/sportstracker/tree/master/leafletmap
      */
     const val ssaring_sportstracker_leafletmap: String = "org.danilopianini:de.saring.leafletmap:_"
+
+    /**
+     * https://search.maven.org/search?q=a:org.oxygen.oxygen-icons
+     */
+    const val oxygen: String = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:_"
 }

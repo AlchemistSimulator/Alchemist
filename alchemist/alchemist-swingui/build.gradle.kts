@@ -30,7 +30,7 @@ dependencies {
     }
     implementation("org.danilopianini:conrec:_")
     implementation(jgrapht("core")) // just to draw cognitive maps
-
+    implementation(Libs.oxygen)
     testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }
 

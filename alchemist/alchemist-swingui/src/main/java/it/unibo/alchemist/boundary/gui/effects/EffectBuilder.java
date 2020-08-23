@@ -56,7 +56,7 @@ public final class EffectBuilder extends JFrame implements ActionListener {
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         final JPanel p1 = new JPanel();
         p1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        final Icon effectIcon = AlchemistSwingUI.loadScaledImage("/oxygen/actions/tools-wizard.png");
+        final Icon effectIcon = AlchemistSwingUI.loadScaledImage("/actions/tools-wizard.png");
         p1.add(new JLabel(EFFECT, effectIcon, SwingConstants.LEADING));
         pane.add(p1);
         pane.add(Box.createVerticalGlue());
@@ -68,7 +68,7 @@ public final class EffectBuilder extends JFrame implements ActionListener {
         }
         pane.add(effectBox);
         final JPanel p4 = new JPanel();
-        final Icon done = AlchemistSwingUI.loadScaledImage("/oxygen/categories/applications-graphics.png");
+        final Icon done = AlchemistSwingUI.loadScaledImage("/categories/applications-graphics.png");
         final JButton button = new JButton(LocalizedResourceBundle.getString("done"));
         button.setIcon(done);
         p4.add(button);

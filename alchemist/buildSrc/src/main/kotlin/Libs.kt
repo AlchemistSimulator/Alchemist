@@ -20,11 +20,6 @@ fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", mod
 
 object Libs {
     /**
-     * http://www.protelis.org
-     */
-    const val protelis_lang: String = "org.protelis:protelis-lang:_"
-
-    /**
      * http://www.antlr.org
      */
     const val antlr4: String = "org.antlr:antlr4:_"

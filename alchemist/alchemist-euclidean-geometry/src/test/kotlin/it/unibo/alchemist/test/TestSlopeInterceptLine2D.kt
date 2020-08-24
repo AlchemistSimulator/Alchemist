@@ -33,7 +33,7 @@ class TestSlopeInterceptLine2D : StringSpec() {
     ): I {
         val intersection = line1.intersect(line2)
         intersection.shouldBeTypeOf<I>()
-        return intersection as I
+        return intersection
     }
 
     private fun <P : Vector2D<P>> shouldIntersectIn(line1: Line2D<P>, line2: Line2D<P>, expectedPoint: P) =
@@ -52,7 +52,7 @@ class TestSlopeInterceptLine2D : StringSpec() {
     ): I {
         val intersection = line.intersectCircle(center, radius)
         intersection.shouldBeTypeOf<I>()
-        return intersection as I
+        return intersection
     }
 
     private fun <P : Vector2D<P>> shouldIntersectIn(

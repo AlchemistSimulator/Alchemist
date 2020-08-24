@@ -67,7 +67,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
         compareBy({ weight(it) }, { it.distanceToPedestrian() })
 
     override fun inNewRoom(newRoom: ConvexPolygon) = with(action) {
-        doorsInSight().minWith(comparator)?.let { crossDoor(it) }
+        doorsInSight().minWithOrNull(comparator)?.let { crossDoor(it) }
             /*
              * Closed room.
              */

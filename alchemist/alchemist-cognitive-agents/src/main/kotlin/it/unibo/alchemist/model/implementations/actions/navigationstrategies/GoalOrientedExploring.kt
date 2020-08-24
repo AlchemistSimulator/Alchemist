@@ -45,11 +45,11 @@ open class GoalOrientedExploring<T, L : Euclidean2DConvexShape, R>(
     protected open fun reachUnknownDestination(newRoom: ConvexPolygon, orElse: () -> Unit) = with(action) {
         unknownDestinations
             .filter { newRoom.contains(it) }
-            .minBy { it.distanceTo(pedestrianPosition) }
+            .minByOrNull { it.distanceTo(pedestrianPosition) }
             ?.let { moveToFinal(it) }
             ?: doorsInSight()
                 .filter { it.leadsToUnknownDestination() }
-                .minBy { weightExit(it) }
+                .minByOrNull { weightExit(it) }
                 ?.let { crossDoor(it) }
             ?: orElse()
     }

@@ -45,7 +45,7 @@ L : ConvexGeometricShape<V, A> {
      * since the start of the simulation. Each area is paired with the number of visits. Areas are assumed to be
      * represented as [ConvexGeometricShape]s, as in [NavigationGraph]s.
      */
-    val volatileMemory: MutableMap<in ConvexGeometricShape<V, A>, Int>
+    val volatileMemory: MutableMap<ConvexGeometricShape<V, A>, Int>
 
     /**
      * Registers a visit to the provided [area] in the agent's [volatileMemory].

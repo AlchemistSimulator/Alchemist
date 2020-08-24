@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
- * 
  *
  */
 public abstract class AFlowLayout implements LayoutManager, Serializable {

@@ -138,6 +138,7 @@ public class TestDeformableCell {
      * Testing {@link TensionPresent}.
      */
     @Test
+    @SuppressWarnings("CPD-START")
     public void testTensionPresent1() {
         env.addNode(cellNode1, CELL_POS_TENSPRES1_1);
         env.addNode(cellNode2, CELL_POS_TENSPRES1_2);

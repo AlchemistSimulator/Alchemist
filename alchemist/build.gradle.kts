@@ -21,6 +21,7 @@ plugins {
     id("com.github.spotbugs")
     pmd
     checkstyle
+    id("de.aaschmid.cpd")
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
     `project-report`
@@ -163,6 +164,16 @@ allprojects {
     pmd {
         ruleSets = listOf()
         ruleSetConfig = resources.text.fromFile("${project.rootProject.projectDir}/config/pmd/pmd.xml")
+    }
+
+    tasks.withType<de.aaschmid.gradle.plugins.cpd.Cpd> {
+        reports {
+            xml.setEnabled(false)
+            text.setEnabled(true)
+        }
+        language = "java"
+        minimumTokenCount = 100
+        source = sourceSets["main"].allJava
     }
 
     detekt {

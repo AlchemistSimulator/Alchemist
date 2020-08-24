@@ -84,24 +84,29 @@ import java.util.stream.Collectors;
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel implements Graphical2DOutputMonitor<T, P> {
 
-    static {
-        System.setProperty("sun.java2d.opengl", "true");
-    }
-
     /**
      * The default frame rate.
      */
     public static final byte DEFAULT_FRAME_RATE = 25;
-
+    private static final String OPENGL = "sun.java2d.opengl";
     private static final double TIME_STEP = 1d / DEFAULT_FRAME_RATE;
     private static final double FREEDOM_RADIUS = 1d;
     private static final Logger L = LoggerFactory.getLogger(Generic2DDisplay.class);
     private static final int MS_PER_SECOND = 1000;
-
     /**
-     * 
+     *
      */
-    public static final long PAUSE_DETECTION_THRESHOLD = 200;
+    private static final long PAUSE_DETECTION_THRESHOLD = 200;
+
+    static {
+        /*
+         * Enable OpenGL unless it's explicitly set otherwise by the user
+         */
+        if (System.getProperty(OPENGL) == null) {
+            System.setProperty(OPENGL, "true");
+        }
+    }
+
     /**
      * How big (in pixels) the selected node should appear.
      */
@@ -150,11 +155,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      */
     public Generic2DDisplay(final int step) {
         super();
-        if (!"true".equals(System.getProperty("sun.java2d.opengl"))) {
+        if (!"true".equals(System.getProperty(OPENGL))) {
             L.warn(
                     "OpenGL acceleration appears to be disabled on this system. "
                             + "This may impact performance negatively. "
-                            + "Please enable it with -Dsun.java2d.opengl=true"
+                            + "Please enable it with -D" + OPENGL + "=true"
             );
         }
         setStep(step);

@@ -91,8 +91,8 @@ fun <T : Comparable<T>> ClosedRange<T>.subtractAll(others: List<ClosedRange<T>>)
  */
 private fun <V : Vector2D<V>> List<V>.findExtremeCoords(getXCoords: Boolean): ClosedRange<Double> {
     val selector = { v: V -> v.x.takeIf { getXCoords } ?: v.y }
-    val min = minBy(selector)?.run(selector)
-    val max = maxBy(selector)?.run(selector)
+    val min = minByOrNull(selector)?.run(selector)
+    val max = maxByOrNull(selector)?.run(selector)
     require(min != null && max != null) { "no point could be found" }
     return min..max
 }

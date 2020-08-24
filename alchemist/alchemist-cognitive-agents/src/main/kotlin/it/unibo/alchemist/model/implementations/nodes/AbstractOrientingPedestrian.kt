@@ -69,7 +69,7 @@ abstract class AbstractOrientingPedestrian<T, P, A, L, N, E, F>(
         require(knowledgeDegree in 0.0..1.0) { "knowledge degree must be in [0,1]" }
     }
 
-    override val volatileMemory: MutableMap<in ConvexGeometricShape<P, A>, Int> = HashMap()
+    override val volatileMemory: MutableMap<ConvexGeometricShape<P, A>, Int> = HashMap()
 
     /**
      * The cognitive map of the pedestrian. This is generated from the [environment]'s graph as follows: we randomly

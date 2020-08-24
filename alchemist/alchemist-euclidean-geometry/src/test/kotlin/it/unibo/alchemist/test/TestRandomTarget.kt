@@ -78,7 +78,7 @@ private class DummyRandomGenerator : RandomGenerator {
     }
 
     override fun nextBytes(bytes: ByteArray) = bytes.forEachIndexed { idx, _ ->
-        bytes[idx] = value.toByte()
+        bytes[idx] = value.toInt().toByte()
     }
 
     override fun nextInt() = value.toInt()

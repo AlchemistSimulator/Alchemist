@@ -57,7 +57,7 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
             val (closestDest, distanceToClosestDest) = destinations
                 .asSequence()
                 .map { it to it.distanceTo(currPos) }
-                .minBy { it.second }
+                .minByOrNull { it.second }
                 ?: throw IllegalArgumentException("internal error: destinations can't be empty at this point")
             destinations.asSequence()
                 .sortedBy { it.distanceTo(currPos) }

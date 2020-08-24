@@ -104,7 +104,7 @@ class SelectionHelper<T, P : Position2D<P>> {
         wormhole: Wormhole2D<P>
     ): Pair<Node<T>, P>? =
         selectionPoint?.let { point ->
-            nodes.minBy { nodes[it.key]!!.distanceTo(wormhole.getEnvPoint(point)) }
+            nodes.minByOrNull { nodes[it.key]!!.distanceTo(wormhole.getEnvPoint(point)) }
                 ?.toPair()
         }
 

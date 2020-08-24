@@ -360,7 +360,7 @@ class InteractionManager<T, P : Position2D<P>>(
                 selection.clear()
                 nodesToMove
                     .mapNotNull { nodes[it] }
-                    .maxWith(Comparator { a, b -> (b - a.coordinates).run { x + y }.roundToInt() })
+                    .maxWithOrNull(Comparator { a, b -> (b - a.coordinates).run { x + y }.roundToInt() })
                     ?.run { (mousePosition - coordinates).coordinates }
                     ?.let { offset ->
                         invokeOnSimulation {

@@ -28,7 +28,7 @@ object IgniteServerLauncher : AbstractLauncher() {
             export != null -> incompatibleWith("direct data export")
             distributed != null -> incompatibleWith("distributed execution")
             graphics != null -> incompatibleWith("graphic effects enabled")
-            help -> Validation.Invalid("There is no specific help for server mode")
+            help -> Invalid("There is no specific help for server mode")
             server == null -> Invalid("No Ignite configuration file specified")
             interval != AlchemistExecutionOptions.defaultInterval -> incompatibleWith("custom sampling intervals")
             parallelism != AlchemistExecutionOptions.defaultParallelism -> incompatibleWith("custom parallelism")

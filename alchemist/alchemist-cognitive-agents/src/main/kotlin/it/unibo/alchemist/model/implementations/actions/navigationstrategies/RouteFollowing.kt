@@ -51,7 +51,7 @@ open class RouteFollowing<T, L : Euclidean2DConvexShape, R> constructor(
     ) = with(action) {
         doorsInSight()
             .filter { it.head == previousRoom }
-            .minBy { it.distanceToPedestrian() }
+            .minByOrNull { it.distanceToPedestrian() }
             ?.let { crossDoor(it) }
             ?: inNewRoom(actualNewRoom)
     }

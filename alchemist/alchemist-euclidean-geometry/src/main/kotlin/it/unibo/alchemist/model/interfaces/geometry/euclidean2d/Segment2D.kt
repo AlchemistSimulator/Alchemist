@@ -122,7 +122,7 @@ interface Segment2D<P : Vector2D<P>> {
             distanceTo(other.second),
             other.distanceTo(first),
             other.distanceTo(second)
-        ).min() ?: Double.POSITIVE_INFINITY
+        ).minOrNull() ?: Double.POSITIVE_INFINITY
     }
 
     /**

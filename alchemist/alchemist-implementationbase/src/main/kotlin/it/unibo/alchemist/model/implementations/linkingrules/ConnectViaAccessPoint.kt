@@ -27,7 +27,7 @@ class ConnectViaAccessPoint<T, P : Position<P>>(
         get() = contains(accessPointId)
 
     private fun Neighborhood<T>.closestAccessPoint(env: Environment<T, P>): Node<T>? =
-        asSequence().filter { it.isAccessPoint }.minBy { env.getDistanceBetweenNodes(center, it) }
+        asSequence().filter { it.isAccessPoint }.minByOrNull { env.getDistanceBetweenNodes(center, it) }
 
     override fun computeNeighborhood(center: Node<T>, env: Environment<T, P>): Neighborhood<T> =
         super.computeNeighborhood(center, env).run {

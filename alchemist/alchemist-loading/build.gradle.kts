@@ -17,7 +17,7 @@ dependencies {
     implementation(Libs.snakeyaml)
 
     runtimeOnly(Libs.groovy_jsr223)
-    runtimeOnly(kotlin("scripting-jsr223-embeddable"))
+    runtimeOnly(kotlin("scripting-jsr223"))
     runtimeOnly("org.scala-lang:scala-compiler:2.13.2")
 
     testImplementation(project(":alchemist-engine"))

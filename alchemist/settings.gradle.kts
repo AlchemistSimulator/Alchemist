@@ -5,8 +5,19 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
+import de.fayard.refreshVersions.bootstrapRefreshVersions
 import org.danilopianini.VersionAliases.justAdditionalAliases
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("de.fayard.refreshVersions:refreshVersions:0.9.5")
+        classpath("org.danilopianini:refreshversions-aliases:+")
+    }
+}
+bootstrapRefreshVersions(justAdditionalAliases)
 
 include(
     "alchemist-cognitive-agents",
@@ -29,19 +40,6 @@ include(
     "alchemist-fxui"
 )
 rootProject.name = "alchemist"
-
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath("de.fayard:dependencies:0.+")
-        classpath("org.danilopianini:refreshversions-aliases:0.+")
-    }
-}
-
-bootstrapRefreshVersionsAndDependencies(justAdditionalAliases)
 
 plugins {
     id("com.gradle.enterprise") version "3.2"

@@ -73,7 +73,7 @@ class FollowScalarField<T, P, A>(
         env !is PhysicsEnvironment<T, P, *, *> || env.canNodeFitPosition(pedestrian, position)
 
     private fun Sequence<P>.maxOr(currentPosition: P): P = this
-        .maxBy { valueIn(it) }
+        .maxByOrNull { valueIn(it) }
         ?.takeIf { valueIn(it) > valueIn(currentPosition) }
         ?: currentPosition
 }

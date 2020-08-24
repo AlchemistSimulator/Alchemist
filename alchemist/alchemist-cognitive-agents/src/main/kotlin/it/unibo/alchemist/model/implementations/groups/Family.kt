@@ -14,5 +14,5 @@ class Family<T, S : Vector<S>, A : GeometricTransformation<S>>(
     GroupWithLeader<T, Pedestrian<T, S, A>> {
 
     override val leader: Pedestrian<T, S, A> =
-        members.minWith(comparator) ?: throw IllegalStateException("Can't determine a leader.")
+        members.minWithOrNull(comparator) ?: throw IllegalStateException("Can't determine a leader.")
 }

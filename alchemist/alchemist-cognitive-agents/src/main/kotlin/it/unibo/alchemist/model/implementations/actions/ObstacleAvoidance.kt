@@ -40,7 +40,7 @@ class ObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
             .map { obstacle: W ->
                 obstacle.nearestIntersection(currentPosition, target) to obstacle.bounds2D
             }
-            .minBy { (intersection, _) -> currentPosition.distanceTo(intersection) }
+            .minByOrNull { (intersection, _) -> currentPosition.distanceTo(intersection) }
             ?.let { (intersection, bound) -> intersection to env.makePosition(bound.centerX, bound.centerY) }
             ?.let { (intersection, center) -> (intersection - center).coerceAtMost(maxWalk) }
             /*

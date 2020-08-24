@@ -22,11 +22,6 @@ object Libs {
     /**
      * http://www.protelis.org
      */
-    const val protelis_interpreter: String = "org.protelis:protelis-interpreter:_"
-
-    /**
-     * http://www.protelis.org
-     */
     const val protelis_lang: String = "org.protelis:protelis-lang:_"
 
     /**

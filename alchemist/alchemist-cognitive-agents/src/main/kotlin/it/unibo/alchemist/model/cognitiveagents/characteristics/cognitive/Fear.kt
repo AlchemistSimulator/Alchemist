@@ -21,7 +21,8 @@ class Fear(
     override fun combinationFunction() = maxOf(
         persistingOmega * currentLevel,
         advancedLogistic(
-            advancedLogisticSigma, advancedLogisticTau,
+            advancedLogisticSigma,
+            advancedLogisticTau,
             influencialPeople().aggregateFears(),
             amplifyingFeelingOmega * desireEvacuate(),
             inhibitingFeelingOmega * desireWalkRandomly()

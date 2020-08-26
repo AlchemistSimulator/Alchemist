@@ -41,5 +41,5 @@ fun <T> List<SteeringAction<T, Euclidean2DPosition>>.pickNearestOrFirst(
     pedestrian: Pedestrian2D<T>
 ): SteeringAction<T, Euclidean2DPosition>? = this
     .filterIsInstance<SteeringActionWithTarget<T, Euclidean2DPosition>>()
-    .minBy { it.targetDistanceTo(pedestrian, env) }
+    .minByOrNull { it.targetDistanceTo(pedestrian, env) }
     ?: firstOrNull()

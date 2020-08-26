@@ -72,7 +72,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
     }
 
     override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> = edges()
-        .minWith(compareBy({ it.distanceTo(segment) }, { it.minCumulativeDistanceTo(segment) }))
+        .minWithOrNull(compareBy({ it.distanceTo(segment) }, { it.minCumulativeDistanceTo(segment) }))
         ?: throw IllegalStateException("no edge found")
 
     override fun toString(): String = javaClass.simpleName + vertices()

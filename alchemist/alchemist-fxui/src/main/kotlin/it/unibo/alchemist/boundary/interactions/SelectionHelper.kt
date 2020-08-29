@@ -56,7 +56,12 @@ class SelectionHelper<T, P : Position2D<P>> {
 
     private var box = SelectionBox().apply { close() }
     private var selectionPoint: Point? = null
-    private var isSelecting = false
+
+    /**
+     * Returns whether a box selection is currently occurring.
+     */
+    var isBoxSelectionInProgress = false
+        private set
 
     /**
      * The rectangle representing the box.
@@ -72,7 +77,7 @@ class SelectionHelper<T, P : Position2D<P>> {
      * Begins a new selection at the given point.
      */
     fun begin(point: Point): SelectionHelper<T, P> = apply {
-        isSelecting = true
+        isBoxSelectionInProgress = true
         selectionPoint = point
         box = SelectionBox(point)
     }
@@ -81,7 +86,7 @@ class SelectionHelper<T, P : Position2D<P>> {
      * Updates the selection with a new point.
      */
     fun update(point: Point): SelectionHelper<T, P> = apply {
-        if (isSelecting && !box.closed) {
+        if (isBoxSelectionInProgress && !box.closed) {
             box = SelectionBox(box.anchorPoint, point)
             selectionPoint = null
         }
@@ -93,7 +98,7 @@ class SelectionHelper<T, P : Position2D<P>> {
     fun close() {
         box.close()
         selectionPoint = null
-        isSelecting = false
+        isBoxSelectionInProgress = false
     }
 
     /**

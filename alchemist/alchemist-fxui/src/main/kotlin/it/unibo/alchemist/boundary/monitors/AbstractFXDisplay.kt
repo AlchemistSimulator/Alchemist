@@ -103,7 +103,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> : Pane(), FXOutputMonitor
                 mayRender.set(true)
             }
         }
-        interactions.repaint()
         mutex.release()
     }
 

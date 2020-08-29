@@ -202,6 +202,7 @@ class InteractionManager<T, P : Position2D<P>>(
                 zoomManager.inc(it.deltaY / ZOOM_SCALE)
                 wormhole.zoomOnPoint(makePoint(it.x, it.y), zoomManager.zoom)
                 monitor.repaint()
+                repaint()
                 it.consume()
             }
         }
@@ -239,6 +240,7 @@ class InteractionManager<T, P : Position2D<P>>(
         if (mousePanHelper.valid) {
             wormhole.viewPosition = mousePanHelper.update(makePoint(event.x, event.y), wormhole.viewPosition)
             monitor.repaint()
+            repaint()
         }
         event.consume()
     }
@@ -297,8 +299,8 @@ class InteractionManager<T, P : Position2D<P>>(
             }
         }
         selectionHelper.close()
-        feedback = feedback - Interaction.SELECTION_BOX
         repaint()
+        feedback = feedback - Interaction.SELECTION_BOX
         if (selectionCandidatesMutex.tryAcquire()) {
             selectionCandidates.clear()
             selectionCandidatesMutex.release()
@@ -427,7 +429,10 @@ class InteractionManager<T, P : Position2D<P>>(
      * To be called by the [AbstractFXDisplay] whenever a step occurs.
      */
     fun simulationStep() {
-        addNodesToSelectionCandidates()
+        if (selectionHelper.isBoxSelectionInProgress) {
+            addNodesToSelectionCandidates()
+        }
+        repaint()
     }
 
     companion object {

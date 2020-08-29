@@ -270,13 +270,11 @@ class InteractionManager<T, P : Position2D<P>>(
      * Called while a select gesture is in progress and the selection is changing.
      */
     private fun onSelecting(event: MouseEvent) {
-        selectionHelper.let { helper: SelectionHelper<T, P> ->
-            helper.update(makePoint(event.x, event.y))
-            listOf(selector.createDrawRectangleCommand(helper.rectangle, Colors.selectionBox))
-                .let { drawCommands -> feedback = feedback + (Interaction.SELECTION_BOX to drawCommands) }
-            addNodesToSelectionCandidates()
-            repaint()
-        }
+        selectionHelper.update(makePoint(event.x, event.y))
+        listOf(selector.createDrawRectangleCommand(selectionHelper.rectangle, Colors.selectionBox))
+            .let { drawCommands -> feedback = feedback + (Interaction.SELECTION_BOX to drawCommands) }
+        addNodesToSelectionCandidates()
+        repaint()
         event.consume()
     }
 
@@ -298,12 +296,13 @@ class InteractionManager<T, P : Position2D<P>>(
                 selection += node
             }
         }
-        selectionCandidatesMutex.acquireUninterruptibly()
         selectionHelper.close()
-        selectionCandidates.clear()
-        selectionCandidatesMutex.release()
         feedback = feedback - Interaction.SELECTION_BOX
         repaint()
+        if (selectionCandidatesMutex.tryAcquire()) {
+            selectionCandidates.clear()
+            selectionCandidatesMutex.release()
+        }
         event.consume()
     }
 
@@ -341,14 +340,15 @@ class InteractionManager<T, P : Position2D<P>>(
      * Grabs all the nodes in the selection box and adds them to the selection candidates.
      */
     private fun addNodesToSelectionCandidates() {
-        selectionCandidatesMutex.acquireUninterruptibly()
-        selectionHelper.boxSelection(nodes, wormhole).keys.let {
-            if (it != selectionCandidates) {
-                selectionCandidates.clear()
-                selectionCandidates += it
+        if (selectionCandidatesMutex.tryAcquire()) {
+            selectionHelper.boxSelection(nodes, wormhole).keys.let {
+                if (it != selectionCandidates) {
+                    selectionCandidates.clear()
+                    selectionCandidates += it
+                }
             }
+            selectionCandidatesMutex.release()
         }
-        selectionCandidatesMutex.release()
     }
 
     private fun enqueueMove() {
@@ -360,7 +360,7 @@ class InteractionManager<T, P : Position2D<P>>(
                 selection.clear()
                 nodesToMove
                     .mapNotNull { nodes[it] }
-                    .maxWithOrNull(Comparator { a, b -> (b - a.coordinates).run { x + y }.roundToInt() })
+                    .maxWithOrNull { a, b -> (b - a.coordinates).run { x + y }.roundToInt() }
                     ?.run { (mousePosition - coordinates).coordinates }
                     ?.let { offset ->
                         invokeOnSimulation {

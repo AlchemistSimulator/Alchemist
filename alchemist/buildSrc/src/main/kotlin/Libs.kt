@@ -1,5 +1,4 @@
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.DependencyHandlerScope
 import kotlin.String
 
 fun Project.alchemist(module: String) = project(":alchemist-$module")
@@ -14,21 +13,12 @@ fun modularizedLibrary(base: String, module: String = "", separator: String = "-
  * Shortcuts for libraries used in multiple places
  */
 fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
-fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
-fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
 fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
+fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
+fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
+fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)
 
 object Libs {
-    /**
-     * http://www.protelis.org
-     */
-    const val protelis_interpreter: String = "org.protelis:protelis-interpreter:_"
-
-    /**
-     * http://www.protelis.org
-     */
-    const val protelis_lang: String = "org.protelis:protelis-lang:_"
-
     /**
      * http://www.antlr.org
      */
@@ -175,7 +165,7 @@ object Libs {
     const val spotbugs: String = "com.github.spotbugs:spotbugs:_"
 
     /**
-     * https://github.com/DanySK/listset
+     * https://github.com/DanySK/listse
      */
     const val listset: String = "org.danilopianini:listset:_"
 

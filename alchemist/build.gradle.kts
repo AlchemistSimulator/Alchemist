@@ -8,7 +8,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
@@ -70,12 +69,9 @@ allprojects {
             maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
         }
         mavenCentral()
-        // Stuff on bintray, build-only dependencies allowed
         jcenter {
             content {
-                includeGroup("com.soywiz.korlibs.korte")
-                includeGroup("org.jetbrains") // for org.jetbrains:markdown
-                includeGroupByRegex("org.jetbrains.(dokka|kotlinx)")
+                onlyForConfigurations("detekt", "dokkaRuntime")
             }
         }
     }
@@ -308,9 +304,10 @@ repositories {
     mavenCentral()
     jcenter {
         content {
-            includeGroupByRegex("""io\.github\.javaeden.*""")
-            includeGroupByRegex("""com\.eden.*""")
-            includeModuleByRegex("""org\.jetbrains\.kotlinx""", """kotlinx-serialization.*""")
+            onlyForConfigurations(
+                "orchidCompileClasspath",
+                "orchidRuntimeClasspath"
+            )
         }
     }
 }
@@ -340,17 +337,16 @@ dependencies {
 tasks.dokkaJavadoc {
     dokkaSourceSets {
         val config = project("alchemist-full").configurations.runtimeClasspath
+        val configurationAction = { sourceSet: GradleDokkaSourceSet ->
+            sourceSet.classpath = config.get().resolve().map { it.absolutePath }
+            sourceSet.sourceRoots = allprojects
+                .flatMap { it.sourceSets.toSet() }
+                .flatMap { it.allSource.toSet() }
+                .map { org.jetbrains.dokka.SourceRootImpl(it.absolutePath) }
+                .toMutableList()
+        }
         tasks.dokkaJavadoc.get().dokkaSourceSets {
-            create("global", object: Action<GradleDokkaSourceSet> {
-                override fun execute(globalSourceSet: GradleDokkaSourceSet) {
-                    globalSourceSet.classpath = config.get().resolve().map { it.absolutePath }
-                    globalSourceSet.sourceRoots = allprojects
-                        .flatMap { it.sourceSets.toSet() }
-                        .flatMap { it.allSource.toSet() }
-                        .map { org.jetbrains.dokka.SourceRootImpl(it.absolutePath) }
-                        .toMutableList()
-                }
-            })
+            create("global", configurationAction)
         }
     }
 }

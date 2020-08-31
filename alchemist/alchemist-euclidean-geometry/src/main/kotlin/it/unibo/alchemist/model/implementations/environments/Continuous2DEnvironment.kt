@@ -90,7 +90,7 @@ open class Continuous2DEnvironment<T> :
                 largestShapeDiameter = nodes.asSequence()
                     .filterIsInstance<NodeWithShape<*, *, *>>()
                     .map { it.shape.diameter }
-                    .max() ?: 0.0
+                    .maxOrNull() ?: 0.0
             }
         }
 
@@ -159,7 +159,7 @@ open class Continuous2DEnvironment<T> :
             .flatMap { other ->
                 desiredMovement.intersectCircle(other.centroid, other.radius + node.shape.radius).asList
             }
-            .minBy { currentPosition.distanceTo(it) }
+            .minByOrNull { currentPosition.distanceTo(it) }
             ?: desiredPosition
     }
 }

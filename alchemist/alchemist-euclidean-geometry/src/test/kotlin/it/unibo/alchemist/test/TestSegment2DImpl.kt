@@ -45,7 +45,7 @@ class TestSegment2DImpl : StringSpec() {
     ): I {
         val intersection = segment1.intersect(segment2)
         intersection.shouldBeTypeOf<I>()
-        return intersection as I
+        return intersection
     }
 
     private fun <P : Vector2D<P>> shouldIntersectIn(
@@ -67,7 +67,7 @@ class TestSegment2DImpl : StringSpec() {
     ): I {
         val intersection = segment.intersectCircle(center, radius)
         intersection.shouldBeTypeOf<I>()
-        return intersection as I
+        return intersection
     }
 
     private fun <P : Vector2D<P>> shouldIntersectIn(

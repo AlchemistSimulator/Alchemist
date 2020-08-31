@@ -71,7 +71,12 @@ allprojects {
         mavenCentral()
         jcenter {
             content {
-                onlyForConfigurations("detekt", "dokkaRuntime")
+                onlyForConfigurations(
+                    "detekt",
+                    "dokkaRuntime",
+                    "orchidCompileClasspath",
+                    "orchidRuntimeClasspath"
+                )
             }
         }
     }
@@ -305,18 +310,6 @@ allprojects {
  * Root project additional configuration
  */
 evaluationDependsOnChildren()
-
-repositories {
-    mavenCentral()
-    jcenter {
-        content {
-            onlyForConfigurations(
-                "orchidCompileClasspath",
-                "orchidRuntimeClasspath"
-            )
-        }
-    }
-}
 
 dependencies {
     // Depend on subprojects whose presence is necessary to run

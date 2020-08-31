@@ -9,6 +9,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.GradleDokkaSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 import java.io.ByteArrayOutputStream
@@ -70,14 +71,11 @@ allprojects {
         }
         mavenCentral()
         // Stuff on bintray, build-only dependencies allowed
-        mapOf(
-            "kotlin/dokka" to setOf("org.jetbrains.dokka"),
-            "kotlin/kotlinx.html" to setOf("org.jetbrains.kotlinx"),
-            "arturbosch/code-analysis" to setOf("io.gitlab.arturbosch.detekt")
-        ).forEach { (uriPart, groups) ->
-            maven {
-                url = uri("https://dl.bintray.com/$uriPart")
-                content { groups.forEach { includeGroup(it) } }
+        jcenter {
+            content {
+                includeGroup("com.soywiz.korlibs.korte")
+                includeGroup("org.jetbrains") // for org.jetbrains:markdown
+                includeGroupByRegex("org.jetbrains.(dokka|kotlinx)")
             }
         }
     }
@@ -187,16 +185,10 @@ allprojects {
 
     // DOCUMENTATION
 
-    tasks.withType<DokkaTask> {
-        outputDirectory = "$buildDir/docs/javadoc"
-        impliedPlatforms = mutableListOf("JVM")
-        // Work around https://github.com/Kotlin/dokka/issues/294
-        if (!JavaVersion.current().isJava10Compatible) {
-            outputFormat = "javadoc"
-        }
+    tasks.javadocJar {
+        dependsOn(tasks.dokkaJavadoc)
+        from(tasks.dokkaJavadoc.get().outputDirectory)
     }
-
-    tasks.getByName("javadocJar").dependsOn(tasks.withType<DokkaTask>())
 
     publishing.publications {
         withType<MavenPublication> {
@@ -345,8 +337,22 @@ dependencies {
 
 // WEBSITE
 
-tasks.withType<DokkaTask> {
-    subProjects = subprojects.map { it.name }.toList()
+tasks.dokkaJavadoc {
+    dokkaSourceSets {
+        val config = project("alchemist-full").configurations.runtimeClasspath
+        tasks.dokkaJavadoc.get().dokkaSourceSets {
+            create("global", object: Action<GradleDokkaSourceSet> {
+                override fun execute(globalSourceSet: GradleDokkaSourceSet) {
+                    globalSourceSet.classpath = config.get().resolve().map { it.absolutePath }
+                    globalSourceSet.sourceRoots = allprojects
+                        .flatMap { it.sourceSets.toSet() }
+                        .flatMap { it.allSource.toSet() }
+                        .map { org.jetbrains.dokka.SourceRootImpl(it.absolutePath) }
+                        .toMutableList()
+                }
+            })
+        }
+    }
 }
 
 val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }

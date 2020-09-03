@@ -185,13 +185,6 @@ allprojects {
         }
     }
 
-    // DOCUMENTATION
-
-    tasks.javadocJar {
-        dependsOn(tasks.dokkaJavadoc)
-        from(tasks.dokkaJavadoc.get().outputDirectory)
-    }
-
     publishing.publications {
         withType<MavenPublication> {
             pom {

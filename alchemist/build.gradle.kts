@@ -321,7 +321,7 @@ dependencies {
 
 // WEBSITE
 
-//tasks.dokkaJavadoc {
+// tasks.dokkaJavadoc {
 //    dokkaSourceSets {
 //        val config = project("alchemist-full").configurations.runtimeClasspath
 //        val configurationAction = { sourceSet: GradleDokkaSourceSet ->
@@ -336,7 +336,7 @@ dependencies {
 //            create("global", configurationAction)
 //        }
 //    }
-//}
+// }
 
 val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }
 

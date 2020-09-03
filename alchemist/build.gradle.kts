@@ -8,7 +8,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.dokka.gradle.GradleDokkaSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 import java.io.ByteArrayOutputStream

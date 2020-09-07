@@ -69,15 +69,14 @@ allprojects {
             maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
         }
         mavenCentral()
-        // Stuff on bintray, build-only dependencies allowed
-        mapOf(
-            "kotlin/dokka" to setOf("org.jetbrains.dokka"),
-            "kotlin/kotlinx.html" to setOf("org.jetbrains.kotlinx"),
-            "arturbosch/code-analysis" to setOf("io.gitlab.arturbosch.detekt")
-        ).forEach { (uriPart, groups) ->
-            maven {
-                url = uri("https://dl.bintray.com/$uriPart")
-                content { groups.forEach { includeGroup(it) } }
+        jcenter {
+            content {
+                onlyForConfigurations(
+                    "detekt",
+                    "dokkaRuntime",
+                    "orchidCompileClasspath",
+                    "orchidRuntimeClasspath"
+                )
             }
         }
 
@@ -319,17 +318,6 @@ allprojects {
  * Root project additional configuration
  */
 evaluationDependsOnChildren()
-
-repositories {
-    mavenCentral()
-    jcenter {
-        content {
-            includeGroupByRegex("""io\.github\.javaeden.*""")
-            includeGroupByRegex("""com\.eden.*""")
-            includeModuleByRegex("""org\.jetbrains\.kotlinx""", """kotlinx-serialization.*""")
-        }
-    }
-}
 
 dependencies {
     // Depend on subprojects whose presence is necessary to run

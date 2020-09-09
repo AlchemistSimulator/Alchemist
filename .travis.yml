@@ -118,8 +118,7 @@ jobs:
         - *reference_jdk
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - travis_retry ./gradlew clean check jacocoTestReport shadowJar javadocJar --scan --parallel
-        - travis_retry ./gradlew projectReport
+        - travis_retry ./gradlew clean check jacocoTestReport shadowJar javadocJar buildDashboard --scan --parallel
         - travis_retry ./gradlew buildDashboard
       after_success:
         - bash <(curl -s https://codecov.io/bash)

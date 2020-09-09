@@ -23,7 +23,6 @@ plugins {
     id("de.aaschmid.cpd")
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
-    `project-report`
     `build-dashboard`
     id("org.jetbrains.dokka")
     id("com.eden.orchidPlugin")

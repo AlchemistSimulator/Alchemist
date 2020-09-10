@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
  * This linking rule dynamically searches for the best radius for each device,
  * in such a way that it connects to a certain number of devices.
  *
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistance<T, P> {
 

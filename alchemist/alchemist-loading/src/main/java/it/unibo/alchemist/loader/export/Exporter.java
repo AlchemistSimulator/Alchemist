@@ -31,8 +31,8 @@ import java.util.TimeZone;
  * CSV with '#' as comment character. Even though this class implements
  * {@link OutputMonitor}, it is not {@link java.io.Serializable}.
  *
- * @param <T>
- * @param <P> position type
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type position type
  */
 @SuppressWarnings("serial")
 @SuppressFBWarnings(value = {"SE_BAD_FIELD", "SE_NO_SERIALVERSIONID"},

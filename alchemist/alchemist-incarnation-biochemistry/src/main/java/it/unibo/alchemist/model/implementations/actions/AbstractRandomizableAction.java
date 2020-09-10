@@ -13,7 +13,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class AbstractRandomizableAction<T> extends AbstractAction<T> {
 
@@ -29,8 +29,8 @@ public abstract class AbstractRandomizableAction<T> extends AbstractAction<T> {
 
     /**
      * 
-     * @param node 
-     * @param random 
+     * @param node the {@link Node}
+     * @param random the {@link RandomGenerator}
      */
     public AbstractRandomizableAction(final Node<T> node, final RandomGenerator random) {
         super(node);

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @param <P>
+ * @param <P>  {@link Position} type
  */
 public class CellNodeImpl<P extends Position<P> & Vector<P>> extends DoubleNode implements CellNode<P>, CellWithCircularArea<P> {
 

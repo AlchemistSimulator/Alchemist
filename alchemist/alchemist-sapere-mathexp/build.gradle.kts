@@ -28,6 +28,10 @@ tasks.withType<de.aaschmid.gradle.plugins.cpd.Cpd> {
     ignoreFailures = true
 }
 
+tasks.javadoc {
+    setFailOnError(false)
+}
+
 publishing.publications {
     withType<MavenPublication> {
         pom {

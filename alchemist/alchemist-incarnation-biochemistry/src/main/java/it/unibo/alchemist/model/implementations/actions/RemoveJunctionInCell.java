@@ -19,10 +19,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import java.util.Map;
 
 /**
- * Represent the action of removing a junction between the current node and a neighbor. <br/>
+ * Represent the action of removing a junction between the current node and a neighbor.
  * This action only remove the junction reference inside this node, the neighbor totally ignore 
- * that a junction has been removed. <br/>
- * This is a part of the junction removal process. <br/>
+ * that a junction has been removed.
+ * This is a part of the junction removal process.
  * See {@link RemoveJunctionInNeighbor} for the other part of the process
  */
 public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> { // TODO try local

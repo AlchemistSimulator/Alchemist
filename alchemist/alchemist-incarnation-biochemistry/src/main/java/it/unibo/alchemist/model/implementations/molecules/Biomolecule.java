@@ -18,7 +18,7 @@ public class Biomolecule extends SimpleMolecule {
 
     /**
      * Create a new biomolecule.
-     * @param name 
+     * @param name  the molecule name
      */
     public Biomolecule(final CharSequence name) {
         super(name);

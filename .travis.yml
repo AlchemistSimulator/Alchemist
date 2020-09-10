@@ -32,7 +32,7 @@ _deploy_on_surge: &deploy_on_surge
 _deploy_javadoc_on_surge: &deploy_javadoc_on_surge
   <<: *deploy_base
   <<: *deploy_on_surge
-  project: "./alchemist/build/docs/javadoc/"
+  project: "./alchemist/build/dokka/javadoc/"
 
 _deploy_reports_on_surge: &deploy_reports_on_surge
   <<: *deploy_base

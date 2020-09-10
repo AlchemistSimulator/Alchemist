@@ -320,22 +320,20 @@ dependencies {
 
 // WEBSITE
 
-// tasks.dokkaJavadoc {
-//    dokkaSourceSets {
-//        val config = project("alchemist-full").configurations.runtimeClasspath
-//        val configurationAction = { sourceSet: GradleDokkaSourceSet ->
-//            sourceSet.classpath = config.get().resolve().map { it.absolutePath }
-//            sourceSet.sourceRoots = allprojects
-//                .flatMap { it.sourceSets.toSet() }
-//                .flatMap { it.allSource.toSet() }
-//                .map { org.jetbrains.dokka.SourceRootImpl(it.absolutePath) }
-//                .toMutableList()
-//        }
-//        tasks.dokkaJavadoc.get().dokkaSourceSets {
-//            create("global", configurationAction)
-//        }
-//    }
-// }
+ tasks.dokkaJavadoc {
+    dokkaSourceSets {
+        val config = project("alchemist-full").configurations.runtimeClasspath
+        tasks.dokkaJavadoc.get().dokkaSourceSets {
+            create("global") {
+                subprojects.asSequence()
+                    .flatMap { it.sourceSets.asSequence() }
+                    .flatMap { it.allSource.asSequence() }
+                    .map { it.path }
+                    .forEach { sourceRoot(it) }
+            }
+        }
+    }
+ }
 
 val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }
 

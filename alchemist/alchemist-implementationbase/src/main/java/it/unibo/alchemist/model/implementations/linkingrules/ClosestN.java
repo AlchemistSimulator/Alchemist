@@ -34,8 +34,8 @@ import it.unibo.alchemist.model.interfaces.Position;
  * Non local-consistent rule that connect the closest N nodes together.
  * Two nodes get connected if either one belongs to the set of the ten devices closest to the other.
  * 
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 

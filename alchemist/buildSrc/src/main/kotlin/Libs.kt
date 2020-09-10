@@ -17,6 +17,7 @@ fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", mod
 fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
 fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
 fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)
+fun graphStream(module: String = "") = modularizedLibrary("com.github.graphstream:gs", module)
 
 object Libs {
     /**

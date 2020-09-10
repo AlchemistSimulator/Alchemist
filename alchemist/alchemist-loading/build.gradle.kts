@@ -6,6 +6,14 @@
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 
+repositories {
+    maven {
+        url = uri("https://jitpack.io")
+        content {
+            includeGroup("com.github.graphstream")
+        }
+    }
+}
 dependencies {
     api(alchemist("implementationbase"))
     api(alchemist("interfaces"))
@@ -15,6 +23,9 @@ dependencies {
     implementation(Libs.guava)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
+    implementation(graphStream("core"))
+    implementation(graphStream("algo"))
+    implementation(graphStream("ui-swing"))
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))

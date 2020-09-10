@@ -8,7 +8,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 import java.io.ByteArrayOutputStream
@@ -24,7 +23,6 @@ plugins {
     id("de.aaschmid.cpd")
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
-    `project-report`
     `build-dashboard`
     id("org.jetbrains.dokka")
     id("com.eden.orchidPlugin")
@@ -73,6 +71,8 @@ allprojects {
             content {
                 onlyForConfigurations(
                     "detekt",
+                    "dokkaJavadocPlugin",
+                    "dokkaJavadocRuntime",
                     "dokkaRuntime",
                     "orchidCompileClasspath",
                     "orchidRuntimeClasspath"
@@ -183,19 +183,6 @@ allprojects {
             html.enabled = true
         }
     }
-
-    // DOCUMENTATION
-
-    tasks.withType<DokkaTask> {
-        outputDirectory = "$buildDir/docs/javadoc"
-        impliedPlatforms = mutableListOf("JVM")
-        // Work around https://github.com/Kotlin/dokka/issues/294
-        if (!JavaVersion.current().isJava10Compatible) {
-            outputFormat = "javadoc"
-        }
-    }
-
-    tasks.getByName("javadocJar").dependsOn(tasks.withType<DokkaTask>())
 
     publishing.publications {
         withType<MavenPublication> {
@@ -333,9 +320,22 @@ dependencies {
 
 // WEBSITE
 
-tasks.withType<DokkaTask> {
-    subProjects = subprojects.map { it.name }.toList()
-}
+// tasks.dokkaJavadoc {
+//    dokkaSourceSets {
+//        val config = project("alchemist-full").configurations.runtimeClasspath
+//        val configurationAction = { sourceSet: GradleDokkaSourceSet ->
+//            sourceSet.classpath = config.get().resolve().map { it.absolutePath }
+//            sourceSet.sourceRoots = allprojects
+//                .flatMap { it.sourceSets.toSet() }
+//                .flatMap { it.allSource.toSet() }
+//                .map { org.jetbrains.dokka.SourceRootImpl(it.absolutePath) }
+//                .toMutableList()
+//        }
+//        tasks.dokkaJavadoc.get().dokkaSourceSets {
+//            create("global", configurationAction)
+//        }
+//    }
+// }
 
 val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }
 

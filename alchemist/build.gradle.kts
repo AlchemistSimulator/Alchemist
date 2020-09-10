@@ -320,7 +320,7 @@ dependencies {
 
 // WEBSITE
 
- tasks.dokkaJavadoc {
+tasks.dokkaJavadoc {
     dokkaSourceSets {
         val config = project("alchemist-full").configurations.runtimeClasspath
         tasks.dokkaJavadoc.get().dokkaSourceSets {
@@ -333,7 +333,7 @@ dependencies {
             }
         }
     }
- }
+}
 
 val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }
 

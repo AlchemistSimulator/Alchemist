@@ -322,7 +322,7 @@ dependencies {
 
 tasks.dokkaJavadoc {
     dokkaSourceSets {
-        val config = project("alchemist-full").configurations.runtimeClasspath
+    git    val config = project("alchemist-full").configurations.runtimeClasspath
         tasks.dokkaJavadoc.get().dokkaSourceSets {
             create("global") {
                 subprojects.asSequence()

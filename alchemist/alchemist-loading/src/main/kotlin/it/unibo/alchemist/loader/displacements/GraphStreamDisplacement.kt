@@ -18,7 +18,7 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * A deployment based on a [GraphStream](https://graphstream-project.org/) graph.
  */
-class GraphStreamDeployment<T, P>(
+class GraphStreamDisplacement<T, P>(
     private val createLinks: Boolean,
     graphStreamSupport: GraphStreamSupport<T, P>,
 ) : Displacement<P> by graphStreamSupport.displacement
@@ -48,6 +48,10 @@ class GraphStreamDeployment<T, P>(
         )
     )
 
+    /**
+     * The [LinkingRule] associated with this [GraphStreamDisplacement],
+     * or null if the displacement has been created without static linking.
+     */
     val associatedLinkingRule: LinkingRule<T, P>? = if (createLinks) graphStreamSupport.linkingRule else null
 
 }

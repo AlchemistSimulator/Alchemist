@@ -20,7 +20,7 @@ import com.google.common.collect.Table.Cell;
 import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Displacement;
-import it.unibo.alchemist.loader.displacements.GraphStreamDeployment;
+import it.unibo.alchemist.loader.displacements.GraphStreamDisplacement;
 import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.export.FilteringPolicy;
 import it.unibo.alchemist.loader.export.MoleculeReader;
@@ -648,8 +648,8 @@ public final class YamlLoader implements Loader {
                 /*
                  * Deal with GraphStream-based deployments: the Linking Rule should get customized
                  */
-                if (displacement instanceof GraphStreamDeployment) {
-                    final var graphStreamDeployment = (GraphStreamDeployment<T, P>) displacement;
+                if (displacement instanceof GraphStreamDisplacement) {
+                    final var graphStreamDeployment = (GraphStreamDisplacement<T, P>) displacement;
                     final var graphLinkingRule = graphStreamDeployment.getAssociatedLinkingRule();
                     if (graphLinkingRule != null) {
                         final var previousRule = environment.getLinkingRule();

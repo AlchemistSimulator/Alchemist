@@ -53,5 +53,4 @@ class GraphStreamDisplacement<T, P>(
      * or null if the displacement has been created without static linking.
      */
     val associatedLinkingRule: LinkingRule<T, P>? = if (createLinks) graphStreamSupport.linkingRule else null
-
 }

@@ -28,6 +28,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.danilopianini.util.Hashes;
 import org.jooq.lambda.Unchecked;
@@ -46,6 +47,7 @@ import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -111,12 +113,8 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
      *
      * @param file
      *            the file path where the map data is stored
-     * @throws IOException
-     *             if the map file is not found, or it's not readable, or
-     *             accessible, or a file system error occurred, or you kicked your
-     *             hard drive while Alchemist was reading the map
      */
-    public OSMEnvironment(final String file) throws IOException {
+    public OSMEnvironment(final String file) {
         this(file, DEFAULT_ON_STREETS);
     }
 
@@ -446,16 +444,28 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     private static synchronized GraphHopperAPI initNavigationSystem(
             final File mapFile,
             final String internalWorkdir,
-            final Vehicle vehicle) {
-        return new GraphHopperOSM()
-                .setOSMFile(mapFile.getAbsolutePath())
-                .forDesktop()
-                .setElevation(false)
-                .setEnableCalcPoints(true)
-                .setInMemory()
-                .setGraphHopperLocation(internalWorkdir)
-                .setEncodingManager(vehicle.getEncoder())
-                .importOrLoad();
+            final Vehicle vehicle) throws IOException {
+        try {
+            return new GraphHopperOSM()
+                    .setOSMFile(mapFile.getAbsolutePath())
+                    .forDesktop()
+                    .setElevation(false)
+                    .setEnableCalcPoints(true)
+                    .setInMemory()
+                    .setGraphHopperLocation(internalWorkdir)
+                    .setEncodingManager(vehicle.getEncoder())
+                    .importOrLoad();
+        } catch (final IllegalStateException e) {
+            final var message = e.getMessage();
+            if (message != null && message.toLowerCase(Locale.ENGLISH).matches("version.*unsupported.*")) {
+                final var internalWorkingDirectoryFile = new File(internalWorkdir);
+                FileUtils.deleteDirectory(internalWorkingDirectoryFile);
+                if (internalWorkingDirectoryFile.mkdirs()) {
+                    return initNavigationSystem(mapFile, internalWorkdir, vehicle);
+                }
+            }
+            throw e;
+        }
     }
 
     private static boolean mkdirsIfNeeded(final File target) {

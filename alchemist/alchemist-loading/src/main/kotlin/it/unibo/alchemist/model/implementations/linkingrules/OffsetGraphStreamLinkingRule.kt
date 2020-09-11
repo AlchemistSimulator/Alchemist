@@ -18,6 +18,11 @@ import it.unibo.alchemist.model.interfaces.Position
 import org.graphstream.graph.Graph
 import kotlin.streams.toList
 
+/**
+ * A [LinkingRule] that statically connects nodes as they were configured by GraphStream.
+ * An [offset] is used to determine the id of the environment's nodes when comparted to the one of the
+ * provided [graph].
+ */
 class OffsetGraphStreamLinkingRule<T, P : Position<P>>(val offset: Int, val graph: Graph) : LinkingRule<T, P> {
 
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> {

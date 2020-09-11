@@ -23,6 +23,9 @@ import org.graphstream.algorithm.generator.BaseGenerator
 import org.graphstream.graph.implementations.SingleGraph
 import org.graphstream.ui.layout.springbox.implementations.SpringBox
 
+/**
+ * Support class for GraphStream, composed of a [linkingRule] and a [displacement].
+ */
 class GraphStreamSupport<T, P : Position<out P>>(
     val linkingRule: LinkingRule<T, P>,
     val displacement: Displacement<P>,
@@ -41,17 +44,19 @@ class GraphStreamSupport<T, P : Position<out P>>(
             .build()
 
         private fun generateGenerator(generatorName: String, vararg parameters: Any): BaseGenerator {
-            val generatorClasses = with (generators) {
+            val generatorClasses = with(generators) {
                 val exactMatch = find {
                     it.simpleName == generatorName || it.simpleName == "${generatorName}Generator"
                 }
                 val match = when {
                     exactMatch != null -> listOf(exactMatch)
-                    else -> filter { it.simpleName.startsWith(generatorName, ignoreCase = true) }
-                        .takeUnless { it.isEmpty() }
+                    else ->
+                        filter { it.simpleName.startsWith(generatorName, ignoreCase = true) }
+                            .takeUnless { it.isEmpty() }
                 }
-                match ?: throw IllegalArgumentException("None of the candidates in ${map { it.simpleName }}" +
-                    " matches requested generator $generatorName")
+                match ?: throw IllegalArgumentException(
+                    "None of the candidates in ${map { it.simpleName }} matches requested generator $generatorName"
+                )
             }
             var result: Either<() -> IllegalArgumentException, BaseGenerator> = Either.Left {
                 IllegalArgumentException(
@@ -67,12 +72,19 @@ class GraphStreamSupport<T, P : Position<out P>>(
                     result = Either.left { previousErrors.a().apply { addSuppressed(e) } }
                 }
             }
-             when(result) {
+            when (result) {
                 is Either.Right -> return result.b
                 is Either.Left -> throw result.a()
             }
         }
 
+        /**
+         * Given an [environment], the [nodeCount] to be displaced,
+         * the GraphStream's [generatorName] and the [parameters] for its constructor,
+         * an identifier [uniqueId],
+         * a [layoutQuality],
+         * and possibly a flag to decide whether or not to compute z-dimensions [is3D].
+         */
         @JvmOverloads
         fun <T, P : Position<out P>> generateGraphStream(
             environment: Environment<T, P>,
@@ -87,7 +99,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
             val randomGenerator = SplitMix64Random(uniqueId)
             val layout = SpringBox(is3D, randomGenerator)
             val graph = SingleGraph(generatorName)
-            with (layout) {
+            with(layout) {
                 addSink(graph)
                 quality = layoutQuality.coerceIn(0.0, 1.0)
             }

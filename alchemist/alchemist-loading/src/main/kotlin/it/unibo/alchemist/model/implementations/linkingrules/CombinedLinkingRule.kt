@@ -12,11 +12,13 @@ package it.unibo.alchemist.model.implementations.linkingrules
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.LinkingRule
-import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 
-
+/**
+ * A meta-rule that combines multiple [subRules].
+ * If any mandates a link, such link is created (union of all links).
+ */
 class CombinedLinkingRule<T, P : Position<P>>(
     val subRules: List<LinkingRule<T, P>>
 ) : LinkingRule<T, P> {

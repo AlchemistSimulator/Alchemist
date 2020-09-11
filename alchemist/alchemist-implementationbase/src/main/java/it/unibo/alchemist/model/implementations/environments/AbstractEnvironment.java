@@ -231,7 +231,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
-    public final int getNodesNumber() {
+    public final int getNodeCount() {
         return nodes.size();
     }
 

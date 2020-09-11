@@ -15,12 +15,21 @@ import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 
+/**
+ * A deployment based on a [GraphStream](https://graphstream-project.org/) graph.
+ */
 class GraphStreamDeployment<T, P>(
     private val createLinks: Boolean,
     graphStreamSupport: GraphStreamSupport<T, P>,
 ) : Displacement<P> by graphStreamSupport.displacement
     where P : Position<out P> {
 
+    /**
+     * Builds a new GraphStream-based deployment, given the [nodeCount],
+     * whether or not the arcs of such graph shoud be links ([createLinks]),
+     * the [generatorName] (must be the name of a subclass of BaseGenerator),
+     * and its [parameters].
+     */
     @JvmOverloads constructor(
         environment: Environment<T, P>,
         randomGenerator: RandomGenerator,

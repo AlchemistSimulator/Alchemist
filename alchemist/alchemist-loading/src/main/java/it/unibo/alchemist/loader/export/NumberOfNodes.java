@@ -33,7 +33,7 @@ public final class NumberOfNodes implements Extractor {
             final it.unibo.alchemist.model.interfaces.Time time,
             final long step
     ) {
-        return new double[]{environment.getNodesNumber()};
+        return new double[]{environment.getNodeCount()};
     }
 
     @Override

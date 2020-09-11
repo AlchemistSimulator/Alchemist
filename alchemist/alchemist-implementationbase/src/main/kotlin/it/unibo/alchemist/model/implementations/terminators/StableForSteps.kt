@@ -58,7 +58,7 @@ class StableForSteps<T>(
     override fun test(environment: Environment<T, *>): Boolean {
         if (environment.getSimulation().getStep() % checkInterval == 0L) {
             val newPositions = environment.associateBy({ it }, { environment.getPosition(it) })
-            val newContents = makeTable<T>(environment.getNodesNumber())
+            val newContents = makeTable<T>(environment.getNodeCount())
             environment.forEach { node ->
                 node.contents.forEach { molecule, concentration ->
                     newContents.put(node, molecule, concentration)

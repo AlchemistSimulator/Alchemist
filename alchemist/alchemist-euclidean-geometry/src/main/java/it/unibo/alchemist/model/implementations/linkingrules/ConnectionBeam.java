@@ -60,13 +60,13 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
     }
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, Euclidean2DPosition> env) {
-        final Neighborhood<T> normal = super.computeNeighborhood(center, env);
+    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, Euclidean2DPosition> environment) {
+        final Neighborhood<T> normal = super.computeNeighborhood(center, environment);
         if (oenv == null) {
-            if (!(env instanceof Euclidean2DEnvironmentWithObstacles<?, ?>)) {
+            if (!(environment instanceof Euclidean2DEnvironmentWithObstacles<?, ?>)) {
                 return normal;
             }
-            oenv = (Euclidean2DEnvironmentWithObstacles<?, T>) env;
+            oenv = (Euclidean2DEnvironmentWithObstacles<?, T>) environment;
             obstacles.reset();
             oenv.getObstacles().forEach((obs) -> {
                 /*
@@ -81,14 +81,14 @@ public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2
             });
         }
         if (!normal.isEmpty()) {
-            final Euclidean2DPosition cp = env.getPosition(center);
+            final Euclidean2DPosition cp = environment.getPosition(center);
             final List<Node<T>> neighs = normal.getNeighbors().stream()
                 .filter((neigh) -> {
-                    final Euclidean2DPosition np = env.getPosition(neigh);
+                    final Euclidean2DPosition np = environment.getPosition(neigh);
                     return !oenv.intersectsObstacle(cp, np) || projectedBeamOvercomesObstacle(cp, np);
                 })
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-            return Neighborhoods.make(env, center, neighs);
+            return Neighborhoods.make(environment, center, neighs);
         }
         return normal;
     }

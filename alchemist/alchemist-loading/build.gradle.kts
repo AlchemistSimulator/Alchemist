@@ -5,27 +5,20 @@
  * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-
-repositories {
-    maven {
-        url = uri("https://jitpack.io")
-        content {
-            includeGroup("com.github.graphstream")
-        }
-    }
-}
 dependencies {
     api(alchemist("implementationbase"))
     api(alchemist("interfaces"))
 
     implementation(alchemist("euclidean-geometry"))
+    implementation(arrowKt("core"))
     implementation(Libs.commons_lang3)
-    implementation(Libs.guava)
-    implementation(Libs.jirf)
-    implementation(Libs.snakeyaml)
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
     implementation(graphStream("ui-swing"))
+    implementation(Libs.guava)
+    implementation(Libs.jirf)
+    implementation(Libs.snakeyaml)
+    implementation(Libs.dsiutil)
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))

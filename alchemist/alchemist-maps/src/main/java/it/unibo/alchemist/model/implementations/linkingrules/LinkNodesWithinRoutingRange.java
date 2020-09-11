@@ -34,16 +34,16 @@ public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsist
     }
 
     @Override
-    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, GeoPosition> env) {
-        if (env instanceof MapEnvironment<?>) {
-            final MapEnvironment<T> menv = (MapEnvironment<T>) env;
+    public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, GeoPosition> environment) {
+        if (environment instanceof MapEnvironment<?>) {
+            final MapEnvironment<T> menv = (MapEnvironment<T>) environment;
             final Stream<Node<T>> stream = menv.getNodesWithinRange(center, range).parallelStream();
             final List<Node<T>> filtered = stream
                     .filter(node -> menv.computeRoute(center, node).length() < range)
                     .collect(Collectors.toList());
             return Neighborhoods.make(menv, center, filtered);
         }
-        return Neighborhoods.make(env, center);
+        return Neighborhoods.make(environment, center);
     }
 
 }

@@ -12,12 +12,13 @@ fun modularizedLibrary(base: String, module: String = "", separator: String = "-
 /*
  * Shortcuts for libraries used in multiple places
  */
+fun arrowKt(module: String) = modularizedLibrary("io.arrow-kt:arrow", module)
 fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
+fun graphStream(module: String = "") = modularizedLibrary("org.danilopianini:graphstream-gs", module)
 fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
 fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
 fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
 fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)
-fun graphStream(module: String = "") = modularizedLibrary("com.github.graphstream:gs", module)
 
 object Libs {
     /**
@@ -117,6 +118,8 @@ object Libs {
      * http://commons.apache.org/proper/commons-cli/
      */
     const val commons_cli: String = "commons-cli:commons-cli:_"
+
+    const val dsiutil: String = "it.unimi.dsi:dsiutils:_"
 
     /**
      * https://github.com/DanySK/gson-extras

@@ -105,11 +105,12 @@ class GraphStreamSupport<T, P : Position<out P>>(
             }
             with(generator) {
                 addNodeLabels(false)
-                setRandomSeed(0)
+                setRandomSeed(randomGenerator.nextLong())
                 addSink(graph)
                 addSink(layout)
                 begin()
-                repeat(nodeCount) { nextEvents() }
+                // One node is inserted by GraphStream automatically
+                repeat(nodeCount - 1) { nextEvents() }
                 end()
             }
             while (layout.stabilization < 1) {

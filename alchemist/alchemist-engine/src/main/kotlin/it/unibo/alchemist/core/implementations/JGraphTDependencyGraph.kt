@@ -18,7 +18,7 @@ import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 import org.jgrapht.graph.DefaultDirectedGraph
 
-typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
+private typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 
 /**
  * This class offers an implementation of a dependency graph, namely a

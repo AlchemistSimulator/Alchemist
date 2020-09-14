@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Exports a column with the current time.
  */
-public final class Time implements Extractor {
+public final class Time implements Extractor<Object> {
 
     private static final List<String> COLNAME;
     static {
@@ -28,8 +28,8 @@ public final class Time implements Extractor {
 
     @Override
     public double[] extractData(
-            final Environment<?, ?> environment,
-            final Reaction<?> reaction,
+            final Environment<Object, ?> environment,
+            final Reaction<Object> reaction,
             final it.unibo.alchemist.model.interfaces.Time time,
             final long step
     ) {

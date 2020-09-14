@@ -19,7 +19,7 @@ import java.util.List;
  * An extractor which provides informations about the running time of the simulation.
  *
  */
-public final class ExecutionTime implements Extractor {
+public final class ExecutionTime implements Extractor<Object> {
 
     private static final double NANOS_TO_SEC = 1e9;
     private static final List<String> COLNAME;
@@ -34,8 +34,8 @@ public final class ExecutionTime implements Extractor {
 
     @Override
     public double[] extractData(
-            final Environment<?, ?> environment,
-            final Reaction<?> reaction,
+            final Environment<Object, ?> environment,
+            final Reaction<Object> reaction,
             final Time time,
             final long step
     ) {

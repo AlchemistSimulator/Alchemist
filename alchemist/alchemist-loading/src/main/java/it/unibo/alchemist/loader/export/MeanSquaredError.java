@@ -7,19 +7,17 @@
  */
 package it.unibo.alchemist.loader.export;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
-
 import com.google.common.collect.Lists;
-
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Exports the Mean Squared Error for the concentration of some molecule, given
@@ -31,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * 
  * @param <T>
  */
-public final class MeanSquaredError<T> implements Extractor {
+public final class MeanSquaredError<T> implements Extractor<T> {
 
     private final Incarnation<T, ?> incarnation;
     private final String pReference;
@@ -89,7 +87,7 @@ public final class MeanSquaredError<T> implements Extractor {
     }
 
     @Override
-    public double[] extractData(final Environment<?, ?> env, final Reaction<?> reaction, final Time time, final long step) {
+    public double[] extractData(final Environment<T, ?> env, final Reaction<T> reaction, final Time time, final long step) {
         @SuppressWarnings("unchecked")
         final Environment<T, ?> environment = (Environment<T, ?>) env;
         final double value = statistic.evaluate(

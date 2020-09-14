@@ -28,7 +28,7 @@ import java.util.stream.DoubleStream;
  * 
  * @param <T>
  */
-public final class MoleculeReader<T> implements Extractor {
+public final class MoleculeReader<T> implements Extractor<T> {
 
     private final List<UnivariateStatistic> aggregators;
     private final List<String> columns;
@@ -80,13 +80,13 @@ public final class MoleculeReader<T> implements Extractor {
 
     @Override
     public double[] extractData(
-            final Environment<?, ?> environment,
-            final Reaction<?> reaction,
+            final Environment<T, ?> environment,
+            final Reaction<T> reaction,
             final Time time,
             final long step
     ) {
         @SuppressWarnings("unchecked")
-        final DoubleStream values = ((Environment<T, ?>) environment).getNodes().stream()
+        final DoubleStream values = environment.getNodes().stream()
                 .mapToDouble(node -> incarnation.getProperty(node, mol, property));
         if (aggregators.isEmpty()) {
             return values.toArray();

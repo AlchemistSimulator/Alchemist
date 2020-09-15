@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * ensures that the distribution does not trigger events before its initial
  * scheduling time.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
 

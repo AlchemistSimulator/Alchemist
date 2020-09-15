@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * Markovian events.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public class ExponentialTime<T> extends AbstractDistribution<T> {
 

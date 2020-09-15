@@ -18,7 +18,7 @@ import org.danilopianini.lang.HashString;
 /**
  * Represents an interface for node of the Tree class.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public interface ITreeNode<T> extends Serializable {
 

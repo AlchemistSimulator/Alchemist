@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * Weibull distributed events, with different (Weibull distributed) mean.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public class WeibullDistributedWeibullTime<T> extends WeibullTime<T> {
 

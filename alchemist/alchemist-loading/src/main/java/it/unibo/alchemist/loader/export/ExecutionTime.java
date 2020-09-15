@@ -33,9 +33,9 @@ public final class ExecutionTime implements Extractor {
     private long lastStep;
 
     @Override
-    public double[] extractData(
-            final Environment<?, ?> environment,
-            final Reaction<?> reaction,
+    public <T> double[] extractData(
+            final Environment<T, ?> environment,
+            final Reaction<T> reaction,
             final Time time,
             final long step
     ) {

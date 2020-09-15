@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  *
- * @param <T>
+ * @param <T> concentration type
  */
 public final class SetLocalMoleculeConcentration<T> extends AbstractActionOnSingleMolecule<T> {
 

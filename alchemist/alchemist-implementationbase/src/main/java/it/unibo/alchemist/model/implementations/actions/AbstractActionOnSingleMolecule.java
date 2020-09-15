@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * This class offers the basic structures to provide operations with numeric
  * concentrations on a single molecule.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class AbstractActionOnSingleMolecule<T> extends AbstractAction<T> {
 

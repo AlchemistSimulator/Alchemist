@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 /**
  * 
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public class ChemicalReaction<T> extends AbstractReaction<T> {
 

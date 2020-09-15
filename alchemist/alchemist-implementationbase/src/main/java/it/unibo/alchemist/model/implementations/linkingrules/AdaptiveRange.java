@@ -168,14 +168,14 @@ public class AdaptiveRange<T, P extends Position<P>> extends ConnectWithinDistan
     }
 
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
+    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
         if (!ranges.containsKey(center.getId())) {
             ranges.put(center.getId(), getRange());
         }
         final double curRange = ranges.get(center.getId());
-        final ListSet<Node<T>> potentialNeighs = env.getNodesWithinRange(center, curRange);
-        final Neighborhood<T> neigh = Neighborhoods.make(env, center, potentialNeighs.stream()
-                .filter(neighbor -> !conditionForRemoval(env, center, neighbor, curRange, ranges.get(neighbor.getId())))
+        final ListSet<Node<T>> potentialNeighs = environment.getNodesWithinRange(center, curRange);
+        final Neighborhood<T> neigh = Neighborhoods.make(environment, center, potentialNeighs.stream()
+                .filter(neighbor -> !conditionForRemoval(environment, center, neighbor, curRange, ranges.get(neighbor.getId())))
                 .collect(Collectors.toList()));
         if (neigh.size() > n + t) {
             ranges.put(center.getId(), Math.max(curRange - defaultAdjustment, minRange));

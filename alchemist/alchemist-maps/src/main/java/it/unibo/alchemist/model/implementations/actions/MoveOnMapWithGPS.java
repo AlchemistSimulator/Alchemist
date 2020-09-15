@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * basic action that follow a {@link GPSTrace}.
- * @param <T>
+ * @param <T> concentration type
  */
 @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "SpotBugs is reporting false positives")
 public class MoveOnMapWithGPS<T> extends MoveOnMap<T> {

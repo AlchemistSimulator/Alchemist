@@ -27,13 +27,13 @@ public final class NumberOfNodes implements Extractor {
     }
 
     @Override
-    public double[] extractData(
-            final Environment<?, ?> environment,
-            final Reaction<?> reaction,
+    public <T> double[] extractData(
+            final Environment<T, ?> environment,
+            final Reaction<T> reaction,
             final it.unibo.alchemist.model.interfaces.Time time,
             final long step
     ) {
-        return new double[]{environment.getNodesNumber()};
+        return new double[]{environment.getNodeCount()};
     }
 
     @Override

@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
 

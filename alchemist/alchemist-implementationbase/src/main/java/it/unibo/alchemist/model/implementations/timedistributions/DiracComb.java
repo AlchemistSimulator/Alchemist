@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * A DiracComb is a sequence of events that happen every fixed time interval.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public class DiracComb<T> extends AbstractDistribution<T> {
 

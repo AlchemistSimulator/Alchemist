@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private static final long serialVersionUID = 8593507198560560646L;

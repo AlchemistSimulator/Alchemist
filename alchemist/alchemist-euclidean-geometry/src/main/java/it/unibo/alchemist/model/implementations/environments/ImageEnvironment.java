@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * This environment loads an image from the file system, and marks as obstacles all the pixels of a given color.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
 

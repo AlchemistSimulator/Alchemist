@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 public class Continuous2DObstacles<T>
         extends LimitedContinuos2D<T>

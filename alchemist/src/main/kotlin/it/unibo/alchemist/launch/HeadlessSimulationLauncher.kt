@@ -13,7 +13,6 @@ import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
 import java.awt.GraphicsEnvironment
-import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

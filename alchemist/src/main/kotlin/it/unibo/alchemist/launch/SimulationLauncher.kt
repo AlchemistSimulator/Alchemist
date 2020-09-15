@@ -56,8 +56,8 @@ abstract class SimulationLauncher : AbstractLauncher() {
     protected fun Map<String, Variable<*>>.cartesianProductOf(
         variables: Collection<String>
     ): List<Map<String, Serializable?>> {
-        val variableValues = variables.stream().flatMap { variableName ->
-            this[variableName]?.stream()?.map { variableName to it }
+        val variableValues = variables.map { variableName ->
+            this[variableName]?.map { variableName to it }
                 ?: throw IllegalArgumentException("$variableName does not exist in $this")
         }.toList()
         return Lists.cartesianProduct(variableValues).map { it.toMap() }.takeUnless { it.isEmpty() }

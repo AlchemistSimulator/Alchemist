@@ -34,6 +34,7 @@ class GraphStreamDisplacement<T, P>(
         environment: Environment<T, P>,
         randomGenerator: RandomGenerator,
         nodeCount: Int,
+        layoutQuality: Double = 1.0,
         createLinks: Boolean = true,
         generatorName: String,
         vararg parameters: Any
@@ -43,6 +44,7 @@ class GraphStreamDisplacement<T, P>(
             environment,
             nodeCount,
             generatorName,
+            layoutQuality = layoutQuality.coerceIn(0.0..1.0),
             uniqueId = randomGenerator.nextLong(),
             parameters = parameters
         )

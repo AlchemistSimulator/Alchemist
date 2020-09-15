@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  *
  *
  * @param <P> position type
- * @param <T>
+ * @param <T> concentration type
  */
 public interface Graphical2DOutputMonitor<T, P extends Position<? extends P>> extends GraphicalOutputMonitor<T, P> {
 

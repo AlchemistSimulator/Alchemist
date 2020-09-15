@@ -27,7 +27,7 @@ import java.util.Optional;
  * extracted from every node, its value is compared (subtracted) to the computed
  * correct value, it gets squared, and then logged.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class MeanSquaredError<T> implements Extractor {
 

@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 import it.unibo.alchemist.utils.MapUtils;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
 

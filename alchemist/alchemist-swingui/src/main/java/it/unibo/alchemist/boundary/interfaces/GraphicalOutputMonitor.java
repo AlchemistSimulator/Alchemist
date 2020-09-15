@@ -15,7 +15,7 @@ import java.util.List;
 /**
  *
  * @param <P> position type
- * @param <T>
+ * @param <T> concentration type
  */
 public interface GraphicalOutputMonitor<T, P extends Position<? extends P>> extends OutputMonitor<T, P> {
 

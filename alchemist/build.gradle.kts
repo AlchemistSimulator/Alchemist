@@ -184,6 +184,15 @@ allprojects {
         }
     }
 
+    tasks.withType<Javadoc> {
+        options {
+            quiet()
+            if (this is CoreJavadocOptions) {
+                addStringOption("Xwerror")
+            }
+        }
+    }
+
     publishing.publications {
         withType<MavenPublication> {
             pom {

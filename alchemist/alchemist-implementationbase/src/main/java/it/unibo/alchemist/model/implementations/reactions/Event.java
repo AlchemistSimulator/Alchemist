@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  * conditions, and tries to run every time the {@link TimeDistribution} wants
  * to.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class Event<T> extends AbstractReaction<T> {
 

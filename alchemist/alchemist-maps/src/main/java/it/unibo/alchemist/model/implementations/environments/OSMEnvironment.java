@@ -61,7 +61,7 @@ import java.util.concurrent.TimeUnit;
  * on online services). The data is then stored in-memory for performance
  * reasons.
  *
- * @param <T>
+ * @param <T> concentration type
  */
 public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPosition> implements MapEnvironment<T> {
 

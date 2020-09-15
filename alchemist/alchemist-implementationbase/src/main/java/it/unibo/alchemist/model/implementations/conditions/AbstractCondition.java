@@ -20,7 +20,7 @@ import java.util.Objects;
 
 /**
  *
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class AbstractCondition<T> implements Condition<T> {
 

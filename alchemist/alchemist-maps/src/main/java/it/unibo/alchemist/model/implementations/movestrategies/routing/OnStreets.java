@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
  * This strategy computes a route along streets allowed for a selected
  * {@link Vehicle} connecting the starting and ending point.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class OnStreets<T> implements RoutingStrategy<GeoPosition> {
 

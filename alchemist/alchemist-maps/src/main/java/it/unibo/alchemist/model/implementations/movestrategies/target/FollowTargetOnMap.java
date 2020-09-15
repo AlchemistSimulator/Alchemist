@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 /**
  * This strategy reads the value of a "target" molecule and tries to interpret it as a coordinate.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public class FollowTargetOnMap<T> extends FollowTarget<T, GeoPosition> {
 

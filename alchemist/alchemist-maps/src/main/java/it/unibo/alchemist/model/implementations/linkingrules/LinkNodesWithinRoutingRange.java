@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 public final class LinkNodesWithinRoutingRange<T> extends AbstractLocallyConsistentLinkingRule<T, GeoPosition> {
 

@@ -38,7 +38,7 @@ import static org.apache.commons.math3.util.FastMath.sin;
  * rule is ideal for environments with obstacles, where the user wants some
  * tolerance in connection breaking.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class ConnectionBeam<T> extends ConnectWithinDistance<T, Euclidean2DPosition> {
 

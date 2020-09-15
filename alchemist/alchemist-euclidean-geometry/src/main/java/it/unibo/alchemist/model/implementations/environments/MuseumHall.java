@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
 

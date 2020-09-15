@@ -27,7 +27,7 @@ import static org.danilopianini.lang.MathUtils.fuzzyGreaterEquals;
  * This class implements a rectangular obstacle, whose sides are parallel to the
  * cartesian axis.
  *
- * @param <V>
+ * @param <V> {@link Vector2D} type
  */
 @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
 public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Double implements Obstacle2D<V> {

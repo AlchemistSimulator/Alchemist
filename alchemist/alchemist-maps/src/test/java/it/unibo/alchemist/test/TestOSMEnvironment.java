@@ -7,7 +7,9 @@
  */
 package it.unibo.alchemist.test;
 
-import java.io.IOException;
+import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
+import org.junit.jupiter.api.Test;
+
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -15,10 +17,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.junit.jupiter.api.Test;
-
-import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 
 /**
  *
@@ -35,12 +33,8 @@ public class TestOSMEnvironment {
         final ExecutorService executor = Executors.newFixedThreadPool(100);
         final Collection<Future<Object>> futureResults = IntStream.range(0, 100)
             .<Callable<Object>>mapToObj(i -> () -> {
-                try {
-                    new OSMEnvironment<>("maps/cesena.pbf");
-                    return true;
-                } catch (IOException e) {
-                    return e;
-                }
+                new OSMEnvironment<>("maps/cesena.pbf");
+                return true;
             })
             .map(executor::submit)
             .collect(Collectors.toList());

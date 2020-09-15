@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  *
  * @param <P> position type
- * @param <T>
+ * @param <T> concentration type
  */
 public final class NodeTracker<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P>, ActionListener {
     private static final byte MARGIN = 100;

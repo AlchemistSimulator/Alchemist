@@ -8,7 +8,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 import java.io.ByteArrayOutputStream
@@ -24,7 +23,6 @@ plugins {
     id("de.aaschmid.cpd")
     id("io.gitlab.arturbosch.detekt")
     id("org.jlleitschuh.gradle.ktlint")
-    `project-report`
     `build-dashboard`
     id("org.jetbrains.dokka")
     id("com.eden.orchidPlugin")
@@ -73,6 +71,8 @@ allprojects {
             content {
                 onlyForConfigurations(
                     "detekt",
+                    "dokkaJavadocPlugin",
+                    "dokkaJavadocRuntime",
                     "dokkaRuntime",
                     "orchidCompileClasspath",
                     "orchidRuntimeClasspath"
@@ -184,18 +184,14 @@ allprojects {
         }
     }
 
-    // DOCUMENTATION
-
-    tasks.withType<DokkaTask> {
-        outputDirectory = "$buildDir/docs/javadoc"
-        impliedPlatforms = mutableListOf("JVM")
-        // Work around https://github.com/Kotlin/dokka/issues/294
-        if (!JavaVersion.current().isJava10Compatible) {
-            outputFormat = "javadoc"
+    tasks.withType<Javadoc> {
+        options {
+            quiet()
+            if (this is CoreJavadocOptions) {
+                addStringOption("Xwerror")
+            }
         }
     }
-
-    tasks.getByName("javadocJar").dependsOn(tasks.withType<DokkaTask>())
 
     publishing.publications {
         withType<MavenPublication> {
@@ -333,8 +329,19 @@ dependencies {
 
 // WEBSITE
 
-tasks.withType<DokkaTask> {
-    subProjects = subprojects.map { it.name }.toList()
+tasks.dokkaJavadoc {
+    dokkaSourceSets {
+        val config = project("alchemist-full").configurations.runtimeClasspath
+        tasks.dokkaJavadoc.get().dokkaSourceSets {
+            create("global") {
+                subprojects.asSequence()
+                    .flatMap { it.sourceSets.asSequence() }
+                    .flatMap { it.allSource.asSequence() }
+                    .map { it.path }
+                    .forEach { sourceRoot(it) }
+            }
+        }
+    }
 }
 
 val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }

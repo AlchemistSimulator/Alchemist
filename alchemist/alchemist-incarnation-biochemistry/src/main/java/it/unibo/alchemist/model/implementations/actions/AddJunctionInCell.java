@@ -17,10 +17,10 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
- * Represent the action of add a junction between the current node and a neighbor. <br/>
+ * Represent the action of add a junction between the current node and a neighbor.
  * This action only create the junction reference inside this node, the neighbor totally ignore 
- * that a junction has been created. <br/>
- * This is a part of the junction creation process. <br/>
+ * that a junction has been created.
+ * This is a part of the junction creation process.
  * See {@link AddJunctionInNeighbor} for the other part of the process
  */
 public final class AddJunctionInCell extends AbstractNeighborAction<Double> { // TODO try with local

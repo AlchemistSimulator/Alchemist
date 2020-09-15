@@ -23,7 +23,7 @@ import java.util.Objects;
  * found in the surroundings. It is an attempt at modeling crowding slow-downs.
  *
  * @param <P> position type
- * @param <T>
+ * @param <T> concentration type
  */
 public final class InteractWithOthers<T, P extends Position<? extends P>> implements SpeedSelectionStrategy<P> {
 

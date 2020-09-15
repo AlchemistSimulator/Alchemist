@@ -17,7 +17,7 @@ import org.danilopianini.util.ListSet;
  * Interface for a neighborhood. When implementing it in a real class, please
  * remember to correctly implement also the equals method inherited from Object.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public interface Neighborhood<T> extends Serializable, Cloneable, Iterable<Node<T>> {
 

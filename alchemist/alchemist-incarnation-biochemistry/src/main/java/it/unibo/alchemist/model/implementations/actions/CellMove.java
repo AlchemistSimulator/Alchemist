@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * 
- * @param <P>
+ * @param <P> {@link Position} type
  */
 public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Double, P> {
 

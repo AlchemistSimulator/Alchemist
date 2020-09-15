@@ -16,8 +16,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * Fake movement class, used only to trigger the neighborhood update.
  * 
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public final class FakeMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 

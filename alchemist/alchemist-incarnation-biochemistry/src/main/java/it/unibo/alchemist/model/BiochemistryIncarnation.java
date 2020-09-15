@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
- * @param <P>
+ * @param <P> position type, must be a {@link Vector}
  */
 public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> implements Incarnation<Double, P> {
 

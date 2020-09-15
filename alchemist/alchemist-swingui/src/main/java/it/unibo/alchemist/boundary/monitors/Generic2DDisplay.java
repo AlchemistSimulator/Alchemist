@@ -78,8 +78,8 @@ import java.util.stream.Collectors;
  * Abstract base-class for each display able a graphically represent a 2D space
  * and simulation.
  * 
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position2D} type
  */
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel implements Graphical2DOutputMonitor<T, P> {

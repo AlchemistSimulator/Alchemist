@@ -22,7 +22,7 @@ import java.util.Objects;
  * This strategy dynamically tries to move the node adjusting its speed to
  * synchronize the reaction rate and the traces data.
  *
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS implements SpeedSelectionStrategy<GeoPosition> {
 

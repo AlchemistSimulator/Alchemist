@@ -408,7 +408,7 @@ public final class YamlLoader implements Loader {
                                             .stream()
                                             .map(Object::toString)
                                             .collect(Collectors.toList());
-                                    return new MoleculeReader<>(
+                                    return new MoleculeReader(
                                             m.get(MOLECULE).toString(),
                                             m.getOrDefault(PROPERTY, "").toString(),
                                             incarnation,

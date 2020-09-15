@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Logs the number of nodes in the scenario.
  */
-public final class NumberOfNodes implements Extractor<Object> {
+public final class NumberOfNodes implements Extractor {
 
     private static final List<String> COLNAME;
     static {
@@ -27,9 +27,9 @@ public final class NumberOfNodes implements Extractor<Object> {
     }
 
     @Override
-    public double[] extractData(
-            final Environment<Object, ?> environment,
-            final Reaction<Object> reaction,
+    public <T> double[] extractData(
+            final Environment<T, ?> environment,
+            final Reaction<T> reaction,
             final it.unibo.alchemist.model.interfaces.Time time,
             final long step
     ) {

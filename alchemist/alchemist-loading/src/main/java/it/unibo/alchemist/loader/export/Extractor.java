@@ -19,9 +19,8 @@ import java.util.List;
  * {@link it.unibo.alchemist.core.interfaces.Simulation} {@link Time}, the last
  * {@link Reaction} executed and the current simulation step.
  *
- * @param <T> concentration type
  */
-public interface Extractor<T> {
+public interface Extractor {
 
     /**
      * Extracts numeric properties from an environment.
@@ -34,9 +33,10 @@ public interface Extractor<T> {
      *            the current {@link Time}
      * @param step
      *            the simulation step
+     * @param <T> concentration type
      * @return the extracted properties
      */
-    double[] extractData(Environment<T, ?> environment, Reaction<T> reaction, Time time, long step);
+    <T> double[] extractData(Environment<T, ?> environment, Reaction<T> reaction, Time time, long step);
 
     /**
      * @return the name of the properties that this {@link Extractor} can

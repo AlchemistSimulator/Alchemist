@@ -119,7 +119,7 @@ public final class Exporter<T, P extends Position<? extends P>> implements Outpu
         out.print(' ');
     }
 
-    private void writeRow(final Environment<?, ?> env, final Reaction<?> r, final Time time, final long step) {
+    private void writeRow(final Environment<T, ?> env, final Reaction<T> r, final Time time, final long step) {
         extractors.parallelStream()
             .flatMapToDouble(e -> Arrays.stream(e.extractData(env, r, time, step)))
             .forEachOrdered(this::printDatum);

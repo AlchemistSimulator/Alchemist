@@ -29,9 +29,8 @@ import java.util.Optional;
  * 
  * @param <T>
  */
-public final class MeanSquaredError<T> implements Extractor<T> {
+public final class MeanSquaredError<T> implements Extractor {
 
-    private final Incarnation<T, ?> incarnation;
     private final String pReference;
     private final Molecule mReference;
     private final String pActual;
@@ -61,11 +60,10 @@ public final class MeanSquaredError<T> implements Extractor<T> {
             final String localValueMolecule,
             final String localValueProperty) {
         final Optional<UnivariateStatistic> statOpt = StatUtil.makeUnivariateStatistic(statistics);
-        if (!statOpt.isPresent()) {
+        if (statOpt.isEmpty()) {
             throw new IllegalArgumentException("Could not create univariate statistic " + statistics);
         }
         statistic = statOpt.get();
-        this.incarnation = incarnation;
         this.mReference = incarnation.createMolecule(localCorrectValueMolecule);
         this.pReference = localCorrectValueProperty == null ? "" : localCorrectValueProperty;
         this.pActual = localValueProperty == null ? "" : localValueProperty;
@@ -87,9 +85,13 @@ public final class MeanSquaredError<T> implements Extractor<T> {
     }
 
     @Override
-    public double[] extractData(final Environment<T, ?> env, final Reaction<T> reaction, final Time time, final long step) {
-        @SuppressWarnings("unchecked")
-        final Environment<T, ?> environment = (Environment<T, ?>) env;
+    public <T> double[] extractData(
+            final Environment<T, ?> environment,
+            final Reaction<T> reaction,
+            final Time time,
+            final long step
+    ) {
+        final Incarnation<T, ?> incarnation = environment.getIncarnation().orElseThrow(IllegalStateException::new);
         final double value = statistic.evaluate(
                 environment.getNodes().parallelStream()
                     .mapToDouble(n -> incarnation.getProperty(n, mReference, pReference))

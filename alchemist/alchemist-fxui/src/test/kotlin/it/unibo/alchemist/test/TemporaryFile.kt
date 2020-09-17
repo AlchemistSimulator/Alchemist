@@ -11,6 +11,9 @@ package it.unibo.alchemist.test
 
 import java.io.File
 
+/**
+ * Used to create a pseudo-randomly named temporary file for testing purposes.
+ */
 object TemporaryFile {
 
     /**

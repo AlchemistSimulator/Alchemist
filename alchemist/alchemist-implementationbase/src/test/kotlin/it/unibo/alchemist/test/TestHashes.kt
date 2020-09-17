@@ -16,8 +16,14 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 
+/**
+ * Contains tests pertaining the [it.unibo.alchemist] package's Hashes.kt.
+ */
 class TestHashes {
 
+    /**
+     * Tests the [murmur3Hash32] function.
+     */
     @Test
     fun testMurmur3_32(): Unit = testAlgorithm({ e -> murmur3Hash32(e) }, Hashing.murmur3_32())
 

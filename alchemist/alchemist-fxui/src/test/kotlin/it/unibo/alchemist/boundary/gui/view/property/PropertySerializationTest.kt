@@ -100,17 +100,26 @@ abstract class PropertySerializationTest {
 
     protected abstract val tester: PropertySerializationTester<*, *>
 
+    /**
+     * Runs [tester]'s Java serialization test.
+     */
     @Test
     fun testJavaSerialization() {
         tester.testJavaSerialization()
     }
 
+    /**
+     * Runs [tester]'s Json serialization test.
+     */
     @Test
     fun testJsonSerialization() {
         tester.testGsonSerialization()
     }
 }
 
+/**
+ * The [PropertySerializationTest] for [RangedDoubleProperty].
+ */
 class RangedDoublePropertySerializationTest : PropertySerializationTest() {
 
     companion object {
@@ -133,6 +142,9 @@ class RangedDoublePropertySerializationTest : PropertySerializationTest() {
     )
 }
 
+/**
+ * The [PropertySerializationTest] for [RangedIntegerProperty].
+ */
 class RangedIntegerPropertySerializationTest : PropertySerializationTest() {
     companion object {
         private const val INTEGER_PROPERTY = "Test integer property name"
@@ -148,6 +160,9 @@ class RangedIntegerPropertySerializationTest : PropertySerializationTest() {
     )
 }
 
+/**
+ * The [PropertySerializationTest] for [SerializableBooleanProperty].
+ */
 class SerializableBooleanPropertySerializationTest : PropertySerializationTest() {
     companion object {
         private const val BOOLEAN_PROPERTY = "Test boolean property name"
@@ -161,6 +176,9 @@ class SerializableBooleanPropertySerializationTest : PropertySerializationTest()
     )
 }
 
+/**
+ * The [PropertySerializationTest] for [SerializableEnumProperty].
+ */
 class SerializableEnumPropertySerializationTest : PropertySerializationTest() {
     companion object {
         private const val ENUM_PROPERTY = "Test enum property name"
@@ -179,6 +197,9 @@ class SerializableEnumPropertySerializationTest : PropertySerializationTest() {
     )
 }
 
+/**
+ * The [PropertySerializationTest] for [SerializableStringProperty].
+ */
 class SerializableStringPropertySerializationTest : PropertySerializationTest() {
     companion object {
         private const val STRING_PROPERTY = "Test string property name"

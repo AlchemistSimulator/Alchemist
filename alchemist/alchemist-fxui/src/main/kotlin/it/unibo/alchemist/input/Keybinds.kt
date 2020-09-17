@@ -22,18 +22,20 @@ import org.kaikikm.threadresloader.ResourceLoader
 /**
  * Actions which can be bound to a key on the keyboard.
  */
-enum class ActionFromKey {
-    MODIFIER_CONTROL,
-    MODIFIER_SHIFT,
-    PAN_NORTH,
-    PAN_SOUTH,
-    PAN_EAST,
-    PAN_WEST,
-    DELETE,
-    MOVE,
-    EDIT,
-    PLAY_AND_PAUSE,
-    ONE_STEP,
+enum class ActionFromKey(private val description: String) {
+    MODIFIER_CONTROL("Control modifier"),
+    MODIFIER_SHIFT("Shift modifier"),
+    PAN_NORTH("Pan north"),
+    PAN_SOUTH("Pan south"),
+    PAN_EAST("Pan east"),
+    PAN_WEST("Pan west"),
+    DELETE("Delete"),
+    MOVE("Move"),
+    EDIT("Edit"),
+    PLAY_AND_PAUSE("Play and Pause"),
+    ONE_STEP("Forward one step");
+
+    override fun toString() = description
 }
 
 /**

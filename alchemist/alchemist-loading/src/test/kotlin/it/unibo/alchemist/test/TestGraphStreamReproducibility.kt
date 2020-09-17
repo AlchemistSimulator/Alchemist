@@ -18,6 +18,9 @@ import org.apache.commons.math3.random.MersenneTwister
 
 typealias EnvironmentDisplacement = List<Pair<List<Double>, List<Int>>>
 
+/**
+ * A test creating graphstream displacements and verifying that they work reproducibly
+ */
 class TestGraphStreamReproducibility : FreeSpec({
     "GraphStream displacement" - {
         mapOf(

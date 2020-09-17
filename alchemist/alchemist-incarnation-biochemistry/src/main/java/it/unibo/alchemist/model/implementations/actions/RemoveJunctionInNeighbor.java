@@ -8,22 +8,21 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.Map;
-
-import org.apache.commons.math3.random.RandomGenerator;
-
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.CellNode;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.random.RandomGenerator;
+
+import java.util.Map;
 
 /**
- * Represent the action of removing a junction between a neighbor and the current node. <br/>
+ * Represent the action of removing a junction between a neighbor and the current node.
  * This action only remove the junction reference inside the neighbor node, the current one totally ignore 
- * that a junction has been removed. <br/>
- * This is a part of the junction removal process. <br/>
+ * that a junction has been removed.
+ * This is a part of the junction removal process.
  * See {@link RemoveJunctionInCell} for the other part of the process.
  */
 public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Double> {

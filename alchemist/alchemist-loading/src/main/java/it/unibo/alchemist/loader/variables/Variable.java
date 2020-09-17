@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  * A variable simulation value, that provides a range of values for batches, and
  * a default value for single-shot runs.
  *
- * @param <V>
+ * @param <V> value typ of the variable
  */
 public interface Variable<V extends Serializable> extends Serializable, Iterable<V> {
 

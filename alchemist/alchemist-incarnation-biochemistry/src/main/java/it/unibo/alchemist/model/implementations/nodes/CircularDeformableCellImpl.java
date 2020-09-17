@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector;
 /**
  * Implementation of a circular deformable cell.
  *
- * @param <P>
+ * @param <P>  {@link Position} type
  */
 public final class CircularDeformableCellImpl<P extends Position<P> & Vector<P>>
         extends CellNodeImpl<P> implements CircularDeformableCell<P> {

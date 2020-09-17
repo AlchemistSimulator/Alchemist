@@ -26,9 +26,9 @@ import java.awt.geom.Dimension2D;
  * - "View" is a 'window' that let us see the environment.<br>
  * - "Environment-space" is the algebraic space on which 'lies' the environment.<br>
  * - "View-space" is the algebraic space on which 'lies' the view.<br>
- * - "Env" before a point's name => it refers to a point into the
+ * - "Env" before a point's name =&gt; it refers to a point into the
  * environment-space.<br>
- * - "View" before a point's name => it refers to a point into the view-space.<br>
+ * - "View" before a point's name =&gt; it refers to a point into the view-space.<br>
  * - "Position" is the point of the view-space every transformation applied to
  * the environment refers to: e.g. if I want to move the environment, I have to
  * change the position; it is also the point the environment rotates around.<br>

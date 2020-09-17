@@ -28,7 +28,7 @@ class Neighborhoods private constructor() {
         @JvmStatic @JvmOverloads fun <T, P : Position<P>> make(
             env: Environment<T, P>,
             center: Node<T>,
-            neighbors: Iterable<Node<T>> = mutableListOf()
+            neighbors: Iterable<Node<T>> = emptyList()
         ) = SimpleNeighborhood(env, center, neighbors)
     }
 }

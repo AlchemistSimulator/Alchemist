@@ -69,7 +69,7 @@ import java.util.Objects;
 /**
  * This class implements a builder for chemical reactions.
  *
- * @param <P>
+ * @param <P> {@link Position} type
  */
 public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 

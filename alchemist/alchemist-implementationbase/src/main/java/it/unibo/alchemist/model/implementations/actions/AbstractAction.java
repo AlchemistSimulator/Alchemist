@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 /**
  * An abstract class facility with some generic methods implemented.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class AbstractAction<T> implements Action<T> {
 

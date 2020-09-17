@@ -10,18 +10,17 @@
  */
 package it.unibo.alchemist.loader.displacements;
 
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
+import org.apache.commons.math3.random.RandomGenerator;
+
 import static org.apache.commons.math3.util.FastMath.PI;
 import static org.apache.commons.math3.util.FastMath.cos;
 import static org.apache.commons.math3.util.FastMath.sin;
 import static org.apache.commons.math3.util.FastMath.sqrt;
 
-import org.apache.commons.math3.random.RandomGenerator;
-
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
-
 /**
- * @param <P>
+ * @param <P> {@link Position} type
  */
 public final class Circle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
 

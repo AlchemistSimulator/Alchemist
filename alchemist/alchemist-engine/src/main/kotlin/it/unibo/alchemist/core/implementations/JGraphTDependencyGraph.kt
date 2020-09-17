@@ -18,7 +18,7 @@ import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 import org.jgrapht.graph.DefaultDirectedGraph
 
-typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
+private typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
 
 /**
  * This class offers an implementation of a dependency graph, namely a
@@ -27,7 +27,7 @@ typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
  * reaction. This class relies heavily on the ReactionHandler
  * interface.
  *
- * @param <T>
+ * @param <T> concentration type
  */
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Reaction<T>>()

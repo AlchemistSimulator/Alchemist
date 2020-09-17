@@ -231,7 +231,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
-    public final int getNodesNumber() {
+    public final int getNodeCount() {
         return nodes.size();
     }
 
@@ -520,7 +520,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
             }
         } else {
             final Queue<Operation> operations = recursiveOperation(node);
-            final TIntSet processed = new TIntHashSet(getNodesNumber());
+            final TIntSet processed = new TIntHashSet(getNodeCount());
             processed.add(node.getId());
             while (!operations.isEmpty()) {
                 final Operation next = operations.poll();

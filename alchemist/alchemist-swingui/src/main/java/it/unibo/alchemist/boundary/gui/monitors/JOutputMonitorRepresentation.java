@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 @Deprecated
 public final class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelectable {

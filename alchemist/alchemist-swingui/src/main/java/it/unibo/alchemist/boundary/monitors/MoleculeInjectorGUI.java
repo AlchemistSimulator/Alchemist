@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * This class raises a new JPanel which allows to graphically inject a new molecule
  * inside a node (or a group of nodes) or to modify the value of a certain molecule.
  *
- * @param <T>
+ * @param <T> concentration type
  */
 @Deprecated
 @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "This class is not meant to get serialized")

@@ -37,7 +37,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     private final RandomGenerator randomEngine;
 
     /**
-     * Builds a new action in a neighborhood. es: +<id,X,n> This class extend
+     * Builds a new action in a neighborhood. es: +&lt;id,X,n&gt; This class extend
      * LsaAbstractAction.
      * 
      * 

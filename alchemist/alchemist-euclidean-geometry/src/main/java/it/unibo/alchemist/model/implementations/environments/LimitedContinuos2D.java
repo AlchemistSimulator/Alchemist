@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * Those limitations will prevent nodes to move in positions which are not
  * allowed.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
 

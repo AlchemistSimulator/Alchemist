@@ -45,6 +45,10 @@ configurations.all {
     }
 }
 
+tasks.javadoc {
+    isFailOnError = true
+}
+
 publishing.publications {
     withType<MavenPublication> {
         pom {

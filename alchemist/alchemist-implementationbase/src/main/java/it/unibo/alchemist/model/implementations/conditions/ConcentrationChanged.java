@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * A condition that holds true only if the tracked {@link Molecule} changed its
  * {@link it.unibo.alchemist.model.interfaces.Concentration}.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class ConcentrationChanged<T> extends AbstractCondition<T> {
 

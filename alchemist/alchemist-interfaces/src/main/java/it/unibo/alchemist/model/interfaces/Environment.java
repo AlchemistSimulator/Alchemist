@@ -130,7 +130,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     /**
      * @return the number of nodes currently in the environment
      */
-    int getNodesNumber();
+    int getNodeCount();
 
     /**
      * Given a node (center) this method returns a list of all the surroundings

@@ -21,13 +21,13 @@ import org.danilopianini.util.ListSet
  */
 class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
     override fun isLocallyConsistent() = true
-    override fun computeNeighborhood(center: Node<T>, env: Environment<T, P>) = object : Neighborhood<T> {
+    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>) = object : Neighborhood<T> {
 
         override fun contains(n: Node<T>?) = n != center
 
         override fun getCenter() = center
 
-        override fun isEmpty() = env.nodesNumber <= 1
+        override fun isEmpty() = environment.nodeCount <= 1
 
         override fun getNeighbors() = object : ListSet<Node<T>> {
             override fun get(index: Int) = TODO()
@@ -43,14 +43,14 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
             override fun add(element: Node<T>?) = TODO()
             override fun addAll(elements: Collection<Node<T>>) = TODO()
             override fun clear() = TODO()
-            override fun iterator() = Iterators.filter(env.nodes.iterator()) { it != center }
+            override fun iterator() = Iterators.filter(environment.nodes.iterator()) { it != center }
             override fun remove(element: Node<T>?) = TODO()
             override fun removeAll(elements: Collection<Node<T>>) = TODO()
             override fun retainAll(elements: Collection<Node<T>>) = TODO()
-            override val size = env.nodesNumber - 1
-            override fun contains(element: Node<T>?) = element != center && env.contains(element)
+            override val size = environment.nodeCount - 1
+            override fun contains(element: Node<T>?) = element != center && environment.contains(element)
             override fun containsAll(elements: Collection<Node<T>>) = elements.all { contains(it) }
-            override fun isEmpty() = env.nodesNumber == 1
+            override fun isEmpty() = environment.nodeCount == 1
         }
 
         override fun remove(node: Node<T>?) = this
@@ -61,6 +61,6 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
 
         override fun getNeighborByNumber(num: Int) = TODO()
 
-        override fun size() = env.nodesNumber - 1
+        override fun size() = environment.nodeCount - 1
     }
 }

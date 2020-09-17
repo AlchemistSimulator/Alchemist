@@ -81,8 +81,8 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
  * Base-class for each display able a graphically represent a 2D space
  * and simulation.
  * 
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position2D} type
  */
 @Deprecated
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")

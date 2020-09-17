@@ -15,8 +15,8 @@ import java.util.List;
 /**
  * {@code OutputMonitor} that handles the graphical part of the simulation.
  *
- * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
- * @param <P> thr position type
+ * @param <P> position type
+ * @param <T> concentration type
  */
 @Deprecated
 public interface GraphicalOutputMonitor<T, P extends Position<? extends P>> extends OutputMonitor<T, P> {

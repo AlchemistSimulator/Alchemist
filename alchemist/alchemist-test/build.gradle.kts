@@ -8,10 +8,10 @@
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-engine"))
-    implementation(project(":alchemist-loading"))
+    api(alchemist("interfaces"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("engine"))
+    implementation(alchemist("loading"))
 }
 
 publishing.publications {

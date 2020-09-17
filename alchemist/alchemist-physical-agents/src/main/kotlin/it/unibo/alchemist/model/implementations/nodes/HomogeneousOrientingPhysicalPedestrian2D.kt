@@ -14,8 +14,8 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
+import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
@@ -38,6 +38,6 @@ class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOver
     override val cognitiveMap: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, Ellipse, DefaultEdge> =
         orientation.cognitiveMap
 
-    override val volatileMemory: MutableMap<in Euclidean2DConvexShape, Int> =
+    override val volatileMemory: MutableMap<ConvexGeometricShape<Euclidean2DPosition, Euclidean2DTransformation>, Int> =
         orientation.volatileMemory
 }

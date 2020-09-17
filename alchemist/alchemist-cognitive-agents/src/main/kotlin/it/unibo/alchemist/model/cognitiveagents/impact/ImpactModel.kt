@@ -37,21 +37,26 @@ class ImpactModel(owner: CognitiveAgent, compliance: Double, environmentalFactor
         Fear::class to Fear(
             { characteristicLevel<DesireWalkRandomly>() },
             { characteristicLevel<DesireEvacuate>() },
-            { owner.influencialPeople() }),
+            { owner.influencialPeople() }
+        ),
         DesireEvacuate::class to DesireEvacuate(
             compliance,
             { characteristicLevel<BeliefDanger>() },
-            { characteristicLevel<Fear>() }),
+            { characteristicLevel<Fear>() }
+        ),
         DesireWalkRandomly::class to DesireWalkRandomly(
             compliance,
             { characteristicLevel<BeliefDanger>() },
-            { characteristicLevel<Fear>() }),
+            { characteristicLevel<Fear>() }
+        ),
         IntentionEvacuate::class to IntentionEvacuate(
             { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() }),
+            { characteristicLevel<DesireEvacuate>() }
+        ),
         IntentionWalkRandomly::class to IntentionWalkRandomly(
             { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() })
+            { characteristicLevel<DesireEvacuate>() }
+        )
     )
 
     override fun dangerBelief() = characteristicLevel<BeliefDanger>()

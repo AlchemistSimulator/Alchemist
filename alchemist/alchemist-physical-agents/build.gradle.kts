@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-cognitive-agents"))
     // implementation(Libs.konf)
-    implementation(Libs.jgrapht_core)
+    implementation(jgrapht("core"))
     testImplementation(project(":alchemist-test"))
     testImplementation(project(":alchemist-incarnation-protelis"))
 }

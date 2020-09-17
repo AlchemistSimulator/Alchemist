@@ -51,7 +51,8 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     randomGenerator,
     environment,
     group
-), Pedestrian2D<T> {
+),
+    Pedestrian2D<T> {
 
     override val shape by lazy { super.shape }
     final override val fieldOfView by lazy { super.fieldOfView }

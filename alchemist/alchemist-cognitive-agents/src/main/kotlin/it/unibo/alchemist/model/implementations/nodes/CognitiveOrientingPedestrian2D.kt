@@ -41,7 +41,8 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
     randomGenerator,
     knowledgeDegree = knowledgeDegree,
     group = group
-), CognitiveAgent by consciousness {
+),
+    CognitiveAgent by consciousness {
 
     override fun speed() = consciousness.speed()
 

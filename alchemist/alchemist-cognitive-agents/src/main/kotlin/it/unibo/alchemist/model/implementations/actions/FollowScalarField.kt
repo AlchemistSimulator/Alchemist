@@ -73,7 +73,7 @@ class FollowScalarField<T, P, A>(
         if (env is PhysicsEnvironment<T, P, *, *>) map { env.farthestPositionReachable(pedestrian, it) } else this
 
     private fun Sequence<P>.maxOr(position: P): P =
-        maxBy { valueIn(it) }
-        ?.takeIf { valueIn(it) > valueIn(position) }
-        ?: position
+        maxByOrNull { valueIn(it) }
+            ?.takeIf { valueIn(it) > valueIn(position) }
+            ?: position
 }

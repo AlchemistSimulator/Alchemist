@@ -14,9 +14,8 @@ dependencies {
     implementation(konf())
     implementation(jgrapht("core"))
 
-    testImplementation(alchemist("engine"))
-    testImplementation(alchemist("loading"))
     testImplementation(incarnation("protelis"))
+    testImplementation(alchemist("test"))
 }
 
 publishing.publications {

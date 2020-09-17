@@ -53,7 +53,7 @@ public final class HorizontalFlowLayout extends AFlowLayout {
      * Constructs an instance of VerticalLayout with a vertical vgap of 5
      * pixels, horizontal centering and anchored to the top of the display area.
      * 
-     * @param ordered 
+     * @param ordered true if should be ordered
      */
     //CHECKSTYLE:OFF
     public HorizontalFlowLayout(final boolean ordered) {

@@ -47,7 +47,9 @@ data class JSR223Variable<R>(val language: String, val formula: String) : Depend
      */
     @Suppress("UNCHECKED_CAST")
     override fun getWith(variables: Map<String, Any>): R = try {
-        engine.eval(formula, variables.asBindings()) as R
+        synchronized(engine) {
+            engine.eval(formula, variables.asBindings()) as R
+        }
     } catch (e: ScriptException) {
         throw IllegalStateException("Unable to evaluate $formula with bindings: $variables", e)
     }

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * A variable stub, with a default {@link #toString()} method.
  *
- * @param <V>
+ * @param <V> value type of the variable
  */
 public abstract class PrintableVariable<V extends Serializable> implements Variable<V> {
 

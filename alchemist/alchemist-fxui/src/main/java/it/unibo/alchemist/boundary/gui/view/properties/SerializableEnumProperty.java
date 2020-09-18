@@ -166,7 +166,7 @@ public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyB
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public int hashCode() {
@@ -174,7 +174,7 @@ public class SerializableEnumProperty<T extends Enum<T>> extends ObjectPropertyB
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object obj) {

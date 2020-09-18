@@ -51,7 +51,7 @@ public class EffectGroupAdapter<P extends Position2D<? extends P>>
     }.getType();
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public EffectGroup<P> deserialize(
@@ -70,7 +70,7 @@ public class EffectGroupAdapter<P extends Position2D<? extends P>>
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public JsonElement serialize(

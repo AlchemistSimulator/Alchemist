@@ -36,7 +36,7 @@ public class FXTimeMonitor<T, P extends Position<? extends P>> extends NumericLa
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public void finished(final Environment<T, P> environment, final Time time, final long step) {
@@ -44,7 +44,7 @@ public class FXTimeMonitor<T, P extends Position<? extends P>> extends NumericLa
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public void stepDone(

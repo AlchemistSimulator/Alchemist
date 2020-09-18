@@ -65,7 +65,7 @@ public interface EffectGroup<P extends Position2D<? extends P>> extends Serializ
     /**
      * Compares the {@link EffectGroup EffectGroup}s. The result is true if and
      * only if the argument is not {@code null} and every {@link EffectFX}
-     * contained is not {@code null} and {@link EffectFX#equals(Object) equal} to
+     * contained is not {@code null} and {@link Object#equals(Object) equal} to
      * the corresponding in the comparing {@code EffectGroup} (order is
      * important!) and the group has the same name, visibility and transparency.
      *

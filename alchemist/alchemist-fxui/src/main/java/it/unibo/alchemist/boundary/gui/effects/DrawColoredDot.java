@@ -310,7 +310,7 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public int hashCode() {
@@ -326,7 +326,7 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object obj) {

@@ -191,7 +191,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
-     * This method configures the environment to start drag'n'drop. <br/>
+     * This method configures the environment to start drag'n'drop.
      * This should not be overridden unless you want to change Drag'n'Drop
      * behavior and you now what you are doing.
      *
@@ -244,7 +244,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     }
 
     /**
-     * This method ends the drag'n'drop action. <br/>
+     * This method ends the drag'n'drop action.
      * This should not be overridden unless you want to change Drag'n'Drop
      * behavior and you now what you are doing.
      *
@@ -342,7 +342,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     protected abstract DataFormat getDataFormat();
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     protected void updateItem(final T item, final boolean empty) {

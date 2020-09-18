@@ -173,7 +173,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * @inheritDocs
+     * {@inheritDoc}
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {

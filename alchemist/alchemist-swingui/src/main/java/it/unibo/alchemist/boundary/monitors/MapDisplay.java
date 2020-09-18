@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Graphical 2D display of an environments that uses a map.
  *
- * @param <T> the {@link Concentration} type
+ * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
  */
 @Deprecated
 public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {

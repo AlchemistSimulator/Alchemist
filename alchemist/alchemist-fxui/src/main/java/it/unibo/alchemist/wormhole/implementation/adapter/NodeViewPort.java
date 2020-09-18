@@ -49,7 +49,7 @@ public class NodeViewPort implements ViewPort {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public double getWidth() {
@@ -57,7 +57,7 @@ public class NodeViewPort implements ViewPort {
     }
 
     /**
-     * @inheritdoc
+     * {{@inheritDoc}}
      */
     @Override
     public double getHeight() {
@@ -65,7 +65,7 @@ public class NodeViewPort implements ViewPort {
     }
 
     /**
-     * @inheritdoc
+     * {{@inheritDoc}}
      */
     @Override
     public boolean equals(final Object o) {
@@ -81,7 +81,7 @@ public class NodeViewPort implements ViewPort {
     }
 
     /**
-     * @inheritdoc
+     * {{@inheritDoc}}
      */
     @Override
     public int hashCode() {

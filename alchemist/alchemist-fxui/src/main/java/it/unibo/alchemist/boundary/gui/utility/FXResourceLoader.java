@@ -56,7 +56,7 @@ public final class FXResourceLoader {
     }
 
     /**
-     * Loads a layout FXML file returning the base pane defined by the layout. <br/>
+     * Loads a layout FXML file returning the base pane defined by the layout.
      * It doesn't set any controller.
      *
      * @param <T>          the generic type of pane

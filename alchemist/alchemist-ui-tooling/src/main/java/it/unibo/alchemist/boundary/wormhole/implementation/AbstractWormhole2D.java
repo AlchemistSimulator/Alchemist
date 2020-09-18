@@ -25,10 +25,10 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
 
 /**
  * Partial, abstract, implementation for the interface {@link Wormhole2D}.
- * <br/>
+ *
  * This implementation considers the particular case of the view as an entity into the
  * sceern-space: the y-axis grows on the bottom side of the screen.
- * <br/>
+ *
  * This abstract class is independent from the 2D graphical component wrapped.
  *
  * @param <P> the position type
@@ -46,7 +46,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
 
     /**
      * Wormhole constructor for any {@link ViewPort}.
-     * <br/>
+     *
      * Initializes a new instance directly setting the size of both view and
      * environment, and the offset too.
      *
@@ -66,7 +66,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public P getEnvPoint(final Point viewPoint) {
@@ -74,7 +74,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Mode getMode() {
@@ -95,7 +95,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Point getViewPoint(final P envPoint) {
@@ -117,7 +117,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Point getViewPosition() {
@@ -125,7 +125,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setViewPosition(final Point viewPoint) {
@@ -133,7 +133,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Dimension2D getViewSize() {
@@ -141,7 +141,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public double getZoom() {
@@ -149,7 +149,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setZoom(final double zoom) {
@@ -160,7 +160,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public boolean isInsideView(final Point viewPoint) {
@@ -171,7 +171,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void rotateAroundPoint(final Point p, final double a) {
@@ -202,7 +202,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setEnvPosition(final P envPoint) {
@@ -210,7 +210,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void optimalZoom() {
@@ -222,7 +222,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void zoomOnPoint(final Point point, final double zoomRate) {
@@ -233,7 +233,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void center() {
@@ -388,7 +388,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
 
     /**
      * Gets the viewWidth / envWidth ratio.
-     * <br/>
+     *
      * NI = Not Isometric.
      *
      * @return a {@code double} value representing the horizontal ratio for
@@ -406,7 +406,7 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
 
     /**
      * Gets the viewHeight / envHeight ratio.
-     * <br/>
+     *
      * NI = Not Isometric.
      *
      * @return a <code>double</code> value representing the vertical ratio for

@@ -192,7 +192,7 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public DataFormat getDataFormat() {

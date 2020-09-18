@@ -107,7 +107,7 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public void finished(final Environment<T, P> environment, final Time time, final long step) {
@@ -115,7 +115,7 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public void initialized(final Environment<T, P> environment) {
@@ -123,7 +123,7 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     @Override
     public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {

@@ -18,6 +18,9 @@ import org.apache.commons.math3.random.MersenneTwister
 
 typealias EnvironmentDisplacement = List<Pair<List<Double>, List<Int>>>
 
+/**
+ * A test creating graphstream displacements and verifying that they work reproducibly.
+ */
 class TestGraphStreamReproducibility : FreeSpec({
     "GraphStream displacement" - {
         mapOf(
@@ -41,13 +44,13 @@ class TestGraphStreamReproducibility : FreeSpec({
                     environment.linkingRule = graphStream.linkingRule
                     graphStream.displacement.forEach {
                         environment.addNode(
-                            object: AbstractNode<Any>(environment) { override fun createT(): Any = Any() },
+                            object : AbstractNode<Any>(environment) { override fun createT(): Any = Any() },
                             it
                         )
                     }
                     environment.nodes.map { node ->
                         environment.getPosition(node).coordinates.toList() to
-                        environment.getNeighborhood(node).neighbors.map { it.id }
+                            environment.getNeighborhood(node).neighbors.map { it.id }
                     }
                 }
                 val graphs1 = generateGraphs()

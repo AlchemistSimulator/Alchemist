@@ -342,7 +342,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     protected abstract DataFormat getDataFormat();
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     protected void updateItem(final T item, final boolean empty) {

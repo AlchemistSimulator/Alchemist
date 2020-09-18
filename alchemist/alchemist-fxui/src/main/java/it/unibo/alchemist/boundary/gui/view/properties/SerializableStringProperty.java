@@ -174,7 +174,7 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public int hashCode() {
@@ -182,7 +182,7 @@ public class SerializableStringProperty extends StringPropertyBase implements Se
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public boolean equals(final Object obj) {

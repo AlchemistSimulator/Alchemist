@@ -62,7 +62,7 @@ public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public void initialized(final Environment<T, P> environment) {

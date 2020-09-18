@@ -331,7 +331,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public int hashCode() {
@@ -339,7 +339,7 @@ public class RangedIntegerProperty extends IntegerPropertyBase implements Serial
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public boolean equals(final Object obj) {

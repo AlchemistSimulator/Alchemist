@@ -158,7 +158,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public void start(final Stage primaryStage) {

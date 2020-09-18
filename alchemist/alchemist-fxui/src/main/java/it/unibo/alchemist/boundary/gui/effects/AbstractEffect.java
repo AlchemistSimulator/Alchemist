@@ -146,7 +146,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public <T> Queue<DrawCommand<P>> computeDrawCommands(final Environment<T, P> environment) {

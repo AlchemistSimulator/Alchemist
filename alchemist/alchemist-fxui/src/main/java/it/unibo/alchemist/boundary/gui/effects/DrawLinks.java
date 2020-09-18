@@ -86,7 +86,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     protected Queue<DrawCommand<P>> consumeData() {
@@ -110,7 +110,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     protected <T> void storeData(final Environment<T, P> environment) {
@@ -181,7 +181,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public int hashCode() {
@@ -189,7 +189,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public boolean equals(final Object obj) {

@@ -38,7 +38,7 @@ public class ControlTypePopoverController implements Initializable {
     private JFXButton selectButton; // Value injected by FXMLLoader
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {

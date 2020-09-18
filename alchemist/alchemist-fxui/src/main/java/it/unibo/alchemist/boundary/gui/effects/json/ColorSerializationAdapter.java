@@ -64,7 +64,7 @@ public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDes
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
@@ -77,7 +77,7 @@ public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDes
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public JsonElement serialize(final Color src, final Type typeOfSrc, final JsonSerializationContext context) {

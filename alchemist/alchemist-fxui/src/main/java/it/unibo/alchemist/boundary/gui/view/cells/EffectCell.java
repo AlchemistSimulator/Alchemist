@@ -173,7 +173,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public DataFormat getDataFormat() {
@@ -186,7 +186,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     protected void updateItem(final EffectFX<P> item, final boolean empty) {

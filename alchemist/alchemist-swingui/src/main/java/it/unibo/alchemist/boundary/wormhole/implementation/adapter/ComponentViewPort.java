@@ -50,7 +50,7 @@ public class ComponentViewPort implements ViewPort {
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public double getWidth() {
@@ -58,7 +58,7 @@ public class ComponentViewPort implements ViewPort {
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public double getHeight() {
@@ -66,7 +66,7 @@ public class ComponentViewPort implements ViewPort {
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public boolean equals(final Object o) {
@@ -82,7 +82,7 @@ public class ComponentViewPort implements ViewPort {
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public int hashCode() {

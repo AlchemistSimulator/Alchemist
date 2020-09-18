@@ -136,7 +136,7 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {

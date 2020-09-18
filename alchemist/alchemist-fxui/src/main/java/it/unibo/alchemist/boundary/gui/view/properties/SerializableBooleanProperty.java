@@ -151,7 +151,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public int hashCode() {
@@ -159,7 +159,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public boolean equals(final Object obj) {

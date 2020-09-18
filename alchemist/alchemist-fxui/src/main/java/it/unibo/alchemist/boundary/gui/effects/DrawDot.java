@@ -93,7 +93,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     protected Queue<DrawCommand<P>> consumeData() {
@@ -235,7 +235,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public int hashCode() {
@@ -243,7 +243,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public boolean equals(final Object obj) {

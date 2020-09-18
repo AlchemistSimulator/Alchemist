@@ -128,7 +128,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {

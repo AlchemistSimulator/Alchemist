@@ -127,7 +127,7 @@ public class EffectPropertiesController implements Initializable {
     }
 
     /**
-     * @inheritDocs
+     * @inheritdoc
      */
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {

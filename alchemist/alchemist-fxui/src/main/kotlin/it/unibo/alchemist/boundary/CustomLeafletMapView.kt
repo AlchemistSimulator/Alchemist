@@ -87,8 +87,9 @@ class CustomLeafletMapView : LeafletMapView() {
 
     /**
      * Prevent the map from wrapping.
-     * Cannot be simply called in the init block since the map
-     * does not yet exist at that point the javascript engine.
+     * Cannot be simply called in the init block
+     * since the map does not yet exist at that
+     * point in time in the javascript engine.
      */
     fun preventWrapping() {
         execScript("myMap.setMaxBounds([[-90, -180], [90, 180]])")

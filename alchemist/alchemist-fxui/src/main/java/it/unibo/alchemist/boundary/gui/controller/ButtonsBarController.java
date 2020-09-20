@@ -14,6 +14,7 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.boundary.ListKeybindsView;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
@@ -37,6 +38,7 @@ import jiconfont.javafx.IconNode;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 import org.jetbrains.annotations.Nullable;
+import tornadofx.FX;
 
 /**
  * This class models a JavaFX controller for ButtonsBarLayout.fxml.
@@ -66,6 +68,9 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     @FXML
     @Nullable
     private JFXButton effectsButton; // Value injected by FXMLLoader
+    @FXML
+    @Nullable
+    private JFXButton keysButton; // Value injected by FXMLLoader
     @FXML
     @Nullable
     private JFXSlider framerateSlider; // Value injected by FXMLLoader
@@ -190,6 +195,10 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
                 FXResourceLoader.getInjectionErrorMessage("effectsButton", BUTTONS_BAR_LAYOUT)
         );
         Objects.requireNonNull(
+                keysButton,
+                FXResourceLoader.getInjectionErrorMessage("keysButton", BUTTONS_BAR_LAYOUT)
+        );
+        Objects.requireNonNull(
                 framerateSlider,
                 FXResourceLoader.getInjectionErrorMessage("framerateSlider", BUTTONS_BAR_LAYOUT)
         );
@@ -227,6 +236,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
                 this.drawerStack.setMouseTransparent(false);
             }
         });
+        keysButton.setOnAction(e -> FX.find(ListKeybindsView.class).openModal());
         controlType.setText("");
         controlType.setGraphic(pan);
         controlType.setOnAction(event -> togglePopover());

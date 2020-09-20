@@ -46,6 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tornadofx.FX;
 
 import java.io.File;
 import java.io.IOException;
@@ -163,6 +164,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     @Override
     public void start(final Stage primaryStage) {
         // load the keybinds from file or classpath
+        FX.registerApplication(this, primaryStage);
         Keybinds.Companion.load();
         parseParams(getParams());
         final Optional<Simulation<T, P>> optSim = getSimulation();

@@ -11,7 +11,6 @@ package it.unibo.alchemist.boundary
 
 import it.unibo.alchemist.input.ActionFromKey
 import it.unibo.alchemist.input.Keybinds
-import java.util.ResourceBundle
 import javafx.beans.property.Property
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections
@@ -48,6 +47,7 @@ import tornadofx.tableview
 import tornadofx.toProperty
 import tornadofx.vbox
 import tornadofx.vgrow
+import java.util.ResourceBundle
 
 private const val ACTION_COLUMN_MIN_WIDTH = 200
 private const val KEY_COLUMN_MIN_WIDTH = 150
@@ -115,6 +115,12 @@ class KeybindController : Controller() {
  * The view that lists current keybinds.
  */
 class ListKeybindsView : View() {
+
+    init {
+        if (messages.baseBundleName == null) {
+            messages = ResourceBundle.getBundle("it.unibo.alchemist.l10n.KeybinderStrings")
+        }
+    }
 
     /**
      * The controller.

@@ -21,6 +21,7 @@
         <ButtonBar id="controlBar" fx:id="controlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
             <buttons>
                 <JFXButton id="effectsButton" fx:id="effectsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Effects" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+                <JFXButton id="keysButton" fx:id="keysButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Keys" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
                 <JFXSlider id="framerateSlider" fx:id="framerateSlider" max="240" min="0" value="60" ButtonBar.buttonData="LEFT">
                     <cursor>
                         <Cursor fx:constant="DEFAULT" />

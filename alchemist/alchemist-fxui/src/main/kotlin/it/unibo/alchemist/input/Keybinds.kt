@@ -11,6 +11,9 @@ package it.unibo.alchemist.input
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.FileWriter
@@ -18,6 +21,7 @@ import java.io.IOException
 import java.util.Optional
 import javafx.scene.input.KeyCode
 import org.kaikikm.threadresloader.ResourceLoader
+import java.lang.reflect.Type
 
 /**
  * Actions which can be bound to a key on the keyboard.
@@ -39,6 +43,20 @@ enum class ActionFromKey(private val description: String) {
 }
 
 /**
+ * Serializer for keybinds that serializes [ActionFromKey]
+ * by using the enum values' names instead of [ActionFromKey.toString].
+ */
+class KeybindsSerializer : JsonSerializer<Map<ActionFromKey, KeyCode>> {
+    /**
+     * {@inheritDoc}.
+     */
+    override fun serialize(src: Map<ActionFromKey, KeyCode>, typeOfSrc: Type, context: JsonSerializationContext) =
+        JsonObject().apply {
+            src.forEach { addProperty(it.key.name, it.value.toString()) }
+        }
+}
+
+/**
  * Reads and writes a configuration of key bindings to a JSON file.
  */
 class Keybinds private constructor() {
@@ -49,7 +67,10 @@ class Keybinds private constructor() {
         private const val filename: String = "keybinds.json"
         private val typeToken: TypeToken<Map<ActionFromKey, KeyCode>> =
             object : TypeToken<Map<ActionFromKey, KeyCode>>() {}
-        private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+        private val gson: Gson = GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(typeToken.type, KeybindsSerializer())
+            .create()
         private val DEFAULT_CHARSET = Charsets.UTF_8
         /**
          * The currently loaded configuration.
@@ -78,7 +99,7 @@ class Keybinds private constructor() {
                 if (!fileIsAvailable) {
                     throw IOException("Failed to create keybind configuration file")
                 }
-                FileWriter(path, DEFAULT_CHARSET).use { w -> w.write(gson.toJson(config)) }
+                FileWriter(path, DEFAULT_CHARSET).use { w -> w.write(gson.toJson(config, typeToken.type)) }
             }
         }
 

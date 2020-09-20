@@ -286,7 +286,7 @@ allprojects {
                 val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
                 val command = arrayOf(javaExecutable, "-jar", archiveFile.get().asFile.absolutePath) +
                     if ("full" in project.name) {
-                        "-y ./alchemist-incarnation-protelis/src/test/resources/testbase.yml"
+                        "-y ../alchemist-incarnation-protelis/src/test/resources/testbase.yml"
                     } else {
                         "--help"
                     }

@@ -284,7 +284,12 @@ allprojects {
             // Run the jar and check the output
             val testShadowJar = tasks.register<Exec>("${this.name}-testWorkingOutput") {
                 val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
-                val command = arrayOf(javaExecutable, "-jar", archiveFile.get().asFile.absolutePath, "--help")
+                val command = arrayOf(javaExecutable, "-jar", archiveFile.get().asFile.absolutePath) +
+                    if ("full" in project.name) {
+                        "-y ./alchemist-incarnation-protelis/src/test/resources/testbase.yml"
+                    } else {
+                        "--help"
+                    }
                 commandLine(*command)
                 val interceptOutput = ByteArrayOutputStream()
                 val interceptError = ByteArrayOutputStream()

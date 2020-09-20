@@ -171,6 +171,12 @@ class ListKeybindsView : View() {
  */
 class EditKeybindView : View() {
     private val toEdit: KeybindModel by inject()
+    
+    init {
+        if (messages.baseBundleName == null) {
+            messages = ResourceBundle.getBundle("it.unibo.alchemist.l10n.KeybinderStrings")
+        }
+    }
 
     /**
      * {@inheritDoc}.

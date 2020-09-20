@@ -13,6 +13,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.boundary.clear
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory
+import it.unibo.alchemist.boundary.interactions.BaseInteractionManager
 import it.unibo.alchemist.boundary.interactions.InteractionManager
 import it.unibo.alchemist.boundary.interfaces.DrawCommand
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor
@@ -64,7 +65,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> : Pane(), FXOutputMonitor
     private var viewStatus = DEFAULT_VIEW_STATUS
     private lateinit var wormhole: Wormhole2D<P>
     private lateinit var zoomManager: ZoomManager
-    private val interactions: InteractionManager<T, P> by lazy { InteractionManager(this) }
+    private val interactions: InteractionManager<T, P> by lazy { BaseInteractionManager(this) }
     private val effectsCanvas = Canvas()
     /**
      * Group dedicated for painting the background.

@@ -47,12 +47,12 @@ import java.util.concurrent.Semaphore
 import kotlin.math.roundToInt
 
 /**
- * An interaction manager that controls the input/output on the environment done through the GUI.
- * @param monitor the monitor
+ * An interaction manager that implements pan, select, move, delete and zoom.
+ * @param monitor the monitor.
  */
-class InteractionManager<T, P : Position2D<P>>(
+class BaseInteractionManager<T, P : Position2D<P>>(
     private val monitor: AbstractFXDisplay<T, P>
-) {
+) : InteractionManager<T, P> {
     /**
      * Describes a certain interaction that has a feedback associated to it.
      */
@@ -62,21 +62,11 @@ class InteractionManager<T, P : Position2D<P>>(
         SELECTION_BOX
     }
 
-    /**
-     * The current environment.
-     */
-    var environment: Environment<T, P>? = null
-    /**
-     * The nodes in the environment.
-     * Should be updated as frequently as possible to ensure a representation of
-     * the feedback that is consistent with the actual environment.
-     */
-    var nodes: Map<Node<T>, P> = emptyMap()
-    /**
-     * The keyboard listener.
-     */
-    val keyboardListener: KeyboardActionListener
+    override lateinit var environment: Environment<T, P>
+    override var nodes: Map<Node<T>, P> = emptyMap()
+    override val keyboardListener: KeyboardActionListener
         get() = keyboard.listener
+    override val canvases = Group().apply { listOf(highlighter, selector).forEach { children.add(it) } }
 
     private lateinit var wormhole: Wormhole2D<P>
     private lateinit var zoomManager: ZoomManager
@@ -108,11 +98,6 @@ class InteractionManager<T, P : Position2D<P>>(
     @Volatile private var feedback: Map<Interaction, List<() -> Unit>> = emptyMap()
 
     /**
-     * The canvases used for input/output.
-     */
-    val canvases = Group().apply { listOf(highlighter, selector).forEach { children.add(it) } }
-
-    /**
      * Wraps the given command on the simulation to run through [Simulation.schedule]
      * in order to properly run the call on the simulation.
      *
@@ -120,9 +105,9 @@ class InteractionManager<T, P : Position2D<P>>(
      * <code>invokeOnSimulation { environment.removeNode(someNode) }</code>
      */
     private val invokeOnSimulation: (Simulation<T, P>.() -> Unit) -> Unit
-        get() = environment?.simulation
+        get() = environment.simulation
             ?.let { { exec: Simulation<T, P>.() -> Unit -> it.schedule { exec.invoke(it) } } }
-            ?: throw IllegalStateException("Uninitialized environment or simulation")
+            ?: error("Uninitialized environment or simulation")
 
     init {
         listOf(selector, highlighter).forEach {
@@ -222,6 +207,29 @@ class InteractionManager<T, P : Position2D<P>>(
                 repaint()
             }
         )
+    }
+
+    override fun repaint() {
+        Platform.runLater {
+            selector.clear()
+            highlighter.clear()
+            feedback.values.forEach { it.forEach { it() } }
+        }
+    }
+
+    override fun setWormhole(wormhole: Wormhole2D<P>) {
+        this.wormhole = wormhole
+    }
+
+    override fun setZoomManager(zoomManager: ZoomManager) {
+        this.zoomManager = zoomManager
+    }
+
+    override fun simulationStep() {
+        if (selectionHelper.isBoxSelectionInProgress) {
+            addNodesToSelectionCandidates()
+        }
+        repaint()
     }
 
     /**
@@ -398,41 +406,6 @@ class InteractionManager<T, P : Position2D<P>>(
                 goToStep(step + 1)
             }
         }
-    }
-
-    /**
-     * Clears and then paints every currently active feedback.
-     */
-    fun repaint() {
-        Platform.runLater {
-            selector.clear()
-            highlighter.clear()
-            feedback.values.forEach { it.forEach { it() } }
-        }
-    }
-
-    /**
-     * Sets the wormhole.
-     */
-    fun setWormhole(wormhole: Wormhole2D<P>) {
-        this.wormhole = wormhole
-    }
-
-    /**
-     * Sets the zoom manager.
-     */
-    fun setZoomManager(zoomManager: ZoomManager) {
-        this.zoomManager = zoomManager
-    }
-
-    /**
-     * To be called by the [AbstractFXDisplay] whenever a step occurs.
-     */
-    fun simulationStep() {
-        if (selectionHelper.isBoxSelectionInProgress) {
-            addNodesToSelectionCandidates()
-        }
-        repaint()
     }
 
     companion object {

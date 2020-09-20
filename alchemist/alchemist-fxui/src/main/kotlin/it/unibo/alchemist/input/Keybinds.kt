@@ -62,8 +62,7 @@ class KeybindsSerializer : JsonSerializer<Map<ActionFromKey, KeyCode>> {
 class Keybinds private constructor() {
     companion object {
         private val filesystemPath = "${System.getProperty("user.home")}${File.separator}.alchemist${File.separator}"
-        private val classpathPath =
-            "it${File.separator}unibo${File.separator}alchemist${File.separator}gui${File.separator}"
+        private const val classpathPath = "it/unibo/alchemist/gui/"
         private const val filename: String = "keybinds.json"
         private val typeToken: TypeToken<Map<ActionFromKey, KeyCode>> =
             object : TypeToken<Map<ActionFromKey, KeyCode>>() {}

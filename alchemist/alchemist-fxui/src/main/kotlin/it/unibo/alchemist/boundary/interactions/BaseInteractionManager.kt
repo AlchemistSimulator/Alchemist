@@ -66,6 +66,9 @@ class BaseInteractionManager<T, P : Position2D<P>>(
     override var nodes: Map<Node<T>, P> = emptyMap()
     override val keyboardListener: KeyboardActionListener
         get() = keyboard.listener
+
+    private val highlighter = Canvas()
+    private val selector = Canvas()
     override val canvases = Group().apply { listOf(highlighter, selector).forEach { children.add(it) } }
 
     private lateinit var wormhole: Wormhole2D<P>
@@ -79,8 +82,6 @@ class BaseInteractionManager<T, P : Position2D<P>>(
     }
     private val mouse: DynamicMouseEventDispatcher = NodeBoundMouseEventDispatcher(monitor)
     private lateinit var mousePanHelper: AnalogPanHelper
-    private val highlighter = Canvas()
-    private val selector = Canvas()
     private val selectionHelper: SelectionHelper<T, P> = SelectionHelper()
     private val selection: ObservableSet<Node<T>> = FXCollections.observableSet()
     private val selectionCandidates: ObservableSet<Node<T>> = FXCollections.observableSet()

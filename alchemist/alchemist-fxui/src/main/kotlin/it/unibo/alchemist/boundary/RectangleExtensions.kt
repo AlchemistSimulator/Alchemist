@@ -27,4 +27,5 @@ fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
  * Returns whether the [Rectangle] [this] contains [point].
  */
 operator fun Rectangle.contains(point: Point): Boolean =
-    point.x.toDouble() in x..x + width && point.y.toDouble() in y..y + height
+    x <= point.x.toDouble() && point.x.toDouble() <= x + width
+        && y <= point.y.toDouble() && point.y.toDouble() <= y + height

@@ -33,9 +33,6 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import javafx.application.Platform
-import javafx.collections.FXCollections
-import javafx.collections.ObservableSet
-import javafx.collections.SetChangeListener
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.KeyCode
@@ -83,8 +80,8 @@ class BaseInteractionManager<T, P : Position2D<P>>(
     private val mouse: DynamicMouseEventDispatcher = NodeBoundMouseEventDispatcher(monitor)
     private lateinit var mousePanHelper: AnalogPanHelper
     private val selectionHelper: SelectionHelper<T, P> = SelectionHelper()
-    private val selection: ObservableSet<Node<T>> = FXCollections.observableSet()
-    private val selectionCandidates: ObservableSet<Node<T>> = FXCollections.observableSet()
+    private var selection: Set<Node<T>> = emptySet()
+    private var selectionCandidates: Set<Node<T>> = emptySet()
     private val selectedElements: ImmutableSet<Node<T>>
         get() = ImmutableSet.copyOf(selection)
     private val selectionCandidatesMutex: Semaphore = Semaphore(1)
@@ -192,22 +189,10 @@ class BaseInteractionManager<T, P : Position2D<P>>(
                 it.consume()
             }
         }
-        selection.addListener(
-            SetChangeListener {
-                selection
-                    .map { paintHighlight(it, Colors.alreadySelected) }
-                    .let { highlighters -> feedback = feedback + (Interaction.HIGHLIGHTED to highlighters) }
-                repaint()
-            }
-        )
-        selectionCandidates.addListener(
-            SetChangeListener {
-                selectionCandidates
-                    .map { paintHighlight(it, Colors.selecting) }
-                    .let { highlighters -> feedback = feedback + (Interaction.HIGHLIGHT_CANDIDATE to highlighters) }
-                repaint()
-            }
-        )
+    }
+
+    private fun Set<Node<T>>.updateHighlight(paint: Paint, interactionType: Interaction) {
+        feedback = feedback + (interactionType to map { paintHighlight(it, paint) })
     }
 
     override fun repaint() {
@@ -294,25 +279,25 @@ class BaseInteractionManager<T, P : Position2D<P>>(
      */
     private fun onSelected(event: MouseEvent) {
         if (Keybinds[ActionFromKey.MODIFIER_CONTROL].filter { key: KeyCode -> keyboard.isHeld(key).not() }.isPresent) {
-            selection.clear()
+            selection = emptySet()
         }
         var selectedNodes = selectionHelper.boxSelection(nodes, wormhole).keys
         selectionHelper.clickSelection(nodes, wormhole)?.first?.let {
             selectedNodes = selectedNodes.plusElement(it)
         }
-        selectedNodes.forEach { node ->
-            if (node in selection) {
-                selection -= node
-            } else {
-                selection += node
-            }
+        selectedNodes.filter { it !in selection }.let {
+            selection += it
+            selectedNodes -= it
         }
+        selection -= selectedNodes.filter { it in selection }
         selectionHelper.close()
+        selection.updateHighlight(Colors.alreadySelected, Interaction.HIGHLIGHTED)
         repaint()
         feedback = feedback - Interaction.SELECTION_BOX
         if (selectionCandidatesMutex.tryAcquire()) {
-            selectionCandidates.clear()
+            selectionCandidates = emptySet()
             selectionCandidatesMutex.release()
+            selectionCandidates.updateHighlight(Colors.selecting, Interaction.HIGHLIGHT_CANDIDATE)
         }
         event.consume()
     }
@@ -354,11 +339,12 @@ class BaseInteractionManager<T, P : Position2D<P>>(
         if (selectionCandidatesMutex.tryAcquire()) {
             selectionHelper.boxSelection(nodes, wormhole).keys.let {
                 if (it != selectionCandidates) {
-                    selectionCandidates.clear()
+                    selectionCandidates = emptySet()
                     selectionCandidates += it
                 }
             }
             selectionCandidatesMutex.release()
+            selectionCandidates.updateHighlight(Colors.selecting, Interaction.HIGHLIGHT_CANDIDATE)
         }
     }
 
@@ -368,7 +354,8 @@ class BaseInteractionManager<T, P : Position2D<P>>(
             if (selection.isNotEmpty()) {
                 val nodesToMove: Set<Node<T>> = ImmutableSet.copyOf(selectedElements)
                 val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
-                selection.clear()
+                selection = emptySet()
+                selection.updateHighlight(Colors.alreadySelected, Interaction.HIGHLIGHTED)
                 nodesToMove
                     .mapNotNull { nodes[it] }
                     .maxWithOrNull { a, b -> (b - a.coordinates).run { x + y }.roundToInt() }
@@ -392,7 +379,8 @@ class BaseInteractionManager<T, P : Position2D<P>>(
         runMutex.acquireUninterruptibly()
         if (selection.isNotEmpty()) {
             val nodesToRemove = ImmutableSet.copyOf(selectedElements)
-            selection.clear()
+            selection = emptySet()
+            selection.updateHighlight(Colors.alreadySelected, Interaction.HIGHLIGHTED)
             invokeOnSimulation {
                 nodesToRemove.forEach { environment?.removeNode(it) }
             }

@@ -84,7 +84,6 @@ class BaseInteractionManager<T, P : Position2D<P>>(
     private var selectionCandidates: Set<Node<T>> = emptySet()
     private val selectedElements: ImmutableSet<Node<T>>
         get() = ImmutableSet.copyOf(selection)
-    private val selectionCandidatesMutex: Semaphore = Semaphore(1)
     private val runMutex: Semaphore = Semaphore(1)
 
     /**
@@ -191,10 +190,6 @@ class BaseInteractionManager<T, P : Position2D<P>>(
         }
     }
 
-    private fun Set<Node<T>>.updateHighlight(paint: Paint, interactionType: Interaction) {
-        feedback = feedback + (interactionType to map { paintHighlight(it, paint) })
-    }
-
     override fun repaint() {
         Platform.runLater {
             selector.clear()
@@ -285,20 +280,17 @@ class BaseInteractionManager<T, P : Position2D<P>>(
         selectionHelper.clickSelection(nodes, wormhole)?.first?.let {
             selectedNodes = selectedNodes.plusElement(it)
         }
+        selectionHelper.close()
         selectedNodes.filter { it !in selection }.let {
             selection += it
             selectedNodes -= it
         }
         selection -= selectedNodes.filter { it in selection }
-        selectionHelper.close()
-        selection.updateHighlight(Colors.alreadySelected, Interaction.HIGHLIGHTED)
-        repaint()
+        selectionCandidates = emptySet()
+        feedback = feedback + (Interaction.HIGHLIGHTED to selection.map { paintHighlight(it, Colors.alreadySelected) })
         feedback = feedback - Interaction.SELECTION_BOX
-        if (selectionCandidatesMutex.tryAcquire()) {
-            selectionCandidates = emptySet()
-            selectionCandidatesMutex.release()
-            selectionCandidates.updateHighlight(Colors.selecting, Interaction.HIGHLIGHT_CANDIDATE)
-        }
+        feedback = feedback - Interaction.HIGHLIGHT_CANDIDATE
+        repaint()
         event.consume()
     }
 
@@ -336,16 +328,14 @@ class BaseInteractionManager<T, P : Position2D<P>>(
      * Grabs all the nodes in the selection box and adds them to the selection candidates.
      */
     private fun addNodesToSelectionCandidates() {
-        if (selectionCandidatesMutex.tryAcquire()) {
-            selectionHelper.boxSelection(nodes, wormhole).keys.let {
-                if (it != selectionCandidates) {
-                    selectionCandidates = emptySet()
-                    selectionCandidates += it
-                }
+        selectionHelper.boxSelection(nodes, wormhole).keys.let {
+            if (it != selectionCandidates) {
+                selectionCandidates = emptySet()
+                selectionCandidates += it
             }
-            selectionCandidatesMutex.release()
-            selectionCandidates.updateHighlight(Colors.selecting, Interaction.HIGHLIGHT_CANDIDATE)
         }
+        feedback = feedback +
+            (Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it, Colors.selecting) })
     }
 
     private fun enqueueMove() {
@@ -355,7 +345,7 @@ class BaseInteractionManager<T, P : Position2D<P>>(
                 val nodesToMove: Set<Node<T>> = ImmutableSet.copyOf(selectedElements)
                 val mousePosition = wormhole.getEnvPoint(makePoint(mouse.x, mouse.y))
                 selection = emptySet()
-                selection.updateHighlight(Colors.alreadySelected, Interaction.HIGHLIGHTED)
+                feedback = feedback - Interaction.HIGHLIGHTED
                 nodesToMove
                     .mapNotNull { nodes[it] }
                     .maxWithOrNull { a, b -> (b - a.coordinates).run { x + y }.roundToInt() }
@@ -380,7 +370,7 @@ class BaseInteractionManager<T, P : Position2D<P>>(
         if (selection.isNotEmpty()) {
             val nodesToRemove = ImmutableSet.copyOf(selectedElements)
             selection = emptySet()
-            selection.updateHighlight(Colors.alreadySelected, Interaction.HIGHLIGHTED)
+            feedback = feedback - Interaction.HIGHLIGHTED
             invokeOnSimulation {
                 nodesToRemove.forEach { environment?.removeNode(it) }
             }

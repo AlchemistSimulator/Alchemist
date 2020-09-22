@@ -207,9 +207,6 @@ class BaseInteractionManager<T, P : Position2D<P>>(
     }
 
     override fun simulationStep() {
-        if (selectionHelper.isBoxSelectionInProgress) {
-            addNodesToSelectionCandidates()
-        }
         repaint()
     }
 
@@ -328,14 +325,15 @@ class BaseInteractionManager<T, P : Position2D<P>>(
      * Grabs all the nodes in the selection box and adds them to the selection candidates.
      */
     private fun addNodesToSelectionCandidates() {
-        selectionHelper.boxSelection(nodes, wormhole).keys.let {
-            if (it != selectionCandidates) {
-                selectionCandidates = emptySet()
-                selectionCandidates += it
+        selectionHelper.boxSelection(nodes, wormhole).keys.let { nodes ->
+            if (nodes != selectionCandidates) {
+                selectionCandidates = nodes
+                feedback = feedback + (
+                    Interaction.HIGHLIGHT_CANDIDATE to
+                        selectionCandidates.map { paintHighlight(it, Colors.selecting) }
+                    )
             }
         }
-        feedback = feedback +
-            (Interaction.HIGHLIGHT_CANDIDATE to selectionCandidates.map { paintHighlight(it, Colors.selecting) })
     }
 
     private fun enqueueMove() {

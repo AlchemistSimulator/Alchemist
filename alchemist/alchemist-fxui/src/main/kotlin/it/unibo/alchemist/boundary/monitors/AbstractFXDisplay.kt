@@ -74,7 +74,10 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> : Pane(), FXOutputMonitor
 
     init {
         firstTime = true
-        val repaintOnResize = ChangeListener<Number> { _, _, _ -> repaint() }
+        val repaintOnResize = ChangeListener<Number> { _, _, _ ->
+            repaint()
+            interactions.repaint()
+        }
         widthProperty().addListener(repaintOnResize)
         heightProperty().addListener(repaintOnResize)
         effectsCanvas.isMouseTransparent = true

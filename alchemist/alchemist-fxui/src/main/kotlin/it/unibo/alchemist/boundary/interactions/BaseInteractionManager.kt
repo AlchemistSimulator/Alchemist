@@ -206,7 +206,10 @@ class BaseInteractionManager<T, P : Position2D<P>>(
         this.zoomManager = zoomManager
     }
 
-    override fun simulationStep() {
+    override fun onMonitorRepaint() {
+        if (selectionHelper.isBoxSelectionInProgress) {
+            addNodesToSelectionCandidates()
+        }
         repaint()
     }
 

@@ -59,7 +59,7 @@ interface InteractionManager<T, P : Position2D<P>> {
     fun setZoomManager(zoomManager: ZoomManager): Unit
 
     /**
-     * To be called whenever a step occurs.
+     * To be called whenever the monitor paints its effects.
      */
-    fun simulationStep(): Unit
+    fun onMonitorRepaint(): Unit
 }

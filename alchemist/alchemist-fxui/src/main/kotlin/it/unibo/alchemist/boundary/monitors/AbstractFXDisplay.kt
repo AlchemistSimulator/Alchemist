@@ -104,6 +104,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> : Pane(), FXOutputMonitor
             mayRender.set(false)
             Platform.runLater {
                 commandQueue.forEach { it() }
+                interactions.onMonitorRepaint()
                 mayRender.set(true)
             }
         }
@@ -206,7 +207,6 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> : Pane(), FXOutputMonitor
             commandQueue = Stream
                 .concat(clearEffects, drawEffects)
                 .collect(Collectors.toCollection { ConcurrentLinkedQueue<() -> Unit>() })
-            interactions.simulationStep()
             repaint()
         } else {
             throw IllegalStateException("Only the simulation thread can dictate GUI updates")

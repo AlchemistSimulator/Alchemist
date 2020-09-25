@@ -11,13 +11,12 @@ package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.OrientingPedestrian;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph;
@@ -26,7 +25,6 @@ import org.danilopianini.view.ExportForGUI;
 import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -78,7 +76,7 @@ public class DrawCognitiveMap extends DrawOnce {
             final Graphics2D graphics,
             final Node<T> node,
             final Environment<T, P> environment,
-            final IWormhole2D<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         super.apply(graphics, node, environment, wormhole);
         final Integer markerNodeID = getMarkerNodeID();
@@ -99,7 +97,7 @@ public class DrawCognitiveMap extends DrawOnce {
             final Graphics2D graphics2D,
             final Node<T> node,
             final Environment<T, P> environment,
-            final IWormhole2D<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         if (cognitiveMap != null) {
             colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
@@ -142,7 +140,7 @@ public class DrawCognitiveMap extends DrawOnce {
 
     private <P extends Position2D<P>> Shape mapEnvEllipseToAwtShape(
             final Ellipse ellipse,
-            final IWormhole2D<P> wormhole,
+            final Wormhole2D<P> wormhole,
             final Environment<?, P> environment
     ) {
         final Rectangle2D frame = ellipse.asAwtShape().getFrame();

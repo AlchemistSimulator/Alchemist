@@ -34,8 +34,8 @@ import it.unibo.alchemist.model.interfaces.Position;
  * Non local-consistent rule that connect the closest N nodes together.
  * Two nodes get connected if either one belongs to the set of the ten devices closest to the other.
  * 
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
 
@@ -93,23 +93,23 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
     }
 
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
-        if (env.getNodesNumber() < expectedNodes || !nodeIsEnabled(center)) {
-            return Neighborhoods.make(env, center);
+    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
+        if (environment.getNodeCount() < expectedNodes || !nodeIsEnabled(center)) {
+            return Neighborhoods.make(environment, center);
         }
-        return Neighborhoods.make(env, center,
+        return Neighborhoods.make(environment, center,
                 Stream.concat(
-                    closestN(center, env),
+                    closestN(center, environment),
                     /*
                      * Of all nodes but myself...
                      */
-                    env.getNodes().parallelStream()
+                    environment.getNodes().parallelStream()
                         /*
                          * ...select those for which I'm on the closest n
                          */
                         .filter(node -> 
                                 !center.equals(node)
-                                && closestN(node, env).anyMatch(center::equals)
+                                && closestN(node, environment).anyMatch(center::equals)
                         )
                 )
                 .sequential()
@@ -124,13 +124,13 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         Set<Node<T>> inRange;
         final double maxRange = Doubles.max(env.getSizeInDistanceUnits()) * 2;
         do {
-            inRange = (env.getNodesNumber() > n && currentRange < maxRange
+            inRange = (env.getNodeCount() > n && currentRange < maxRange
                     ? nodesInRange(env, center, currentRange).stream()
                     : env.getNodes().stream())
                         .filter(n -> !n.equals(center) && nodeIsEnabled(n))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
             currentRange *= 2;
-        } while (inRange.size() < n && inRange.size() < env.getNodesNumber() - 1 && currentRange < maxRange * 2);
+        } while (inRange.size() < n && inRange.size() < env.getNodeCount() - 1 && currentRange < maxRange * 2);
         if (inRange.isEmpty()) {
             return Stream.empty();
         }
@@ -178,7 +178,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
              * would, on average, contain the number of required devices
              */
             return ranges().get(center, () -> {
-                final int nodes = env.getNodesNumber();
+                final int nodes = env.getNodeCount();
                 if (nodes < n || nodes < 10) {
                     return Double.MAX_VALUE;
                 }

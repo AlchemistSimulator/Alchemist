@@ -17,19 +17,19 @@ public enum SimControlCommand {
     /**
      * 
      */
-    PLAY("/oxygen/actions/media-playback-start.png", getString("play")),
+    PLAY("/actions/media-playback-start.png", getString("play")),
     /**
      * 
      */
-    STEP("/oxygen/actions/media-skip-forward.png", getString("step")),
+    STEP("/actions/media-skip-forward.png", getString("step")),
     /**
      * 
      */
-    PAUSE("/oxygen/actions/media-playback-pause.png", getString("pause")),
+    PAUSE("/actions/media-playback-pause.png", getString("pause")),
     /**
      * 
      */
-    STOP("/oxygen/actions/media-playback-stop.png", getString("stop"));
+    STOP("/actions/media-playback-stop.png", getString("stop"));
 
     private final String icon, tt;
 

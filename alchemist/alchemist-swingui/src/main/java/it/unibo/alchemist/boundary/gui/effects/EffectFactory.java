@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  */
+@Deprecated
 public final class EffectFactory {
 
     /**

@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * This class implements the indexed priority queue through an Array.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * A {@link DiracComb} whose rate is determined (uniformly) randomly within the provided bounds.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public class RandomDiracComb<T> extends DiracComb<T> {
 

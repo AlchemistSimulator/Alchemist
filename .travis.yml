@@ -1,3 +1,6 @@
+# Do not double-build branches and PRs from this repo
+if: repo != head_repo
+
 # SHARED VARIABLES
 
 _reference_jdk: &reference_jdk
@@ -29,7 +32,7 @@ _deploy_on_surge: &deploy_on_surge
 _deploy_javadoc_on_surge: &deploy_javadoc_on_surge
   <<: *deploy_base
   <<: *deploy_on_surge
-  project: "./alchemist/build/docs/javadoc/"
+  project: "./alchemist/build/dokka/javadoc/"
 
 _deploy_reports_on_surge: &deploy_reports_on_surge
   <<: *deploy_base
@@ -114,7 +117,8 @@ jobs:
         - *reference_jdk
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - travis_retry ./gradlew clean check jacocoTestReport shadowJar --scan --parallel
+        - travis_retry ./gradlew clean check jacocoTestReport shadowJar javadocJar buildDashboard --scan --parallel
+        - travis_retry ./gradlew buildDashboard
       after_success:
         - bash <(curl -s https://codecov.io/bash)
       workspaces:
@@ -143,8 +147,7 @@ jobs:
         - bash prepare_environment.sh
       script:
         - cd "$TRAVIS_BUILD_DIR"/alchemist
-        - travis_retry ./gradlew dokka > >(egrep -v '(null:-1:-1)|(t find node by signature)') --scan
-        - travis_retry ./gradlew sign shadowJar projectReport buildDashboard orchidDeploy -x test --scan --parallel
+        - travis_retry ./gradlew sign --parallel
         - mkdir -p report
         - cp --parent */build/reports build/reports report -R
         - travis_retry travis_wait 30 ./gradlew publishAll --scan --stacktrace

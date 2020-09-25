@@ -16,10 +16,10 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
- * Represent the action of add a junction between a neighbor and the current node. <br/>
+ * Represent the action of add a junction between a neighbor and the current node.
  * This action only create the junction reference inside the neighbor, the current node totally ignore 
- * that a junction has been created.  <br/>
- * This is a part of the junction creation process. <br/>
+ * that a junction has been created.
+ * This is a part of the junction creation process.
  * See {@link AddJunctionInCell} for the other part of the process
  * @param <P> Position type
  */

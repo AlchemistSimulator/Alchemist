@@ -15,11 +15,10 @@ import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
-
 import java.util.List;
 
 /**
- * @param <P>
+ * @param <P> {@link it.unibo.alchemist.model.interfaces.Position} type
  */
 public final class LsaAscendingAgent<P extends Position2D<? extends P>> extends SAPEREMoveNodeAgent<P> {
 

@@ -39,16 +39,16 @@ public class TestContinuous2DObstacle {
         assertEquals(new Euclidean2DPosition(FastMath.nextAfter(1.0, 0.0), FastMath.nextAfter(0.5, 0.0)), env.next(0, 0, 2, 1));
 
         env.addNode(new IntNode(env), new Euclidean2DPosition(0, 0));
-        assertEquals(env.getNodesNumber(), 1);
+        assertEquals(env.getNodeCount(), 1);
         env.addNode(new IntNode(env), new Euclidean2DPosition(1, 1));
-        assertEquals(env.getNodesNumber(), 1);
+        assertEquals(env.getNodeCount(), 1);
         // CHECKSTYLE: MagicNumber OFF
         env.addNode(new IntNode(env), new Euclidean2DPosition(1.5, 0.5));
-        assertEquals(env.getNodesNumber(), 1);
+        assertEquals(env.getNodeCount(), 1);
         env.addNode(new IntNode(env), new Euclidean2DPosition(1, 5));
-        assertEquals(env.getNodesNumber(), 1);
+        assertEquals(env.getNodeCount(), 1);
         env.addNode(new IntNode(env), new Euclidean2DPosition(1, 2.999));
-        assertEquals(env.getNodesNumber(), 2);
+        assertEquals(env.getNodeCount(), 2);
         assertEquals(env.getObstaclesInRange(0d, 0d, 100d).size(), 2);
         assertEquals(env.getObstaclesInRange(0d, 0d, 1d).size(), 1);
         assertEquals(env.getObstaclesInRange(0d, 0d, 1d).get(0), R1021);

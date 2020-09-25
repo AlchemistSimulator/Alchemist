@@ -26,8 +26,8 @@ class ConnectToAccessPoint<T, P : Position<P>>(
     private val Node<T>.isAccessPoint
         get() = contains(accessPointId)
 
-    override fun computeNeighborhood(center: Node<T>, env: Environment<T, P>): Neighborhood<T> =
-        super.computeNeighborhood(center, env).run {
-            if (center.isAccessPoint) this else Neighborhoods.make(env, center, filter { it.isAccessPoint })
+    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> =
+        super.computeNeighborhood(center, environment).run {
+            if (center.isAccessPoint) this else Neighborhoods.make(environment, center, filter { it.isAccessPoint })
         }
 }

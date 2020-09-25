@@ -27,34 +27,34 @@ class ConnectViaAccessPoint<T, P : Position<P>>(
         get() = contains(accessPointId)
 
     private fun Neighborhood<T>.closestAccessPoint(env: Environment<T, P>): Node<T>? =
-        asSequence().filter { it.isAccessPoint }.minBy { env.getDistanceBetweenNodes(center, it) }
+        asSequence().filter { it.isAccessPoint }.minByOrNull { env.getDistanceBetweenNodes(center, it) }
 
-    override fun computeNeighborhood(center: Node<T>, env: Environment<T, P>): Neighborhood<T> =
-        super.computeNeighborhood(center, env).run {
+    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> =
+        super.computeNeighborhood(center, environment).run {
             if (!center.isAccessPoint) {
                 // Connect to closest access point and all nodes connected to the same AP
-                closestAccessPoint(env)?.let { closestAP ->
+                closestAccessPoint(environment)?.let { closestAP ->
                     Neighborhoods.make(
-                        env,
+                        environment,
                         center,
                         neighbors.filter {
-                            it == closestAP || !it.isAccessPoint && env.getNeighborhood(it).contains(closestAP)
+                            it == closestAP || !it.isAccessPoint && environment.getNeighborhood(it).contains(closestAP)
                         }
                     )
-                } ?: Neighborhoods.make(env, center, emptyList())
+                } ?: Neighborhoods.make(environment, center, emptyList())
             } else {
                 if (all { it.isAccessPoint }) {
                     this
                 } else {
                     // The AP must connect only if it is the closest AP of each node or the node is not connected
                     Neighborhoods.make(
-                        env,
+                        environment,
                         center,
                         neighbors
                             .asSequence()
                             .filter { neighbor ->
                                 neighbor.isAccessPoint ||
-                                    env.getNeighborhood(neighbor).run {
+                                    environment.getNeighborhood(neighbor).run {
                                         contains(center) || none { it.isAccessPoint }
                                     }
                             }

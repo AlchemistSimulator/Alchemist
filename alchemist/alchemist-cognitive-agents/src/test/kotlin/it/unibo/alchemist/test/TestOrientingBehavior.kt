@@ -19,6 +19,8 @@ import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import loadYamlSimulation
+import startSimulation
 
 /**
  * Contains tests concerning [NavigationAction]s and [NavigationStrategy], such tests are
@@ -64,7 +66,8 @@ class TestOrientingBehavior<T, P> : StringSpec({
             "explore.yml",
             0.1,
             3000,
-            119.97675568510425, 30.0965400881618
+            44.910744827515124,
+            19.554979285729484
         )
     }
 
@@ -117,15 +120,19 @@ class TestOrientingBehavior<T, P> : StringSpec({
     }
 
     "pedestrian should avoid congestion" {
+        var corridorTaken = false
         loadYamlSimulation<T, P>("congestion-avoidance.yml").startSimulation(
             stepDone = { env: Environment<T, P>, _, _, _ ->
-                if (env is Euclidean2DEnvironmentWithGraph<*, T, *, *>) {
-                    val pedestrian = env.nodes.first()
-                    val roomToAvoid = env.graph.nodeContaining(env.makePosition(40, 40))
-                    roomToAvoid?.contains(env.getPosition(pedestrian)) shouldBe false
+                if (env is Euclidean2DEnvironmentWithGraph<*, T, *, *> && !corridorTaken) {
+                    val pedestrian = env.nodes.filterIsInstance<OrientingPedestrian<T, *, *, *, *>>().first()
+                    val corridorToTake = env.graph.nodeContaining(env.makePosition(35.0, 31.0))
+                    corridorTaken = corridorToTake?.contains(env.getPosition(pedestrian)) ?: false
                 }
             },
-            finished = { env, _, _ -> assertPedestriansReached(env, 1.0, 10, 55) },
+            finished = { env, _, _ ->
+                assertPedestriansReached(env, 1.0, 10, 55)
+                corridorTaken shouldBe true
+            },
             steps = 70
         )
     }

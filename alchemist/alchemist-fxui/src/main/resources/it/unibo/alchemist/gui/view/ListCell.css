@@ -1,0 +1,11 @@
+.list-cell {
+    -fx-min-width: 10em;
+}
+
+.jfx-toggle-button {
+    -jfx-toggle-color: #90a4ae;
+    -jfx-untoggle-color: #ffffff;
+    -jfx-toggle-line-color: #c1d5e0;
+    -jfx-untoggle-line-color: #62757f;
+}
+

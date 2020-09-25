@@ -10,8 +10,8 @@ package it.unibo.alchemist.model.interfaces;
 /**
  * An environment which provides a mean to get infos about its performances.
  *
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public interface BenchmarkableEnvironment<T, P extends Position<? extends P>> extends Environment<T, P> {
 

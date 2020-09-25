@@ -5,19 +5,23 @@
  * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-
 dependencies {
     api(alchemist("implementationbase"))
     api(alchemist("interfaces"))
 
     implementation(alchemist("euclidean-geometry"))
+    implementation(arrowKt("core"))
     implementation(Libs.commons_lang3)
+    implementation(graphStream("core"))
+    implementation(graphStream("algo"))
+    implementation(graphStream("ui-swing"))
     implementation(Libs.guava)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
+    implementation(Libs.dsiutil)
 
     runtimeOnly(Libs.groovy_jsr223)
-    runtimeOnly(kotlin("scripting-jsr223-embeddable"))
+    runtimeOnly(kotlin("scripting-jsr223"))
     runtimeOnly("org.scala-lang:scala-compiler:2.13.2")
 
     testImplementation(project(":alchemist-engine"))

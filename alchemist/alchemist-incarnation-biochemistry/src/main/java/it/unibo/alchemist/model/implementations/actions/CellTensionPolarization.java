@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @param <P>
+ * @param <P> {@link Position2D} type
  */
 public final class CellTensionPolarization<P extends Position2D<P>> extends AbstractAction<Double> {
 
@@ -53,7 +53,6 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 + " of type: " + node.getClass());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void execute() {
         // get node position as array
@@ -69,7 +68,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 .parallel()
                 .filter(n -> { // only cells overlapping this cell are selected
                     if (n instanceof CellWithCircularArea) {
-                        // computing for each cell the max distance among which cant't be overlapping
+                        // computing for each cell the max distance among which can't be overlapping
                         double maxDist;
                         if (n instanceof CircularDeformableCell) {
                             // for deformable cell is maxRad + maxRad
@@ -117,17 +116,17 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                                 / (maxRadiusSum - localNodeMinRadius - nodeMinRadius);
                     }
                     if (intensity != 0) {
-                        double[] propensityVect = {nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
-                        final double module = FastMath.sqrt(FastMath.pow(propensityVect[0], 2)
-                                + FastMath.pow(propensityVect[1], 2));
+                        double[] propensityVector = {nodePos[0] - nPos[0], nodePos[1] - nPos[1]};
+                        final double module = FastMath.sqrt(FastMath.pow(propensityVector[0], 2)
+                                + FastMath.pow(propensityVector[1], 2));
                         if (module == 0) {
                             return env.makePosition(0, 0);
                         }
-                        propensityVect = new double[]{
-                                intensity * (propensityVect[0] / module),
-                                intensity * (propensityVect[1] / module)
+                        propensityVector = new double[]{
+                                intensity * (propensityVector[0] / module),
+                                intensity * (propensityVector[1] / module)
                         };
-                        return env.makePosition(propensityVect[0], propensityVect[1]);
+                        return env.makePosition(propensityVector[0], propensityVector[1]);
                     } else {
                         return env.makePosition(0, 0);
                     } 
@@ -155,7 +154,6 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public CircularDeformableCell<P> getNode() {
         return (CircularDeformableCell<P>) super.getNode();
     }

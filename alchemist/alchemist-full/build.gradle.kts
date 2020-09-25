@@ -13,3 +13,11 @@ dependencies {
     }
     testImplementation(rootProject)
 }
+
+plugins {
+    application
+}
+
+application {
+    mainClassName = "it.unibo.alchemist.Alchemist"
+}

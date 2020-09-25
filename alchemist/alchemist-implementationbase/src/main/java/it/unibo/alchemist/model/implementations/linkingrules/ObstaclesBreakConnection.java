@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector;
  * the links are removed.
  *
  * @param <P> position type
- * @param <T>
+ * @param <T> concentration type
  */
 public final class ObstaclesBreakConnection<T, P extends Position<P> & Vector<P>> extends ConnectWithinDistance<T, P> {
 

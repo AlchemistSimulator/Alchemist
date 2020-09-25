@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 /**
  */
+@Deprecated
 public final class NumericTextField extends JTextField {
 
     private static final long serialVersionUID = 1556539674522648542L;

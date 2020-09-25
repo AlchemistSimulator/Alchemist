@@ -13,7 +13,7 @@ import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
 import java.awt.GraphicsEnvironment
-import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -55,28 +55,31 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
     }
 
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
-        val executor = Executors.newFixedThreadPool(parameters.parallelism)
-        val exception = loader.variables
+        var count = 0
+        val executor = Executors.newFixedThreadPool(parameters.parallelism) {
+            Thread(it).apply { name = "alchemist-executor-${count++}" }
+        }
+        val errorQueue = ConcurrentLinkedQueue<Throwable>()
+        loader.variables
             .cartesianProductOf(parameters.variables)
-            .asSequence()
-            .map { variables ->
-                executor.submit(
-                    Callable {
-                        val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, parameters, variables)
-                        simulation.play()
-                        simulation.run()
-                        simulation.error
+            .forEach { variables ->
+                executor.submit {
+                    val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, parameters, variables)
+                    simulation.play()
+                    simulation.run()
+                    simulation.error.ifPresent {
+                        errorQueue.add(it)
+                        executor.shutdownNow()
                     }
-                )
+                }
             }
-            .map { it.get() }
-            .filter { it.isPresent }
-            .map { it.get() }
-            .firstOrNull()
         executor.shutdown()
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
-        if (exception != null) {
-            throw exception
+        if (errorQueue.isNotEmpty()) {
+            throw errorQueue.reduce { previous, other ->
+                previous.addSuppressed(other)
+                previous
+            }
         }
     }
 

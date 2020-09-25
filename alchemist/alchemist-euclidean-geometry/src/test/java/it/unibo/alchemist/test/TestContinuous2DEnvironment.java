@@ -48,7 +48,7 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testEnvironmentSize() {
-        assertEquals(0, env.getNodesNumber());
+        assertEquals(0, env.getNodeCount());
         assertArrayEquals(ZEROS, env.getSize(), TOLERANCE);
         env.addNode(new IntNode(env), new Euclidean2DPosition(P2_3));
         assertArrayEquals(ZEROS, env.getSize(), TOLERANCE);
@@ -63,7 +63,7 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testEnvironmentOffset() {
-        assertEquals(0, env.getNodesNumber());
+        assertEquals(0, env.getNodeCount());
         assertTrue(Double.isNaN(env.getOffset()[0]));
         assertTrue(Double.isNaN(env.getOffset()[1]));
         env.addNode(new IntNode(env), new Euclidean2DPosition(P2_3));
@@ -79,7 +79,7 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testNegativeRangeQuery() {
-        assertEquals(0, env.getNodesNumber());
+        assertEquals(0, env.getNodeCount());
         final Node<Integer> dummy = new IntNode(env);
         env.addNode(dummy, new Euclidean2DPosition(ZEROS));
         try {
@@ -95,12 +95,12 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testZeroRangeQuery() {
-        assertEquals(0, env.getNodesNumber());
+        assertEquals(0, env.getNodeCount());
         final Node<Integer> dummy = new IntNode(env);
         final Node<Integer> dummy2 = new IntNode(env);
         env.addNode(dummy, new Euclidean2DPosition(ZEROS));
         env.addNode(dummy2, new Euclidean2DPosition(ZEROS));
-        assertEquals(2, env.getNodesNumber());
+        assertEquals(2, env.getNodeCount());
         assertEquals(Collections.singletonList(dummy2), env.getNodesWithinRange(dummy, Math.nextUp(0)));
     }
 

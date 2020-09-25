@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -42,7 +42,7 @@ public interface DrawLayers extends Effect {
             Collection<Layer<T, P>> toDraw,
             Environment<T, P> environment,
             Graphics2D graphics,
-            IWormhole2D<P> wormhole
+            Wormhole2D<P> wormhole
     );
 
 }

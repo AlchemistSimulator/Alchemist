@@ -35,7 +35,7 @@ import java.util.function.Consumer;
  * This class realizes an abstract node. You may extend it to realize your own
  * nodes.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class AbstractNode<T> implements Node<T> {
 

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.Node;
  * Those limitations will prevent nodes to move in positions which are not
  * allowed.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
 
@@ -38,7 +38,10 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      */
     @Override
     protected boolean nodeShouldBeAdded(final Node<T> node, final Euclidean2DPosition p) {
-        return isAllowed(p);
+        /*
+         * Takes into account both obstacles and other nodes.
+         */
+        return isAllowed(p) && super.nodeShouldBeAdded(node, p);
     }
 
     /**

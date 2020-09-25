@@ -19,7 +19,7 @@ import java.util.List;
 
 
 /**
- * @param <P>
+ * @param <P> {@link Position} type
  */
 public abstract class SAPEREMoveNodeAgent<P extends Position<? extends P>> extends SAPERELocalAgent {
 

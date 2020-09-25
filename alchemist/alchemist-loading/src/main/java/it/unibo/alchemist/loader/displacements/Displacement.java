@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.loader.displacements;
 
+import it.unibo.alchemist.model.interfaces.Position;
+
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-import it.unibo.alchemist.model.interfaces.Position;
-
 /**
- * @param <P>
+ * @param <P> position type
  */
 @FunctionalInterface
 public interface Displacement<P extends Position<? extends P>> extends Iterable<P> {

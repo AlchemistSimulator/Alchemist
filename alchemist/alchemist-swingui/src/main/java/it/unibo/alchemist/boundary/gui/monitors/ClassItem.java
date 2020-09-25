@@ -12,8 +12,9 @@ import java.io.Serializable;
 /**
  * A simple {@link Class} wrapper exposing a better {@link Object#toString()}.
  *
- * @param <E>
+ * @param <E> class type
  */
+@Deprecated
 public final class ClassItem<E> implements Serializable {
 
     private static final long serialVersionUID = 3274105941480613159L;

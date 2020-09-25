@@ -38,49 +38,45 @@ import java.util.Optional;
 /**
  * Utility class for quickly creating non-reusable graphical interfaces.
  */
+@Deprecated
 public final class SingleRunGUI {
-
     private static final Logger L = LoggerFactory.getLogger(SingleRunGUI.class);
     private static final float SCALE_FACTOR = 0.8f;
     private static final int FALLBACK_X_SIZE = 800;
     private static final int FALLBACK_Y_SIZE = 600;
 
+    /**
+     * Private static constructor, as this is an utility class.
+     */
     private SingleRunGUI() {
+        // Private static constructor, as this is an utility class.
+    }
+
+    /**
+     * Builds a single-use graphical interface.
+     *
+     * @param simulation the simulation for this GUI
+     * @param <T>        concentration type
+     * @param <P>        position type
+     */
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> simulation) {
+        make(simulation, (File) null, JFrame.EXIT_ON_CLOSE);
+    }
+
+    /**
+     * @param simulation     the simulation for this GUI
+     * @param closeOperation the type of close operation for this GUI
+     * @param <T>            concentration type         concentration type
+     * @param <P>            position type
+     */
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> simulation, final int closeOperation) {
+        make(simulation, (File) null, closeOperation);
     }
 
     /**
      * Builds a single-use graphical interface.
      * 
-     * @param sim
-     *            the simulation for this GUI
-     * @param <T>
-     *            concentration type
-     * @param <P>
-     *            position type
-     */
-    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim) {
-        make(sim, (File) null, JFrame.EXIT_ON_CLOSE);
-    }
-
-    /**
-     * 
-     * @param sim
-     *            the simulation for this GUI
-     * @param closeOperation
-     *            the type of close operation for this GUI
-     * @param <T>
-     *            concentration type
-     * @param <P>
-     *            position type
-     */
-    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final int closeOperation) {
-        make(sim, (File) null, closeOperation);
-    }
-
-    /**
-     * Builds a single-use graphical interface.
-     * 
-     * @param sim
+     * @param simulation
      *            the simulation for this GUI
      * @param effectsFile
      *            the effects file
@@ -89,13 +85,13 @@ public final class SingleRunGUI {
      * @param <P>
      *            position type
      */
-    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> sim, final String effectsFile) {
-        make(sim, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
+    public static <T, P extends Position2D<P>> void make(final Simulation<T, P> simulation, final String effectsFile) {
+        make(simulation, new File(effectsFile), JFrame.EXIT_ON_CLOSE);
     }
 
     /**
      * Builds a single-use graphical interface.
-     * 
+     *
      * @param simulation
      *            the simulation for this GUI
      * @param effectsFile
@@ -115,23 +111,23 @@ public final class SingleRunGUI {
         make(simulation, new File(effectsFile), closeOperation);
     }
 
+    /**
+     * Logs an error during effect loading.
+     *
+     * @param e thrown exception
+     */
     private static void errorLoadingEffects(final Throwable e) {
         L.error(LocalizedResourceBundle.getString("cannot_load_effects"), e);
     }
 
     /**
      * Builds a single-use graphical interface.
-     * 
-     * @param simulation
-     *            the simulation for this GUI
-     * @param effectsFile
-     *            the effects file
-     * @param closeOperation
-     *            the type of close operation for this GUI
-     * @param <T>
-     *            concentration type
-     * @param <P>
-     *            position type
+     *
+     * @param simulation     the simulation for this GUI
+     * @param effectsFile    the effects file
+     * @param closeOperation the type of close operation for this GUI
+     * @param <T>            concentration type
+     * @param <P>            position type
      */
     public static <T, P extends Position2D<P>> void make(
             final Simulation<T, P> simulation,
@@ -180,7 +176,7 @@ public final class SingleRunGUI {
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
         /*
-         * OutputMonitor's add to the sim must be done as the last operation
+         * OutputMonitor's add to the simulation must be done as the last operation
          */
         simulation.addOutputMonitor(main);
     }

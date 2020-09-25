@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  *
  * @param <P> position type
- * @param <T>
+ * @param <T> concentration type
  */
 public class SelectiveAdaptiveRange<T, P extends Position<P>> extends AdaptiveRange<T, P> {
 

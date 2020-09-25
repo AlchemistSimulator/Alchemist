@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Speed
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
@@ -45,7 +45,7 @@ open class Arrive<T, P, A>(
         vararg coordinates: Number
     ) : this(env, reaction, pedestrian, decelerationRadius, arrivalTolerance, env.makePosition(*coordinates))
 
-    override val maxWalk: Double get() = with(currentPosition.distanceTo(target)) {
+    override val maxWalk: Double get() = with((currentPosition as Vector<P>).distanceTo(target)) {
         when {
             this < arrivalTolerance -> 0.0
             this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate

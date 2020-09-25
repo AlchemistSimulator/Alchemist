@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.environments;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
 

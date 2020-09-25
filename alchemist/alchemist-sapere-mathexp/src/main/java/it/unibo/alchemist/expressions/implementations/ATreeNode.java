@@ -14,7 +14,7 @@ import java.util.Map;
 
 
 /**
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class ATreeNode<T> implements ITreeNode<T> {
 

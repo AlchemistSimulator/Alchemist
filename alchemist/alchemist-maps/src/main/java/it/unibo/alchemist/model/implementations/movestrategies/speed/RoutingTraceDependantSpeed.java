@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
  * This {@link TraceDependantSpeed} strategy computes the remaining distance by
  * relying on maps data for a selected {@link Vehicle}.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class RoutingTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
 

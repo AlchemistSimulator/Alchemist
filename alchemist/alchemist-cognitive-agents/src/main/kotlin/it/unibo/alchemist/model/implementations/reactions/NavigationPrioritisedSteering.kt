@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
  * @param T concentration type
  * @param N type of nodes of the environment's graph.
  */
-class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads constructor(
+open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads constructor(
     env: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: Pedestrian2D<T>,
     timeDistribution: TimeDistribution<T>,

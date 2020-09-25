@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.implementations.actions.cartesianProduct
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
-import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
@@ -45,19 +44,13 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
 
     final override val route: List<Euclidean2DPosition>
 
-    /**
-     * Shortcut to get the environment.
-     */
-    protected val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>
-        get() = action.environment as Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>
-
     init {
         route = emptyList<Euclidean2DPosition>().takeIf { destinations.isEmpty() } ?: with(action) {
             val currPos = environment.getPosition(pedestrian)
             val (closestDest, distanceToClosestDest) = destinations
                 .asSequence()
                 .map { it to it.distanceTo(currPos) }
-                .minBy { it.second }
+                .minByOrNull { it.second }
                 ?: throw IllegalArgumentException("internal error: destinations can't be empty at this point")
             destinations.asSequence()
                 .sortedBy { it.distanceTo(currPos) }

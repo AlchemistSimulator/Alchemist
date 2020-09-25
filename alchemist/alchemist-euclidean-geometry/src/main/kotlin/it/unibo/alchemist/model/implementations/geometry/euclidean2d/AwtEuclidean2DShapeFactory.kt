@@ -42,7 +42,8 @@ internal class AwtEuclidean2DShapeFactory(
                 radius * 2,
                 radius * 2,
                 toDegrees(startAngle),
-                toDegrees(angle), Arc2D.PIE
+                toDegrees(angle),
+                Arc2D.PIE
             )
         )
     }

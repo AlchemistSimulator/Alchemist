@@ -57,7 +57,7 @@ class FollowScalarField<T, P, A>(
         (currentPosition.surrounding(maxWalk) + (centerProjectedPositions ?: emptyList()))
             .asSequence()
             .enforceObstacles(currentPosition)
-            .filter { canFit(it) }
+            .enforceOthers()
             /*
              * Next relative position.
              */
@@ -69,11 +69,11 @@ class FollowScalarField<T, P, A>(
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
         if (env is EnvironmentWithObstacles<*, T, P>) map { env.next(currentPosition, it) } else this
 
-    private fun canFit(position: P): Boolean =
-        env !is PhysicsEnvironment<T, P, *, *> || env.canNodeFitPosition(pedestrian, position)
+    private fun Sequence<P>.enforceOthers(): Sequence<P> =
+        if (env is PhysicsEnvironment<T, P, *, *>) map { env.farthestPositionReachable(pedestrian, it) } else this
 
-    private fun Sequence<P>.maxOr(currentPosition: P): P = this
-        .maxBy { valueIn(it) }
-        ?.takeIf { valueIn(it) > valueIn(currentPosition) }
-        ?: currentPosition
+    private fun Sequence<P>.maxOr(position: P): P =
+        maxByOrNull { valueIn(it) }
+            ?.takeIf { valueIn(it) > valueIn(position) }
+            ?: position
 }

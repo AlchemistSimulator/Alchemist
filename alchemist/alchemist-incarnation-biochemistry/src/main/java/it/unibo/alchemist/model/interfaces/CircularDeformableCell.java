@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.interfaces;
 /**
  * Implements a circular deformable cell.
  *
- * @param <P>
+ * @param <P> {@link Position} type
  *
  */
 public interface CircularDeformableCell<P extends Position<? extends P>> extends CellWithCircularArea<P> {

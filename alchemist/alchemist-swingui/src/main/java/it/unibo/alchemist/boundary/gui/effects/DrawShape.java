@@ -28,6 +28,7 @@ import java.util.Set;
 
 /**
  */
+@Deprecated
 public final class DrawShape implements Effect {
 
     private static final int DEFAULT_SIZE = 5;
@@ -379,11 +380,13 @@ public final class DrawShape implements Effect {
     }
 
     /**
-     * @param mol molFilter
+     * @param mol
+     *            molFilter
      */
     public void setMolFilter(final boolean mol) {
         this.molFilter = mol;
     }
+
 
     /**
      * @return molPropertyFilter
@@ -407,7 +410,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
-     * @param r reverse
+     * @param r
+     *            reverse
      */
     public void setReverse(final boolean r) {
         this.reverse = r;
@@ -428,7 +432,8 @@ public final class DrawShape implements Effect {
     }
 
     /**
-     * @param writingPropertyValue if it should draw the property value
+     * @param writingPropertyValue
+     *            if it should draw the property value
      */
     public void setWritingPropertyValue(final boolean writingPropertyValue) {
         this.writingPropertyValue = writingPropertyValue;
@@ -459,8 +464,4 @@ public final class DrawShape implements Effect {
             return sb.toString();
         }
     }
-
-
 }
-
-

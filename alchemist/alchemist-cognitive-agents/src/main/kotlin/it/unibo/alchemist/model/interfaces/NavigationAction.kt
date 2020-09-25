@@ -9,10 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A [SteeringAction] allowing a pedestrian to navigate an environment consciously (e.g. without getting stuck in
@@ -72,3 +74,9 @@ interface NavigationAction<T, P, A, L, R, N, E> : SteeringAction<T, P>
      */
     fun stop() = moveToFinal(pedestrianPosition)
 }
+
+/**
+ * A [NavigationAction] in a bidimensional euclidean space.
+ */
+typealias NavigationAction2D<T, L, R, N, E> =
+    NavigationAction<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>

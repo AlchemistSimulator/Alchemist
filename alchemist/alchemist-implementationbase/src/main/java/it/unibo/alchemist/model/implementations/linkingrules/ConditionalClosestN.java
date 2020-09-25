@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.interfaces.Position;
  * A {@link ClosestN} rule that also checks that a {@link Molecule} has a
  * specific concentration before allowing the connection.
  * 
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public final class ConditionalClosestN<T, P extends Position<P>> extends ClosestN<T, P> {
 

@@ -26,8 +26,8 @@ public class NoLinks<T, P extends Position<P>> extends AbstractLocallyConsistent
     private static final long serialVersionUID = -711043794655618585L;
 
     @Override
-    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> env) {
-        return Neighborhoods.make(env, center);
+    public final Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
+        return Neighborhoods.make(environment, center);
     }
 
 }

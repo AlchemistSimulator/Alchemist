@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
  * This interface is meant to be implemented by the data structure(s) which must
  * manage the reactions.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public interface Scheduler<T> {
 

@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  * This class offers a partial implementation of Reaction. In particular, it
  * allows to write new reaction specifying only which distribution time to adopt
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public abstract class AbstractReaction<T> implements Reaction<T> {
 
@@ -302,7 +302,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     /**
      * @return the default implementation returns a String in the form
-     * className@timeScheduled[Conditions]-rate->[Actions]
+     * className@timeScheduled[Conditions]-rate-&gt;[Actions]
      */
     @Override
     public String toString() {

@@ -14,7 +14,7 @@ import java.util.Map;
  * A dependent variable, namely a variable whose value can be obtained given the
  * values of other variables.
  *
- * @param <V>
+ * @param <V> value type of the variable
  */
 @FunctionalInterface
 public interface DependentVariable<V> extends Serializable {

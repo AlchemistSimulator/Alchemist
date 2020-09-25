@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -17,25 +17,27 @@ import java.awt.Color;
 import java.awt.Point;
 import java.io.Serializable;
 
+
 /**
  */
+@Deprecated
 public interface Effect extends Serializable {
 
     /**
      * Applies the effect.
      * 
-     * @param g
+     * @param graphic
      *            Graphics2D to use
-     * @param n
+     * @param node
      *            the node to draw
      * @param x
      *            x screen position
      * @param y
      *            y screen position
-     * @deprecated use {@link #apply(Graphics2D, Node, Environment, IWormhole2D)} instead.
+     * @deprecated use {@link #apply(Graphics2D, Node, Environment, Wormhole2D)} instead.
      */
     @Deprecated
-    default void apply(Graphics2D g, Node<?> n, int x, int y) {
+    default void apply(Graphics2D graphic, Node<?> node, int x, int y) {
         // deprecated, defaults to nothing.
     }
 
@@ -50,7 +52,12 @@ public interface Effect extends Serializable {
      * @param wormhole the wormhole used to map environment's coords to screen coords
      */
     @SuppressWarnings("deprecation")
-    default <T, P extends Position2D<P>> void apply(Graphics2D g, Node<T> n, Environment<T, P> env, IWormhole2D<P> wormhole) {
+    default <T, P extends Position2D<P>> void apply(
+            Graphics2D g,
+            Node<T> n,
+            Environment<T, P> env,
+            Wormhole2D<P> wormhole
+    ) {
         final Point viewPoint = wormhole.getViewPoint(env.getPosition(n));
         apply(g, n, viewPoint.x, viewPoint.y); // preserve backward compatibility
     }
@@ -59,4 +66,10 @@ public interface Effect extends Serializable {
      * @return a color which resembles the color of this effect
      */
     Color getColorSummary();
+
+    @Override // Should override hashCode() method
+    int hashCode();
+
+    @Override // Should override equals() method
+    boolean equals(Object obj);
 }

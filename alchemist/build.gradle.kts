@@ -79,6 +79,14 @@ allprojects {
                 )
             }
         }
+
+        // for tornadofx 2.0.0 snapshot release
+        maven {
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+            content {
+                includeGroup("no.tornado")
+            }
+        }
     }
 
     dependencies {

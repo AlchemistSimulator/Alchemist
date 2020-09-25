@@ -42,3 +42,20 @@ publishing.publications {
         }
     }
 }
+
+tasks.register<Exec>("shadowJar-testProtelisExecution") {
+    dependsOn(tasks.shadowJar)
+    val jar = tasks.shadowJar.get().archiveFile.get().asFile.absolutePath
+    val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
+    val command = arrayOf(
+        javaExecutable,
+        "-jar",
+        jar,
+        "-y",
+        "$projectDir/src/test/resources/testbase.yml",
+        "-t",
+        "2",
+        "--batch"
+    )
+    commandLine(*command)
+}

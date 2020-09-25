@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * - the max layer value
  * - the distribution, used to space isoline values between min and max
  *
- * This class defines the {@link DrawLayersIsolines#drawFunction(Function, Environment, Graphics2D, IWormhole2D)}
+ * This class defines the {@link DrawLayersIsolines#drawFunction(Function, Environment, Graphics2D, Wormhole2D)}
  * method, which is capable of drawing a layer's isolines given a function.
  * The only responsibility left to subclasses is to provide a {@link LayerToFunctionMapper}.
  */
@@ -76,7 +76,7 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
             final Function<? super P, ? extends Number> function,
             final Environment<T, P> environment,
             final Graphics2D graphics,
-            final IWormhole2D<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         final Dimension2D viewSize = wormhole.getViewSize();
         final int viewStartX = 0;

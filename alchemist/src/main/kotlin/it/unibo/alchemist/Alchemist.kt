@@ -30,6 +30,7 @@ object Alchemist {
     private const val VARIABLES = "var"
     private const val BATCH = 'b'
     private const val EXPORT = 'e'
+    private const val FXUI = "fxui"
     private const val DISTRIBUTED = 'd'
     private const val GRAPHICS = 'g'
     private const val HELP = 'h'
@@ -206,6 +207,7 @@ object Alchemist {
                 ?: AlchemistExecutionOptions.defaultEndTime,
             export = getOptionValue(EXPORT),
             graphics = getOptionValue(GRAPHICS),
+            fxui = hasOption(FXUI),
             headless = hasOption(HEADLESS),
             interval = hasNumeric(INTERVAL, kotlin.String::toDoubleOrNull)
                 ?: AlchemistExecutionOptions.defaultInterval,

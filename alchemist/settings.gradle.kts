@@ -33,10 +33,11 @@ include(
     "alchemist-interfaces",
     "alchemist-loading",
     "alchemist-maps",
-//    "alchemist-projectview",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",
-    "alchemist-swingui"
+    "alchemist-ui-tooling",
+    "alchemist-swingui",
+    "alchemist-fxui"
 )
 rootProject.name = "alchemist"
 

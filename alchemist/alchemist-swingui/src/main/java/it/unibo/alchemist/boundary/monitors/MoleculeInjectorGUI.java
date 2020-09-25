@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
  *
  * @param <T> concentration type
  */
+@Deprecated
 @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "This class is not meant to get serialized")
 public class MoleculeInjectorGUI<T> extends JPanel {
 

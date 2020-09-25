@@ -17,6 +17,7 @@ import java.awt.Dimension;
 /**
  *
  */
+@Deprecated
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public final class JTapeMainFeature extends JTapeSection {
 

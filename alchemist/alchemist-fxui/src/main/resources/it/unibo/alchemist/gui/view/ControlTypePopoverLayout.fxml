@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<!--
+  ~ Copyright (C) 2010-2020, Danilo Pianini and contributors
+  ~ listed in the main project's alchemist/build.gradle.kts file.
+  ~
+  ~ This file is part of Alchemist, and is distributed under the terms of the
+  ~ GNU General Public License, with a linking exception,
+  ~ as described in the file LICENSE in the Alchemist distribution's top directory.
+  -->
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@ButtonsBarLayout.css" xmlns="http://javafx.com/javafx">
+    <ButtonBar>
+        <buttons>
+            <JFXButton id="panButton" fx:id="panButton" text="Pan" textAlignment="CENTER" textFill="WHITE" ButtonBar.buttonData="LEFT"/>
+            <JFXButton id="selectButton" fx:id="selectButton" text="Select" textAlignment="CENTER" textFill="WHITE" ButtonBar.buttonData="RIGHT"/>
+        </buttons>
+    </ButtonBar>
+</AnchorPane>

@@ -32,6 +32,7 @@ import java.util.List;
 /**
  * @param <T> concentration type
  */
+@Deprecated
 public final class JOutputMonitorRepresentation<T> extends JPanel implements ItemSelectable {
     /**
      * 

@@ -19,6 +19,7 @@ package it.unibo.alchemist
  * @property export the path to the file root of the data to export, or null if unspecified (export disabled).
  * @property distributed the path to the file with the load distribution configuration, or null if the run is local
  * @property graphics the path to the effects file, or null if unspecified
+ * @property fxui whether the JavaFX UI takes priority over the default Swing UI
  * @property help true if print help function is selected
  * @property interval sampling time, defaults to [defaultInterval]
  * @property server if launched as Alchemist grid node server, the path to the configuration file. Null otherwise.
@@ -33,6 +34,7 @@ data class AlchemistExecutionOptions(
     val export: String? = null,
     val distributed: String? = null,
     val graphics: String? = null,
+    val fxui: Boolean = false,
     val help: Boolean = false,
     val interval: Double = defaultInterval,
     val server: String? = null,

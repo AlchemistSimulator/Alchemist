@@ -16,6 +16,7 @@ import javax.swing.JPanel;
  * close to each other because of stylistic or semantic reasons.
  * 
  */
+@Deprecated
 public abstract class JTapeSection extends JPanel {
 
     /**

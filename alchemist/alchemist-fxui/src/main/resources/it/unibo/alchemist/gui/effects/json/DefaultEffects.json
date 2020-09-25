@@ -1,0 +1,42 @@
+{
+  "type": "EffectStack",
+  "name": "Default Effects",
+  "visibility": true,
+  "transparency": 100,
+  "effects": [
+    {
+      "type": "DrawDot",
+      "size": {
+        "name": "Size",
+        "value": 5.0,
+        "lower bound": 0.0,
+        "upper bound": 100.0
+      },
+      "color": {
+        "Red": 0.0,
+        "Green": 0.0,
+        "Blue": 0.0,
+        "Alpha": 1.0
+      },
+      "name": "Draw the dots",
+      "visibility": true
+    },
+    {
+      "type": "DrawLinks",
+      "size": {
+        "name": "Size",
+        "value": 0.15,
+        "lower bound": 0.0,
+        "upper bound": 100.0
+      },
+      "color": {
+        "Red": 0.0,
+        "Green": 0.0,
+        "Blue": 0.0,
+        "Alpha": 1.0
+      },
+      "name": "Draw the links",
+      "visibility": true
+    }
+  ]
+}

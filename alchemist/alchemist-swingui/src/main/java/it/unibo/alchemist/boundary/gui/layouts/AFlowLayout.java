@@ -18,6 +18,7 @@ import java.util.List;
 /**
  *
  */
+@Deprecated
 public abstract class AFlowLayout implements LayoutManager, Serializable {
     /**
      * 

@@ -1,0 +1,13 @@
+{
+  "MODIFIER_CONTROL": "CONTROL",
+  "MODIFIER_SHIFT": "SHIFT",
+  "PAN_NORTH": "W",
+  "PAN_SOUTH": "S",
+  "PAN_EAST": "D",
+  "PAN_WEST": "A",
+  "DELETE": "DELETE",
+  "MOVE": "M",
+  "PLAY_AND_PAUSE": "P",
+  "ONE_STEP": "PERIOD",
+  "EDIT": "UNDEFINED"
+}

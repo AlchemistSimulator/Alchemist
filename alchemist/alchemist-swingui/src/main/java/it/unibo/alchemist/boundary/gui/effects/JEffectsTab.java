@@ -44,6 +44,7 @@ import java.util.List;
  * @param <T>
  *            is the type for the concentration
  */
+@Deprecated
 public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
 
     /**

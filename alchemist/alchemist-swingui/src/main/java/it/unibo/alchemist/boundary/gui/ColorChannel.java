@@ -52,7 +52,7 @@ public enum ColorChannel {
 
     /**
      * Given a color, modifies the channel setting the passed value.
-     * 
+     *
      * @param c
      *            the initial color
      * @param q

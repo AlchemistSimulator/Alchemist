@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -31,7 +31,8 @@ import java.awt.Graphics2D;
 /**
  * This class collects the following responsibilities:
  * - it manages to draw layers only when necessary (as the apply method will be called for every node).
- * Every subclass must only define the {@link AbstractDrawLayers#drawLayers(Collection, Environment, Graphics2D, IWormhole2D)}
+ * Every subclass must only define the
+ * {@link AbstractDrawLayers#drawLayers(Collection, Environment, Graphics2D, Wormhole2D)}
  * method, which is guaranteed to be called only when necessary.
  * - it declares gui controls for the selection of the color to use
  * - it declares gui controls for the selection of a filter, used to filter the layers to draw.
@@ -79,7 +80,7 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
             final Graphics2D graphics2D,
             final Node<T> node,
             final Environment<T, P> environment,
-            final IWormhole2D<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         if (layerFilter && (molecule == null || molString != molStringCached)) {
             molStringCached = molString;
@@ -114,7 +115,7 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
             Collection<Layer<T, P>> toDraw,
             Environment<T, P> environment,
             Graphics2D graphics,
-            IWormhole2D<P> wormhole
+            Wormhole2D<P> wormhole
     );
 
     /**

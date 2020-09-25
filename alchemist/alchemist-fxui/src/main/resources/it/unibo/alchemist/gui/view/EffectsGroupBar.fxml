@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<!--
+  ~ Copyright (C) 2010-2020, Danilo Pianini and contributors
+  ~ listed in the main project's alchemist/build.gradle.kts file.
+  ~
+  ~ This file is part of Alchemist, and is distributed under the terms of the
+  ~ GNU General Public License, with a linking exception,
+  ~ as described in the file LICENSE in the Alchemist distribution's top directory.
+  -->
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" id="effectsGroupPane" fx:id="effectsGroupPane" xmlns="http://javafx.com/javafx">
+    <bottom>
+        <ButtonBar id="groupControlBar" fx:id="groupControlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
+            <buttons>
+                <JFXButton id="save" fx:id="save" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Save" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT"/>
+                <JFXButton id="load" fx:id="load" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Load" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT"/>
+                <JFXButton id="addGroup" fx:id="addGroup" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" stylesheets="" text="Add" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="RIGHT"/>
+            </buttons>
+        </ButtonBar>
+    </bottom>
+    <center>
+        <ListView id="effectGroupsList" fx:id="effectGroupsList" stylesheets="@ListCell.css" BorderPane.alignment="CENTER"/>
+    </center>
+</BorderPane>

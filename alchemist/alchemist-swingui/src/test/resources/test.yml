@@ -1,0 +1,18 @@
+incarnation: protelis
+network-model:
+  type: EuclideanDistance
+  parameters: [10]
+displacements:
+  - in:
+      type: Circle
+      parameters: [500, 0, 0, 50]
+    programs:
+      -
+        - time-distribution: 1
+          program: 0
+        - program: send
+        - time-distribution: 1
+          type: Event
+          actions:
+            - type: BrownianMove
+              parameters: [1]

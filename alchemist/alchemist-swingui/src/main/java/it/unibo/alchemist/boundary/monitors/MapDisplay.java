@@ -33,9 +33,11 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 
- * @param <T> concentration type
+ * Graphical 2D display of an environments that uses a map.
+ *
+ * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
  */
+@Deprecated
 public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     private static final long serialVersionUID = 8593507198560560646L;
     private static final GraphicFactory GRAPHIC_FACTORY = AwtGraphicFactory.INSTANCE;
@@ -48,7 +50,7 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
         InitMapsForge.initAgent();
     }
     /**
-     * 
+     * Default constructor.
      */
     public MapDisplay() {
         super();
@@ -58,6 +60,25 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
         tdl.start();
         mapView.getMapScaleBar().setVisible(true);
         add(mapView);
+    }
+
+    private static TileCache createTileCache() {
+        final TileCache firstLevelTileCache = new InMemoryTileCache(IN_MEMORY_TILES);
+        final String tmpdir = System.getProperty("java.io.tmpdir");
+        final File cacheDirectory = new File(tmpdir, "mapsforge" + IDGEN.getAndIncrement());
+        final TileCache secondLevelTileCache = new FileSystemTileCache(ON_DISK_TILES, cacheDirectory, GRAPHIC_FACTORY);
+        return new TwoLevelTileCache(firstLevelTileCache, secondLevelTileCache);
+    }
+
+    private static TileDownloadLayer createTileDownloadLayer(final TileCache tileCache, final Model model) {
+        final TileSource tileSource = OpenStreetMapMapnik.INSTANCE;
+        final TileDownloadLayer tdl = new TileDownloadLayer(
+                tileCache,
+                model.mapViewPosition,
+                tileSource,
+                GRAPHIC_FACTORY);
+        tdl.setDisplayModel(model.displayModel);
+        return tdl;
     }
 
     @Override
@@ -88,25 +109,6 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
         getWormhole().optimalZoom();
         getZoomManager().setZoom(getWormhole().getZoom());
         super.initialized(environment);
-    }
-
-    private static TileCache createTileCache() {
-        final TileCache firstLevelTileCache = new InMemoryTileCache(IN_MEMORY_TILES);
-        final String tmpdir = System.getProperty("java.io.tmpdir");
-        final File cacheDirectory = new File(tmpdir, "mapsforge" + IDGEN.getAndIncrement());
-        final TileCache secondLevelTileCache = new FileSystemTileCache(ON_DISK_TILES, cacheDirectory, GRAPHIC_FACTORY);
-        return new TwoLevelTileCache(firstLevelTileCache, secondLevelTileCache);
-    }
-
-    private static TileDownloadLayer createTileDownloadLayer(final TileCache tileCache, final Model model) {
-        final TileSource tileSource = OpenStreetMapMapnik.INSTANCE;
-        final TileDownloadLayer tdl = new TileDownloadLayer(
-                tileCache,
-                model.mapViewPosition,
-                tileSource,
-                GRAPHIC_FACTORY);
-        tdl.setDisplayModel(model.displayModel);
-        return tdl;
     }
 
     @Override

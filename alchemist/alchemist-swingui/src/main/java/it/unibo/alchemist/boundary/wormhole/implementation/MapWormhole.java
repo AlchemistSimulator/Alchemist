@@ -22,10 +22,9 @@ import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.f
 
 /**
  * Wormhole used for maps rendering.
- * 
-
+ *
  */
-public final class MapWormhole extends Wormhole2D<GeoPosition> {
+public final class MapWormhole extends WormholeSwing<GeoPosition> {
     private final IMapViewPosition mapModel;
     /**
      * Maximum zoom.
@@ -36,7 +35,7 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     /**
      * Initializes a new {@link MapWormhole} copying the state of the one in
      * input.
-     * 
+     *
      * @param env
      *            the {@link Environment}
      * @param comp
@@ -94,9 +93,9 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
     }
 
     @Override
-    public Point getViewPoint(final GeoPosition envPoint) {
+    public Point getViewPoint(final GeoPosition environmentPoint) {
         final LatLong l = mapModel.getCenter();
-        final PointAdapter<GeoPosition> viewPoint = coordToPx(from(envPoint));
+        final PointAdapter<GeoPosition> viewPoint = coordToPx(from(environmentPoint));
         final PointAdapter<GeoPosition> centerView = coordToPx(from(l.longitude, l.latitude));
         final PointAdapter<GeoPosition> diff = viewPoint.diff(centerView);
         final PointAdapter<GeoPosition> vc = from(getViewPosition());
@@ -159,9 +158,14 @@ public final class MapWormhole extends Wormhole2D<GeoPosition> {
         setViewPosition(from(getViewPosition()).sum(delta).toPoint());
     }
 
-    @Override
+    /**
+     * Returns a {@link GeoPosition} with the given coordinates.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the newly created {@link GeoPosition}
+     */
     protected GeoPosition makePosition(final double x, final double y) {
         return new LatLongPosition(y, x);
     }
-
 }

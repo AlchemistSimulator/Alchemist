@@ -9,9 +9,11 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * Defines what a pedestrian should do when in a new room (= environment's area), this is designed to be used jointly
@@ -48,3 +50,9 @@ interface NavigationStrategy<T, P, A, L, R, N, E>
      */
     fun inUnexpectedNewRoom(previousRoom: N, expectedNewRoom: N, actualNewRoom: N) = inNewRoom(actualNewRoom)
 }
+
+/**
+ * A [NavigationStrategy] in a bidimensional euclidean space.
+ */
+typealias NavigationStrategy2D<T, L, R, N, E> =
+    NavigationStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>

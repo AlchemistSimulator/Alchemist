@@ -38,7 +38,7 @@ reactions: &behavior
       - type: FollowLayer
         parameters: [*target]
     conditions:
-      - type: WantToEvacuate
+      - type: WantToEscape
   - time-distribution:
       type: DiracComb
       parameters: [0.5]

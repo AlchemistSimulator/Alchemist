@@ -38,7 +38,10 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      */
     @Override
     protected boolean nodeShouldBeAdded(final Node<T> node, final Euclidean2DPosition p) {
-        return isAllowed(p);
+        /*
+         * Takes into account both obstacles and other nodes.
+         */
+        return isAllowed(p) && super.nodeShouldBeAdded(node, p);
     }
 
     /**

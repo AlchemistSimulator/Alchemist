@@ -7,10 +7,11 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
 /**
  * An environment supporting physics and nodes shapes.
- * Note: due to the high number of parameters its's highly recommended to not use this interface directly,
+ * Note: due to the high number of parameters it's highly recommended not to use this interface directly,
  * but to create an apposite interface extending this one instead.
  *
  * @param <T> nodes concentration type
@@ -61,12 +62,15 @@ where P : Position<P>,
     fun getNodesWithin(shape: GeometricShape<P, A>): List<Node<T>>
 
     /**
-     * Whether or not a node can be placed in a position.
-     *
-     * @param node
-     *      the node to move.
-     * @param position
-     *      the position you want to move the node to.
+     * Computes the farthest position reachable by a [node] towards a [desiredPosition], avoiding node overlapping.
+     * If no node is located in between, [desiredPosition] is returned. Otherwise, the first position where the node
+     * collides with someone else is returned. For collision purposes, hitboxes are used: each node is given a circular
+     * hitbox of radius equal to its shape's radius (shapeless nodes can't cause overlapping). The client can specify
+     * a different radius for the hitbox of the moving node.
      */
-    fun canNodeFitPosition(node: Node<T>, position: P): Boolean
+    fun farthestPositionReachable(
+        node: NodeWithShape<T, *, *>,
+        desiredPosition: P,
+        hitboxRadius: Double = node.shape.radius
+    ): P
 }

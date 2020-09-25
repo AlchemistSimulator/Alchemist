@@ -300,7 +300,7 @@ Here's a list of all the hardcoded parameters.
 
 So far we didn't mention physical interactions between pedestrians. Guess what? Physical pedestrians are capable of pushing and bumping into each other. Similarly to Orienting Pedestrians, we have `HomogeneousPhysicalPedestrian2D` and `CognitivePhysicalPedestrian2D`. Whatsmore, you can have a physical pedestrian capable of orienting as well: there are `HomogeneousOrientingPhysicalPedestrian2D` and `CognitiveOrientingPhysicalPedestrian2D`. Physical pedestrians don't require any additional parameter upon creation, hence the constructors showed above can be used to instance them.
 
-Physical pedestrians are inspired to [the work of Pelechano et al](https://bit.ly/3e3C7Tb). Note that this features are at an early stage, things may not work as expected.
+Physical pedestrians are inspired to [the work of Pelechano et al](https://bit.ly/3e3C7Tb). Note that this features are at an early stage, things might not work as expected.
 
 ### Physical steering strategies
 
@@ -344,3 +344,6 @@ Steering Behaviors for Autonomous Characters. 1999.](http://citeseer.ist.psu.edu
 
 [Erik Andresen, Mohcine Chraibi & Armin Seyfried\
 A representation of partial spatial knowledge: a cognitive map approach for evacuation simulations](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717)
+
+[Nuria Pelechano, Jan M. Allbeck, Norman I. Badler\
+Controlling Individual Agents in High-Density Crowd Simulation](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1223&context=hms)

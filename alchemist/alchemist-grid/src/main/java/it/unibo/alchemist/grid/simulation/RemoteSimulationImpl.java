@@ -37,8 +37,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 /**
  * {@link RemoteSimulation} implementation for Apache Ignite.
  *
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public final class RemoteSimulationImpl<T, P extends Position<P>> implements RemoteSimulation<T> {
 

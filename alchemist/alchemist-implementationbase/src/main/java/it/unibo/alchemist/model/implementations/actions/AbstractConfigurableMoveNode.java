@@ -22,8 +22,8 @@ import java.util.Objects;
  * three strategies can be defined: the next target to be reached, the routing
  * strategy to adopt, the speed to move at.
  *
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 

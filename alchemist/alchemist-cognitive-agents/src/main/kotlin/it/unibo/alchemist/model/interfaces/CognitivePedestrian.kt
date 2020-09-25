@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.cognitive.CognitiveAgent
+import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 

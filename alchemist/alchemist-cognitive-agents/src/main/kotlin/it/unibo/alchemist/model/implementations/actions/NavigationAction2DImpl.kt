@@ -87,7 +87,9 @@ open class NavigationAction2DImpl<T, L : Euclidean2DConvexShape, R>(
              * When moving towards a door the most convenient crossing point may change depending on the pedestrian
              * position. Recomputing the crossing points allows more natural movement (even though it's costly).
              */
-            crossingPoints = computeCrossingPoints(targetDoor.orFail())
+            if (currentRoom != null) {
+                crossingPoints = computeCrossingPoints(targetDoor.orFail())
+            }
         }
     }
 

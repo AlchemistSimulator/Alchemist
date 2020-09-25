@@ -19,8 +19,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * Moves the node randomly.
  * 
- * @param <T>
- * @param <P>
+ * @param <T> Concentration type
+ * @param <P> {@link Position} type
  */
 public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDrawersStack?>
+<?import com.jfoenix.controls.JFXSlider?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.layout.BorderPane?>
+
+<!--
+  ~ Copyright (C) 2010-2020, Danilo Pianini and contributors
+  ~ listed in the main project's alchemist/build.gradle.kts file.
+  ~
+  ~ This file is part of Alchemist, and is distributed under the terms of the
+  ~ GNU General Public License, with a linking exception,
+  ~ as described in the file LICENSE in the Alchemist distribution's top directory.
+  -->
+
+<BorderPane id="controlPane" fx:id="controlPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+    <bottom>
+        <ButtonBar id="controlBar" fx:id="controlBar" stylesheets="@ButtonsBarLayout.css" BorderPane.alignment="CENTER">
+            <buttons>
+                <JFXButton id="effectsButton" fx:id="effectsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Effects" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+                <JFXButton id="keysButton" fx:id="keysButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Keys" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+                <JFXSlider id="framerateSlider" fx:id="framerateSlider" max="240" min="0" value="60" ButtonBar.buttonData="LEFT">
+                    <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                    </cursor>
+                </JFXSlider>
+                <JFXButton id="controlType" fx:id="controlType" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" ripplerFill="WHITE" text="Pan" textAlignment="CENTER" textFill="WHITE" wrapText="true" ButtonBar.buttonData="LEFT" />
+            </buttons>
+        </ButtonBar>
+    </bottom>
+    <left>
+        <JFXDrawersStack id="drawerStack" fx:id="drawerStack" BorderPane.alignment="CENTER" />
+    </left>
+    <right>
+        <JFXDrawersStack id="moleculingStack" fx:id="moleculingStack" BorderPane.alignment="CENTER" />
+    </right>
+</BorderPane>

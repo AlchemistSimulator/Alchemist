@@ -14,6 +14,7 @@ import javax.swing.JMenuItem;
 
 /**
  */
+@Deprecated
 public abstract class AbstractMenu extends JMenu implements ActionListener {
 
     private static final long serialVersionUID = 5209455686362711386L;

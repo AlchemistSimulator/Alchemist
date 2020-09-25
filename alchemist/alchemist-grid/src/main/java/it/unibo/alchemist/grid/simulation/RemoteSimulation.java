@@ -11,7 +11,7 @@ import org.apache.ignite.lang.IgniteCallable;
 /**
  * Alchemist simulation that will be executed in remote cluster's nodes.
  *
- * @param <T>
+ * @param <T> concentration type
  */
 public interface RemoteSimulation<T> extends IgniteCallable<RemoteResult> {
 

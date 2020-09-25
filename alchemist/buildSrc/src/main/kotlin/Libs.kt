@@ -12,7 +12,9 @@ fun modularizedLibrary(base: String, module: String = "", separator: String = "-
 /*
  * Shortcuts for libraries used in multiple places
  */
+fun arrowKt(module: String) = modularizedLibrary("io.arrow-kt:arrow", module)
 fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
+fun graphStream(module: String = "") = modularizedLibrary("org.danilopianini:graphstream-gs", module)
 fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
 fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
 fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
@@ -51,6 +53,11 @@ object Libs {
      * https://github.com/mapsforge/mapsforge
      */
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"
+
+    /**
+     * https://github.com/jIconFont/jiconfont-javafx
+     */
+    const val jiconfont_javafx: String = "com.github.jiconfont:jiconfont-javafx:_"
 
     /**
      * http://logback.qos.ch
@@ -117,6 +124,8 @@ object Libs {
      */
     const val commons_cli: String = "commons-cli:commons-cli:_"
 
+    const val dsiutil: String = "it.unimi.dsi:dsiutils:_"
+
     /**
      * https://github.com/DanySK/gson-extras
      */
@@ -155,6 +164,11 @@ object Libs {
     const val snakeyaml: String = "org.yaml:snakeyaml:_"
 
     /**
+     * https://github.com/edvin/tornadofx
+     */
+    const val tornadofx: String = "no.tornado:tornadofx:_"
+
+    /**
      * https://github.com/ben-manes/caffeine
      */
     const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:_"
@@ -165,7 +179,12 @@ object Libs {
     const val spotbugs: String = "com.github.spotbugs:spotbugs:_"
 
     /**
-     * https://github.com/DanySK/listse
+     * http://www.jfoenix.com/
+     */
+    const val jfoenix: String = "com.jfoenix:jfoenix:_"
+
+    /**
+     * https://github.com/DanySK/listset
      */
     const val listset: String = "org.danilopianini:listset:_"
 
@@ -198,4 +217,19 @@ object Libs {
      * https://github.com/jenetics/jpx
      */
     const val jpx: String = "io.jenetics:jpx:_"
+
+    /**
+     * https://github.com/jIconFont/jiconfont-google_material_design_icons
+     */
+    const val jiconfont_google_material_design_icons: String = "com.github.jiconfont:jiconfont-google_material_design_icons:_"
+
+    /**
+     * https://github.com/ssaring/sportstracker/tree/master/leafletmap
+     */
+    const val ssaring_sportstracker_leafletmap: String = "org.danilopianini:de.saring.leafletmap:_"
+
+    /**
+     * https://search.maven.org/search?q=a:org.oxygen.oxygen-icons
+     */
+    const val oxygen: String = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:_"
 }

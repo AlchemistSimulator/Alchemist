@@ -7,6 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
+@file:Suppress("DEPRECATION")
+
 package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
@@ -14,7 +16,6 @@ import it.unibo.alchemist.boundary.gui.SingleRunGUI
 import it.unibo.alchemist.launch.Validation.Invalid
 import it.unibo.alchemist.launch.Validation.OK
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.model.interfaces.GeoPosition
 import java.awt.GraphicsEnvironment
 import javax.swing.JFrame
 
@@ -22,7 +23,7 @@ import javax.swing.JFrame
  * Launches a Swing GUI meant to be used for a single simulation run.
  */
 object SingleRunSwingUI : SimulationLauncher() {
-    override val name = "Alchemist graphical simulation"
+    override val name = "Alchemist Swing graphical simulation"
 
     override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
@@ -33,13 +34,13 @@ object SingleRunSwingUI : SimulationLauncher() {
             GraphicsEnvironment.isHeadless() -> Invalid(
                 "The JVM graphic environment is marked as headless. Cannot show a graphical interface. "
             )
-            graphics != null -> OK(Priority.High("Graphical effects requested, priority shifts up"))
+            graphics != null && !fxui -> OK(Priority.High("Graphical effects requested, priority shifts up"))
             else -> OK()
         }
     }
 
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
-        val simulation = prepareSimulation<Any, GeoPosition>(loader, parameters, emptyMap<String, Any>())
+        val simulation = prepareSimulation<Any, Nothing>(loader, parameters, emptyMap<String, Any>())
         when {
             parameters.graphics == null -> SingleRunGUI.make(simulation, JFrame.EXIT_ON_CLOSE)
             else -> SingleRunGUI.make(simulation, parameters.graphics, JFrame.EXIT_ON_CLOSE)

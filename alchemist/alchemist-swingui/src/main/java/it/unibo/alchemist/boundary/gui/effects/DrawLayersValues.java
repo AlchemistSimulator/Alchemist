@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D;
+import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -58,7 +58,7 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
             final Collection<Layer<T, P>> toDraw,
             final Environment<T, P> environment,
             final Graphics2D graphics,
-            final IWormhole2D<P> wormhole
+            final Wormhole2D<P> wormhole
     ) {
         if (mapper == null) {
             mapper = createMapper();
@@ -75,7 +75,7 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
             Function<? super P, ? extends Number> function,
             Environment<T, P> environment,
             Graphics2D graphics,
-            IWormhole2D<P> wormhole
+            Wormhole2D<P> wormhole
     );
 
     /**

@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @param <P>
+ * @param <P> {@link Position2D} type
  */
 public final class ChemotacticPolarization<P extends Position2D<P>> extends AbstractAction<Double> {
 

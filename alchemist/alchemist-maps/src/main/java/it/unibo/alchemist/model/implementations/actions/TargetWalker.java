@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Vehicle;
 
 /**
  *
- * @param <T>
+ * @param <T> concentration type
  */
 public class TargetWalker<T> extends MoveOnMap<T> {
 

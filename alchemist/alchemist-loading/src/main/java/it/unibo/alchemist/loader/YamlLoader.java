@@ -20,6 +20,7 @@ import com.google.common.collect.Table.Cell;
 import com.google.common.reflect.TypeToken;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Displacement;
+import it.unibo.alchemist.loader.displacements.GraphStreamDisplacement;
 import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.export.FilteringPolicy;
 import it.unibo.alchemist.loader.export.MoleculeReader;
@@ -33,6 +34,7 @@ import it.unibo.alchemist.loader.variables.LinearVariable;
 import it.unibo.alchemist.loader.variables.NumericConstant;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
@@ -72,6 +74,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -180,10 +183,10 @@ public final class YamlLoader implements Loader {
             makeBaseFactory(),
             m -> CommonFilters.fromString(m.get(NAME).toString())
     );
-    private static final TypeToken<List<Number>> LIST_NUMBER = new TypeToken<List<Number>>() {
+    private static final TypeToken<List<Number>> LIST_NUMBER = new TypeToken<>() {
         private static final long serialVersionUID = 1L;
     };
-    private static final TypeToken<Map<String, Object>> MAP_STRING_OBJECT = new TypeToken<Map<String, Object>>() {
+    private static final TypeToken<Map<String, Object>> MAP_STRING_OBJECT = new TypeToken<>() {
         private static final long serialVersionUID = 1L;
     };
     private static final BuilderConfiguration<Extractor> NAMED_EXTRACTOR_CONFIG = new BuilderConfiguration<>(
@@ -317,7 +320,7 @@ public final class YamlLoader implements Loader {
                         );
                         depVariables.put(name, dv);
                     }
-                    L.debug("Constant intialized in {}", constants);
+                    L.debug("Constant initialized in {}", constants);
                 } catch (IllegalAlchemistYAMLException e) {
                     L.debug(
                             "{} could not be created: its constructor may be requiring an uninitialized variable."
@@ -405,7 +408,7 @@ public final class YamlLoader implements Loader {
                                             .stream()
                                             .map(Object::toString)
                                             .collect(Collectors.toList());
-                                    return new MoleculeReader<>(
+                                    return new MoleculeReader(
                                             m.get(MOLECULE).toString(),
                                             m.getOrDefault(PROPERTY, "").toString(),
                                             incarnation,
@@ -414,11 +417,10 @@ public final class YamlLoader implements Loader {
                                     );
                                 })
                     ), factory);
-            extractors = Collections.unmodifiableList(((List<?>) extrObj).stream()
+            extractors = ((List<?>) extrObj).stream()
                     .map(obj -> extractorBuilder.build(obj instanceof CharSequence
                             ? ImmutableMap.of(NAME, obj.toString())
-                            : obj))
-                    .collect(Collectors.toList()));
+                            : obj)).collect(Collectors.toUnmodifiableList());
         } else {
             throw new IllegalAlchemistYAMLException("Exports must be a YAML map.");
         }
@@ -643,6 +645,30 @@ public final class YamlLoader implements Loader {
                 final Map<String, Object> dispMap = cast(factory, MAP_STRING_OBJECT, dispObj, "displacement");
                 factory.registerSingleton(RandomGenerator.class,  scenarioRng);
                 final Displacement<P> displacement = displacementBuilder.build(dispMap.get(IN));
+                /*
+                 * Deal with GraphStream-based deployments: the Linking Rule should get customized
+                 */
+                if (displacement instanceof GraphStreamDisplacement) {
+                    final var graphStreamDeployment = (GraphStreamDisplacement<T, P>) displacement;
+                    final var graphLinkingRule = graphStreamDeployment.getAssociatedLinkingRule();
+                    if (graphLinkingRule != null) {
+                        final var previousRule = environment.getLinkingRule();
+                        if (previousRule instanceof CombinedLinkingRule) {
+                            final var subRules = ((CombinedLinkingRule<T, P>) previousRule).getSubRules();
+                            final var newRules = new ArrayList<LinkingRule<T, P>>(subRules.size() + 1);
+                            newRules.addAll(subRules);
+                            newRules.add(graphLinkingRule);
+                            environment.setLinkingRule(new CombinedLinkingRule<>(newRules));
+                        } else {
+                            environment.setLinkingRule(new CombinedLinkingRule<>(
+                                ImmutableList.of(previousRule, graphLinkingRule)
+                            ));
+                        }
+                    }
+                }
+                /*
+                 * Displacements processing complete.
+                 */
                 factory.registerSingleton(RandomGenerator.class,  simulationRandomGenerator);
                 factory.registerSingleton(Displacement.class, displacement);
                 /*

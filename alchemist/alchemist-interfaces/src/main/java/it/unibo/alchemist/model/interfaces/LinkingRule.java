@@ -25,11 +25,11 @@ public interface LinkingRule<T, P extends Position<? extends P>> extends Seriali
      * 
      * @param center
      *            the node to recompute
-     * @param env
+     * @param environment
      *            the node's environment
      * @return a neighborhood
      */
-    Neighborhood<T> computeNeighborhood(Node<T> center, Environment<T, P> env);
+    Neighborhood<T> computeNeighborhood(Node<T> center, Environment<T, P> environment);
 
     /**
      * Some rules may require to be evaluated against multiple nodes until the

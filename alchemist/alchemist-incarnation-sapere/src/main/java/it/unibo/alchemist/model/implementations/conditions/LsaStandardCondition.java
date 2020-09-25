@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * simple LSA-condition (example: <grad,X,1>). Search an instance of a template
+ * simple LSA-condition (example: &lt;grad,X,1&gt;). Search an instance of a template
  * in a node. The LSAMolecule matched, if exist, will not be deleted from the
  * node Lsa-space . It can be deleted from the reaction, if necessary.
  */

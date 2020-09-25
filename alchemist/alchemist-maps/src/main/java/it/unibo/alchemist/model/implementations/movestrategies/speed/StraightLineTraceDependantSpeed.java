@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 /**
  * This {@link TraceDependantSpeed} uses the distance between coordinates for estimating the distance.
  * 
- * @param <T>
+ * @param <T> concentration type
  */
 public final class StraightLineTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
 

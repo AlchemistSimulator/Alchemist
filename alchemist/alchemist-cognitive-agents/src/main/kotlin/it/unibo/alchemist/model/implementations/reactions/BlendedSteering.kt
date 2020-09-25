@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  * @param timeDistribution
  *          the time distribution according to this the reaction executes.
  */
-class BlendedSteering<T>(
+open class BlendedSteering<T>(
     environment: Euclidean2DEnvironment<T>,
     pedestrian: Pedestrian2D<T>,
     timeDistribution: TimeDistribution<T>

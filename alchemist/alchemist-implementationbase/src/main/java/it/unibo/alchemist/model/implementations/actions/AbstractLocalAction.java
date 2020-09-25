@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
- * @param <T>
+ * @param <T> concentration type
  *
  */
 public abstract class AbstractLocalAction<T> extends AbstractAction<T> {

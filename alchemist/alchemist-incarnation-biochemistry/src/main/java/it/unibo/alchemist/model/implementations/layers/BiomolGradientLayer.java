@@ -15,8 +15,7 @@ import it.unibo.alchemist.model.interfaces.Layer;
 /**
  * A {@link Layer} representing a linear distribution in space of a molecule.
  *
- * @param <P>
- *
+ * @param <P> {@link Position2D} type
  */
 public final class BiomolGradientLayer<P extends Position2D<P>> implements Layer<Double, P> {
 

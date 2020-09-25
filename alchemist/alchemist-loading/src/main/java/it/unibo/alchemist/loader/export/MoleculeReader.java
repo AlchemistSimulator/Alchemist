@@ -26,13 +26,11 @@ import java.util.stream.DoubleStream;
 /**
  * Reads the value of a molecule and logs it.
  * 
- * @param <T>
  */
-public final class MoleculeReader<T> implements Extractor {
+public final class MoleculeReader implements Extractor {
 
     private final List<UnivariateStatistic> aggregators;
     private final List<String> columns;
-    private final Incarnation<T, ?> incarnation;
     private final String property;
     private final Molecule mol;
     private final FilteringPolicy filter;
@@ -53,10 +51,9 @@ public final class MoleculeReader<T> implements Extractor {
      */
     public MoleculeReader(final String molecule,
                           final String property,
-                          final Incarnation<T, ?> incarnation,
+                          final Incarnation<?, ?> incarnation,
                           final FilteringPolicy filter,
                           final List<String> aggregators) {
-        this.incarnation = Objects.requireNonNull(incarnation);
         this.property = property;
         this.mol = incarnation.createMolecule(molecule);
         this.filter = Objects.requireNonNull(filter);
@@ -79,15 +76,18 @@ public final class MoleculeReader<T> implements Extractor {
     }
 
     @Override
-    public double[] extractData(
-            final Environment<?, ?> environment,
-            final Reaction<?> reaction,
+    public <T> double[] extractData(
+            final Environment<T, ?> environment,
+            final Reaction<T> reaction,
             final Time time,
             final long step
     ) {
-        @SuppressWarnings("unchecked")
-        final DoubleStream values = ((Environment<T, ?>) environment).getNodes().stream()
-                .mapToDouble(node -> incarnation.getProperty(node, mol, property));
+        final DoubleStream values = environment.getNodes().stream()
+                .mapToDouble(node ->
+                    environment.getIncarnation()
+                        .map(incarnation -> incarnation.getProperty(node, mol, property))
+                        .orElseThrow(() -> new IllegalStateException("No incarnation available in the environment"))
+                );
         if (aggregators.isEmpty()) {
             return values.toArray();
         } else {

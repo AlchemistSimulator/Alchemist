@@ -35,6 +35,7 @@ import java.util.List;
  * @param <T>
  *            is the type for the concentration
  */
+@Deprecated
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public final class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemSelectable {
 

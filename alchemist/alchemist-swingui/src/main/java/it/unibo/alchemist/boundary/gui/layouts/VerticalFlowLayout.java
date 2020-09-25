@@ -40,6 +40,7 @@ import java.awt.Insets;
  *         Homepage:www.kagi.com/equitysoft - Based on 'FlexLayout' in Java
  *         class libraries Vol 2 Chan/Lee Addison-Wesley 1998
  */
+@Deprecated
 @SuppressWarnings("CPD-START")
 public final class VerticalFlowLayout extends AFlowLayout {
     /**

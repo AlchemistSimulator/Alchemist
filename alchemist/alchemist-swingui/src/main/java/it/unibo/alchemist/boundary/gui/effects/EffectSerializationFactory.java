@@ -18,9 +18,6 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.SupportedIncarnations;
-import org.danilopianini.io.FileUtilities;
-import org.danilopianini.lang.CollectionWithCurrentElement;
-import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,11 +29,15 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import org.danilopianini.io.FileUtilities;
+import org.danilopianini.lang.CollectionWithCurrentElement;
+import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 
 /**
  * Serialize Alchemist effects from/to file in human readable format.
  *
  */
+@Deprecated
 public final class EffectSerializationFactory {
     private static final RuntimeTypeAdapterFactory<Effect> RTA = RuntimeTypeAdapterFactory.of(Effect.class);
 

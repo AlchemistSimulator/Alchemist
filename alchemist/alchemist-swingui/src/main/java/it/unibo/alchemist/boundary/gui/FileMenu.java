@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Locale;
 
 import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString;
 
@@ -56,7 +57,7 @@ public final class FileMenu extends AbstractMenu {
             fc.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(final File f) {
-                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".jar");
+                    return f.isDirectory() || f.getName().toLowerCase(Locale.ENGLISH).endsWith(".jar");
                 }
 
                 @Override

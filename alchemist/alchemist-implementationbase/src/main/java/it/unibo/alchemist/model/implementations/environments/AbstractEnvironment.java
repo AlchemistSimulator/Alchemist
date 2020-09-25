@@ -231,7 +231,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
-    public final int getNodesNumber() {
+    public final int getNodeCount() {
         return nodes.size();
     }
 
@@ -484,7 +484,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
          * The following optimization allows to define as local the context of
          * reactions which are actually including a move, which should be
          * normally considered global. This because for each node which is
-         * detached, all the dependencies are updated, ensuring the soundness.
+         * detached, all the dependencies are updated, ensuring soundness.
          */
         if (Objects.requireNonNull(rule, "No linking rule / network model set.").isLocallyConsistent()) {
             final Neighborhood<T> newNeighborhood = rule.computeNeighborhood(Objects.requireNonNull(node), this);
@@ -520,7 +520,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
             }
         } else {
             final Queue<Operation> operations = recursiveOperation(node);
-            final TIntSet processed = new TIntHashSet(getNodesNumber());
+            final TIntSet processed = new TIntHashSet(getNodeCount());
             processed.add(node.getId());
             while (!operations.isEmpty()) {
                 final Operation next = operations.poll();

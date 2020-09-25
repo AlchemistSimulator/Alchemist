@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Age
-import it.unibo.alchemist.model.cognitiveagents.characteristics.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
@@ -28,8 +28,11 @@ private typealias AbstractCognitivePedestrian2D<T> =
  * @param danger
  *          the molecule associated to danger in the environment.
  */
-class CognitivePedestrian2D<T> @JvmOverloads constructor(
-    override val environment: Physics2DEnvironment<T>,
+open class CognitivePedestrian2D<T> @JvmOverloads constructor(
+    /*
+     * This is final for a reason, see HomogeneousPedestrian2D.
+     */
+    final override val environment: Physics2DEnvironment<T>,
     randomGenerator: RandomGenerator,
     age: Age,
     gender: Gender,
@@ -39,7 +42,7 @@ class CognitivePedestrian2D<T> @JvmOverloads constructor(
     Pedestrian2D<T> {
 
     override val shape by lazy { super.shape }
-    override val fieldOfView by lazy { super.fieldOfView }
+    final override val fieldOfView by lazy { super.fieldOfView }
 
     init {
         senses += fieldOfView

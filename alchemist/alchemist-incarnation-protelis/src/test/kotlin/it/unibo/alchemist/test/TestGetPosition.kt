@@ -45,18 +45,20 @@ class TestGetPosition {
     @Test
     fun testGetPosition() {
         val sim: Simulation<Any, Euclidean2DPosition> = Engine(env, 100)
-        sim.addOutputMonitor(object : OutputMonitor<Any, Euclidean2DPosition> {
-            override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) = Unit
-            override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) = Unit
-            override fun stepDone(environment: Environment<Any, Euclidean2DPosition>?, reaction: Reaction<Any>?, time: Time?, step: Long) {
-                if (step > 0) {
-                    Assertions.assertEquals(
-                        DatatypeFactory.createTuple(1.0, 1.0),
-                        node.getConcentration(action.asMolecule())
-                    )
+        sim.addOutputMonitor(
+            object : OutputMonitor<Any, Euclidean2DPosition> {
+                override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) = Unit
+                override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) = Unit
+                override fun stepDone(environment: Environment<Any, Euclidean2DPosition>?, reaction: Reaction<Any>?, time: Time?, step: Long) {
+                    if (step > 0) {
+                        Assertions.assertEquals(
+                            DatatypeFactory.createTuple(1.0, 1.0),
+                            node.getConcentration(action.asMolecule())
+                        )
+                    }
                 }
             }
-        })
+        )
         sim.play()
         sim.run()
         Assertions.assertEquals(Optional.empty<Any>(), sim.error)

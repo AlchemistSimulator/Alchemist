@@ -11,7 +11,7 @@ os:
   - osx
   - windows
   - *reference_os
-dist: xenial
+dist: focal
 addons:
   apt:
     packages:

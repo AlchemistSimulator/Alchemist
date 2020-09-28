@@ -52,7 +52,7 @@ os:
   - windows
   - *reference_os
 
-dist: xenial
+dist: focal
 
 addons:
   apt:

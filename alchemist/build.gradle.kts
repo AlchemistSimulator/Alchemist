@@ -279,7 +279,7 @@ allprojects {
         exclude("gradlew.bat")
         isZip64 = true
         mergeServiceFiles()
-        destinationDirectory.set(file("${rootProject.buildDir}/libs"))
+        destinationDirectory.set(file("${rootProject.buildDir}/shadow"))
         if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
             // Run the jar and check the output
             val testShadowJar = tasks.register<Exec>("${this.name}-testWorkingOutput") {

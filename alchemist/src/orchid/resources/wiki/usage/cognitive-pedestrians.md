@@ -78,10 +78,10 @@ displacements:
 ```
 
 ### Orienting pedestrians
-As shown in the animation on the top of the page, pedestrians can be equipped with different knowledge degrees of the environment. To do so, orienting pedestrians are required: these are derived from the work of [Andresen et al](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717). There are two available types of orienting pedestrian, described below.
+As shown in the animation on the top of the page, pedestrians can be equipped with different knowledge degrees of the environment. To do so, a particular type of pedestrian called orienting pedestrian is required: this is derived from the work of [Andresen et al](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717). There are two available types of orienting pedestrian, described below.
 
 #### Homogeneous orienting pedestrian
-These are homogeneous pedestrians that can be equipped with a given knowledge degree of the environment. Such quantity is a `Double` value in [0,1] describing the percentage of environment the pedestrian is familiar with prior to the start of the simulation (thus it does not take into account the knowledge the pedestrian will gain during it). Note that despite their name, the knowledge degree of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment. Be also aware that orienting pedestrians can only be placed in an `EnvironmentWithGraph`, which is a type of environment providing a navigation graph (see [how to generate navigation graphs](navigation-graphs.md)). 
+These are homogeneous pedestrians that can be equipped with a given knowledge degree of the environment. Such quantity is a `Double` value in [0,1] describing the percentage of environment the pedestrian is familiar with prior to the start of the simulation (thus it does not take into account the knowledge the pedestrian will gain during it). Note that despite their name ("homogeneous"), knowledge degrees of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment. Be also aware that orienting pedestrians can only be placed in an `EnvironmentWithGraph`, which is a type of environment providing a navigation graph (see [how to generate navigation graphs](navigation-graphs.md)). 
 
 ```yaml
 displacements:
@@ -94,7 +94,7 @@ displacements:
 ```
 
 #### Cognitive orienting pedestrian
-As you may guess, these are cognitive pedestrians equipable with a given knowledge degree of the environment. Cognitive orienting pedestrians can be instanced providing their knowledge degree before every other parameter.
+As you may guess, these are cognitive pedestrians equipable with a given knowledge degree of the environment. Cognitive orienting pedestrians can be instanced providing their knowledge degree as first parameter.
 
 ```yaml
 reactions: &behavior
@@ -296,6 +296,43 @@ Here's a list of all the hardcoded parameters.
 | maxWalkRatio       | 0.3        | Used by `SinglePrevalent` steering strategy (see its api documentation). When the pedestrian is subject to contrasting forces the resulting one may be small in magnitude, hence a lower bound for such quantity is set to (maximum distance walkable by the pedestrian) * (this parameter) so as to avoid extremely slow movements.                                                                                                                                                                                                                                                                                                                                       |
 | delta              | 0.05       | Used by `SinglePrevalent` steering strategy (see its api documentation). The weight assigned to disturbing forces is set to 1 and then iteratively decreased by delta until the resulting force satisfies the required conditions (see the api). This is similar to a gradient descent.                                                                                                                                                                                                                                                                                                                                                                                    |
 
+### Physical pedestrians
+
+So far we didn't mention physical interactions between pedestrians. Guess what? Physical pedestrians are capable of pushing and bumping into each other. Similarly to Orienting Pedestrians, we have `HomogeneousPhysicalPedestrian2D` and `CognitivePhysicalPedestrian2D`. Whatsmore, you can have a physical pedestrian capable of orienting as well: there are `HomogeneousOrientingPhysicalPedestrian2D` and `CognitiveOrientingPhysicalPedestrian2D`. Physical pedestrians don't require any additional parameter upon creation, hence the constructors showed above can be used to instance them.
+
+Physical pedestrians are inspired to [the work of Pelechano et al](https://bit.ly/3e3C7Tb). Note that this features are at an early stage, things might not work as expected.
+
+### Physical steering strategies
+
+In order to work properly, physical pedestrians should be equipped with physical steering strategies. Such strategies define how steering actions (which are intentional) are combined with physical forces (which are mostly unintentional). At present, only `BlendedSteeringWithPhysics` and `NavigationPrioritisedSteeringWithPhysics` are available. For further information, see the api. Here's a simple code for loading a `HomogeneousPhysicalPedestrian` with `Seek` and `Flee` steering actions:
+
+```yaml
+incarnation: protelis
+
+environment:
+  type: Continuous2DEnvironment
+
+reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: BlendedSteeringWithPhysics
+    actions:
+      - type: Seek
+        parameters: [1000, 500]
+      - type: Flee
+        parameters: [500, -500]
+
+displacements:
+  - in:
+      type: Point
+      parameters: [0, 0]
+    nodes:
+      type: HomogeneousPhysicalPedestrian2D
+    programs:
+      - *behavior
+```
+
 
 ### Further references
 [C. Natalie van der Wal, Daniel Formolo, Mark A. Robinson, Michael Minkov, Tibor Bosse\
@@ -307,3 +344,6 @@ Steering Behaviors for Autonomous Characters. 1999.](http://citeseer.ist.psu.edu
 
 [Erik Andresen, Mohcine Chraibi & Armin Seyfried\
 A representation of partial spatial knowledge: a cognitive map approach for evacuation simulations](https://www.tandfonline.com/doi/full/10.1080/23249935.2018.1432717)
+
+[Nuria Pelechano, Jan M. Allbeck, Norman I. Badler\
+Controlling Individual Agents in High-Density Crowd Simulation](https://repository.upenn.edu/cgi/viewcontent.cgi?article=1223&context=hms)

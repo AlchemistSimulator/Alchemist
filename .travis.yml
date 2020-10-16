@@ -4,7 +4,7 @@ if: repo != head_repo
 # SHARED VARIABLES
 
 _reference_jdk: &reference_jdk
-  'JDK="adopt@1.11.0"'
+  'JDK="adopt@1.11"'
 _reference_os: &reference_os
   'linux'
 _official_repo: &official_repo
@@ -74,8 +74,8 @@ env:
     - *reference_jdk
 # OpenJ9 temporarily disabled due to: https://issues.apache.org/jira/browse/GROOVY-9493
 #    - JDK="adopt-openj9@1.11.0"
-    - JDK="adopt@"
-#    - JDK="adopt-openj9@"
+    - JDK="adopt@1.14"
+#    - JDK="adopt-openj9@1.14"
 
 before_install:
   - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS

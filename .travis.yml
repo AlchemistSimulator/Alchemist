@@ -99,7 +99,7 @@ jobs:
       # TODO: Re-enable windows build when the following issue is resolved:
       # https://github.com/gradle/gradle/issues/12681
     - os: windows
-      env: JDK="adopt@"
+      env: JDK="adopt@1.14"
   include:
     - stage: check
       name: "Check on reference OS and JDK"

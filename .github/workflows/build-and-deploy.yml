@@ -81,10 +81,10 @@ jobs:
         shell: bash
         run: .github/build-steps/check.sh
       - name: CodeCov
-        if: ${{ env.REFERENCE == 'true' }}
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
         uses: codecov/codecov-action@v1
       - name: Deploy
-        if: ${{ env.REFERENCE == 'true' }}
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
         shell: bash
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}

@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+cd alchemist
+PUBLISH='./gradlew publishAll --parallel'
+$PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH
+if [ -n "$TAG" ] || [ "$BRANCH" = 'develop' ]; then
+    echo Installing surge
+    npm install --global surge
+    echo preparing build reports
+    mkdir -p report
+    cp --parent */build/reports build/reports report -R
+    STABILITY_MARKER=$([ "$BRANCH" = 'develop' ] && echo 'unstable-' || echo '')
+    echo Deploying ${STABILITY_MARKER}reports on surge
+    surge report/ alchemist-${STABILITY_MARKER}reports.surge.sh
+    echo Deploying ${STABILITY_MARKER}javadoc on surge
+    surge build/dokka/javadoc/ alchemist-${STABILITY_MARKER}doc.surge.sh
+fi
+if [ -n "$TAG"]; then
+    MESSAGE=$(git tag -l --format='%(contents)' "$TAG")
+    hub release create -m "$MESSAGE" "$TAG" || true
+    for jar in build/shadow/*; do
+        hub release edit -m '' -a "$jar" "$TAG"
+    done
+fi

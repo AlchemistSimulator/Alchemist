@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+cd alchemist
+./gradlew assemble shadowJar dokkaJavadoc orchidBuild --parallel --scan

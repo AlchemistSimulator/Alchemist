@@ -3,6 +3,7 @@ set -e
 cd alchemist
 PUBLISH='./gradlew publishAll --parallel'
 $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH
+./gradlew orchidDeploy
 if [ -n "$TAG" ] || [ "$BRANCH" = 'develop' ]
 then
     echo Installing surge

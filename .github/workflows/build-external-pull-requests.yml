@@ -1,4 +1,4 @@
-name: CI
+name: Pull Request CI
 on:
   pull_request:
 
@@ -17,17 +17,28 @@ jobs:
     steps:
       # Checkout the repository
       - uses: actions/checkout@v2
-      # Check if the configuration is supported
-      - shell: bash
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        shell: bash
+        run: git fetch --tags -f
+      - name: Populate TAG and BRANCH environment variables
+        shell: bash
         run: |
-          if [ -x .github/scripts/check_environment ]; then
-            .github/scripts/check_environment
-          else
-            echo "COMPATIBLE=true"
-            echo "COMPATIBLE=true" >> $GITHUB_ENV
-            echo "REFERENCE=$([ "$OS" = 'ubuntu' ] && [ "$JAVA_VERSION" = 8 ] && echo 'true' || echo 'false')"
-            echo "REFERENCE=$([ "$OS" = 'ubuntu' ] && [ "$JAVA_VERSION" = 8 ] && echo 'true' || echo 'false')" >> $GITHUB_ENV
-          fi
+          TAG=$(git describe --tags --exact-match HEAD || echo '')
+          echo "Current tag is: '$TAG' (setup in the TAG environment variable)"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          BRANCH=$([ -z "$TAG" ] && echo ${GITHUB_REF#refs/heads/} || echo $TAG)
+          echo "Current tag is: '$BRANCH' (setup in BRANCH TAG environment variable)"
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+      # Check if the configuration is supported
+      # COMPATIBLE means the build can run on this matrix combination
+      # REFERENCE means this is the combination that produces the reference artifacts
+      # (hence, artifacts from REFERENCE configuration shall be deployed)
+      # Only one matrix entry should be REFERENCE=true
+      # If REFERENCE=true, then also COMPATIBLE=true
+      - shell: bash
+        run: .github/scripts/compatibility_check.sh
       # Install the JDK
       - uses: joschi/setup-jdk@v2.3.0
         if: ${{ env.COMPATIBLE }}

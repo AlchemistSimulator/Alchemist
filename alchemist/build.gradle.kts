@@ -6,7 +6,6 @@
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
@@ -29,7 +28,6 @@ plugins {
     signing
     `maven-publish`
     id("org.danilopianini.publish-on-central")
-    id("com.jfrog.bintray")
     id("com.dorongold.task-tree")
     id("com.github.johnrengelman.shadow")
 }
@@ -47,13 +45,11 @@ allprojects {
     apply(plugin = "pmd")
     apply(plugin = "io.gitlab.arturbosch.detekt")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "project-report")
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "signing")
     apply(plugin = "maven-publish")
     apply(plugin = "org.danilopianini.publish-on-central")
-    apply(plugin = "com.jfrog.bintray")
     apply(plugin = "com.dorongold.task-tree")
     apply(plugin = "com.github.johnrengelman.shadow")
 
@@ -231,37 +227,6 @@ allprojects {
         licenseName.set("GPL 3.0 with linking exception")
         licenseUrl.set("https://github.com/AlchemistSimulator/Alchemist/blob/develop/LICENSE.md")
         scmConnection.set("git:git@github.com:$repoSlug")
-    }
-    val apiKeyName = "BINTRAY_API_KEY"
-    val userKeyName = "BINTRAY_USER"
-    bintray {
-        user = System.getenv(userKeyName)
-        key = System.getenv(apiKeyName)
-        setPublications("mavenCentral")
-        override = true
-        with(pkg) {
-            repo = "Alchemist"
-            name = project.name
-            userOrg = "alchemist-simulator"
-            vcsUrl = "https://github.com/$repoSlug"
-            setLicenses("GPL-3.0-or-later")
-            with(version) {
-                name = project.version.toString()
-            }
-        }
-    }
-    tasks.withType<BintrayUploadTask> {
-        onlyIf {
-            val hasKey = System.getenv(apiKeyName) != null
-            val hasUser = System.getenv(userKeyName) != null
-            if (!hasKey) {
-                println("The $apiKeyName environment variable must be set in order for the bintray deployment to work")
-            }
-            if (!hasUser) {
-                println("The $userKeyName environment variable must be set in order for the bintray deployment to work")
-            }
-            hasKey && hasUser
-        }
     }
 
     // Shadow Jar

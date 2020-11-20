@@ -14,8 +14,11 @@ jobs:
     env:
       JAVA_VERSION: ${{ matrix.jvm_version }}
       OS: ${{ matrix.os }}
+      TERM: dumb
     steps:
       # Checkout the repository
+      - name: Disable autocrlf
+        run: git config --global core.autocrlf false
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -36,7 +39,6 @@ jobs:
       - name: Prepare Environment
         shell: bash
         run: |
-          ls -ahl .github/scripts/
           if [ -x .github/scripts/check_environment ]; then
             .github/scripts/check_environment
           else

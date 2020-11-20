@@ -13,8 +13,10 @@ jobs:
     env:
       JAVA_VERSION: ${{ matrix.jvm_version }}
       OS: ${{ matrix.os }}
+      TERM: dumb
     steps:
       # Checkout the repository
+      - run: git config --global core.autocrlf false
       - uses: actions/checkout@v2
       # Check if the configuration is supported
       - shell: bash

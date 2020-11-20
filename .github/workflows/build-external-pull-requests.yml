@@ -53,9 +53,9 @@ jobs:
           fi
       - name: Build
         if: ${{ env.COMPATIBLE == 'true' }}
-        shell: bash 
+        shell: bash
         run: .github/build-steps/build.sh
       - name: Check
         if: ${{ env.COMPATIBLE == 'true' }}
-        shell: bash 
+        shell: bash
         run: .github/build-steps/check.sh

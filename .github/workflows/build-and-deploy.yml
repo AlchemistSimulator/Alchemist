@@ -36,6 +36,7 @@ jobs:
       - name: Prepare Environment
         shell: bash
         run: |
+          ls -ahl .github/scripts/
           if [ -x .github/scripts/check_environment ]; then
             .github/scripts/check_environment
           else

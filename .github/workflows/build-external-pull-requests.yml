@@ -1,0 +1,61 @@
+name: CI
+on:
+  pull_request:
+
+jobs:
+  Build-Foreign-Pull-Request:
+    if: ${{ github.event.repository.full_name != github.repository }}
+    strategy:
+      matrix:
+        os: [windows, macos, ubuntu]
+        jvm_version: [8, 11, 14]
+    runs-on: ${{ matrix.os }}-latest
+    env:
+      JAVA_VERSION: ${{ matrix.jvm_version }}
+      OS: ${{ matrix.os }}
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v2
+      # Check if the configuration is supported
+      - shell: bash
+        run: |
+          if [ -x .github/scripts/check_environment ]; then
+            .github/scripts/check_environment
+          else
+            echo "COMPATIBLE=true" >> $GITHUB_ENV
+          fi
+      # Install the JDK
+      - uses: joschi/setup-jdk@v2.3.0
+        if: ${{ env.COMPATIBLE }}
+        with:
+          java-version: ${{ matrix.jvm_version }}
+      # Install additional packages
+      - name: Configure Linux
+        shell: bash
+        if: ${{ env.COMPATIBLE && contains(matrix.os, 'ubuntu') }}
+        run: |
+          if [ -x .github/scripts/configure_linux ]; then
+            .github/scripts/configure_linux
+          fi
+      - name: Configure MacOS X
+        shell: bash
+        if: ${{ env.COMPATIBLE && contains(matrix.os, 'macos') }}
+        run: |
+          if [ -f .github/scripts/configure_macos ]; then
+            .github/scripts/configure_macos
+          fi
+      - name: Configure Windows
+        shell: bash
+        if: ${{ env.COMPATIBLE && contains(matrix.os, 'windows') }}
+        run: |
+          if [ -f .github/scripts/configure_windows ]; then
+            .github/scripts/configure_windows
+          fi
+      - name: Build
+        if: ${{ env.COMPATIBLE == 'true' }}
+        shell: bash 
+        run: .github/build-steps/build.sh
+      - name: Check
+        if: ${{ env.COMPATIBLE == 'true' }}
+        shell: bash 
+        run: .github/build-steps/check.sh

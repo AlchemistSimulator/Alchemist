@@ -1,4 +1,5 @@
 #!/bin/bash
 set -e
 cd alchemist
-./gradlew check jacocoTestReport --parallel --scan
+COMMAND='./gradlew check jacocoTestReport --parallel --scan'
+$COMMAND || $COMMAND || $COMMAND || $COMMAND || $COMMAND

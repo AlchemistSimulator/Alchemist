@@ -13,8 +13,10 @@ jobs:
     env:
       JAVA_VERSION: ${{ matrix.jvm_version }}
       OS: ${{ matrix.os }}
+      TERM: dumb
     steps:
       # Checkout the repository
+      - run: git config --global core.autocrlf false
       - uses: actions/checkout@v2
       # Check if the configuration is supported
       - shell: bash
@@ -22,7 +24,10 @@ jobs:
           if [ -x .github/scripts/check_environment ]; then
             .github/scripts/check_environment
           else
+            echo "COMPATIBLE=true"
             echo "COMPATIBLE=true" >> $GITHUB_ENV
+            echo "SHOULD_DEPLOY=$([ "$OS" = 'ubuntu' ] && [ "$JAVA_VERSION" = 8 ] && echo 'true' || echo 'false')"
+            echo "SHOULD_DEPLOY=$([ "$OS" = 'ubuntu' ] && [ "$JAVA_VERSION" = 8 ] && echo 'true' || echo 'false')" >> $GITHUB_ENV
           fi
       # Install the JDK
       - uses: joschi/setup-jdk@v2.3.0
@@ -59,3 +64,6 @@ jobs:
         if: ${{ env.COMPATIBLE == 'true' }}
         shell: bash
         run: .github/build-steps/check.sh
+      - name: CodeCov
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        uses: codecov/codecov-action@v1

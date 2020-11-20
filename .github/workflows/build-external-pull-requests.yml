@@ -13,6 +13,7 @@ jobs:
     env:
       JAVA_VERSION: ${{ matrix.jvm_version }}
       OS: ${{ matrix.os }}
+      TERM: dumb
     steps:
       # Checkout the repository
       - uses: actions/checkout@v2

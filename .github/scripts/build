@@ -1,5 +1,4 @@
 #!/bin/bash
 set -e
 cd alchemist
-./gradlew checkstyleMain --parallel
 ./gradlew assemble shadowJar dokkaJavadoc orchidBuild --parallel --scan

@@ -9,7 +9,7 @@ $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH
 if [ -n "$TAG" ] || [ "$BRANCH" = 'develop' ]
 then
     echo Installing surge
-    npm install --global surge
+    sudo npm install --global surge
     echo preparing build reports
     mkdir -p report
     cp --parent ./*/build/reports build/reports report -R

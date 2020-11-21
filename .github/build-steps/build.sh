@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 CUSTOM_BUILD_SCRIPT=${CUSTOM_BUILD_SCRIPT:-.github/scripts/build}
 if [ -x $CUSTOM_BUILD_SCRIPT ]; then
     echo 'Detected custom build instructions'

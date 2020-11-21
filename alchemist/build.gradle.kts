@@ -205,6 +205,19 @@ allprojects {
         }
     }
 
+    group = "it.unibo.alchemist"
+    val repoSlug = "AlchemistSimulator/Alchemist.git"
+    publishOnCentral {
+        projectDescription = extra["projectDescription"].toString()
+        projectLongName = extra["projectLongName"].toString()
+        licenseName = "GPL 3.0 with linking exception"
+        licenseUrl = "https://github.com/AlchemistSimulator/Alchemist/blob/develop/LICENSE.md"
+        scmConnection = "git:git@github.com:$repoSlug"
+        repository("https://maven.pkg.github.com/alchemistsimulator/alchemist") {
+            user = "DanySK"
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
     publishing.publications {
         withType<MavenPublication> {
             pom {
@@ -218,15 +231,6 @@ allprojects {
                 }
             }
         }
-    }
-    group = "it.unibo.alchemist"
-    val repoSlug = "AlchemistSimulator/Alchemist.git"
-    publishOnCentral {
-        projectDescription.set(extra["projectDescription"].toString())
-        projectLongName.set(extra["projectLongName"].toString())
-        licenseName.set("GPL 3.0 with linking exception")
-        licenseUrl.set("https://github.com/AlchemistSimulator/Alchemist/blob/develop/LICENSE.md")
-        scmConnection.set("git:git@github.com:$repoSlug")
     }
 
     // Shadow Jar

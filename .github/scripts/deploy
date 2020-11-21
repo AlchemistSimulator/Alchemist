@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 cd alchemist
-PUBLISH='./gradlew publishAll --parallel'
+PUBLISH='./gradlew publishAllPublicationsToMavenCentralRepository --parallel'
 $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH
+# Publish on GitHub. Fails due to overwritings, so it's ok to give up
+./gradlew publishAllPublicationsToGithubRepository --continue || true
 ./gradlew orchidDeploy
 if [ -n "$TAG" ] || [ "$BRANCH" = 'develop' ]
 then

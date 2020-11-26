@@ -117,7 +117,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         Objects.requireNonNull(additionalParameters);
         if (node instanceof ProtelisNode) {
             final ProtelisNode<P> pNode = (ProtelisNode<P>) node;
-            if (additionalParameters.equalsIgnoreCase("send")) {
+            if ("send".equalsIgnoreCase(additionalParameters)) {
                 final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
                         .parallelStream()
                         .flatMap(r -> r.getActions().parallelStream())

@@ -13,10 +13,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("de.fayard.refreshVersions:refreshVersions:0.9.5")
+        classpath("de.fayard.refreshVersions:refreshVersions:0.9.7")
         classpath("org.danilopianini:refreshversions-aliases:+")
     }
 }
+
 bootstrapRefreshVersions(justAdditionalAliases)
 
 include(

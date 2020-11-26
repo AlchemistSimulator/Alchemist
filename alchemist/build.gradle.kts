@@ -114,6 +114,10 @@ allprojects {
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
         }
+        pmd(pmdModule("core"))
+        pmd(pmdModule("java"))
+        pmd(pmdModule("scala"))
+        pmd(pmdModule("kotlin"))
     }
 
     // COMPILE

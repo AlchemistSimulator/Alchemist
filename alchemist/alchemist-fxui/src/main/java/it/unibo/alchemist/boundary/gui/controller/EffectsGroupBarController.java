@@ -231,7 +231,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
         );
         File selectedFile = fileChooser.showSaveDialog(this.save.getScene().getWindow());
         if (selectedFile != null) {
-            if (FilenameUtils.getExtension(selectedFile.getAbsolutePath()).equals("")) {
+            if (FilenameUtils.getExtension(selectedFile.getAbsolutePath()).isEmpty()) {
                 selectedFile = new File(selectedFile.getAbsolutePath() + DEFAULT_EXTENSION);
             }
             this.lastPath = Optional.ofNullable(selectedFile.getParent());

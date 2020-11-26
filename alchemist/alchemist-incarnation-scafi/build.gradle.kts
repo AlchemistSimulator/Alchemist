@@ -5,6 +5,7 @@
  * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
+import java.time.Duration
 
 plugins {
     scala
@@ -31,6 +32,10 @@ dependencies {
 
 tasks.withType<ScalaCompile> {
     targetCompatibility = "1.8"
+}
+
+tasks.withType<Test> {
+    timeout.set(Duration.ofMinutes(4))
 }
 
 publishing.publications {

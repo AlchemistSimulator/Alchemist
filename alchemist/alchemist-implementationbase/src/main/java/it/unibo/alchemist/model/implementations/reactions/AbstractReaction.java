@@ -247,7 +247,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
                 result.removeIf(it -> it instanceof Molecule);
                 everyMolecule = true;
                 result.add(Dependency.EVERY_MOLECULE);
-            } else  if (!(everyMolecule && dependency instanceof Molecule)) {
+            } else if (!(everyMolecule && dependency instanceof Molecule)) {
                 result.add(dependency);
             }
         }

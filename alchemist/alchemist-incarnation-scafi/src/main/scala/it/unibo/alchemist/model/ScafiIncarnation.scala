@@ -33,7 +33,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     case x: Int => x
     case x: String => java.lang.Double.parseDouble(x)
     case x: Boolean => if (x) 1 else 0
-    case x: Long => x
+    case x: Long => x.toDouble
     case x: Float => x
     case x: Byte => x
     case x: Short => x

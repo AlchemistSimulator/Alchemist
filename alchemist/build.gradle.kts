@@ -182,7 +182,7 @@ allprojects {
     detekt {
         failFast = true
         buildUponDefaultConfig = true
-        config = files("${rootProject.projectDir}/config/detekt.yml")
+        config = files("${rootProject.projectDir}/config/detekt/detekt.yml")
         reports {
             html.enabled = true
         }

@@ -1,0 +1,3 @@
+[submodule "alchemist/config/detekt"]
+	path = alchemist/config/detekt
+	url = https://github.com/DanySK/detekt-configuration.git

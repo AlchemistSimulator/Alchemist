@@ -92,8 +92,10 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
             };
             final FutureTask<RemoteResultImpl> futureTask = new FutureTask<>(callable);
             final Thread t = new Thread(futureTask);
-            final URLClassLoader cl = new URLClassLoader(new URL[]{wd.getDirectoryUrl()},
-                    ResourceLoader.getClassLoader());
+            final URLClassLoader cl = new URLClassLoader(
+                new URL[]{wd.getDirectoryUrl()},
+                ResourceLoader.getClassLoader()
+            );
             t.setContextClassLoader(cl);
             t.start();
             return futureTask.get();

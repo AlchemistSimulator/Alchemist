@@ -36,7 +36,7 @@ public final class Local implements Concentration<Object> {
             try {
                 temp = Double.parseDouble(ts);
             } catch (NumberFormatException e) {
-                if (ts.equalsIgnoreCase("true") || ts.equalsIgnoreCase("false")) {
+                if ("true".equalsIgnoreCase(ts) || "false".equalsIgnoreCase(ts)) {
                     temp = Boolean.parseBoolean(ts);
                 }
             }

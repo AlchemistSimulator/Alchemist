@@ -53,9 +53,9 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
         super(node);
         this.env = Objects.requireNonNull(environment);
         this.biomol = Objects.requireNonNull(biomolecule);
-        if (ascendGrad.equalsIgnoreCase("up")) {
+        if ("up".equalsIgnoreCase(ascendGrad)) {
             this.ascend = true;
-        } else if (ascendGrad.equalsIgnoreCase("down")) {
+        } else if ("down".equalsIgnoreCase(ascendGrad)) {
             this.ascend = false;
         } else {
             throw new IllegalArgumentException("Possible imput string are only up or down");

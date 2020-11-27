@@ -62,7 +62,7 @@ jobs:
           if [ -f .github/scripts/configure_macos ]; then
             .github/scripts/configure_macos
           fi
-      - name: Configure Windows Pagefile
+      - name: Configure the Windows Pagefile
         if: ${{ env.COMPATIBLE == 'true' && contains(matrix.os, 'windows') }}
         uses: al-cheb/configure-pagefile-action@v1.2
       - name: Configure Windows

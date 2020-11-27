@@ -16,7 +16,7 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.GraphHopperAPI;
 import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.routing.util.EdgeFilter;
-import com.graphhopper.storage.index.QueryResult;
+import com.graphhopper.storage.index.Snap;
 import com.graphhopper.util.shapes.GHPoint;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
@@ -97,8 +97,8 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     private static final String MAPNAME = "map";
     private static final Semaphore LOCK_FILE = new Semaphore(1);
     private static final LoadingCache<String, Map<Vehicle, GraphHopperAPI>> KNOWN_MAPS = Caffeine.newBuilder()
-            .softValues()
-            .build(OSMEnvironment::initNavigators);
+        .softValues()
+        .<String, Map<Vehicle, GraphHopperAPI>>build(OSMEnvironment::initNavigators);
     private final String mapResource;
     private final boolean forceStreets, onlyStreet;
     private transient Map<Vehicle, GraphHopperAPI> navigators;
@@ -315,7 +315,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     private Optional<GeoPosition> getNearestStreetPoint(final GeoPosition position) {
         assert position != null;
         final GraphHopperAPI gh = navigators.get(Vehicle.BIKE);
-        final QueryResult qr = ((GraphHopper) gh).getLocationIndex()
+        final Snap qr = ((GraphHopper) gh).getLocationIndex()
                 .findClosest(position.getLatitude(), position.getLongitude(), EdgeFilter.ALL_EDGES);
         if (qr.isValid()) {
             final GHPoint pt = qr.getSnappedPoint();
@@ -447,14 +447,13 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
             final Vehicle vehicle) throws IOException {
         try {
             return new GraphHopperOSM()
-                    .setOSMFile(mapFile.getAbsolutePath())
-                    .forDesktop()
-                    .setElevation(false)
-                    .setEnableCalcPoints(true)
-                    .setInMemory()
-                    .setGraphHopperLocation(internalWorkdir)
-                    .setEncodingManager(vehicle.getEncoder())
-                    .importOrLoad();
+                .setOSMFile(mapFile.getAbsolutePath())
+                .forDesktop()
+                .setElevation(false)
+                .setInMemory()
+                .setGraphHopperLocation(internalWorkdir)
+                .setEncodingManager(vehicle.getEncoder())
+                .importOrLoad();
         } catch (final IllegalStateException e) {
             final var message = e.getMessage();
             if (message != null && message.toLowerCase(Locale.ENGLISH).matches("version.*unsupported.*")) {

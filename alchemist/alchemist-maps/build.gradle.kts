@@ -9,8 +9,8 @@
 dependencies {
     api(project(":alchemist-interfaces"))
 
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-loading"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("loading"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.commons_codec)

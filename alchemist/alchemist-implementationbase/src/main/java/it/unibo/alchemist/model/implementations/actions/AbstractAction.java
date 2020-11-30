@@ -32,7 +32,7 @@ public abstract class AbstractAction<T> implements Action<T> {
 
     private static final long serialVersionUID = 1L;
     private final ListSet<Dependency> dependencies = new LinkedListSet<>();
-    private final Node<T> n;
+    private final Node<T> node;
 
     /**
      * Call this constructor in the subclasses in order to automatically
@@ -43,7 +43,7 @@ public abstract class AbstractAction<T> implements Action<T> {
      */
     protected AbstractAction(final Node<T> node) {
         Objects.requireNonNull(node);
-        this.n = node;
+        this.node = node;
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class AbstractAction<T> implements Action<T> {
      * @return the node this action belongs to
      */
     public Node<T> getNode() {
-        return n;
+        return node;
     }
 
     /**

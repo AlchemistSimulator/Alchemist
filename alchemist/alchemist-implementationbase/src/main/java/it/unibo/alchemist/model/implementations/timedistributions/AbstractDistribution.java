@@ -40,7 +40,7 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      * @param t
      *            the new time
      */
-    protected final void setTau(final Time t) {
+    protected final void setNextOccurrence(final Time t) {
         this.tau = t;
     }
 

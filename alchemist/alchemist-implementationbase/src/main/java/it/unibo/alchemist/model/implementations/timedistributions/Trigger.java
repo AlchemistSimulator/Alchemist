@@ -39,7 +39,7 @@ public final class Trigger<T> extends AbstractDistribution<T> {
     @Override
     protected void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
         if (dryRunDone && curTime.compareTo(getNextOccurence()) >= 0 && executed) {
-            setTau(new DoubleTime(Double.POSITIVE_INFINITY));
+            setNextOccurrence(new DoubleTime(Double.POSITIVE_INFINITY));
         }
         dryRunDone = true;
     }

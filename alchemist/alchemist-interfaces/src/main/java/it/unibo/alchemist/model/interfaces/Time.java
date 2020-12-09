@@ -63,6 +63,11 @@ public interface Time extends Comparable<Time>, Serializable {
         public int hashCode() {
             return Double.hashCode(0);
         }
+
+        @Override
+        public String toString() {
+            return "0";
+        }
     };
 
     /**
@@ -111,6 +116,11 @@ public interface Time extends Comparable<Time>, Serializable {
         @Override
         public int hashCode() {
             return Double.hashCode(Double.POSITIVE_INFINITY);
+        }
+
+        @Override
+        public String toString() {
+            return "∞";
         }
     };
 

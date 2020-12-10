@@ -376,9 +376,21 @@ public final class YamlLoader implements Loader {
                 ImmutableSet.of(arbitraryVarConfig, linearVarConfig),
                 factory
         );
-        variables = originalVars.entrySet().stream()
-                .filter(e -> e != null && !e.getValue().containsKey(FORMULA))
-                .collect(ImmutableMap.toImmutableMap(Entry::getKey, e -> varBuilder.build(e.getValue())));
+        final var actualVariablesToBeInitialized = (Map<String, Object>) contents.get(VARIABLES);
+        if (actualVariablesToBeInitialized != null) {
+            final var immutableVariablesBuilder = ImmutableMap.<String, Variable<?>>builder();
+            for (final var entry: actualVariablesToBeInitialized.entrySet()) {
+                if (entry.getValue() instanceof Map) {
+                    final var valueAsMap = (Map<String, Object>) entry.getValue();
+                    if (!valueAsMap.containsKey(FORMULA)) {
+                        immutableVariablesBuilder.put(entry.getKey(), varBuilder.build(entry.getValue()));
+                    }
+                }
+            }
+            variables = immutableVariablesBuilder.build();
+        } else {
+            variables = ImmutableMap.of();
+        }
         L.debug("Lookup table: {}", variables);
         assert depVariables.size() + variables.size() == reverseLookupTable.size();
         /*
@@ -946,55 +958,54 @@ public final class YamlLoader implements Loader {
         if (yamlNode instanceof Collection) {
             final Collection<?> collection = (Collection<?>) yamlNode;
             final int s = collection.size();
-            return collection.stream()
-                .map(e -> recursivelyResolveVariables(e, reverseLookupTable, variables))
-                .collect(Collectors.toCollection(() -> collection instanceof Set
-                        ? Sets.newLinkedHashSetWithExpectedSize(s)
-                        : Lists.newArrayListWithCapacity(s)));
+            final Collection<Object> destination = collection instanceof Set
+                ? Sets.newLinkedHashSetWithExpectedSize(s)
+                : Lists.newArrayListWithCapacity(s);
+            for (final var element: collection) {
+                destination.add(recursivelyResolveVariables(element, reverseLookupTable, variables));
+            }
+            return destination;
         }
         if (yamlNode instanceof Map) {
-            final String varName = reverseLookupTable.get(yamlNode);
-            if (varName != null) {
-                final Object value = variables.get(varName);
-                if (value != null) {
-                    return value;
-                }
+            final var variableValue = Optional.ofNullable(reverseLookupTable.get(yamlNode))
+                .map(variables::get);
+            if (variableValue.isPresent()) {
+                return variableValue.get();
             } else {
-                final Map<?, ?> oMap = (Map<?, ?>) yamlNode;
-                return oMap.entrySet().stream()
-                        .collect(() -> Maps.newLinkedHashMapWithExpectedSize(oMap.size()),
-                            (m, p) -> m.put(
-                                    p.getKey(),
-                                    recursivelyResolveVariables(p.getValue(), reverseLookupTable, variables)
-                            ),
-                            (m1, m2) -> {
-                                throw new IllegalStateException();
-                            }
-                        );
+                final Map<?, ?> origin = (Map<?, ?>) yamlNode;
+                final Map<Object, Object> destination = Maps.newLinkedHashMapWithExpectedSize(origin.size());
+                for (final var entry: origin.entrySet()) {
+                    final var newValue = recursivelyResolveVariables(entry.getValue(), reverseLookupTable, variables);
+                    destination.put(entry.getKey(), newValue);
+                }
+                return destination;
             }
         }
         return yamlNode;
     }
+
     private static Function<Map<String, Object>, RandomGenerator> rngMaker(final Factory factory, final String seed) {
         return m -> Optional.ofNullable(m.get(seed))
-                .map(o -> factory.build(MersenneTwister.class, o))
-                .orElse(new MersenneTwister(0));
+            .map(o -> factory.build(MersenneTwister.class, o))
+            .orElse(new MersenneTwister(0));
     }
 
     private static <T> BuilderConfiguration<T> singleParamConfig(final Factory factory, final Function<Object, T> supplier) {
         return new BuilderConfiguration<>(
-                ImmutableMap.of(PARAMETER, Object.class),
-                emptyMap(),
-                factory, m -> supplier.apply(m.get(PARAMETER))
+            ImmutableMap.of(PARAMETER, Object.class),
+            emptyMap(),
+            factory, m -> supplier.apply(m.get(PARAMETER))
         );
     }
 
     private static final class Builder<T> {
         private final @Nonnull Class<? super T> clazz;
         private final @Nonnull Set<BuilderConfiguration<T>> supportedConfigs;
-        private Builder(@Nonnull final Class<? super T> clazz,
-                        @Nonnull final BuilderConfiguration<T> supportedConfig,
-                        final Factory factory) {
+        private Builder(
+            @Nonnull final Class<? super T> clazz,
+            @Nonnull final BuilderConfiguration<T> supportedConfig,
+            final Factory factory
+        ) {
             this(clazz, ImmutableSet.of(supportedConfig), factory);
         }
 

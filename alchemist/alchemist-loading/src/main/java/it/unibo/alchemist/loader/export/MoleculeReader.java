@@ -29,6 +29,7 @@ import java.util.stream.DoubleStream;
  */
 public final class MoleculeReader implements Extractor {
 
+    private static final int SHORT_NAME_MAX_LENGTH = 5;
     private final List<UnivariateStatistic> aggregators;
     private final List<String> columns;
     private final String property;
@@ -62,16 +63,18 @@ public final class MoleculeReader implements Extractor {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+        final var propertyText = property == null || property.isEmpty()
+            ? ""
+            : property.replaceAll("[^\\d\\w]*", "");
+        final var shortProp = propertyText.isEmpty()
+            ? ""
+            : propertyText.substring(0, Math.min(SHORT_NAME_MAX_LENGTH, propertyText.length())) + "@";
         this.columns = Collections.unmodifiableList(
-                this.aggregators.isEmpty()
-                    ? Lists.newArrayList(
-                            (property == null || property.isEmpty() ? "" : property + "@") + molecule + "@every_node"
-                        )
-                    : this.aggregators.stream()
-                        .map(a -> 
-                            (property == null || property.isEmpty() ? "" : property + "@")
-                            + molecule + '[' + a.getClass().getSimpleName() + ']')
-                        .collect(Collectors.toList())
+            this.aggregators.isEmpty()
+                ? Lists.newArrayList(shortProp + molecule + "@every_node")
+                : this.aggregators.stream()
+                    .map(a -> shortProp + molecule + '[' + a.getClass().getSimpleName() + ']')
+                    .collect(Collectors.toList())
         );
     }
 
@@ -107,5 +110,4 @@ public final class MoleculeReader implements Extractor {
     public List<String> getNames() {
         return columns;
     }
-
 }

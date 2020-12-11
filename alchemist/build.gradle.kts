@@ -193,11 +193,14 @@ allprojects {
     }
 
     tasks.withType<Javadoc> {
+        // Disable Javadoc, use Dokka.
+        enabled = false
         options {
             quiet()
             if (this is CoreJavadocOptions) {
                 addStringOption("Xwerror")
             }
+            encoding = "UTF-8"
         }
     }
 

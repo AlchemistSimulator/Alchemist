@@ -35,7 +35,7 @@ public class TestContinuous2DObstacle {
         env.addObstacle(R0527);
 
         assertEquals(new Euclidean2DPosition(FastMath.nextAfter(1.0, 0.0), FastMath.nextAfter(1.0, 0.0)), env.next(0, 0, 1, 1));
-        assertEquals(new Euclidean2DPosition(0, 1), env.next(1, 1, 0, 0));
+        assertEquals(new Euclidean2DPosition(0, 0), env.next(1, 1, 0, 0));
         assertEquals(new Euclidean2DPosition(FastMath.nextAfter(1.0, 0.0), FastMath.nextAfter(0.5, 0.0)), env.next(0, 0, 2, 1));
 
         env.addNode(new IntNode(env), new Euclidean2DPosition(0, 0));

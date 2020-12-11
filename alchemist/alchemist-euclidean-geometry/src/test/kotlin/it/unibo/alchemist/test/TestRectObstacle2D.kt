@@ -13,8 +13,8 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
+import org.apache.commons.math3.util.FastMath
 import org.danilopianini.lang.MathUtils.fuzzyEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 
 class TestRectObstacle2D : StringSpec({
 
@@ -34,8 +34,8 @@ class TestRectObstacle2D : StringSpec({
         nexty: Double
     ) {
         val next = obstacle.next(coords(startx, starty), coords(endx, endy))
-        assertTrue(fuzzyEquals(next.x, nextx))
-        assertTrue(fuzzyEquals(next.y, nexty))
+        fuzzyEquals(next.x, nextx) shouldBe true
+        fuzzyEquals(next.y, nexty) shouldBe true
     }
 
     /*
@@ -73,32 +73,45 @@ class TestRectObstacle2D : StringSpec({
         nextShouldBe(6.0, 6.0, 0.0, 0.0, 6.0, 6.0)
     }
 
-    "movements from the obstacle's vertices to points on its border should be allowed" {
+    "movements from the obstacle's vertices to points *close* to its border should be allowed" {
         /*
-         * from vertex 1
+         * from vertex BL
          */
-        vectorShouldNotBeCut(2.0, 2.0, 4.0, 2.0)
-        vectorShouldNotBeCut(2.0, 2.0, 2.0, 4.0)
+        vectorShouldNotBeCut(2.0, 2.0, 4.0, FastMath.nextDown(2.0))
+        vectorShouldNotBeCut(2.0, 2.0, FastMath.nextDown(2.0), 4.0)
         /*
-         * from vertex 2
+         * from vertex BR
          */
-        vectorShouldNotBeCut(6.0, 2.0, 4.0, 2.0)
-        vectorShouldNotBeCut(6.0, 2.0, 6.0, 4.0)
+        vectorShouldNotBeCut(6.0, 2.0, 5.0, 1.9999999999999996)
+        vectorShouldNotBeCut(6.0, 2.0, FastMath.nextUp(6.0), 4.0)
         /*
-         * from vertex 3
+         * from vertex TR
          */
-        vectorShouldNotBeCut(6.0, 6.0, 4.0, 6.0)
-        vectorShouldNotBeCut(6.0, 6.0, 6.0, 4.0)
+        vectorShouldNotBeCut(6.0, 6.0, 4.0, FastMath.nextUp(6.0))
+        vectorShouldNotBeCut(6.0, 6.0, FastMath.nextUp(6.0), 4.0)
         /*
-         * from vertex 4
+         * from vertex TL
          */
-        vectorShouldNotBeCut(2.0, 6.0, 4.0, 6.0)
-        vectorShouldNotBeCut(2.0, 6.0, 2.0, 4.0)
+        vectorShouldNotBeCut(2.0, 6.0, 4.0, FastMath.nextUp(6.0))
+        vectorShouldNotBeCut(2.0, 6.0, FastMath.nextDown(2.0), 4.0)
     }
 
     "nearestIntersection() should return the original end point when there's no intersection at all" {
         coords(2.0, 5.0).let { end ->
             obstacle.nearestIntersection(coords(1.0, 2.0), end) shouldBe end
         }
+    }
+
+    "movements from vertices towards the obstacle should be restricted to edges" {
+        val minX = -5.3
+        val maxX = -5.2574
+        val minY = -5.3
+        val maxY = 5.3074
+        val subject = RectObstacle2D<Euclidean2DPosition>(minX, minY, maxX - minY, maxY - minY)
+        val topRight = Euclidean2DPosition(-5.257399999999999, 5.3073999999999995)
+        val desired1 = Euclidean2DPosition(-5.844256289989133, 6.172836637106708)
+        subject.next(topRight, desired1) shouldBe desired1
+        val desired2 = Euclidean2DPosition(-5.844256289989133, 5.3073999999999995)
+        subject.next(topRight, desired2) shouldBe topRight
     }
 })

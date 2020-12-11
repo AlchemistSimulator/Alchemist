@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.geom.Rectangle2D;
 
+import static java.lang.Math.PI;
 import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.min;
 import static org.danilopianini.lang.MathUtils.closestTo;
@@ -127,35 +128,47 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
                 && fuzzyGreaterEquals(maxY, starty)
                 && fuzzyGreaterEquals(startx, minX)
                 && fuzzyGreaterEquals(maxX, startx)) {
+            final boolean onLeftBorder = fuzzyEquals(startx, minX);
+            final boolean onRightBorder = fuzzyEquals(startx, maxX);
+            final boolean onBottomBorder = fuzzyEquals(starty, minY);
+            final boolean onTopBorder = fuzzyEquals(starty, maxY);
+            if ((onLeftBorder || onRightBorder) && (onTopBorder || onBottomBorder)) {
+                /*
+                 * Vertices must restrict movement along borders.
+                 * Otherwise, having adjacent obstacles:
+                 * ┌──────────────┐
+                 * ├────────┬─────┘
+                 * │        │
+                 * │        │
+                 * └────────┘
+                 * and a node located on the concave vertex,
+                 * the top one may restrict movement along the horizontal border,
+                 * then the bottom obstacle may allow for a movement towards the left,
+                 * de facto creating a tunnel.
+                 *
+                 * To prevent this interaction,
+                 * movement from a vertex must be restricted to angles that prevent walking along borders.
+                 */
+                final var angle = FastMath.atan2(endy - starty, endx - startx);
+                /*
+                 * When a vertex is hit, there are two cases: either the destination is allowed as-is,
+                 * or the destination is unreachable.
+                 */
+                final var halfPI = PI / 2;
+                return onTopBorder && 0 < angle && angle < PI
+                    || onRightBorder && -halfPI < angle && angle < halfPI
+                    || onBottomBorder && -PI < angle && angle < 0
+                    || onLeftBorder && (angle > halfPI || angle < -halfPI)
+                    ? new double[]{ endx, endy } : new double[]{startx, starty};
+            }
             final double[] res = { endx, endy };
-            final boolean startIsVertex = (fuzzyEquals(startx, minX) || fuzzyEquals(startx, maxX))
-                    && (fuzzyEquals(starty, minY) || fuzzyEquals(starty, maxY));
-            /*
-             * Allows axis-aligned movements from obstacle's vertices to points on its border.
-             */
-            if (startIsVertex && (fuzzyEquals(startx, endx) || fuzzyEquals(starty, endy))) {
-                return res;
-            }
-            if (fuzzyEquals(startx, minX) && endx >= minX) {
-                /*
-                 * Left border
-                 */
+            if (onLeftBorder && endx >= minX) {
                 res[0] = FastMath.nextAfter(minX, startx);
-            } else if (fuzzyEquals(startx, maxX) && endx <= maxX) {
-                /*
-                 * Right border
-                 */
+            } else if (onRightBorder && endx <= maxX) {
                 res[0] = FastMath.nextAfter(maxX, startx);
-            }
-            if (fuzzyEquals(starty, minY) && endy >= minY) {
-                /*
-                 * Bottom border
-                 */
+            } else if (onBottomBorder && endy >= minY) {
                 res[1] = FastMath.nextAfter(minY, starty);
-            } else if (fuzzyEquals(starty, maxY) && endy <= maxY) {
-                /*
-                 * Top border
-                 */
+            } else if (onTopBorder && endy <= maxY) {
                 res[1] = FastMath.nextAfter(maxY, starty);
             }
             return res;

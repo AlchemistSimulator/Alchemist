@@ -49,7 +49,7 @@ public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPER
     public void execute() {
         double minGrad = getLSAArgumentAsDouble(getNode().getConcentration(MOLGRAD).get(0), POS);
         final Neighborhood<List<ILsaMolecule>> neigh = env.getNeighborhood(getNode());
-        final List<LsaNode> targetPositions = new ArrayList<LsaNode>();
+        final List<LsaNode> targetPositions = new ArrayList<>();
         for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final LsaNode n = (LsaNode) node;
             final List<ILsaMolecule> gradList;

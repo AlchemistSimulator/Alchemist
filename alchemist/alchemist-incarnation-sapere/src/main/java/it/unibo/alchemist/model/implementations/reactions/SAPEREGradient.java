@@ -473,7 +473,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
                      */
                     final List<IExpression> valuesFound = gradientExpr.allocateVar(localMatches);
                     if (gradientsFound.isEmpty()) {
-                        if (((Double) valuesFound.get(argPosition).getRootNodeData()) <= threshold) {
+                        if ((Double) valuesFound.get(argPosition).getRootNodeData() <= threshold) {
                             gradientsFound.add(new LsaMolecule(valuesFound));
                         }
                     } else {

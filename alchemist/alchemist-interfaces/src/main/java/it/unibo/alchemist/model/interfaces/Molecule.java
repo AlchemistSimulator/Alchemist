@@ -18,11 +18,4 @@ public interface Molecule extends Dependency {
      */
     String getName();
 
-    /**
-     * Allows to access the id of a molecule.
-     * 
-     * @return the id of the molecule
-     */
-    long getId();
-
 }

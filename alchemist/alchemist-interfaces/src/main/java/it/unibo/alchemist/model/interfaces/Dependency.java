@@ -36,7 +36,7 @@ public interface Dependency extends Serializable {
     Dependency EVERY_MOLECULE = new Dependency() {
         @Override
         public boolean dependsOn(final Dependency dependency) {
-            return dependency == this || dependency instanceof Molecule;
+            return equals(dependency) || dependency instanceof Molecule;
         }
         @Override
         public String toString() {

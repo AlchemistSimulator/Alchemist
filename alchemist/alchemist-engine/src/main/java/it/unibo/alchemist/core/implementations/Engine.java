@@ -144,7 +144,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void checkCaller() {
-        if (Thread.currentThread() != myThread) {
+        if (!Thread.currentThread().equals(myThread)) {
             throw new IllegalMonitorStateException("This method must get called from the simulation thread.");
         }
     }

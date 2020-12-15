@@ -100,7 +100,7 @@ public final class SimControlPanel extends JTapeGroup {
     }
 
     private static synchronized void setSimulation(final SimControlPanel scp, final Simulation<?, ?> sim) {
-        if (sim != scp.simulation) {
+        if (sim != scp.simulation) { // NOPMD: this comparison is intentional
             if (scp.simulation != null) {
                 /*
                  * Remove from the previous set

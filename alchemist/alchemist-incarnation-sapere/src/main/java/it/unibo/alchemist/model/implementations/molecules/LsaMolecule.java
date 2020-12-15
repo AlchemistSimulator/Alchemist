@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,7 +82,8 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private final List<IExpression> args;
     private final boolean duplicateVars, instance;
-    @Nonnull private HashString repr;
+    @Nullable
+    private HashString repr;
 
     /**
      * Empty molecule, no arguments.
@@ -287,7 +289,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     @Override
     public boolean matches(final ILsaMolecule mol) {
-        if (mol instanceof LsaMolecule && ((LsaMolecule) mol).repr.equals(repr)) {
+        if (this == mol || mol instanceof LsaMolecule && ((LsaMolecule) mol).toHashString().equals(toHashString())) {
             return true;
         }
         return mol.matches(args, duplicateVars);

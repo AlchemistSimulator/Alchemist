@@ -456,8 +456,8 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * @return the template modified, with the insertion of data where required
      *         in place of the old value
      */
-    protected ILsaMolecule setLSAArgument(final ILsaMolecule template, final double data, final int argNumber) {
-        return setLSAArgument(template, new NumTreeNode(data), argNumber);
+    protected ILsaMolecule substitute(final ILsaMolecule template, final double data, final int argNumber) {
+        return substitute(template, new NumTreeNode(data), argNumber);
     }
 
     /**
@@ -473,7 +473,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
      * @return the template modified, with the insertion of data where required
      *         in place of the old value
      */
-    protected ILsaMolecule setLSAArgument(final ILsaMolecule template, final ITreeNode<?> data, final int argNumber) {
+    protected ILsaMolecule substitute(final ILsaMolecule template, final ITreeNode<?> data, final int argNumber) {
         final List<IExpression> l = template.allocateVar(null);
         l.remove(argNumber);
         l.add(argNumber, new Expression(data));

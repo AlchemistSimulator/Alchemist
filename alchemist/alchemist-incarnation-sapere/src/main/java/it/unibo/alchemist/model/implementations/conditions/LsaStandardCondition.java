@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class LsaStandardCondition extends LsaAbstractCondition {
 
-    private static final long serialVersionUID = -7400434133059391639L;
+    private static final long serialVersionUID = 1L;
 
     private final ILsaMolecule molecule;
     private boolean valid;
@@ -68,7 +68,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
              * This is the first condition. It must create all the matches.
              */
             createMatches(molecule, node, matchesList, retrieved);
-            return setValid(!matchesList.isEmpty());
+            return makeValid(!matchesList.isEmpty());
         }
         /*
          * At least a condition has been run before. This condition must check
@@ -110,7 +110,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
                 matchesfound = true;
             }
         }
-        return setValid(matchesfound);
+        return makeValid(matchesfound);
     }
 
     /**
@@ -154,7 +154,7 @@ public class LsaStandardCondition extends LsaAbstractCondition {
      *            true if this condition is valid
      * @return the value which is passed.
      */
-    protected final boolean setValid(final boolean isValid) {
+    protected final boolean makeValid(final boolean isValid) {
         valid = isValid;
         return valid;
     }

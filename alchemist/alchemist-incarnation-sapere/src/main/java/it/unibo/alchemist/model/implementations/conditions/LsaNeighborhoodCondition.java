@@ -97,7 +97,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
             /*
              * True if at least a valid match has been created.
              */
-            return setValid(!matchesList.isEmpty());
+            return makeValid(!matchesList.isEmpty());
         }
         /*
          * At least a condition has been run before. This condition must check
@@ -194,7 +194,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
                 i--;
             }
         }
-        return setValid(matchesfound);
+        return makeValid(matchesfound);
     }
 
     /*

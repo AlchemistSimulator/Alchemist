@@ -30,7 +30,13 @@ public final class Expression implements IExpression {
 
     private static final long serialVersionUID = 3443642011985784643L;
 
-    private static final HashString EQUALS = new HashString("="), NOT_EQUALS = new HashString("!="), GREATER = new HashString(">"), GREATER_EQUALS = new HashString(">="), SMALLER = new HashString("<"), SMALLER_EQUALS = new HashString("<=");
+    private static final HashString
+        EQUALS = new HashString("="),
+        NOT_EQUALS = new HashString("!="),
+        GREATER = new HashString(">"),
+        GREATER_EQUALS = new HashString(">="),
+        SMALLER = new HashString("<"),
+        SMALLER_EQUALS = new HashString("<=");
     private static final Logger L = LoggerFactory.getLogger(Expression.class);
 
     private final ITree ast;
@@ -481,19 +487,19 @@ public final class Expression implements IExpression {
         case VAR:
             return true;
         case LIST:
-            return (target == Type.LIST) || (target == Type.LISTCOMPARATOR);
+            return target == Type.LIST || target == Type.LISTCOMPARATOR;
         case NUM:
-            return (target == Type.OPERATOR || expr.getRootNodeData().equals(getRootNodeData()) || target == Type.COMPARATOR);
+            return target == Type.OPERATOR || expr.getRootNodeData().equals(getRootNodeData()) || target == Type.COMPARATOR;
         case CONST:
             return expr.getRootNodeData().equals(getRootNodeData());
         case OPERATOR:
-            return (target != Type.CONST);
+            return target != Type.CONST;
         case COMPARATOR:
             switch (target) {
             case OPERATOR:
-                return (getRightChildren().getType() == Type.NUM || getRightChildren().getType() == Type.VAR || getRightChildren().getType() == Type.OPERATOR);
+                return getRightChildren().getType() == Type.NUM || getRightChildren().getType() == Type.VAR || getRightChildren().getType() == Type.OPERATOR;
             case NUM:
-                return (getRightChildren().getType() == Type.NUM || getRightChildren().getType() == Type.VAR || getRightChildren().getType() == Type.OPERATOR);
+                return getRightChildren().getType() == Type.NUM || getRightChildren().getType() == Type.VAR || getRightChildren().getType() == Type.OPERATOR;
             case COMPARATOR:
                 if (getRightChildren().getType() == Type.NUM || getRightChildren().getType() == Type.OPERATOR) {
                     if (expr.getRightChildren().getType() == Type.NUM || expr.getRightChildren().getType() == Type.OPERATOR) {
@@ -505,7 +511,7 @@ public final class Expression implements IExpression {
                     return getRightChildren().getType() == Type.VAR || expr.getRightChildren().getType() == Type.VAR;
                 }
             case CONST:
-                return (getRightChildren().getType() == Type.CONST || getRightChildren().getType() == Type.VAR);
+                return getRightChildren().getType() == Type.CONST || getRightChildren().getType() == Type.VAR;
             default:
                 L.error("ERROR with comparator: " + this + " -- " + expr);
             }

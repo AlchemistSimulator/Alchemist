@@ -31,7 +31,7 @@ public final class ExpressionFactory {
      */
     public static IExpression buildComplexGroundExpression(final String s) {
         if (s.length() == 0) {
-            throw new RuntimeException("The given String can't be empty.");
+            throw new IllegalArgumentException("The given String can't be empty.");
         }
         return new Expression(new ConstTreeNode(new HashString(s)));
     }
@@ -81,7 +81,7 @@ public final class ExpressionFactory {
      */
     public static ITreeNode<?> buildLiteralNode(final HashString s) {
         if (s.length() == 0) {
-            throw new RuntimeException();
+            throw new IllegalArgumentException("The given String can't be empty.");
         }
         return Character.isUpperCase(s.charAt(0)) ? new VarTreeNode(s) : new ConstTreeNode(s);
     }

@@ -20,7 +20,7 @@ import java.util.List;
  */
 public final class GPSPointImpl implements GPSPoint {
 
-    private static final long serialVersionUID = -6060550940453129358L;
+    private static final long serialVersionUID = 1L;
     private final LatLongPosition repr;
     private final Time t;
 
@@ -65,9 +65,12 @@ public final class GPSPointImpl implements GPSPoint {
     @Override
     @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
     public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj instanceof GPSPointImpl) {
             final GPSPointImpl pt = (GPSPointImpl) obj;
-            return pt.getTime() == t && repr.equals(pt.repr);
+            return pt.getTime().equals(t) && repr.equals(pt.repr);
         }
         return false;
     }

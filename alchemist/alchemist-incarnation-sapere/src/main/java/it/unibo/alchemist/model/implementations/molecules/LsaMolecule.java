@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import org.danilopianini.lang.HashString;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     private final List<IExpression> args;
     private final boolean duplicateVars, instance;
-    private HashString repr;
+    @Nonnull private HashString repr;
 
     /**
      * Empty molecule, no arguments.
@@ -96,17 +97,17 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
      * @param listArgs
      *            the list of IExpressions
      */
-    public LsaMolecule(final List<IExpression> listArgs) {
+    public LsaMolecule(@Nonnull final List<IExpression> listArgs) {
         this(listArgs, buildString(listArgs));
     }
 
-    private LsaMolecule(final List<IExpression> listArgs, final HashString hash) {
+    private LsaMolecule(final List<IExpression> listArgs, @Nonnull final HashString hash) {
         this(listArgs, hash, selfVariableUsed(listArgs), computeInstance(listArgs));
     }
 
     private LsaMolecule(
             final List<IExpression> argumentList,
-            final HashString hash,
+            @Nonnull final HashString hash,
             final boolean duplicateVariables,
             final boolean isInstance
     ) {
@@ -286,7 +287,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     @Override
     public boolean matches(final ILsaMolecule mol) {
-        if (mol.getId() == getId()) {
+        if (mol instanceof LsaMolecule && ((LsaMolecule) mol).repr.equals(repr)) {
             return true;
         }
         return mol.matches(args, duplicateVars);

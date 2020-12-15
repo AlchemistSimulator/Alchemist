@@ -12,8 +12,9 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
+import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -23,17 +24,15 @@ public class SimpleMolecule implements Molecule {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] hash;
     private int hash32;
-    private long hash64;
     private final String n;
 
     /**
      * @param name
      *            the molecule name
      */
-    public SimpleMolecule(final CharSequence name) {
-        this.n = name.toString();
+    public SimpleMolecule(@Nonnull final CharSequence name) {
+        this.n = Objects.requireNonNull(name).toString().intern();
     }
 
     /**
@@ -46,18 +45,9 @@ public class SimpleMolecule implements Molecule {
         }
         if (obj != null && getClass() == obj.getClass()) {
             final SimpleMolecule other = (SimpleMolecule) obj;
-            if (n == other.n) {
-                return true;
-            }
-            return hashCode() == other.hashCode() && getId() == other.getId() && Arrays.equals(hash, other.hash);
+            return hashCode() == obj.hashCode() && n.equals(other.n);
         }
         return false;
-    }
-
-    @Override
-    public final long getId() {
-        initHash();
-        return hash64;
     }
 
     @Override
@@ -70,17 +60,11 @@ public class SimpleMolecule implements Molecule {
      */
     @Override
     public int hashCode() {
-        initHash();
-        return hash32;
-    }
-
-    private void initHash() {
-        if (hash == null) {
-            final HashCode hashCode = Hashing.murmur3_128().hashString(n, StandardCharsets.UTF_8);
+        if (hash32 == 0) {
+            final HashCode hashCode = Hashing.murmur3_32().hashString(n, StandardCharsets.UTF_16);
             hash32 = hashCode.asInt();
-            hash64 = hashCode.asLong();
-            hash = hashCode.asBytes();
         }
+        return hash32;
     }
 
     /**

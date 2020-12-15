@@ -21,6 +21,9 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Vehicle;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  *
  * @param <T> concentration type
@@ -76,11 +79,11 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            slow down the {@link MoveOnMap}
      */
     public TargetWalker(
-            final MapEnvironment<T> environment,
-            final Node<T> node,
-            final Reaction<T> reaction,
-            final Molecule trackMolecule,
-            final Molecule interactingMolecule,
+            @Nonnull final MapEnvironment<T> environment,
+            @Nonnull final Node<T> node,
+            @Nonnull final Reaction<T> reaction,
+            @Nonnull final Molecule trackMolecule,
+            @Nullable final Molecule interactingMolecule,
             final double speed,
             final double interaction,
             final double range) {
@@ -211,7 +214,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
                 node,
                 reaction,
                 new SimpleMolecule(trackMolecule),
-                new SimpleMolecule(interactingMolecule),
+                interactingMolecule == null ? null : new SimpleMolecule(interactingMolecule),
                 speed,
                 interaction,
                 range

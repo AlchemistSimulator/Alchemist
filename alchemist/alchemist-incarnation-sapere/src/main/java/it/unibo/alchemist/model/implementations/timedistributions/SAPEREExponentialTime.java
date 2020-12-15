@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Semaphore;
 
 /**
  * Allows for a Markovian event whose lambda is computed dynamically using a
@@ -37,6 +38,7 @@ public final class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecu
     private static final long serialVersionUID = -687039899173488373L;
     private static final String F_PATTERN = "###.######################";
     private static final DecimalFormat FORMAT = new DecimalFormat(F_PATTERN, DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    private static final Semaphore FORMAT_MUTEX = new Semaphore(1);
 
     private final IExpression exp;
     private final double staticRate;
@@ -76,7 +78,12 @@ public final class SAPEREExponentialTime extends ExponentialTime<List<ILsaMolecu
             if (Double.isInfinite(staticRate)) {
                 exp = new Expression("asap");
             } else {
-                exp = new Expression(FORMAT.format(staticRate));
+                try {
+                    FORMAT_MUTEX.acquireUninterruptibly();
+                    exp = new Expression(FORMAT.format(staticRate)); // NOPMD: access is synchronized via mutex
+                } finally {
+                    FORMAT_MUTEX.release();
+                }
             }
         } else {
             exp = new Expression(rateEquation);

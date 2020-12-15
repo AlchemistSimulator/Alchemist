@@ -55,8 +55,8 @@ public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPER
             final List<ILsaMolecule> gradList;
             gradList = n.getConcentration(MOLGRAD);
             if (!gradList.isEmpty()) {
-                for (int i = 0; i < gradList.size(); i++) {
-                    final double valueGrad = (Double) gradList.get(i).getArg(POS).calculate(null).getValue(null);
+                for (final ILsaMolecule iExpressions : gradList) {
+                    final double valueGrad = (Double) iExpressions.getArg(POS).calculate(null).getValue(null);
                     if (valueGrad <= minGrad) {
                         minGrad = valueGrad;
                         targetPositions.add(n);

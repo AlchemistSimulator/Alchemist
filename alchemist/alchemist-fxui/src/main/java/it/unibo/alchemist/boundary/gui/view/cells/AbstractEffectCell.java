@@ -209,13 +209,17 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
         event.consume();
     }
 
+    private boolean eventGestureSourceIsNotThis(final DragEvent event) {
+        return !this.equals(event.getGestureSource());
+    }
+
     /**
      * This method models the behavior on drag over.
      *
      * @param event the drag over DragEvent
      */
     private void dragNDropOver(final DragEvent event) {
-        if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+        if (eventGestureSourceIsNotThis(event) && event.getDragboard().hasContent(getDataFormat())) {
             event.acceptTransferModes(TransferMode.MOVE);
         }
         event.consume();
@@ -227,7 +231,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param event the drag entered event
      */
     private void dragNDropEntered(final DragEvent event) {
-        if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+        if (eventGestureSourceIsNotThis(event) && event.getDragboard().hasContent(getDataFormat())) {
             setOpacity(DRAG_N_DROP_TARGET_OPACITY);
         }
     }
@@ -238,7 +242,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param event the drag exited event
      */
     private void dragNDropExited(final DragEvent event) {
-        if (event.getGestureSource() != this && event.getDragboard().hasContent(getDataFormat())) {
+        if (eventGestureSourceIsNotThis(event) && event.getDragboard().hasContent(getDataFormat())) {
             setOpacity(1);
         }
     }

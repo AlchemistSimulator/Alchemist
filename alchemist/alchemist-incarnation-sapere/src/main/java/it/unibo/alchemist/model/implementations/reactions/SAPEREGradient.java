@@ -501,7 +501,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
                                 }
                             }
                         }
-                        if (!compatibleFound && ((Double) valuesFound.get(argPosition).getRootNodeData() < threshold)) {
+                        if (!compatibleFound && (Double) valuesFound.get(argPosition).getRootNodeData() < threshold) {
                             gradientsFound.add(new LsaMolecule(valuesFound));
                         }
                     }

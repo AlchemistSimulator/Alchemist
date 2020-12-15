@@ -65,7 +65,7 @@ public final class LsaNode extends AbstractNode<List<ILsaMolecule>> implements I
         }
         final ILsaMolecule mol = (ILsaMolecule) m;
         final ArrayList<ILsaMolecule> listMol = new ArrayList<>();
-        for (ILsaMolecule instance : instances) {
+        for (final ILsaMolecule instance : instances) {
             if (mol.matches(instance)) {
                 listMol.add(instance);
             }

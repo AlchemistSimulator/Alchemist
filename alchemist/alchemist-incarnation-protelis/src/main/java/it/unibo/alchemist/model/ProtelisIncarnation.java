@@ -315,7 +315,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         public boolean equals(final Object obj) {
             return obj instanceof CacheKey
-                    && ((CacheKey) obj).node.get() == node.get()
+                    && ((CacheKey) obj).node.get() == node.get() // NOPMD: this comparison is intentional
                     && ((CacheKey) obj).molecule.equals(molecule)
                     && ((CacheKey) obj).property.equals(property);
         }

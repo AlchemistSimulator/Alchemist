@@ -111,7 +111,6 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      * @param timeDistribution
      *            Markovian Rate
      */
-    @SuppressWarnings("unchecked")
     public SAPEREGradient(
             final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,

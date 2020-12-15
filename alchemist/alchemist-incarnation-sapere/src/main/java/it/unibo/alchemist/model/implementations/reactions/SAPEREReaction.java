@@ -77,7 +77,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         /*
          * PHASE 1: generalize the list
          */
-        for (int i = 0; i < moleculeList.size(); i++) {
+        for (int i = 0; i < moleculeList.size(); i++) { // NOPMD: this loop has side effects
             moleculeList.add(((ILsaMolecule) moleculeList.remove(0)).generalize());
         }
         /*

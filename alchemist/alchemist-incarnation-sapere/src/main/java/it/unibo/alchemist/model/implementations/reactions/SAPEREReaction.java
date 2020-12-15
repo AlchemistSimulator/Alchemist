@@ -48,7 +48,7 @@ import java.util.Objects;
 @SuppressWarnings("unchecked")
 public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
-    private static final long serialVersionUID = -7264856859267079626L;
+    private static final long serialVersionUID = 1L;
 
     private final Environment<List<ILsaMolecule>, ?> environment;
     @SuppressFBWarnings(
@@ -144,7 +144,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
      * @return the inner {@link Action} list, cast
      */
     protected List<ILsaAction> getSAPEREActions() {
-        return (List<ILsaAction>) ((List<? extends Action<List<ILsaMolecule>>>) getActions());
+        return (List<ILsaAction>) (List<? extends Action<List<ILsaMolecule>>>) getActions();
     }
 
     /**

@@ -109,6 +109,7 @@ public interface ILsaMolecule extends Molecule, Iterable<IExpression>, Comparabl
     /**
      * @return the string representing the molecule.
      */
+    @Override
     String toString();
 
 }

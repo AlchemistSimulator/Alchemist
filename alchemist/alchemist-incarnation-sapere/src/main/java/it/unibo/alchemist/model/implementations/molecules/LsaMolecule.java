@@ -289,7 +289,8 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
 
     @Override
     public boolean matches(final ILsaMolecule mol) {
-        if (this == mol || mol instanceof LsaMolecule && ((LsaMolecule) mol).toHashString().equals(toHashString())) {
+        if (this == mol // NOPMD: this comparison is intentional
+                || mol instanceof LsaMolecule && ((LsaMolecule) mol).toHashString().equals(toHashString())) {
             return true;
         }
         return mol.matches(args, duplicateVars);

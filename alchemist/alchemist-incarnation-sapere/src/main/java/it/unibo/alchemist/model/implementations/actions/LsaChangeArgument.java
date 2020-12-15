@@ -7,16 +7,14 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.expressions.implementations.ConstTreeNode;
-import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,10 +69,7 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
 
     @Override
     public void execute() {
-        final List<String> listTarg = new ArrayList<>();
-        for (int i = 0; i < listT.length; i++) {
-            listTarg.add(listT[i]);
-        }
+        final List<String> listTarg = Arrays.asList(Arrays.copyOf(listT, listT.length));
         final String oldType = getMatches().get(OLD).toString();
         if (!listTarg.remove(oldType)) {
             throw new IllegalStateException("Cannot remove " + oldType + " from " + listTarg);

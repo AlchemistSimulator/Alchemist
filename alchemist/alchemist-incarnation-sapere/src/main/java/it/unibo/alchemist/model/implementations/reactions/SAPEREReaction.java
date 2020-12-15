@@ -151,7 +151,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
      * @return the inner {@link Condition} list, cast
      */
     protected List<ILsaCondition> getSAPEREConditions() {
-        return (List<ILsaCondition>) ((List<? extends Condition<List<ILsaMolecule>>>) getConditions());
+        return (List<ILsaCondition>) (List<? extends Condition<List<ILsaMolecule>>>) getConditions();
     }
 
     @Override

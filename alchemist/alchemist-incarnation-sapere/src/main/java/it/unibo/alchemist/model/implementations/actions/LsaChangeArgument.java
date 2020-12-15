@@ -71,7 +71,7 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
 
     @Override
     public void execute() {
-        final List<String> listTarg = new ArrayList<String>();
+        final List<String> listTarg = new ArrayList<>();
         for (int i = 0; i < listT.length; i++) {
             listTarg.add(listT[i]);
         }

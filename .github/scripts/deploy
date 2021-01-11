@@ -24,6 +24,6 @@ then
     MESSAGE=$(git tag -l --format='%(contents)' "$TAG")
     hub release create -m "$MESSAGE" "$TAG" || true
     for jar in build/shadow/*; do
-        hub release edit -m '' -a "$jar" "$TAG"
+        gh release upload "$TAG" --clobber "$jar"
     done
 fi

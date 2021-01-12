@@ -6,6 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
@@ -223,6 +224,10 @@ allprojects {
         repository("https://maven.pkg.github.com/alchemistsimulator/alchemist") {
             user = "DanySK"
             password = System.getenv("GITHUB_TOKEN")
+        }
+        repository("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+            user = mavenCentral().user()
+            password = mavenCentral().password()
         }
     }
     publishing.publications {

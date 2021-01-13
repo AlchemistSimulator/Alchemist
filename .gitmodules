@@ -1,6 +1,6 @@
 [submodule "alchemist/config/detekt"]
-	path = alchemist/config/detekt
+	path = config/detekt
 	url = https://github.com/DanySK/detekt-configuration.git
 [submodule "alchemist/config/pmd"]
-	path = alchemist/config/pmd
+	path = config/pmd
 	url = https://github.com/DanySK/pmd-configuration.git

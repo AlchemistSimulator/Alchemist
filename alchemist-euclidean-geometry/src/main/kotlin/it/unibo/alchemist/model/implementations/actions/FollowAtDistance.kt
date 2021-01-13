@@ -22,7 +22,9 @@ import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * Follows a target at distance.
+ * Makes the [Node] follow a [target] defined in a [Molecule] with some [speed],
+ * but keeping a [distance] from it.
+ *
  * @param <T> concentration type
  * @param env the environment containing the nodes
  * @param node the follower

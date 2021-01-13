@@ -25,7 +25,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * at a distance extracted from [distanceDistribution].
  * Moves the node towards the targets at the given constant [speed]. Changes target on collision.
  */
-open class RandomWalker<T>(
+open class GenericRandomWalker<T>(
     node: Node<T>,
     reaction: Reaction<T>,
     environment: Environment<T, Euclidean2DPosition>,
@@ -40,5 +40,5 @@ open class RandomWalker<T>(
     GloballyConstantSpeed(reaction, speed)
 ) {
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        RandomWalker(node, reaction, environment, randomGenerator, speed, distanceDistribution)
+        GenericRandomWalker(node, reaction, environment, randomGenerator, speed, distanceDistribution)
 }

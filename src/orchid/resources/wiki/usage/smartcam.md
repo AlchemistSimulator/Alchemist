@@ -190,7 +190,7 @@ displacements:
       - *Camera
 ```
 
-It is time for cameras to identify _wanted_ targets so we add a _ExtractClosestVisibleNodeAtDistance_ action in order to select the closest node to the center of the field of view.
+It is time for cameras to identify _wanted_ targets so we add a _CameraInjectVisibleNodeClosestToDistance_ action in order to select the closest node to the center of the field of view.
 We also specify the _wanted_ molecule in the _See_ action in order to filter only the interesting nodes.
 Then, at the condition that a _target_ is found, we want the cameras to start following it, so we add the actions _FollowAtDistance_ and _HeadTowardTarget_.
 
@@ -243,7 +243,7 @@ programs:
       actions:
         - type: See
           parameters: [*CameraFoVDistance, *CameraFoVAngle, vision, wanted]
-        - type: ExtractClosestVisibleNodeAtDistance
+        - type: CameraInjectVisibleNodeClosestToDistance
           parameters: [*CameraDistanceFromTarget, vision, target]
     - time-distribution: 1
       type: ChemicalReaction
@@ -325,7 +325,7 @@ programs:
       actions:
         - type: See
           parameters: [*CameraFoVDistance, *CameraFoVAngle, vision, wanted]
-        - type: ExtractClosestVisibleNodeAtDistance
+        - type: CameraInjectVisibleNodeClosestToDistance
           parameters: [*CameraDistanceFromTarget, vision, target]
     - time-distribution: 1
       type: ChemicalReaction

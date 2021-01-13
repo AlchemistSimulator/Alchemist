@@ -10,14 +10,14 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import kotlin.math.min
 
 /**
- * Extracts the closest [VisibleNode] to the position at the given distance from the given node's position
- * in the direction of the node's heading.
- * @constructor
- * [visionMolecule] is expected to contain a list of [VisibleNode].
- * If there are no visible nodes then [targetMolecule] will be removed from [node],
- * otherwise the VisibleNode's position will be inserted in [targetMolecule].
+ * Given a list of [VisibleNode] associated to [visionMolecule],
+ * it finds the closest to a point located at [distance] from [node]
+ * in the direction of [node]'s heading,
+ * and injects its position in [targetMolecule].
+ *
+ * If there are no [VisibleNode]s, [targetMolecule] will be removed from [node].
  */
-class ExtractClosestVisibleNodeAtDistance(
+class CameraInjectVisibleNodeClosestToDistance(
     node: Node<Any>,
     private val env: Physics2DEnvironment<Any>,
     private val distance: Double,
@@ -25,7 +25,7 @@ class ExtractClosestVisibleNodeAtDistance(
     private val targetMolecule: Molecule
 ) : AbstractAction<Any>(node) {
     override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
-        ExtractClosestVisibleNodeAtDistance(node, env, distance, visionMolecule, targetMolecule)
+        CameraInjectVisibleNodeClosestToDistance(node, env, distance, visionMolecule, targetMolecule)
 
     override fun execute() {
         if (node.contains(visionMolecule)) {

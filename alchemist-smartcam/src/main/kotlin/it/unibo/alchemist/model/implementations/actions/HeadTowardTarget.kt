@@ -15,7 +15,7 @@ import kotlin.math.sin
 
 /**
  * Reads the target's absolute coordinates from the [target] molecule
- * contained in [getNode] and sets the node's heading accordingly.
+ * contained in [node] and sets the node's heading accordingly.
  */
 class HeadTowardTarget<T> @JvmOverloads constructor(
     node: Node<T>,

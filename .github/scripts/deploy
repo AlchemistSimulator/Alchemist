@@ -8,12 +8,6 @@ if [ -n "$TAG" ] || [ "$BRANCH" = 'develop' ]
 then
     echo Installing surge
     sudo npm install --global surge
-    echo preparing build reports
-    mkdir -p report
-    cp --parent ./*/build/reports build/reports report -R
-    STABILITY_MARKER=$([ "$BRANCH" = 'develop' ] && echo 'unstable-' || echo '')
-    echo Deploying ${STABILITY_MARKER}reports on surge
-    surge report/ alchemist-${STABILITY_MARKER}reports.surge.sh
     echo Deploying ${STABILITY_MARKER}javadoc on surge
     surge build/dokka/javadoc/ alchemist-${STABILITY_MARKER}doc.surge.sh
 fi

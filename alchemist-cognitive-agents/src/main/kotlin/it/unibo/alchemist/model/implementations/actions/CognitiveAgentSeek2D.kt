@@ -9,8 +9,9 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
- * [CognitiveAgentSeek] behavior in a bidimensional environment, delegated to [CognitiveAgentFollowScalarField] (this means the pedestrian tries
- * to overtake others on its path, in general its movements are more sophisticated than [CognitiveAgentSeek]).
+ * [CognitiveAgentSeek] behavior in a bidimensional environment, delegated to [CognitiveAgentFollowScalarField]
+ * (this means the pedestrian tries to overtake others on its path,
+ * in general its movements are more sophisticated than [CognitiveAgentSeek]).
  */
 open class CognitiveAgentSeek2D<T, P, A>(
     /**

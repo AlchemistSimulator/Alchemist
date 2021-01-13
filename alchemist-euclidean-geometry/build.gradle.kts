@@ -7,8 +7,8 @@
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
-    api(project(":alchemist-implementationbase"))
+    api(alchemist("interfaces"))
+    api(alchemist("implementationbase"))
     implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
@@ -17,6 +17,8 @@ dependencies {
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
+    testImplementation(alchemist("loading"))
+    testRuntimeOnly(alchemist("incarnation-protelis"))
 }
 
 publishing.publications {

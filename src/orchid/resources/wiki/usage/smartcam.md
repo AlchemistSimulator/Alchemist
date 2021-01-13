@@ -158,7 +158,7 @@ programs:
     - time-distribution: 1
       type: ChemicalReaction
       actions:
-        - type: ZigZagMove
+        - type: ConstantDistanceRandomMove
           parameters: [*HalfEnvironmentSize, *HumanSpeed]
     - time-distribution: 0.02
       type: ChemicalReaction
@@ -230,7 +230,7 @@ programs:
     - time-distribution: 1
       type: ChemicalReaction
       actions:
-        - type: ZigZagMove
+        - type: ConstantDistanceRandomMove
           parameters: [*HalfEnvironmentSize, *HumanSpeed]
     - time-distribution: 0.02
       type: ChemicalReaction
@@ -274,7 +274,7 @@ displacements:
       - *Camera
 ```
 
-To conclude, we want the cameras to explore randomly and spin when no targets are detected. For this purpose we add another reaction with a _Spin_ and _ZigZagMove_ and with an _Else_ condition which will be triggered when the conditions of the other reactions are not valid.
+To conclude, we want the cameras to explore randomly and spin when no targets are detected. For this purpose we add another reaction with a _Spin_ and _ConstantDistanceRandomMove_ and with an _NoOtherReactionCanExecute_ condition which will be triggered when the conditions of the other reactions are not valid.
 
 ```yaml
 incarnation: protelis
@@ -312,7 +312,7 @@ programs:
     - time-distribution: 1
       type: ChemicalReaction
       actions:
-        - type: ZigZagMove
+        - type: ConstantDistanceRandomMove
           parameters: [*HalfEnvironmentSize, *HumanSpeed]
     - time-distribution: 0.02
       type: ChemicalReaction
@@ -340,12 +340,12 @@ programs:
     - time-distribution: 1
       type: ChemicalReaction
       conditions:
-        - type: Else
+        - type: NoOtherReactionCanExecute
           parameters:
       actions:
         - type: Spin
           parameters: [*CameraAngularSpeed]
-        - type: ZigZagMove
+        - type: ConstantDistanceRandomMove
           parameters: [*HalfEnvironmentSize, *CameraSpeed]
 
 displacements:

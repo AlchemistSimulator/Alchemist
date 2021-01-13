@@ -29,9 +29,9 @@ open class GenericRandomWalker<T>(
     node: Node<T>,
     reaction: Reaction<T>,
     environment: Environment<T, Euclidean2DPosition>,
-    private val randomGenerator: RandomGenerator,
-    private val speed: Double,
-    private val distanceDistribution: RealDistribution
+    protected val randomGenerator: RandomGenerator,
+    protected val speed: Double,
+    protected val distanceDistribution: RealDistribution
 ) : AbstractEuclideanConfigurableMoveNode<T, Euclidean2DPosition>(
     environment,
     node,

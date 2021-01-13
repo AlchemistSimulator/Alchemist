@@ -14,9 +14,9 @@ In Alchemist smartcams are simulated as _Nodes_ equipped with specific _Reaction
 Single capabilities are expressed as _Actions_.
 
 #### Vision
-The most basic example of a camera is a _Node_ containing a _Reaction_ with the _See_ action. Note: the _See_ action currently
+The most basic example of a camera is a _Node_ containing a _Reaction_ with the _CameraSee_ action. Note: the _CameraSee_ action currently
 only works in 2D environments supporting euclidean geometry, for example _Continuous2DEnvironment_ and _Rectangular2DEnvironment_.
-The _See_ action requires 3 parameters to be defined in this order: the distance of the field of view, its angle in degrees,
+The _CameraSee_ action requires 3 parameters to be defined in this order: the distance of the field of view, its angle in degrees,
 and the name of the _Molecule_ which will contain the ouput, namely a list of the nodes contained in the field of view which is updated
 each time the action is triggered. Optionally a fourth parameter can be defined in order to filter the output. Such parameter is expected to
 be the name of a _Molecule_ which has to be contained in a _Node_ for it to be visible, e.g. if it is "wanted" then only nodes containing
@@ -77,7 +77,7 @@ displacements:
       type: ProtelisNode
 ```
 
-Then we give cameras the ability to see other nodes. The _See_ action requires the distance and angle of the field of view. Each time it is triggered, it writes all the nodes seen in the molecule _vision_.
+Then we give cameras the ability to see other nodes. The _CameraSee_ action requires the distance and angle of the field of view. Each time it is triggered, it writes all the nodes seen in the molecule _vision_.
 
 ```yaml
 incarnation: protelis
@@ -107,7 +107,7 @@ programs:
     - time-distribution: 1
       type: ChemicalReaction
       actions:
-        - type: See
+        - type: CameraSee
           parameters: [*CameraFoVDistance, *CameraFoVAngle, vision]
 
 displacements:
@@ -169,7 +169,7 @@ programs:
     - time-distribution: 1
       type: ChemicalReaction
       actions:
-        - type: See
+        - type: CameraSee
           parameters: [*CameraFoVDistance, *CameraFoVAngle, vision]
 
 displacements:
@@ -191,7 +191,7 @@ displacements:
 ```
 
 It is time for cameras to identify _wanted_ targets so we add a _CameraInjectVisibleNodeClosestToDistance_ action in order to select the closest node to the center of the field of view.
-We also specify the _wanted_ molecule in the _See_ action in order to filter only the interesting nodes.
+We also specify the _wanted_ molecule in the _CameraSee_ action in order to filter only the interesting nodes.
 Then, at the condition that a _target_ is found, we want the cameras to start following it, so we add the actions _FollowAtDistance_ and _HeadTowardTarget_.
 
 ```yaml
@@ -241,7 +241,7 @@ programs:
     - time-distribution: 1
       type: ChemicalReaction
       actions:
-        - type: See
+        - type: CameraSee
           parameters: [*CameraFoVDistance, *CameraFoVAngle, vision, wanted]
         - type: CameraInjectVisibleNodeClosestToDistance
           parameters: [*CameraDistanceFromTarget, vision, target]
@@ -323,7 +323,7 @@ programs:
     - time-distribution: 1
       type: ChemicalReaction
       actions:
-        - type: See
+        - type: CameraSee
           parameters: [*CameraFoVDistance, *CameraFoVAngle, vision, wanted]
         - type: CameraInjectVisibleNodeClosestToDistance
           parameters: [*CameraDistanceFromTarget, vision, target]

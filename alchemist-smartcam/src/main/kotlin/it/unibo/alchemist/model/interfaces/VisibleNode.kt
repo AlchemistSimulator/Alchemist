@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.interfaces
 
 /**
- * Represents a node seen by the [it.unibo.alchemist.model.implementations.actions.See] action.
+ * Represents a node seen by the [it.unibo.alchemist.model.implementations.actions.CameraSee] action.
  */
 interface VisibleNode<T, P : Position<P>> {
     /**

@@ -11,11 +11,12 @@ import it.unibo.alchemist.model.smartcam.VisibleNodeImpl
 import java.lang.Math.toRadians
 
 /**
- * Checks nodes in the [environment] and writes in [outputMolecule] a list of [it.unibo.alchemist.model.interfaces.VisibleNode],
- * filtered by those containing [filterByMolecule].
+ * Checks nodes in the [environment] and writes in [outputMolecule]
+ * the list of [it.unibo.alchemist.model.interfaces.VisibleNode],
+ * containing [filterByMolecule].
  * [distance] and [angle] define the field of view.
  */
-class See @JvmOverloads constructor(
+class CameraSee @JvmOverloads constructor(
     node: Node<Any>,
     private val environment: Physics2DEnvironment<Any>,
     /**
@@ -43,7 +44,7 @@ class See @JvmOverloads constructor(
     }
 
     override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
-        See(node, environment, distance, angle, outputMolecule, filterByMolecule)
+        CameraSee(node, environment, distance, angle, outputMolecule, filterByMolecule)
 
     override fun execute() {
         var seen = fieldOfView.influentialNodes()

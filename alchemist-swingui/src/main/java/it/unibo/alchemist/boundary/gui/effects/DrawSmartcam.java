@@ -1,7 +1,7 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
-import it.unibo.alchemist.model.implementations.actions.See;
+import it.unibo.alchemist.model.implementations.actions.CameraSee;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -94,8 +94,8 @@ public final class DrawSmartcam implements Effect {
         node.getReactions()
             .stream()
             .flatMap(r -> r.getActions().stream())
-            .filter(a -> a instanceof See)
-            .map(a -> (See) a)
+            .filter(a -> a instanceof CameraSee)
+            .map(a -> (CameraSee) a)
             .forEach(a -> {
                 final double angle = a.getAngle();
                 final double startAngle = -angle / 2;

@@ -109,7 +109,7 @@ public class TestInSimulator {
      * Test the ability to inject variables.
      */
     @Test
-    public void testLoadWIthVariable() {
+    public void testLoadWithVariable() {
         final Map<String, Double> map = Maps.newLinkedHashMap();
         map.put("testVar", 10d);
         testLoading("test00.yml", map);

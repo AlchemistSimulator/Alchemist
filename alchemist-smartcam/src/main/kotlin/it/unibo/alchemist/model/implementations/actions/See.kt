@@ -11,13 +11,13 @@ import it.unibo.alchemist.model.smartcam.VisibleNodeImpl
 import java.lang.Math.toRadians
 
 /**
- * Checks nodes in the [env] and writes in [outputMolecule] a list of [it.unibo.alchemist.model.interfaces.VisibleNode],
+ * Checks nodes in the [environment] and writes in [outputMolecule] a list of [it.unibo.alchemist.model.interfaces.VisibleNode],
  * filtered by those containing [filterByMolecule].
  * [distance] and [angle] define the field of view.
  */
 class See @JvmOverloads constructor(
     node: Node<Any>,
-    private val env: Physics2DEnvironment<Any>,
+    private val environment: Physics2DEnvironment<Any>,
     /**
      * Distance of the field of view.
      */
@@ -32,7 +32,7 @@ class See @JvmOverloads constructor(
 
     private val fieldOfView =
         FieldOfView2D(
-            env,
+            environment,
             node,
             distance,
             toRadians(angle)
@@ -43,14 +43,14 @@ class See @JvmOverloads constructor(
     }
 
     override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
-        See(node, env, distance, angle, outputMolecule, filterByMolecule)
+        See(node, environment, distance, angle, outputMolecule, filterByMolecule)
 
     override fun execute() {
         var seen = fieldOfView.influentialNodes()
         filterByMolecule?.run {
             seen = seen.filter { it.contains(filterByMolecule) }
         }
-        node.setConcentration(outputMolecule, seen.map { VisibleNodeImpl(it, env.getPosition(it)) })
+        node.setConcentration(outputMolecule, seen.map { VisibleNodeImpl(it, environment.getPosition(it)) })
     }
 
     override fun getContext() = Context.LOCAL

@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param pedestrian
  *          the owner of this action.
  */
-class Cohesion<T, P, A>(
+class CognitiveAgentCohesion<T, P, A>(
     env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>
@@ -25,7 +25,7 @@ class Cohesion<T, P, A>(
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Cohesion(env, r, n)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = CognitiveAgentCohesion(env, r, n)
 
     override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 

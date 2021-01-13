@@ -20,7 +20,7 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: ReachDestination
+      - type: CognitiveAgentReachDestination
         parameters: [60, 40, 85, 15]
         # (85, 15) will be known, (60, 40) won't be known but will be reached because found along the way to the former
 

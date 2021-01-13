@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  * @param viewDepth
  *          the depth of view of the pedestrian, defaults to infinity.
  */
-class AvoidLayer @JvmOverloads constructor(
+class CognitiveAgentAvoidLayer @JvmOverloads constructor(
     environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
     pedestrian: Pedestrian2D<Number>,
@@ -32,7 +32,7 @@ class AvoidLayer @JvmOverloads constructor(
 ) : AbstractLayerAction(environment, reaction, pedestrian, targetMolecule) {
 
     private val followScalarField = getLayerOrFail().let { layer ->
-        FollowScalarField(environment, reaction, pedestrian, layer.center()) {
+        CognitiveAgentFollowScalarField(environment, reaction, pedestrian, layer.center()) {
             /*
              * Moves the pedestrian where the concentration is lower.
              */
@@ -40,8 +40,8 @@ class AvoidLayer @JvmOverloads constructor(
         }
     }
 
-    override fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): AvoidLayer =
-        AvoidLayer(environment, r, n, targetMolecule, viewDepth)
+    override fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): CognitiveAgentAvoidLayer =
+        CognitiveAgentAvoidLayer(environment, r, n, targetMolecule, viewDepth)
 
     /**
      * @returns the next relative position. The pedestrian is moved only if he/she percepts the danger

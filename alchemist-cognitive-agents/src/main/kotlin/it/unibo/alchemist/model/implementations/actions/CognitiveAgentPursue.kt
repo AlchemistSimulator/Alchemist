@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.navigationstrategies.RouteFollowing
+import it.unibo.alchemist.model.implementations.actions.navigationstrategies.Pursuing
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -19,20 +19,20 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConve
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 
 /**
- * A [NavigationAction] using [RouteFollowing] navigation strategy.
+ * A [NavigationAction] using [Pursuing] navigation strategy.
  *
  * @param T the concentration type.
  * @param L the type of landmarks of the pedestrian's cognitive map.
  * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-class FollowRoute<T, L : Euclidean2DConvexShape, R>(
+class CognitiveAgentPursue<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
     pedestrian: OrientingPedestrian2D<T, L, R>,
-    vararg route: Number
-) : NavigationAction2DImpl<T, L, R>(environment, reaction, pedestrian) {
+    vararg destination: Number
+) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
 
     init {
-        strategy = RouteFollowing(this, route.toPositions(environment))
+        strategy = Pursuing(this, environment.makePosition(*destination))
     }
 }

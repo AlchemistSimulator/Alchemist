@@ -28,7 +28,7 @@ reactions: &behavior
       parameters: [1.0]
     type: CognitiveBehavior
     actions:
-      - type: Seek
+      - type: CognitiveAgentSeek
         parameters: [0.0, 0.0]
       - type: RandomRotate
 

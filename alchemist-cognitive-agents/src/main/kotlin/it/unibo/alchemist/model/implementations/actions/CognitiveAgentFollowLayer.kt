@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
-open class FollowLayer(
+open class CognitiveAgentFollowLayer(
     env: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
     pedestrian: Pedestrian2D<Number>,
@@ -26,13 +26,13 @@ open class FollowLayer(
 ) : AbstractLayerAction(env, reaction, pedestrian, targetMolecule) {
 
     private val followScalarField = getLayerOrFail().let { layer ->
-        FollowScalarField(environment, reaction, pedestrian, layer.center()) {
+        CognitiveAgentFollowScalarField(environment, reaction, pedestrian, layer.center()) {
             layer.concentrationIn(it)
         }
     }
 
     override fun nextPosition(): Euclidean2DPosition = followScalarField.nextPosition()
 
-    override fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): FollowLayer =
-        FollowLayer(environment, r, n, targetMolecule)
+    override fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): CognitiveAgentFollowLayer =
+        CognitiveAgentFollowLayer(environment, r, n, targetMolecule)
 }

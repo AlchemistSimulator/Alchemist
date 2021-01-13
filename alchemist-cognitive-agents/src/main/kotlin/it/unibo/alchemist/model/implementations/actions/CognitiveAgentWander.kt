@@ -29,7 +29,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param radius
  *          the radius of the circle.
  */
-open class Wander<T>(
+open class CognitiveAgentWander<T>(
     private val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian2D<T>,
@@ -57,8 +57,8 @@ open class Wander<T>(
         .coerceAtMost(maxWalk)
 
     override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<Pedestrian2D<T>, Wander<T>>(n) {
-            Wander(environment, r, it, randomGenerator, offset, radius)
+        requireNodeTypeAndProduce<Pedestrian2D<T>, CognitiveAgentWander<T>>(n) {
+            CognitiveAgentWander(environment, r, it, randomGenerator, offset, radius)
         }
 }
 

@@ -19,7 +19,7 @@ reactions: &behavior
       parameters: [1.0]
     type: PrioritySteering
     actions:
-      - type: Separation
+      - type: CognitiveAgentSeparation
       - type: RandomRotate
 
 displacements:

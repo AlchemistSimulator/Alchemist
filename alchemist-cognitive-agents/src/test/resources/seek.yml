@@ -19,7 +19,7 @@ reactions: &behavior
       parameters: [10.0]
     type: PrioritySteering
     actions:
-      - type: Seek
+      - type: CognitiveAgentSeek
         parameters: [0, 0]
 
 displacements:

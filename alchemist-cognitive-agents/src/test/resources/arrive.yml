@@ -19,7 +19,7 @@ reactions: &behavior
       parameters: [1.0]
     type: PrioritySteering
     actions:
-      - type: Arrive
+      - type: CognitiveAgentArrive
         parameters: [400, 1, 0, 0]
 
 displacements:

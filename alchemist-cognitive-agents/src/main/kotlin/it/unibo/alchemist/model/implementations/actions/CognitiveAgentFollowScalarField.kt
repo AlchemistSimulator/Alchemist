@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 /**
  * Moves the pedestrian where the given scalar field is higher.
  */
-class FollowScalarField<T, P, A>(
+class CognitiveAgentFollowScalarField<T, P, A>(
     /**
      * The environment the pedestrian is into.
      */
@@ -64,7 +64,7 @@ class FollowScalarField<T, P, A>(
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = FollowScalarField(env, r, n, center, valueIn)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = CognitiveAgentFollowScalarField(env, r, n, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
         if (env is EnvironmentWithObstacles<*, T, P>) map { env.next(currentPosition, it) } else this

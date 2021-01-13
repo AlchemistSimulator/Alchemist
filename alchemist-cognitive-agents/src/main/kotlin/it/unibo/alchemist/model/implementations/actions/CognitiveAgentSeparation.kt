@@ -17,14 +17,14 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  * @param pedestrian
  *          the owner of this action.
  */
-class Separation<T>(
+class CognitiveAgentSeparation<T>(
     override val env: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
     override val pedestrian: Pedestrian2D<T>
 ) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
 
     override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<Pedestrian2D<T>, Separation<T>>(n) { Separation(env, r, it) }
+        requireNodeTypeAndProduce<Pedestrian2D<T>, CognitiveAgentSeparation<T>>(n) { CognitiveAgentSeparation(env, r, it) }
 
     override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)
 

@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.reactions
 
-import it.unibo.alchemist.model.implementations.actions.Combine
+import it.unibo.alchemist.model.implementations.actions.CognitiveAgentCombineSteering
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
@@ -48,6 +48,6 @@ open class SteeringBehavior<T>(
 
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
-        Combine(env, this, pedestrian, steerActions(), steerStrategy).execute()
+        CognitiveAgentCombineSteering(env, this, pedestrian, steerActions(), steerStrategy).execute()
     }
 }

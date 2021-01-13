@@ -51,15 +51,15 @@ reactions: &behavior
     conditions:
       - type: WantToEvacuate
     actions:
-      - type: AvoidLayer
+      - type: CognitiveAgentAvoidLayer
         parameters: [*danger]
-      - type: FollowLayer
+      - type: CognitiveAgentFollowLayer
         parameters: [*exit1]
-      - type: FollowLayer
+      - type: CognitiveAgentFollowLayer
         parameters: [*exit2]
-      - type: FollowLayer
+      - type: CognitiveAgentFollowLayer
         parameters: [*exit3]
-      - type: FollowLayer
+      - type: CognitiveAgentFollowLayer
         parameters: [*exit4]
   - time-distribution:
       type: DiracComb

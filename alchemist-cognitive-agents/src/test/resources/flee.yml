@@ -19,7 +19,7 @@ reactions: &behavior
       parameters: [10.0]
     type: PrioritySteering
     actions:
-      - type: Flee
+      - type: CognitiveAgentFlee
         parameters: [0, 0]
 
 displacements:

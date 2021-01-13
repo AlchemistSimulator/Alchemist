@@ -32,12 +32,12 @@ import org.jgrapht.Graphs
  * @param L the type of landmarks of the pedestrian's cognitive map.
  * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-class ReachDestination<T, L : Euclidean2DConvexShape, R>(
+class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
     pedestrian: OrientingPedestrian2D<T, L, R>,
     vararg destinations: Number
-) : NavigationAction2DImpl<T, L, R>(environment, reaction, pedestrian) {
+) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
 
     /**
      * Infers if a [destination] is known by the [pedestrian] (see [Pursuing]). A destination is considered

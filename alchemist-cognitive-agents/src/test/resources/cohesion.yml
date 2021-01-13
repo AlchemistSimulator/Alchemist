@@ -36,8 +36,8 @@ reactions: &behavior
       parameters: [2.0]
     type: PrioritySteering
     actions:
-      - type: Cohesion
-      - type: AvoidLayer
+      - type: CognitiveAgentCohesion
+      - type: CognitiveAgentAvoidLayer
         parameters: [*exit]
 
 displacements:

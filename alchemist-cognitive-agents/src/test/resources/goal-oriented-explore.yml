@@ -20,9 +20,9 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: GoalOrientedExplore
+      - type: CognitiveAgentGoalOrientedExplore
         parameters: [135, 15]
-        # GoalOrientedExplore assumes the destination is unknown
+        # CognitiveAgentGoalOrientedExplore assumes the destination is unknown
 
 displacements:
   - in:

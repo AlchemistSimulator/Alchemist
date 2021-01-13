@@ -4,34 +4,33 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.SteeringAction
-import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * Combination of multiple steering actions.
+ * Move the agent away from a target position. It's the opposite of Seek.
  *
  * @param env
  *          the environment inside which the pedestrian moves.
+ * @param reaction
+ *          the reaction which executes this action.
  * @param pedestrian
  *          the owner of this action.
- * @param actions
- *          the list of actions to combine to determine the pedestrian movement.
- * @param steerStrategy
- *          the logic according to the steering actions are combined.
+ * @param coords
+ *          the coordinates of the position the pedestrian moves away.
  */
-class Combine<T, P, A>(
+open class CognitiveAgentFlee<T, P, A>(
     private val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>,
-    private val actions: List<SteeringAction<T, P>>,
-    private val steerStrategy: SteeringStrategy<T, P>
+    vararg coords: Double
 ) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Combine(env, r, n, actions, steerStrategy)
+    private val danger: P = env.makePosition(*coords.toTypedArray())
 
-    override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).coerceAtMost(maxWalk)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = CognitiveAgentFlee(env, r, n, *danger.coordinates)
+
+    override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)
 }

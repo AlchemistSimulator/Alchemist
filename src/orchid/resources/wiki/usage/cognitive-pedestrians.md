@@ -172,9 +172,9 @@ reactions: &behavior
     type: PrioritySteering
     actions:
       - type: RandomRotate
-      - type: Wander
+      - type: CognitiveAgentWander
         parameters: [6, 4]
-      - type: ObstacleAvoidance
+      - type: CognitiveAgentObstacleAvoidance
         parameters: [4]
 
 displacements:
@@ -208,11 +208,11 @@ reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
-    type: BlendedSteering
+    type: CognitiveAgentBlendedSteering
     actions:
-      - type: Seek
+      - type: CognitiveAgentSeek
         parameters: [1000, 500]
-      - type: Flee
+      - type: CognitiveAgentFlee
         parameters: [500, -500]
 
 displacements:
@@ -258,7 +258,7 @@ reactions: &behavior
       parameters: [1.0]
     type: PrioritySteering
     actions:
-      - type: AvoidFlowField
+      - type: CognitiveAgentCognitiveAgentAvoidLayer
         parameters: [*danger]
 
 displacements:
@@ -318,9 +318,9 @@ reactions: &behavior
       parameters: [1.0]
     type: BlendedSteeringWithPhysics
     actions:
-      - type: Seek
+      - type: CognitiveAgentSeek
         parameters: [1000, 500]
-      - type: Flee
+      - type: CognitiveAgentFlee
         parameters: [500, -500]
 
 displacements:

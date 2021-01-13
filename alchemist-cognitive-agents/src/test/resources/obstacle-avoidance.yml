@@ -29,9 +29,9 @@ reactions: &behavior
       parameters: [0.25]
     type: BlendedSteering
     actions:
-      - type: FollowLayer
+      - type: CognitiveAgentFollowLayer
         parameters: [*danger]
-      - type: ObstacleAvoidance
+      - type: CognitiveAgentObstacleAvoidance
         parameters: [50]
 
 displacements:

@@ -17,12 +17,12 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param target
  *          the position the pedestrian moves towards.
  */
-open class Seek<T, P, A>(
+open class CognitiveAgentSeek<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>,
     target: P
-) : Arrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
+) : CognitiveAgentArrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
@@ -33,5 +33,5 @@ open class Seek<T, P, A>(
         vararg coordinates: Number
     ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Seek(environment, r, n, target)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = CognitiveAgentSeek(environment, r, n, target)
 }

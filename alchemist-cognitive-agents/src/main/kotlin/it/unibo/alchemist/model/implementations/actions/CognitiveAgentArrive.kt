@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * Move the agent towards a target position.
- * It is similar to Seek but attempts to arrive at the target position with a zero velocity.
+ * It is similar to [CognitiveAgentSeek] but attempts to arrive at the target position with a zero velocity.
  *
  * @param env
  *          the environment inside which the pedestrian moves.
@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param target
  *          the position the pedestrian moves towards.
  */
-open class Arrive<T, P, A>(
+open class CognitiveAgentArrive<T, P, A>(
     protected val env: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>,
@@ -53,6 +53,6 @@ open class Arrive<T, P, A>(
         }
     }
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>): Arrive<T, P, A> =
-        Arrive(env, r, n, decelerationRadius, arrivalTolerance, target)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>): CognitiveAgentArrive<T, P, A> =
+        CognitiveAgentArrive(env, r, n, decelerationRadius, arrivalTolerance, target)
 }

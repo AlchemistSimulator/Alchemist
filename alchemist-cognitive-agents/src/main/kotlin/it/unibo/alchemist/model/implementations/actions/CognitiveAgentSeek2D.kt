@@ -9,10 +9,10 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
- * [Seek] behavior in a bidimensional environment, delegated to [FollowScalarField] (this means the pedestrian tries
- * to overtake others on its path, in general its movements are more sophisticated than [Seek]).
+ * [CognitiveAgentSeek] behavior in a bidimensional environment, delegated to [CognitiveAgentFollowScalarField] (this means the pedestrian tries
+ * to overtake others on its path, in general its movements are more sophisticated than [CognitiveAgentSeek]).
  */
-open class Seek2D<T, P, A>(
+open class CognitiveAgentSeek2D<T, P, A>(
     /**
      * The environment the pedestrian is into.
      */
@@ -36,7 +36,7 @@ open class Seek2D<T, P, A>(
         y: Number
     ) : this(environment, reaction, pedestrian, environment.makePosition(x, y))
 
-    private val followScalarField = FollowScalarField(environment, reaction, pedestrian, target) {
+    private val followScalarField = CognitiveAgentFollowScalarField(environment, reaction, pedestrian, target) {
         -it.distanceTo(target)
     }
 
@@ -44,5 +44,5 @@ open class Seek2D<T, P, A>(
 
     override fun nextPosition(): P = followScalarField.nextPosition()
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = Seek2D(environment, r, n, target)
+    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = CognitiveAgentSeek2D(environment, r, n, target)
 }

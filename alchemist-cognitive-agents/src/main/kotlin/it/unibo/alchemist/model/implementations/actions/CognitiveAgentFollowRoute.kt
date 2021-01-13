@@ -9,10 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.actions.navigationstrategies.KnownDestinationReaching
+import it.unibo.alchemist.model.implementations.actions.navigationstrategies.RouteFollowing
 import it.unibo.alchemist.model.interfaces.NavigationAction
-import it.unibo.alchemist.model.math.lazyMutable
-import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
@@ -21,20 +19,20 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConve
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 
 /**
- * A [NavigationAction] using [KnownDestinationReaching] navigation strategy.
+ * A [NavigationAction] using [RouteFollowing] navigation strategy.
  *
  * @param T the concentration type.
  * @param L the type of landmarks of the pedestrian's cognitive map.
  * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
+class CognitiveAgentFollowRoute<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
     pedestrian: OrientingPedestrian2D<T, L, R>,
-    vararg destinations: Number
-) : NavigationAction2DImpl<T, L, R>(environment, reaction, pedestrian) {
+    vararg route: Number
+) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
 
-    override var strategy: NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> by lazyMutable {
-        KnownDestinationReaching(this, destinations.toPositions(environment))
+    init {
+        strategy = RouteFollowing(this, route.toPositions(environment))
     }
 }

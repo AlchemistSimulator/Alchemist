@@ -32,7 +32,7 @@ private typealias AbstractNavigationAction2D<T, L, R, N, E> =
  * @param L the type of landmarks of the pedestrian's cognitive map.
  * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
  */
-open class NavigationAction2DImpl<T, L : Euclidean2DConvexShape, R>(
+open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
     pedestrian: OrientingPedestrian2D<T, L, R>,
@@ -95,12 +95,12 @@ open class NavigationAction2DImpl<T, L : Euclidean2DConvexShape, R>(
 
     override fun nextPosition(): Euclidean2DPosition {
         update()
-        return Seek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
+        return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
     }
 
     override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<OrientingPedestrian2D<T, L, R>, NavigationAction2DImpl<T, L, R>>(n) {
-            val clone = NavigationAction2DImpl(environment, r, it, wallRepulsionFactor)
+        requireNodeTypeAndProduce<OrientingPedestrian2D<T, L, R>, CognitiveAgentNavigationAction2D<T, L, R>>(n) {
+            val clone = CognitiveAgentNavigationAction2D(environment, r, it, wallRepulsionFactor)
             clone.strategy = this.strategy
             return clone
         }

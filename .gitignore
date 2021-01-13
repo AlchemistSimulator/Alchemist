@@ -41,3 +41,4 @@ scala_compiler.xml
 vcs.xml
 compiler.xml
 misc.xml
+.name

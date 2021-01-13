@@ -1,3 +1,11 @@
+/*
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Context
@@ -6,12 +14,9 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 
 /**
- * Toggles a molecule.
- *
- * @param <T> concentration type
- * @param node the node containing the molecule
- * @param molecule the molecule to toggle
- * @param concentration the concentration to set
+ * Treats [molecule] as a switch:
+ * * if it is present, then it's removed from [node];
+ * * otherwise, it is inserted in [node] with the provided [concentration].
  */
 open class ToggleMolecule<T>(
     node: Node<T>,

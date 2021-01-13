@@ -34,7 +34,8 @@ class HeadToRandomDirection<T>(
     /**
      * {@inheritDoc}.
      */
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> = HeadToRandomDirection(node, environment, randomGenerator)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> =
+        HeadToRandomDirection(node, environment, randomGenerator)
 
     /**
      * Changes the heading of the node randomly.

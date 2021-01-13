@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
-PUBLISH='./gradlew publishAllPublicationsToMavenCentralRepository --parallel'
-$PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH
+./gradlew publishKotlinMavenPublicationToCentralS01Repository
 # Publish on GitHub. Fails due to overwritings, so it's ok to give up
-./gradlew publishAllPublicationsToGithubRepository --continue || true
+./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
 ./gradlew orchidDeploy
 if [ -n "$TAG" ] || [ "$BRANCH" = 'develop' ]
 then

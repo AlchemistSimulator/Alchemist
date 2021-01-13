@@ -37,12 +37,12 @@ public final class RemoveNode<T> extends AbstractAction<T> {
     }
 
     @Override
-    public final Context getContext() {
+    public Context getContext() {
         return Context.LOCAL;
     }
 
     @Override
-    public final void execute() {
+    public void execute() {
         env.removeNode(getNode());
     }
 

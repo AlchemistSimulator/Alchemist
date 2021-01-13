@@ -16,6 +16,12 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
+ * Moves the node along the x axis up to coordinate {@link #getMaxX()},
+ * with steps of size {@link #getDeltaX()}.
+ * Once {@link #getMaxX()} is reached, the nodes gets teleported back to {@link #getMinX()}.
+ *
+ * Somewhat, it mimics the movement a node would have in a cylindrical environment.
+ *
  * @param <T>
  *            Concentration type
  * @param <P>
@@ -65,4 +71,15 @@ public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends Ab
         return getEnvironment().makePosition(x + dx, y);
     }
 
+    public double getMaxX() {
+        return maxx;
+    }
+
+    public double getMinX() {
+        return minx;
+    }
+
+    public double getDeltaX() {
+        return dx;
+    }
 }

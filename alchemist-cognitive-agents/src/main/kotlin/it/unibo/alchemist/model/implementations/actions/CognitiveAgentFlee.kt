@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * Move the agent away from a target position. It's the opposite of Seek.
+ * Move the agent away from a target position. It's the opposite of [CognitiveAgentSeek].
  *
  * @param env
  *          the environment inside which the pedestrian moves.

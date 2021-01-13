@@ -21,7 +21,7 @@ reactions: &behavior
     actions:
       - type: Wander
         parameters: [10, 8]
-      - type: RandomRotate
+      - type: HeadToRandomDirection
 
 displacements:
   - in:

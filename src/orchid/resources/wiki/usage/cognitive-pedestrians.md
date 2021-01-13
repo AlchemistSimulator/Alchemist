@@ -171,7 +171,7 @@ reactions: &behavior
       parameters: [3.0]
     type: PrioritySteering
     actions:
-      - type: RandomRotate
+      - type: HeadToRandomDirection
       - type: CognitiveAgentWander
         parameters: [6, 4]
       - type: CognitiveAgentObstacleAvoidance

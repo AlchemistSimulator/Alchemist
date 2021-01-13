@@ -21,7 +21,7 @@ reactions: &behavior
     actions:
       - type: CognitiveAgentSeek
         parameters: [0.0, 0.0]
-      - type: RandomRotate
+      - type: HeadToRandomDirection
 
 displacements:
   - in:

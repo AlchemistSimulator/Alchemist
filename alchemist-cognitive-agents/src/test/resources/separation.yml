@@ -20,7 +20,7 @@ reactions: &behavior
     type: PrioritySteering
     actions:
       - type: CognitiveAgentSeparation
-      - type: RandomRotate
+      - type: HeadToRandomDirection
 
 displacements:
   - in:

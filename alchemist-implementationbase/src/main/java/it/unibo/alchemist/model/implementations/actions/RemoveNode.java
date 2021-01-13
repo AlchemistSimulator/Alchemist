@@ -14,9 +14,11 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
+ * Removes the current node from the environment.
+ *
  * @param <T> concentration type
  */
-public class RemoveNode<T> extends AbstractAction<T> {
+public final class RemoveNode<T> extends AbstractAction<T> {
 
     /**
      * 

@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-cd alchemist
 PUBLISH='./gradlew publishAllPublicationsToMavenCentralRepository --parallel'
 $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH || $PUBLISH
 # Publish on GitHub. Fails due to overwritings, so it's ok to give up

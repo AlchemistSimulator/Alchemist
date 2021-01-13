@@ -1,5 +1,3 @@
 #!/bin/bash
 set -e
-cd alchemist
-COMMAND='./gradlew assemble shadowJar dokkaJavadoc orchidBuild --parallel --scan --stacktrace'
-$COMMAND || $COMMAND || $COMMAND || $COMMAND || $COMMAND
+./gradlew assemble shadowJar dokkaJavadoc orchidBuild --parallel --scan --stacktrace

@@ -30,7 +30,7 @@ reactions: &behavior
     actions:
       - type: CognitiveAgentSeek
         parameters: [0.0, 0.0]
-      - type: HeadToRandomDirection
+      - type: HeadTowardRandomDirection
 
 displacements:
   - in:

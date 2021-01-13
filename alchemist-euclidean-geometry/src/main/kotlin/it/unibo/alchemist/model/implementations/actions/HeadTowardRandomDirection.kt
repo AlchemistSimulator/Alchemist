@@ -25,7 +25,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * Changes the heading of [node] randomly.
  * The [environment] must support node heading, hence, be a [Physics2DEnvironment].
  */
-class HeadToRandomDirection<T>(
+class HeadTowardRandomDirection<T>(
     node: Node<T>,
     private val environment: Physics2DEnvironment<T>,
     private val randomGenerator: RandomGenerator
@@ -35,7 +35,7 @@ class HeadToRandomDirection<T>(
      * {@inheritDoc}.
      */
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> =
-        HeadToRandomDirection(node, environment, randomGenerator)
+        HeadTowardRandomDirection(node, environment, randomGenerator)
 
     /**
      * Changes the heading of the node randomly.

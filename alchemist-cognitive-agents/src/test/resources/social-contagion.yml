@@ -44,7 +44,7 @@ reactions: &behavior
       parameters: [0.5]
     type: CognitiveBehavior
     actions:
-      - type: HeadToRandomDirection
+      - type: HeadTowardRandomDirection
 
 displacements:
   - in:

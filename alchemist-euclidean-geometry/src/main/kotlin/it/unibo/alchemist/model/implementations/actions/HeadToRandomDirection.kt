@@ -22,26 +22,27 @@ import kotlin.math.sin
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Changes the heading of the node randomly.
+ * Changes the heading of [node] randomly.
+ * The [environment] must support node heading, hence, be a [Physics2DEnvironment].
  */
-class RandomRotate<T>(
+class HeadToRandomDirection<T>(
     node: Node<T>,
-    private val env: Physics2DEnvironment<T>,
-    private val rng: RandomGenerator
+    private val environment: Physics2DEnvironment<T>,
+    private val randomGenerator: RandomGenerator
 ) : AbstractAction<T>(node) {
 
     /**
      * {@inheritDoc}.
      */
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> = RandomRotate(node, env, rng)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> = HeadToRandomDirection(node, environment, randomGenerator)
 
     /**
      * Changes the heading of the node randomly.
      */
     override fun execute() {
-        val delta = PI_8 * (2 * rng.nextDouble() - 1)
-        val originalAngle = env.getHeading(node).asAngle()
-        env.setHeading(node, (originalAngle + delta).toDirection())
+        val delta = PI_8 * (2 * randomGenerator.nextDouble() - 1)
+        val originalAngle = environment.getHeading(node).asAngle()
+        environment.setHeading(node, (originalAngle + delta).toDirection())
     }
 
     /**

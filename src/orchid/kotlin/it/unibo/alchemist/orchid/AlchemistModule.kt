@@ -10,11 +10,13 @@
 package it.unibo.alchemist.orchid
 
 import com.eden.orchid.api.compilers.TemplateFunction
+import com.eden.orchid.api.compilers.TemplateTag
 import com.eden.orchid.api.registration.OrchidModule
 
 class AlchemistModule : OrchidModule() {
 
     override fun configure() {
         addToSet(TemplateFunction::class.java, ShortenPackage::class.java)
+        addToSet(TemplateTag::class.java, EmbedCode::class.java)
     }
 }

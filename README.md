@@ -12,12 +12,18 @@ At the moment, the simulator features:
 * Simulating bidimensional environments
 * Simulating real-world maps, with support for navigation along roads, and for importing gpx format gps traces
 * Simulating indoor environments by importing black and white images
+* Simulating networks of smart cameras (similarly to [CamSim](https://doi.org/10.1109/SASOW.2013.11), but with much better scaling)
+* Simulating pedestrian with a cognitive model
 * Creating batches and run with different value of parameters
 * Run in grid computing environments
 
-## Users
-
 Alchemist users should rely on the documentation available on [the official Alchemist website](http://alchemistsimulator.github.io/).
+If you are already there, well, this text is shared by the README.md file and the site front page,
+so you are on the right place, **check the menu** (should be on the left-hand side) to learn how to use the simulator.
+
+If you need access to features of the simulator which are still in development,
+please refer to the ["latest" version of the website](http://alchemistsimulator.github.io/latest).
+
 Alchemist is available on Maven Central. You can import all the components by importing the `it.unibo.alchemist:alchemist` artifact.
 
 ### Gradle

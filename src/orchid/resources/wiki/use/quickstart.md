@@ -3,9 +3,8 @@
 title: Quick start
 
 ---
-You can find [here](https://github.com/AlchemistSimulator/alchemist-primer) a project showing how to use Alchemist via
-[Gradle](https://gradle.org) to run a simple simulation.
-Let's use it as a quick start to have you hit the ground running. 
+
+You can find 
 
 You can either follow these instructions or those on the `README.md` file of the linked project, information is equivalent.
 
@@ -21,7 +20,8 @@ On Windows:
 ```
 gradlew.bat runAll
 ```
-Press P and you will see some pedestrians wandering around. For further information about the gui, see the {{ anchor('graphical interface shortcuts', 'Alchemist graphical interface') }}.
+Press P and you will see some pedestrians wandering around.
+For further information about the gui, see the {{ anchor('graphical interface shortcuts', 'Alchemist graphical interface') }}.
 
 Note that the first launch will be rather slow, since Gradle will download all the required files.
 They will get cached in the user's home folder (as per Gradle normal behavior).
@@ -44,7 +44,7 @@ Simulations are in the `yaml` folder.
 
 ## The build script
 
-Let's explain how things work by looking at the `build.gradle.kts` script.
+Let's explain how things work by looking at the.
 
 ### Importing Alchemist
 

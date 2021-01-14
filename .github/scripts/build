@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e
+./gradlew assemble shadowJar dokkaJavadoc orchidBuild --parallel --scan --stacktrace

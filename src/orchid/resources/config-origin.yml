@@ -1,0 +1,44 @@
+site:
+  about:
+    siteName: The Alchemist Simulator
+    siteDescription: An extensible simulator for doing science and engineering in pervasive, bio-inspired, and aggregate computing.
+Editorial:
+  primaryColor: '#169C2D'
+  social:
+    github: 'AlchemistSimulator/Alchemist'
+  menu:
+    - type: link
+      title: Home
+      url: '/'
+    - type: 'separator'
+      title: 'Documentation'
+    - type: 'wiki'
+    - type: 'separator'
+      title: 'API Docs'
+    - type: 'sourcedocPages'
+      moduleType: 'kotlindoc'
+      node: 'packages'
+      asSubmenu: true
+      submenuTitle: 'Packages'
+      transform: '{{ title | shortenPackage(38) }}'
+    - type: 'sourcedocPages'
+      moduleType: 'kotlindoc'
+      node: 'classes'
+      asSubmenu: true
+      submenuTitle: 'Classes'
+      transform: '{{ title | abbreviate(38) }}'
+  extraCss:
+    - 'assets/css/pygments.scss'
+allPages:
+  components:
+    - type: 'pageContent'
+    - type: "prism"
+      githubTheme: 'ghcolors'
+      languages:
+        - kotlin
+        - java
+        - groovy
+        - yaml
+        - asciidoc
+        - markdown
+        - python

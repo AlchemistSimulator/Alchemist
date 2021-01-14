@@ -1,0 +1,28 @@
+incarnation: sapere
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [0.4]
+
+variables:
+  seed: &seed
+    min: 0
+    max: 9
+    step: 1
+    default: 0
+  speed: &speed
+    type: ArbitraryVariable
+    parameters: [0.1, [0.1, 0.1, 1]]
+  latencies:
+    formula: "[0.001, 0.01, 0.1, 1]"
+  tolerances:
+    formula: "[0, 0.01, 0.03, 0.1, 0.3, 1, 3]"
+  controlParameters: &control
+    formula: GroovyCollections.combinations(latencies, tolerances) + [[Double.NaN, Double.NaN]]
+  algorithm:
+    type: ArbitraryVariable
+    parameters: [[0.1, 0.01], *control]
+  network_mean_latency: &network_mean_latency
+    formula: algorithm[0]
+  tolerance: &tolerance
+    formula: algorithm[1]

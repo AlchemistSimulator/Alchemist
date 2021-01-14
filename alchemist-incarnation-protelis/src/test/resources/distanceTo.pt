@@ -1,0 +1,28 @@
+module distanceTo
+import java.lang.Double.POSITIVE_INFINITY
+
+def myPosition() {
+	self.getDevicePosition()
+}
+
+def nbrRange() {
+    nbr(myPosition()).distanceTo(myPosition())
+}
+
+def distanceTo(source) {
+	rep (d <- POSITIVE_INFINITY) {
+		mux (source) {
+			0
+		} else {
+            minHood(nbr(d) + nbrRange())
+		}
+	}
+}
+
+def distanceToWithEnable(source, enabled) {
+   if (enabled) { distanceTo(source) } else { POSITIVE_INFINITY }
+}
+
+let d = distanceToWithEnable(env.get("source"), env.get("enabled"));
+env.put("data", d);
+d

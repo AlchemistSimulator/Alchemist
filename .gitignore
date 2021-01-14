@@ -1,17 +1,44 @@
+# Eclipse
 .metadata/
 .recommenders/
-build/
-bin/
-.directory
-.gradle
-gradle.prefs
-version.info
-prepare_environment.sh
+
+# Xtext
 **/*-gen/
 **/*generated*/
+
+# Gradle
+build/
+bin/
+.gradle
+gradle.prefs
+gradle.xml
+
+# KDE
+.directory
+*.kate-swp
+
+# Idea
+out/
+uiDesigner.xml
+buildProfile/
+*.iml
+.idea/libraries/
+.idea/workspace.xml
+.idea/codeStyleSettings.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/jarRepositories.xml
+
+# MacOS
+.DS_Store
+
+# Other
 *.cache-main
 *.cache-tests
-out/
-.DS_Store
-*.kate-swp
 **/*.kotlintest*/*
+.kotlintest/
+modules.xml
+scala_compiler.xml
+vcs.xml
+compiler.xml
+misc.xml
+.name

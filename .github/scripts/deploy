@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+./gradlew publishKotlinMavenPublicationToCentralS01Repository
+# Publish on GitHub. Fails due to overwritings, so it's ok to give up
+./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
+./gradlew orchidDeploy
+if [ -n "$TAG" ] || [ "$BRANCH" = 'develop' ]
+then
+    echo Installing surge
+    sudo npm install --global surge
+    echo Deploying ${STABILITY_MARKER}javadoc on surge
+    surge build/dokka/javadoc/ alchemist-${STABILITY_MARKER}doc.surge.sh
+fi
+if [ -n "$TAG" ]
+then
+    MESSAGE=$(git tag -l --format='%(contents)' "$TAG")
+    hub release create -m "$MESSAGE" "$TAG" || true
+    for jar in build/shadow/*; do
+        gh release upload "$TAG" --clobber "$jar"
+    done
+fi

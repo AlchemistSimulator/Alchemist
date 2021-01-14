@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e
+./gradlew check jacocoTestReport --parallel --scan

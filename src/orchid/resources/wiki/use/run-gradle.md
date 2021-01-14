@@ -150,3 +150,20 @@ deciding how often and where to export data,
 how to display the information,
 and so on.
 A list of the commands can be printed by passing `--help` as argument.
+
+## Importing the project into an IDE
+
+Alchemist projects can be imported in several IDEs:
+as far as the development environment supports Gradle,
+then it supports development of Alchemist projects.
+The IDE we recommend for development is IntelliJ Idea,
+which (among those we tested out) has the better integration with Gradle.
+Importing the project in Idea is trivial:
+just open the folder containing the `build.gradle.kts` file with the IDE.
+Depending on the version and the IDE settings,
+it could import the project straight away or ask which import format to prefer:
+pick "Gradle".
+
+Once the project is ready, it can be developed as any other project.
+IntelliJ provides a syntax helper for YAML which is rather handy.
+Since the IDE can run gradle tasks, it is also possible to launch the simulator directly from the IDE.

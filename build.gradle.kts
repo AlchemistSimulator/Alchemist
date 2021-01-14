@@ -5,6 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
+import Version.Companion.toVersion
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -341,7 +342,9 @@ tasks.dokkaJavadoc {
     }
 }
 
-val isMarkedStable by lazy { """\d+(\.\d+){2}""".toRegex().matches(rootProject.version.toString()) }
+val projectVersion = rootProject.version.toString().toVersion()
+@ExperimentalUnsignedTypes
+val isMarkedStable = !projectVersion.isPreRelease
 
 orchid {
     theme = "Editorial"
@@ -362,7 +365,7 @@ orchid {
     val shouldDeploy = matchedVersions
         .takeIf { it.size == 1 }
         ?.first()
-        ?.let { rootProject.version.toString() > it }
+        ?.let { projectVersion > it.toVersion() }
         ?: false
     dryDeploy = shouldDeploy.not().toString()
     println(

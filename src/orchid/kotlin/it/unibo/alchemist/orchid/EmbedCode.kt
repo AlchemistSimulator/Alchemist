@@ -47,11 +47,4 @@ class EmbedCode : TemplateTag(tagname, Type.Simple, true) {
     lateinit var slice: String
 
     override fun parameters() = arrayOf("owner", "repository", "branch", "file", "slice")
-
-//    override fun apply(context: OrchidContext?, page: OrchidPage?): String {
-//        val lines = if (slice.isBlank()) "" else "?slice=$slice"
-//        return """ta$repository/raw/$branch/$file?footer=no$lines">
-//            </script>
-//        """.trimIndent()
-//    }
 }

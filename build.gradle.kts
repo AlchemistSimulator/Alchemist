@@ -368,7 +368,6 @@ orchid {
         ?.let { projectVersion > it.toVersion() }
         ?: false
     dryDeploy = shouldDeploy.not().toString()
-    githubToken = System.getenv("GITHUB_TOKEN")
     println(
         when (matchedVersions.size) {
             0 -> "Unable to fetch the current site version from $baseUrl"
@@ -376,6 +375,15 @@ orchid {
             else -> "Multiple site versions fetched from $baseUrl: $matchedVersions"
         } + ". Orchid deployment ${if (shouldDeploy) "enabled" else "set as dry run"}."
     )
+}
+
+gradle.taskGraph.whenReady {
+    if (hasTask(tasks.orchidDeploy.get()) &&
+        orchid.dryDeploy?.toBoolean()?.not() == true &&
+        orchid.githubToken.isNullOrBlank()
+    ) {
+        throw IllegalStateException("Real deployment requested but no GitHub deployment token set")
+    }
 }
 
 val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {

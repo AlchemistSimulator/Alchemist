@@ -49,5 +49,5 @@ publishing.publications {
 }
 
 tasks.withType<Test> {
-    timeout.set(Duration.ofMinutes(1))
+    timeout.set(Duration.ofMinutes(2))
 }

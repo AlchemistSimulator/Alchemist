@@ -367,6 +367,9 @@ orchid {
         ?.first()
         ?.let { projectVersion > it.toVersion() }
         ?: false
+    githubToken = System.getenv("githubToken")
+        ?: project.property("githubToken")?.toString()
+        ?: System.getenv("GITHUB_TOKEN")
     dryDeploy = shouldDeploy.not().toString()
     println(
         when (matchedVersions.size) {

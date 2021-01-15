@@ -368,6 +368,7 @@ orchid {
         ?.let { projectVersion > it.toVersion() }
         ?: false
     dryDeploy = shouldDeploy.not().toString()
+    githubToken = System.getenv("GITHUB_TOKEN")
     println(
         when (matchedVersions.size) {
             0 -> "Unable to fetch the current site version from $baseUrl"

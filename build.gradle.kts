@@ -368,7 +368,7 @@ orchid {
         ?.let { projectVersion > it.toVersion() }
         ?: false
     githubToken = System.getenv("githubToken")
-        ?: project.property("githubToken")?.toString()
+        ?: project.findProperty("githubToken")?.toString()
         ?: System.getenv("GITHUB_TOKEN")
     dryDeploy = shouldDeploy.not().toString()
     println(

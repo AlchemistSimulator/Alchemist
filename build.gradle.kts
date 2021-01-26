@@ -183,6 +183,7 @@ allprojects {
         language = "java"
         minimumTokenCount = 100
         source = sourceSets["main"].allJava
+        tasks.check.orNull?.dependsOn(this)
     }
 
     detekt {

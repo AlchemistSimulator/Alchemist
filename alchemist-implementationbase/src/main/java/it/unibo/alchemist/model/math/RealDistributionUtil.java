@@ -13,6 +13,7 @@ import it.unibo.alchemist.ClassPathScanner;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -52,7 +53,7 @@ public final class RealDistributionUtil {
         final String name = shortname + (
                 shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution"
         );
-        return REAL_DISTRIBUTIONS.stream()
+        final var result = REAL_DISTRIBUTIONS.stream()
             .filter(stat -> stat.getSimpleName().equalsIgnoreCase(requireNonNull(name)))
             .findAny()
             .stream()
@@ -76,9 +77,7 @@ public final class RealDistributionUtil {
                         | InvocationTargetException e
                 ) {
                     throw new IllegalArgumentException(
-                            "Could not initialize " + name + " with "
-                            + c + " and arguments " + Arrays.toString(arguments),
-                            e
+                        "Could not initialize " + name + " with " + c + " and arguments " + Arrays.toString(arguments), e
                     );
                 }
             })
@@ -87,6 +86,11 @@ public final class RealDistributionUtil {
                     "Could not initialize " + name + " with " + randomGenerator + " and " + Arrays.toString(arguments)
                 )
             );
+        if (!(result instanceof Serializable)) {
+            throw new IllegalStateException(
+                result.getClass().getSimpleName() + " is not Serializable. This may break the simulator."
+            );
+        }
+        return result;
     }
-
 }

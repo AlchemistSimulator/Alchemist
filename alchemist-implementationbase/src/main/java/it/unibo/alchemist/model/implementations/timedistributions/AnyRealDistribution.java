@@ -97,8 +97,14 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
         return distribution.getNumericalMean();
     }
 
+    /**
+     * This method can be overridden to implment further controls.
+     * Subclasses should still call super.updateStatus, though.
+     *
+     * {@inheritDoc}
+     */
     @Override
-    protected final void updateStatus(
+    protected void updateStatus(
             final Time currentTime,
             final boolean hasBeenExecuted,
             final double additionalParameter,
@@ -111,7 +117,11 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
                 || additionalParameter > 0 && getNextOccurence().isInfinite()
         ) {
             // New time generation necessary
-            next = new DoubleTime(currentTime.toDouble() + distribution.sample());
+            final var step = distribution.sample();
+            if (step < 0) {
+                throw new IllegalStateException(distribution + " generated a negative delta time: " + step);
+            }
+            next = new DoubleTime(currentTime.toDouble() + step);
         }
         if (additionalParameter == 0) {
             // The execution is blocked
@@ -127,5 +137,9 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
     @Override
     public AbstractDistribution<T> clone(final Time currentTime) {
         return new AnyRealDistribution<>(currentTime, distribution);
+    }
+
+    protected final RealDistribution getDistribution() {
+        return distribution;
     }
 }

@@ -9,6 +9,8 @@
 
 package org.apache.commons.math3.distribution
 
+import org.apache.commons.math3.random.RandomGenerator
+
 /**
  * Models a Real Distribution backed by a Dirac Delta Function.
  * This is similar to a Logistic probability function with a shape whose value tends to zero.
@@ -18,8 +20,18 @@ package org.apache.commons.math3.distribution
  * are actually lost.
  * However, this utility can transform tools meant to work with a probability function in such a way that
  * they work with a constant value (e.g., random walks with a constant step).
+ *
  */
-class DiracDeltaAsDistribution(val value: Double) : RealDistribution, java.io.Serializable {
+class DiracDeltaDistribution constructor(val value: Double) : RealDistribution, java.io.Serializable {
+
+    /**
+     * This constructor is meant for reflection compatibility only.
+     * [randomGenerator] is unused.
+     */
+    constructor(
+        @Suppress("UNUSED_PARAMETER") randomGenerator: RandomGenerator? = null,
+        value: Double
+    ) : this(value)
 
     override fun probability(x: Double) = if (x == value) 1.0 else 0.0
 

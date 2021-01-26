@@ -81,10 +81,11 @@ public final class RealDistributionUtil {
                             e
                     );
                 }
-            }).orElseThrow(
-                    () -> new IllegalArgumentException(
-                        "Could not initialize " + name + " with " + randomGenerator + " and " + Arrays.toString(arguments)
-                    )
+            })
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    "Could not initialize " + name + " with " + randomGenerator + " and " + Arrays.toString(arguments)
+                )
             );
     }
 

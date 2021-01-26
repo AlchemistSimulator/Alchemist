@@ -48,7 +48,6 @@ import org.protelis.vm.impl.SimpleExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Iterator;
@@ -106,6 +105,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Action<Object> createAction(
             final RandomGenerator randomGenerator,
             final Environment<Object, P> environment,
@@ -122,8 +122,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                         .parallelStream()
                         .flatMap(r -> r.getActions().parallelStream())
                         .filter(a -> a instanceof SendToNeighbor)
-                        .map(c -> (SendToNeighbor) c)
-                        .map(SendToNeighbor::getProtelisProgram)
+                        .map(c -> ((SendToNeighbor) c).getProtelisProgram())
                         .collect(Collectors.toList());
                 final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
                 if (pList.isEmpty()) {
@@ -181,8 +180,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     .parallelStream()
                     .flatMap(r -> r.getConditions().stream())
                     .filter(c -> c instanceof ComputationalRoundComplete)
-                    .map(c -> (ComputationalRoundComplete) c)
-                    .map(ComputationalRoundComplete::getProgram)
+                    .map(c -> ((ComputationalRoundComplete) c).getProgram())
                     .collect(Collectors.toList());
             final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
             if (pList.isEmpty()) {
@@ -485,7 +483,6 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     private static final class NoNode implements Node<Object> {
         public static final NoNode INSTANCE = new NoNode();
-        @Serial
         private static final long serialVersionUID = 1L;
 
         private <A> A notImplemented() {

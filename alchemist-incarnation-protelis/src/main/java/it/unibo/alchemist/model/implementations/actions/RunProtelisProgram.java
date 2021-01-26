@@ -25,7 +25,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 import org.protelis.lang.ProtelisLoader;
-import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ProtelisVM;
 
 import java.io.IOException;
@@ -127,13 +126,13 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the molecule associated with the execution of this program
      */
-    public final Molecule asMolecule() {
+    public Molecule asMolecule() {
         return name;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public final RunProtelisProgram<P> cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
+    public RunProtelisProgram<P> cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
         if (node instanceof ProtelisNode) {
             try {
                 return new RunProtelisProgram<>(
@@ -152,7 +151,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     }
 
     @Override
-    public final boolean equals(final Object other) {
+    public boolean equals(final Object other) {
         if (other == this) {
             return true;
         }
@@ -163,14 +162,14 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     }
 
     @Override
-    public final void execute() {
+    public void execute() {
         vm.runCycle();
         node.setConcentration(name, vm.getCurrentValue());
         computationalCycleComplete = true;
     }
 
     @Override
-    public final Context getContext() {
+    public Context getContext() {
         /*
          * A Protelis program never writes in other nodes
          */
@@ -180,38 +179,38 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the environment
      */
-    protected final Environment<Object, P> getEnvironment() {
+    public Environment<Object, P> getEnvironment() {
         return environment;
     }
 
     @Override
-    public final ListSet<? extends Dependency> getOutboundDependencies() {
+    public ListSet<? extends Dependency> getOutboundDependencies() {
         return ImmutableListSet.of(Dependency.EVERY_MOLECULE);
     }
 
     /**
      * @return the node
      */
-    protected final ProtelisNode getNode() {
+    public ProtelisNode getNode() {
         return node;
     }
 
     /**
      * @return the internal {@link RandomGenerator}
      */
-    protected RandomGenerator getRandomGenerator() {
+    public RandomGenerator getRandomGenerator() {
         return random;
     }
 
     /**
      * @return the retention time
      */
-    protected double getRetentionTime() {
+    public double getRetentionTime() {
         return retentionTime;
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return name.hashCode();
     }
 
@@ -249,5 +248,4 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     public AlchemistExecutionContext<P> getExecutionContext() {
         return executionContext;
     }
-
 }

@@ -73,7 +73,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     /**
      * @return the {@link RunProtelisProgram} action this condition is mapped to
      */
-    public RunProtelisProgram getProgram() {
+    public RunProtelisProgram<?> getProgram() {
         return program;
     }
 

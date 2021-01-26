@@ -57,7 +57,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
             final Time currentTime,
             final boolean executed,
             final double newpropensity,
-            final Environment<T, ?> env) {
+            final Environment<T, ?> environment) {
         assert !Double.isNaN(newpropensity);
         assert !Double.isNaN(oldPropensity);
         if (oldPropensity == 0 && newpropensity != 0) {

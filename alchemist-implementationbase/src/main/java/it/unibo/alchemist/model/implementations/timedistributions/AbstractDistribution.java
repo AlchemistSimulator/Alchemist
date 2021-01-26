@@ -80,10 +80,10 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
      *            associated has just been executed
      * @param param
      *            optional parameter passed by the reaction
-     * @param env
+     * @param environment
      *            the current environment
      */
-    protected abstract void updateStatus(Time currentTime, boolean executed, double param, Environment<T, ?> env);
+    protected abstract void updateStatus(Time currentTime, boolean executed, double param, Environment<T, ?> environment);
 
     @Override
     public abstract AbstractDistribution<T> clone(Time currentTime);

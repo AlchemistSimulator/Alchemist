@@ -37,10 +37,9 @@ import static java.util.Objects.requireNonNull;
  * @param <P> position type
  */
 @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
-// TODO: make final when ProtelisProgram is dropped.
-public class RunProtelisProgram<P extends Position<P>> implements Action<Object> {
+public final class RunProtelisProgram<P extends Position<P>> implements Action<Object> {
 
-    private static final long serialVersionUID = 2207914086772704332L;
+    private static final long serialVersionUID = 1L;
     private boolean computationalCycleComplete;
     private final Environment<Object, P> environment;
     private final Molecule name;
@@ -52,6 +51,7 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     private final Reaction<Object> reaction;
     private final double retentionTime;
     private transient ProtelisVM vm;
+    private transient AlchemistExecutionContext<P> executionContext;
 
     private RunProtelisProgram(
             final Environment<Object, P> env,
@@ -68,8 +68,8 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
         reaction = requireNonNull(r);
         final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
         node.addNetworkManger(this, netmgr);
-        final ExecutionContext ctx = new AlchemistExecutionContext<>(env, n, r, rand, netmgr);
-        vm = new ProtelisVM(prog, ctx);
+        executionContext = new AlchemistExecutionContext<>(env, n, r, rand, netmgr);
+        vm = new ProtelisVM(prog, executionContext);
         this.retentionTime = retentionTime;
     }
 
@@ -137,12 +137,12 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
         if (node instanceof ProtelisNode) {
             try {
                 return new RunProtelisProgram<>(
-                        getEnvironment(),
-                        (ProtelisNode<P>) node,
-                        reaction,
-                        getRandomGenerator(),
-                        originalProgram,
-                        getRetentionTime()
+                    getEnvironment(),
+                    (ProtelisNode<P>) node,
+                    reaction,
+                    getRandomGenerator(),
+                    originalProgram,
+                    getRetentionTime()
                 );
             } catch (SecurityException e) {
                 throw new IllegalStateException(e);
@@ -234,7 +234,8 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
         stream.defaultReadObject();
         final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this);
         node.addNetworkManger(this, netmgr);
-        vm = new ProtelisVM(program, new AlchemistExecutionContext<>(environment, node, reaction, random, netmgr));
+        executionContext = new AlchemistExecutionContext<>(environment, node, reaction, random, netmgr);
+        vm = new ProtelisVM(program, executionContext);
     }
 
     /**
@@ -243,6 +244,10 @@ public class RunProtelisProgram<P extends Position<P>> implements Action<Object>
     @Override
     public String toString() {
         return name + "@" + node.getId();
+    }
+
+    public AlchemistExecutionContext<P> getExecutionContext() {
+        return executionContext;
     }
 
 }

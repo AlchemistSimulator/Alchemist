@@ -48,6 +48,7 @@ import org.protelis.vm.impl.SimpleExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Iterator;
@@ -74,7 +75,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build(new CacheLoader<CacheKey, SynchronizedVM>() {
+            .build(new CacheLoader<>() {
                 @Override
                 public SynchronizedVM load(@NotNull final CacheKey key) {
                     return new SynchronizedVM(key);
@@ -105,7 +106,6 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Action<Object> createAction(
             final RandomGenerator randomGenerator,
             final Environment<Object, P> environment,
@@ -182,9 +182,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     .flatMap(r -> r.getConditions().stream())
                     .filter(c -> c instanceof ComputationalRoundComplete)
                     .map(c -> (ComputationalRoundComplete) c)
-                    .flatMap(crc -> crc.getInboundDependencies().stream())
-                    .filter(mol -> mol instanceof RunProtelisProgram)
-                    .map(mol -> (RunProtelisProgram<P>) mol)
+                    .map(ComputationalRoundComplete::getProgram)
                     .collect(Collectors.toList());
             final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
             if (pList.isEmpty()) {
@@ -364,7 +362,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         public DeviceUID getDeviceUID() {
             if (node instanceof ProtelisNode) {
-                return (ProtelisNode) node;
+                return (ProtelisNode<?>) node;
             }
             return NO_NODE_ID;
         }
@@ -487,6 +485,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     private static final class NoNode implements Node<Object> {
         public static final NoNode INSTANCE = new NoNode();
+        @Serial
         private static final long serialVersionUID = 1L;
 
         private <A> A notImplemented() {

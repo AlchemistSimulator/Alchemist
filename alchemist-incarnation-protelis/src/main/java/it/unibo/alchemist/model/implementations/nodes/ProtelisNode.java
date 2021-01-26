@@ -36,7 +36,7 @@ public final class ProtelisNode<P extends Position<? extends P>>
         implements DeviceUID, ExecutionEnvironment {
 
     private static final long serialVersionUID = 7411790948884770553L;
-    private final Map<RunProtelisProgram<?>, AlchemistNetworkManager> netmgrs = new LinkedHashMap<>();
+    private final Map<RunProtelisProgram<?>, AlchemistNetworkManager> networkManagers = new LinkedHashMap<>();
     private final Environment<Object, P> environment;
 
     /**
@@ -69,7 +69,7 @@ public final class ProtelisNode<P extends Position<? extends P>>
      *            the {@link AlchemistNetworkManager}
      */
     public void addNetworkManger(final RunProtelisProgram<?> program, final AlchemistNetworkManager networkManager) {
-        netmgrs.put(program, networkManager);
+        networkManagers.put(program, networkManager);
     }
 
     /**
@@ -80,14 +80,14 @@ public final class ProtelisNode<P extends Position<? extends P>>
      */
     public AlchemistNetworkManager getNetworkManager(final RunProtelisProgram<?> program) {
         Objects.requireNonNull(program);
-        return netmgrs.get(program);
+        return networkManagers.get(program);
     }
 
     /**
      * @return all the {@link AlchemistNetworkManager} in this node
      */
     public Map<RunProtelisProgram<?>, AlchemistNetworkManager> getNetworkManagers() {
-        return Collections.unmodifiableMap(netmgrs);
+        return Collections.unmodifiableMap(networkManagers);
     }
 
     private static <P extends Position<P>> Molecule makeMol(final String id) {

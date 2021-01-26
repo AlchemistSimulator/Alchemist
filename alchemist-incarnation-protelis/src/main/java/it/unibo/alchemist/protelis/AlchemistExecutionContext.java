@@ -42,7 +42,8 @@ import java.util.function.Function;
 /**
  * @param <P> position type
  */
-public final class AlchemistExecutionContext<P extends Position<P>> extends AbstractExecutionContext<AlchemistExecutionContext<P>>
+public final class AlchemistExecutionContext<P extends Position<P>>
+        extends AbstractExecutionContext<AlchemistExecutionContext<P>>
         implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice {
 
     /**

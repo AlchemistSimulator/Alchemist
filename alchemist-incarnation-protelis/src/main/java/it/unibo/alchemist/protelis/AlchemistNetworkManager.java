@@ -7,14 +7,17 @@
  */
 package it.unibo.alchemist.protelis;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.distribution.RealDistribution;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
 import org.protelis.vm.NetworkManager;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
@@ -32,7 +35,7 @@ import java.util.Set;
 public final class AlchemistNetworkManager implements NetworkManager, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private final Environment<Object, ?> env;
+    private final Environment<Object, ?> environment;
     private final ProtelisNode<?> node;
     /**
      * This reaction stores the time at which the neighbor state is read.
@@ -40,35 +43,27 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     private final Reaction<Object> event;
     private final RunProtelisProgram<?> program;
     private final double retentionTime;
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All implementations are actually Serializable")
+    @Nullable private final RealDistribution distanceLossDistribution;
     private final Map<DeviceUID, MessageInfo> messages = new LinkedHashMap<>();
     private Map<CodePath, Object> toBeSent;
     private Map<DeviceUID, Map<CodePath, Object>> neighborState = Collections.emptyMap();
     private double timeAtLastValidityCheck = Double.NEGATIVE_INFINITY;
 
     /**
-     * @param environment
-     *            the environment
-     * @param local
-     *            the node
      * @param executionTime
      *            the reaction hosting the {@link NetworkManager}
      * @param program
      *            the {@link RunProtelisProgram}
      */
     public AlchemistNetworkManager(
-            final Environment<Object, ?> environment,
-            final ProtelisNode<?> local,
             final Reaction<Object> executionTime,
             final RunProtelisProgram<?> program
     ) {
-        this(environment, local, executionTime, program, Double.NaN);
+        this(executionTime, program, Double.NaN);
     }
 
     /**
-     * @param environment
-     *            the environment
-     * @param local
-     *            the node
      * @param executionTime
      *            the reaction hosting the {@link NetworkManager}
      * @param program
@@ -78,20 +73,48 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      *            to mean that they should get eliminated upon node awake.
      */
     public AlchemistNetworkManager(
-            final Environment<Object, ?> environment,
-            final ProtelisNode<?> local,
             final Reaction<Object> executionTime,
             final RunProtelisProgram<?> program,
             final double retentionTime
     ) {
-        env = Objects.requireNonNull(environment);
-        node = Objects.requireNonNull(local);
+        this(executionTime, program, retentionTime, null);
+    }
+
+    /**
+     * @param executionTime
+     *            the reaction hosting the {@link NetworkManager}
+     * @param program
+     *            the {@link RunProtelisProgram}
+     * @param retentionTime
+     *            how long the messages will be stored. Pass {@link Double#NaN}
+     *            to mean that they should get eliminated upon node awake.
+     * @param distanceLossDistribution
+     *            the package loss probability, scaling with distance.
+     *            This {@link RealDistribution} will be used as follows:
+     *            its PDF will be computed with {@link RealDistribution#density(double)},
+     *            and will be fed the distance between the current node and the neighbor;
+     *            the generated probability will in turn be used to determine the probability of the package to be
+     *            successfully delivered. Can be null, in which case packets always arrive to neighbors.
+     */
+    public AlchemistNetworkManager(
+            final Reaction<Object> executionTime,
+            final RunProtelisProgram<?> program,
+            final double retentionTime,
+            final RealDistribution distanceLossDistribution
+    ) {
+        this.environment = Objects.requireNonNull(program.getEnvironment());
+        node = Objects.requireNonNull(program.getNode());
         this.program = Objects.requireNonNull(program);
         this.event = Objects.requireNonNull(executionTime);
         if (retentionTime < 0) {
             throw new IllegalArgumentException("The retention time can't be negative.");
         }
         this.retentionTime = retentionTime;
+        this.distanceLossDistribution = distanceLossDistribution;
+    }
+
+    public RealDistribution getDistancePacketLossDistribution() {
+        return distanceLossDistribution;
     }
 
     @Override
@@ -111,7 +134,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                 final Iterator<MessageInfo> messagesIterator = this.messages.values().iterator();
                 final boolean retainsNeighbors = Double.isNaN(retentionTime);
                 final Set<?> neighbors = retainsNeighbors
-                        ? env.getNeighborhood(node).getNeighbors()
+                        ? environment.getNeighborhood(node).getNeighbors()
                         : Collections.emptySet();
                 while (messagesIterator.hasNext()) {
                     final MessageInfo message = messagesIterator.next();
@@ -157,15 +180,23 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         Objects.requireNonNull(toBeSent);
         if (!toBeSent.isEmpty()) {
             final MessageInfo msg = new MessageInfo(currentTime, node, toBeSent);
-            env.getNeighborhood(node).forEach(n -> {
+            environment.getNeighborhood(node).forEach(n -> {
                 if (n instanceof ProtelisNode) {
                     final AlchemistNetworkManager destination = ((ProtelisNode<?>) n).getNetworkManager(program);
                     if (destination != null) {
-                        /*
-                         * The node is running the program. Otherwise, the
-                         * program is discarded
-                         */
-                        destination.receiveMessage(msg);
+                        boolean packetArrives = true;
+                        if (distanceLossDistribution != null) {
+                            final var distance = environment.getDistanceBetweenNodes(node, n);
+                            final var random = program.getRandomGenerator().nextDouble();
+                            packetArrives = random < distanceLossDistribution.cumulativeProbability(distance);
+                        }
+                        if (packetArrives) {
+                            /*
+                             * The node is running the program, and the loss model actually makes the packet arrive.
+                             * Otherwise, the message is discarded
+                             */
+                            destination.receiveMessage(msg);
+                        }
                     }
                 }
             });

@@ -21,21 +21,23 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
+import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 import org.protelis.lang.ProtelisLoader;
+import org.protelis.vm.ProtelisProgram;
 import org.protelis.vm.ProtelisVM;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import static it.unibo.alchemist.model.math.RealDistributionUtil.makeRealDistribution;
 import static java.util.Objects.requireNonNull;
 
 /**
  * @param <P> position type
  */
-@SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
 public final class RunProtelisProgram<P extends Position<P>> implements Action<Object> {
 
     private static final long serialVersionUID = 1L;
@@ -44,42 +46,51 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     private final Molecule name;
     private final ProtelisNode<P> node;
     private String originalProgram = "unknown";
-    private final org.protelis.vm.ProtelisProgram program;
+    private final ProtelisProgram program;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
     private final RandomGenerator random;
     private final Reaction<Object> reaction;
     private final double retentionTime;
+    private final AlchemistNetworkManager networkManager;
     private transient ProtelisVM vm;
     private transient AlchemistExecutionContext<P> executionContext;
 
     private RunProtelisProgram(
-            final Environment<Object, P> env,
-            final ProtelisNode<P> n,
-            final Reaction<Object> r,
-            final RandomGenerator rand,
-            final org.protelis.vm.ProtelisProgram prog,
-            final double retentionTime) {
-        name = new SimpleMolecule(prog.getName());
-        program = requireNonNull(prog);
-        environment = requireNonNull(env);
-        node = requireNonNull(n);
-        random = requireNonNull(rand);
-        reaction = requireNonNull(r);
-        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this, retentionTime);
-        node.addNetworkManger(this, netmgr);
-        executionContext = new AlchemistExecutionContext<>(env, n, r, rand, netmgr);
-        vm = new ProtelisVM(prog, executionContext);
+            final Environment<Object, P> environment,
+            final ProtelisNode<P> node,
+            final Reaction<Object> reaction,
+            final RandomGenerator randomGenerator,
+            final ProtelisProgram program,
+            final double retentionTime,
+            final RealDistribution packetLossDistance
+    ) {
+        final var otherCopies = node.getReactions().stream()
+            .flatMap(it -> it.getActions().stream())
+            .filter(it -> it instanceof RunProtelisProgram)
+            .map(it -> ((RunProtelisProgram) it).program.getName())
+            .filter(programName -> programName.equals(program.getName()))
+            .count();
+        name = new SimpleMolecule(program.getName() + (otherCopies == 0 ? "" : "$copy" + otherCopies));
+        this.program = requireNonNull(program);
+        this.environment = requireNonNull(environment);
+        this.node = requireNonNull(node);
+        random = requireNonNull(randomGenerator);
+        this.reaction = requireNonNull(reaction);
+        networkManager = new AlchemistNetworkManager(reaction, this, retentionTime, packetLossDistance);
+        this.node.addNetworkManger(this, networkManager);
+        executionContext = new AlchemistExecutionContext<>(environment, node, reaction, randomGenerator, networkManager);
+        vm = new ProtelisVM(program, executionContext);
         this.retentionTime = retentionTime;
     }
 
     /**
-     * @param env
+     * @param environment
      *            the environment
-     * @param n
+     * @param node
      *            the node
-     * @param r
+     * @param reaction
      *            the reaction
-     * @param rand
+     * @param randomGenerator
      *            the random engine
      * @param program
      *            the Protelis program
@@ -87,22 +98,23 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      *             if you are not authorized to load required classes
      */
     public RunProtelisProgram(
-            final Environment<Object, P> env,
-            final ProtelisNode<P> n,
-            final Reaction<Object> r,
-            final RandomGenerator rand,
-            final String program) {
-        this(env, n, r, rand, program, Double.NaN);
+            final Environment<Object, P> environment,
+            final ProtelisNode<P> node,
+            final Reaction<Object> reaction,
+            final RandomGenerator randomGenerator,
+            final String program
+    ) {
+        this(environment, node, reaction, randomGenerator, program, Double.NaN);
     }
 
     /**
-     * @param env
+     * @param environment
      *            the environment
-     * @param n
+     * @param node
      *            the node
-     * @param r
+     * @param reaction
      *            the reaction
-     * @param rand
+     * @param randomGenerator
      *            the random engine
      * @param program
      *            the Protelis program
@@ -113,13 +125,153 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      *             if you are not authorized to load required classes
      */
     public RunProtelisProgram(
-            final Environment<Object, P> env,
-            final ProtelisNode<P> n,
-            final Reaction<Object> r,
-            final RandomGenerator rand,
+            final Environment<Object, P> environment,
+            final ProtelisNode<P> node,
+            final Reaction<Object> reaction,
+            final RandomGenerator randomGenerator,
             final String program,
-            final double retentionTime) {
-        this(env, n, r, rand, ProtelisLoader.parse(program), retentionTime);
+            final double retentionTime
+    ) {
+        this(environment, node, reaction, randomGenerator, program, retentionTime, null);
+        originalProgram = program;
+    }
+
+    /**
+     * @param environment
+     *            the environment
+     * @param node
+     *            the node
+     * @param reaction
+     *            the reaction
+     * @param randomGenerator
+     *            the random engine
+     * @param program
+     *            the Protelis program
+     * @param retentionTime
+     *            how long the messages will be stored. Pass {@link Double#NaN}
+     *            to mean that they should get eliminated upon node awake.
+     * @param packetLossDistributionName
+     *            the package loss probability, scaling with distance.
+     *            This is the name of the {@link RealDistribution} to be used as follows:
+     *            its PDF will be computed with {@link RealDistribution#density(double)},
+     *            and will be fed the distance between the current node and the neighbor;
+     *            the generated probability will in turn be used to determine the probability of the package to be
+     *            successfully delivered.
+     * @param packetLossDistributionParameters
+     *            parameters that will be passed when building the packet loss distribution
+     * @throws SecurityException
+     *             if you are not authorized to load required classes
+     */
+    public RunProtelisProgram(
+            final Environment<Object, P> environment,
+            final ProtelisNode<P> node,
+            final Reaction<Object> reaction,
+            final RandomGenerator randomGenerator,
+            final String program,
+            final double retentionTime,
+            final String packetLossDistributionName,
+            final double... packetLossDistributionParameters
+    ) {
+        this(
+            environment,
+            node,
+            reaction,
+            randomGenerator,
+            program,
+            retentionTime,
+            makeRealDistribution(randomGenerator, packetLossDistributionName, packetLossDistributionParameters)
+        );
+    }
+
+    /**
+     * @param environment
+     *            the environment
+     * @param node
+     *            the node
+     * @param reaction
+     *            the reaction
+     * @param randomGenerator
+     *            the random engine
+     * @param program
+     *            the Protelis program
+     * @param retentionTime
+     *            how long the messages will be stored. Pass {@link Double#NaN}
+     *            to mean that they should get eliminated upon node awake.
+     * @param packetLossDistributionName
+     *            the package loss probability, scaling with distance.
+     *            This is the name of the {@link RealDistribution} to be used as follows:
+     *            its PDF will be computed with {@link RealDistribution#density(double)},
+     *            and will be fed the distance between the current node and the neighbor;
+     *            the generated probability will in turn be used to determine the probability of the package to be
+     *            successfully delivered.
+     * @param packetLossDistributionParameters
+     *            parameters that will be passed when building the packet loss distribution
+     * @throws SecurityException
+     *             if you are not authorized to load required classes
+     */
+    public RunProtelisProgram(
+            final Environment<Object, P> environment,
+            final ProtelisNode<P> node,
+            final Reaction<Object> reaction,
+            final RandomGenerator randomGenerator,
+            final ProtelisProgram program,
+            final double retentionTime,
+            final String packetLossDistributionName,
+            final double... packetLossDistributionParameters
+    ) {
+        this(
+            environment,
+            node,
+            reaction,
+            randomGenerator,
+            program,
+            retentionTime,
+            makeRealDistribution(randomGenerator, packetLossDistributionName, packetLossDistributionParameters)
+        );
+    }
+
+    /**
+     * @param environment
+     *            the environment
+     * @param node
+     *            the node
+     * @param reaction
+     *            the reaction
+     * @param randomGenerator
+     *            the random engine
+     * @param program
+     *            the Protelis program
+     * @param retentionTime
+     *            how long the messages will be stored. Pass {@link Double#NaN}
+     *            to mean that they should get eliminated upon node awake.
+     * @param packetLossDistance
+     *            the package loss probability, scaling with distance.
+     *            This {@link RealDistribution} will be used as follows:
+     *            its PDF will be computed with {@link RealDistribution#density(double)},
+     *            and will be fed the distance between the current node and the neighbor;
+     *            the generated probability will in turn be used to determine the probability of the package to be
+     *            successfully delivered. Can be null, in which case packets always arrive to neighbors.
+     * @throws SecurityException
+     *             if you are not authorized to load required classes
+     */
+    public RunProtelisProgram(
+            final Environment<Object, P> environment,
+            final ProtelisNode<P> node,
+            final Reaction<Object> reaction,
+            final RandomGenerator randomGenerator,
+            final String program,
+            final double retentionTime,
+            final RealDistribution packetLossDistance
+    ) {
+        this(
+            environment,
+            node,
+            reaction,
+            randomGenerator,
+            ProtelisLoader.parse(program),
+            retentionTime,
+            packetLossDistance
+        );
         originalProgram = program;
     }
 
@@ -156,7 +308,8 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
             return true;
         }
         if (other != null && other.getClass() == getClass()) {
-            return name.equals(((RunProtelisProgram<?>) other).name);
+            final var otherProgram = (RunProtelisProgram<?>) other;
+            return name.equals(otherProgram.name);
         }
         return false;
     }
@@ -191,7 +344,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the node
      */
-    public ProtelisNode getNode() {
+    public ProtelisNode<P> getNode() {
         return node;
     }
 
@@ -231,9 +384,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
 
     private void readObject(final ObjectInputStream stream) throws ClassNotFoundException, IOException {
         stream.defaultReadObject();
-        final AlchemistNetworkManager netmgr = new AlchemistNetworkManager(environment, node, reaction, this);
-        node.addNetworkManger(this, netmgr);
-        executionContext = new AlchemistExecutionContext<>(environment, node, reaction, random, netmgr);
+        executionContext = new AlchemistExecutionContext<>(environment, node, reaction, random, networkManager);
         vm = new ProtelisVM(program, executionContext);
     }
 

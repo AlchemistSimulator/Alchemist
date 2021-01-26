@@ -19,7 +19,7 @@ package org.apache.commons.math3.distribution
  * However, this utility can transform tools meant to work with a probability function in such a way that
  * they work with a constant value (e.g., random walks with a constant step).
  */
-class DiracDeltaAsDistribution(val value: Double) : RealDistribution {
+class DiracDeltaAsDistribution(val value: Double) : RealDistribution, Serializable {
 
     override fun probability(x: Double) = if (x == value) 1.0 else 0.0
 

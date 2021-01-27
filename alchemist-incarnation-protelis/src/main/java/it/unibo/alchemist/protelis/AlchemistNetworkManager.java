@@ -188,7 +188,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                         if (distanceLossDistribution != null) {
                             final var distance = environment.getDistanceBetweenNodes(node, n);
                             final var random = program.getRandomGenerator().nextDouble();
-                            packetArrives = random < distanceLossDistribution.cumulativeProbability(distance);
+                            packetArrives = random > distanceLossDistribution.cumulativeProbability(distance);
                         }
                         if (packetArrives) {
                             /*

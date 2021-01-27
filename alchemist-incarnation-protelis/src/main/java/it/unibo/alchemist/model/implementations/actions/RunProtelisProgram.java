@@ -147,6 +147,49 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      *            the random engine
      * @param program
      *            the Protelis program
+     * @param packetLossDistributionName
+     *            the package loss probability, scaling with distance.
+     *            This is the name of the {@link RealDistribution} to be used as follows:
+     *            its PDF will be computed with {@link RealDistribution#density(double)},
+     *            and will be fed the distance between the current node and the neighbor;
+     *            the generated probability will in turn be used to determine the probability of the package to be
+     *            successfully delivered.
+     * @param packetLossDistributionParameters
+     *            parameters that will be passed when building the packet loss distribution
+     * @throws SecurityException
+     *             if you are not authorized to load required classes
+     */
+    public RunProtelisProgram(
+            final Environment<Object, P> environment,
+            final ProtelisNode<P> node,
+            final Reaction<Object> reaction,
+            final RandomGenerator randomGenerator,
+            final String program,
+            final String packetLossDistributionName,
+            final double... packetLossDistributionParameters
+    ) {
+        this(
+            environment,
+            node,
+            reaction,
+            randomGenerator,
+            program,
+            Double.NaN,
+            makeRealDistribution(randomGenerator, packetLossDistributionName, packetLossDistributionParameters)
+        );
+    }
+
+    /**
+     * @param environment
+     *            the environment
+     * @param node
+     *            the node
+     * @param reaction
+     *            the reaction
+     * @param randomGenerator
+     *            the random engine
+     * @param program
+     *            the Protelis program
      * @param retentionTime
      *            how long the messages will be stored. Pass {@link Double#NaN}
      *            to mean that they should get eliminated upon node awake.

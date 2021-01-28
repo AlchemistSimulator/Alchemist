@@ -160,7 +160,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
                     )
                 }
             }
-            require(currentValue > 0) {
+            require(currentValue >= 0) {
                 "You requested to be scheduled with a delta of $currentValue in molecule $molecule at node ${node.id}" +
                     "Alchemist loves causality and won't let you go back in time"
             }

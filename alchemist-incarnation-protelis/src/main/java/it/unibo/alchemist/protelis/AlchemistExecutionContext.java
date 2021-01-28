@@ -143,7 +143,10 @@ public final class AlchemistExecutionContext<P extends Position<P>>
         }
         if (obj instanceof AlchemistExecutionContext) {
             final AlchemistExecutionContext<?> ctx = (AlchemistExecutionContext<?>) obj;
-            return node.equals(ctx.node) && environment.equals(ctx.environment) && reaction.equals(ctx.reaction) && randomGenerator.equals(ctx.randomGenerator);
+            return node.equals(ctx.node)
+                && environment.equals(ctx.environment)
+                && reaction.equals(ctx.reaction)
+                && randomGenerator.equals(ctx.randomGenerator);
         }
         return false;
     }
@@ -195,7 +198,13 @@ public final class AlchemistExecutionContext<P extends Position<P>>
 
     @Override
     protected AlchemistExecutionContext<P> instance() {
-        return new AlchemistExecutionContext<>(environment, node, reaction, randomGenerator, (AlchemistNetworkManager) getNetworkManager());
+        return new AlchemistExecutionContext<>(
+            environment,
+            node,
+            reaction,
+            randomGenerator,
+            (AlchemistNetworkManager) getNetworkManager()
+        );
     }
 
     /**

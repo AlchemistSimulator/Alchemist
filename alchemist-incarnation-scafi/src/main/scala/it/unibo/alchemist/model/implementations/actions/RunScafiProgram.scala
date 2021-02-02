@@ -43,7 +43,7 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
            reaction: Reaction[Any],
            rng: RandomGenerator,
            programName: String) = {
-    this(environment, node, reaction, rng, programName, FastMath.nextUp(reaction.getTimeDistribution.getRate))
+    this(environment, node, reaction, rng, programName, FastMath.nextUp(1.0/reaction.getTimeDistribution.getRate))
   }
 }
 
@@ -61,7 +61,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     reaction: Reaction[T],
     rng: RandomGenerator,
     programName: String) = {
-    this(environment, node, reaction, rng, programName, FastMath.nextUp(reaction.getTimeDistribution.getRate))
+    this(environment, node, reaction, rng, programName, FastMath.nextUp(1.0/reaction.getTimeDistribution.getRate))
   }
 
   import RunScafiProgram.NBRData

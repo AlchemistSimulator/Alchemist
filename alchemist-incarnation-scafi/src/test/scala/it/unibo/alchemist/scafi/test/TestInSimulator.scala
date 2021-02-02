@@ -23,11 +23,14 @@ import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
+import it.unibo.scafi.space.{Point2D, Point3D}
+import it.unibo.scafi.space.Point3D.toPoint2D
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import scala.math.Ordering.Double.TotalOrdering
 
+import scala.concurrent.duration.{FiniteDuration, NANOSECONDS}
 import scala.jdk.CollectionConverters._
+import scala.math.Ordering.Double.TotalOrdering
 
 @SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
 class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
@@ -46,12 +49,23 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
   test("Environment"){
     val env = testNoVar[Any]("/test_env.yml")
     env.getNodes.iterator().asScala.foreach(node => {
+      import ScafiEnvProgram._
       val contents = node.getContents.asScala
-      def inputMolecule = contents(new SimpleMolecule("number")).asInstanceOf[Int]
-      def outputMolecule = contents(new SimpleMolecule("number2")).asInstanceOf[Int]
+      def getValue[T](name: String) = contents(new SimpleMolecule(name)).asInstanceOf[T]
+      def inputMolecule = getValue[Int]("number")
+      def outputMolecule = getValue[Int]("number2")
+
+      print(getValue("out"))
+
       if(node.getId==0) {
         inputMolecule shouldBe 77
         outputMolecule shouldBe 177
+        getValue[java.time.Instant](MOL_TIMESTAMP).getEpochSecond > 0
+        getValue[Long](MOL_DELTA_MANUAL_MILLIS) shouldEqual 2000L +- 1L
+        getValue[FiniteDuration](MOL_DELTATIME) shouldEqual FiniteDuration(2_000_000_000L, NANOSECONDS)
+        getValue[Option[Double]](MOL_NBR_RANGE).get shouldEqual Math.sqrt(4+4) +- 0.1
+        getValue[Option[FiniteDuration]](MOL_NBR_LAG).map(_.toMillis).get shouldBe 2000L +- 1999L
+        toPoint2D(getValue[Option[Point3D]](MOL_NBR_VECTOR).get) shouldEqual Point2D(2.0, 2.0)
       } else {
         inputMolecule shouldBe (-500)
         outputMolecule shouldBe (-400)

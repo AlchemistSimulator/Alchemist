@@ -7,7 +7,11 @@
  */
 package it.unibo.alchemist.scafi.test
 
+import java.time.ZoneOffset
+
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
+
+import scala.concurrent.duration.FiniteDuration
 
 class ScafiGradientProgram extends AggregateProgram {
   override def main(): Double = gradient(sense[Boolean]("source"))
@@ -20,34 +24,55 @@ class ScafiGradientProgram extends AggregateProgram {
     }
 }
 
-class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport {
+class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport
+  with FieldUtils {
+  import ScafiEnvProgram._
+
   override def main(): Any = {
     node.put("number2", node.get[Int]("number")+100)
 
-    node.put("out", "" +
-    // Local sensors
-    randomGenerator().nextDouble() +
-    alchemistEnvironment.getDimensions +
-    deltaTime().length +
-    currentTime().getDayOfMonth +
-    timestamp() +
-    (nextRandom() + 0.0) +
+    val itimestamp: java.time.Instant = currentTime()
+    val deltaManual = java.time.Instant.ofEpochMilli(rep((itimestamp,0L))(old => (itimestamp, itimestamp.toEpochMilli - old._1.toEpochMilli))._2)
+    val delta: FiniteDuration = deltaTime()
+    val nbrLagField = excludingSelf.reifyField(nbrLag()).values.headOption
+    val nbrRangeField = excludingSelf.reifyField(nbrRange()).values.headOption
+    val nbrVectorField = excludingSelf.reifyField(nbrVector()).values.headOption
 
-    // Alchemist-specific local sensors
-    (!alchemistRandomGen.nextBoolean()) +
-    alchemistCoordinates.head +
-    alchemistDeltaTime(whenNan = 0.0).longValue() +
-    alchemistTimestamp.toDouble +
+    node.put(MOL_TIMESTAMP, itimestamp)
+    node.put(MOL_DELTA_MANUAL_MILLIS, deltaManual.toEpochMilli)
+    node.put(MOL_DELTATIME, delta)
+    node.put(MOL_NBR_LAG, nbrLagField)
+    node.put(MOL_NBR_RANGE, nbrRangeField)
+    node.put(MOL_NBR_VECTOR, nbrVectorField)
 
-    // Environmental sensors
-    foldhood("")(_+_){
-      "" +
-      nbrLag().length +
-      nbrRange().toString +
-      nbrDelay().length +
-      nbrVector().y
-    })
+    node.put("out",
+      // Local sensors
+      s"CONTENTS: ${mid()}: \nrandomgen nextdouble " + randomGenerator().nextDouble() +
+        "\nalchemistenv getdimensions " + alchemistEnvironment.getDimensions +
+        "\ndeltatime " + deltaTime() +
+        "\ncurrentTime toEpochMilli " + currentTime().toEpochMilli +
+        "\ntimestamp() " + timestamp() +
+        "\nnextRandom " + nextRandom() +
+        // Alchemist-specific local sensors
+        "\nnot next boolean " + (!alchemistRandomGen.nextBoolean()) +
+        "\nalchemistCoordinates toSeq " + alchemistCoordinates.toSeq +
+        "\nalchemistDeltaTime " + alchemistDeltaTime() +
+        "\nalchemistTimestamp toDouble " + alchemistTimestamp.toDouble +
+        // Environmental sensors
+        "\nnbrLag " + includingSelf.reifyField(nbrLag()) +
+        "\nnbrRange " + includingSelf.reifyField(nbrRange()) +
+        "\nnbrDelay" + includingSelf.reifyField(nbrDelay()) +
+        "\nnbrVector" + includingSelf.reifyField(nbrVector())
+    )
   }
+}
+object ScafiEnvProgram {
+  val MOL_TIMESTAMP = "timestamp"
+  val MOL_DELTA_MANUAL_MILLIS = "deltaManualEpochMilli"
+  val MOL_DELTATIME = "deltatime"
+  val MOL_NBR_VECTOR = "nbrvec"
+  val MOL_NBR_RANGE = "nbrran"
+  val MOL_NBR_LAG = "nbrlag"
 }
 
 object MyMain extends App {

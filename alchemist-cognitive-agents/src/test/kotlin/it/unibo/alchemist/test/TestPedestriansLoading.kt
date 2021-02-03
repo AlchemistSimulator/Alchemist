@@ -25,7 +25,7 @@ class TestPedestriansLoading<T, P, A> : StringSpec({
     }
 
     "can't give non-cognitive pedestrians cognitive characteristics" {
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<RuntimeException> {
             loadYamlSimulation<T, P>("cant-give-cognitive-to-heterogeneous.yml").startSimulation()
             fail("An heterogeneous pedestrian can't have cognitive capabilities")
         }

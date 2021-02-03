@@ -986,7 +986,7 @@ public final class YamlLoader implements Loader {
 
     private static Function<Map<String, Object>, RandomGenerator> rngMaker(final Factory factory, final String seed) {
         return m -> Optional.ofNullable(m.get(seed))
-            .map(o -> factory.build(MersenneTwister.class, o))
+            .map(o -> factory.build(MersenneTwister.class, o).getCreatedObjectOrThrowException())
             .orElse(new MersenneTwister(0));
     }
 
@@ -1035,7 +1035,7 @@ public final class YamlLoader implements Loader {
                                     }
                                 });
                                 final List<?> parameters = rawParams.map(l -> (List<?>) l).orElse(emptyList());
-                                return factory.build((Class<T>) actualClass, parameters);
+                                return factory.build((Class<T>) actualClass, parameters).getCreatedObjectOrThrowException();
                             } else {
                                 throw new IllegalAlchemistYAMLException(type + " is not a subclass of " + clazz);
                             }

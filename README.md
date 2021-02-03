@@ -140,7 +140,7 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 #### Importing the project
 
 0. Windows user should perform an additional first step: before cloning the repository, make sure that the autocrlf feature of git is disabled, by issuing `git config --global core.autocrlf false`. If the step is not performed, git will automatically insert CRLF line endings, violating the project's Checkstyle rules (which are rather strict, and prevent the build from succeeding).
-0. Clone this repository in a folder of your preference using `git clone` appropriately
+0. Clone this repository in a folder of your preference using `git clone --recurse-submodules` appropriately
 0. Open IntellJ. If a project opens automatically, select "Close project". You should be on the welcome screen of IntelliJ idea.
 0. Select "Import Project"
 0. Navigate your file system and find the folder where you cloned the repository. **Do not select it**. Open the folder, and you should find a lowercase `alchemist` folder. That is the correct project folder, not the outermost `Alchemist` folder (created by `git` in case you cloned without specifying a different folder name). Once the correct folder has been selected, click <kbd>Ok</kbd>

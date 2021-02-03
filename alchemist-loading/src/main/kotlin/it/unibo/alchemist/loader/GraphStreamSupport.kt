@@ -44,39 +44,49 @@ class GraphStreamSupport<T, P : Position<out P>>(
             .build()
 
         private fun generateGenerator(generatorName: String, vararg parameters: Any): BaseGenerator {
-            val generatorClasses = with(generators) {
+            val generatorClasses = findSuitableGeneratorsFor(generatorName)
+            val parameterList = parameters.toList()
+            val created = generatorClasses.asSequence()
+                .map { factory.build(it, parameterList) }
+                .map { construction ->
+                    if (construction.createdObject.isPresent) {
+                        Either.right(construction.createdObject.get())
+                    } else {
+                        Either.left(construction.exceptions)
+                    }
+                }
+                .reduceOrNull { a, b ->
+                    when {
+                        a is Either.Left && b is Either.Left -> Either.left(a.a + b.a)
+                        a is Either.Right -> a
+                        else -> b
+                    }
+                }
+            return when (created) {
+                is Either.Left -> throw created.a.values.reduce { a, b -> a.also { it.addSuppressed(b) } }
+                is Either.Right -> created.b
+                null ->
+                    throw IllegalArgumentException(
+                        "No suitable graph generator for name $generatorName," +
+                            " try any of ${generators.map { it.simpleName }}"
+                    )
+            }
+        }
+
+        private fun findSuitableGeneratorsFor(generator: String) =
+            with(generators) {
                 val exactMatch = find {
-                    it.simpleName == generatorName || it.simpleName == "${generatorName}Generator"
+                    it.simpleName == generator || it.simpleName == "${generator}Generator"
                 }
                 val match = when {
                     exactMatch != null -> listOf(exactMatch)
                     else ->
-                        filter { it.simpleName.startsWith(generatorName, ignoreCase = true) }
-                            .takeUnless { it.isEmpty() }
+                        filter { it.simpleName.startsWith(generator, ignoreCase = true) }.takeUnless { it.isEmpty() }
                 }
                 match ?: throw IllegalArgumentException(
-                    "None of the candidates in ${map { it.simpleName }} matches requested generator $generatorName"
+                    "None of the candidates in ${map { it.simpleName }} matches requested generator $generator"
                 )
             }
-            var result: Either<() -> IllegalArgumentException, BaseGenerator> = Either.Left {
-                IllegalArgumentException(
-                    "Cannot create the requested generator $generatorName with parameters $parameters"
-                )
-            }
-            val iterator = generatorClasses.iterator()
-            while (result.isLeft() && iterator.hasNext()) {
-                try {
-                    result = Either.Right(factory.build(iterator.next(), parameters.toList()))
-                } catch (e: IllegalArgumentException) {
-                    val previousErrors = result as Either.Left
-                    result = Either.left { previousErrors.a().apply { addSuppressed(e) } }
-                }
-            }
-            when (result) {
-                is Either.Right -> return result.b
-                is Either.Left -> throw result.a()
-            }
-        }
 
         /**
          * Given an [environment], the [nodeCount] to be displaced,

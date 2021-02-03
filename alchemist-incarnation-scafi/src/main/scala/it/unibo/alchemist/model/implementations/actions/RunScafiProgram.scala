@@ -104,7 +104,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
            */
           case NBR_DELAY => nbrData.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime, TimeUnit.NANOSECONDS))
           case NBR_RANGE => nbrData.mapValuesStrict[Double](_.position.distanceTo(position))
-          case NBR_VECTOR => nbrData.mapValuesStrict[Point3D](nbr => position.minus(nbr.position.getCoordinates) )
+          case NBR_VECTOR => nbrData.mapValuesStrict[Point3D](_.position.minus(position.getCoordinates))
           case NBR_ALCHEMIST_LAG => nbrData.mapValuesStrict[Double](alchemistCurrentTime - _.executionTime)
           case NBR_ALCHEMIST_DELAY => nbrData.mapValuesStrict(nbr => alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime)
         }).get(nbr).map(_.asInstanceOf[T])

@@ -165,6 +165,13 @@ Contributions to this project are welcome. Just some rules:
 * Stay in sync with the `develop` branch: pull often from `develop` (if the build passes), so that you don't diverge too much from the main development line.
 * Do not introduce low quality code. All the new code must comply with the checker rules (that are quite strict) and must not introduce any other warning. Resolutions of existing warnings (if any is present) are very welcome instead.
 
+#### Forking the project
+This project defines several CI jobs. One of them (`automerge`) requires a secret with:
+
+* name = AUTOMERGE_TOKEN
+* value = a github token with `public_repo` scope
+
+If you don't provide it, then the CI workflow will fail.
 
 #### Building the project
 While developing, you can rely on IntelliJ to build the project, it will generally do a very good job.

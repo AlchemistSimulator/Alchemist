@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit
 
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
-import it.unibo.alchemist.model.interfaces.{Time => _, _}
+import it.unibo.alchemist.model.interfaces.{Time => AlchemistTime, _}
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ContextImpl, _}
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{Time => ScafiTime, ContextImpl, _}
 import it.unibo.alchemist.scala.PimpMyAlchemist._
 import it.unibo.scafi.space.Point3D
 import org.apache.commons.math3.random.RandomGenerator
@@ -82,7 +82,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     // NB: We assume it.unibo.alchemist.model.interfaces.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
     val alchemistCurrentTime = environment.getSimulation.getTime
-    def alchemistTimeToNanos(time: Time): Long = (time.toDouble * 1_000_000_000).toLong
+    def alchemistTimeToNanos(time: AlchemistTime): Long = (time.toDouble * 1_000_000_000).toLong
     val currentTime: Long = alchemistTimeToNanos(alchemistCurrentTime)
     if(!nbrData.contains(node.getId)) {
       nbrData += node.getId -> NBRData(factory.emptyExport(), position, Double.NaN)
@@ -98,7 +98,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
         LSNS_TIMESTAMP -> currentTime,
         LSNS_TIME -> java.time.Instant.ofEpochMilli((alchemistCurrentTime * 1000).toLong),
         LSNS_ALCHEMIST_NODE_MANAGER -> nodeManager,
-        LSNS_ALCHEMIST_DELTA_TIME -> alchemistCurrentTime.minus(nbrData.get(node.getId).map(_.executionTime).getOrElse(Time.INFINITY)),
+        LSNS_ALCHEMIST_DELTA_TIME -> alchemistCurrentTime.minus(nbrData.get(node.getId).map(_.executionTime).getOrElse(AlchemistTime.INFINITY)),
         LSNS_ALCHEMIST_ENVIRONMENT -> environment,
         LSNS_ALCHEMIST_RANDOM -> rng,
         LSNS_ALCHEMIST_TIMESTAMP -> alchemistCurrentTime
@@ -115,7 +115,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
       NBR_RANGE -> nbrData.view.mapValues[Double](_.position.distanceTo(position)),
       NBR_VECTOR -> nbrData.view.mapValues[Point3D](nbr => position.minus(nbr.position.getCoordinates) ),
       NBR_ALCHEMIST_LAG -> nbrData.view.mapValues[Double](alchemistCurrentTime - _.executionTime),
-      NBR_ALCHEMIST_DELAY -> nbrData.view.mapValues[Double](nbr => alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime),
+      NBR_ALCHEMIST_DELAY -> nbrData.view.mapValues(nbr => alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime),
     )
     val exports: Iterable[(ID,EXPORT)] = nbrData.view.mapValues { _.export }
     val ctx = new ContextImpl(node.getId, exports, localSensors, Map.empty){
@@ -140,5 +140,5 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
 }
 
 object RunScafiProgram {
-  case class NBRData[P <: Position[P]](export: EXPORT, position: P, executionTime: Time)
+  case class NBRData[P <: Position[P]](export: EXPORT, position: P, executionTime: AlchemistTime)
 }

@@ -117,7 +117,7 @@ develop: [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg
 ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/AlchemistSimulator/Alchemist/latest/develop)
 ![GitHub last commit](https://img.shields.io/github/last-commit/AlchemistSimulator/Alchemist/develop)
 
-### Javadocs 
+### Javadocs
 
 Javadocs are available for both [the latest stable version][Javadoc] and [the latest development snapshot][Javadoc-unstable].
 If you need to access the documentation for any older stable version, [javadoc.io](https://www.javadoc.io/doc/it.unibo.alchemist/alchemist/) is probably the right place to search in.
@@ -137,6 +137,20 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
     * [FindBugs-IDEA](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
     * [PMDPlugin](https://plugins.jetbrains.com/plugin/1137-pmdplugin)
 
+#### Forking the project
+To contribute to this project we suggest to fork it and work on your copy.
+Working on your copy allows you to:
+* push all your commits and save your work in remote
+* use CI jobs to check the project status
+* open pull request easily directly from GitHub
+
+This project defines several CI jobs. One of them (`automerge`) requires a secret with:
+
+* name = AUTOMERGE_TOKEN
+* value = a github token with `public_repo` scope. If you already have a token with the required scope, then you can use it, otherwise you have to [create a new token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
+
+If you don't provide it, then the CI workflow will fail even though the project status is correct.
+
 #### Importing the project
 
 0. Windows user should perform an additional first step: before cloning the repository, make sure that the autocrlf feature of git is disabled, by issuing `git config --global core.autocrlf false`. If the step is not performed, git will automatically insert CRLF line endings, violating the project's Checkstyle rules (which are rather strict, and prevent the build from succeeding).
@@ -150,7 +164,7 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 0. If prompted to override any .idea file, try to answer <kbd>No</kbd>. It's possible that IntelliJ refuses to proceed, in which case click <kbd>Finish</kbd> again, then select <kbd>Yes</kbd>.
 0. A dialog stating that "IntelliJ IDEA found a Gradle build script" may appear, in such case answer <kbd>Import Gradle Project</kbd>.
 0. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly:
-0. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended. 
+0. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended.
 0. **Important:** Alchemist requires java 11+, so make sure the 'Gradle JVM' option points to such a version (if you don't have a JDK 11+ installed make sure to get one).
 0. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
   - On Unix: `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
@@ -164,14 +178,6 @@ Contributions to this project are welcome. Just some rules:
 * Commit often. Do not throw at me pull requests with a single giant commit adding or changing the whole world. Split it in multiple commits and request a merge to the mainline often.
 * Stay in sync with the `develop` branch: pull often from `develop` (if the build passes), so that you don't diverge too much from the main development line.
 * Do not introduce low quality code. All the new code must comply with the checker rules (that are quite strict) and must not introduce any other warning. Resolutions of existing warnings (if any is present) are very welcome instead.
-
-#### Forking the project
-This project defines several CI jobs. One of them (`automerge`) requires a secret with:
-
-* name = AUTOMERGE_TOKEN
-* value = a github token with `public_repo` scope
-
-If you don't provide it, then the CI workflow will fail.
 
 #### Building the project
 While developing, you can rely on IntelliJ to build the project, it will generally do a very good job.

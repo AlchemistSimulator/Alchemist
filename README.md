@@ -123,10 +123,27 @@ Javadocs are available for both [the latest stable version][Javadoc] and [the la
 If you need to access the documentation for any older stable version, [javadoc.io](https://www.javadoc.io/doc/it.unibo.alchemist/alchemist/) is probably the right place to search in.
 
 
-### Importing the project
+### Developing Alchemist (namely evolving the simulator, not using it for simulating stuff)
+
+#### Forking the project
+To contribute to this project we recommend to fork it and work on your own copy so that you can:
+
+* push all your commits, saving your work on the cloud;
+* exploit the included continuous integration jobs to check the project status;
+* contribute back to the main project via pull requests directly from GitHub.
+
+This project defines several CI jobs.
+Some rely on an automatic merge system ([YAAGHA](https://github.com/marketplace/actions/yet-another-automerge-github-action)) which requires a repository secret with:
+
+* name = AUTOMERGE_TOKEN
+* value = a github token with `public_repo` scope (or `repo`, if your fork is private). If you already have a token with the required scope, then you can reuse it, otherwise you have to [create a new token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+
+If you don't provide it, then the CI workflow is likely to fail even though the project status is correct.
+
+#### Recommended IDE configuration
+
 The project is easiest to import in IntelliJ Idea.
 
-#### Recommended configuration
 Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, then search for "Plugins"):
 * From the main list:
     * Scala
@@ -137,33 +154,14 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
     * [FindBugs-IDEA](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
     * [PMDPlugin](https://plugins.jetbrains.com/plugin/1137-pmdplugin)
 
-#### Forking the project
-To contribute to this project we suggest to fork it and work on your copy.
-Working on your copy allows you to:
-* push all your commits and save your work in remote
-* use CI jobs to check the project status
-* open pull request easily directly from GitHub
-
-This project defines several CI jobs. One of them (`automerge`) requires a secret with:
-
-* name = AUTOMERGE_TOKEN
-* value = a github token with `public_repo` scope. If you already have a token with the required scope, then you can use it, otherwise you have to [create a new token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
-
-If you don't provide it, then the CI workflow will fail even though the project status is correct.
-
 #### Importing the project
 
-0. Windows user should perform an additional first step: before cloning the repository, make sure that the autocrlf feature of git is disabled, by issuing `git config --global core.autocrlf false`. If the step is not performed, git will automatically insert CRLF line endings, violating the project's Checkstyle rules (which are rather strict, and prevent the build from succeeding).
-0. Clone this repository in a folder of your preference using `git clone --recurse-submodules` appropriately
-0. Open IntellJ. If a project opens automatically, select "Close project". You should be on the welcome screen of IntelliJ idea.
-0. Select "Import Project"
-0. Navigate your file system and find the folder where you cloned the repository. **Do not select it**. Open the folder, and you should find a lowercase `alchemist` folder. That is the correct project folder, not the outermost `Alchemist` folder (created by `git` in case you cloned without specifying a different folder name). Once the correct folder has been selected, click <kbd>Ok</kbd>
-0. Select "Import Project from external model"
-0. Make sure "Gradle" is selected as external model tool
-0. Click <kbd>Finish</kbd>
-0. If prompted to override any .idea file, try to answer <kbd>No</kbd>. It's possible that IntelliJ refuses to proceed, in which case click <kbd>Finish</kbd> again, then select <kbd>Yes</kbd>.
-0. A dialog stating that "IntelliJ IDEA found a Gradle build script" may appear, in such case answer <kbd>Import Gradle Project</kbd>.
-0. Wait for the IDE to import the project from Gradle. The process may take several minutes, due to the amount of dependencies. Should the synchronization fail, make sure that the IDE's Gradle is configured correctly:
+0. Clone this repository in a folder of your preference using `git clone --recurse-submodules <ALCHEMIST_REPO_URI>`.
+0. Right click on `settings.gradle.kts`, select "Open With" and use IntelliJ Idea.
+The procedure may be slightly different depending on your operating system and desktop environment.
+If you have a terminal, and if you can launch idea from there, just:
+    0. `cd <LOCATION_WHERE_YOU_CLONED_THE REPOSITORY>
+    0. `idea .` (we are assuming that you can launch IntelliJ Idea with the `idea` command, replace it with the correct one for your syustem
 0. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended.
 0. **Important:** Alchemist requires java 11+, so make sure the 'Gradle JVM' option points to such a version (if you don't have a JDK 11+ installed make sure to get one).
 0. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:

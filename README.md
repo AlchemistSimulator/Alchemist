@@ -156,15 +156,16 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
 
 #### Importing the project
 
-0. Clone this repository in a folder of your preference using `git clone --recurse-submodules <ALCHEMIST_REPO_URI>`.
-0. Right click on `settings.gradle.kts`, select "Open With" and use IntelliJ Idea.
+1. Clone this repository in a folder of your preference using `git clone --recurse-submodules <ALCHEMIST_REPO_URI>`.
+1. Right click on `settings.gradle.kts`, select "Open With" and use IntelliJ Idea.
 The procedure may be slightly different depending on your operating system and desktop environment.
 If you have a terminal, and if you can launch idea from there, just:
-    0. `cd <LOCATION_WHERE_YOU_CLONED_THE REPOSITORY>
-    0. `idea .` (we are assuming that you can launch IntelliJ Idea with the `idea` command, replace it with the correct one for your syustem
-0. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended.
-0. **Important:** Alchemist requires java 11+, so make sure the 'Gradle JVM' option points to such a version (if you don't have a JDK 11+ installed make sure to get one).
-0. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
+
+    1. `cd <LOCATION_WHERE_YOU_CLONED_THE REPOSITORY>`
+    1. `idea .` (we are assuming that you can launch IntelliJ Idea with the `idea` command, replace it with the correct one for your syustem
+1. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended.
+1. **Important:** Alchemist requires java 11+, so make sure the 'Gradle JVM' option points to such a version (if you don't have a JDK 11+ installed make sure to get one).
+1. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
   - On Unix: `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
   - On Windows: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
 

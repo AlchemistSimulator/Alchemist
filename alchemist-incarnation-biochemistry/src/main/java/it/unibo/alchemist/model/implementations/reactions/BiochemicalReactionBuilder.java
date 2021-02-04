@@ -221,7 +221,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                                     : arg.LITERAL().getText())
                     );
                 }
-                return factory.build(clazz, params);
+                return factory.build(clazz, params).getCreatedObjectOrThrowException();
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException("cannot instance " + className + ", class not found", e);
             }

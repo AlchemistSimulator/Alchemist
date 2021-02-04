@@ -38,6 +38,14 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
   test("Basic test"){
     testNoVar("/plain_vanilla.yml")
   }
+
+  test("Basic failure test"){
+    assertThrows[Exception] {
+      testNoVar("/plain_error.yml")
+    }
+  }
+
+
   test("Gradient"){
     val env = testNoVar[Any]("/test_gradient.yml")
     env.getNodes.iterator().asScala.foreach(node => {
@@ -60,6 +68,10 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
       if(node.getId==0) {
         inputMolecule shouldBe 77
         outputMolecule shouldBe 177
+        val p = getValue[Poin                                                                     t3D](MOL_POSITION)
+        p.x shouldEqual 4.0 +- 0.0001
+        p.y shouldEqual 4.0 +- 0.0001
+        p.z shouldEqual 0.0
         getValue[java.time.Instant](MOL_TIMESTAMP).getEpochSecond > 0
         getValue[Long](MOL_DELTA_MANUAL_MILLIS) shouldEqual 2000L +- 1L
         getValue[FiniteDuration](MOL_DELTATIME) shouldEqual FiniteDuration(2_000_000_000L, NANOSECONDS)

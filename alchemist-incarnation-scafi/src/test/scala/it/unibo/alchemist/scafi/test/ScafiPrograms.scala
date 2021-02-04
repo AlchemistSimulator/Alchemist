@@ -10,6 +10,7 @@ package it.unibo.alchemist.scafi.test
 import java.time.ZoneOffset
 
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
+import it.unibo.scafi.space.Point3D
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -37,7 +38,9 @@ class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAl
     val nbrLagField = excludingSelf.reifyField(nbrLag()).values.headOption
     val nbrRangeField = excludingSelf.reifyField(nbrRange()).values.headOption
     val nbrVectorField = excludingSelf.reifyField(nbrVector()).values.headOption
+    val pos: Point3D = currentPosition()
 
+    node.put(MOL_POSITION, pos)
     node.put(MOL_TIMESTAMP, itimestamp)
     node.put(MOL_DELTA_MANUAL_MILLIS, deltaManual.toEpochMilli)
     node.put(MOL_DELTATIME, delta)
@@ -73,6 +76,7 @@ object ScafiEnvProgram {
   val MOL_NBR_VECTOR = "nbrvec"
   val MOL_NBR_RANGE = "nbrran"
   val MOL_NBR_LAG = "nbrlag"
+  val MOL_POSITION = "pos"
 }
 
 object MyMain extends App {

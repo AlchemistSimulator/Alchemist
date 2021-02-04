@@ -112,7 +112,10 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
       override def sense[T](lsns: String): Option[T] = (lsns match {
         case LSNS_ALCHEMIST_COORDINATES => Some(position.getCoordinates)
         case LSNS_DELTA_TIME => Some(FiniteDuration(deltaTime, TimeUnit.NANOSECONDS))
-        case LSNS_POSITION => Some(position)
+        case LSNS_POSITION => {
+          val k = position.getDimensions()
+          Some(Point3D(position.getCoordinate(0), if(k>=2) position.getCoordinate(1) else 0, if(k>=3) position.getCoordinate(2) else 0))
+        }
         case LSNS_TIMESTAMP => Some(currentTime)
         case LSNS_TIME => Some(java.time.Instant.ofEpochMilli((alchemistCurrentTime * 1000).toLong))
         case LSNS_ALCHEMIST_NODE_MANAGER => Some(nodeManager)

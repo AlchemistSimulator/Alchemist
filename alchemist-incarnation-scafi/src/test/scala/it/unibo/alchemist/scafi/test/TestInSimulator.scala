@@ -68,7 +68,7 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
       if(node.getId==0) {
         inputMolecule shouldBe 77
         outputMolecule shouldBe 177
-        val p = getValue[Poin                                                                     t3D](MOL_POSITION)
+        val p = getValue[Point3D](MOL_POSITION)
         p.x shouldEqual 4.0 +- 0.0001
         p.y shouldEqual 4.0 +- 0.0001
         p.z shouldEqual 0.0

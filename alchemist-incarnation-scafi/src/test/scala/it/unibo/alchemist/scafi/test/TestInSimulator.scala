@@ -65,7 +65,7 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
         getValue[FiniteDuration](MOL_DELTATIME) shouldEqual FiniteDuration(2_000_000_000L, NANOSECONDS)
         getValue[Option[Double]](MOL_NBR_RANGE).get shouldEqual Math.sqrt(4+4) +- 0.1
         getValue[Option[FiniteDuration]](MOL_NBR_LAG).map(_.toMillis).get shouldBe 2000L +- 1999L
-        toPoint2D(getValue[Option[Point3D]](MOL_NBR_VECTOR).get) shouldEqual Point2D(2.0, 2.0)
+        toPoint2D(getValue[Option[Point3D]](MOL_NBR_VECTOR).get) shouldEqual Point2D(-2.0, -2.0)
       } else {
         inputMolecule shouldBe (-500)
         outputMolecule shouldBe (-400)

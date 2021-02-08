@@ -6,12 +6,13 @@ incarnation: scafi
 
 pools:
   - pool: &program
-    - time-distribution: 2
+    - time-distribution: 0.5 # DiracComb: the parameter (rate) tells how many events should happen per time out
       type: Event
       actions:
         - type: RunScafiProgram
           parameters: [it.unibo.alchemist.scafi.test.ScafiEnvProgram]
-    # program: send
+    - program: send
+
 positions:
   type: Continuous2DEuclidean
   

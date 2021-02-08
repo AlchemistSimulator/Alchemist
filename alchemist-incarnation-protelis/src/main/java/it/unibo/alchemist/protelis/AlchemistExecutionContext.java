@@ -324,5 +324,4 @@ public final class AlchemistExecutionContext<P extends Position<P>>
         }
         throw new IllegalArgumentException(dest + " is not a coordinate I can understand.");
     }
-
 }

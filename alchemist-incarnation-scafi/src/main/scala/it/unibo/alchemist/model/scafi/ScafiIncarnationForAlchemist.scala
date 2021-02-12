@@ -7,17 +7,20 @@
  */
 package it.unibo.alchemist.model.scafi
 
+import java.util.Optional
+
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.NodeManager
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.{Environment, Position}
+import it.unibo.alchemist.model.interfaces.{Environment, Layer, Position}
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation
 import it.unibo.scafi.lib.StandardLibrary
 import it.unibo.scafi.space.{BasicSpatialAbstraction, Point2D, Point3D}
 import it.unibo.scafi.time.BasicTimeAbstraction
 import org.apache.commons.math3.random.RandomGenerator
 
-import scala.util.Random
+import scala.util.{Random, Success, Try}
 
 object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
   with StandardLibrary with BasicTimeAbstraction with BasicSpatialAbstraction {
@@ -50,6 +53,7 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
 
     def alchemistCoordinates = sense[Array[Double]](LSNS_ALCHEMIST_COORDINATES)
 
+
     def alchemistDeltaTime(whenNan: Double = Double.NaN): Double = {
       val dt = sense[DoubleTime](LSNS_ALCHEMIST_DELTA_TIME).toDouble
       if(dt.isNaN) whenNan else dt
@@ -63,6 +67,20 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
     override def nextRandom(): Double = alchemistRandomGen.nextDouble()
 
     def alchemistEnvironment = sense[Environment[Any,Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
+
+    private implicit def optionalToOption[E](p : Optional[E]) : Option[E] = if (p.isPresent) Some(p.get()) else None
+
+    private def findInLayers[A](name : String) : Option[A] = {
+      val layer : Option[Layer[Any, Position[_]]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
+      val node = alchemistEnvironment.getNodeByID(mid())
+      layer.map(l => l.getValue(alchemistEnvironment.getPosition(node)))
+        .map(value => Try(value.asInstanceOf[A]))
+        .collect { case Success(value) => value }
+    }
+
+    def senseEnvData[A](name: String): A = {
+      findInLayers[A](name).get
+    }
   }
 
   /**

@@ -74,7 +74,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build(new CacheLoader<CacheKey, SynchronizedVM>() {
+            .build(new CacheLoader<>() {
                 @Override
                 public SynchronizedVM load(@NotNull final CacheKey key) {
                     return new SynchronizedVM(key);
@@ -122,8 +122,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                         .parallelStream()
                         .flatMap(r -> r.getActions().parallelStream())
                         .filter(a -> a instanceof SendToNeighbor)
-                        .map(c -> (SendToNeighbor) c)
-                        .map(SendToNeighbor::getProtelisProgram)
+                        .map(c -> ((SendToNeighbor) c).getProtelisProgram())
                         .collect(Collectors.toList());
                 final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
                 if (pList.isEmpty()) {
@@ -181,10 +180,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     .parallelStream()
                     .flatMap(r -> r.getConditions().stream())
                     .filter(c -> c instanceof ComputationalRoundComplete)
-                    .map(c -> (ComputationalRoundComplete) c)
-                    .flatMap(crc -> crc.getInboundDependencies().stream())
-                    .filter(mol -> mol instanceof RunProtelisProgram)
-                    .map(mol -> (RunProtelisProgram<P>) mol)
+                    .map(c -> ((ComputationalRoundComplete) c).getProgram())
                     .collect(Collectors.toList());
             final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
             if (pList.isEmpty()) {
@@ -262,11 +258,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     public double getProperty(final Node<Object> node, final Molecule molecule, final String property) {
         try {
             final SynchronizedVM vm = cache.get(
-                    new CacheKey(
-                            Objects.requireNonNull(node),
-                            Objects.requireNonNull(molecule),
-                            Objects.requireNonNull(property)
-                    )
+                new CacheKey(
+                    Objects.requireNonNull(node),
+                    Objects.requireNonNull(molecule),
+                    Objects.requireNonNull(property)
+                )
             );
             final Object val = vm.runCycle();
             if (val instanceof Number) {
@@ -364,7 +360,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         public DeviceUID getDeviceUID() {
             if (node instanceof ProtelisNode) {
-                return (ProtelisNode) node;
+                return (ProtelisNode<?>) node;
             }
             return NO_NODE_ID;
         }

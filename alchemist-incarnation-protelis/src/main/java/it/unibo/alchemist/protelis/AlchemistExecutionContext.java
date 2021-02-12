@@ -42,7 +42,8 @@ import java.util.function.Function;
 /**
  * @param <P> position type
  */
-public final class AlchemistExecutionContext<P extends Position<P>> extends AbstractExecutionContext<AlchemistExecutionContext<P>>
+public final class AlchemistExecutionContext<P extends Position<P>>
+        extends AbstractExecutionContext<AlchemistExecutionContext<P>>
         implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice {
 
     /**
@@ -62,9 +63,9 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
                 @Override
                 @SuppressWarnings("unchecked")
                 public Double load(@NotNull final P dest) {
-                    if (env instanceof MapEnvironment) {
+                    if (environment instanceof MapEnvironment) {
                         if (dest instanceof GeoPosition) {
-                            return ((MapEnvironment<Object>) env).computeRoute(node, (GeoPosition) dest).length();
+                            return ((MapEnvironment<Object>) environment).computeRoute(node, (GeoPosition) dest).length();
                         } else {
                             throw new IllegalStateException("Illegal position type: " + dest.getClass() + " " + dest);
                         }
@@ -72,13 +73,13 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
                     return getDevicePosition().distanceTo(dest);
                 }
             });
-    private final Environment<Object, P> env;
+    private final Environment<Object, P> environment;
     private int hash;
     private double nbrRangeTimeout;
     private double precalcdRoutingDistance = Double.NaN;
     private final ProtelisNode<P> node;
-    private final RandomGenerator rand;
-    private final Reaction<Object> react;
+    private final RandomGenerator randomGenerator;
+    private final Reaction<Object> reaction;
 
     /**
      * @param environment
@@ -99,10 +100,10 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
             final RandomGenerator random,
             final AlchemistNetworkManager networkManager) {
         super(localNode, networkManager);
-        env = environment;
+        this.environment = environment;
         node = localNode;
-        react = reaction;
-        rand = random;
+        this.reaction = reaction;
+        randomGenerator = random;
     }
 
     private <X> Field<X> buildFieldWithPosition(final Function<? super P, X> fun) {
@@ -120,7 +121,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
     @SuppressWarnings("unchecked")
     public double distanceTo(final DeviceUID target) {
         assert target instanceof ProtelisNode;
-        return env.getDistanceBetweenNodes(node, (ProtelisNode<P>) target);
+        return environment.getDistanceBetweenNodes(node, (ProtelisNode<P>) target);
     }
 
     /**
@@ -132,7 +133,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
      * @return the distance
      */
     public double distanceTo(final int target) {
-        return distanceTo((ProtelisNode) env.getNodeByID(target));
+        return distanceTo((ProtelisNode) environment.getNodeByID(target));
     }
 
     @Override
@@ -142,7 +143,10 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
         }
         if (obj instanceof AlchemistExecutionContext) {
             final AlchemistExecutionContext<?> ctx = (AlchemistExecutionContext<?>) obj;
-            return node.equals(ctx.node) && env.equals(ctx.env) && react.equals(ctx.react) && rand.equals(ctx.rand);
+            return node.equals(ctx.node)
+                && environment.equals(ctx.environment)
+                && reaction.equals(ctx.reaction)
+                && randomGenerator.equals(ctx.randomGenerator);
         }
         return false;
     }
@@ -154,14 +158,14 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
 
     @Override
     public Number getCurrentTime() {
-        return react.getTau().toDouble();
+        return reaction.getTau().toDouble();
     }
 
     /**
      * @return the device position, in form of {@link Position}
      */
     public P getDevicePosition() {
-        return env.getPosition(node);
+        return environment.getPosition(node);
     }
 
     @Override
@@ -173,7 +177,11 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
      * @return experimental access to the simulated environment, for building oracles
      */
     public Environment<Object, P> getEnvironmentAccess() {
-        return env;
+        return environment;
+    }
+
+    public RandomGenerator getRandomGenerator() {
+        return randomGenerator;
     }
 
     @Override
@@ -181,8 +189,8 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
         if (hash == 0) {
             hash = Hashing.murmur3_32().newHasher()
                 .putInt(node.getId())
-                .putInt(env.hashCode())
-                .putInt(react.hashCode())
+                .putInt(environment.hashCode())
+                .putInt(reaction.hashCode())
                 .hash().asInt();
         }
         return hash;
@@ -190,7 +198,13 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
 
     @Override
     protected AlchemistExecutionContext<P> instance() {
-        return new AlchemistExecutionContext<>(env, node, react, rand, (AlchemistNetworkManager) getNetworkManager());
+        return new AlchemistExecutionContext<>(
+            environment,
+            node,
+            reaction,
+            randomGenerator,
+            (AlchemistNetworkManager) getNetworkManager()
+        );
     }
 
     /**
@@ -208,7 +222,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
 
     @Override
     public Field<Double> nbrRange() {
-        final boolean useRoutesAsDistances = env instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES);
+        final boolean useRoutesAsDistances = environment instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES);
         return buildFieldWithPosition(p -> {
             if (useRoutesAsDistances) {
                 if (p instanceof GeoPosition) {
@@ -216,7 +230,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
                     if (node.contains(APPROXIMATE_NBR_RANGE)) {
                         try {
                             final double tolerance = (double) node.getConcentration(APPROXIMATE_NBR_RANGE);
-                            final double currTime = env.getSimulation().getTime().toDouble();
+                            final double currTime = environment.getSimulation().getTime().toDouble();
                             if (currTime > nbrRangeTimeout) {
                                 nbrRangeTimeout = currTime + tolerance;
                                 precalcdRoutingDistance = routingDistance(destination);
@@ -253,7 +267,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
 
     @Override
     public double nextRandomDouble() {
-        return rand.nextDouble();
+        return randomGenerator.nextDouble();
     }
 
     /**
@@ -264,7 +278,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
      * @return the distance on a map
      */
     public double routingDistance(final Node<Object> dest) {
-        return routingDistance((GeoPosition) env.getPosition(dest));
+        return routingDistance((GeoPosition) environment.getPosition(dest));
     }
 
     /**
@@ -277,7 +291,7 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
      * @return the distance on a map
      */
     public double routingDistance(final Number dest) {
-        return routingDistance(env.getNodeByID(dest.intValue()));
+        return routingDistance(environment.getNodeByID(dest.intValue()));
     }
 
     /**
@@ -310,5 +324,4 @@ public final class AlchemistExecutionContext<P extends Position<P>> extends Abst
         }
         throw new IllegalArgumentException(dest + " is not a coordinate I can understand.");
     }
-
 }

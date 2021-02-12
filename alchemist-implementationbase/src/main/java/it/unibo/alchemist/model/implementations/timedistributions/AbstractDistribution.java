@@ -73,17 +73,17 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     /**
      * Implement this method to update the distribution's internal status.
      * 
-     * @param curTime
+     * @param currentTime
      *            current time
      * @param executed
      *            true if the reaction whose this distribution has been
      *            associated has just been executed
      * @param param
      *            optional parameter passed by the reaction
-     * @param env
+     * @param environment
      *            the current environment
      */
-    protected abstract void updateStatus(Time curTime, boolean executed, double param, Environment<T, ?> env);
+    protected abstract void updateStatus(Time currentTime, boolean executed, double param, Environment<T, ?> environment);
 
     @Override
     public abstract AbstractDistribution<T> clone(Time currentTime);

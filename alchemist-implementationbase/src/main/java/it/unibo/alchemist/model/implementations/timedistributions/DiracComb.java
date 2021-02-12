@@ -48,12 +48,12 @@ public class DiracComb<T> extends AbstractDistribution<T> {
 
     @Override
     protected final void updateStatus(
-            final Time curTime,
+            final Time currentTime,
             final boolean executed,
             final double param,
-            final Environment<T, ?> env) {
+            final Environment<T, ?> environment) {
         if (executed) {
-            setNextOccurrence(new DoubleTime(curTime.toDouble() + timeInterval));
+            setNextOccurrence(new DoubleTime(currentTime.toDouble() + timeInterval));
         }
     }
 

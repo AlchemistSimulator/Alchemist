@@ -18,25 +18,25 @@ import it.unibo.alchemist.model.interfaces.Time;
 
 /**
  * This class is able to use any distribution provided by Apache Math 3 as a
- * subclass of {@link RealDistribution}. Being generic, however, it does not
- * allow for dynamic rate tuning (namely, it can't be used to generate events
- * with varying frequency based on
- * {@link it.unibo.alchemist.model.interfaces.Condition#getPropensityContribution()}.
- * 
+ * subclass of {@link RealDistribution}, blocking the execution if
+ * {@link it.unibo.alchemist.model.interfaces.Condition#getPropensityContribution()}
+ * returns zero for any condition.
+ *
  * @param <T>
  *            concentration type
  */
 public class AnyRealDistribution<T> extends AbstractDistribution<T> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     @SuppressFBWarnings(
-            value = "SE_BAD_FIELD",
-            justification = "All the implementations of RealDistribution also implement Serializable"
+        value = "SE_BAD_FIELD",
+        justification = "All the implementations of RealDistribution also implement Serializable"
     )
     private final RealDistribution distribution;
+    private Time next;
 
     /**
      * @param rng
@@ -97,18 +97,38 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
         return distribution.getNumericalMean();
     }
 
-    @SuppressFBWarnings(value = "FE_FLOATING_POINT_EQUALITY", justification = "We want to check for exact equality here")
+    /**
+     * This method can be overridden to implment further controls.
+     * Subclasses should still call super.updateStatus, though.
+     *
+     * {@inheritDoc}
+     */
     @Override
-    protected final void updateStatus(
+    protected void updateStatus(
             final Time currentTime,
             final boolean hasBeenExecuted,
             final double additionalParameter,
             final Environment<T, ?> environment
     ) {
-        if (additionalParameter != getRate()) {
-            throw new IllegalStateException(getClass().getSimpleName() + " does not allow to dynamically tune the rate.");
+        if (
+            next == null
+                || hasBeenExecuted
+                || currentTime.compareTo(next) < 0
+                || additionalParameter > 0 && getNextOccurence().isInfinite()
+        ) {
+            // New time generation necessary
+            final var step = distribution.sample();
+            if (step < 0) {
+                throw new IllegalStateException(distribution + " generated a negative delta time: " + step);
+            }
+            next = new DoubleTime(currentTime.toDouble() + step);
         }
-        setNextOccurrence(new DoubleTime(currentTime.toDouble() + distribution.sample()));
+        if (additionalParameter == 0) {
+            // The execution is blocked
+            setNextOccurrence(Time.INFINITY);
+        } else {
+            setNextOccurrence(next);
+        }
     }
 
     /**
@@ -119,4 +139,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
         return new AnyRealDistribution<>(currentTime, distribution);
     }
 
+    protected final RealDistribution getDistribution() {
+        return distribution;
+    }
 }

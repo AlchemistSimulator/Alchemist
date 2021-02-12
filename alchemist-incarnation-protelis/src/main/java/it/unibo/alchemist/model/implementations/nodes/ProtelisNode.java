@@ -20,6 +20,7 @@ import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Field;
 import org.protelis.vm.ExecutionEnvironment;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,12 +36,12 @@ public final class ProtelisNode<P extends Position<? extends P>>
         implements DeviceUID, ExecutionEnvironment {
 
     private static final long serialVersionUID = 7411790948884770553L;
-    private final Map<RunProtelisProgram<?>, AlchemistNetworkManager> netmgrs = new LinkedHashMap<>();
+    private final Map<RunProtelisProgram<?>, AlchemistNetworkManager> networkManagers = new LinkedHashMap<>();
     private final Environment<Object, P> environment;
 
     /**
      * Builds a new {@link ProtelisNode}.
-     * 
+     *
      * @param environment
      *            the environment
      */
@@ -61,14 +62,14 @@ public final class ProtelisNode<P extends Position<? extends P>>
 
     /**
      * Adds a new {@link AlchemistNetworkManager}.
-     * 
+     *
      * @param program
      *            the {@link RunProtelisProgram}
      * @param networkManager
      *            the {@link AlchemistNetworkManager}
      */
     public void addNetworkManger(final RunProtelisProgram<?> program, final AlchemistNetworkManager networkManager) {
-        netmgrs.put(program, networkManager);
+        networkManagers.put(program, networkManager);
     }
 
     /**
@@ -79,7 +80,14 @@ public final class ProtelisNode<P extends Position<? extends P>>
      */
     public AlchemistNetworkManager getNetworkManager(final RunProtelisProgram<?> program) {
         Objects.requireNonNull(program);
-        return netmgrs.get(program);
+        return networkManagers.get(program);
+    }
+
+    /**
+     * @return all the {@link AlchemistNetworkManager} in this node
+     */
+    public Map<RunProtelisProgram<?>, AlchemistNetworkManager> getNetworkManagers() {
+        return Collections.unmodifiableMap(networkManagers);
     }
 
     private static <P extends Position<P>> Molecule makeMol(final String id) {
@@ -96,8 +104,9 @@ public final class ProtelisNode<P extends Position<? extends P>>
         final Molecule mid = makeMol(id);
         return Optional.ofNullable(getConcentration(mid))
             .orElse(environment.getLayer(mid)
-                    .map(it -> it.getValue(environment.getPosition(this)))
-                    .orElse(null));
+                .map(it -> it.getValue(environment.getPosition(this)))
+                .orElse(null)
+            );
     }
 
     @Override
@@ -113,7 +122,7 @@ public final class ProtelisNode<P extends Position<? extends P>>
 
     /**
      * Writes a Map representation of the Field on the environment.
-     * 
+     *
      * @param id variable name
      * @param v the {@link Field}
      * @return true
@@ -152,5 +161,4 @@ public final class ProtelisNode<P extends Position<? extends P>>
                 .map(Molecule::getName)
                 .collect(ImmutableSet.toImmutableSet());
     }
-
 }

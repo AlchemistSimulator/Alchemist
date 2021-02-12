@@ -82,9 +82,14 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public final void updateStatus(final Time curTime, final boolean executed, final double param, final Environment<T, ?> env) {
+    public final void updateStatus(
+        final Time currentTime,
+        final boolean executed,
+        final double param,
+        final Environment<T, ?> environment
+    ) {
         if (executed) {
-            setNextOccurrence(curTime.plus(new DoubleTime(genSample())));
+            setNextOccurrence(currentTime.plus(new DoubleTime(genSample())));
         }
     }
 

@@ -29,18 +29,20 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
      *            the environment
      * @param node
      *            the node
-     * @param rt the {@link RoutingStrategy}
-     * @param sp
+     * @param routingStrategy the {@link RoutingStrategy}
+     * @param speedSelectionStrategy
      *            the {@link SpeedSelectionStrategy}
-     * @param tg
+     * @param targetSelectionStrategy
      *            {@link TargetSelectionStrategy}
      */
-    public MoveOnMap(final MapEnvironment<T> environment,
-            final Node<T> node,
-            final RoutingStrategy<GeoPosition> rt,
-            final SpeedSelectionStrategy<GeoPosition> sp,
-            final TargetSelectionStrategy<GeoPosition> tg) {
-        super(environment, node, rt, tg, sp, true);
+    public MoveOnMap(
+        final MapEnvironment<T> environment,
+        final Node<T> node,
+        final RoutingStrategy<GeoPosition> routingStrategy,
+        final SpeedSelectionStrategy<GeoPosition> speedSelectionStrategy,
+        final TargetSelectionStrategy<GeoPosition> targetSelectionStrategy
+    ) {
+        super(environment, node, routingStrategy, targetSelectionStrategy, speedSelectionStrategy, true);
     }
 
     @Override

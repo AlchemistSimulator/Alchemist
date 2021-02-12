@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public final class ComputationalRoundComplete extends AbstractCondition<Object> {
 
     private static final long serialVersionUID = -4113718948444451107L;
+
     private final RunProtelisProgram program;
 
     /**
@@ -60,18 +61,25 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     }
 
     @Override
+    public ProtelisNode<?> getNode() {
+        return (ProtelisNode<?>) super.getNode();
+    }
+
+    @Override
     public double getPropensityContribution() {
         return isValid() ? 1 : 0;
+    }
+
+    /**
+     * @return the {@link RunProtelisProgram} action this condition is mapped to
+     */
+    public RunProtelisProgram<?> getProgram() {
+        return program;
     }
 
     @Override
     public boolean isValid() {
         return program.isComputationalCycleComplete();
-    }
-
-    @Override
-    public ProtelisNode<?> getNode() {
-        return (ProtelisNode<?>) super.getNode();
     }
 
     @Override

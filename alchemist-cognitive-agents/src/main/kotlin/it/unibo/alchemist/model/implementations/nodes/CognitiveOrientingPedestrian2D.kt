@@ -37,11 +37,11 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
     private val consciousness: CognitivePedestrian2D<T> =
         CognitivePedestrian2D(environment, randomGenerator, age, gender, danger, group)
 ) : HomogeneousOrientingPedestrian2D<T, N, E>(
-    environment,
-    randomGenerator,
-    knowledgeDegree = knowledgeDegree,
-    group = group
-),
+        environment,
+        randomGenerator,
+        knowledgeDegree = knowledgeDegree,
+        group = group
+    ),
     CognitiveAgent by consciousness {
 
     override fun speed() = consciousness.speed()

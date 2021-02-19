@@ -4,8 +4,6 @@ title: Quick start
 
 ---
 
-You can find 
-
 You can either follow these instructions or those on the `README.md` file of the linked project, information is equivalent.
 
 ## How to launch

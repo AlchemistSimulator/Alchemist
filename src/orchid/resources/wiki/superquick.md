@@ -23,4 +23,4 @@ Something went **wrong** along the line?
 [Open an issue](https://github.com/AlchemistSimulator/Alchemist/issues/new/choose) and we'll get back to you.
 
 Too quick, works but you wonder why?
-[Take your time with the docs](simulator/metamodel), so that maybe you also understand what's going on.
+[Take your time with the docs](../simulator/metamodel), so that maybe you also understand what's going on.

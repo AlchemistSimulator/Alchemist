@@ -24,7 +24,7 @@ it makes it easier to import them.
 
 There are two ways of running Alchemist:
 
-* [Via Gradle](../use/run-gradle): the recommended way, as it provides an easy way to import the simulator within an
+* [Via Gradle](../../use/run-gradle): the recommended way, as it provides an easy way to import the simulator within an
 IDE and develop your simulation from there. 
-* [Stand-alone](../use/run-stand-alone): an alternative that can be useful for quick demos of if you just need to run
+* [Stand-alone](../../use/run-stand-alone): an alternative that can be useful for quick demos of if you just need to run
 an existing simulation file.

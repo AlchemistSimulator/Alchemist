@@ -11,7 +11,9 @@ package it.unibo.alchemist.loader.konf
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import it.unibo.alchemist.loader.IllegalAlchemistYAMLException
 import org.danilopianini.jirf.Factory
+import org.slf4j.LoggerFactory
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -84,9 +86,34 @@ sealed class JVMConstructor(val typeName: String) {
     inline fun <reified T : Any> newInstance(jirf: Factory): T = newInstance(T::class, jirf)
 
     fun <T : Any> newInstance(target: KClass<T>, jirf: Factory): T =
-        jirf.build(target.java, parametersFor(target)).createdObjectOrThrowException
+        jirf.build(target.java, parametersFor(target)).let { creationResult ->
+            creationResult.createdObject.orElseGet {
+                logger.error("Could not create {}, requested as instance of {}", this, target.simpleName)
+                val masterException = IllegalArgumentException("Illegal Alchemist specification")
+                for ((constructor, exception) in creationResult.exceptions) {
+                    masterException.addSuppressed(exception)
+                    val errorMessages = generateSequence<Pair<Throwable?, String?>>(
+                        exception to exception.message
+                    ) { (outer, _) -> outer?.cause to outer?.cause?.message }
+                        .takeWhile { it.first != null }
+                        .filter { !it.second.isNullOrBlank() }
+                        .map { "${it.first!!::class.simpleName}: ${it.second}" }
+                        .toList()
+                    logger.error(
+                        "Constructor {} failed for {} ",
+                        constructor,
+                        if (errorMessages.isEmpty()) "unknown reasons" else "the following reasons:"
+                    )
+                    errorMessages.reversed().forEach { logger.error("  - $it") }
+                }
+                throw masterException
+            }
+        }
 
     companion object {
+
+        val logger = LoggerFactory.getLogger(JVMConstructor::class.java)
+
         @JsonCreator
         @JvmStatic
         fun createConstructor(

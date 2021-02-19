@@ -12,11 +12,14 @@ package it.unibo.alchemist.loader.konf
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
 import com.uchuhimo.konf.Feature
+import com.uchuhimo.konf.Item
+import com.uchuhimo.konf.OptionalItem
 import com.uchuhimo.konf.source.yaml
 import it.unibo.alchemist.ClassPathScanner
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.loader.export.Extractor
+import it.unibo.alchemist.loader.konf.EntityMapper.buildAny
 import it.unibo.alchemist.loader.konf.EntityMapper.buildIncarnation
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.Variable
@@ -33,6 +36,7 @@ import java.lang.reflect.Modifier
 class KonfBasedLoader(spec: String, specType: SupportedSpecType) : Loader {
 
     private val rawIncarnation: Incarnation<*, *>
+    private val environmentSpec: JVMConstructor
     @Suppress("UNCHECKED_CAST")
     fun <T, P: Position<P>> getIncarnation(): Incarnation<T, P> = rawIncarnation as Incarnation<T, P>
 
@@ -44,11 +48,13 @@ class KonfBasedLoader(spec: String, specType: SupportedSpecType) : Loader {
         }
         val factory = ObjectFactory.makeBaseFactory()
         rawIncarnation = config[AlchemistSpec.incarnation].buildIncarnation<Any?, Nothing>(factory)
+        environmentSpec = config[AlchemistSpec.environment]
     }
 
 
     override fun <T : Any?, P : Position<P>?> getDefault(): Environment<T, P> {
-        TODO("Not yet implemented")
+        val factory = ObjectFactory.makeBaseFactory()
+        return environmentSpec.buildAny(factory)
     }
 
     override fun getDependentVariables(): MutableMap<String, DependentVariable<*>> {
@@ -97,34 +103,37 @@ private object EntityMapper {
         string?.let { factory.convert(Incarnation::class.java, it).orElseThrow() as Incarnation<T, P> }
             ?: constructor!!.newInstance(factory)
 
-    inline fun <reified T : Any> ConstructorOrString.buildAny(factory: Factory): T {
+    inline fun <reified T : Any> ConstructorOrString.buildAny(factory: Factory): T =
         if (string != null) {
-            return factory.convert(T::class.java, string).orElseThrow()
+            factory.convert(T::class.java, string).orElseThrow()
+        } else {
+            constructor!!.buildAny<T>(factory)
         }
-        val type = constructor!!.typeName
-        val hasPackage = type.contains('.')
+
+    inline fun <reified T : Any> JVMConstructor.buildAny(factory: Factory): T {
+        val hasPackage = typeName.contains('.')
         val subtypes = ClassPathScanner.subTypesOf<T>().filter { !Modifier.isAbstract(it.modifiers) }
-        val perfectMatches = subtypes.filter { constructor.typeName == if (hasPackage) it.name else it.simpleName }
+        val perfectMatches = subtypes.filter { typeName == if (hasPackage) it.name else it.simpleName }
         when (perfectMatches.size) {
-            0 -> KonfBasedLoader.logger.warn("No perfect match for type {} in {}", type, subtypes.map { it.name })
-            1 -> return constructor.newInstance(perfectMatches.first().kotlin, factory)
+            0 -> KonfBasedLoader.logger.warn("No perfect match for type {} in {}", typeName, subtypes.map { it.name })
+            1 -> return newInstance(perfectMatches.first().kotlin, factory)
             else -> throw IllegalStateException(
-                "Multiple perfect matches for $type: ${perfectMatches.map { it.name }}"
+                "Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}"
             )
         }
         val subOptimalMatches = subtypes.filter {
-            constructor.typeName.equals(if (hasPackage) it.name else it.simpleName, ignoreCase = true)
+            typeName.equals(if (hasPackage) it.name else it.simpleName, ignoreCase = true)
         }
         return when (subOptimalMatches.size) {
             0 -> throw IllegalStateException(
                 """
-                No valid match for type $type among subtypes of ${T::class.simpleName}.
-                Valid subtypes are: $subtypes
-                """.trimMargin()
+            No valid match for type $typeName among subtypes of ${T::class.simpleName}.
+            Valid subtypes are: $subtypes
+            """.trimMargin()
             )
-            1 -> constructor.newInstance(subOptimalMatches.first().kotlin, factory)
+            1 -> newInstance(subOptimalMatches.first().kotlin, factory)
             else ->  throw IllegalStateException(
-                "Multiple matches for $type as subtype of ${T::class.simpleName}: ${perfectMatches.map { it.name }}. " +
+                "Multiple matches for $typeName as subtype of ${T::class.simpleName}: ${perfectMatches.map { it.name }}. " +
                     "Disambiguation is required."
             )
         }

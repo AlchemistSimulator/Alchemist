@@ -34,6 +34,7 @@ dependencies {
     testRuntimeOnly("org.scala-lang:scala-compiler:_")
 
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
+    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
 }
 
 tasks.withType<Test> {

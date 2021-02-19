@@ -19,15 +19,19 @@ dependencies {
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
     implementation(Libs.dsiutil)
+    implementation("com.uchuhimo:konf:_")
+    implementation("io.arrow-kt:arrow-core:_")
+//    implementation("com.uchuhimo:konf-yaml:_")
+//    implementation("com.uchuhimo:konf-toml:_")
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
-    runtimeOnly("org.scala-lang:scala-compiler:2.13.2")
+    runtimeOnly("org.scala-lang:scala-compiler:_")
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
     testImplementation(Libs.gson)
-    testRuntimeOnly("org.scala-lang:scala-compiler:2.13.2")
+    testRuntimeOnly("org.scala-lang:scala-compiler:_")
 
     testRuntimeOnly(project(":alchemist-incarnation-sapere"))
 }

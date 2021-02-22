@@ -14,11 +14,12 @@ import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.ClassPathScanner
 import it.unibo.alchemist.loader.konf.KonfBasedLoader
 import it.unibo.alchemist.loader.konf.SupportedSpecType
+import java.io.File
 
 class TestGuidedTourLoading : FreeSpec (
     {
         ClassPathScanner.resourcesMatching(".*\\.yml", "guidedTour").forEach { yaml ->
-            "${yaml.file} should load with default parameters" {
+            "${File(yaml.file).name} should load with default parameters" {
                 KonfBasedLoader(yaml.readText(), SupportedSpecType.YAML)
                     .getDefault<Any, Nothing>() shouldNotBe null
             }

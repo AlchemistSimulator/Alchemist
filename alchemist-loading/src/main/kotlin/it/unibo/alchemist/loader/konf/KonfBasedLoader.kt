@@ -43,7 +43,7 @@ class KonfBasedLoader(spec: String, specType: SupportedSpecType) : Loader {
     init {
         val config = with (specType) {
             Config { addSpec(AlchemistSpec) }
-                .enable(Feature.FAIL_ON_UNKNOWN_PATH)
+//                .enable(Feature.FAIL_ON_UNKNOWN_PATH)
                 .from.selectedSpecType.string(spec)
         }
         val factory = ObjectFactory.makeBaseFactory()

@@ -7,11 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.konf
+package it.unibo.alchemist.loader.konf.types
 
 import arrow.core.Either
 import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
+import it.unibo.alchemist.loader.konf.leftOrNull
+import it.unibo.alchemist.loader.konf.rightOrNull
 
 class ConstructorOrString private constructor(source: Either<String, JVMConstructor>) {
     val string: String? = source.leftOrNull
@@ -24,7 +25,7 @@ class ConstructorOrString private constructor(source: Either<String, JVMConstruc
 
         @JsonCreator @JvmStatic
         fun buildFromTypeAndParameters(type: String, parameters: Iterable<*>?)
-            = ConstructorOrString(Either.right(JVMConstructor.createConstructor(type, parameters)))
+            = ConstructorOrString(Either.right(JVMConstructor.create(type, parameters)))
     }
 
     override fun toString(): String = string ?: constructor?.toString() ?: TODO()

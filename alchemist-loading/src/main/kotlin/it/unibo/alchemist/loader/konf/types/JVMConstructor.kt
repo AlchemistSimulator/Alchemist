@@ -7,12 +7,13 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.konf
+package it.unibo.alchemist.loader.konf.types
 
-import arrow.core.extensions.map.align.empty
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import it.unibo.alchemist.ClassPathScanner
+import it.unibo.alchemist.loader.konf.EntityMapper.buildAny
+import it.unibo.alchemist.loader.konf.KonfBasedLoader
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
@@ -26,7 +27,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 class OrderedParametersConstructor(
     type: String,
-    val parameters: List<*> = emptyList<Any?>()
+    private val parameters: List<*> = emptyList<Any?>()
 ) : JVMConstructor(type) {
 
     override fun <T : Any> parametersFor(target: KClass<T>): List<*> = parameters
@@ -36,7 +37,7 @@ class OrderedParametersConstructor(
 
 class NamedParametersConstructor(
     type: String,
-    val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()
+    private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()
 ) : JVMConstructor(type) {
 
     override fun <T : Any> parametersFor(target: KClass<T>): List<*> {
@@ -84,9 +85,9 @@ sealed class JVMConstructor(val typeName: String) {
 
     abstract fun <T : Any> parametersFor(target: KClass<T>): List<*>
 
-    inline fun <reified T : Any> newInstance(jirf: Factory): T = newInstance(T::class, jirf)
+    private inline fun <reified T : Any> newInstance(jirf: Factory): T = newInstance(T::class, jirf)
 
-    fun <T : Any> newInstance(target: KClass<T>, jirf: Factory): T {
+    private fun <T : Any> newInstance(target: KClass<T>, jirf: Factory): T {
         /*
          * preprocess parameters:
          *
@@ -111,22 +112,26 @@ sealed class JVMConstructor(val typeName: String) {
                     val compatibleSubtypes = subtypes.filter {
                         typeName == if (parameter.typeName.contains('.')) it.name else it.simpleName
                     }
-                    if (compatibleSubtypes.isEmpty()) {
-                        logger.warn(
-                            "Constructor {} discarded as parameter #{}:{} has no compatible subtype {} (expected: {})",
-                            constructor,
-                            mappedIndex,
-                            potentialType.type,
-                            typeName
-                        )
-                        emptyList()
-                    } else if (compatibleSubtypes.size > 1) {
-                        throw IllegalStateException(
-                            "Ambiguous mapping: $compatibleSubtypes all match the requested type $typeName for " +
-                                "parameter #$mappedIndex:$potentialType of $constructor"
-                        )
-                    } else {
-                        listOf(parameter.newInstance(compatibleSubtypes.first().kotlin, jirf))
+                    when {
+                        compatibleSubtypes.isEmpty() -> {
+                            logger.warn(
+                                "Constructor {} discarded as parameter #{}:{} has no compatible subtype {} (expected: {})",
+                                constructor,
+                                mappedIndex,
+                                potentialType.type,
+                                typeName
+                            )
+                            emptyList()
+                        }
+                        compatibleSubtypes.size > 1 -> {
+                            throw IllegalStateException(
+                                "Ambiguous mapping: $compatibleSubtypes all match the requested type $typeName for " +
+                                    "parameter #$mappedIndex:$potentialType of $constructor"
+                            )
+                        }
+                        else -> {
+                            listOf(buildAny(compatibleSubtypes.first(), jirf))
+                        }
                     }
                 }
                 when (possibleMappings.size) {
@@ -152,7 +157,40 @@ sealed class JVMConstructor(val typeName: String) {
         }
     }
 
-    fun CreationResult<*>.logErrors(logger: (String, Array<Any?>) -> Unit) {
+    inline fun <reified T : Any> buildAny(factory: Factory): T = buildAny(T::class.java, factory)
+
+    fun <T : Any> buildAny(type: Class<out T>, factory: Factory): T {
+        val hasPackage = typeName.contains('.')
+        val subtypes = ClassPathScanner.subTypesOf(type) +
+            if (Modifier.isAbstract(type.modifiers)) emptyList() else listOf(type)
+        val perfectMatches = subtypes.filter { typeName == if (hasPackage) it.name else it.simpleName }
+        when (perfectMatches.size) {
+            0 -> KonfBasedLoader.logger.warn("No perfect match for type {} in {}", typeName, subtypes.map { it.name })
+            1 -> return newInstance(perfectMatches.first().kotlin, factory)
+            else -> throw IllegalStateException(
+                "Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}"
+            )
+        }
+        val subOptimalMatches = subtypes.filter {
+            typeName.equals(if (hasPackage) it.name else it.simpleName, ignoreCase = true)
+        }
+        return when (subOptimalMatches.size) {
+            0 -> throw IllegalStateException(
+                """
+            No valid match for type $typeName among subtypes of ${type.simpleName}.
+            Valid subtypes are: $subtypes
+            """.trimMargin()
+            )
+            1 -> newInstance(subOptimalMatches.first().kotlin, factory)
+            else ->  throw IllegalStateException(
+                "Multiple matches for $typeName as subtype of ${type.simpleName}: ${perfectMatches.map { it.name }}. " +
+                    "Disambiguation is required."
+            )
+        }
+    }
+
+
+    private fun CreationResult<*>.logErrors(logger: (String, Array<Any?>) -> Unit) {
         for ((constructor, exception) in exceptions) {
             val errorMessages = generateSequence<Pair<Throwable?, String?>>(
                 exception to exception.message
@@ -178,16 +216,21 @@ sealed class JVMConstructor(val typeName: String) {
 
         @JsonCreator
         @JvmStatic
-        fun createConstructor(
-            @JsonProperty("type") type: String,
-            @JsonProperty("parameters", defaultValue = "[]") parameters: Iterable<*>?
-        ) = when (parameters) {
-            is List<*> -> OrderedParametersConstructor(type, parameters)
-            is Map<*, *> -> NamedParametersConstructor(type, parameters)
-            null -> OrderedParametersConstructor(type, emptyList<Any>())
-            else -> throw IllegalArgumentException("TODO THIS ERROR")
-        }
+        fun create(
+            @JsonProperty("type") type: Any,
+            @JsonProperty("parameters") parameters: Iterable<*>?
+        ): JVMConstructor =
+            if (type is String) {
+                when (parameters) {
+                    is List<*> -> OrderedParametersConstructor(type, parameters)
+                    is Map<*, *> -> NamedParametersConstructor(type, parameters)
+                    null -> OrderedParametersConstructor(type, emptyList<Any>())
+                    else -> throw IllegalArgumentException("TODO THIS ERROR")
+                }
+            } else {
+                throw IllegalStateException()
+            }
 
-        fun createConstructor(type: String) = createConstructor(type, null)
+        fun create(type: String) = create(type, null)
     }
 }

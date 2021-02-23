@@ -487,7 +487,7 @@ public final class YamlLoader implements Loader {
     }
 
     @Override
-    public List<String> getDependencies() {
+    public List<String> getRemoteDependencies() {
         return this.dependencies;
     }
 

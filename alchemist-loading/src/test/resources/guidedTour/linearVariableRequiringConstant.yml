@@ -1,0 +1,19 @@
+incarnation: sapere
+
+variables:
+  category:
+    subcategory:
+      - anothercategory:
+          - three: &three
+              formula: 3
+  formula: &formula
+    type: JSR223Variable
+    parameters: [groovy, *three]
+  *three: &max
+    <<: *formula
+  min: &min
+    formula: max * 0
+    language: kotlin
+  myvar: &myvar
+    type: LinearVariable
+    parameters: [0, *min, *max, step]

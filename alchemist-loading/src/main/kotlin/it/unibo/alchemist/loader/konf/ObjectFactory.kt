@@ -42,6 +42,7 @@ object ObjectFactory {
             .withArrayBooleanIntConversions()
             .withArrayListConversions(Array<String>::class.java, Array<Number>::class.java)
             .withArrayNarrowingConversions()
+            .withAutomaticToString()
             .build()
         /*
          * Alchemist entities
@@ -65,8 +66,8 @@ object ObjectFactory {
          */
         factory.registerImplicit(Number::class.java, CharSequence::class.java) { it.toString() }
         factory.registerImplicit(Double::class.javaPrimitiveType, Time::class.java) { DoubleTime(it) }
-        factory.registerImplicit(List::class.java, Array<Number>::class.java) {
-            it.map { factory.convertOrFail(Number::class.java, it) }.toTypedArray()
+        factory.registerImplicit(List::class.java, Array<Number>::class.java) { list ->
+            list.map { factory.convertOrFail(Number::class.java, it) }.toTypedArray()
         }
         factory.registerImplicit(Number::class.java, Double::class.javaPrimitiveType) { it.toDouble() }
         factory.registerImplicit(Double::class.javaPrimitiveType, BigDecimal::class.java) { BigDecimal(it) }

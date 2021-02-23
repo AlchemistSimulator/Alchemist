@@ -157,7 +157,7 @@ public class TestYAMLLoader {
         final InputStream is = ResourceLoader.getResourceAsStream("isac/16-dependencies.yaml");
         assertNotNull(is);
         final Loader loader = new YamlLoader(is);
-        final List<String> dependencies = loader.getDependencies();
+        final List<String> dependencies = loader.getRemoteDependencies();
         assertEquals(dependencies.size(), 2);
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }

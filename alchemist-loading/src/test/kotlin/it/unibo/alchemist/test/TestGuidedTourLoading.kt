@@ -9,19 +9,31 @@
 
 package it.unibo.alchemist.test
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.ClassPathScanner
 import it.unibo.alchemist.loader.konf.KonfBasedLoader
 import it.unibo.alchemist.loader.konf.SupportedSpecType
 import java.io.File
 
+val cache = Caffeine.newBuilder().build<Pair<String, SupportedSpecType>, KonfBasedLoader> {
+    KonfBasedLoader(it.first, it.second)
+}
+
 class TestGuidedTourLoading : FreeSpec (
     {
         ClassPathScanner.resourcesMatching(".*\\.yml", "guidedTour").forEach { yaml ->
             "${File(yaml.file).name} should load with default parameters" {
-                KonfBasedLoader(yaml.readText(), SupportedSpecType.YAML)
-                    .getDefault<Any, Nothing>() shouldNotBe null
+                cache.get(yaml.readText() to SupportedSpecType.YAML)
+                    ?.getDefault<Any, Nothing>() shouldNotBe null
+            }
+        }
+        ClassPathScanner.resourcesMatching(".*[Vv]ariable.*\\.yml", "guidedTour").forEach { yaml ->
+            "${File(yaml.file).name} should actually define variables" {
+                val parsed = cache.get(yaml.readText() to SupportedSpecType.YAML)!!
+                (parsed.variables + parsed.dependentVariables).size shouldBeGreaterThan 0
             }
         }
     }

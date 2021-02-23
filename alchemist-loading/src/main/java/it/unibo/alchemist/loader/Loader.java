@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,9 @@ public interface Loader extends Serializable {
      * @return an {@link Environment} with all the variables set at their
      *         default values
      */
-    <T, P extends Position<P>> Environment<T, P> getDefault();
+    default <T, P extends Position<P>> Environment<T, P> getDefault(){
+        return getWith(Collections.emptyMap());
+    }
 
     /**
      * Allows to access the currently defined dependent variable (those variables whose value can be determined given a
@@ -78,6 +81,6 @@ public interface Loader extends Serializable {
      * 
      * @return dependencies files
      */
-    List<String> getDependencies();
+    List<String> getRemoteDependencies();
 
 }

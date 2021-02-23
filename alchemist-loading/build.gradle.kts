@@ -30,6 +30,7 @@ dependencies {
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
+    testImplementation(Libs.caffeine)
     testImplementation(Libs.gson)
     testRuntimeOnly("org.scala-lang:scala-compiler:_")
 
@@ -40,6 +41,12 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
     maxHeapSize = "1500m"
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += listOf("-Xallow-result-return-type")
+    }
 }
 
 publishing.publications {

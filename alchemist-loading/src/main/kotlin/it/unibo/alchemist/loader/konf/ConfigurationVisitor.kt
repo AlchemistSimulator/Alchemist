@@ -95,14 +95,17 @@ object DefaultVisitor {
             visitAnyAndBuild<Variable<*>>(context, element)
         }
         logger.debug("Variables: {}", variables)
+        val dependentVariables = visitMultipleNamed(context, injectedRoot["variables"]) { _, element ->
+            visitDependentVariable(context, element)
+        }
+        logger.debug("Dependent variables: {}", dependentVariables)
+        val remoteDependencies = visitMultipleOrdered(context, injectedRoot["dependencies"]) { _, element ->
+            visitAnyAndBuild<String>(context, element)
+        }
         return object : Loader {
-            override fun getDependentVariables(): MutableMap<String, DependentVariable<*>> {
-                TODO("Not yet implemented")
-            }
+            override fun getDependentVariables(): Map<String, DependentVariable<*>> = dependentVariables
 
-            override fun getVariables(): Map<String, Variable<*>> {
-                TODO("Not yet implemented")
-            }
+            override fun getVariables(): Map<String, Variable<*>> = variables
 
             override fun <T : Any?, P : Position<P>?> getWith(values: Map<String, *>?): Environment<T, P> {
                 TODO("Not yet implemented")
@@ -114,9 +117,7 @@ object DefaultVisitor {
                 TODO("Not yet implemented")
             }
 
-            override fun getRemoteDependencies(): MutableList<String> {
-                TODO("Not yet implemented")
-            }
+            override fun getRemoteDependencies(): List<String> = remoteDependencies
         }
     }
 
@@ -180,25 +181,13 @@ object DefaultVisitor {
             else -> null
         } ?: throw IllegalStateException("Unable to obtain a String from $root")
 
-    fun visitConstant(context: Context, root: Any): Constant<*>? =
+    fun visitDependentVariable(context: Context, root: Any): DependentVariable<*>? =
         if (root is Map<*, *>) {
             if (root.containsKey("formula")) {
                 val formula = root["formula"]
                 if (formula is String) {
                     val language = root["language"]?.toString()?.toLowerCase() ?: "groovy"
-                    val interpreter = JSR223Variable<Any>(language, formula)
-                    runCatching { Constant(interpreter.getWith(context.constants)) }
-                        .also {
-                            if (it.isFailure) {
-                                logger.info(
-                                    "Unable to resolve constant from {} with context {}: {}",
-                                    root,
-                                    context,
-                                    it.exceptionOrNull()?.message
-                                )
-                            }
-                        }
-                        .getOrNull()
+                    JSR223Variable<Any>(language, formula)
                 } else {
                     Constant(formula)
                 }
@@ -206,27 +195,39 @@ object DefaultVisitor {
                 visitJVMConstructor(context, root)
                     ?.buildAny<DependentVariable<Any>>(context.factory)
                     ?.getOrNull()
-                    ?.getWith(context.constants)
-                    ?.let { Constant(it) }
-            }.also { if (it != null) context.pushReverseMapping(root, it.value) }
+            }
         } else {
             null
         }
 
+    fun visitConstant(context: Context, root: Any): Constant<*>? =
+        visitDependentVariable(context, root)
+            ?.runCatching { getWith(context.constants) }
+            ?.also { result ->
+                result.exceptionOrNull()?.let { error ->
+                    logger.info("Unable to resolve constant from {} with context {}: {}", root, context, error.message)
+                }
+            }
+            ?.getOrNull()
+            ?.let { Constant(it) }
+            ?.also { context.pushReverseMapping(root as Map<*, *>, it.value) }
+
     val linearVariableParameters = listOf("default", "min", "max", "step")
 
-    fun <T : Any> visitMultipleOrdered(context: Context, root: Any, visitSingle: (Context, Any) -> T?): List<T?> =
-        visitSingle(context, root)?.let { listOf(it) }
-            ?: when(root) {
-                is Iterable<*> -> root.flatMap { element ->
-                    requireNotNull(element) {
-                        "Illegal null element in $root"
+    fun <T : Any> visitMultipleOrdered(context: Context, root: Any?, visitSingle: (Context, Any) -> T?): List<T> =
+        root?.let {
+            visitSingle(context, root)?.let { single -> listOf(single) }
+                ?: when(root) {
+                    is Iterable<*> -> root.flatMap { element ->
+                        requireNotNull(element) {
+                            "Illegal null element in $root"
+                        }
+                        visitMultipleOrdered(context, element, visitSingle)
                     }
-                    visitMultipleOrdered(context, element, visitSingle)
+                    is Map<*, *> -> visitMultipleOrdered(context, root.values, visitSingle)
+                    else -> null
                 }
-                is Map<*, *> -> visitMultipleOrdered(context, root.values, visitSingle)
-                else -> visitSingle(context, root)?.let { listOf(it) } ?: emptyList()
-            }
+        } ?: emptyList()
 
     fun <T : Any> visitMultipleNamed(context: Context, root: Any?, failOnError: Boolean = false, visitSingle: (Context, Any) -> T?): Map<String, T> =
         when(root) {

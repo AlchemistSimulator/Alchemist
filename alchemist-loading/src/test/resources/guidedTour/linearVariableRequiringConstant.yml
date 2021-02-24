@@ -12,8 +12,8 @@ variables:
   *three: &max
     <<: *formula
   min: &min
-    formula: max * 0
+    formula: three * 0
     language: kotlin
   myvar: &myvar
     type: LinearVariable
-    parameters: [0, *min, *max, step]
+    parameters: [0, *min, *max, 1]

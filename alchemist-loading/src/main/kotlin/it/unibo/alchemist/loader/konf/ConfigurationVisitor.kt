@@ -10,7 +10,6 @@
 package it.unibo.alchemist.loader.konf
 
 import arrow.core.Either
-import com.google.errorprone.annotations.Var
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.konf.types.JVMConstructor
@@ -18,7 +17,6 @@ import it.unibo.alchemist.loader.konf.types.NamedParametersConstructor
 import it.unibo.alchemist.loader.konf.types.OrderedParametersConstructor
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
-import it.unibo.alchemist.loader.variables.LinearVariable
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -28,13 +26,14 @@ import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.InputStream
 import java.io.Reader
+import java.lang.IllegalArgumentException
 import java.net.URL
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 import kotlin.reflect.full.isSubclassOf
 
 data class Context(
-    private val lookup: MutableMap<Map<*, *>, Any?> = mutableMapOf(),
+    val lookup: MutableMap<Map<*, *>, Any?> = mutableMapOf(),
     val constants: MutableMap<String, Any?> = mutableMapOf(),
     val factory: Factory = ObjectFactory.makeBaseFactory(),
 ) {
@@ -55,11 +54,16 @@ data class Context(
             if (result == null) {
                 Result.success(null)
             } else {
-                require(result::class.isSubclassOf(destinationType)) {
-                    "A request for type $destinationType has been fullfilled by the context based on $element, " +
-                        "but the result does not match the expected type"
+                if (result::class.isSubclassOf(destinationType)) {
+                    Result.success(destinationType.cast(result))
+                } else {
+                    Result.failure(
+                        IllegalStateException(
+                            "A request for type ${destinationType.qualifiedName} has been fullfilled by the context based on " +
+                                "$element, but the result does not match the expected type"
+                        )
+                    )
                 }
-                Result.success(destinationType.cast(result))
             }
         } else {
             null
@@ -75,21 +79,28 @@ object DefaultVisitor {
     fun visitYaml(yaml: URL) = visitRoot(Yaml().load(yaml.openStream()))
 
     fun visitRoot(root: Map<String, Any>): Loader {
-        val variables = root["variables"] ?: emptyMap<Any, Any>()
         val context = Context()
         var previousSize: Int? = null
-        if (variables is Map<*, *>) {
-            while (context.constants.size != previousSize) {
-                previousSize = context.constants.size
-                context.constants += visitMultipleNamed(context, variables, ::visitConstant).mapValues { (_, v) -> v.value }
-            }
+        var injectedRoot = root
+        while (context.constants.size != previousSize) {
+            previousSize = context.constants.size
+            context.constants += visitMultipleNamed(context, injectedRoot["variables"], false, ::visitConstant)
+                .mapValues { (_, v) -> v.value }
+            injectedRoot = inject(context, injectedRoot)
+            logger.debug("Constants {}", context.constants)
+            logger.debug("Lookup {}", context.lookup)
+            logger.debug("New map {}", injectedRoot)
         }
+        val variables = visitMultipleNamed(context, injectedRoot["variables"]) { _, element ->
+            visitAnyAndBuild<Variable<*>>(context, element)
+        }
+        logger.debug("Variables: {}", variables)
         return object : Loader {
             override fun getDependentVariables(): MutableMap<String, DependentVariable<*>> {
                 TODO("Not yet implemented")
             }
 
-            override fun getVariables(): MutableMap<String, Variable<*>> {
+            override fun getVariables(): Map<String, Variable<*>> {
                 TODO("Not yet implemented")
             }
 
@@ -109,10 +120,24 @@ object DefaultVisitor {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun inject(context: Context, root: Map<String, Any>): Map<String, Any> =
+        replaceKnownValuesRecursively(context, root) as Map<String, Any>
+
+    fun replaceKnownValuesRecursively(context: Context, root: Any?): Any? =
+        when (root) {
+            is Map<*, *> -> context.lookup<Any>(root)?.getOrNull()
+                ?: root.entries.map {
+                    replaceKnownValuesRecursively(context, it.key) to replaceKnownValuesRecursively(context, it.value)
+                }.toMap()
+            is Iterable<*> -> root.map { replaceKnownValuesRecursively(context, it) }
+            else -> root
+        }
+
     fun visitAny(context: Context, root: Any?): Any? =
         when(root) {
             is Iterable<*> -> root.map { visitAny(context, it) }
-            is Map<*, *> -> context.lookup(Any::class, root)?.getOrNull()
+            is Map<*, *> -> context.lookup<Any>(root)?.getOrNull()
                 ?: visitJVMConstructor(context, root)
                 ?: root
             else -> root
@@ -122,8 +147,9 @@ object DefaultVisitor {
         when(root) {
             is T -> root
             is Map<*, *> -> context.lookup<T>(root)?.getOrNull()
-                ?: visitJVMConstructor(context, root)?.buildAny(context.factory)
-            else -> context.factory.convertOrFail(T::class.java, root)
+                ?: visitJVMConstructor(context, root)?.buildAny<T>(context.factory)?.getOrNull()
+            else -> context.factory.convert(T::class.java, root).orElse(null)
+                .also { logger.debug("Unable to convert {} into a {}, discarding.", root, T::class.simpleName) }
         }
 
     fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
@@ -135,12 +161,6 @@ object DefaultVisitor {
             else -> Either.left(listOf(visitAny(context, root)))
         }
 
-//    fun visitJVMConstructor(context: Context, root: Any): JVMConstructor? =
-//        if (root is Map<*, *> && root.containsKey("type")) visitJVMConstructor(context, root) else null
-
-//    inline fun <reified T : Any> visitJVMConstructor(context: Context, root: Map<*, *>): T =
-//        visitJVMConstructor(T::class, context, root)
-
     fun visitJVMConstructor(context: Context, root: Map<*, *>): JVMConstructor? =
         if (root.containsKey("type")) {
             val type: String = visitString(context, root["type"])
@@ -151,13 +171,12 @@ object DefaultVisitor {
         } else {
             null
         }
-//        return constructor.newInstance(expected, context.factory)
 
     fun visitString(context: Context, root: Any?): String =
         when (root) {
             null -> throw IllegalStateException("null value provided where String was required")
             is CharSequence -> root.toString()
-            is Map<*, *> -> context.lookup(CharSequence::class, root)?.getOrNull()?.toString()
+            is Map<*, *> -> context.lookup<CharSequence>(root)?.getOrNull()?.toString()
             else -> null
         } ?: throw IllegalStateException("Unable to obtain a String from $root")
 
@@ -168,47 +187,33 @@ object DefaultVisitor {
                 if (formula is String) {
                     val language = root["language"]?.toString()?.toLowerCase() ?: "groovy"
                     val interpreter = JSR223Variable<Any>(language, formula)
-                    runCatching { interpreter.getWith(context.constants) }
-                        .getOrElse {
-                            logger.info("Unable to resolve constant from {} with context {}: {}", root, context, it.message)
+                    runCatching { Constant(interpreter.getWith(context.constants)) }
+                        .also {
+                            if (it.isFailure) {
+                                logger.info(
+                                    "Unable to resolve constant from {} with context {}: {}",
+                                    root,
+                                    context,
+                                    it.exceptionOrNull()?.message
+                                )
+                            }
                         }
-                        .let { Constant(it) }
+                        .getOrNull()
                 } else {
                     Constant(formula)
-                }.also { context.pushReverseMapping(root, it.value) }
+                }
             } else {
                 visitJVMConstructor(context, root)
                     ?.buildAny<DependentVariable<Any>>(context.factory)
+                    ?.getOrNull()
                     ?.getWith(context.constants)
                     ?.let { Constant(it) }
-            }
+            }.also { if (it != null) context.pushReverseMapping(root, it.value) }
         } else {
             null
         }
 
     val linearVariableParameters = listOf("default", "min", "max", "step")
-
-//    fun visitVariable(context: Context, root: Any): Variable<*>? =
-//        if (root is Map<*, *>) {
-//            if (linearVariableParameters.any { root.keys.contains(it) }) {
-//                val typeName = LinearVariable::class.qualifiedName!!
-//                require(linearVariableParameters.size == root.keys.size
-//                    && root.keys.containsAll(linearVariableParameters)) {
-//                    "Inconsistent ${typeName} definition: requires parameters $linearVariableParameters, " +
-//                        "but ${root} were provided."
-//                }
-//                val parameters = linearVariableParameters.map { visitAny(context, root[it]) }
-//                OrderedParametersConstructor(typeName, linearVariableParameters)
-//                    .buildAny<LinearVariable>(context.factory)
-//            } else {
-//                visitJVMConstructor(context, root)
-//                    ?.buildAny<DependentVariable<Any>>(context.factory)
-//                    ?.getWith(context.constants)
-//                    ?.let { Constant(it) }
-//            }
-//        } else {
-//            null
-//        }.let{TODO()}
 
     fun <T : Any> visitMultipleOrdered(context: Context, root: Any, visitSingle: (Context, Any) -> T?): List<T?> =
         visitSingle(context, root)?.let { listOf(it) }
@@ -223,26 +228,21 @@ object DefaultVisitor {
                 else -> visitSingle(context, root)?.let { listOf(it) } ?: emptyList()
             }
 
-    fun <T : Any> visitMultipleNamed(context: Context, root: Iterable<*>, visitSingle: (Context, Any) -> T?): Map<String, T> =
-        root.flatMap {
-            when(it) {
-                is Map<*, *> -> visitMultipleNamed(context, it, visitSingle)
-                is Iterable<*> -> visitMultipleNamed(context, it, visitSingle)
-                else -> throw IllegalStateException("Unnamed entity $root Probably an array has been used where an object was expected.")
-            }.toList()
-        }.toMap()
+    fun <T : Any> visitMultipleNamed(context: Context, root: Any?, failOnError: Boolean = false, visitSingle: (Context, Any) -> T?): Map<String, T> =
+        when(root) {
+            is Map<*, *> -> visitMultipleNamedFromMap(context, root, failOnError, visitSingle)
+            is Iterable<*> -> root.flatMap { visitMultipleNamed(context, it, failOnError, visitSingle).toList() }.toMap()
+            else -> emptyMap<String, T>().takeUnless { failOnError }
+                ?: throw IllegalArgumentException("Unable to build a named object from $root")
+        }
 
-    fun <T : Any> visitMultipleNamed(context: Context, root: Map<*, *>, visitSingle: (Context, Any) -> T?): Map<String, T> =
+    fun <T : Any> visitMultipleNamedFromMap(context: Context, root: Map<*, *>, failOnError: Boolean = false, visitSingle: (Context, Any) -> T?): Map<String, T> =
         root.flatMap { (key, value) ->
             requireNotNull(value) {
                 "Illegal null element found in $root. Current context: $context."
             }
             visitSingle(context, value)?.let { listOf(key.toString() to it) }
-                ?: when (value) {
-                    is Map<*, *> -> visitMultipleNamed(context, value, visitSingle)
-                    is Iterable<*> -> visitMultipleNamed(context, value, visitSingle)
-                    else -> emptyMap()
-                }.toList()
+                ?: visitMultipleNamed(context, value, failOnError, visitSingle).toList()
         }.toMap()
 
     val logger = LoggerFactory.getLogger(DefaultVisitor::class.java)

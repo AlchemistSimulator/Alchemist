@@ -12,8 +12,6 @@ package it.unibo.alchemist.loader.konf.types
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import it.unibo.alchemist.ClassPathScanner
-import it.unibo.alchemist.loader.konf.EntityMapper.buildAny
-import it.unibo.alchemist.loader.konf.KonfBasedLoader
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
@@ -115,11 +113,11 @@ sealed class JVMConstructor(val typeName: String) {
                     when {
                         compatibleSubtypes.isEmpty() -> {
                             logger.warn(
-                                "Constructor {} discarded as parameter #{}:{} has no compatible subtype {} (expected: {})",
+                                "Constructor {} discarded as {} is incompatible with parameter #{}:{}",
                                 constructor,
+                                parameter,
                                 mappedIndex,
                                 potentialType.type,
-                                typeName
                             )
                             emptyList()
                         }
@@ -135,7 +133,7 @@ sealed class JVMConstructor(val typeName: String) {
                     }
                 }
                 when (possibleMappings.size) {
-                    0 -> throw IllegalStateException("Could not build paramenter #$index defined as $parameter")
+                    0 -> throw IllegalStateException("Could not build parameter #$index defined as $parameter")
                     1 ->  possibleMappings.first()
                     else -> throw IllegalStateException(
                         "Ambiguous parameter #$index $parameter, multiple options match: $possibleMappings"
@@ -157,34 +155,48 @@ sealed class JVMConstructor(val typeName: String) {
         }
     }
 
-    inline fun <reified T : Any> buildAny(factory: Factory): T = buildAny(T::class.java, factory)
+    inline fun <reified T : Any> buildAny(factory: Factory): Result<T> = buildAny(T::class.java, factory)
 
-    fun <T : Any> buildAny(type: Class<out T>, factory: Factory): T {
+    fun <T : Any> buildAny(type: Class<out T>, factory: Factory): Result<T> {
         val hasPackage = typeName.contains('.')
         val subtypes = ClassPathScanner.subTypesOf(type) +
             if (Modifier.isAbstract(type.modifiers)) emptyList() else listOf(type)
         val perfectMatches = subtypes.filter { typeName == if (hasPackage) it.name else it.simpleName }
-        when (perfectMatches.size) {
-            0 -> KonfBasedLoader.logger.warn("No perfect match for type {} in {}", typeName, subtypes.map { it.name })
-            1 -> return newInstance(perfectMatches.first().kotlin, factory)
-            else -> throw IllegalStateException(
-                "Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}"
-            )
-        }
-        val subOptimalMatches = subtypes.filter {
-            typeName.equals(if (hasPackage) it.name else it.simpleName, ignoreCase = true)
-        }
-        return when (subOptimalMatches.size) {
-            0 -> throw IllegalStateException(
-                """
-            No valid match for type $typeName among subtypes of ${type.simpleName}.
-            Valid subtypes are: $subtypes
-            """.trimMargin()
-            )
-            1 -> newInstance(subOptimalMatches.first().kotlin, factory)
-            else ->  throw IllegalStateException(
-                "Multiple matches for $typeName as subtype of ${type.simpleName}: ${perfectMatches.map { it.name }}. " +
-                    "Disambiguation is required."
+        return when (perfectMatches.size) {
+            0 -> {
+                val subOptimalMatches = subtypes.filter {
+                    typeName.equals(if (hasPackage) it.name else it.simpleName, ignoreCase = true)
+                }
+                when (subOptimalMatches.size) {
+                    0 -> Result.failure(
+                        IllegalStateException(
+                            """
+                            No valid match for type $typeName among subtypes of ${type.simpleName}.
+                            Valid subtypes are: $subtypes
+                            """.trimMargin()
+                        )
+                    )
+                    1 -> {
+                        logger.warn(
+                            "{} has been selected even though it is not a perfect match for {}",
+                            subOptimalMatches.first().name,
+                            typeName
+                        )
+                        Result.success(newInstance(subOptimalMatches.first().kotlin, factory))
+                    }
+                    else ->  Result.failure(
+                        IllegalStateException(
+                            "Multiple matches for $typeName as subtype of ${type.simpleName}: " +
+                                "${perfectMatches.map { it.name }}. Disambiguation is required."
+                        )
+                    )
+                }
+            }
+            1 -> return Result.success(newInstance(perfectMatches.first().kotlin, factory))
+            else -> return Result.failure(
+                IllegalStateException(
+                    "Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}"
+                )
             )
         }
     }

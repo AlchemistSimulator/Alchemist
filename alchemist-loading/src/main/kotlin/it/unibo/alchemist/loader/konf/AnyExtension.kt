@@ -9,9 +9,6 @@
 
 package it.unibo.alchemist.loader.konf
 
-import it.unibo.alchemist.loader.konf.types.JVMConstructor
-import it.unibo.alchemist.loader.konf.types.VariableDescriptor
-
 val Any?.requireNull get() = require(this == null) {
     "Illegal non-null value: $this"
 }

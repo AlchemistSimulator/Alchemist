@@ -11,5 +11,12 @@ package it.unibo.alchemist.loader.konf
 
 import arrow.core.Either
 
+/**
+ * Returns the left of this [Either] if it is left, and null otherwise
+ */
 val <A, B> Either<A, B>.leftOrNull get(): A? = if (this is Either.Left) a else null
+
+/**
+ * Returns the right of this [Either] if it is right, and null otherwise
+ */
 val <A, B> Either<A, B>.rightOrNull get(): B? = if (this is Either.Right) b else null

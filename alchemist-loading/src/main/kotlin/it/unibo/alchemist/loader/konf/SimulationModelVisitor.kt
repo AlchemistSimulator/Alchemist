@@ -270,14 +270,6 @@ object SimulationModelVisitor {
         val factory: Factory = ObjectFactory.makeBaseFactory(),
     ) {
 
-//        fun pushPlaceHolder(key: String, value: Any) {
-//            if (value is Map<*, *>) {
-//                if(placeHolderLookup.containsKey(placeHolder))
-//            } else {
-//                throw IllegalStateException("$value can't be associated with $key")
-//            }
-//        }
-
         fun pushLookupEntry(name: String, element: Map<*, *>, value: Any?) {
             if (namedLookup.containsKey(name)) {
                 val previous = elementLookup[element]

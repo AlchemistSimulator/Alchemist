@@ -324,12 +324,3 @@ object SimulationModelVisitor {
 class Constant<V>(val value: V) : DependentVariable<V> {
     override fun getWith(variables: Map<String, Any>): V = value
 }
-
-fun main() {
-    println(
-        SimulationModelVisitor
-            .visitYaml(File("/home/danysk/LocalProjects/Alchemist/alchemist-loading/src/test/resources/guidedTour/linearVariableRequiringConstant.yml").readText())
-            .getDefault<Any, Nothing>()
-    )
-}
-// class ContextImpl() : Context

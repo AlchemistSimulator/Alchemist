@@ -50,9 +50,11 @@ object ObjectFactory {
         factory.registerImplicit(CharSequence::class.java, Incarnation::class.java) {
             val availableIncarnations = SupportedIncarnations.getAvailableIncarnations()
             if (availableIncarnations.isEmpty()) {
-                throw IllegalStateException("No incarnations have been included, " +
-                    "please make sure that your class path includes at least one module named like " +
-                    "it.unibo.alchemist:alchemist-*")
+                throw IllegalStateException(
+                    "No incarnations have been included, " +
+                        "please make sure that your class path includes at least one module named like " +
+                        "it.unibo.alchemist:alchemist-*"
+                )
             }
             SupportedIncarnations.get<Nothing, Nothing>(it.toString()).orElseThrow {
                 java.lang.IllegalArgumentException("Unknown incarnation \"$it\". Possible values are $availableIncarnations")

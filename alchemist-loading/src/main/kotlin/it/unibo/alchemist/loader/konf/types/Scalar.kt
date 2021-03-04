@@ -9,14 +9,12 @@
 
 package it.unibo.alchemist.loader.konf.types
 
-import com.fasterxml.jackson.annotation.JsonCreator
+// sealed class AnyYAMLType<out V>
+// sealed class Scalar<out V>
+// sealed class Numeric : Scalar()
+// sealed class String : Scalar()
 
-//sealed class AnyYAMLType<out V>
-//sealed class Scalar<out V>
-//sealed class Numeric : Scalar()
-//sealed class String : Scalar()
-
-//class Scalar {
+// class Scalar {
 //    companion object {
 //        @JsonCreator
 //        @JvmStatic
@@ -24,4 +22,4 @@ import com.fasterxml.jackson.annotation.JsonCreator
 //
 //        }
 //    }
-//}
+// }

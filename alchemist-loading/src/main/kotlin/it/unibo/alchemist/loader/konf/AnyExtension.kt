@@ -17,7 +17,7 @@ fun requireAllNulls(vararg objects: Any?) = objects.also {
     objects.forEach { it.requireNull }
 }
 
-//fun Any.resolve(): Any =
+// fun Any.resolve(): Any =
 //    if (this is Map<*, *>) {
 //        val type = this["type"]
 //        if (type != null) {

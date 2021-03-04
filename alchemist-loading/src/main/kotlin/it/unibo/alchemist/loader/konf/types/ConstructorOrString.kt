@@ -24,8 +24,8 @@ class ConstructorOrString private constructor(source: Either<String, JVMConstruc
         fun buildFromString(stringDescriptor: String) = ConstructorOrString(Either.left(stringDescriptor))
 
         @JsonCreator @JvmStatic
-        fun buildFromTypeAndParameters(type: String, parameters: Iterable<*>?)
-            = ConstructorOrString(Either.right(JVMConstructor.create(type, parameters)))
+        fun buildFromTypeAndParameters(type: String, parameters: Iterable<*>?) =
+            ConstructorOrString(Either.right(JVMConstructor.create(type, parameters)))
     }
 
     override fun toString(): String = string ?: constructor?.toString() ?: TODO()

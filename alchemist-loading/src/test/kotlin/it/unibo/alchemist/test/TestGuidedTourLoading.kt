@@ -22,7 +22,7 @@ val cache = Caffeine.newBuilder().build<Pair<String, SupportedSpecType>, KonfBas
     KonfBasedLoader(it.first, it.second)
 }
 
-class TestGuidedTourLoading : FreeSpec (
+class TestGuidedTourLoading : FreeSpec(
     {
         ClassPathScanner.resourcesMatching(".*\\.yml", "guidedTour").forEach { yaml ->
             "${File(yaml.file).name} should load with default parameters" {

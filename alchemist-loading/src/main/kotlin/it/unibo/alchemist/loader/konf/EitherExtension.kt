@@ -10,7 +10,6 @@
 package it.unibo.alchemist.loader.konf
 
 import arrow.core.Either
-import com.fasterxml.jackson.annotation.JsonCreator
 
 val <A, B> Either<A, B>.leftOrNull get(): A? = if (this is Either.Left) a else null
 val <A, B> Either<A, B>.rightOrNull get(): B? = if (this is Either.Right) b else null

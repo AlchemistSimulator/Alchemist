@@ -128,40 +128,44 @@ object DefaultVisitor {
 
     private fun replaceKnownValuesRecursively(context: Context, root: Any?): Any? =
         when (root) {
-            is Map<*, *> -> context.lookup<Any>(root)?.getOrNull()
-                ?: root.entries.map {
-                    replaceKnownValuesRecursively(context, it.key) to replaceKnownValuesRecursively(context, it.value)
-                }.toMap()
+            is Map<*, *> ->
+                context.lookup<Any>(root)?.getOrNull()
+                    ?: root.entries.map {
+                        replaceKnownValuesRecursively(context, it.key) to replaceKnownValuesRecursively(context, it.value)
+                    }.toMap()
             is Iterable<*> -> root.map { replaceKnownValuesRecursively(context, it) }
             else -> root
         }
 
     private fun visitAny(context: Context, root: Any?): Any? =
-        when(root) {
+        when (root) {
             is Iterable<*> -> root.map { visitAny(context, it) }
-            is Map<*, *> -> context.lookup<Any>(root)?.getOrNull()
-                ?: visitJVMConstructor(context, root)
-                ?: root
+            is Map<*, *> ->
+                context.lookup<Any>(root)?.getOrNull()
+                    ?: visitJVMConstructor(context, root)
+                    ?: root
             else -> root
         }
 
     private inline fun <reified T : Any> visitAnyAndBuild(context: Context, root: Any): T? =
-        when(root) {
+        when (root) {
             is T -> root
-            is Map<*, *> -> context.lookup<T>(root)?.getOrNull()
-                ?: visitJVMConstructor(context, root)?.buildAny<T>(context.factory)?.getOrNull()
-            else -> context.factory.convert(T::class.java, root).orElse(null)
-                .also { logger.debug("Unable to convert {} into a {}, discarding.", root, T::class.simpleName) }
+            is Map<*, *> ->
+                context.lookup<T>(root)?.getOrNull()
+                    ?: visitJVMConstructor(context, root)?.buildAny<T>(context.factory)?.getOrNull()
+            else ->
+                context.factory.convert(T::class.java, root).orElse(null)
+                    .also { logger.debug("Unable to convert {} into a {}, discarding.", root, T::class.simpleName) }
         }
 
     private fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
-            null -> Either.left(emptyList<Any>())
-            is Iterable<*> -> Either.left(root.map { visitAny(context, it) })
-            is Map<*, *> -> Either.right(
-                root.map { visitString(context, it.key) to visitAny(context, it.value) }.toMap()
-            )
-            else -> Either.left(listOf(visitAny(context, root)))
-        }
+        null -> Either.left(emptyList<Any>())
+        is Iterable<*> -> Either.left(root.map { visitAny(context, it) })
+        is Map<*, *> -> Either.right(
+            root.map { visitString(context, it.key) to visitAny(context, it.value) }.toMap()
+        )
+        else -> Either.left(listOf(visitAny(context, root)))
+    }
 
     private fun visitJVMConstructor(context: Context, root: Map<*, *>): JVMConstructor? =
         if (root.containsKey("type")) {
@@ -215,7 +219,7 @@ object DefaultVisitor {
     private fun <T : Any> visitMultipleOrdered(context: Context, root: Any?, visitSingle: (Context, Any) -> T?): List<T> =
         root?.let {
             visitSingle(context, root)?.let { single -> listOf(single) }
-                ?: when(root) {
+                ?: when (root) {
                     is Iterable<*> -> root.flatMap { element ->
                         requireNotNull(element) {
                             "Illegal null element in $root"
@@ -228,19 +232,22 @@ object DefaultVisitor {
         } ?: emptyList()
 
     private fun <T : Any> visitMultipleNamed(
-        context: Context, root: Any?,
+        context: Context,
+        root: Any?,
         failOnError: Boolean = false,
         visitSingle: (Context, String, Any) -> T?
     ): Map<String, T> =
-        when(root) {
+        when (root) {
             is Map<*, *> -> visitMultipleNamedFromMap(context, root, failOnError, visitSingle)
             is Iterable<*> -> root.flatMap { visitMultipleNamed(context, it, failOnError, visitSingle).toList() }.toMap()
-            else -> emptyMap<String, T>().takeUnless { failOnError }
-                ?: throw IllegalArgumentException("Unable to build a named object from $root")
+            else ->
+                emptyMap<String, T>().takeUnless { failOnError }
+                    ?: throw IllegalArgumentException("Unable to build a named object from $root")
         }
 
     private fun <T : Any> visitMultipleNamedFromMap(
-        context: Context, root: Map<*, *>,
+        context: Context,
+        root: Map<*, *>,
         failOnError: Boolean = false,
         visitSingle: (Context, String, Any) -> T?
     ): Map<String, T> =
@@ -254,7 +261,7 @@ object DefaultVisitor {
 
     val logger = LoggerFactory.getLogger(DefaultVisitor::class.java)
 
-    private data class PlaceHolder (val name: String)
+    private data class PlaceHolder(val name: String)
 
     private data class Context(
         val constants: MutableMap<String, Any?> = mutableMapOf(),
@@ -310,11 +317,11 @@ object DefaultVisitor {
             }
 
         fun lookupElementByName(name: String): Map<*, *> =
-             namedLookup[name] ?: throw IllegalArgumentException("No element named $name")
+            namedLookup[name] ?: throw IllegalArgumentException("No element named $name")
     }
 }
 
-class Constant<V>(val value: V): DependentVariable<V> {
+class Constant<V>(val value: V) : DependentVariable<V> {
     override fun getWith(variables: Map<String, Any>): V = value
 }
 
@@ -325,4 +332,4 @@ fun main() {
             .getDefault<Any, Nothing>()
     )
 }
-//class ContextImpl() : Context
+// class ContextImpl() : Context

@@ -57,8 +57,8 @@ class NamedParametersConstructor(
             )
         }
         val orderedParameters = usableParameters.map { parameterList ->
-                parameterList.sortedBy { it.index }.map { parametersMap[it.name] }.filterNotNull()
-            }
+            parameterList.sortedBy { it.index }.map { parametersMap[it.name] }.filterNotNull()
+        }
             .distinct()
         if (orderedParameters.size > 1) {
             throw IllegalArgumentException(
@@ -71,7 +71,7 @@ class NamedParametersConstructor(
         return orderedParameters
     }
 
-    private fun Collection<KParameter>.namedParametersDescriptor() = "${size}-ary constructor: " + filter { it.name != null }
+    private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " + filter { it.name != null }
         .joinToString {
             "${it.name}:${it.type}${if (it.isOptional) "<optional>" else "" }"
         }
@@ -134,7 +134,7 @@ sealed class JVMConstructor(val typeName: String) {
                 }
                 when (possibleMappings.size) {
                     0 -> throw IllegalStateException("Could not build parameter #$index defined as $parameter")
-                    1 ->  possibleMappings.first()
+                    1 -> possibleMappings.first()
                     else -> throw IllegalStateException(
                         "Ambiguous parameter #$index $parameter, multiple options match: $possibleMappings"
                     )
@@ -184,7 +184,7 @@ sealed class JVMConstructor(val typeName: String) {
                         )
                         Result.success(newInstance(subOptimalMatches.first().kotlin, factory))
                     }
-                    else ->  Result.failure(
+                    else -> Result.failure(
                         IllegalStateException(
                             "Multiple matches for $typeName as subtype of ${type.simpleName}: " +
                                 "${perfectMatches.map { it.name }}. Disambiguation is required."
@@ -200,7 +200,6 @@ sealed class JVMConstructor(val typeName: String) {
             )
         }
     }
-
 
     private fun CreationResult<*>.logErrors(logger: (String, Array<Any?>) -> Unit) {
         for ((constructor, exception) in exceptions) {

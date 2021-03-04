@@ -15,6 +15,7 @@ import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.konf.types.JVMConstructor
 import it.unibo.alchemist.loader.konf.types.NamedParametersConstructor
 import it.unibo.alchemist.loader.konf.types.OrderedParametersConstructor
+import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
 import it.unibo.alchemist.loader.variables.Variable
@@ -24,10 +25,8 @@ import it.unibo.alchemist.model.interfaces.Position
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
 import org.yaml.snakeyaml.Yaml
-import java.io.File
 import java.io.InputStream
 import java.io.Reader
-import java.lang.IllegalArgumentException
 import java.net.URL
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
@@ -311,8 +310,4 @@ object SimulationModelVisitor {
         fun lookupElementByName(name: String): Map<*, *> =
             namedLookup[name] ?: throw IllegalArgumentException("No element named $name")
     }
-}
-
-class Constant<V>(val value: V) : DependentVariable<V> {
-    override fun getWith(variables: Map<String, Any>): V = value
 }

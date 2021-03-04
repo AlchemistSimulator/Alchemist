@@ -14,11 +14,10 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.ClassPathScanner
-import it.unibo.alchemist.loader.konf.KonfBasedLoader
 import it.unibo.alchemist.loader.konf.SupportedSpecType
 import java.io.File
 
-val cache = Caffeine.newBuilder().build<Pair<String, SupportedSpecType>, KonfBasedLoader> {
+val cache = Caffeine.newBuilder().build<Pair<String, SupportedSpecType>, Loader> {
     KonfBasedLoader(it.first, it.second)
 }
 

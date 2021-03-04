@@ -29,6 +29,10 @@ import kotlin.reflect.KClass
 import kotlin.reflect.cast
 import kotlin.reflect.full.isSubclassOf
 
+/**
+ * Contains the model-to-model translation between the Alchemist YAML specification and the
+ * loading system.
+ */
 object SimulationModelVisitor {
 
     fun visitYaml(yaml: String) = visitRoot(Yaml().load(yaml))
@@ -118,16 +122,16 @@ object SimulationModelVisitor {
 
     @Suppress("UNCHECKED_CAST")
     private fun inject(context: Context, root: Map<String, Any>): Map<String, Any> =
-        replaceKnownValuesRecursively(context, root) as Map<String, Any>
+        replaceKnownRecursively(context, root) as Map<String, Any>
 
-    private fun replaceKnownValuesRecursively(context: Context, root: Any?): Any? =
+    private fun replaceKnownRecursively(context: Context, root: Any?): Any? =
         when (root) {
             is Map<*, *> ->
                 context.lookup<Any>(root)?.getOrNull()
                     ?: root.entries.map {
-                        replaceKnownValuesRecursively(context, it.key) to replaceKnownValuesRecursively(context, it.value)
+                        replaceKnownRecursively(context, it.key) to replaceKnownRecursively(context, it.value)
                     }.toMap()
-            is Iterable<*> -> root.map { replaceKnownValuesRecursively(context, it) }
+            is Iterable<*> -> root.map { replaceKnownRecursively(context, it) }
             else -> root
         }
 
@@ -210,20 +214,23 @@ object SimulationModelVisitor {
             ?.getOrNull()
             ?.let { Constant(it) }
 
-    private fun <T : Any> visitMultipleOrdered(context: Context, root: Any?, visitSingle: (Context, Any) -> T?): List<T> =
-        root?.let {
-            visitSingle(context, root)?.let { single -> listOf(single) }
-                ?: when (root) {
-                    is Iterable<*> -> root.flatMap { element ->
-                        requireNotNull(element) {
-                            "Illegal null element in $root"
-                        }
-                        visitMultipleOrdered(context, element, visitSingle)
+    private fun <T : Any> visitMultipleOrdered(
+        context: Context,
+        root: Any?,
+        visitSingle: (Context, Any) -> T?
+    ): List<T> = root?.let {
+        visitSingle(context, root)?.let { single -> listOf(single) }
+            ?: when (root) {
+                is Iterable<*> -> root.flatMap { element ->
+                    requireNotNull(element) {
+                        "Illegal null element in $root"
                     }
-                    is Map<*, *> -> visitMultipleOrdered(context, root.values, visitSingle)
-                    else -> null
+                    visitMultipleOrdered(context, element, visitSingle)
                 }
-        } ?: emptyList()
+                is Map<*, *> -> visitMultipleOrdered(context, root.values, visitSingle)
+                else -> null
+            }
+    } ?: emptyList()
 
     private fun <T : Any> visitMultipleNamed(
         context: Context,
@@ -233,7 +240,8 @@ object SimulationModelVisitor {
     ): Map<String, T> =
         when (root) {
             is Map<*, *> -> visitMultipleNamedFromMap(context, root, failOnError, visitSingle)
-            is Iterable<*> -> root.flatMap { visitMultipleNamed(context, it, failOnError, visitSingle).toList() }.toMap()
+            is Iterable<*> ->
+                root.flatMap { visitMultipleNamed(context, it, failOnError, visitSingle).toList() }.toMap()
             else ->
                 emptyMap<String, T>().takeUnless { failOnError }
                     ?: throw IllegalArgumentException("Unable to build a named object from $root")
@@ -255,8 +263,6 @@ object SimulationModelVisitor {
 
     val logger = LoggerFactory.getLogger(SimulationModelVisitor::class.java)
 
-    private data class PlaceHolder(val name: String)
-
     private data class Context(
         val constants: MutableMap<String, Any?> = mutableMapOf(),
         val elementLookup: MutableMap<Map<*, *>, Any?> = mutableMapOf(),
@@ -267,7 +273,10 @@ object SimulationModelVisitor {
         fun pushLookupEntry(name: String, element: Map<*, *>, value: Any?) {
             if (namedLookup.containsKey(name)) {
                 val previous = elementLookup[element]
-                if (value != previous && value != null && previous != null && value::class == previous::class) {
+                val differentButSameClass = value != previous &&
+                    value != null && previous != null &&
+                    value::class == previous::class
+                if (differentButSameClass) {
                     throw IllegalStateException(
                         "Tried to substitute value for $name: $element from $value to $previous"
                     )
@@ -292,8 +301,8 @@ object SimulationModelVisitor {
                     } else {
                         Result.failure(
                             IllegalStateException(
-                                "A request for type ${destinationType.qualifiedName} has been fullfilled by the context based on " +
-                                    "$element, but the result does not match the expected type"
+                                "A request for type ${destinationType.qualifiedName} has been fullfilled " +
+                                    "by the context based on $element, but the result does not match the expected type"
                             )
                         )
                     }

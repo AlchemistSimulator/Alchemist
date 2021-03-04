@@ -31,7 +31,7 @@ public interface Loader extends Serializable {
      * @return an {@link Environment} with all the variables set at their
      *         default values
      */
-    default <T, P extends Position<P>> Environment<T, P> getDefault(){
+    default <T, P extends Position<P>> Environment<T, P> getDefault() {
         return getWith(Collections.emptyMap());
     }
 

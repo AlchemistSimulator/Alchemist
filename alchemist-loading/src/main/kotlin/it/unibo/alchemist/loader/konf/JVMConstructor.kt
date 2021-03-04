@@ -19,6 +19,9 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmErasure
 
+/**
+ * A [JVMConstructor] whose [parameters] are an ordered list (common case for any JVM language).
+ */
 class OrderedParametersConstructor(
     type: String,
     private val parameters: List<*> = emptyList<Any?>()
@@ -29,6 +32,11 @@ class OrderedParametersConstructor(
     override fun toString(): String = "$typeName${parameters.joinToString(prefix = "(", postfix = ")")}"
 }
 
+/**
+ * A [JVMConstructor] whose parameters are named
+ * and hence stored in a [parametersMap]
+ * (no pure Java class works with named parameters now, Kotlin-only).
+ */
 class NamedParametersConstructor(
     type: String,
     private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()
@@ -67,19 +75,93 @@ class NamedParametersConstructor(
         return orderedParameters
     }
 
-    private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " + filter { it.name != null }
-        .joinToString {
-            "${it.name}:${it.type}${if (it.isOptional) "<optional>" else "" }"
-        }
+    private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +
+        filter { it.name != null }.joinToString { "${it.name}:${it.type}${if (it.isOptional) "<optional>" else "" }" }
 
     override fun toString(): String = "$typeName($parametersMap)"
 }
 
+/**
+ * A constructor for a JVM class of type [typeName].
+ */
 sealed class JVMConstructor(val typeName: String) {
 
+    /**
+     * provided a [target] class, extracts the parameters as an ordered list.
+     */
     abstract fun <T : Any> parametersFor(target: KClass<T>): List<*>
 
-    private inline fun <reified T : Any> newInstance(jirf: Factory): T = newInstance(T::class, jirf)
+    /**
+     * Provided a JIRF [factory], builds an instance of the requested type [T] or fails gracefully,
+     * returning a [Result<T>].
+     */
+    inline fun <reified T : Any> buildAny(factory: Factory): Result<T> = buildAny(T::class.java, factory)
+
+    /**
+     * Provided a JIRF [factory], builds an instance of the requested [type] T or fails gracefully,
+     * returning a [Result<T>].
+     */
+    fun <T : Any> buildAny(type: Class<out T>, factory: Factory): Result<T> {
+        val hasPackage = typeName.contains('.')
+        val subtypes = ClassPathScanner.subTypesOf(type) +
+            if (Modifier.isAbstract(type.modifiers)) emptyList() else listOf(type)
+        val perfectMatches = subtypes.filter { typeName == if (hasPackage) it.name else it.simpleName }
+        return when (perfectMatches.size) {
+            0 -> {
+                val subOptimalMatches = subtypes.filter {
+                    typeName.equals(if (hasPackage) it.name else it.simpleName, ignoreCase = true)
+                }
+                when (subOptimalMatches.size) {
+                    0 -> Result.failure(
+                        IllegalStateException(
+                            """
+                            No valid match for type $typeName among subtypes of ${type.simpleName}.
+                            Valid subtypes are: $subtypes
+                            """.trimMargin()
+                        )
+                    )
+                    1 -> {
+                        logger.warn(
+                            "{} has been selected even though it is not a perfect match for {}",
+                            subOptimalMatches.first().name,
+                            typeName
+                        )
+                        Result.success(newInstance(subOptimalMatches.first().kotlin, factory))
+                    }
+                    else -> Result.failure(
+                        IllegalStateException(
+                            "Multiple matches for $typeName as subtype of ${type.simpleName}: " +
+                                "${perfectMatches.map { it.name }}. Disambiguation is required."
+                        )
+                    )
+                }
+            }
+            1 -> Result.success(newInstance(perfectMatches.first().kotlin, factory))
+            else -> Result.failure(
+                IllegalStateException("Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}")
+            )
+        }
+    }
+
+    private fun CreationResult<*>.logErrors(logger: (String, Array<Any?>) -> Unit) {
+        for ((constructor, exception) in exceptions) {
+            val errorMessages = generateSequence<Pair<Throwable?, String?>>(
+                exception to exception.message
+            ) { (outer, _) -> outer?.cause to outer?.cause?.message }
+                .takeWhile { it.first != null }
+                .filter { !it.second.isNullOrBlank() }
+                .map { "${it.first!!::class.simpleName}: ${it.second}" }
+                .toList()
+            logger(
+                "Constructor {} failed for {} ",
+                arrayOf(
+                    constructor,
+                    if (errorMessages.isEmpty()) "unknown reasons" else "the following reasons:",
+                )
+            )
+            errorMessages.reversed().forEach { logger("  - $it", emptyArray()) }
+        }
+    }
 
     private fun <T : Any> newInstance(target: KClass<T>, jirf: Factory): T {
         /*
@@ -148,72 +230,6 @@ sealed class JVMConstructor(val typeName: String) {
             throw masterException
         }.also {
             creationResult.logErrors { message, arguments -> logger.warn(message, *arguments) }
-        }
-    }
-
-    inline fun <reified T : Any> buildAny(factory: Factory): Result<T> = buildAny(T::class.java, factory)
-
-    fun <T : Any> buildAny(type: Class<out T>, factory: Factory): Result<T> {
-        val hasPackage = typeName.contains('.')
-        val subtypes = ClassPathScanner.subTypesOf(type) +
-            if (Modifier.isAbstract(type.modifiers)) emptyList() else listOf(type)
-        val perfectMatches = subtypes.filter { typeName == if (hasPackage) it.name else it.simpleName }
-        return when (perfectMatches.size) {
-            0 -> {
-                val subOptimalMatches = subtypes.filter {
-                    typeName.equals(if (hasPackage) it.name else it.simpleName, ignoreCase = true)
-                }
-                when (subOptimalMatches.size) {
-                    0 -> Result.failure(
-                        IllegalStateException(
-                            """
-                            No valid match for type $typeName among subtypes of ${type.simpleName}.
-                            Valid subtypes are: $subtypes
-                            """.trimMargin()
-                        )
-                    )
-                    1 -> {
-                        logger.warn(
-                            "{} has been selected even though it is not a perfect match for {}",
-                            subOptimalMatches.first().name,
-                            typeName
-                        )
-                        Result.success(newInstance(subOptimalMatches.first().kotlin, factory))
-                    }
-                    else -> Result.failure(
-                        IllegalStateException(
-                            "Multiple matches for $typeName as subtype of ${type.simpleName}: " +
-                                "${perfectMatches.map { it.name }}. Disambiguation is required."
-                        )
-                    )
-                }
-            }
-            1 -> return Result.success(newInstance(perfectMatches.first().kotlin, factory))
-            else -> return Result.failure(
-                IllegalStateException(
-                    "Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}"
-                )
-            )
-        }
-    }
-
-    private fun CreationResult<*>.logErrors(logger: (String, Array<Any?>) -> Unit) {
-        for ((constructor, exception) in exceptions) {
-            val errorMessages = generateSequence<Pair<Throwable?, String?>>(
-                exception to exception.message
-            ) { (outer, _) -> outer?.cause to outer?.cause?.message }
-                .takeWhile { it.first != null }
-                .filter { !it.second.isNullOrBlank() }
-                .map { "${it.first!!::class.simpleName}: ${it.second}" }
-                .toList()
-            logger(
-                "Constructor {} failed for {} ",
-                arrayOf(
-                    constructor,
-                    if (errorMessages.isEmpty()) "unknown reasons" else "the following reasons:",
-                )
-            )
-            errorMessages.reversed().forEach { logger("  - $it", emptyArray()) }
         }
     }
 

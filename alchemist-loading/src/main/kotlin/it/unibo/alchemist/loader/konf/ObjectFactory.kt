@@ -34,6 +34,9 @@ import org.apache.commons.lang3.tuple.Pair as CommonsLangPair
 import org.apache.commons.lang3.tuple.Triple as CommonsLangTriple
 import org.apache.commons.math3.util.Pair as CommonsMathPair
 
+/**
+ *
+ */
 object ObjectFactory {
 
     fun makeBaseFactory(): Factory {
@@ -57,7 +60,7 @@ object ObjectFactory {
                 )
             }
             SupportedIncarnations.get<Nothing, Nothing>(it.toString()).orElseThrow {
-                java.lang.IllegalArgumentException("Unknown incarnation \"$it\". Possible values are $availableIncarnations")
+                IllegalArgumentException("Unknown incarnation \"$it\". Possible values are $availableIncarnations")
             }
         }
         factory.registerImplicit(CharSequence::class.java, FilteringPolicy::class.java) {

@@ -33,7 +33,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.cast
 import kotlin.reflect.full.isSubclassOf
 
-object DefaultVisitor {
+object SimulationModelVisitor {
 
     private val linearVariableParameters = listOf("default", "min", "max", "step")
 
@@ -259,7 +259,7 @@ object DefaultVisitor {
                 ?: visitMultipleNamed(context, value, failOnError, visitSingle).toList()
         }.toMap()
 
-    val logger = LoggerFactory.getLogger(DefaultVisitor::class.java)
+    val logger = LoggerFactory.getLogger(SimulationModelVisitor::class.java)
 
     private data class PlaceHolder(val name: String)
 
@@ -327,7 +327,7 @@ class Constant<V>(val value: V) : DependentVariable<V> {
 
 fun main() {
     println(
-        DefaultVisitor
+        SimulationModelVisitor
             .visitYaml(File("/home/danysk/LocalProjects/Alchemist/alchemist-loading/src/test/resources/guidedTour/linearVariableRequiringConstant.yml").readText())
             .getDefault<Any, Nothing>()
     )

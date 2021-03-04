@@ -11,27 +11,28 @@ package it.unibo.alchemist.test
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.ints.shouldBeGreaterThan
+import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.ClassPathScanner
-import it.unibo.alchemist.loader.konf.SupportedSpecType
+import it.unibo.alchemist.loader.Loader
+import it.unibo.alchemist.loader.konf.SimulationModelVisitor
 import java.io.File
 
-val cache = Caffeine.newBuilder().build<Pair<String, SupportedSpecType>, Loader> {
-    KonfBasedLoader(it.first, it.second)
+val cache = Caffeine.newBuilder().build<String, Loader> {
+    SimulationModelVisitor.visitYaml(it)
 }
 
 class TestGuidedTourLoading : FreeSpec(
     {
         ClassPathScanner.resourcesMatching(".*\\.yml", "guidedTour").forEach { yaml ->
             "${File(yaml.file).name} should load with default parameters" {
-                cache.get(yaml.readText() to SupportedSpecType.YAML)
+                cache.get(yaml.readText())
                     ?.getDefault<Any, Nothing>() shouldNotBe null
             }
         }
         ClassPathScanner.resourcesMatching(".*[Vv]ariable.*\\.yml", "guidedTour").forEach { yaml ->
             "${File(yaml.file).name} should actually define variables" {
-                val parsed = cache.get(yaml.readText() to SupportedSpecType.YAML)!!
+                val parsed = cache.get(yaml.readText())!!
                 (parsed.variables + parsed.dependentVariables).size shouldBeGreaterThan 0
             }
         }

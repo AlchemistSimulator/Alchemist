@@ -12,9 +12,6 @@ package it.unibo.alchemist.loader.konf
 import arrow.core.Either
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Extractor
-import it.unibo.alchemist.loader.konf.types.JVMConstructor
-import it.unibo.alchemist.loader.konf.types.NamedParametersConstructor
-import it.unibo.alchemist.loader.konf.types.OrderedParametersConstructor
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
@@ -33,8 +30,6 @@ import kotlin.reflect.cast
 import kotlin.reflect.full.isSubclassOf
 
 object SimulationModelVisitor {
-
-    private val linearVariableParameters = listOf("default", "min", "max", "step")
 
     fun visitYaml(yaml: String) = visitRoot(Yaml().load(yaml))
     fun visitYaml(yaml: Reader) = visitRoot(Yaml().load(yaml))

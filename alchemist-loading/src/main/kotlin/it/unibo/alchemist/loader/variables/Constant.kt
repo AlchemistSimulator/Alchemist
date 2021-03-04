@@ -9,6 +9,9 @@
 
 package it.unibo.alchemist.loader.variables
 
+/*
+ * A constant [value], expressed as a variable to promote code reuse in Alchemist specifications
+ */
 class Constant<V>(val value: V) : DependentVariable<V> {
     override fun getWith(variables: Map<String, Any>): V = value
 }

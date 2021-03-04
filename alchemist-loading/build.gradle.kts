@@ -19,10 +19,7 @@ dependencies {
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
     implementation(Libs.dsiutil)
-    implementation("com.uchuhimo:konf:_")
     implementation("io.arrow-kt:arrow-core:_")
-//    implementation("com.uchuhimo:konf-yaml:_")
-//    implementation("com.uchuhimo:konf-toml:_")
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))

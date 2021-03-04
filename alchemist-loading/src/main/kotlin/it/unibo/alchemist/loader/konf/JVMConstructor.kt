@@ -7,16 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.konf.types
+package it.unibo.alchemist.loader.konf
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
 import it.unibo.alchemist.ClassPathScanner
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -222,26 +218,6 @@ sealed class JVMConstructor(val typeName: String) {
     }
 
     companion object {
-
         private val logger = LoggerFactory.getLogger(JVMConstructor::class.java)
-
-        @JsonCreator
-        @JvmStatic
-        fun create(
-            @JsonProperty("type") type: Any,
-            @JsonProperty("parameters") parameters: Iterable<*>?
-        ): JVMConstructor =
-            if (type is String) {
-                when (parameters) {
-                    is List<*> -> OrderedParametersConstructor(type, parameters)
-                    is Map<*, *> -> NamedParametersConstructor(type, parameters)
-                    null -> OrderedParametersConstructor(type, emptyList<Any>())
-                    else -> throw IllegalArgumentException("TODO THIS ERROR")
-                }
-            } else {
-                throw IllegalStateException()
-            }
-
-        fun create(type: String) = create(type, null)
     }
 }

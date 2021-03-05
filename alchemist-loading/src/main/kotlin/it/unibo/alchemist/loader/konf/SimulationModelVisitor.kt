@@ -47,7 +47,7 @@ object SimulationModelVisitor {
         while (context.constants.size != previousSize) {
             previousSize = context.constants.size
             val resolvedConstants = visitMultipleNamed(context, injectedRoot["variables"], false) { _, name, element ->
-                visitConstant(context, root)
+                visitConstant(context, element)
                     ?.also { context.pushLookupEntry(name, element as Map<*, *>, it.value) }
             }
             context.constants += resolvedConstants.mapValues { (_, v) -> v.value }
@@ -103,8 +103,8 @@ object SimulationModelVisitor {
                     localContext.pushLookupEntry(name, context.lookupElementByName(name), value)
                 }
                 localRoot = inject(context, localRoot)
-                @Suppress("UNCHECKED_CAST") val environment = localRoot["environment"]
-                    ?.let { visitAnyAndBuild<Environment<T, P>>(localContext, it) }
+                @Suppress("UNCHECKED_CAST") val environment: Environment<T, P> = localRoot["environment"]
+                    ?.let { visitAnyAndBuild(localContext, it) }
                     ?: Continuous2DEnvironment<T>() as Environment<T, P>
                 println(environment)
                 return environment

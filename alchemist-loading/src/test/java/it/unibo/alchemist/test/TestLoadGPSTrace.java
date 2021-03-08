@@ -74,7 +74,7 @@ public class TestLoadGPSTrace {
     public <T> void testLoadGPSTrace() {
         final InputStream res = ResourceLoader.getResourceAsStream("testgps.yml");
         assertNotNull(res, "Missing test resource " + "testgps.yml");
-        final Environment<T, GeoPosition> env = new YamlLoader(res).getDefault();
+        final Environment<T, GeoPosition> env = new YamlLoader(res).<T, GeoPosition>getDefault().getEnvironment();
         final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
 

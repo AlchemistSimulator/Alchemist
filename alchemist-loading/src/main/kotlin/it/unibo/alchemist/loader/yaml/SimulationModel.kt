@@ -7,17 +7,20 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.konf
+package it.unibo.alchemist.loader.yaml
 
 import arrow.core.Either
+import it.unibo.alchemist.loader.EnvironmentAndExports
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.export.Extractor
+import it.unibo.alchemist.loader.export.*
+import it.unibo.alchemist.loader.export.filters.CommonFilters
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Position
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
@@ -33,20 +36,25 @@ import kotlin.reflect.full.isSubclassOf
  * Contains the model-to-model translation between the Alchemist YAML specification and the
  * loading system.
  */
-object SimulationModelVisitor {
+object SimulationModel {
 
-    fun visitYaml(yaml: String) = visitRoot(Yaml().load(yaml))
-    fun visitYaml(yaml: Reader) = visitRoot(Yaml().load(yaml))
-    fun visitYaml(yaml: InputStream) = visitRoot(Yaml().load(yaml))
-    fun visitYaml(yaml: URL) = visitRoot(Yaml().load(yaml.openStream()))
+    fun fromYaml(yaml: String) = fromMap(Yaml().load(yaml))
+    fun fromYaml(yaml: Reader) = fromMap(Yaml().load(yaml))
+    fun fromYaml(yaml: InputStream) = fromMap(Yaml().load(yaml))
+    fun fromYaml(yaml: URL) = fromMap(Yaml().load(yaml.openStream()))
 
-    fun visitRoot(root: Map<String, Any>): Loader {
+    fun fromMap(root: Map<String, Any>): Loader {
+        val unkownKeys = root.keys.filterNot { it.startsWith("_") } - Syntax.rootKeys
+        require(unkownKeys.isEmpty()) {
+            "There are unknown root keys: $unkownKeys. Allowed root keys: ${Syntax.rootKeys}" +
+                "If you need private keys (e.g. for internal use), prefix them with underscore (_)"
+        }
         val context = Context()
         var previousSize: Int? = null
         var injectedRoot = root
         while (context.constants.size != previousSize) {
             previousSize = context.constants.size
-            val resolvedConstants = visitMultipleNamed(context, injectedRoot["variables"], false) { _, name, element ->
+            val resolvedConstants = visitMultipleNamed(context, injectedRoot[Syntax.variables], false) { _, name, element ->
                 visitConstant(context, element)
                     ?.also { context.pushLookupEntry(name, element as Map<*, *>, it.value) }
             }
@@ -56,27 +64,31 @@ object SimulationModelVisitor {
             logger.debug("Lookup {}", context.elementLookup)
             logger.debug("New map {}", injectedRoot)
         }
-        val variables = visitMultipleNamed(context, injectedRoot["variables"]) { _, name, element ->
+        val variables = visitMultipleNamed(context, injectedRoot[Syntax.variables]) { _, name, element ->
             visitAnyAndBuild<Variable<*>>(context, element)
                 ?.also { context.pushLookupEntry(name, element as Map<*, *>, it) }
         }
         logger.debug("Variables: {}", variables)
-        val dependentVariables = visitMultipleNamed(context, injectedRoot["variables"]) { _, name, element ->
+        val dependentVariables = visitMultipleNamed(context, injectedRoot[Syntax.variables]) { _, name, element ->
             visitDependentVariable(context, element)
                 ?.also { context.pushLookupEntry(name, element as Map<*, *>, it) }
         }
         logger.debug("Dependent variables: {}", dependentVariables)
-        val remoteDependencies = visitMultipleOrdered(context, injectedRoot["dependencies"]) { _, element ->
+        val remoteDependencies = visitMultipleOrdered(context, injectedRoot[Syntax.remoteDependencies]) { _, element ->
             visitAnyAndBuild<String>(context, element)
         }
         return object : Loader {
+
             override fun getDependentVariables(): Map<String, DependentVariable<*>> = dependentVariables
 
             override fun getVariables(): Map<String, Variable<*>> = variables
 
-            override fun <T : Any?, P : Position<P>> getWith(values: Map<String, *>): Environment<T, P> {
+            override fun <T : Any?, P : Position<P>> getWith(values: Map<String, *>): EnvironmentAndExports<T, P> {
                 val localContext = Context(namedLookup = context.namedLookup)
                 var localRoot = injectedRoot
+                /*
+                 * Variables actual instancing
+                 */
                 val variableValues = this.variables.mapValues { (name, previous) ->
                     if (values.containsKey(name)) values[name] else previous.default
                 }
@@ -103,18 +115,20 @@ object SimulationModelVisitor {
                     localContext.pushLookupEntry(name, context.lookupElementByName(name), value)
                 }
                 localRoot = inject(context, localRoot)
+                /*
+                 * Environment
+                 */
                 @Suppress("UNCHECKED_CAST") val environment: Environment<T, P> = localRoot["environment"]
                     ?.let { visitAnyAndBuild(localContext, it) }
                     ?: Continuous2DEnvironment<T>() as Environment<T, P>
-                println(environment)
-                return environment
+
+                val exports = visitMultipleOrdered(context, root[Syntax.export]) { _, element ->
+                    visitExports(localContext, element)
+                }
+                return EnvironmentAndExports(environment, exports)
             }
 
             override fun getConstants(): Map<String, Any?> = context.constants.toMap()
-
-            override fun getDataExtractors(): MutableList<Extractor> {
-                TODO("Not yet implemented")
-            }
 
             override fun getRemoteDependencies(): List<String> = remoteDependencies
         }
@@ -156,33 +170,16 @@ object SimulationModelVisitor {
                     .also { logger.debug("Unable to convert {} into a {}, discarding.", root, T::class.simpleName) }
         }
 
-    private fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
-        null -> Either.left(emptyList<Any>())
-        is Iterable<*> -> Either.left(root.map { visitAny(context, it) })
-        is Map<*, *> -> Either.right(
-            root.map { visitString(context, it.key) to visitAny(context, it.value) }.toMap()
-        )
-        else -> Either.left(listOf(visitAny(context, root)))
-    }
-
-    private fun visitJVMConstructor(context: Context, root: Map<*, *>): JVMConstructor? =
-        if (root.containsKey("type")) {
-            val type: String = visitString(context, root["type"])
-            when (val parameters = visitParameters(context, root["parameters"])) {
-                is Either.Left -> OrderedParametersConstructor(type, parameters.a)
-                is Either.Right -> NamedParametersConstructor(type, parameters.b)
+    private fun visitConstant(context: Context, root: Any): Constant<*>? =
+        visitDependentVariable(context, root)
+            ?.runCatching { getWith(context.constants) }
+            ?.also { result ->
+                result.exceptionOrNull()?.let { error ->
+                    logger.info("Unable to resolve constant from {} with context {}: {}", root, context, error.message)
+                }
             }
-        } else {
-            null
-        }
-
-    private fun visitString(context: Context, root: Any?): String =
-        when (root) {
-            null -> throw IllegalStateException("null value provided where String was required")
-            is CharSequence -> root.toString()
-            is Map<*, *> -> context.lookup<CharSequence>(root)?.getOrNull()?.toString()
-            else -> null
-        } ?: throw IllegalStateException("Unable to obtain a String from $root")
+            ?.getOrNull()
+            ?.let { Constant(it) }
 
     private fun visitDependentVariable(context: Context, root: Any): DependentVariable<*>? =
         if (root is Map<*, *>) {
@@ -203,16 +200,65 @@ object SimulationModelVisitor {
             null
         }
 
-    private fun visitConstant(context: Context, root: Any): Constant<*>? =
-        visitDependentVariable(context, root)
-            ?.runCatching { getWith(context.constants) }
-            ?.also { result ->
-                result.exceptionOrNull()?.let { error ->
-                    logger.info("Unable to resolve constant from {} with context {}: {}", root, context, error.message)
+    private fun visitExports(context: Context, root: Any?): Extractor? =
+        when (root) {
+            root is String && root.equals(Syntax.Export.time, ignoreCase = true) -> Time()
+            root is Map<*, *> && root.containsKey(Syntax.Export.molecule) -> {
+                root as Map<*, *>
+                val molecule = visitString(context, root[Syntax.Export.molecule])
+                val propertyDescriptor = root[Syntax.Export.property]
+                val property = visitStringOptionally(context, propertyDescriptor).also {
+                    if (it == null && propertyDescriptor != null) {
+                        logger.warn(
+                            "Ignored property {}:{}, cannot be converted to String.",
+                            propertyDescriptor,
+                            propertyDescriptor::class.simpleName,
+                        )
+                    }
                 }
+                val incarnation = context.factory.build(Incarnation::class.java)?.createdObjectOrThrowException
+                val filter: FilteringPolicy = visitStringOptionally(context, root[Syntax.Export.valueFilter])
+                    ?.let { CommonFilters.fromString(it) }
+                    ?: CommonFilters.NOFILTER.filteringPolicy
+                val aggregators: List<String> = visitMultipleOrdered(context, root[Syntax.Export.aggregators]) { _, it ->
+                    visitString(context, it)
+                }
+                MoleculeReader(molecule, property, incarnation, filter, aggregators)
             }
-            ?.getOrNull()
-            ?.let { Constant(it) }
+            is Map<*, *> -> visitAnyAndBuild(context, root)
+            else -> null
+        }
+
+    private fun visitJVMConstructor(context: Context, root: Map<*, *>): JVMConstructor? =
+        if (root.containsKey("type")) {
+            val type: String = visitString(context, root[Syntax.JavaType.type])
+            when (val parameters = visitParameters(context, root[Syntax.JavaType.parameters])) {
+                is Either.Left -> OrderedParametersConstructor(type, parameters.a)
+                is Either.Right -> NamedParametersConstructor(type, parameters.b)
+            }
+        } else {
+            null
+        }
+
+    private fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
+        null -> Either.left(emptyList<Any>())
+        is Iterable<*> -> Either.left(root.map { visitAny(context, it) })
+        is Map<*, *> -> Either.right(
+            root.map { visitString(context, it.key) to visitAny(context, it.value) }.toMap()
+        )
+        else -> Either.left(listOf(visitAny(context, root)))
+    }
+
+    private fun visitStringOptionally(context: Context, root: Any?): String? =
+        when (root) {
+            null -> throw IllegalStateException("null value provided where String was required")
+            is CharSequence -> root.toString()
+            is Map<*, *> -> context.lookup<CharSequence>(root)?.getOrNull()?.toString()
+            else -> null
+        }
+
+    private fun visitString(context: Context, root: Any?): String =
+        visitStringOptionally(context, root) ?: throw IllegalStateException("Unable to obtain a String from $root")
 
     private fun <T : Any> visitMultipleOrdered(
         context: Context,
@@ -261,7 +307,7 @@ object SimulationModelVisitor {
                 ?: visitMultipleNamed(context, value, failOnError, visitSingle).toList()
         }.toMap()
 
-    val logger = LoggerFactory.getLogger(SimulationModelVisitor::class.java)
+    val logger = LoggerFactory.getLogger(SimulationModel::class.java)
 
     private data class Context(
         val constants: MutableMap<String, Any?> = mutableMapOf(),
@@ -315,3 +361,5 @@ object SimulationModelVisitor {
             namedLookup[name] ?: throw IllegalArgumentException("No element named $name")
     }
 }
+
+

@@ -21,6 +21,7 @@ class TestGraphStream : FreeSpec({
     "the lobster displacement should" - {
         val environment = YamlLoader(ResourceLoader.getResourceAsStream("graphstream/testlobster.yml"))
             .getDefault<Nothing, Nothing>()
+            .environment
         "displace all nodes" - {
             environment.nodeCount shouldBeExactly 400
             "with neighbors closer than non-neighbors" {

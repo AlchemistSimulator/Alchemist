@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.konf
+package it.unibo.alchemist.loader.yaml
 
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.export.FilteringPolicy

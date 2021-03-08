@@ -15,11 +15,11 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.ClassPathScanner
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.konf.SimulationModelVisitor
+import it.unibo.alchemist.loader.yaml.SimulationModel
 import java.io.File
 
 val cache = Caffeine.newBuilder().build<String, Loader> {
-    SimulationModelVisitor.visitYaml(it)
+    SimulationModel.fromYaml(it)
 }
 
 class TestGuidedTourLoading : FreeSpec(

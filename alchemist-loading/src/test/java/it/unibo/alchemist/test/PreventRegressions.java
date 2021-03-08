@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import it.unibo.alchemist.loader.yaml.SimulationModel;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -32,8 +33,10 @@ public class PreventRegressions {
      */
     @Test
     public void testLoadCustomExport() {
-        final List<Extractor> extractors = new YamlLoader(ResourceLoader.getResourceAsStream("testCustomExport.yml"))
-            .getDataExtractors();
+        final List<Extractor> extractors =
+            SimulationModel.INSTANCE.fromYaml(ResourceLoader.getResourceAsStream("testCustomExport.yml"))
+                .getDefault()
+                .getDataExtractors();
         assertEquals(1, extractors.size());
         assertEquals(MeanSquaredError.class, extractors.get(0).getClass());
     }
@@ -43,7 +46,9 @@ public class PreventRegressions {
      */
     @Test
     public void testLoadAndSerialize() {
-        final Environment<?, ?> env = new YamlLoader(ResourceLoader.getResourceAsStream("testCustomExport.yml")).getDefault();
+        final Environment<?, ?> env = new YamlLoader(ResourceLoader.getResourceAsStream("testCustomExport.yml"))
+                .getDefault()
+                .getEnvironment();
         assertTrue(env.getIncarnation().isPresent());
         final byte[] serialized = SerializationUtils.serialize(env);
         assertNotNull(serialized);

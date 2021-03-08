@@ -467,16 +467,6 @@ public final class YamlLoader implements Loader {
     }
 
     @Override
-    public List<Extractor> getDataExtractors() {
-        return Collections.unmodifiableList(extractors);
-    }
-
-    @Override
-    public <T, P extends Position<P>> Environment<T, P> getDefault() {
-        return getWith(emptyMap());
-    }
-
-    @Override
     public ImmutableMap<String, DependentVariable<?>> getDependentVariables() {
         return depVariables;
     }
@@ -492,7 +482,7 @@ public final class YamlLoader implements Loader {
     }
 
     @Override
-    public <T, P extends Position<P>> Environment<T, P> getWith(final Map<String, ?> values) {
+    public <T, P extends Position<P>> InitializedEnvironment<T, P> getWith(final Map<String, ?> values) {
         if (values.size() > variables.size()) {
             throw new IllegalArgumentException(
                     "Some variables do not exist in the environment, or are not overridable: "
@@ -846,7 +836,7 @@ public final class YamlLoader implements Loader {
                 }
             }
         }
-        return environment;
+        return new EnvironmentAndExports<>(environment, Collections.unmodifiableList(extractors));
     }
 
     private void readObject(final ObjectInputStream ois) throws IOException, ClassNotFoundException {

@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.konf
+package it.unibo.alchemist.loader.yaml
 
 import it.unibo.alchemist.ClassPathScanner
 import org.danilopianini.jirf.CreationResult
@@ -174,6 +174,7 @@ sealed class JVMConstructor(val typeName: String) {
          * 5. if so, build the parameter
          */
         val originalParameters = parametersFor(target)
+        logger.debug("Building a {} with {}", target.simpleName, originalParameters)
         val compatibleConstructors by lazy {
             target.constructors.filter { it.valueParameters.size >= originalParameters.size }
         }
@@ -223,8 +224,9 @@ sealed class JVMConstructor(val typeName: String) {
         }
         val creationResult = jirf.build(target.java, parameters)
         return creationResult.createdObject.orElseGet {
-            logger.error("Could not create {}, requested as instance of {}", this, target.simpleName)
-            val masterException = IllegalArgumentException("Illegal Alchemist specification")
+            val errorMessage = "Could not create $this, requested as instance of ${target.simpleName}"
+            logger.error(errorMessage)
+            val masterException = IllegalArgumentException("Illegal Alchemist specification: $errorMessage")
             creationResult.exceptions.forEach { (_, exception) -> masterException.addSuppressed(exception) }
             creationResult.logErrors { message, arguments -> logger.error(message, *arguments) }
             throw masterException

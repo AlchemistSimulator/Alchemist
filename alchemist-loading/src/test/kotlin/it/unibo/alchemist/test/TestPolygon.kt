@@ -12,15 +12,18 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.displacements.Polygon
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
+import it.unibo.alchemist.model.interfaces.Position2D
 import org.apache.commons.math3.random.MersenneTwister
 
-const val deploymentSize = 10_000
+private const val deploymentSize = 10_000
+private fun <P : Position2D<P>> incarnation() = SupportedIncarnations.get<Any, P>("sapere").get()
 class TestPolygon : StringSpec({
     "test deployment on 2D space" {
-        val environment = Continuous2DEnvironment<Any>()
+        val environment = Continuous2DEnvironment<Any>(incarnation())
         val randomGenerator = MersenneTwister(0)
         val displacement = Polygon(environment, randomGenerator, deploymentSize, points)
         displacement.stream().count() shouldBe deploymentSize
@@ -28,7 +31,7 @@ class TestPolygon : StringSpec({
         displacementPoints.stream().count() shouldBe deploymentSize
     }
     "test deployment on Venice lagoon" {
-        val environment = OSMEnvironment<Any>("venezia.pbf")
+        val environment = OSMEnvironment<Any>(incarnation(), "venezia.pbf")
         val randomGenerator = MersenneTwister(0)
         val displacement = Polygon(environment, randomGenerator, deploymentSize, points)
         displacement.stream().count() shouldBe deploymentSize

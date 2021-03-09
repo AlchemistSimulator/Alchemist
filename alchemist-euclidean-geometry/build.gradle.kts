@@ -18,7 +18,7 @@ dependencies {
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
     testImplementation(alchemist("loading"))
-    testRuntimeOnly(alchemist("incarnation-protelis"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 publishing.publications {

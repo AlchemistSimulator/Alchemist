@@ -7,7 +7,10 @@
  */
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -31,9 +34,11 @@ public class TestOSMEnvironment {
     @Test
     public void testConcurrentInit() throws Throwable {
         final ExecutorService executor = Executors.newFixedThreadPool(100);
+        final Incarnation<Object, GeoPosition> incarnation =
+                SupportedIncarnations.<Object, GeoPosition>get("protelis").orElseThrow();
         final Collection<Future<Object>> futureResults = IntStream.range(0, 100)
             .<Callable<Object>>mapToObj(i -> () -> {
-                new OSMEnvironment<>("maps/cesena.pbf");
+                new OSMEnvironment<>(incarnation, "maps/cesena.pbf");
                 return true;
             })
             .map(executor::submit)

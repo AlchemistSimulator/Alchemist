@@ -7,8 +7,10 @@
  */
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.loader.displacements.Grid;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestGrid {
 
     private static Continuous2DEnvironment env() {
-        return new Continuous2DEnvironment<>();
+        return new Continuous2DEnvironment<Object>(SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").get());
     }
 
     private static MersenneTwister rand() {
@@ -89,7 +91,7 @@ public class TestGrid {
         assertEquals(
                 expected,
                 new Grid(
-                        new Continuous2DEnvironment<>(),
+                        env(),
                         new MersenneTwister(),
                         0,
                         0,

@@ -26,6 +26,8 @@ dependencies {
     implementation(Libs.jpx)
     implementation(Libs.simplelatlng)
     implementation(Libs.trove4j)
+
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 publishing.publications {

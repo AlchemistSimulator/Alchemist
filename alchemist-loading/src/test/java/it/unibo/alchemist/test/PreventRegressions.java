@@ -18,7 +18,6 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
-import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.export.MeanSquaredError;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -46,9 +45,10 @@ public class PreventRegressions {
      */
     @Test
     public void testLoadAndSerialize() {
-        final Environment<?, ?> env = new YamlLoader(ResourceLoader.getResourceAsStream("testCustomExport.yml"))
-                .getDefault()
-                .getEnvironment();
+        final Environment<?, ?> env = SimulationModel.INSTANCE
+            .fromYaml(ResourceLoader.getResourceAsStream("testCustomExport.yml"))
+            .getDefault()
+            .getEnvironment();
         assertTrue(env.getIncarnation().isPresent());
         final byte[] serialized = SerializationUtils.serialize(env);
         assertNotNull(serialized);

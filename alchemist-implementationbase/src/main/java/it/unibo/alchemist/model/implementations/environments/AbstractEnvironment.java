@@ -77,12 +77,17 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private SerializablePredicate<T, P> terminator = c -> false;
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param internalIndex
      *            the {@link SpatialIndex} to use in order to efficiently
      *            retrieve nodes.
      */
-    protected AbstractEnvironment(final SpatialIndex<Node<T>> internalIndex) {
+    protected AbstractEnvironment(
+        @Nonnull final Incarnation<T, P> incarnation,
+        @Nonnull final SpatialIndex<Node<T>> internalIndex
+    ) {
         spatialIndex = Objects.requireNonNull(internalIndex);
+        this.incarnation = Objects.requireNonNull(incarnation);
     }
 
     @Override
@@ -171,17 +176,6 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     @Override
     public final Optional<Incarnation<T, P>> getIncarnation() {
         return Optional.ofNullable(incarnation);
-    }
-
-    @Override
-    public final void setIncarnation(final Incarnation<T, P> incarnation) {
-        if (this.incarnation == null) {
-            this.incarnation = Objects.requireNonNull(incarnation);
-        } else {
-            throw new IllegalStateException(
-                    "The Environment has already been equipeed with an incarnation: " + this.incarnation
-            );
-        }
     }
 
     @Override

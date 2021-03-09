@@ -7,9 +7,11 @@
  */
 package it.unibo.alchemist.test
 
+import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
 import it.unibo.alchemist.model.implementations.nodes.IntNode
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -23,7 +25,8 @@ class TestNeighborhood {
      */
     @Test
     fun testClone() {
-        val env = Continuous2DEnvironment<Int>()
+        val incarnation = SupportedIncarnations.get<Int, Euclidean2DPosition>("protelis").orElseThrow()
+        val env = Continuous2DEnvironment<Int>(incarnation)
         val n1 = IntNode(env)
         val n2 = IntNode(env)
         val neigh1 = Neighborhoods.make(env, n1, mutableListOf(n2))

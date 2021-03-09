@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.environments;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.imageio.ImageIO;
@@ -48,17 +49,19 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
     public static final double DEFAULT_DELTA_Y = 0d;
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param path
      *            the path where to load the image. Must be a local file path.
      * @throws IOException
      *             if image file cannot be found, or if you disconnected your
      *             hard drive while this method was running.
      */
-    public ImageEnvironment(final String path) throws IOException {
-        this(path, DEFAULT_ZOOM);
+    public ImageEnvironment(final Incarnation<T, Euclidean2DPosition> incarnation, final String path) throws IOException {
+        this(incarnation, path, DEFAULT_ZOOM);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param path
      *            the path where to load the image. Must be a local file path.
      * @param zoom
@@ -67,11 +70,16 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      *             if image file cannot be found, or if you disconnected your
      *             hard drive while this method was running.
      */
-    public ImageEnvironment(final String path, final double zoom) throws IOException {
-        this(path, zoom, DEFAULT_DELTA_X, DEFAULT_DELTA_Y);
+    public ImageEnvironment(
+        final Incarnation<T, Euclidean2DPosition> incarnation,
+        final String path,
+        final double zoom
+    ) throws IOException {
+        this(incarnation, path, zoom, DEFAULT_DELTA_X, DEFAULT_DELTA_Y);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param path
      *            the path where to load the image. Must be a local file path.
      * @param zoom
@@ -84,11 +92,18 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      *             if image file cannot be found, or if you disconnected your
      *             hard drive while this method was running.
      */
-    public ImageEnvironment(final String path, final double zoom, final double dx, final double dy) throws IOException {
-        this(DEFAULT_COLOR, path, zoom, dx, dy);
+    public ImageEnvironment(
+        final Incarnation<T, Euclidean2DPosition> incarnation,
+        final String path,
+        final double zoom,
+        final double dx,
+        final double dy
+    ) throws IOException {
+        this(incarnation, DEFAULT_COLOR, path, zoom, dx, dy);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param obstacleColor
      *            integer representing the RGB color to use as color for the
      *            obstacle detection in image. Encoding follows common Java
@@ -106,13 +121,14 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
      *             hard drive while this method was running.
      */
     public ImageEnvironment(
+            final Incarnation<T, Euclidean2DPosition> incarnation,
             final int obstacleColor,
             final String path,
             final double zoom,
             final double dx,
             final double dy
     ) throws IOException {
-        super();
+        super(incarnation);
         final InputStream resource = ResourceLoader.getResourceAsStream(path);
         final BufferedImage img = resource == null 
                 ? ImageIO.read(new File(path))

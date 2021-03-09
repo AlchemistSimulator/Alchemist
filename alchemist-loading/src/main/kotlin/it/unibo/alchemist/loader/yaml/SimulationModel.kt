@@ -23,6 +23,7 @@ import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Position
@@ -126,7 +127,6 @@ object SimulationModel {
                 /*
                  * Simulation environment
                  */
-                val environment: Environment<T, P> = visitEnvironment(localContext, localRoot[Syntax.environment])
                 val incarnation = SupportedIncarnations.get<T, P>(
                     visitString(localContext, localRoot[Syntax.incarnation])
                 ).orElseThrow {
@@ -136,6 +136,7 @@ object SimulationModel {
                     )
                 }
                 localContext.factory.registerSingleton(Incarnation::class.java, incarnation)
+                val environment: Environment<T, P> = visitEnvironment(localContext, localRoot[Syntax.environment])
                 val exports = visitMultipleOrdered(localContext, root[Syntax.export]) { visitExports(localContext, it) }
                 return EnvironmentAndExports(environment, exports)
             }
@@ -229,7 +230,10 @@ object SimulationModel {
     private fun <T, P : Position<P>> visitEnvironment(context: Context, root: Any?): Environment<T, P> =
         if (root == null) {
             logger.info("No environment specified, defaulting to {}", Continuous2DEnvironment::class.simpleName)
-            Continuous2DEnvironment<T>() as Environment<T, P>
+            Continuous2DEnvironment(
+                context.factory.build(Incarnation::class.java)
+                    .createdObjectOrThrowException as Incarnation<T, Euclidean2DPosition>
+            ) as Environment<T, P>
         } else {
             requireNotNull(visitAnyAndBuildCatching<Environment<T, P>>(context, root).getOrThrow()) {
                 "Could not create an environment from: $root"

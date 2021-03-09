@@ -7,10 +7,12 @@
  */
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.IntNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,15 +34,17 @@ public final class TestContinuous2DEnvironment {
     private static final double [] P2_3 = {2, 3};
     private static final double [] P2_2 = {2, 2};
     private static final double TOLERANCE = 1E-15;
-    private Continuous2DEnvironment<Integer> env = new Continuous2DEnvironment<>();
+    private static final Incarnation<Integer, Euclidean2DPosition> INCARNATION =
+            SupportedIncarnations.<Integer, Euclidean2DPosition>get("protelis").orElseThrow();
+    private Continuous2DEnvironment<Integer> environment;
 
     /**
      * Instances the environment.
      */
     @BeforeEach
     public void setUp() {
-        env = new Continuous2DEnvironment<>();
-        env.setLinkingRule(new NoLinks<>());
+        environment = new Continuous2DEnvironment<>(INCARNATION);
+        environment.setLinkingRule(new NoLinks<>());
     }
 
     /**
@@ -48,14 +52,14 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testEnvironmentSize() {
-        assertEquals(0, env.getNodeCount());
-        assertArrayEquals(ZEROS, env.getSize(), TOLERANCE);
-        env.addNode(new IntNode(env), new Euclidean2DPosition(P2_3));
-        assertArrayEquals(ZEROS, env.getSize(), TOLERANCE);
-        env.addNode(new IntNode(env), new Euclidean2DPosition(P2_2));
-        assertArrayEquals(new double[]{0, 1}, env.getSize(), TOLERANCE);
-        env.addNode(new IntNode(env), new Euclidean2DPosition(ZEROS));
-        assertArrayEquals(P2_3, env.getSize(), TOLERANCE);
+        assertEquals(0, environment.getNodeCount());
+        assertArrayEquals(ZEROS, environment.getSize(), TOLERANCE);
+        environment.addNode(new IntNode(environment), new Euclidean2DPosition(P2_3));
+        assertArrayEquals(ZEROS, environment.getSize(), TOLERANCE);
+        environment.addNode(new IntNode(environment), new Euclidean2DPosition(P2_2));
+        assertArrayEquals(new double[]{0, 1}, environment.getSize(), TOLERANCE);
+        environment.addNode(new IntNode(environment), new Euclidean2DPosition(ZEROS));
+        assertArrayEquals(P2_3, environment.getSize(), TOLERANCE);
     }
 
     /**
@@ -63,15 +67,15 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testEnvironmentOffset() {
-        assertEquals(0, env.getNodeCount());
-        assertTrue(Double.isNaN(env.getOffset()[0]));
-        assertTrue(Double.isNaN(env.getOffset()[1]));
-        env.addNode(new IntNode(env), new Euclidean2DPosition(P2_3));
-        assertArrayEquals(P2_3, env.getOffset(), TOLERANCE);
-        env.addNode(new IntNode(env), new Euclidean2DPosition(P2_2));
-        assertArrayEquals(P2_2, env.getOffset(), TOLERANCE);
-        env.addNode(new IntNode(env), new Euclidean2DPosition(ZEROS));
-        assertArrayEquals(ZEROS, env.getOffset(), TOLERANCE);
+        assertEquals(0, environment.getNodeCount());
+        assertTrue(Double.isNaN(environment.getOffset()[0]));
+        assertTrue(Double.isNaN(environment.getOffset()[1]));
+        environment.addNode(new IntNode(environment), new Euclidean2DPosition(P2_3));
+        assertArrayEquals(P2_3, environment.getOffset(), TOLERANCE);
+        environment.addNode(new IntNode(environment), new Euclidean2DPosition(P2_2));
+        assertArrayEquals(P2_2, environment.getOffset(), TOLERANCE);
+        environment.addNode(new IntNode(environment), new Euclidean2DPosition(ZEROS));
+        assertArrayEquals(ZEROS, environment.getOffset(), TOLERANCE);
     }
 
     /**
@@ -79,11 +83,11 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testNegativeRangeQuery() {
-        assertEquals(0, env.getNodeCount());
-        final Node<Integer> dummy = new IntNode(env);
-        env.addNode(dummy, new Euclidean2DPosition(ZEROS));
+        assertEquals(0, environment.getNodeCount());
+        final Node<Integer> dummy = new IntNode(environment);
+        environment.addNode(dummy, new Euclidean2DPosition(ZEROS));
         try {
-            env.getNodesWithinRange(dummy, -1);
+            environment.getNodesWithinRange(dummy, -1);
             fail();
         } catch (IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());
@@ -95,13 +99,13 @@ public final class TestContinuous2DEnvironment {
      */
     @Test
     public void testZeroRangeQuery() {
-        assertEquals(0, env.getNodeCount());
-        final Node<Integer> dummy = new IntNode(env);
-        final Node<Integer> dummy2 = new IntNode(env);
-        env.addNode(dummy, new Euclidean2DPosition(ZEROS));
-        env.addNode(dummy2, new Euclidean2DPosition(ZEROS));
-        assertEquals(2, env.getNodeCount());
-        assertEquals(Collections.singletonList(dummy2), env.getNodesWithinRange(dummy, Math.nextUp(0)));
+        assertEquals(0, environment.getNodeCount());
+        final Node<Integer> dummy = new IntNode(environment);
+        final Node<Integer> dummy2 = new IntNode(environment);
+        environment.addNode(dummy, new Euclidean2DPosition(ZEROS));
+        environment.addNode(dummy2, new Euclidean2DPosition(ZEROS));
+        assertEquals(2, environment.getNodeCount());
+        assertEquals(Collections.singletonList(dummy2), environment.getNodesWithinRange(dummy, Math.nextUp(0)));
     }
 
 }

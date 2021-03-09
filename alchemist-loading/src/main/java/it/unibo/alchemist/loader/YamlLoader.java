@@ -36,6 +36,7 @@ import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Concentration;
@@ -564,7 +565,7 @@ public final class YamlLoader implements Loader {
         @SuppressWarnings("unchecked")
         final BuilderConfiguration<Environment<T, P>> envDefaultConfig = emptyConfig(
                 factory,
-                () -> (Environment<T, P>) new Continuous2DEnvironment<>()
+                () -> (Environment<T, P>) new Continuous2DEnvironment<T>((Incarnation<T, Euclidean2DPosition>) incarnation)
         );
         final Builder<Environment<T, P>> envBuilder = new Builder<>(
                 Environment.class,
@@ -573,7 +574,6 @@ public final class YamlLoader implements Loader {
         );
         factory.registerSingleton(RandomGenerator.class, simulationRandomGenerator);
         final Environment<T, P> environment = envBuilder.build(contents.get(ENVIRONMENT));
-        environment.setIncarnation(incarnation);
         factory.registerSingleton(Environment.class, environment);
         factory.registerImplicit(
                 List.class,

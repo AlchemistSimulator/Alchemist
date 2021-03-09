@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute;
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Route;
@@ -36,6 +37,7 @@ import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -110,26 +112,28 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
 
     /**
      * Builds a new {@link OSMEnvironment}, with nodes forced on streets.
-     *
+     * @param incarnation the incarnation to be used.
      * @param file
      *            the file path where the map data is stored
      */
-    public OSMEnvironment(final String file) {
-        this(file, DEFAULT_ON_STREETS);
+    public OSMEnvironment(final Incarnation<T, GeoPosition> incarnation, final String file) {
+        this(incarnation, file, DEFAULT_ON_STREETS);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param file
      *            the file path where the map data is stored
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
      *            desired {@link it.unibo.alchemist.model.interfaces.Position}.
      */
-    public OSMEnvironment(final String file, final boolean onStreets) {
-        this(file, onStreets, DEFAULT_FORCE_STREETS);
+    public OSMEnvironment(final Incarnation<T, GeoPosition> incarnation, final String file, final boolean onStreets) {
+        this(incarnation, file, onStreets, DEFAULT_FORCE_STREETS);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param file
      *            the file path where the map data is stored
      * @param onStreets
@@ -140,12 +144,17 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
      *            discarded. If false, they will be placed anyway, in the original
      *            position.
      */
-    public OSMEnvironment(final String file, final boolean onStreets, final boolean onlyOnStreets) {
-        this(file, DEFAULT_APPROXIMATION, onStreets, onlyOnStreets);
-
+    public OSMEnvironment(
+        final Incarnation<T, GeoPosition> incarnation,
+        final String file,
+        final boolean onStreets,
+        final boolean onlyOnStreets
+    ) {
+        this(incarnation, file, DEFAULT_APPROXIMATION, onStreets, onlyOnStreets);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param file
      *            the file path where the map data is stored. Accepts OSM maps of
      *            any format (xml, osm, pbf). The map will be processed, optimized
@@ -158,11 +167,12 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
      *            can be considered to be the same route, according to
      *            the level of precision determined by this value
      */
-    public OSMEnvironment(final String file, final int approximation) {
-        this(file, approximation, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS);
+    public OSMEnvironment(final Incarnation<T, GeoPosition> incarnation, final String file, final int approximation) {
+        this(incarnation, file, approximation, DEFAULT_ON_STREETS, DEFAULT_FORCE_STREETS);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param file
      *            the file path where the map data is stored. Accepts OSM maps of
      *            any format (xml, osm, pbf). The map will be processed, optimized
@@ -183,12 +193,13 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
      *            position.
      */
     public OSMEnvironment(
+            final Incarnation<T, GeoPosition> incarnation,
             final String file,
             final int approximation,
             final boolean onStreets,
             final boolean onlyOnStreets
     ) {
-        super();
+        super(incarnation);
         if (approximation < 0 || approximation > 64) {
             throw new IllegalArgumentException();
         }
@@ -350,7 +361,7 @@ public final class OSMEnvironment<T> extends Abstract2DEnvironment<T, GeoPositio
     }
 
     @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE")
-    private static EnumMap<Vehicle, GraphHopperAPI> initNavigators(final String fileName) throws IOException {
+    private static EnumMap<Vehicle, GraphHopperAPI> initNavigators(@Nonnull final String fileName) throws IOException {
         Objects.requireNonNull(fileName, "define the file with the map: " + fileName);
         final Optional<URL> file = Optional.of(new File(fileName))
                 .filter(File::exists)

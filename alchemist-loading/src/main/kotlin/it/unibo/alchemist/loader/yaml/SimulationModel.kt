@@ -10,9 +10,11 @@
 package it.unibo.alchemist.loader.yaml
 
 import arrow.core.Either
+import arrow.core.extensions.map.functorFilter.filter
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.EnvironmentAndExports
 import it.unibo.alchemist.loader.Loader
+import it.unibo.alchemist.loader.displacements.Displacement
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.MoleculeReader
@@ -23,10 +25,16 @@ import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
+import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
+import it.unibo.alchemist.model.interfaces.LinkingRule
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
+import org.apache.commons.math3.random.MersenneTwister
+import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
 import org.yaml.snakeyaml.Yaml
@@ -41,7 +49,14 @@ import kotlin.reflect.full.isSubclassOf
  * Contains the model-to-model translation between the Alchemist YAML specification and the
  * loading system.
  */
+private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
+
+/**
+ * Converts a representation of an Alchemist simulation into an executable simulation.
+ */
 object SimulationModel {
+
+    val logger = LoggerFactory.getLogger(SimulationModel::class.java)
 
     fun fromYaml(yaml: String) = fromMap(Yaml().load(yaml))
     fun fromYaml(yaml: Reader) = fromMap(Yaml().load(yaml))
@@ -49,11 +64,7 @@ object SimulationModel {
     fun fromYaml(yaml: URL) = fromMap(Yaml().load(yaml.openStream()))
 
     fun fromMap(root: Map<String, Any>): Loader {
-        val unkownKeys = root.keys.filterNot { it.startsWith("_") } - Syntax.rootKeys
-        require(unkownKeys.isEmpty()) {
-            "There are unknown root keys: $unkownKeys. Allowed root keys: ${Syntax.rootKeys}" +
-                "If you need private keys (e.g. for internal use), prefix them with underscore (_)"
-        }
+        DocumentRoot.verifyKeysForElement(root)
         val context = Context()
         var previousSize: Int? = null
         var injectedRoot = root
@@ -61,7 +72,7 @@ object SimulationModel {
             previousSize = context.constants.size
             val resolvedConstants = visitMultipleNamed(
                 context,
-                injectedRoot[Syntax.variables],
+                injectedRoot[DocumentRoot.variables],
                 failOnError = false
             ) { name, element ->
                 visitConstant(context, element)
@@ -73,17 +84,17 @@ object SimulationModel {
             logger.debug("Lookup {}", context.elementLookup)
             logger.debug("New map {}", injectedRoot)
         }
-        val variables = visitMultipleNamed(context, injectedRoot[Syntax.variables]) { name, element ->
+        val variables = visitMultipleNamed(context, injectedRoot[DocumentRoot.variables]) { name, element ->
             visitAnyAndBuild<Variable<*>>(context, element)
                 ?.also { context.pushLookupEntry(name, element as Map<*, *>, it) }
         }
         logger.debug("Variables: {}", variables)
-        val dependentVariables = visitMultipleNamed(context, injectedRoot[Syntax.variables]) { name, element ->
+        val dependentVariables = visitMultipleNamed(context, injectedRoot[DocumentRoot.variables]) { name, element ->
             visitDependentVariable(context, element)
                 ?.also { context.pushLookupEntry(name, element as Map<*, *>, it) }
         }
         logger.debug("Dependent variables: {}", dependentVariables)
-        val remoteDependencies = visitMultipleOrdered(context, injectedRoot[Syntax.remoteDependencies]) {
+        val remoteDependencies = visitMultipleOrdered(context, injectedRoot[DocumentRoot.remoteDependencies]) {
             visitAnyAndBuild<String>(context, it)
         }
         return object : Loader {
@@ -127,17 +138,77 @@ object SimulationModel {
                 /*
                  * Simulation environment
                  */
+                val (scenarioRNG, simulationRNG) =
+                    visitSeeds(localContext, localRoot[DocumentRoot.seeds])
+                fun setCurrentRandomGenerator(randomGenerator: RandomGenerator) =
+                    localContext.factory.registerSingleton(RandomGenerator::class.java, randomGenerator)
+                setCurrentRandomGenerator(simulationRNG)
                 val incarnation = SupportedIncarnations.get<T, P>(
-                    visitString(localContext, localRoot[Syntax.incarnation])
+                    visitString(localContext, localRoot[DocumentRoot.incarnation])
                 ).orElseThrow {
                     IllegalArgumentException(
-                        "Invalid incarnation descriptor: ${localRoot[Syntax.incarnation]}. " +
+                        "Invalid incarnation descriptor: ${localRoot[DocumentRoot.incarnation]}. " +
                             "Valid incarnations are ${SupportedIncarnations.getAvailableIncarnations()}"
                     )
                 }
                 localContext.factory.registerSingleton(Incarnation::class.java, incarnation)
-                val environment: Environment<T, P> = visitEnvironment(localContext, localRoot[Syntax.environment])
-                val exports = visitMultipleOrdered(localContext, root[Syntax.export]) { visitExports(localContext, it) }
+                val environment: Environment<T, P> = visitEnvironment(localContext, localRoot[DocumentRoot.environment])
+                localContext.factory.registerSingleton(Environment::class.java, environment)
+                // Environment population
+                // LAYERS
+                // LINKING RULE
+                val linkingRules = visitMultipleOrdered(localContext, localRoot[DocumentRoot.linkingRule]) { element ->
+                    when (element) {
+                        is Map<*, *> -> visitAnyAndBuildCatching<LinkingRule<T, P>>(localContext, element).getOrThrow()
+                        else -> null
+                    }
+                }
+                val linkingRule: LinkingRule<T, P> = when {
+                    linkingRules.isEmpty() -> NoLinks()
+                    linkingRules.size == 1 -> linkingRules.first()
+                    else -> CombinedLinkingRule(linkingRules)
+                }
+                environment.linkingRule = linkingRule
+                localContext.factory.registerSingleton(LinkingRule::class.java, linkingRule)
+                // DISPLACEMENTS
+                setCurrentRandomGenerator(scenarioRNG)
+                val displacementDescriptors: List<Pair<Displacement<P>, Map<*, *>>> = visitMultipleOrdered(
+                    localContext,
+                    localRoot[DocumentRoot.displacements]
+                ) { element ->
+                    (element as? Map<*, *>)?.let {
+                        visitAnyAndBuild<Displacement<P>>(localContext, element)?.let { displacement ->
+                            DocumentRoot.Displacement.verifyKeysForElement(
+                                it.filterKeys { it !in DocumentRoot.JavaType.validKeys }
+                            )
+                            displacement to element
+                        }
+                    }
+                }
+                setCurrentRandomGenerator(simulationRNG)
+                for ((displacement, descriptor) in displacementDescriptors) {
+                    val nodeDescriptor = descriptor[DocumentRoot.Displacement.nodes]
+                    if (descriptor.containsKey(DocumentRoot.Displacement.nodes)) {
+                        requireNotNull(nodeDescriptor) {
+                            "Invalid node type descriptor: $nodeDescriptor"
+                        }
+                        if (nodeDescriptor is Map<*, *>) {
+                            DocumentRoot.JavaType.verifyKeysForElement(nodeDescriptor)
+                        }
+                    }
+                    // special management of GraphStream-based displacement TODO
+                    displacement.stream().forEach { position ->
+                        val node = visitNode(simulationRNG, incarnation, environment, localContext, nodeDescriptor)
+                        localContext.factory.registerSingleton(Node::class.java, node)
+                        // CONTENTS
+                        // PROGRAMS
+                        environment.addNode(node, position)
+                    }
+                }
+                // EXPORTS
+                val exports = visitMultipleOrdered(localContext, root[DocumentRoot.export]) {
+                    visitExports(localContext, it)
+                }
                 return EnvironmentAndExports(environment, exports)
             }
 
@@ -150,6 +221,8 @@ object SimulationModel {
     @Suppress("UNCHECKED_CAST")
     private fun inject(context: Context, root: Map<String, Any>): Map<String, Any> =
         replaceKnownRecursively(context, root) as Map<String, Any>
+
+    private fun makeDefaultRandomGenerator(seed: Long) = MersenneTwister(seed)
 
     private fun replaceKnownRecursively(context: Context, root: Any?): Any? =
         when (root) {
@@ -209,10 +282,10 @@ object SimulationModel {
 
     private fun visitDependentVariable(context: Context, root: Any): DependentVariable<*>? =
         if (root is Map<*, *>) {
-            if (root.containsKey("formula")) {
-                val formula = root["formula"]
+            if (root.containsKey(DocumentRoot.DependentVariable.formula)) {
+                val formula = root[DocumentRoot.DependentVariable.formula]
                 if (formula is String) {
-                    val language = root["language"]?.toString()?.toLowerCase() ?: "groovy"
+                    val language = root[DocumentRoot.DependentVariable.language]?.toString()?.toLowerCase() ?: "groovy"
                     JSR223Variable<Any>(language, formula)
                 } else {
                     Constant(formula)
@@ -242,11 +315,11 @@ object SimulationModel {
 
     private fun visitExports(context: Context, root: Any?): Extractor? =
         when (root) {
-            root is String && root.equals(Syntax.Export.time, ignoreCase = true) -> Time()
-            root is Map<*, *> && root.containsKey(Syntax.Export.molecule) -> {
+            root is String && root.equals(DocumentRoot.Export.time, ignoreCase = true) -> Time()
+            root is Map<*, *> && root.containsKey(DocumentRoot.Export.molecule) -> {
                 root as Map<*, *>
-                val molecule = visitString(context, root[Syntax.Export.molecule])
-                val propertyDescriptor = root[Syntax.Export.property]
+                val molecule = visitString(context, root[DocumentRoot.Export.molecule])
+                val propertyDescriptor = root[DocumentRoot.Export.property]
                 val property = visitStringOptionally(context, propertyDescriptor).also {
                     if (it == null && propertyDescriptor != null) {
                         logger.warn(
@@ -257,10 +330,10 @@ object SimulationModel {
                     }
                 }
                 val incarnation = context.factory.build(Incarnation::class.java)?.createdObjectOrThrowException
-                val filter: FilteringPolicy = visitStringOptionally(context, root[Syntax.Export.valueFilter])
+                val filter: FilteringPolicy = visitStringOptionally(context, root[DocumentRoot.Export.valueFilter])
                     ?.let { CommonFilters.fromString(it) }
                     ?: CommonFilters.NOFILTER.filteringPolicy
-                val aggregators: List<String> = visitMultipleOrdered(context, root[Syntax.Export.aggregators]) {
+                val aggregators: List<String> = visitMultipleOrdered(context, root[DocumentRoot.Export.aggregators]) {
                     visitString(context, it)
                 }
                 MoleculeReader(molecule, property, incarnation, filter, aggregators)
@@ -271,14 +344,27 @@ object SimulationModel {
 
     private fun visitJVMConstructor(context: Context, root: Map<*, *>): JVMConstructor? =
         if (root.containsKey("type")) {
-            val type: String = visitString(context, root[Syntax.JavaType.type])
-            when (val parameters = visitParameters(context, root[Syntax.JavaType.parameters])) {
+            val type: String = visitString(context, root[DocumentRoot.JavaType.type])
+            when (val parameters = visitParameters(context, root[DocumentRoot.JavaType.parameters])) {
                 is Either.Left -> OrderedParametersConstructor(type, parameters.a)
                 is Either.Right -> NamedParametersConstructor(type, parameters.b)
             }
         } else {
             null
         }
+
+    private fun <T, P : Position<P>> visitNode(
+        randomGenerator: RandomGenerator,
+        incarnation: Incarnation<T, P>,
+        environment: Environment<T, P>,
+        context: Context,
+        root: Any?
+    ): Node<T> =
+        when (root) {
+            is CharSequence? -> incarnation.createNode(randomGenerator, environment, root?.toString())
+            is Map<*, *> -> visitAnyAndBuildCatching<Node<T>>(context, root).getOrThrow()
+            else -> null
+        } ?: throw IllegalArgumentException("Invalid node descriptor: $root")
 
     private fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
         null -> Either.left(emptyList<Any>())
@@ -288,6 +374,54 @@ object SimulationModel {
         )
         else -> Either.left(listOf(visitAny(context, root)))
     }
+
+    private fun visitRandomGenerator(context: Context, root: Any): RandomGenerator {
+        fun failure(cause: Throwable? = null): Nothing {
+            val message = "Invalid random generator descriptor: $root"
+            throw cause?.let { IllegalArgumentException(message, cause) } ?: IllegalArgumentException(message)
+        }
+        return visitAnyAndBuild<Long>(context, root)
+            ?.let { makeDefaultRandomGenerator(it) }
+            ?: visitAnyAndBuildCatching<RandomGenerator>(context, root).getOrElse { failure(it) }
+            ?: failure()
+    }
+
+    private fun visitSeeds(context: Context, root: Any?): Seeds =
+        when (root) {
+            null -> makeDefaultRandomGenerator(0) to makeDefaultRandomGenerator(0)
+                .also {
+                    logger.warn(
+                        "No seeds specified, defaulting to 0 for both {} and {}",
+                        DocumentRoot.Seeds.scenario,
+                        DocumentRoot.Seeds.scenario
+                    )
+                }
+            is Map<*, *> -> {
+                val stringKeys = root.keys.filterIsInstance<String>()
+                require(stringKeys.size == root.keys.size) {
+                    "Illegal seeds sub-keys: ${root.keys - stringKeys}"
+                }
+                val validKeys = DocumentRoot.Seeds.validKeys
+                val nonPrivateKeys = stringKeys.filterNot { it.startsWith("_") }
+                require(nonPrivateKeys.all { it in validKeys }) {
+                    "Illegal seeds sub-keys: ${nonPrivateKeys - validKeys}"
+                }
+                fun valueOf(element: String): Any =
+                    if (root.containsKey(element)) {
+                        root[element] ?: throw IllegalArgumentException(
+                            "Invalid random generator descriptor $root has a null value associated to $element"
+                        )
+                    } else {
+                        0
+                    }
+                visitRandomGenerator(context, valueOf(DocumentRoot.Seeds.scenario)) to
+                    visitRandomGenerator(context, valueOf(DocumentRoot.Seeds.simulation))
+            }
+            else -> throw IllegalArgumentException(
+                "Not a valid ${DocumentRoot.seeds} section: $root. Expected " +
+                    DocumentRoot.Seeds.validKeys.map { it to "<a number>" }
+            )
+        }
 
     private fun visitStringOptionally(context: Context, root: Any?): String? =
         when (root) {
@@ -346,8 +480,6 @@ object SimulationModel {
             visitSingle(key.toString(), value)?.let { listOf(key.toString() to it) }
                 ?: visitMultipleNamed(context, value, failOnError, visitSingle).toList()
         }.toMap()
-
-    val logger = LoggerFactory.getLogger(SimulationModel::class.java)
 
     private data class Context(
         val constants: MutableMap<String, Any?> = mutableMapOf(),

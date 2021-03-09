@@ -13,6 +13,9 @@ import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 
+/**
+ * Pair-like implementation of [InitializedEnvironment].
+ */
 data class EnvironmentAndExports<T, P : Position<P>>(
     override val environment: Environment<T, P>,
     override val dataExtractors: List<Extractor>,

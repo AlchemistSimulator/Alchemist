@@ -10,9 +10,13 @@
 package it.unibo.alchemist.loader.yaml
 
 import arrow.core.Either
+import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.EnvironmentAndExports
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.export.*
+import it.unibo.alchemist.loader.export.Extractor
+import it.unibo.alchemist.loader.export.FilteringPolicy
+import it.unibo.alchemist.loader.export.MoleculeReader
+import it.unibo.alchemist.loader.export.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
@@ -54,7 +58,11 @@ object SimulationModel {
         var injectedRoot = root
         while (context.constants.size != previousSize) {
             previousSize = context.constants.size
-            val resolvedConstants = visitMultipleNamed(context, injectedRoot[Syntax.variables], false) { _, name, element ->
+            val resolvedConstants = visitMultipleNamed(
+                context,
+                injectedRoot[Syntax.variables],
+                failOnError = false
+            ) { name, element ->
                 visitConstant(context, element)
                     ?.also { context.pushLookupEntry(name, element as Map<*, *>, it.value) }
             }
@@ -64,18 +72,18 @@ object SimulationModel {
             logger.debug("Lookup {}", context.elementLookup)
             logger.debug("New map {}", injectedRoot)
         }
-        val variables = visitMultipleNamed(context, injectedRoot[Syntax.variables]) { _, name, element ->
+        val variables = visitMultipleNamed(context, injectedRoot[Syntax.variables]) { name, element ->
             visitAnyAndBuild<Variable<*>>(context, element)
                 ?.also { context.pushLookupEntry(name, element as Map<*, *>, it) }
         }
         logger.debug("Variables: {}", variables)
-        val dependentVariables = visitMultipleNamed(context, injectedRoot[Syntax.variables]) { _, name, element ->
+        val dependentVariables = visitMultipleNamed(context, injectedRoot[Syntax.variables]) { name, element ->
             visitDependentVariable(context, element)
                 ?.also { context.pushLookupEntry(name, element as Map<*, *>, it) }
         }
         logger.debug("Dependent variables: {}", dependentVariables)
-        val remoteDependencies = visitMultipleOrdered(context, injectedRoot[Syntax.remoteDependencies]) { _, element ->
-            visitAnyAndBuild<String>(context, element)
+        val remoteDependencies = visitMultipleOrdered(context, injectedRoot[Syntax.remoteDependencies]) {
+            visitAnyAndBuild<String>(context, it)
         }
         return object : Loader {
 
@@ -116,15 +124,19 @@ object SimulationModel {
                 }
                 localRoot = inject(context, localRoot)
                 /*
-                 * Environment
+                 * Simulation environment
                  */
-                @Suppress("UNCHECKED_CAST") val environment: Environment<T, P> = localRoot["environment"]
-                    ?.let { visitAnyAndBuild(localContext, it) }
-                    ?: Continuous2DEnvironment<T>() as Environment<T, P>
-
-                val exports = visitMultipleOrdered(context, root[Syntax.export]) { _, element ->
-                    visitExports(localContext, element)
+                val environment: Environment<T, P> = visitEnvironment(localContext, localRoot[Syntax.environment])
+                val incarnation = SupportedIncarnations.get<T, P>(
+                    visitString(localContext, localRoot[Syntax.incarnation])
+                ).orElseThrow {
+                    IllegalArgumentException(
+                        "Invalid incarnation descriptor: ${localRoot[Syntax.incarnation]}. " +
+                            "Valid incarnations are ${SupportedIncarnations.getAvailableIncarnations()}"
+                    )
                 }
+                localContext.factory.registerSingleton(Incarnation::class.java, incarnation)
+                val exports = visitMultipleOrdered(localContext, root[Syntax.export]) { visitExports(localContext, it) }
                 return EnvironmentAndExports(environment, exports)
             }
 
@@ -160,14 +172,27 @@ object SimulationModel {
         }
 
     private inline fun <reified T : Any> visitAnyAndBuild(context: Context, root: Any): T? =
+        visitAnyAndBuildCatching<T>(context, root).getOrNull()
+
+    private inline fun <reified T : Any> visitAnyAndBuildCatching(context: Context, root: Any): Result<T?> =
         when (root) {
-            is T -> root
+            is T -> Result.success(root)
             is Map<*, *> ->
-                context.lookup<T>(root)?.getOrNull()
-                    ?: visitJVMConstructor(context, root)?.buildAny<T>(context.factory)?.getOrNull()
-            else ->
-                context.factory.convert(T::class.java, root).orElse(null)
-                    .also { logger.debug("Unable to convert {} into a {}, discarding.", root, T::class.simpleName) }
+                context.lookup(root)
+                    ?: visitJVMConstructor(context, root)?.buildAny(context.factory)
+                    ?: Result.success(null)
+            else -> {
+                logger.debug("Unable to build a {} with {}, attempting a JIRF conversion ", root, T::class.simpleName)
+                context.factory.convert(T::class.java, root)
+                    .map { Result.success(it) }
+                    .orElseGet {
+                        Result.failure(
+                            IllegalArgumentException(
+                                "Unable to convert $root into a ${T::class.simpleName}"
+                            )
+                        )
+                    }
+            }
         }
 
     private fun visitConstant(context: Context, root: Any): Constant<*>? =
@@ -200,6 +225,17 @@ object SimulationModel {
             null
         }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun <T, P : Position<P>> visitEnvironment(context: Context, root: Any?): Environment<T, P> =
+        if (root == null) {
+            logger.info("No environment specified, defaulting to {}", Continuous2DEnvironment::class.simpleName)
+            Continuous2DEnvironment<T>() as Environment<T, P>
+        } else {
+            requireNotNull(visitAnyAndBuildCatching<Environment<T, P>>(context, root).getOrThrow()) {
+                "Could not create an environment from: $root"
+            }
+        }
+
     private fun visitExports(context: Context, root: Any?): Extractor? =
         when (root) {
             root is String && root.equals(Syntax.Export.time, ignoreCase = true) -> Time()
@@ -220,7 +256,7 @@ object SimulationModel {
                 val filter: FilteringPolicy = visitStringOptionally(context, root[Syntax.Export.valueFilter])
                     ?.let { CommonFilters.fromString(it) }
                     ?: CommonFilters.NOFILTER.filteringPolicy
-                val aggregators: List<String> = visitMultipleOrdered(context, root[Syntax.Export.aggregators]) { _, it ->
+                val aggregators: List<String> = visitMultipleOrdered(context, root[Syntax.Export.aggregators]) {
                     visitString(context, it)
                 }
                 MoleculeReader(molecule, property, incarnation, filter, aggregators)
@@ -263,9 +299,9 @@ object SimulationModel {
     private fun <T : Any> visitMultipleOrdered(
         context: Context,
         root: Any?,
-        visitSingle: (Context, Any) -> T?
+        visitSingle: (Any) -> T?
     ): List<T> = root?.let {
-        visitSingle(context, root)?.let { single -> listOf(single) }
+        visitSingle(root)?.let { single -> listOf(single) }
             ?: when (root) {
                 is Iterable<*> -> root.flatMap { element ->
                     requireNotNull(element) {
@@ -282,7 +318,7 @@ object SimulationModel {
         context: Context,
         root: Any?,
         failOnError: Boolean = false,
-        visitSingle: (Context, String, Any) -> T?
+        visitSingle: (String, Any) -> T?
     ): Map<String, T> =
         when (root) {
             is Map<*, *> -> visitMultipleNamedFromMap(context, root, failOnError, visitSingle)
@@ -297,13 +333,13 @@ object SimulationModel {
         context: Context,
         root: Map<*, *>,
         failOnError: Boolean = false,
-        visitSingle: (Context, String, Any) -> T?
+        visitSingle: (String, Any) -> T?
     ): Map<String, T> =
         root.flatMap { (key, value) ->
             requireNotNull(value) {
                 "Illegal null element found in $root. Current context: $context."
             }
-            visitSingle(context, key.toString(), value)?.let { listOf(key.toString() to it) }
+            visitSingle(key.toString(), value)?.let { listOf(key.toString() to it) }
                 ?: visitMultipleNamed(context, value, failOnError, visitSingle).toList()
         }.toMap()
 
@@ -361,5 +397,3 @@ object SimulationModel {
             namedLookup[name] ?: throw IllegalArgumentException("No element named $name")
     }
 }
-
-

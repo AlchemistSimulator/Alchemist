@@ -9,7 +9,6 @@ package it.unibo.alchemist.loader;
 
 import it.unibo.alchemist.loader.variables.DependentVariable;
 import it.unibo.alchemist.loader.variables.Variable;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 import java.io.Serializable;
@@ -18,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An entity which is able to produce an Alchemist {@link Environment}, possibly
- * with user defined variable values.
+ * An entity which is able to produce an Alchemist {@link InitializedEnvironment}, resolving user defined variable values.
  */
 public interface Loader extends Serializable {
 
@@ -27,7 +25,7 @@ public interface Loader extends Serializable {
      * @param <T>
      *            concentration type
      * @param <P> position type
-     * @return an {@link Environment} with all the variables set at their
+     * @return an {@link InitializedEnvironment} with all the variables set at their
      *         default values
      */
     default <T, P extends Position<P>> InitializedEnvironment<T, P> getDefault() {
@@ -57,7 +55,7 @@ public interface Loader extends Serializable {
      *            concentration type
      * @param <P>
      *            position type
-     * @return an {@link Environment} with all the variables set at the
+     * @return an {@link InitializedEnvironment} with all the variables set at the
      *         specified values. If the value is unspecified, the default is
      *         used instead
      */
@@ -76,5 +74,4 @@ public interface Loader extends Serializable {
      * @return dependencies files
      */
     List<String> getRemoteDependencies();
-
 }

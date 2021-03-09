@@ -733,7 +733,9 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Map<String, Double> vars = Collections.emptyMap();
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Environment<Double, Euclidean2DPosition> env = new YamlLoader(res).getWith(vars);
+        final Environment<Double, Euclidean2DPosition> env = new YamlLoader(res)
+                .<Double, Euclidean2DPosition>getWith(vars)
+                .getEnvironment();
         final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 10000);
         sim.addOutputMonitor(new OutputMonitor<Double, Euclidean2DPosition>() {
             private static final long serialVersionUID = 1L;

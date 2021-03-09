@@ -368,7 +368,7 @@ public final class TestEnvironmentNodes {
     ) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(res);
-        final Environment<T, P> env = new YamlLoader(res).getWith(vars);
+        final Environment<T, P> env = new YamlLoader(res).<T, P>getWith(vars).getEnvironment();
         final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();

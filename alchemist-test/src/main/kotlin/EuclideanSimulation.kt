@@ -65,6 +65,6 @@ fun <T, P> loadYamlSimulation(
     resource: String,
     vars: Map<String, Double> = emptyMap()
 ): EuclideanEnvironment<T, P> where P : Position<P>, P : Vector<P> =
-    YamlLoader(ResourceLoader.getResourceAsStream(resource)).getWith<T, P>(vars).let {
+    YamlLoader(ResourceLoader.getResourceAsStream(resource)).getWith<T, P>(vars).environment.let {
         if (it is EuclideanEnvironment) it else throw IllegalStateException("Illegal kind of environment")
     }

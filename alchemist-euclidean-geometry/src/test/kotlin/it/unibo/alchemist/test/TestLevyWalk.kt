@@ -12,6 +12,7 @@ class TestLevyWalk : StringSpec() {
         "Test can load" {
             YamlLoader(ResourceLoader.getResourceAsStream("levywalk.yml"))
                 .getDefault<Any, Euclidean2DPosition>()
+                .environment
                 .nodes.first()
                 .reactions.first()
                 .actions.first()::class shouldBe LevyWalk::class

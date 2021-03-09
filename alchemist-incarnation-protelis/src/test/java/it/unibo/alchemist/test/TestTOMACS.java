@@ -32,7 +32,7 @@ public class TestTOMACS {
     @Test
     public void testCustomRetainTimeLoading() {
         final Loader loader = new YamlLoader(ResourceLoader.getResourceAsStream("tomacs.yml"));
-        Assertions.assertTrue(StreamSupport.stream(loader.getDefault().spliterator(), false)
+        Assertions.assertTrue(StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
             .map(n -> (ProtelisNode<?>) n)
             .flatMap(n -> n.getReactions().stream()
                     .map(Reaction::getActions)

@@ -13,9 +13,19 @@ import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 
+/**
+ * The result of the loading of an [environment] with all the free variables instanced,
+ * also providing access to [dataExtractors].
+ */
 interface InitializedEnvironment<T, P : Position<P>> {
 
+    /**
+     * The environment.
+     */
     val environment: Environment<T, P>
 
+    /**
+     * The data extractors for this environment.
+     */
     val dataExtractors: List<Extractor>
 }

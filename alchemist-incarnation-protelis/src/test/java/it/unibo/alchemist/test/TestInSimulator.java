@@ -122,7 +122,7 @@ public class TestInSimulator {
     private static <T, P extends Position<P>> void testLoading(final String resource, final Map<String, Double> vars) {
         final InputStream res = ResourceLoader.getResourceAsStream(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Environment<T, P> env = new YamlLoader(res).getWith(vars);
+        final Environment<T, P> env = new YamlLoader(res).<T, P>getWith(vars).getEnvironment();
         final Simulation<T, P> sim = new Engine<>(env, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {

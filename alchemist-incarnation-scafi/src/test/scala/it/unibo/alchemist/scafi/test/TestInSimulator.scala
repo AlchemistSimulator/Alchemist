@@ -93,7 +93,7 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
     import scala.jdk.CollectionConverters._
     val res: InputStream = classOf[TestInSimulator[P]].getResourceAsStream(resource)
     res shouldNot be(null)
-    val env: Environment[T, P] = new YamlLoader(res).getWith(vars.asJava)
+    val env: Environment[T, P] = new YamlLoader(res).getWith[T, P](vars.asJava).getEnvironment
     val sim = new Engine[T, P](env, maxSteps)
     sim.play()
     sim.run()

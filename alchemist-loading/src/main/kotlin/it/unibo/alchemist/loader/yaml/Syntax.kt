@@ -11,7 +11,7 @@ package it.unibo.alchemist.loader.yaml
 
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.createType
-import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.declaredMemberProperties
 
 internal object Syntax {
     object JavaType {
@@ -27,17 +27,18 @@ internal object Syntax {
         val molecule by OwnName()
         val property by OwnName()
         val aggregators by OwnName()
-        val valueFilter = "value-filter"
+        const val valueFilter = "value-filter"
     }
     val environment by OwnName()
     val export by OwnName()
     val incarnation by OwnName()
-    val remoteDependencies = "remote-dependencies"
+    const val remoteDependencies = "remote-dependencies"
     val variables by OwnName()
     val rootKeys: List<String> =
-        Syntax::class.memberProperties
+        Syntax::class.declaredMemberProperties
             .filter { it.returnType == String::class.createType() }
-            .map { it.get(Syntax).toString() }
+            .map { if (it.isConst) it.getter.call() else it.getter.call(Syntax) }
+            .map { it.toString() }
 }
 
 internal class OwnName {

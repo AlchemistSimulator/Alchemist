@@ -14,40 +14,136 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
 
 internal interface SyntaxElement {
+
     val validKeys: List<String> get() = this::class.declaredMemberProperties
         .filter { it.returnType == String::class.createType() }
         .map { if (it.isConst) it.getter.call() else it.getter.call(this) }
         .map { it.toString() }
 
-    fun verifyKeysForElement(descriptor: Map<*, *>) {
+    val validDescriptors: Set<ValidDescriptor>
+
+    val guide get() = "Possible configurations are:" +
+        validDescriptors.foldIndexed("\n") { index, previous, element ->
+            "$previous## Option ${index + 1}:\n$element"
+        }
+
+    /**
+     * Validates a candidate [descriptor] for a SyntaxElement.
+     * If at least one of its [validDescriptors] mandatory keys match,
+     * then such a structure is mandated, and an exception is thrown if the syntax is incorrect;
+     * otherwise, `true` is returned.
+     *
+     * If none of the [validDescriptors] match, the function returns `false`.
+     */
+    fun validateDescriptor(descriptor: Map<*, *>): Boolean {
         val publicKeys = descriptor.keys.asSequence()
             .filterNotNull()
             .map { it.toString() }
             .filterNot { it.startsWith("_") }
             .toSet()
-        val unkownKeys = publicKeys - DocumentRoot.validKeys
-        require(unkownKeys.isEmpty()) {
-            "There are unknown ${this::class.simpleName} keys: $unkownKeys. " +
-                "Allowed root keys: ${
-                DocumentRoot.validKeys.joinToString(prefix = "\n\t- ", separator = "\n\t- ", postfix = "\n")
-                }" +
-                "If you need private keys (e.g. for internal use), prefix them with underscore (_)"
+        for (validDescriptor in validDescriptors) {
+            if (validDescriptor.mandatoryKeys.all { descriptor.containsKey(it) }) {
+                val unkownKeys = publicKeys - validDescriptor.mandatoryKeys - validDescriptor.optionalKeys
+                require(unkownKeys.isEmpty()) {
+                    val matched = descriptor.keys.intersect(validDescriptor.mandatoryKeys)
+                    val typeName = this::class.simpleName
+                    """
+                    |Mandatory keys $matched were present in the provided $typeName descriptor $descriptor
+                    |However, there are also unknown keys: $unkownKeys. $guide
+                    |If you need private keys (e.g. for internal use), prefix them with underscore (_)
+                    """.trimMargin()
+                }
+                return true
+            }
+        }
+        return false
+    }
+
+    data class ValidDescriptor(
+        val mandatoryKeys: Set<String>,
+        val optionalKeys: Set<String> = setOf(),
+    ) {
+        override fun toString(): String {
+            fun Set<String>.lines() = joinToString(prefix = "\n\t\t- ", separator = "\n\t\t- ", postfix = "\n")
+            return "\trequired keys: ${mandatoryKeys.lines()}\toptional keys: ${optionalKeys.lines()}"
         }
     }
 }
+
+@Suppress("SuspiciousCollectionReassignment")
+internal class DescriptorBuilder {
+    private var mandatoryKeys = emptySet<String>()
+    private var optionalKeys = emptySet<String>()
+    fun mandatory(vararg names: String) {
+        mandatoryKeys += names.toSet()
+    }
+    fun optional(vararg names: String) {
+        optionalKeys += names.toSet()
+    }
+    fun build() = SyntaxElement.ValidDescriptor(mandatoryKeys, optionalKeys)
+}
+
+private fun validDescriptor(configuration: DescriptorBuilder.() -> Unit): SyntaxElement.ValidDescriptor =
+    DescriptorBuilder().apply(configuration).build()
 
 internal object DocumentRoot : SyntaxElement {
     object JavaType : SyntaxElement {
         val type by OwnName()
         val parameters by OwnName()
+        override val validDescriptors = setOf(
+            validDescriptor {
+                mandatory(type)
+                optional(parameters)
+            }
+        )
     }
     object DependentVariable : SyntaxElement {
         val language by OwnName()
         val formula by OwnName()
+        override val validDescriptors = JavaType.validDescriptors + setOf(
+            validDescriptor {
+                mandatory(formula)
+                optional(language)
+            }
+        )
     }
     object Displacement : SyntaxElement {
+        val contents by OwnName()
         val nodes by OwnName()
         val programs by OwnName()
+        override val validDescriptors = setOf(
+            validDescriptor {
+                mandatory(JavaType.type)
+                optional(JavaType.parameters, contents, nodes, programs)
+            }
+        )
+        object Contents : SyntaxElement {
+            val molecule by OwnName()
+            val concentration by OwnName()
+            const val shapes = "in"
+            override val validDescriptors = setOf(
+                validDescriptor {
+                    mandatory(molecule, concentration)
+                    optional(shapes)
+                }
+            )
+        }
+        object Program : SyntaxElement {
+            val program by OwnName()
+            val actions by OwnName()
+            val conditions by OwnName()
+            const val timeDistribution = "time-distribution"
+            override val validDescriptors = setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters, conditions, timeDistribution, actions)
+                },
+                validDescriptor {
+                    mandatory(program)
+                    optional(timeDistribution)
+                }
+            )
+        }
     }
     object Export : SyntaxElement {
         val time by OwnName()
@@ -55,10 +151,20 @@ internal object DocumentRoot : SyntaxElement {
         val property by OwnName()
         val aggregators by OwnName()
         const val valueFilter = "value-filter"
+        override val validDescriptors = JavaType.validDescriptors + setOf(
+            validDescriptor { mandatory(time) },
+            validDescriptor {
+                mandatory(molecule)
+                optional(property, aggregators, valueFilter)
+            }
+        )
     }
     object Seeds : SyntaxElement {
         val scenario by OwnName()
         val simulation by OwnName()
+        override val validDescriptors = setOf(
+            validDescriptor { optional(simulation, scenario) }
+        )
     }
     val displacements by OwnName()
     val environment by OwnName()
@@ -68,6 +174,12 @@ internal object DocumentRoot : SyntaxElement {
     const val remoteDependencies = "remote-dependencies"
     val seeds by OwnName()
     val variables by OwnName()
+    override val validDescriptors = setOf(
+        validDescriptor {
+            mandatory(incarnation)
+            optional(displacements, environment, export, linkingRule, remoteDependencies, seeds, variables)
+        }
+    )
 }
 
 internal class OwnName {

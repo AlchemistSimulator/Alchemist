@@ -13,7 +13,8 @@
     </encoder>
   </appender>
   <logger name="org.reflections.Reflections" level="OFF"/>
-  <root level="WARN">
+  <root level="OFF"/>
+  <logger name="it.unibo.alchemist" level="DEBUG">
     <appender-ref ref="STDOUT" />
-  </root>
+  </logger>
 </configuration>

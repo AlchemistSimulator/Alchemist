@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.yaml.SimulationModel;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -74,7 +75,9 @@ public class TestLoadGPSTrace {
     public <T> void testLoadGPSTrace() {
         final InputStream res = ResourceLoader.getResourceAsStream("testgps.yml");
         assertNotNull(res, "Missing test resource " + "testgps.yml");
-        final Environment<T, GeoPosition> env = new YamlLoader(res).<T, GeoPosition>getDefault().getEnvironment();
+        final Environment<T, GeoPosition> env =
+                SimulationModel.INSTANCE.fromYaml(res).<T, GeoPosition>getDefault().getEnvironment();
+        assertTrue(env.getNodeCount() > 0);
         final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
 

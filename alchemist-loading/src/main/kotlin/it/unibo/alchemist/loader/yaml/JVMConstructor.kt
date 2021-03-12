@@ -136,7 +136,7 @@ sealed class JVMConstructor(val typeName: String) {
                     )
                 }
             }
-            1 -> Result.success(newInstance(perfectMatches.first().kotlin, factory))
+            1 -> runCatching { newInstance(perfectMatches.first().kotlin, factory) }
             else -> Result.failure(
                 IllegalStateException("Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}")
             )

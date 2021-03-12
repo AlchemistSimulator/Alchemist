@@ -6,7 +6,7 @@ variables:
       - anothercategory:
           - three: &three
               formula: 3
-  formula: &formula
+  _formula: &formula
     type: JSR223Variable
     parameters: [groovy, *three]
   *three: &max

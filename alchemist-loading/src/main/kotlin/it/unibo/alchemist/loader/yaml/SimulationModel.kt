@@ -171,16 +171,10 @@ object SimulationModel {
                 localContext.factory.registerSingleton(Environment::class.java, environment)
                 // LAYERS TODO
                 // LINKING RULE
-                val linkingRules = visitRecursively(
+                val linkingRule = visitLinkingRule<P, T>(
                     localContext,
-                    localRoot[DocumentRoot.linkingRule] ?: emptyMap<String, Any>(),
-                    DocumentRoot.JavaType,
-                ) { element -> visitAnyAndBuildCatching<LinkingRule<T, P>>(localContext, element) }
-                val linkingRule: LinkingRule<T, P> = when {
-                    linkingRules.isEmpty() -> NoLinks()
-                    linkingRules.size == 1 -> linkingRules.first()
-                    else -> CombinedLinkingRule(linkingRules)
-                }
+                    localRoot[DocumentRoot.linkingRule] ?: emptyMap<String, Any>()
+                )
                 environment.linkingRule = linkingRule
                 localContext.factory.registerSingleton(LinkingRule::class.java, linkingRule)
                 // DISPLACEMENTS
@@ -249,6 +243,17 @@ object SimulationModel {
             override fun getConstants(): Map<String, Any?> = context.constants.toMap()
 
             override fun getRemoteDependencies(): List<String> = remoteDependencies
+        }
+    }
+
+    private fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
+        val linkingRules = visitRecursively(localContext, root, DocumentRoot.JavaType) { element ->
+            visitAnyAndBuildCatching<LinkingRule<T, P>>(localContext, element)
+        }
+        return when {
+            linkingRules.isEmpty() -> NoLinks()
+            linkingRules.size == 1 -> linkingRules.first()
+            else -> CombinedLinkingRule(linkingRules)
         }
     }
 

@@ -79,7 +79,7 @@ object SimulationModel {
         var injectedRoot = root
         while (context.constants.size != previousSize) {
             previousSize = context.constants.size
-            visitMultipleNamed(
+            visitNamedRecursively(
                 context = context,
                 root = injectedRoot[DocumentRoot.variables] ?: emptyMap<String, Any>(),
                 syntax = null // Prevent clashes with variables
@@ -89,7 +89,7 @@ object SimulationModel {
         }
         logger.info("{} constants: {}", context.constants.size, context.constants)
         val variables: Map<String, Variable<*>> =
-            visitMultipleNamed(
+            visitNamedRecursively(
                 context = context,
                 root = injectedRoot[DocumentRoot.variables] ?: emptyMap<String, Any>(),
                 syntax = null, // Prevent clashes with dependent variables
@@ -102,14 +102,14 @@ object SimulationModel {
         logger.info("Variables: {}", variables)
         injectedRoot = inject(context, injectedRoot)
         val dependentVariables: Map<String, DependentVariable<*>> =
-            visitMultipleNamed(
+            visitNamedRecursively(
                 context = context,
                 root = injectedRoot[DocumentRoot.variables] ?: emptyMap<String, Any>(),
                 syntax = DocumentRoot.DependentVariable,
             ) { name, element -> visitDependentVariableRegistering(name, context, element) }
         logger.info("Dependent variables: {}", dependentVariables)
         val remoteDependencies =
-            visitMultipleOrdered(
+            visitRecursively(
                 context,
                 injectedRoot[DocumentRoot.remoteDependencies] ?: emptyMap<String, Any>(),
             ) { visitAnyAndBuildCatching<String>(context, it) }
@@ -171,7 +171,7 @@ object SimulationModel {
                 localContext.factory.registerSingleton(Environment::class.java, environment)
                 // LAYERS TODO
                 // LINKING RULE
-                val linkingRules = visitMultipleOrdered(
+                val linkingRules = visitRecursively(
                     localContext,
                     localRoot[DocumentRoot.linkingRule] ?: emptyMap<String, Any>(),
                     DocumentRoot.JavaType,
@@ -188,7 +188,7 @@ object SimulationModel {
                 val displacementsSource = localRoot[DocumentRoot.displacements] ?: emptyList<Any>().also {
                     logger.warn("There are no displacements in the specification, the environment won't have any node")
                 }
-                val displacementDescriptors: List<Pair<Displacement<P>, Map<*, *>>> = visitMultipleOrdered(
+                val displacementDescriptors: List<Pair<Displacement<P>, Map<*, *>>> = visitRecursively(
                     localContext,
                     displacementsSource,
                     syntax = DocumentRoot.Displacement
@@ -221,7 +221,7 @@ object SimulationModel {
                                 node.setConcentration(molecule, concentrationMaker())
                             }
                         }
-                        val programs = visitMultipleOrdered<Reaction<T>>(
+                        val programs = visitRecursively<Reaction<T>>(
                             localContext,
                             descriptor[programKey],
                             DocumentRoot.Displacement.Program
@@ -230,7 +230,7 @@ object SimulationModel {
                                 "null is not a valid program ${DocumentRoot.Displacement.Program.guide}"
                             }
                             (program as? Map<*, *>)?.let {
-                                visitReaction(simulationRNG, incarnation, environment, node, localContext, it)
+                                visitProgram(simulationRNG, incarnation, environment, node, localContext, it)
                             }
                         }
                         programs.forEach { node.addReaction(it) }
@@ -240,7 +240,7 @@ object SimulationModel {
                     }
                 }
                 // EXPORTS
-                val exports = visitMultipleOrdered(localContext, root[DocumentRoot.export] ?: emptyList<Any>()) {
+                val exports = visitRecursively(localContext, root[DocumentRoot.export] ?: emptyList<Any>()) {
                     visitExports(incarnation, localContext, it)
                 }
                 return EnvironmentAndExports(environment, exports)
@@ -349,7 +349,7 @@ object SimulationModel {
     ): List<Triple<List<Shape<P>>, Molecule, () -> T>> {
         logger.debug("Visiting contents: {}", root)
         val allContents = root[DocumentRoot.Displacement.contents] ?: emptyList<Any>()
-        return visitMultipleOrdered(context, allContents) { element ->
+        return visitRecursively(context, allContents) { element ->
             logger.debug("Visiting as content: {}", element)
             val moleculeKey = DocumentRoot.Displacement.Contents.molecule
             (element as? Map<*, *>)
@@ -357,7 +357,7 @@ object SimulationModel {
                 ?.let {
                     logger.debug("Found content descriptor: {}", it)
                     val shapesKey = DocumentRoot.Displacement.Contents.shapes
-                    val shapes = visitMultipleOrdered(context, element[shapesKey]) { shape ->
+                    val shapes = visitRecursively(context, element[shapesKey]) { shape ->
                         visitAnyAndBuildCatching<Shape<P>>(context, shape)
                     }
                     logger.debug("Shapes: {}", shapes)
@@ -416,7 +416,7 @@ object SimulationModel {
                 val filter: FilteringPolicy = root[DocumentRoot.Export.valueFilter]
                     ?.let { CommonFilters.fromString(it.toString()) }
                     ?: CommonFilters.NOFILTER.filteringPolicy
-                val aggregators: List<String> = visitMultipleOrdered(context, root[DocumentRoot.Export.aggregators]) {
+                val aggregators: List<String> = visitRecursively(context, root[DocumentRoot.Export.aggregators]) {
                     require(it is CharSequence) {
                         "Invalid aggregator $it:${it?.let { it::class.simpleName }}. Must be a String."
                     }
@@ -467,7 +467,7 @@ object SimulationModel {
             ?.getOrThrow()
             ?: cantBuildWith<RandomGenerator>(root)
 
-    private fun <T, P : Position<P>> visitReaction(
+    private fun <T, P : Position<P>> visitProgram(
         simulationRNG: RandomGenerator,
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
@@ -475,25 +475,22 @@ object SimulationModel {
         context: Context,
         program: Map<*, *>
     ): Result<Reaction<T>>? = if (DocumentRoot.Displacement.Program.validateDescriptor(program)) {
-        val timeDistribution: TimeDistribution<T> =
-            when (val descriptor = program[DocumentRoot.Displacement.Program.timeDistribution]) {
-                is Map<*, *> -> visitAnyAndBuildCatching<TimeDistribution<T>>(context, descriptor)?.getOrThrow()
-                    ?: cantBuildWith<TimeDistribution<T>>(descriptor)
-                else -> incarnation.createTimeDistribution(simulationRNG, environment, node, descriptor?.toString())
-            }
+        val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
+            incarnation,
+            simulationRNG,
+            environment,
+            node,
+            context,
+            program[DocumentRoot.Displacement.Program.timeDistribution]
+        )
         context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
-        val reaction: Reaction<T> = if (program.containsKey(DocumentRoot.Displacement.Program.program)) {
-            val programDescriptor = program[DocumentRoot.Displacement.Program.program]?.toString()
-            incarnation.createReaction(simulationRNG, environment, node, timeDistribution, programDescriptor)
-        } else {
-            visitAnyAndBuildCatching<Reaction<T>>(context, program)?.getOrThrow()
-                ?: cantBuildWith<Reaction<T>>(program)
-        }
+        val reaction: Reaction<T> =
+            visitReaction(simulationRNG, incarnation, environment, node, timeDistribution, context, program)
         context.factory.registerSingleton(Reaction::class.java, reaction)
         fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = kotlin.runCatching {
             makeWith(simulationRNG, environment, node, timeDistribution, reaction, parameter?.toString())
         }
-        val conditions = visitMultipleOrdered<Condition<T>>(
+        val conditions = visitRecursively<Condition<T>>(
             context,
             program[DocumentRoot.Displacement.Program.conditions] ?: emptyList<Any>(),
             DocumentRoot.JavaType,
@@ -504,7 +501,7 @@ object SimulationModel {
             }
         }
         reaction.conditions = conditions
-        val actions = visitMultipleOrdered<Action<T>>(
+        val actions = visitRecursively<Action<T>>(
             context,
             program[DocumentRoot.Displacement.Program.actions] ?: emptyList<Any>(),
             DocumentRoot.JavaType,
@@ -520,6 +517,22 @@ object SimulationModel {
         Result.success(reaction)
     } else {
         null
+    }
+
+    private fun <P : Position<P>, T> visitReaction(
+        simulationRNG: RandomGenerator,
+        incarnation: Incarnation<T, P>,
+        environment: Environment<T, P>,
+        node: Node<T>,
+        timeDistribution: TimeDistribution<T>,
+        context: Context,
+        root: Map<*, *>
+    ) = if (root.containsKey(DocumentRoot.Displacement.Program.program)) {
+        val programDescriptor = root[DocumentRoot.Displacement.Program.program]?.toString()
+        incarnation.createReaction(simulationRNG, environment, node, timeDistribution, programDescriptor)
+    } else {
+        visitAnyAndBuildCatching<Reaction<T>>(context, root)?.getOrThrow()
+            ?: cantBuildWith<Reaction<T>>(root)
     }
 
     private fun visitSeeds(context: Context, root: Any?): Seeds =
@@ -559,14 +572,27 @@ object SimulationModel {
             )
         }
 
-    private inline fun <reified T : Any> visitMultipleOrdered(
+    private fun <P : Position<P>, T> visitTimeDistribution(
+        incarnation: Incarnation<T, P>,
+        simulationRNG: RandomGenerator,
+        environment: Environment<T, P>,
+        node: Node<T>,
+        context: Context,
+        root: Any?,
+    ) = when (root) {
+        is Map<*, *> -> visitAnyAndBuildCatching<TimeDistribution<T>>(context, root)?.getOrThrow()
+            ?: cantBuildWith<TimeDistribution<T>>(root)
+        else -> incarnation.createTimeDistribution(simulationRNG, environment, node, root?.toString())
+    }
+
+    private inline fun <reified T : Any> visitRecursively(
         context: Context,
         root: Any?,
         syntax: SyntaxElement? = null,
         noinline visitSingle: (Any?) -> Result<T>?
-    ): List<T> = visitMultipleOrdered(T::class, context, root, syntax, visitSingle)
+    ): List<T> = visitRecursively(T::class, context, root, syntax, visitSingle)
 
-    private fun <T : Any> visitMultipleOrdered(
+    private fun <T : Any> visitRecursively(
         evidence: KClass<T>,
         context: Context,
         root: Any?,
@@ -579,10 +605,10 @@ object SimulationModel {
          */
         visitSingle: (Any?) -> Result<T>?
     ): List<T> = when (root) {
-        is Iterable<*> -> root.flatMap { visitMultipleOrdered(evidence, context, it, syntax, visitSingle) }
+        is Iterable<*> -> root.flatMap { visitRecursively(evidence, context, it, syntax, visitSingle) }
         is Map<*, *> -> {
             logger.debug("Trying to build a {} using syntax {} from {}", evidence.simpleName, root, syntax)
-            fun recurse() = visitMultipleOrdered(evidence, context, root.values, syntax, visitSingle)
+            fun recurse() = visitRecursively(evidence, context, root.values, syntax, visitSingle)
             fun fail(): Nothing = cantBuildWith(evidence, root, syntax)
             fun result() = visitSingle(root)?.map { listOf(it) }
             when (syntax) {
@@ -596,14 +622,14 @@ object SimulationModel {
         else -> visitSingle(root)?.map { listOf(it) }?.getOrThrow() ?: cantBuildWith(evidence, root, syntax)
     }
 
-    private inline fun <reified T : Any> visitMultipleNamed(
+    private inline fun <reified T : Any> visitNamedRecursively(
         context: Context,
         root: Any?,
         syntax: SyntaxElement? = null,
         noinline visitSingle: (String, Any?) -> Result<T>?
-    ): Map<String, T> = visitMultipleNamed(T::class, context, root, syntax, visitSingle)
+    ): Map<String, T> = visitNamedRecursively(T::class, context, root, syntax, visitSingle)
 
-    private fun <T : Any> visitMultipleNamed(
+    private fun <T : Any> visitNamedRecursively(
         evidence: KClass<T>,
         context: Context,
         root: Any?,
@@ -612,14 +638,14 @@ object SimulationModel {
     ): Map<String, T> {
         logger.debug("Visiting: {} searching for {}", root, evidence.simpleName)
         return when (root) {
-            is Map<*, *> -> visitMultipleNamedFromMap(evidence, context, root, syntax, visitSingle)
+            is Map<*, *> -> visitNamedRecursivelyFromMap(evidence, context, root, syntax, visitSingle)
             is Iterable<*> ->
-                root.flatMap { visitMultipleNamed(evidence, context, it, syntax, visitSingle).toList() }.toMap()
+                root.flatMap { visitNamedRecursively(evidence, context, it, syntax, visitSingle).toList() }.toMap()
             else -> emptyMap()
         }
     }
 
-    private fun <T : Any> visitMultipleNamedFromMap(
+    private fun <T : Any> visitNamedRecursivelyFromMap(
         evidence: KClass<T>,
         context: Context,
         root: Map<*, *>,
@@ -635,7 +661,7 @@ object SimulationModel {
         root.flatMap { (key, value) ->
             logger.debug("Visiting: {} searching for {}", root, evidence.simpleName)
             fun recurse(): List<Pair<String, T>> =
-                visitMultipleNamed(evidence, context, value, syntax, visitSingle).toList()
+                visitNamedRecursively(evidence, context, value, syntax, visitSingle).toList()
             fun fail(): Nothing = cantBuildWith(evidence, value)
             fun result() = visitSingle(key.toString(), value)?.map { listOf(key.toString() to it) }
             when (value) {

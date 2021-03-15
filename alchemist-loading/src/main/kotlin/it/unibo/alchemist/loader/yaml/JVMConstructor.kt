@@ -10,9 +10,6 @@
 package it.unibo.alchemist.loader.yaml
 
 import it.unibo.alchemist.ClassPathScanner
-import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.TimeDistribution
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory

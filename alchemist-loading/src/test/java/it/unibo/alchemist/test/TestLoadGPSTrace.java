@@ -100,8 +100,8 @@ public class TestLoadGPSTrace {
                         0.0,
                         idealArrive.distanceTo(realArrive),
                         DELTA,
-                        "simulation completed at time " + time + " after " + step + " steps.\n" +
-                            "Start at " + start + ", ideal arrive " + idealArrive + ", actual arrive " + realArrive
+                        "simulation completed at time " + time + " after " + step + " steps.\n"
+                            + "Start at " + start + ", ideal arrive " + idealArrive + ", actual arrive " + realArrive
                     );
                 }
             }

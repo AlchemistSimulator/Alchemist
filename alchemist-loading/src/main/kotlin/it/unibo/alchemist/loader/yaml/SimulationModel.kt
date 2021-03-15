@@ -416,7 +416,10 @@ object SimulationModel {
                 val filter: FilteringPolicy = root[DocumentRoot.Export.valueFilter]
                     ?.let { CommonFilters.fromString(it.toString()) }
                     ?: CommonFilters.NOFILTER.filteringPolicy
-                val aggregators: List<String> = visitRecursively(context, root[DocumentRoot.Export.aggregators]) {
+                val aggregators: List<String> = visitRecursively(
+                    context,
+                    root[DocumentRoot.Export.aggregators] ?: emptyList<Any>()
+                ) {
                     require(it is CharSequence) {
                         "Invalid aggregator $it:${it?.let { it::class.simpleName }}. Must be a String."
                     }

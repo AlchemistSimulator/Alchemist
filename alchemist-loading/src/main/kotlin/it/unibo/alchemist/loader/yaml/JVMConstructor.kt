@@ -10,6 +10,9 @@
 package it.unibo.alchemist.loader.yaml
 
 import it.unibo.alchemist.ClassPathScanner
+import it.unibo.alchemist.model.interfaces.Incarnation
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.TimeDistribution
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
@@ -224,7 +227,23 @@ sealed class JVMConstructor(val typeName: String) {
         }
         val creationResult = jirf.build(target.java, parameters)
         return creationResult.createdObject.orElseGet {
-            val errorMessage = "Could not create $this, requested as instance of ${target.simpleName}"
+            val implicits =
+                """
+                |${'\t'} implicitly available singleton objects:
+                ${jirf.singletonObjects.map { (type, it) -> "|\t\t * ${type.simpleName} -> $it" }.joinToString("\n") }}"
+                """.trim()
+            val exceptionsummary = creationResult.exceptions.asSequence().map { (constructor, exception) ->
+                """
+                |${'\t'}- constructor: $constructor"
+                |${'\t'}  failure message: ${exception.message ?: "no message"}"
+                """.trim()
+            }.joinToString(separator = "\n")
+            val errorMessage =
+                """
+                |Could not create $this, requested as instance of ${target.simpleName}.
+                $exceptionsummary
+                $implicits
+                """.trimMargin().trim()
             logger.error(errorMessage)
             val masterException = IllegalArgumentException("Illegal Alchemist specification: $errorMessage")
             creationResult.exceptions.forEach { (_, exception) -> masterException.addSuppressed(exception) }

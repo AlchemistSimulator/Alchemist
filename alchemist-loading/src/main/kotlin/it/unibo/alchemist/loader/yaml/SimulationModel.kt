@@ -235,6 +235,7 @@ object SimulationModel {
                         }
                         programs.forEach { node.addReaction(it) }
                         environment.addNode(node, position)
+                        logger.debug("Added node {} at {}", node.id, position)
                         localContext.factory.deregisterSingleton(node)
                     }
                 }
@@ -480,7 +481,7 @@ object SimulationModel {
                     ?: cantBuildWith<TimeDistribution<T>>(descriptor)
                 else -> incarnation.createTimeDistribution(simulationRNG, environment, node, descriptor?.toString())
             }
-        context.factory.registerSingleton(timeDistribution)
+        context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
         val reaction: Reaction<T> = if (program.containsKey(DocumentRoot.Displacement.Program.program)) {
             val programDescriptor = program[DocumentRoot.Displacement.Program.program]?.toString()
             incarnation.createReaction(simulationRNG, environment, node, timeDistribution, programDescriptor)
@@ -488,13 +489,13 @@ object SimulationModel {
             visitAnyAndBuildCatching<Reaction<T>>(context, program)?.getOrThrow()
                 ?: cantBuildWith<Reaction<T>>(program)
         }
-        context.factory.registerSingleton(reaction)
+        context.factory.registerSingleton(Reaction::class.java, reaction)
         fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = kotlin.runCatching {
             makeWith(simulationRNG, environment, node, timeDistribution, reaction, parameter?.toString())
         }
         val conditions = visitMultipleOrdered<Condition<T>>(
             context,
-            program[DocumentRoot.Displacement.Program.conditions],
+            program[DocumentRoot.Displacement.Program.conditions] ?: emptyList<Any>(),
             DocumentRoot.JavaType,
         ) {
             when (it) {
@@ -505,7 +506,7 @@ object SimulationModel {
         reaction.conditions = conditions
         val actions = visitMultipleOrdered<Action<T>>(
             context,
-            program[DocumentRoot.Displacement.Program.conditions],
+            program[DocumentRoot.Displacement.Program.actions] ?: emptyList<Any>(),
             DocumentRoot.JavaType,
         ) {
             when (it) {

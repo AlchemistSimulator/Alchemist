@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -247,6 +248,7 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
             final Reaction<List<ILsaMolecule>> reaction,
             final String additionalParameters
     ) {
+        Objects.requireNonNull(additionalParameters, "The condition can't be null. Reaction:" + reaction);
         if (additionalParameters.startsWith("+")) {
             return new LsaNeighborhoodCondition((LsaNode) node, createMolecule(additionalParameters.substring(1)), environment);
         }

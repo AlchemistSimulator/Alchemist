@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -78,6 +79,14 @@ public class TestLoadGPSTrace {
         final Environment<T, GeoPosition> env =
                 SimulationModel.INSTANCE.fromYaml(res).<T, GeoPosition>getDefault().getEnvironment();
         assertTrue(env.getNodeCount() > 0);
+        env.getNodes().forEach(node -> {
+            var reactions = node.getReactions();
+            assertFalse(reactions.isEmpty());
+            reactions.forEach(reaction -> {
+                assertTrue(reaction.getConditions().isEmpty());
+                assertEquals(1, reaction.getActions().size());
+            });
+        });
         final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
 
@@ -87,7 +96,13 @@ public class TestLoadGPSTrace {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
                     final GeoPosition realArrive = Objects.requireNonNull(env.getPosition(node));
-                    assertEquals(0.0, idealArrive.distanceTo(realArrive), DELTA);
+                    assertEquals(
+                        0.0,
+                        idealArrive.distanceTo(realArrive),
+                        DELTA,
+                        "simulation completed at time " + time + " after " + step + " steps.\n" +
+                            "Start at " + start + ", ideal arrive " + idealArrive + ", actual arrive " + realArrive
+                    );
                 }
             }
 

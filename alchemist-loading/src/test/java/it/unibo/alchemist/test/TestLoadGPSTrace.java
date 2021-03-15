@@ -80,7 +80,7 @@ public class TestLoadGPSTrace {
                 SimulationModel.INSTANCE.fromYaml(res).<T, GeoPosition>getDefault().getEnvironment();
         assertTrue(env.getNodeCount() > 0);
         env.getNodes().forEach(node -> {
-            var reactions = node.getReactions();
+            final var reactions = node.getReactions();
             assertFalse(reactions.isEmpty());
             reactions.forEach(reaction -> {
                 assertTrue(reaction.getConditions().isEmpty());

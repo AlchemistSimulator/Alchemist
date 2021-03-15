@@ -247,7 +247,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             return new ExponentialTime<>(Double.POSITIVE_INFINITY, randomGenerator);
         }
         try {
-            double frequency = Double.parseDouble(parameter);
+            final double frequency = Double.parseDouble(parameter);
             return new DiracComb<>(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
         } catch (final NumberFormatException e) {
             L.error("Unable to convert {} to a double", parameter);

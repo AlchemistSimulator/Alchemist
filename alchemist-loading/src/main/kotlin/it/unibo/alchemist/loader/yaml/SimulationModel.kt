@@ -411,23 +411,26 @@ object SimulationModel {
         when {
             root is String && root.equals(DocumentRoot.Export.time, ignoreCase = true) -> Result.success(Time())
             root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
-                val molecule = root[DocumentRoot.Export.molecule].toString()
-                val property = root[DocumentRoot.Export.property]?.toString()
-                val filter: FilteringPolicy = root[DocumentRoot.Export.valueFilter]
-                    ?.let { CommonFilters.fromString(it.toString()) }
-                    ?: CommonFilters.NOFILTER.filteringPolicy
-                val aggregators: List<String> = visitRecursively(
-                    context,
-                    root[DocumentRoot.Export.aggregators] ?: emptyList<Any>()
-                ) {
-                    require(it is CharSequence) {
-                        "Invalid aggregator $it:${it?.let { it::class.simpleName }}. Must be a String."
+                val molecule = root[DocumentRoot.Export.molecule]?.toString()
+                if (molecule == null) {
+                    visitAnyAndBuildCatching<Extractor>(context, root)
+                } else {
+                    val property = root[DocumentRoot.Export.property]?.toString()
+                    val filter: FilteringPolicy = root[DocumentRoot.Export.valueFilter]
+                        ?.let { CommonFilters.fromString(it.toString()) }
+                        ?: CommonFilters.NOFILTER.filteringPolicy
+                    val aggregators: List<String> = visitRecursively(
+                        context,
+                        root[DocumentRoot.Export.aggregators] ?: emptyList<Any>()
+                    ) {
+                        require(it is CharSequence) {
+                            "Invalid aggregator $it:${it?.let { it::class.simpleName }}. Must be a String."
+                        }
+                        Result.success(it.toString())
                     }
-                    Result.success(it.toString())
+                    Result.success(MoleculeReader(molecule, property, incarnation, filter, aggregators))
                 }
-                Result.success(MoleculeReader(molecule, property, incarnation, filter, aggregators))
             }
-            root is Map<*, *> -> visitAnyAndBuildCatching<Extractor>(context, root)
             else -> null
         }
 

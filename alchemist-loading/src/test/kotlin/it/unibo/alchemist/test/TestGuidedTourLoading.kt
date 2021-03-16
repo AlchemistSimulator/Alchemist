@@ -10,29 +10,30 @@
 package it.unibo.alchemist.test
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.ClassPathScanner
+import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.SimulationModel
 import java.io.File
+import java.net.URL
 
-val cache = Caffeine.newBuilder().build<String, Loader> {
-    SimulationModel.fromYaml(it)
+val cache: LoadingCache<URL, Loader> = Caffeine.newBuilder().build {
+    LoadAlchemist.from(it)
 }
 
 class TestGuidedTourLoading : FreeSpec(
     {
-        ClassPathScanner.resourcesMatching(".*\\.yml", "guidedTour").forEach { yaml ->
+        ClassPathScanner.resourcesMatching(".*\\.[yY][aA]?[mM][lL]", "guidedTour").forEach { yaml ->
             "${File(yaml.file).name} should load with default parameters" {
-                cache.get(yaml.readText())
-                    ?.getDefault<Any, Nothing>() shouldNotBe null
+                cache.get(yaml)?.getDefault<Any, Nothing>() shouldNotBe null
             }
         }
         ClassPathScanner.resourcesMatching(".*[Vv]ariable.*\\.yml", "guidedTour").forEach { yaml ->
             "${File(yaml.file).name} should actually define variables" {
-                val parsed = cache.get(yaml.readText())!!
+                val parsed = cache.get(yaml)!!
                 (parsed.variables + parsed.dependentVariables).size shouldBeGreaterThan 0
             }
         }

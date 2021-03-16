@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.SimulationModel;
+import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -22,7 +22,6 @@ import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -74,10 +73,9 @@ public class TestLoadGPSTrace {
      */
     @Test
     public <T> void testLoadGPSTrace() {
-        final InputStream res = ResourceLoader.getResourceAsStream("testgps.yml");
+        final var res = ResourceLoader.getResource("testgps.yml");
         assertNotNull(res, "Missing test resource " + "testgps.yml");
-        final Environment<T, GeoPosition> env =
-                SimulationModel.INSTANCE.fromYaml(res).<T, GeoPosition>getDefault().getEnvironment();
+        final Environment<T, GeoPosition> env = LoadAlchemist.from(res).<T, GeoPosition>getDefault().getEnvironment();
         assertTrue(env.getNodeCount() > 0);
         env.getNodes().forEach(node -> {
             final var reactions = node.getReactions();

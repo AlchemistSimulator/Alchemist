@@ -42,10 +42,6 @@ import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
-import org.yaml.snakeyaml.Yaml
-import java.io.InputStream
-import java.io.Reader
-import java.net.URL
 import kotlin.reflect.KClass
 
 /**
@@ -61,14 +57,9 @@ private typealias ReactionComponentFunction<T, P, R> =
  */
 object SimulationModel {
 
-    val logger = LoggerFactory.getLogger(SimulationModel::class.java)
+    private val logger = LoggerFactory.getLogger(SimulationModel::class.java)
 
-    fun fromYaml(yaml: String) = fromMap(Yaml().load(yaml))
-    fun fromYaml(yaml: Reader) = fromMap(Yaml().load(yaml))
-    fun fromYaml(yaml: InputStream) = fromMap(Yaml().load(yaml))
-    fun fromYaml(yaml: URL) = fromMap(Yaml().load(yaml.openStream()))
-
-    fun fromMap(root: Map<String, Any>): Loader {
+    fun fromMap(root: Map<String, *>): Loader {
         require(DocumentRoot.validateDescriptor(root)) {
             "Invalid simulation descriptor: $root.\n" + DocumentRoot.validDescriptors.first()
         }
@@ -151,7 +142,7 @@ object SimulationModel {
                 val knownValues: MutableMap<String, Any?> = constants.toMutableMap()
                 knownValues.putAll(variableValues)
                 var previousToVisitSize: Int? = null
-                var toVisit = dependentVariables.toMutableMap()
+                val toVisit = dependentVariables.toMutableMap()
                 val failures = mutableListOf<Throwable>()
                 while (toVisit.isNotEmpty() && toVisit.size != previousToVisitSize) {
                     failures.clear()
@@ -323,14 +314,14 @@ object SimulationModel {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun inject(context: Context, root: Map<String, Any>): Map<String, Any> =
+    private fun inject(context: Context, root: Map<String, *>): Map<String, Any> =
         (replaceKnownRecursively(context, root) as Map<String, Any>).also { logger.debug("New model: {}", it) }
 
     private fun makeDefaultRandomGenerator(seed: Long) = MersenneTwister(seed)
 
     private fun replaceKnownRecursively(context: Context, root: Any?): Any? =
         when (root) {
-            is PlaceHolderForVariables -> context.lookup(root).also { logger.debug("Set {}={}", root.name, it) }
+            is PlaceHolderForVariables -> context.lookup(root).also { logger.debug("Set {} = {}", root.name, it) }
             is Map<*, *> -> {
                 when (val lookup = context.lookup(root)) {
                     null -> root.entries.map {

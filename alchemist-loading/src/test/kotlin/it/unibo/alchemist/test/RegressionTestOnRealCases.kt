@@ -16,7 +16,6 @@ import io.kotest.matchers.maps.haveSize
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.loader.YamlLoader
 import org.kaikikm.threadresloader.ResourceLoader
 
 class RegressionTestOnRealCases : FreeSpec(

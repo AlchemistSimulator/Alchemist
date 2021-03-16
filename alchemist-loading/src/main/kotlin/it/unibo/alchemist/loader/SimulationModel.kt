@@ -243,10 +243,12 @@ object SimulationModel {
                     val programKey = DocumentRoot.Displacement.programs
                     // Displacement-wise additional linking rules
                     displacement.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
-                        val composedLinkingRule: CombinedLinkingRule<T, P> = when (linkingRule) {
+                        val composedLinkingRule = when (linkingRule) {
+                            is NoLinks -> newLinkingRule
                             is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
                             else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
                         }
+                        environment.linkingRule = composedLinkingRule
                         context.factory.registerSingleton<LinkingRule<T, P>>(composedLinkingRule)
                     }
                     displacement.stream().forEach { position ->

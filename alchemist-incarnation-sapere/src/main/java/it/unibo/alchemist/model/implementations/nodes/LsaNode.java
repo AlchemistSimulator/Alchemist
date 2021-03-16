@@ -54,7 +54,7 @@ public final class LsaNode extends AbstractNode<List<ILsaMolecule>> implements I
     }
 
     @Override
-    public int getChemicalSpecies() {
+    public int getMoleculeCount() {
         return instances.size();
     }
 

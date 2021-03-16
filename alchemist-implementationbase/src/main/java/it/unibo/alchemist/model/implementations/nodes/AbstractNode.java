@@ -126,7 +126,7 @@ public abstract class AbstractNode<T> implements Node<T> {
      * {@inheritDoc}
      */
     @Override
-    public int getChemicalSpecies() {
+    public int getMoleculeCount() {
         return molecules.size();
     }
 

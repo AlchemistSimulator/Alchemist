@@ -512,7 +512,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
-        public int getChemicalSpecies() {
+        public int getMoleculeCount() {
             return notImplemented();
         }
 

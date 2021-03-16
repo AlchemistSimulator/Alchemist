@@ -23,8 +23,8 @@ internal interface SyntaxElement {
     val validDescriptors: Set<ValidDescriptor>
 
     val guide get() = "Possible configurations are:" +
-        validDescriptors.foldIndexed("\n") { index, previous, element ->
-            "$previous## Option ${index + 1}:\n$element"
+        validDescriptors.foldIndexed("") { index, previous, element ->
+            "$previous\n## Option ${index + 1}:\n$element"
         }
 
     /**
@@ -64,8 +64,8 @@ internal interface SyntaxElement {
         val optionalKeys: Set<String> = setOf(),
     ) {
         override fun toString(): String {
-            fun Set<String>.lines() = joinToString(prefix = "\n\t\t- ", separator = "\n\t\t- ", postfix = "\n")
-            return "\trequired keys: ${mandatoryKeys.lines()}\toptional keys: ${optionalKeys.lines()}"
+            fun Set<String>.lines() = joinToString(prefix = "\n\t\t- ", separator = "\n\t\t- ")
+            return "\trequired keys: ${mandatoryKeys.lines()}\n\toptional keys: ${optionalKeys.lines()}"
         }
     }
 }
@@ -159,6 +159,15 @@ internal object DocumentRoot : SyntaxElement {
             }
         )
     }
+    object Layer : SyntaxElement {
+        val molecule by OwnName()
+        override val validDescriptors = setOf(
+            validDescriptor {
+                mandatory(JavaType.type, molecule)
+                optional(JavaType.parameters)
+            }
+        )
+    }
     object Seeds : SyntaxElement {
         val scenario by OwnName()
         val simulation by OwnName()
@@ -166,10 +175,20 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor { optional(simulation, scenario) }
         )
     }
+    object Variable : SyntaxElement {
+        val min by OwnName()
+        val max by OwnName()
+        val default by OwnName()
+        val step by OwnName()
+        override val validDescriptors = JavaType.validDescriptors + setOf(
+            validDescriptor { mandatory(min, max, default, step) }
+        )
+    }
     val displacements by OwnName()
     val environment by OwnName()
     val export by OwnName()
     val incarnation by OwnName()
+    val layers by OwnName()
     const val linkingRule = "network-model"
     const val remoteDependencies = "remote-dependencies"
     val seeds by OwnName()
@@ -177,7 +196,7 @@ internal object DocumentRoot : SyntaxElement {
     override val validDescriptors = setOf(
         validDescriptor {
             mandatory(incarnation)
-            optional(displacements, environment, export, linkingRule, remoteDependencies, seeds, variables)
+            optional(*validKeys.toTypedArray())
         }
     )
 }

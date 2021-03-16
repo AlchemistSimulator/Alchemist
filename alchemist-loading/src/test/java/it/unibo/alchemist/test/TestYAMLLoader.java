@@ -13,6 +13,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.yaml.SimulationModel;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -120,7 +121,7 @@ public class TestYAMLLoader {
     @Test
     public void testMultipleMolecules() {
         final Environment<?, ?> env = testNoVar("synthetic/multiplemolecule.yml");
-        env.forEach(n -> assertEquals(4, n.getChemicalSpecies()));
+        env.forEach(n -> assertEquals(4, n.getMoleculeCount()));
     }
 
     /**
@@ -167,7 +168,7 @@ public class TestYAMLLoader {
             final Map<String, Double> vars
     ) {
         assertNotNull(resource, "Missing test resource " + resource);
-        final Environment<T, P> env = new YamlLoader(resource).<T, P>getWith(vars).getEnvironment();
+        final Environment<T, P> env = SimulationModel.INSTANCE.fromYaml(resource).<T, P>getWith(vars).getEnvironment();
         final Simulation<T, P> sim = new Engine<>(env, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {

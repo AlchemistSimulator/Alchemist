@@ -23,6 +23,7 @@ import it.unibo.alchemist.loader.shapes.Shape
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
+import it.unibo.alchemist.loader.variables.LinearVariable
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
@@ -32,6 +33,7 @@ import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
+import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
@@ -47,8 +49,6 @@ import java.io.InputStream
 import java.io.Reader
 import java.net.URL
 import kotlin.reflect.KClass
-import kotlin.reflect.cast
-import kotlin.reflect.full.isSubclassOf
 
 /**
  * Contains the model-to-model translation between the Alchemist YAML specification and the
@@ -94,10 +94,25 @@ object SimulationModel {
                 root = injectedRoot[DocumentRoot.variables] ?: emptyMap<String, Any>(),
                 syntax = null, // Prevent clashes with dependent variables
             ) { name, element ->
-                visitAnyAndBuildCatching<Variable<*>>(context, element)
-                    ?.onFailure { logger.debug("Not a valid variable: {} from {}: {}", name, element, it.message) }
-                    ?.takeIf { it.isSuccess }
-                    ?.also { context.registerVariable(name, element as Map<*, *>) }
+                (element as? Map<*, *>)?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }?.let {
+                    if (element.containsKey(DocumentRoot.JavaType.type)) {
+                        visitAnyAndBuildCatching<Variable<*>>(context, element)
+                            ?.onFailure { logger.debug("Invalid variable: {} from {}: {}", name, element, it.message) }
+                            ?.takeIf { it.isSuccess }
+                    } else {
+                        fun Any?.toDouble(): Double = visitAnyAndBuildCatching<Double>(context, this)
+                            ?.getOrThrow()
+                            ?: cantBuildWith<Double>(this)
+                        runCatching {
+                            LinearVariable(
+                                element[DocumentRoot.Variable.default].toDouble(),
+                                element[DocumentRoot.Variable.min].toDouble(),
+                                element[DocumentRoot.Variable.max].toDouble(),
+                                element[DocumentRoot.Variable.step].toDouble(),
+                            )
+                        }
+                    }
+                }?.also { context.registerVariable(name, element) }
             }
         logger.info("Variables: {}", variables)
         injectedRoot = inject(context, injectedRoot)
@@ -108,6 +123,7 @@ object SimulationModel {
                 syntax = DocumentRoot.DependentVariable,
             ) { name, element -> visitDependentVariableRegistering(name, context, element) }
         logger.info("Dependent variables: {}", dependentVariables)
+        injectedRoot = inject(context, injectedRoot)
         val remoteDependencies =
             visitRecursively(
                 context,
@@ -121,6 +137,11 @@ object SimulationModel {
             override fun getVariables(): Map<String, Variable<*>> = variables
 
             override fun <T : Any?, P : Position<P>> getWith(values: Map<String, *>): EnvironmentAndExports<T, P> {
+                val unknownVariableNames = values.keys - variables.keys
+                require(unknownVariableNames.isEmpty()) {
+                    "Unknown variables provided: $unknownVariableNames." +
+                        " Valid names: ${variables.keys}. Provided: ${values.keys}"
+                }
                 val localContext = context.child()
                 var localRoot = injectedRoot
                 /*
@@ -136,6 +157,7 @@ object SimulationModel {
                 val failures = mutableListOf<Throwable>()
                 while (toVisit.isNotEmpty() && toVisit.size != previousToVisitSize) {
                     failures.clear()
+                    previousToVisitSize = toVisit.size
                     val iterator = toVisit.iterator()
                     val (name, variable) = iterator.next()
                     runCatching { variable.getWith(knownValues) }
@@ -144,10 +166,13 @@ object SimulationModel {
                         .onFailure { exception -> failures.add(exception) }
                 }
                 failures.forEach { throw it }
+                logger.debug("Known values: {}", knownValues)
                 knownValues.forEach { (name, value) ->
+                    logger.debug("Setting {} = {}", name, value)
                     localContext.fixVariableValue(name, value)
                 }
-                localRoot = inject(context, localRoot)
+                localRoot = inject(localContext, localRoot)
+                logger.debug("Complete simulation model: {}", localRoot)
                 /*
                  * Simulation environment
                  */
@@ -169,7 +194,28 @@ object SimulationModel {
                     visitEnvironment(incarnation, localContext, localRoot[DocumentRoot.environment])
                 logger.info("Created environment: {}", environment)
                 localContext.factory.registerSingleton(Environment::class.java, environment)
-                // LAYERS TODO
+                // LAYERS
+                val layers: List<Pair<Molecule, Layer<T, P>>> = visitRecursively(
+                    localContext,
+                    localRoot[DocumentRoot.layers] ?: emptyList<Any>(),
+                    DocumentRoot.Layer
+                ) { origin ->
+                    (origin as? Map<*, *>)?.let {
+                        visitAnyAndBuildCatching<Layer<T, P>>(localContext, origin)
+                            ?.map { incarnation.createMolecule(origin[DocumentRoot.Layer.molecule]?.toString()) to it }
+                    }
+                }
+                layers.groupBy { it.first }
+                    .mapValues { (_, pair) -> pair.map { it.second } }
+                    .forEach { (molecule, layers) ->
+                        require(layers.size == 1) {
+                            "Inconsistent layer definition for molecule $molecule: $layers." +
+                                "There must be a single layer per molecule"
+                        }
+                        val layer = layers.first()
+                        environment.addLayer(molecule, layer)
+                        logger.debug("Pushed layer {} -> {}", molecule, layer)
+                    }
                 // LINKING RULE
                 val linkingRule = visitLinkingRule<P, T>(
                     localContext,
@@ -211,17 +257,24 @@ object SimulationModel {
                         val node = visitNode(simulationRNG, incarnation, environment, localContext, nodeDescriptor)
                         localContext.factory.registerSingleton(Node::class.java, node)
                         contents.forEach { (shapes, molecule, concentrationMaker) ->
-                            if (shapes.any { position in it }) {
+                            if (shapes.isEmpty() || shapes.any { position in it }) {
+                                val concentration = concentrationMaker()
+                                logger.debug(
+                                    "Injecting molecule {} with concentration {} in node {}",
+                                    molecule,
+                                    concentration,
+                                    node.id
+                                )
                                 node.setConcentration(molecule, concentrationMaker())
                             }
                         }
                         val programs = visitRecursively<Reaction<T>>(
                             localContext,
-                            descriptor[programKey],
+                            descriptor[programKey] ?: emptyList<Any>(),
                             DocumentRoot.Displacement.Program
                         ) { program ->
                             requireNotNull(program) {
-                                "null is not a valid program ${DocumentRoot.Displacement.Program.guide}"
+                                "null is not a valid program in $descriptor. ${DocumentRoot.Displacement.Program.guide}"
                             }
                             (program as? Map<*, *>)?.let {
                                 visitProgram(simulationRNG, incarnation, environment, node, localContext, it)
@@ -279,25 +332,23 @@ object SimulationModel {
 
     private fun replaceKnownRecursively(context: Context, root: Any?): Any? =
         when (root) {
+            is PlaceHolderForVariables -> context.lookup(root).also { logger.debug("Set {}={}", root.name, it) }
             is Map<*, *> -> {
-                when (val lookup = context.lookup<Any>(root)) {
+                when (val lookup = context.lookup(root)) {
                     null -> root.entries.map {
                         replaceKnownRecursively(context, it.key) to replaceKnownRecursively(context, it.value)
                     }.toMap()
-                    else -> lookup.getOrThrow()
+                    else -> lookup
                 }
             }
             is Iterable<*> -> root.map { replaceKnownRecursively(context, it) }
-            else -> root
+            else -> root.also { logger.debug("Could not replace nor iterate over {}", root) }
         }
 
     private fun visitParameter(context: Context, root: Any?): Any? =
         when (root) {
             is Iterable<*> -> root.map { visitParameter(context, it) }
-            is Map<*, *> ->
-                context.lookup<Any>(root)?.getOrNull()
-                    ?: visitJVMConstructor(context, root)
-                    ?: root
+            is Map<*, *> -> context.lookup(root) ?: visitJVMConstructor(context, root) ?: root
             else -> root
         }
 
@@ -362,7 +413,7 @@ object SimulationModel {
                 ?.let {
                     logger.debug("Found content descriptor: {}", it)
                     val shapesKey = DocumentRoot.Displacement.Contents.shapes
-                    val shapes = visitRecursively(context, element[shapesKey]) { shape ->
+                    val shapes = visitRecursively(context, element[shapesKey] ?: emptyList<Any>()) { shape ->
                         visitAnyAndBuildCatching<Shape<P>>(context, shape)
                     }
                     logger.debug("Shapes: {}", shapes)
@@ -695,6 +746,7 @@ object SimulationModel {
     ) {
 
         private var backingConstants: MutableMap<String, Any?> = mutableMapOf()
+        private val fixedVariables = mutableSetOf<String>()
 
         val constants: Map<String, Any?> get() = backingConstants
 
@@ -724,7 +776,7 @@ object SimulationModel {
         fun registerVariable(name: String, representation: Map<*, *>) {
             logger.debug("Injecting variable {} represented by {}", name, representation)
             namedLookup[name] = representation
-            elementLookup[representation] = PlaceHolderForVariables
+            elementLookup[representation] = PlaceHolderForVariables(name)
         }
 
         fun fixVariableValue(name: String, value: Any?) {
@@ -736,36 +788,27 @@ object SimulationModel {
                 """.trimIndent()
             }
             elementLookup[key] = value
+            fixedVariables += name
+            logger.debug("Contextually set {} = {}. Currently fixed: {}.", name, value, fixedVariables)
         }
 
         /**
          * Returns null if the element is not a resolvable entity.
          * Othewise, returns a Result with the resolution result.
-         * In case types do not match, a Result failure is returned.
          */
-        inline fun <reified T : Any> lookup(element: Map<*, *>): Result<T?>? =
-            if (elementLookup.containsKey(element)) {
-                val result = elementLookup[element]
-                if (result == null) {
-                    Result.success(null)
-                } else {
-                    if (result::class.isSubclassOf(T::class)) {
-                        Result.success(T::class.cast(result))
-                    } else {
-                        Result.failure(
-                            IllegalStateException(
-                                "A request for type ${T::class.qualifiedName} has been fullfilled " +
-                                    "by the context based on $element, but the result does not match the expected type"
-                            )
-                        )
-                    }
-                }
-            } else {
-                null
-            }
+        fun lookup(representation: Map<*, *>): Any? =
+            if (elementLookup.containsKey(representation)) elementLookup[representation] else null
+
+        /**
+         * Returns null if the element is not a resolvable entity.
+         * Othewise, returns a Result with the resolution result.
+         */
+        fun lookup(placeholder: PlaceHolderForVariables): Any? =
+            placeholder.takeUnless { placeholder.name in fixedVariables }
+                ?: requireNotNull(namedLookup[placeholder.name]) {
+                    "Bug in Alchemist: unresolvable variable ${placeholder.name}"
+                }.let { lookup(it) }
     }
 
-    private object PlaceHolderForVariables {
-        override fun toString() = this::class.simpleName!!
-    }
+    private data class PlaceHolderForVariables(val name: String)
 }

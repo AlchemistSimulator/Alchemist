@@ -115,8 +115,8 @@ sealed class JVMConstructor(val typeName: String) {
                     0 -> Result.failure(
                         IllegalStateException(
                             """
-                            No valid match for type $typeName among subtypes of ${type.simpleName}.
-                            Valid subtypes are: $subtypes
+                            |No valid match for type $typeName among subtypes of ${type.simpleName}.
+                            |Valid subtypes are: $subtypes
                             """.trimMargin()
                         )
                     )
@@ -244,7 +244,6 @@ sealed class JVMConstructor(val typeName: String) {
             logger.error(errorMessage)
             val masterException = IllegalArgumentException("Illegal Alchemist specification: $errorMessage")
             creationResult.exceptions.forEach { (_, exception) -> masterException.addSuppressed(exception) }
-            creationResult.logErrors { message, arguments -> logger.error(message, *arguments) }
             throw masterException
         }.also {
             creationResult.logErrors { message, arguments -> logger.warn(message, *arguments) }

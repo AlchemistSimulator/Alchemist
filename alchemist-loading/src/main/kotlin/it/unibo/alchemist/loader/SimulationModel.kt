@@ -10,10 +10,8 @@
 package it.unibo.alchemist.loader
 
 import arrow.core.Either
-import com.google.common.collect.ImmutableList
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.displacements.Displacement
-import it.unibo.alchemist.loader.displacements.GraphStreamDisplacement
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.MoleculeReader
@@ -44,7 +42,6 @@ import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
-import java.util.ArrayList
 import kotlin.reflect.KClass
 
 /**

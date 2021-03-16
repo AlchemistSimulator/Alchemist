@@ -10,8 +10,10 @@
 package it.unibo.alchemist.loader
 
 import arrow.core.Either
+import com.google.common.collect.ImmutableList
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.displacements.Displacement
+import it.unibo.alchemist.loader.displacements.GraphStreamDisplacement
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.MoleculeReader
@@ -42,6 +44,7 @@ import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
+import java.util.ArrayList
 import kotlin.reflect.KClass
 
 /**
@@ -241,8 +244,15 @@ object SimulationModel {
                     val contents = visitContents(incarnation, localContext, descriptor)
                     // PROGRAMS
                     val programKey = DocumentRoot.Displacement.programs
+                    // Displacement-wise additional linking rules
+                    displacement.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
+                        val composedLinkingRule: CombinedLinkingRule<T, P> = when (linkingRule) {
+                            is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
+                            else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
+                        }
+                        context.factory.registerSingleton<LinkingRule<T, P>>(composedLinkingRule)
+                    }
                     displacement.stream().forEach { position ->
-                        // special management of GraphStream-based displacement TODO
                         val node = visitNode(simulationRNG, incarnation, environment, localContext, nodeDescriptor)
                         localContext.factory.registerSingleton(Node::class.java, node)
                         contents.forEach { (shapes, molecule, concentrationMaker) ->

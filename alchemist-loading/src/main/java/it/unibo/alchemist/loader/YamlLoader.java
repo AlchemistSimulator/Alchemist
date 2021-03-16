@@ -652,7 +652,7 @@ public final class YamlLoader implements Loader {
                  */
                 if (displacement instanceof GraphStreamDisplacement) {
                     final var graphStreamDeployment = (GraphStreamDisplacement<T, P>) displacement;
-                    final var graphLinkingRule = graphStreamDeployment.getAssociatedLinkingRule();
+                    final var graphLinkingRule = graphStreamDeployment.<T>getAssociatedLinkingRule();
                     if (graphLinkingRule != null) {
                         final var previousRule = environment.getLinkingRule();
                         if (previousRule instanceof CombinedLinkingRule) {

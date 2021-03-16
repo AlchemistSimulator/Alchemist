@@ -15,7 +15,7 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.ClassPathScanner
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.yaml.SimulationModel
+import it.unibo.alchemist.loader.SimulationModel
 import java.io.File
 
 val cache = Caffeine.newBuilder().build<String, Loader> {

@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.yaml.SimulationModel;
+import it.unibo.alchemist.loader.SimulationModel;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;

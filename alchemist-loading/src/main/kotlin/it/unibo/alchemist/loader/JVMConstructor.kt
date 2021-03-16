@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.yaml
+package it.unibo.alchemist.loader
 
 import it.unibo.alchemist.ClassPathScanner
 import org.danilopianini.jirf.CreationResult

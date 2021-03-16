@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.yaml
+package it.unibo.alchemist.loader
 
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.createType

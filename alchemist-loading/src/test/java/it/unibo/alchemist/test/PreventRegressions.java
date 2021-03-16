@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import it.unibo.alchemist.loader.yaml.SimulationModel;
+import it.unibo.alchemist.loader.SimulationModel;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;

@@ -13,7 +13,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.YamlLoader;
-import it.unibo.alchemist.loader.yaml.SimulationModel;
+import it.unibo.alchemist.loader.SimulationModel;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
 import it.unibo.alchemist.model.interfaces.Environment;

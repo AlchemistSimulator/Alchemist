@@ -13,7 +13,6 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.loader.providers.YamlProvider;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
@@ -156,9 +155,9 @@ public class TestYAMLLoader {
      */
     @Test
     public void testDependencies() {
-        final InputStream is = ResourceLoader.getResourceAsStream("isac/16-dependencies.yaml");
+        final var is = ResourceLoader.getResource("isac/16-dependencies.yaml");
         assertNotNull(is);
-        final Loader loader = new YamlLoader(is);
+        final Loader loader = LoadAlchemist.from(is);
         final List<String> dependencies = loader.getRemoteDependencies();
         assertEquals(dependencies.size(), 2);
         assertEquals(dependencies.get(0), "dependencies_test.txt");

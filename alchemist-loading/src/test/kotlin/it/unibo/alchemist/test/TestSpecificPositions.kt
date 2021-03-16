@@ -13,7 +13,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.loader.YamlLoader
+import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.displacements.SpecificPositions
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -35,7 +35,7 @@ class TestSpecificPositions : StringSpec({
         }
     }
     "Test YAML loading with 2D env" {
-        val loader = YamlLoader(ResourceLoader.getResourceAsStream("testSpecificPositions.yml"))
+        val loader = LoadAlchemist.from(ResourceLoader.getResource("testSpecificPositions.yml"))
         val env = loader.getWith<Any, Euclidean2DPosition>(emptyMap<String, Double>()).environment
         env.nodes.map { env.getPosition(it) } shouldBe listOf(Euclidean2DPosition(1.0, 2.0), Euclidean2DPosition(3.0, 4.0))
     }

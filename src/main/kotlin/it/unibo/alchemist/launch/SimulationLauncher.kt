@@ -14,8 +14,8 @@ import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
+import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.implementations.times.DoubleTime
@@ -44,9 +44,9 @@ abstract class SimulationLauncher : AbstractLauncher() {
         if (configuration == null) {
             throw IllegalStateException("Invalid configuration $configuration")
         }
-        val loader = YamlLoader(
-            ResourceLoader.getResource(configuration)?.openStream()
-                ?: File(configuration).takeIf { it.exists() && it.isFile }?.inputStream()
+        val loader = LoadAlchemist.from(
+            ResourceLoader.getResource(configuration)
+                ?: File(configuration).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
                 ?: throw IllegalStateException("No classpath resource or file $configuration was found")
         )
         launch(loader, parameters)

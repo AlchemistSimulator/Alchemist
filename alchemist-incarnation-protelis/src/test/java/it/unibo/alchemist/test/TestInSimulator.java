@@ -8,10 +8,9 @@
 package it.unibo.alchemist.test;
 
 import com.google.common.collect.Maps;
-import com.google.common.io.Files;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import org.apache.commons.io.FileUtils;
@@ -21,10 +20,10 @@ import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -99,7 +98,7 @@ public class TestInSimulator {
     }
 
     private File createDependenciesDirectory() throws IOException, URISyntaxException {
-        final File d = Files.createTempDir();
+        final File d = Files.createTempDirectory("alchemist-test").toFile();
         FileUtils.copyDirectory(new File(ResourceLoader.getResource("advancedorig").toURI()), new File(d, "advanced"));
         FileUtils.copyDirectory(new File(ResourceLoader.getResource("plutoorig").toURI()), new File(d, "pluto"));
         return d;
@@ -120,9 +119,9 @@ public class TestInSimulator {
     }
 
     private static <T, P extends Position<P>> void testLoading(final String resource, final Map<String, Double> vars) {
-        final InputStream res = ResourceLoader.getResourceAsStream(resource);
+        final var res = ResourceLoader.getResource(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Environment<T, P> env = new YamlLoader(res).<T, P>getWith(vars).getEnvironment();
+        final Environment<T, P> env = LoadAlchemist.from(res).<T, P>getWith(vars).getEnvironment();
         final Simulation<T, P> sim = new Engine<>(env, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {

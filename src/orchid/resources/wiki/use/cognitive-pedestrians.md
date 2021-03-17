@@ -21,9 +21,8 @@ Homogeneous pedestrians are _Nodes_ with no peculiar characteristic each other.
 
 ```yaml
 displacements:
-  - in:
-      type: Circle
-      parameters: [100, 0, 0, 20]
+  - type: Circle
+    parameters: [100, 0, 0, 20]
     nodes:
       type: HomogeneousPedestrian2D
 ```
@@ -34,15 +33,13 @@ The age groups available are: *child*, *adult*, *elderly*; alternatively you can
 
 ```yaml
 displacements:
-  - in:
-      type: Circle
-      parameters: [50, 0, 0, 20]
+  - type: Circle
+    parameters: [50, 0, 0, 20]
     nodes:
       type: HeterogeneousPedestrian2D
       parameters: ["elderly", "female"]
-  - in:
-      type: Circle
-      parameters: [50, 0, 0, 20]
+  - type: Circle
+    parameters: [50, 0, 0, 20]
     nodes:
       type: HeterogeneousPedestrian2D
       parameters: ["child", "male"]
@@ -52,24 +49,22 @@ displacements:
 Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities. They have an emotional state and are able to influence and be influenced by others with the same capabilities. As an example, cognitive pedestrians can perceive fear via social contagion (e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).
 
 ```yaml
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
     type: CognitiveBehavior
 
 displacements:
-  - in:
-      type: Circle
-      parameters: [50, 0, 0, 20]
+  - type: Circle
+    parameters: [50, 0, 0, 20]
     nodes:
       type: CognitivePedestrian2D
       parameters: ["adult", "male"]
     programs:
       - *behavior
-  - in:
-      type: Circle
-      parameters: [50, 0, 0, 20]
+  - type: Circle
+    parameters: [50, 0, 0, 20]
     nodes:
       type: CognitivePedestrian2D
       parameters: ["adult", "female"]
@@ -85,9 +80,8 @@ These are homogeneous pedestrians that can be equipped with a given knowledge de
 
 ```yaml
 displacements:
-  - in:
-      type: Point
-      parameters: [15, 15]
+  - type: Point
+    parameters: [15, 15]
     nodes:
       type: HomogeneousOrientingPedestrian2D
       parameters: [0.5]
@@ -97,16 +91,15 @@ displacements:
 As you may guess, these are cognitive pedestrians equipable with a given knowledge degree of the environment. Cognitive orienting pedestrians can be instanced providing their knowledge degree as first parameter.
 
 ```yaml
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
     type: CognitiveBehavior
 
 displacements:
-  - in:
-      type: Point
-      parameters: [0, 0]
+  - type: Point
+    parameters: [0, 0]
     nodes:
       type: CognitiveOrientingPedestrian2D
       parameters: [0.5, "adult", "male"]
@@ -135,15 +128,13 @@ variables:
     language: kotlin
 
 displacements:
-  - in:
-      type: Circle
-      parameters: [10, 0, 0, 20]
+  - type: Circle
+    parameters: [10, 0, 0, 20]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group1]
-  - in:
-      type: Circle
-      parameters: [15, 0, 0, 20]
+  - type: Circle
+    parameters: [15, 0, 0, 20]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group2]
@@ -165,7 +156,7 @@ environment:
   type: ImageEnvironment
   parameters: [...]
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [3.0]
@@ -178,9 +169,8 @@ reactions: &behavior
         parameters: [4]
 
 displacements:
-  - in:
-      type: Circle
-      parameters: [50, 0, 0, 25]
+  - type: Circle
+    parameters: [50, 0, 0, 25]
     nodes:
       type: HomogeneousPedestrian2D
 ```
@@ -204,7 +194,7 @@ incarnation: protelis
 environment:
   type: Continuous2DEnvironment
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
@@ -216,9 +206,8 @@ reactions: &behavior
         parameters: [500, -500]
 
 displacements:
-  - in:
-      type: Point
-      parameters: [0, 0]
+  - type: Point
+    parameters: [0, 0]
     nodes:
       type: HomogeneousPedestrian2D
     programs:
@@ -252,7 +241,7 @@ layers:
     molecule: *danger
     parameters: [0.0, 0.0, 20.0, 15.0]
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
@@ -262,9 +251,8 @@ reactions: &behavior
         parameters: [*danger]
 
 displacements:
-  - in:
-      type: Circle
-      parameters: [100, 0, 0, 50]
+  - type: Circle
+    parameters: [100, 0, 0, 50]
     nodes:
       type: CognitivePedestrian2D
       parameters: ["adult", "female", *danger]
@@ -312,7 +300,7 @@ incarnation: protelis
 environment:
   type: Continuous2DEnvironment
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
@@ -324,9 +312,8 @@ reactions: &behavior
         parameters: [500, -500]
 
 displacements:
-  - in:
-      type: Point
-      parameters: [0, 0]
+  - type: Point
+    parameters: [0, 0]
     nodes:
       type: HomogeneousPhysicalPedestrian2D
     programs:

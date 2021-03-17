@@ -11,11 +11,12 @@ dependencies {
 
     implementation(alchemist("euclidean-geometry"))
     implementation(arrowKt("core"))
-    implementation(Libs.commons_lang3)
+    implementation(apacheCommons("lang3"))
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
     implementation(graphStream("ui-swing"))
     implementation(Libs.guava)
+    implementation(Libs.gson)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
     implementation(Libs.dsiutil)
@@ -31,8 +32,8 @@ dependencies {
     testImplementation(Libs.gson)
     testRuntimeOnly("org.scala-lang:scala-compiler:_")
 
-    testRuntimeOnly(project(":alchemist-incarnation-sapere"))
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+    testRuntimeOnly(incarnation("sapere"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 tasks.withType<Test> {

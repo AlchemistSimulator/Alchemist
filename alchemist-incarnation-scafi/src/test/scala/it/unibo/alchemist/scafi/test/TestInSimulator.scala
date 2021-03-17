@@ -16,11 +16,9 @@ package it.unibo.alchemist.scafi.test
  * GNU General Public License, with a linking exception, as described in the file
  * LICENSE in the Alchemist distribution's top directory.
  ******************************************************************************/
-import java.io.InputStream
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.core.implementations.Engine
-import it.unibo.alchemist.loader.YamlLoader
+import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
 import it.unibo.scafi.space.{Point2D, Point3D}
@@ -28,6 +26,7 @@ import it.unibo.scafi.space.Point3D.toPoint2D
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
+import java.net.URL
 import scala.concurrent.duration.{FiniteDuration, NANOSECONDS}
 import scala.jdk.CollectionConverters._
 import scala.math.Ordering.Double.TotalOrdering
@@ -91,9 +90,9 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
 
   private def testLoading[T](resource: String, vars: Map[String, java.lang.Double], maxSteps: Long = 1000): Environment[T, P] = {
     import scala.jdk.CollectionConverters._
-    val res: InputStream = classOf[TestInSimulator[P]].getResourceAsStream(resource)
+    val res: URL = classOf[TestInSimulator[P]].getResource(resource)
     res shouldNot be(null)
-    val env: Environment[T, P] = new YamlLoader(res).getWith[T, P](vars.asJava).getEnvironment
+    val env: Environment[T, P] = LoadAlchemist.from(res).getWith[T, P](vars.asJava).getEnvironment
     val sim = new Engine[T, P](env, maxSteps)
     sim.play()
     sim.run()

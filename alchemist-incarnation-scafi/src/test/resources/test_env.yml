@@ -17,9 +17,8 @@ positions:
   type: Continuous2DEuclidean
   
 displacements:
-  - in:
-      type: Point
-      parameters: [4,4]
+  - type: Point
+    parameters: [4,4]
     programs: 
       - *program
     contents:
@@ -27,9 +26,8 @@ displacements:
         concentration: 77
       - molecule: number2
         concentration: 0
-  - in:
-      type: Point
-      parameters: [2, 2]
+  - type: Point
+    parameters: [2, 2]
     programs: 
       - *program
     contents:

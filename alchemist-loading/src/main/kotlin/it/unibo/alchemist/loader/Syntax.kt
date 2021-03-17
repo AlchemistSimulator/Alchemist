@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.loader
 
+import com.google.gson.GsonBuilder
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
@@ -41,16 +42,29 @@ internal interface SyntaxElement {
             .map { it.toString() }
             .filterNot { it.startsWith("_") }
             .toSet()
+        val problematicSegment by lazy {
+            "Problematic segment:\n|" +
+                GsonBuilder().setPrettyPrinting().create().toJson(descriptor.mapValues { "..." })
+        }
         for (validDescriptor in validDescriptors) {
+            val forbidden = validDescriptor.forbiddenKeys.filter { descriptor.containsKey(it) }
+            val typeName = this::class.simpleName
+            require(forbidden.isEmpty()) {
+                """
+                |Forbidden keys for $typeName detected: $forbidden.
+                |$guide
+                |$problematicSegment
+                """.trimMargin()
+            }
             if (validDescriptor.mandatoryKeys.all { descriptor.containsKey(it) }) {
                 val unkownKeys = publicKeys - validDescriptor.mandatoryKeys - validDescriptor.optionalKeys
                 require(unkownKeys.isEmpty()) {
                     val matched = descriptor.keys.intersect(validDescriptor.mandatoryKeys)
-                    val typeName = this::class.simpleName
                     """
-                    |Mandatory keys $matched were present in the provided $typeName descriptor $descriptor
+                    |Mandatory keys $matched were present in the provided $typeName descriptor.
                     |However, there are also unknown keys: $unkownKeys. $guide
                     |If you need private keys (e.g. for internal use), prefix them with underscore (_)
+                    |$problematicSegment
                     """.trimMargin()
                 }
                 return true
@@ -62,25 +76,33 @@ internal interface SyntaxElement {
     data class ValidDescriptor(
         val mandatoryKeys: Set<String>,
         val optionalKeys: Set<String> = setOf(),
+        val forbiddenKeys: Set<String> = setOf(),
     ) {
         override fun toString(): String {
-            fun Set<String>.lines() = joinToString(prefix = "\n\t\t- ", separator = "\n\t\t- ")
-            return "\trequired keys: ${mandatoryKeys.lines()}\n\toptional keys: ${optionalKeys.lines()}"
+            fun Set<String>.lines() = joinToString(prefix = "\n  - ", separator = "\n  - ")
+            fun Set<String>.describe(name: String) = if (this.isEmpty()) "" else "\n$name keys: ${this.lines()}"
+            return mandatoryKeys.describe("required").drop(1) +
+                optionalKeys.describe("optional") +
+                forbiddenKeys.describe("forbidden")
         }
     }
 }
 
 @Suppress("SuspiciousCollectionReassignment")
 internal class DescriptorBuilder {
+    private var forbiddenKeys = emptySet<String>()
     private var mandatoryKeys = emptySet<String>()
     private var optionalKeys = emptySet<String>()
+    fun forbidden(vararg names: String) {
+        forbiddenKeys += names.toSet()
+    }
     fun mandatory(vararg names: String) {
         mandatoryKeys += names.toSet()
     }
     fun optional(vararg names: String) {
         optionalKeys += names.toSet()
     }
-    fun build() = SyntaxElement.ValidDescriptor(mandatoryKeys, optionalKeys)
+    fun build() = SyntaxElement.ValidDescriptor(mandatoryKeys, optionalKeys, forbiddenKeys)
 }
 
 private fun validDescriptor(configuration: DescriptorBuilder.() -> Unit): SyntaxElement.ValidDescriptor =
@@ -115,6 +137,7 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor {
                 mandatory(JavaType.type)
                 optional(JavaType.parameters, contents, nodes, programs)
+                forbidden(Contents.shapes)
             }
         )
         object Contents : SyntaxElement {

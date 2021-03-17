@@ -13,9 +13,9 @@ dependencies {
     implementation(alchemist("loading"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
-    implementation(Libs.commons_codec)
-    implementation(Libs.commons_io)
-    implementation(Libs.commons_lang3)
+    implementation(apacheCommons("codec"))
+    implementation(apacheCommons("io"))
+    implementation(apacheCommons("lang3"))
     implementation(graphhopper("core"))
     implementation(graphhopper("reader-osm")) {
         exclude(module = "slf4j-log4j12")

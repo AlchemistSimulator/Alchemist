@@ -7,12 +7,6 @@ variables:
 environment:
   type: Continuous2DEnvironment
 
-positions:
-  type: EuclideanPosition2D
-
-network-model:
-  type: NoLinks
-
 seeds:
   scenario: 0
   simulation: 1
@@ -22,7 +16,7 @@ layers:
     molecule: *target
     parameters: [-100.0, -100.0, 2.0, 10.0]
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
@@ -32,9 +26,8 @@ reactions: &behavior
         parameters: [*target]
 
 displacements:
-  - in:
-      type: Circle
-      parameters: [100, 0, 0, 100]
+  - type: Circle
+    parameters: [100, 0, 0, 100]
     nodes:
       type: HeterogeneousPedestrian2D
       parameters: ["adult", "male"]

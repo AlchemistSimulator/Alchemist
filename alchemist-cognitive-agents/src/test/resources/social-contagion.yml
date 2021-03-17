@@ -9,12 +9,6 @@ variables:
 environment:
   type: Continuous2DEnvironment
 
-positions:
-  type: EuclideanPosition2D
-
-network-model:
-  type: NoLinks
-
 layers:
   - type: BidimensionalGaussianLayer
     molecule: *danger
@@ -27,7 +21,7 @@ seeds:
   scenario: 0
   simulation: 1
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [2.0]
@@ -46,20 +40,16 @@ reactions: &behavior
     actions:
       - type: HeadTowardRandomDirection
 
+_nodes: &nodes
+  nodes:
+    type: CognitivePedestrian2D
+    parameters: ["adult", "male", *danger]
+  programs: *behavior
+
 displacements:
-  - in:
-      type: Circle
-      parameters: [25, 0, 0, 8]
-    nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "male", *danger]
-    programs:
-      - *behavior
-  - in:
-      type: Circle
-      parameters: [75, 60, 0, 10]
-    nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "male", *danger]
-    programs:
-      - *behavior
+  - type: Circle
+    parameters: [25, 0, 0, 8]
+    <<: *nodes
+  - type: Circle
+    parameters: [75, 60, 0, 10]
+    <<: *nodes

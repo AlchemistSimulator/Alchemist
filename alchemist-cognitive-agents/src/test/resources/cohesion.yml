@@ -30,7 +30,7 @@ layers:
     molecule: *exit
     parameters: [0.0, 0.0, 1.0, 2.0]
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [2.0]
@@ -41,35 +41,27 @@ reactions: &behavior
         parameters: [*exit]
 
 displacements:
-  - in:
-      type: Circle
-      parameters: [8, 0, 0, 15]
+  - type: Circle
+    parameters: [8, 0, 0, 15]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group1]
-    programs:
-      - *behavior
-  - in:
-      type: Circle
-      parameters: [4, 0, 0, 15]
+    programs: *behavior
+  - type: Circle
+    parameters: [4, 0, 0, 15]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group2]
-    programs:
-      - *behavior
-  - in:
-      type: Circle
-      parameters: [10, 0, 0, 15]
+    programs: *behavior
+  - type: Circle
+    parameters: [10, 0, 0, 15]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group3]
-    programs:
-      - *behavior
-  - in:
-      type: Circle
-      parameters: [2, 0, 0, 15]
+    programs: *behavior
+  - type: Circle
+    parameters: [2, 0, 0, 15]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group4]
-    programs:
-      - *behavior
+    programs: *behavior

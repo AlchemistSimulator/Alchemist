@@ -25,9 +25,8 @@ displacements:
     contents:
       - molecule: source
         concentration: false
-  - in:
-      type: Point
-      parameters: [2, 2]
+  - type: Point
+    parameters: [2, 2]
     programs: 
       - *program
     contents:

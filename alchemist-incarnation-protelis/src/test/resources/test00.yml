@@ -58,9 +58,8 @@ contents:
       concentration: *testVar
     
 displacements:
-  - in:
-      type: Circle
-      parameters: [100, 0, 0, 2.8]
+  - type: Circle
+    parameters: [100, 0, 0, 2.8]
     contents:
       - *content
       - *test

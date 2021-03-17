@@ -88,22 +88,18 @@ allprojects {
     }
 
     dependencies {
-        // Support functions
-        fun junit(module: String) = "org.junit.jupiter:junit-jupiter-$module:_"
         // Code quality control
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         // Compilation only
         compileOnly(Libs.annotations)
-        compileOnly(Libs.spotbugs)
+        compileOnly(spotBugsModule("annotations"))
         // Implementation
         implementation(Libs.slf4j_api)
         implementation(kotlin("stdlib-jdk8"))
         implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
         // Test compilation only
-        testCompileOnly(Libs.spotbugs) {
-            exclude(group = "commons-lang")
-        }
+        testCompileOnly(spotBugsModule("annotations"))
         // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
         testImplementation(junit("api"))
         testImplementation(Libs.kotest_runner_junit5)
@@ -311,11 +307,10 @@ dependencies {
     listOf("interfaces", "engine", "loading") // Execution requirements
         .map { project(":alchemist-$it") }
         .forEach { api(it) }
-    implementation(Libs.commons_io)
-    implementation(Libs.commons_cli)
+    implementation(apacheCommons("io"))
+    implementation(apacheCommons("lang3"))
+    implementation(apacheCommons("cli"))
     implementation(Libs.logback_classic)
-    implementation(Libs.commons_lang3)
-    runtimeOnly(Libs.logback_classic)
     testRuntimeOnly(incarnation("protelis"))
 
     // Populate the dependencies for Orchid

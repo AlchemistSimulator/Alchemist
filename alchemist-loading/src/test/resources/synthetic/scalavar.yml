@@ -10,6 +10,5 @@ variables:
 
 
 displacements:
-  - in:
-      type: Point
-      parameters: [*var, *var2]
+  - type: Point
+    parameters: [*var, *var2]

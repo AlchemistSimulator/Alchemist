@@ -12,7 +12,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -54,7 +55,7 @@ public class TestNodeCloning<P extends Position<P>> {
     @BeforeEach
     public void setUp() {
         final String pathYaml = "gradient.yml";
-        final YamlLoader loader = new YamlLoader(ResourceLoader.getResourceAsStream(pathYaml));
+        final Loader loader = LoadAlchemist.from(ResourceLoader.getResource(pathYaml));
         environment = loader.<Object, P>getWith(Collections.emptyMap()).getEnvironment();
         simulation = new Engine<>(environment, SIMULATED_STEPS);
     }

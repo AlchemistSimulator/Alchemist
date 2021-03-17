@@ -19,7 +19,7 @@ dependencies {
     implementation(Libs.guava)
     implementation(ignite("spring"))
     implementation(ignite("indexing"))
-    implementation(Libs.commons_io)
+    implementation(apacheCommons("io"))
 
     testImplementation(incarnation("sapere"))
 }

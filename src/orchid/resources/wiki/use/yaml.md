@@ -395,9 +395,8 @@ The following example places a single node in the (0, 0) {{ anchor('Point') }}.
 ```yaml
 displacements:
   # "in" entries, where each entry defines a group of nodes
-  - in:
-      type: Point
-      # Using a constructor taking (x,y) coordinates
+  - type: Point
+    parameters    # Using a constructor taking (x,y) coordinates
       parameters: [0, 0]
 ```
 
@@ -415,18 +414,16 @@ displacements:
 This example places 10000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.
 ```yaml
 displacements:
-  - in:
-      type: Circle
-      parameters: [10000, 0, 0, 10]
+  - type: Circle
+    parameters: [10000, 0, 0, 10]
 ```
 
 Here instead nodes are located in a {{ anchor('Grid') }} centered in (0, 0), with nodes distanced of 0.25 both
 horizontally and vertically, and whose position is not exact but randomly perturbed (±0.1 distance units).
 ```yaml
 displacements:
-  - in:
-      type: Grid
-      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  - type: Grid
+    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
 ```
 
 ### Customizing the node type
@@ -438,9 +435,8 @@ followed by the name of the class and the parameters required to build it.
 radius 20.
 ```yaml
 displacements:
-  - in:
-      type: Circle
-      parameters: [100, 0, 0, 20]
+  - type: Circle
+    parameters: [100, 0, 0, 20]
     nodes:
       type: MyCustomNodeImpl
       parameters: []
@@ -449,9 +445,8 @@ displacements:
 The empty parameters section can be omitted (as per custom class loading mechanism):
 ```yaml
 displacements:
-  - in:
-      type: Circle
-      parameters: [100, 0, 0, 20]
+  - type: Circle
+    parameters: [100, 0, 0, 20]
     nodes:
       type: MyCustomNodeImpl
 ```
@@ -469,9 +464,8 @@ a valid molecule from the `"foo"` String.
 
 ```yaml
 displacements:
-  - in:
-      type: Grid
-      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  - type: Grid
+    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     contents:
       - molecule: foo
         concentration: 1
@@ -483,9 +477,8 @@ we can just add another entry to the list:
 
 ```yaml
 displacements:
-  - in:
-      type: Grid
-      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  - type: Grid
+    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     contents:
       - molecule: foo
         concentration: 1
@@ -500,9 +493,8 @@ the `source` molecule.
 
 ```yaml
 displacements:
-  - in:
-      type: Grid
-      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  - type: Grid
+    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     contents:
       - in:
           type: Rectangle
@@ -524,9 +516,8 @@ gradient: &gradient
     program: program:package:distanceTo
   - program: send
 displacements:
-  - in:
-      type: Grid
-      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  - type: Grid
+    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     programs:
       # Reference to the "gradient" list of programs. This program is executed in all
       # the grid nodes

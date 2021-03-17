@@ -179,6 +179,9 @@ object SimulationModel {
                     )
                 }
                 localContext.factory.registerSingleton(Incarnation::class.java, incarnation)
+                val stringClass = String::class.java
+                localContext.factory.registerImplicit(stringClass, Molecule::class.java, incarnation::createMolecule)
+                localContext.factory.registerImplicit(stringClass, Any::class.java, incarnation::createConcentration)
                 val environment: Environment<T, P> =
                     visitEnvironment(incarnation, localContext, localRoot[DocumentRoot.environment])
                 logger.info("Created environment: {}", environment)
@@ -560,7 +563,9 @@ object SimulationModel {
                 else -> visitAnyAndBuildCatching<Condition<T>>(context, it)
             }
         }
-        reaction.conditions = conditions
+        if (conditions.isNotEmpty()) {
+            reaction.conditions = reaction.conditions + conditions
+        }
         val actions = visitRecursively<Action<T>>(
             context,
             program[DocumentRoot.Displacement.Program.actions] ?: emptyList<Any>(),
@@ -571,7 +576,9 @@ object SimulationModel {
                 else -> visitAnyAndBuildCatching<Action<T>>(context, it)
             }
         }
-        reaction.actions = actions
+        if (actions.isNotEmpty()) {
+            reaction.actions = reaction.actions + actions
+        }
         context.factory.deregisterSingleton(reaction)
         context.factory.deregisterSingleton(timeDistribution)
         Result.success(reaction)

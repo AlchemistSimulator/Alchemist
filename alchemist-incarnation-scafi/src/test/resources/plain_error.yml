@@ -16,8 +16,7 @@ pools:
       - program: send
 
 displacements:
-  - in:
-      type: Point
-      parameters: [4,4]
+  - type: Point
+    parameters: [4,4]
     programs:
       - *program

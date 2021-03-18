@@ -145,14 +145,24 @@ object SimulationModel {
                 val toVisit = dependentVariables.toMutableMap()
                 val failures = mutableListOf<Throwable>()
                 while (toVisit.isNotEmpty() && toVisit.size != previousToVisitSize) {
+                    logger.debug("Variables to visit: {}", toVisit)
                     failures.clear()
                     previousToVisitSize = toVisit.size
-                    val iterator = toVisit.iterator()
-                    val (name, variable) = iterator.next()
-                    runCatching { variable.getWith(knownValues) }
-                        .onSuccess { iterator.remove() }
-                        .onSuccess { result -> knownValues[name] = result }
-                        .onFailure { exception -> failures.add(exception) }
+                    val iterator = toVisit.entries.iterator()
+                    while(iterator.hasNext()) {
+                        val (name, variable) = iterator.next()
+                        runCatching { variable.getWith(knownValues) }
+                            .onSuccess { result ->
+                                iterator.remove()
+                                assert(previousToVisitSize != toVisit.size)
+                                logger.debug("Created {}: {}", name, variable)
+                                knownValues[name] = result
+                            }
+                            .onFailure { exception ->
+                                failures.add(exception)
+                                logger.debug("Could not create {}: {}", name, exception.message)
+                            }
+                    }
                 }
                 failures.forEach { throw it }
                 logger.debug("Known values: {}", knownValues)

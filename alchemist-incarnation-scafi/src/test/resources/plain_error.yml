@@ -6,17 +6,15 @@ export:
     aggregators: [sum]
     value-filter: onlyfinite
 
-pools:
-  - pool: &program
-      - time-distribution: 2
-        type: Event
-        actions:
-          - type: RunScafiProgram
-            parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]
-      - program: send
+_pool: &program
+  - time-distribution: 2
+    type: Event
+    actions:
+      - type: RunScafiProgram
+        parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]
+  - program: send
 
 displacements:
   - type: Point
     parameters: [4,4]
-    programs:
-      - *program
+    programs: *program

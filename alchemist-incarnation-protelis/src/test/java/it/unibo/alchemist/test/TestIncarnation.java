@@ -37,7 +37,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
  */
 public class TestIncarnation {
 
-    private static final ProtelisIncarnation<Euclidean2DPosition> INC = new ProtelisIncarnation<>();
+    private static final ProtelisIncarnation<Euclidean2DPosition> INCARNATION = new ProtelisIncarnation<>();
 
     /**
      * Tests the ability of {@link ProtelisIncarnation} of properly building a
@@ -46,25 +46,25 @@ public class TestIncarnation {
     @Test
     public void testBuild() {
         final RandomGenerator rng = new MersenneTwister(0);
-        final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>();
-        final Node<Object> node = INC.createNode(rng, env, null);
+        final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>(INCARNATION);
+        final Node<Object> node = INCARNATION.createNode(rng, env, null);
         assertNotNull(node);
-        final TimeDistribution<Object> immediately = INC.createTimeDistribution(rng, env, node, null);
+        final TimeDistribution<Object> immediately = INCARNATION.createTimeDistribution(rng, env, node, null);
         assertNotNull(immediately);
         assertTrue(Double.isInfinite(immediately.getRate()));
         assertTrue(immediately.getRate() > 0);
-        final TimeDistribution<Object> standard = INC.createTimeDistribution(rng, env, node, "3");
+        final TimeDistribution<Object> standard = INCARNATION.createTimeDistribution(rng, env, node, "3");
         assertNotNull(standard);
         assertEquals(3d, standard.getRate(), Double.MIN_VALUE);
-        final Reaction<Object> generic = INC.createReaction(rng, env, node, standard, null);
+        final Reaction<Object> generic = INCARNATION.createReaction(rng, env, node, standard, null);
         assertNotNull(generic);
         assertTrue(generic instanceof Event);
-        final Reaction<Object> program = INC.createReaction(rng, env, node, standard, "nbr(1)");
+        final Reaction<Object> program = INCARNATION.createReaction(rng, env, node, standard, "nbr(1)");
         testIsProtelisProgram(program);
-        final Reaction<Object> program2 = INC.createReaction(rng, env, node, standard, "testprotelis:test");
+        final Reaction<Object> program2 = INCARNATION.createReaction(rng, env, node, standard, "testprotelis:test");
         testIsProtelisProgram(program2);
         try {
-            INC.createReaction(rng, env, node, standard, "send");
+            INCARNATION.createReaction(rng, env, node, standard, "send");
             fail();
         } catch (final IllegalStateException e) {
             assertNotNull(e.getMessage());
@@ -72,13 +72,13 @@ public class TestIncarnation {
         node.addReaction(program);
         node.addReaction(program2);
         try {
-            INC.createReaction(rng, env, node, standard, "send");
+            INCARNATION.createReaction(rng, env, node, standard, "send");
             fail();
         } catch (final IllegalStateException e) {
             assertNotNull(e.getMessage());
         }
         node.removeReaction(program2);
-        final Reaction<Object> send = INC.createReaction(rng, env, node, standard, "send");
+        final Reaction<Object> send = INCARNATION.createReaction(rng, env, node, standard, "send");
         testIsSendToNeighbor(send);
     }
 
@@ -113,9 +113,9 @@ public class TestIncarnation {
      */
     @Test
     public void testCreateConcentration() {
-        assertEquals("aString", INC.createConcentration("aString"));
-        assertEquals(1.0, INC.createConcentration("1"));
-        assertEquals("foo", INC.createConcentration("let a = \"foo\"; a"));
+        assertEquals("aString", INCARNATION.createConcentration("aString"));
+        assertEquals(1.0, INCARNATION.createConcentration("1"));
+        assertEquals("foo", INCARNATION.createConcentration("let a = \"foo\"; a"));
     }
 
 }

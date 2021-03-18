@@ -1,4 +1,3 @@
----
 variables:
   testVar: &testVar
     min: 0
@@ -12,6 +11,9 @@ seeds:
   scenario: 1
   simulation: *testVar
 
+_molecules:
+  testref: &testRef test
+
 network-model:
   type: ConnectWithinDistance
   parameters: [1.5]
@@ -19,34 +21,27 @@ network-model:
 environment:
   type: Continuous2DEnvironment
   
-positions:
-  type: Continuous2DEuclidean
-  
-molecules:
-  testref: &testRef test
+_pool: &program
+  - time-distribution: *testVar
+    program: test
+  - time-distribution: null
+    program: send
+  - time-distribution: 1
+    type: Event
+    conditions: []
+    actions:
+      - type: BrownianMove
+        parameters: [1]
+  - time-distribution:
+      type: Trigger
+      parameters: [1]
+    type: Event
+    conditions: []
+    actions:
+      - type: BrownianMove
+        parameters: [1]
 
-pools:
-  - pool: &program
-      - time-distribution: *testVar
-        program: test
-      - time-distribution: null
-        program: send
-      - time-distribution: 1
-        type: Event
-        conditions: []
-        actions:
-          - type: BrownianMove
-            parameters: [1]
-      - time-distribution:
-          type: Trigger
-          parameters: [1]
-        type: Event
-        conditions: []
-        actions:
-          - type: BrownianMove
-            parameters: [1]
-
-contents:
+_contents:
   - source: &content
       in:
         type: Rectangle
@@ -58,9 +53,8 @@ contents:
       concentration: *testVar
     
 displacements:
-  - in:
-      type: Circle
-      parameters: [100, 0, 0, 2.8]
+  - type: Circle
+    parameters: [100, 0, 0, 2.8]
     contents:
       - *content
       - *test

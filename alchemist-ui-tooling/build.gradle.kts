@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-maps"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 publishing.publications {

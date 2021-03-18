@@ -5,6 +5,5 @@ network-model:
   parameters: [0.5]
   
 displacements:
-  - in:
-      type: Grid
-      parameters: [-5, -5, 5, 5, 0.25, 0.25, 0, 0]
+  type: Grid
+  parameters: [-5, -5, 5, 5, 0.25, 0.25, 0, 0]

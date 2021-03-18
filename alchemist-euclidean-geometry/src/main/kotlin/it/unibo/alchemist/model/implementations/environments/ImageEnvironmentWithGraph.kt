@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator.g
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.DirectedEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
+import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -33,13 +34,14 @@ import javax.imageio.ImageIO
  * to blue).
  */
 class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
+    incarnation: Incarnation<T, Euclidean2DPosition>,
     path: String,
     zoom: Double = 1.0,
     dx: Double = 0.0,
     dy: Double = 0.0,
     obstaclesColor: Int = Color.BLACK.rgb,
     roomsColor: Int = Color.BLUE.rgb
-) : ImageEnvironment<T>(obstaclesColor, path, zoom, dx, dy),
+) : ImageEnvironment<T>(incarnation, obstaclesColor, path, zoom, dx, dy),
     EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D<Euclidean2DPosition>, T, ConvexPolygon, Euclidean2DPassage> {
 
     override val graph: Euclidean2DNavigationGraph

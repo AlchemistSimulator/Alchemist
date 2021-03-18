@@ -5,6 +5,5 @@ network-model:
   parameters: [0.5]
   
 displacements:
-  - in:
-      type: Circle
-      parameters: [10000, 0, 0, 10]
+  type: Circle
+  parameters: [10000, 0, 0, 10]

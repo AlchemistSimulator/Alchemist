@@ -5,10 +5,8 @@ variables:
     type: GeometricVariable
     parameters: [2, 0.1, 10, 9]
   size: &size
-    min: 1
-    max: 10
-    step: 1
-    default: 5
+    type: LinearVariable
+    parameters: [5, 1, 10, 1]
   mSize: &mSize
     formula: -size
   sourceStart: &sourceStart
@@ -20,20 +18,17 @@ network-model:
   type: ConnectWithinDistance
   parameters: [0.5]
 
-send: &grad
+_send: &grad
   - time-distribution: *rate
     program: "{token, N, L} --> {token, N, L} *{token, N+#D, L add [#NODE;]}"
   - program: >
       {token, N, L}{token, def: N2>=N, L2} --> {token, N, L}
  
 displacements:
-  - in:
-      type: Grid
-      parameters: [*mSize, *mSize, *size, *size, 0.25, 0.25, 0.1, 0.1]
-    contents:
-      - in:
-          type: Rectangle
-          parameters: [*sourceStart, *sourceStart, *sourceSize, *sourceSize]
-        molecule: token, 0, []
-    programs:
-      - *grad
+  type: Grid
+  parameters: [*mSize, *mSize, *size, *size, 0.25, 0.25, 0.1, 0.1]
+  contents:
+    type: Rectangle
+    parameters: [*sourceStart, *sourceStart, *sourceSize, *sourceSize]
+    molecule: token, 0, []
+  programs: *grad

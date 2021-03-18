@@ -19,6 +19,7 @@ import java.util.concurrent.FutureTask;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import it.unibo.alchemist.loader.InitializedEnvironment;
 import org.apache.ignite.Ignition;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
@@ -73,8 +74,13 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
             final Callable<RemoteResultImpl> callable = () -> {
                 ResourceLoader.injectURLs(wd.getDirectoryUrl());
                 final Loader loader = generalConfig.getLoader();
-                final Environment<T, P> env = loader.getWith(config.getVariables());
-                final Simulation<T, P> sim = new Engine<>(env, generalConfig.getEndStep(), generalConfig.getEndTime());
+                final InitializedEnvironment<T, P> initialized = loader.getWith(config.getVariables());
+                final Environment<T, P> environment = initialized.getEnvironment();
+                final Simulation<T, P> simulation = new Engine<>(
+                        environment,
+                        generalConfig.getEndStep(),
+                        generalConfig.getEndTime()
+                );
                 final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
                         .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
                 defaultVars.putAll(config.getVariables());
@@ -83,12 +89,12 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
                         .collect(Collectors.joining(", "));
                 final String filename = masterNodeId.toString() + "_" + config.toString() + ".txt";
                 final Exporter<T, P> exp = new Exporter<>(wd.getFileAbsolutePath(filename),
-                        1, header, loader.getDataExtractors());
-                sim.addOutputMonitor(exp);
-                sim.play();
-                sim.run();
+                        1, header, initialized.getDataExtractors());
+                simulation.addOutputMonitor(exp);
+                simulation.play();
+                simulation.run();
                 return new RemoteResultImpl(wd.getFileContent(filename),
-                        Ignition.ignite().cluster().localNode().id(), sim.getError(), config);
+                        Ignition.ignite().cluster().localNode().id(), simulation.getError(), config);
             };
             final FutureTask<RemoteResultImpl> futureTask = new FutureTask<>(callable);
             final Thread t = new Thread(futureTask);

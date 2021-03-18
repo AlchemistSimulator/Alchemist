@@ -20,7 +20,7 @@ import org.apache.commons.math3.random.RandomGenerator
  */
 class GraphStreamDisplacement<T, P>(
     private val createLinks: Boolean,
-    graphStreamSupport: GraphStreamSupport<T, P>,
+    private val graphStreamSupport: GraphStreamSupport<T, P>,
 ) : Displacement<P> by graphStreamSupport.displacement
     where P : Position<out P> {
 
@@ -54,5 +54,7 @@ class GraphStreamDisplacement<T, P>(
      * The [LinkingRule] associated with this [GraphStreamDisplacement],
      * or null if the displacement has been created without static linking.
      */
-    val associatedLinkingRule: LinkingRule<T, P>? = if (createLinks) graphStreamSupport.linkingRule else null
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getAssociatedLinkingRule(): LinkingRule<T, P>? =
+        if (createLinks) graphStreamSupport.linkingRule as? LinkingRule<T, P> else null
 }

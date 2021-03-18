@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -31,8 +31,8 @@ public class TestTOMACS {
      */
     @Test
     public void testCustomRetainTimeLoading() {
-        final Loader loader = new YamlLoader(ResourceLoader.getResourceAsStream("tomacs.yml"));
-        Assertions.assertTrue(StreamSupport.stream(loader.getDefault().spliterator(), false)
+        final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
+        Assertions.assertTrue(StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
             .map(n -> (ProtelisNode<?>) n)
             .flatMap(n -> n.getReactions().stream()
                     .map(Reaction::getActions)

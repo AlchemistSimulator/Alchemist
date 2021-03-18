@@ -238,20 +238,21 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public TimeDistribution<Object> createTimeDistribution(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final Node<Object> node,
-            final String parameter) {
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final String parameter
+    ) {
         if (parameter == null) {
             return new ExponentialTime<>(Double.POSITIVE_INFINITY, randomGenerator);
         }
-        double frequency;
         try {
-            frequency = Double.parseDouble(parameter);
+            final double frequency = Double.parseDouble(parameter);
+            return new DiracComb<>(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
         } catch (final NumberFormatException e) {
-            frequency = 1;
+            L.error("Unable to convert {} to a double", parameter);
+            throw e;
         }
-        return new DiracComb<>(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
     }
 
     @Override
@@ -511,7 +512,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
-        public int getChemicalSpecies() {
+        public int getMoleculeCount() {
             return notImplemented();
         }
 

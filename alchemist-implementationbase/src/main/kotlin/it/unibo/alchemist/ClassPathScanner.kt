@@ -8,15 +8,34 @@
 
 package it.unibo.alchemist
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import io.github.classgraph.ClassGraph
 import java.io.InputStream
 import java.net.URL
 import java.util.regex.Pattern
 
+private typealias ScanData = Pair<Class<*>, String?>
+private val ScanData.inPackage get() = second
+private val ScanData.superClass get() = first
+
 /**
  * An utility class providing support for loading arbitrary subclasses available in the classpath.
  */
 object ClassPathScanner {
+
+    private val loader = Caffeine.newBuilder().build<ScanData, List<Class<*>>> { scanData ->
+        classGraphForPackage(scanData.inPackage)
+            .enableClassInfo()
+            .scan()
+            .let { scanResult ->
+                if (scanData.superClass.isInterface) {
+                    scanResult.getClassesImplementing(scanData.superClass.name)
+                } else {
+                    scanResult.getSubclasses(scanData.superClass.name)
+                }
+            }
+            .filter { !it.isAbstract }.loadClasses()
+    }
 
     private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph()
         .apply {
@@ -38,18 +57,7 @@ object ClassPathScanner {
     @JvmOverloads
     @Suppress("UNCHECKED_CAST")
     fun <T> subTypesOf(superClass: Class<T>, inPackage: String? = null): List<Class<out T>> =
-        classGraphForPackage(inPackage)
-            .enableClassInfo()
-            .scan()
-            .let { scanResult ->
-                if (superClass.isInterface) {
-                    scanResult.getClassesImplementing(superClass.name)
-                } else {
-                    scanResult.getSubclasses(superClass.name)
-                }
-            }
-            .filter { !it.isAbstract }.loadClasses()
-            .map { it as Class<out T> }
+        loader[ScanData(superClass, inPackage)] as List<Class<out T>>
 
     inline fun <reified T> subTypesOf(inPackage: String? = null): List<Class<out T>> =
         subTypesOf(T::class.java, inPackage)
@@ -65,7 +73,6 @@ object ClassPathScanner {
     fun resourcesMatching(regex: String, inPackage: String? = null): List<URL> = classGraphForPackage(inPackage)
         .scan().getResourcesMatchingPattern(Pattern.compile(regex))
         .urLs
-        .also { it.forEach { println(it) } }
 
     @JvmStatic
     @JvmOverloads

@@ -9,7 +9,7 @@ package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
@@ -30,7 +30,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -217,8 +216,8 @@ public final class TestEnvironmentNodes {
      */
     @Test
     public void testEnv1() {
-        final double conA = (double) testNoVar("testEnv1.yml").getNodes().stream()
-                .parallel()
+        final var environment = testNoVar("testEnv1.yml");
+        final double conA = (double) environment.getNodes().stream()
                 .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
                 .findFirst()
                 .get()
@@ -366,9 +365,9 @@ public final class TestEnvironmentNodes {
             final String resource,
             final Map<String, Double> vars
     ) {
-        final InputStream res = ResourceLoader.getResourceAsStream(resource);
+        final var res = ResourceLoader.getResource(resource);
         assertNotNull(res);
-        final Environment<T, P> env = new YamlLoader(res).getWith(vars);
+        final Environment<T, P> env = LoadAlchemist.from(res).<T, P>getWith(vars).getEnvironment();
         final Simulation<?, ?> sim = new Engine<>(env, 10_000);
         sim.play();
         sim.run();

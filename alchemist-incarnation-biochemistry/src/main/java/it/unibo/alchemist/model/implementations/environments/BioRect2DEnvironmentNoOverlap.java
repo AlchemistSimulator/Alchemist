@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 import org.jetbrains.annotations.NotNull;
@@ -319,8 +318,8 @@ public final class BioRect2DEnvironmentNoOverlap
                                 return 0;
                             }
                         } else {
-                            throw new ClassFormatException(
-                                    "Return type of method " + diameterToCompare.getName() + " should be double"
+                            throw new IllegalStateException(
+                                "Return type of method " + diameterToCompare.getName() + " should be double"
                             );
                         }
                     } catch (NoSuchMethodException e) {

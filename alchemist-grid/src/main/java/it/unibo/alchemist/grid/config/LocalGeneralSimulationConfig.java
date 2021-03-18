@@ -41,7 +41,7 @@ public final class LocalGeneralSimulationConfig extends LightInfoGeneralSimulati
     public LocalGeneralSimulationConfig(final Loader loader, final long endStep, final Time endTime) {
         super(loader, endStep, endTime);
         this.dependencies = new HashMap<>();
-        for (final String file : Objects.requireNonNull(loader).getDependencies()) {
+        for (final String file : Objects.requireNonNull(loader).getRemoteDependencies()) {
             try {
                 final URL dependency = ResourceLoader.getResource(file);
                 if (dependency != null) {

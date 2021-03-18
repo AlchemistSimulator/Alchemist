@@ -52,14 +52,6 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
     boolean contains(Molecule mol);
 
     /**
-     * This method is usefult to know how many different chemical species may be
-     * contained in this node.
-     * 
-     * @return the number of chemical species in this node
-     */
-    int getChemicalSpecies();
-
-    /**
      * Calculates the concentration of a molecule.
      * 
      * @param mol
@@ -77,6 +69,11 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
      * @return an univocal id for this node in the environment
      */
     int getId();
+
+    /**
+     * @return the count of different molecules in this node
+     */
+    int getMoleculeCount();
 
     /**
      * This method allows to access all the reaction of the node.

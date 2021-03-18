@@ -7,8 +7,10 @@
  */
 package it.unibo.alchemist.loader.displacements;
 
+import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Position;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
@@ -28,4 +30,8 @@ public interface Displacement<P extends Position<? extends P>> extends Iterable<
         return stream().iterator();
     }
 
+    @Nullable
+    default <T> LinkingRule<T, P> getAssociatedLinkingRule() {
+        return null;
+    }
 }

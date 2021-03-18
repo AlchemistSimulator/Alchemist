@@ -11,9 +11,11 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.GraphStreamSupport
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.nodes.AbstractNode
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.MersenneTwister
 
 typealias EnvironmentDisplacement = List<Pair<List<Double>, List<Int>>>
@@ -21,6 +23,7 @@ typealias EnvironmentDisplacement = List<Pair<List<Double>, List<Int>>>
 /**
  * A test creating graphstream displacements and verifying that they work reproducibly.
  */
+private val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("sapere").get()
 class TestGraphStreamReproducibility : FreeSpec({
     "GraphStream displacement" - {
         mapOf(
@@ -32,7 +35,7 @@ class TestGraphStreamReproducibility : FreeSpec({
                 val generator = MersenneTwister(1)
                 val ids = generateSequence { generator.nextLong() }.take(10).toList()
                 fun generateGraphs(): List<EnvironmentDisplacement> = ids.map { uniqueId ->
-                    val environment = Continuous2DEnvironment<Any>()
+                    val environment = Continuous2DEnvironment<Any>(incarnation)
                     val graphStream = GraphStreamSupport.generateGraphStream(
                         environment = environment,
                         nodeCount = 100,

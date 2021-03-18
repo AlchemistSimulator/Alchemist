@@ -4,7 +4,7 @@ network-model:
   type: ConnectWithinDistance
   parameters: [7]
 
-gradient: &gradient
+_gradient: &gradient
   - time-distribution: 1
     type: Event
     actions:
@@ -13,15 +13,13 @@ gradient: &gradient
   - program: send
 
 displacements:
-  - in:
-      type: Point
-      parameters: [0,0]      
+  - type: Point
+    parameters: [0,0]
     contents:
-        - molecule: source
-          concentration: false
-        - molecule: enabled
-          concentration: true
-        - molecule: data
-          concentration: 1 / 0
-    programs:
-      - *gradient
+      - molecule: source
+        concentration: false
+      - molecule: enabled
+        concentration: true
+      - molecule: data
+        concentration: 1 / 0
+    programs: *gradient

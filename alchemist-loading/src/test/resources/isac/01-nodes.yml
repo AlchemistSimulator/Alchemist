@@ -5,9 +5,7 @@ network-model:
   parameters: [5]
   
 displacements:
-  - in:
-      type: Point
-      parameters: [0, 0]
-  - in:
-      type: Point
-      parameters: [0, 1]
+  - type: Point
+    parameters: [0, 0]
+  - type: Point
+    parameters: [0, 1]

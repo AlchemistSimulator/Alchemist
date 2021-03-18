@@ -4,30 +4,24 @@ network-model:
   
 incarnation: scafi
 
-pools:
-  - pool: &program
-    - time-distribution: 2
-      type: Event
-      actions:
-        - type: RunScafiProgram
-          parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]
-    - program: send
-      
-positions:
-  type: Continuous2DEuclidean
+_pool: &program
+  - time-distribution: 2
+    type: Event
+    actions:
+      - type: RunScafiProgram
+        parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]
+  - program: send
   
 displacements:
-  - in:
-      type: Rectangle 
-      parameters: [20, 0, 0, 10, 10]
+  - type: Rectangle
+    parameters: [20, 0, 0, 10, 10]
     programs: 
       - *program
     contents:
       - molecule: source
         concentration: false
-  - in:
-      type: Point
-      parameters: [2, 2]
+  - type: Point
+    parameters: [2, 2]
     programs: 
       - *program
     contents:

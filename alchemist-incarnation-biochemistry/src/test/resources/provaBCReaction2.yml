@@ -8,39 +8,35 @@ environment:
   type: BioRect2DEnvironmentNoOverlap
   parameters: [-5, 5, -5, 5]
 
-ionic: &waterDissociation
+_ionic: &waterDissociation
     - time-distribution: 10
       program: >
         [] --> [BrownianMove(10)]
 
 displacements:
-  - in:
-      type: Circle
-      parameters: [4, 0, 0, 5]
+  - type: Circle
+    parameters: [4, 0, 0, 5]
     nodes:
       type: CellNodeImpl
       parameters: [4, p] # p useless parameter
     programs:
       - *waterDissociation
-  - in:
-      type: Circle
-      parameters: [5, 0, 0, 5]
+  - type: Circle
+    parameters: [5, 0, 0, 5]
     nodes:
       type: CellNodeImpl
       parameters: [3, p] # p useless parameter
     programs:
       - *waterDissociation
-  - in:
-      type: Circle
-      parameters: [5, 0, 0, 5]
+  - type: Circle
+    parameters: [5, 0, 0, 5]
     nodes:
       type: CellNodeImpl
       parameters: [2, p] # p useless parameter
     programs:
       - *waterDissociation
-  - in:
-      type: Circle
-      parameters: [5, 0, 0, 5]
+  - type: Circle
+    parameters: [5, 0, 0, 5]
     nodes:
       type: CellNodeImpl
       parameters: [1, p] # p useless parameter

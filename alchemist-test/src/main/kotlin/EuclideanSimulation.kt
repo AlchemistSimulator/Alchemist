@@ -9,7 +9,7 @@
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
-import it.unibo.alchemist.loader.YamlLoader
+import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Position
@@ -41,11 +41,11 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
         addOutputMonitor(
             object : OutputMonitor<T, P> {
                 override fun initialized(environment: Environment<T, P>) =
-                    initialized.invoke(this@startSimulation)
+                    initialized(this@startSimulation)
                 override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>, t: Time, s: Long) =
-                    stepDone.invoke(this@startSimulation, reaction, t, s)
+                    stepDone(this@startSimulation, reaction, t, s)
                 override fun finished(environment: Environment<T, P>, t: Time, s: Long) =
-                    finished.invoke(this@startSimulation, t, s)
+                    finished(this@startSimulation, t, s)
             }
         )
         play()
@@ -65,6 +65,5 @@ fun <T, P> loadYamlSimulation(
     resource: String,
     vars: Map<String, Double> = emptyMap()
 ): EuclideanEnvironment<T, P> where P : Position<P>, P : Vector<P> =
-    YamlLoader(ResourceLoader.getResourceAsStream(resource)).getWith<T, P>(vars).let {
-        if (it is EuclideanEnvironment) it else throw IllegalStateException("Illegal kind of environment")
-    }
+    LoadAlchemist.from(ResourceLoader.getResource(resource)).getWith<T, P>(vars).environment
+        .let { it as? EuclideanEnvironment } ?: throw IllegalStateException("Illegal kind of environment")

@@ -4,17 +4,11 @@ environment:
   type: ImageEnvironmentWithGraph
   parameters: [images/congestion-avoidance.png, 0.1]
 
-positions:
-  type: EuclideanPosition2D
-
-network-model:
-  type: NoLinks
-
 seeds:
   scenario: 0
   simulation: 2
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
@@ -24,21 +18,18 @@ reactions: &behavior
         parameters: [10, 55]
 
 displacements:
-  - in:
-      type: Point
-      parameters: [70, 50]
+  - type: Point
+    parameters: [70, 50]
     nodes:
       type: HomogeneousOrientingPedestrian2D
       parameters: [1.0]
     programs:
       - *behavior
-  - in:
-      type: Grid
-      parameters: [27, 52, 56, 58, 0.5, 0.5, 0.3, 0.3]
+  - type: Grid
+    parameters: [27, 52, 56, 58, 0.5, 0.5, 0.3, 0.3]
     nodes:
       type: HomogeneousPedestrian2D
-  - in:
-      type: Grid
-      parameters: [30, 40, 50, 45, 0.5, 0.5, 0.3, 0.3]
+  - type: Grid
+    parameters: [30, 40, 50, 45, 0.5, 0.5, 0.3, 0.3]
     nodes:
       type: HomogeneousPedestrian2D

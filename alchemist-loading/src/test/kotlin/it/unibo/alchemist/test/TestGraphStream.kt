@@ -14,13 +14,14 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.doubles.shouldBeLessThan
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeGreaterThan
-import it.unibo.alchemist.loader.YamlLoader
+import it.unibo.alchemist.loader.LoadAlchemist
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestGraphStream : FreeSpec({
     "the lobster displacement should" - {
-        val environment = YamlLoader(ResourceLoader.getResourceAsStream("graphstream/testlobster.yml"))
+        val environment = LoadAlchemist.from(ResourceLoader.getResource("graphstream/testlobster.yml"))
             .getDefault<Nothing, Nothing>()
+            .environment
         "displace all nodes" - {
             environment.nodeCount shouldBeExactly 400
             "with neighbors closer than non-neighbors" {

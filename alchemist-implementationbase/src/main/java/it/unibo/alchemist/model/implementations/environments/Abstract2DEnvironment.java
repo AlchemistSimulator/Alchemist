@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -28,14 +29,16 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
 
     private static final long serialVersionUID = 1L;
 
-    private double minX = POSITIVE_INFINITY, maxX = NEGATIVE_INFINITY, minY = POSITIVE_INFINITY,
-            maxY = NEGATIVE_INFINITY;
+    private double minX = POSITIVE_INFINITY,
+        maxX = NEGATIVE_INFINITY,
+        minY = POSITIVE_INFINITY,
+        maxY = NEGATIVE_INFINITY;
 
     /**
-     * 
+     * @param incarnation the incarnation to be used.
      */
-    protected Abstract2DEnvironment() {
-        super(new FlexibleQuadTree<>());
+    protected Abstract2DEnvironment(final Incarnation<T, P> incarnation) {
+        super(incarnation, new FlexibleQuadTree<>());
     }
 
     /**
@@ -128,5 +131,4 @@ public abstract class Abstract2DEnvironment<T, P extends Position2D<P>> extends 
          */
         includeObject(position);
     }
-
 }

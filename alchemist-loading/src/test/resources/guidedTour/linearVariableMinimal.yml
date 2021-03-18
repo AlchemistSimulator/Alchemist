@@ -1,0 +1,6 @@
+incarnation: sapere
+
+variables:
+  myvar: &myvar
+    type: LinearVariable
+    parameters: [0, 0, 1, 0.2]

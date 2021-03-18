@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
@@ -29,7 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -731,9 +730,11 @@ public class TestBioRect2DEnvironmentNoOverlap {
 
     private static void testLoading(final String resource) {
         final Map<String, Double> vars = Collections.emptyMap();
-        final InputStream res = ResourceLoader.getResourceAsStream(resource);
+        final var res = ResourceLoader.getResource(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Environment<Double, Euclidean2DPosition> env = new YamlLoader(res).getWith(vars);
+        final Environment<Double, Euclidean2DPosition> env = LoadAlchemist.from(res)
+                .<Double, Euclidean2DPosition>getWith(vars)
+                .getEnvironment();
         final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 10000);
         sim.addOutputMonitor(new OutputMonitor<Double, Euclidean2DPosition>() {
             private static final long serialVersionUID = 1L;

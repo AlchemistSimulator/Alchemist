@@ -3,12 +3,6 @@ incarnation: protelis
 environment:
   type: Continuous2DEnvironment
 
-positions:
-  type: EuclideanPosition2D
-
-network-model:
-  type: NoLinks
-
 seeds:
   scenario: 0
   simulation: 1
@@ -24,15 +18,13 @@ variables:
     language: kotlin
 
 displacements:
-  - in:
-      type: Circle
-      parameters: [10, 100, 20, 10]
+  - type: Circle
+    parameters: [10, 100, 20, 10]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group1]
-  - in:
-      type: Circle
-      parameters: [5, 10, 10, 10]
+  - type: Circle
+    parameters: [5, 10, 10, 10]
     nodes:
       type: HomogeneousPedestrian2D
       parameters: [*group2]

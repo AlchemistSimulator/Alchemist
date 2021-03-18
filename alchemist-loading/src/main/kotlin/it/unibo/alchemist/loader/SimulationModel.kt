@@ -279,9 +279,10 @@ object SimulationModel {
                             }
                             (program as? Map<*, *>)?.let {
                                 visitProgram(simulationRNG, incarnation, environment, node, localContext, it)
+                                    ?.onSuccess(node::addReaction)
                             }
                         }
-                        programs.forEach { node.addReaction(it) }
+                        logger.debug("Programs: {}", programs)
                         environment.addNode(node, position)
                         logger.debug("Added node {} at {}", node.id, position)
                         localContext.factory.deregisterSingleton(node)

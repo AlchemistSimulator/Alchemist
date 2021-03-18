@@ -149,7 +149,7 @@ object SimulationModel {
                     failures.clear()
                     previousToVisitSize = toVisit.size
                     val iterator = toVisit.entries.iterator()
-                    while(iterator.hasNext()) {
+                    while (iterator.hasNext()) {
                         val (name, variable) = iterator.next()
                         runCatching { variable.getWith(knownValues) }
                             .onSuccess { result ->

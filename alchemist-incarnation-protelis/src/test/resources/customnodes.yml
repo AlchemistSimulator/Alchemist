@@ -3,9 +3,6 @@ incarnation: protelis
 environment:
   type: Continuous2DEnvironment
 
-positions:
-  type: Continuous2DEuclidean
-
 displacements:
   - type: Circle
     parameters: [50, 0, 0, 20]

@@ -13,8 +13,6 @@ pools:
           parameters: [it.unibo.alchemist.scafi.test.ScafiEnvProgram]
     - program: send
 
-positions:
-  type: Continuous2DEuclidean
   
 displacements:
   - type: Point

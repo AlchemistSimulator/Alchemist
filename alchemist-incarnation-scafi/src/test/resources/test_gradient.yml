@@ -12,9 +12,7 @@ pools:
         - type: RunScafiProgram
           parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]
     - program: send
-      
-positions:
-  type: Continuous2DEuclidean
+
   
 displacements:
   - in:

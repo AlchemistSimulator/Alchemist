@@ -28,8 +28,7 @@ displacements:
   type: Grid
   parameters: [*mSize, *mSize, *size, *size, 0.25, 0.25, 0.1, 0.1]
   contents:
-    in:
-      type: Rectangle
-      parameters: [*sourceStart, *sourceStart, *sourceSize, *sourceSize]
+    type: Rectangle
+    parameters: [*sourceStart, *sourceStart, *sourceSize, *sourceSize]
     molecule: token, 0, []
   programs: *grad

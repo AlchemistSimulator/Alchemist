@@ -17,7 +17,7 @@ import com.eden.orchid.api.options.annotations.StringDefault
 private const val tagname = "gistit"
 
 @Description("Embed a GitHub code snippet in your page.", name = tagname)
-class EmbedCode : TemplateTag(tagname, Type.Simple, true) {
+class GistIt : TemplateTag(tagname, Type.Simple, true) {
 
     @Option
     @Description("The owner of the repository")
@@ -30,7 +30,7 @@ class EmbedCode : TemplateTag(tagname, Type.Simple, true) {
     lateinit var repository: String
 
     @Option
-    @Description("The branch for the file")
+    @Description("The branch for the file. Tries to default to the current branch.")
     @StringDefault("master")
     lateinit var branch: String
 

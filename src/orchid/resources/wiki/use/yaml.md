@@ -22,17 +22,11 @@ name is closest to the string.
 
 **Examples**
 
-```yaml
-incarnation: sapere
-```
+{{ snippet("just-loading/minimal-sapere.yml") }}
 
-```yaml
-incarnation: protelis
-```
+{{ snippet("just-loading/minimal-protelis.yml") }}
 
-```yaml
-incarnation: biochemistry
-```
+{{ snippet("just-loading/minimal-biochemistry.yml") }}
 
 *Note:* this is also the most minimal valid alchemist specification
 
@@ -88,25 +82,14 @@ If no fully qualified environment name is provided for class loading, Alchemist 
 
 The following simulations are equivalent, and load the default environment (which is incarnation independent, here
 `protelis` is picked, but it works for any other incarnation as well):
-```yaml
-incarnation: protelis
-```
-```yaml
-incarnation: protelis
-environment:
-  type: Continuous2DEnvironment
-```
-```yaml
-incarnation: protelis
-environment:
-  type: it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-```
-```yaml
-incarnation: protelis
-environment:
-  type: Continuous2DEnvironment
-  parameters: []
-```
+
+{{ snippet("just-loading/minimal-protelis.yml") }}
+
+{{ snippet("just-loading/envtype-protelis.yml") }}
+
+{{ snippet("just-loading/envtype-fullyqualified-protelis.yml") }}
+
+{{ snippet("just-loading/envtype-explicitparameters-protelis.yml") }}
 
 {{ anchor('OSMEnvironment') }} allows for running simulations over real world maps. The following simulation
 loads data from an Openstreetmap file (OSM, XML and PBF formats are supported) located in the classpath in the folder

@@ -312,9 +312,10 @@ dependencies {
     implementation(apacheCommons("cli"))
     implementation(Libs.logback_classic)
     testRuntimeOnly(incarnation("protelis"))
+    testRuntimeOnly(incarnation("sapere"))
+    testRuntimeOnly(incarnation("biochemistry"))
 
     // Populate the dependencies for Orchid
-    fun orchidModule(module: String) = "io.github.javaeden.orchid:Orchid$module:_"
     orchidImplementation(orchidModule("Core"))
     listOf("Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki").forEach {
         orchidRuntimeOnly(orchidModule(it))

@@ -4,12 +4,12 @@ import kotlin.String
 fun Project.alchemist(module: String) = project(":alchemist-$module")
 fun Project.incarnation(module: String) = alchemist("incarnation-$module")
 
-fun modularizedLibrary(base: String, module: String = "", separator: String = "-") = when {
+private fun modularizedLibrary(base: String, module: String = "", separator: String = "-") = when {
     module.isEmpty() -> base
     else -> base + separator + module
 } + ":_"
 
-fun oldApache(module: String) = "commons-$module:commons-$module:_"
+private fun oldApache(module: String) = "commons-$module:commons-$module:_"
 
 /*
  * Shortcuts for libraries used in multiple places
@@ -24,6 +24,7 @@ fun graphStream(module: String = "") = modularizedLibrary("org.danilopianini:gra
 fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
 fun junit(module: String) = modularizedLibrary("org.junit.jupiter:junit-jupiter", module)
 fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
+fun orchidModule(module: String) = modularizedLibrary("io.github.javaeden.orchid:Orchid", module, separator = "")
 fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
 fun pmdModule(module: String = "") = modularizedLibrary("net.sourceforge.pmd:pmd", module)
 fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)

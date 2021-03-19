@@ -103,142 +103,14 @@ The environments shipped with the distribution can be found in the package
 
 ## Displacing nodes
 
-Once the environment is defined
-
-## Connecting nodes
-
-#### Multiline programs
-
-Sometimes data manipulation can get tricky and trivial scripting may no longer be enough.
-In such cases, and especially with modern languages that allow for a reduced usage of cerimonial semicolons (such as Kotlin and Scala), it can be useful to write multiline programs.
-This can be achieved in YAML by using the pipe `|` operator, as exemplified in the following snippet:
-
-```yaml
-variables:
-  a:
-    formula: 22 + 1
-    language: kt
-  test:
-    formula: |
-      import com.google.common.reflect.TypeToken
-      import com.google.gson.Gson
-      Gson().fromJson<Map<String, List<List<List<Double>>>>>(
-          ClassLoader.getSystemResourceAsStream("explorable-area.json")?.reader(),
-          object: TypeToken<Map<String, List<List<List<Double>>>>>() {}.type
-      )
-      .get("coordinates")!!
-      .first()
-      .map { Pair(it.last(), it.first()) }
-    language: kotlin
-```
-If the string begins with a `|`, its contents preserve newlines, thus allowing for multiline scripts of arbitrary complexity.
-
-### Using variables
-
-## Controlling the reproducibility
-
-Alchemist simulations can be reproduced by feeding them the same random number generator.
-This assumption is true as far as the custom component in use:
-* do not use any other random generator but the one provided by the simulation framework
-* do not iterate over collections with no predicible iteration order (i.e., `Set` and `Map`) containing elements (or
-keys) whose `hashCode()` has not been overridden to return the same value regardless of the specific JVM in use.
-* do not run operations in parallel
-
-The `seeds` section may contain two optional values: `scenario` and `simulation`.
-The former is the seed of the pseudo-random generator used during the creation of the simulation, e.g. for displacing
-nodes in random arrangements.
-The latter is the seed of the pseudo-random generator used during the simulation, e.g. for computing time distributions
-or generating random positions.
-A typical example in which one may want to have different values, is to keep the same random displacement of devices in
-some scenario but allow events to happen with different timings.
-
-A typical `seed` section may look like:
-
-```yaml
-seeds:
-  scenario: 0
-  simulation: 1
-```
-
-Usually, in batches, you wan to run multiple runs per experiment, varying the simulation seed, in order to get more
-reliable data (and appropriate error bars).
-As per any other value, variables can be feeded as random generator seeds.
-In the following example, 100 simulations are generated with different seeds (both for environment configuration and
-simulation execution)
-
-```yaml
-variables:
-  random: &random
-    min: 0
-    max: 9
-    step: 1
-    default: 0
-seeds:
-  # reference to the `random` variable
-  scenario: *random
-  simulation: *random
-```
-
-## Defining the network
-
-The `network-model` key is used to load the implementation of {{ anchor('LinkingRule') }} to be used in the simulation,
-which determines the neighborhood of every node.
-The key is optional, but defaults to {{ anchor('NoLinks') }}, so if unspecified nodes in the environment don't get
-connected.
-Omitting such key is equivalent to writing any of the following:
-```yaml
-network-model:
-  type: NoLinks
-```
-```yaml
-network-model:
-  type: it.unibo.alchemist.model.implementations.linkingrules.NoLinks
-  parameters: []
-```
-```yaml
-network-model:
-  type: NoLinks
-  parameters: []
-```
-If no fully qualified linking rule name is provided for class loading, Alchemist uses the package
-{{ anchor('it.unibo.alchemist.model.implementations.linkingrules') }} to search for the class.
-
-### Linking nodes based on distance
-
-One of the most common ways of linking nodes is to connect those which are close enough to each other. To do so, you can
-use the class {{ anchor('ConnectWithinDistance') }}, passing a parameter representing the maximum connection distance.
-Note that such distance depends on the environment: while the definition of distance is straightforward for euclidean
-spaces, it's not so for [Riemannian manifolds](https://en.wikipedia.org/wiki/Riemannian_geometry), which is a fancy
-name to define geometries such as the one typical of a urban map (you can roughly interpret it as a euclidean space
-"with holes").
-For instance, in case of environments using {{ anchor('GeoPosition') }}, the distance is computed in meters, so the
-distance between `[44.133254, 12.237770]` and `[44.146680, 12.258627]` is about `2240` (meters).
-
-```yaml
-network-model:
-  type: ConnectWithinDistance
-  # Link together all the nodes closer than 100 according to the distance function
-  parameters: [100]
-```
-
-## Displacing nodes
-
+Once the environment is set up, it is time to populate it with nodes.
 The `displacements` section lists the node locations at the beginning of the simulation.
-Each displacement type extends the interface {{ anchor('Displacement') }}. If no fully qualified displacement name is
-provided for class loading,
-Alchemist uses the package {{ anchor('it.unibo.alchemist.loader.displacements') }} to search for the class.
-The YAML key associated to displacements is `in`.
+Each displacement type extends the interface {{ anchor('Displacement') }}.
 
 ### Displacing on specific positions
 
 The following example places a single node in the (0, 0) {{ anchor('Point') }}.
-```yaml
-displacements:
-  # "in" entries, where each entry defines a group of nodes
-  - type: Point
-    parameters    # Using a constructor taking (x,y) coordinates
-      parameters: [0, 0]
-```
+{{ snippet("has-nodes/diplacements-in-point.yml") }}
 
 ### Displacing multiple nodes on specific positions
 
@@ -341,6 +213,49 @@ displacements:
           parameters: [-6, -6, 2, 2]
         molecule: source
         concentration: true
+```
+
+
+## Defining the network
+
+The `network-model` key is used to load the implementation of {{ anchor('LinkingRule') }} to be used in the simulation,
+which determines the neighborhood of every node.
+The key is optional, but defaults to {{ anchor('NoLinks') }}, so if unspecified nodes in the environment don't get
+connected.
+Omitting such key is equivalent to writing any of the following:
+```yaml
+network-model:
+  type: NoLinks
+```
+```yaml
+network-model:
+  type: it.unibo.alchemist.model.implementations.linkingrules.NoLinks
+  parameters: []
+```
+```yaml
+network-model:
+  type: NoLinks
+  parameters: []
+```
+If no fully qualified linking rule name is provided for class loading, Alchemist uses the package
+{{ anchor('it.unibo.alchemist.model.implementations.linkingrules') }} to search for the class.
+
+### Linking nodes based on distance
+
+One of the most common ways of linking nodes is to connect those which are close enough to each other. To do so, you can
+use the class {{ anchor('ConnectWithinDistance') }}, passing a parameter representing the maximum connection distance.
+Note that such distance depends on the environment: while the definition of distance is straightforward for euclidean
+spaces, it's not so for [Riemannian manifolds](https://en.wikipedia.org/wiki/Riemannian_geometry), which is a fancy
+name to define geometries such as the one typical of a urban map (you can roughly interpret it as a euclidean space
+"with holes").
+For instance, in case of environments using {{ anchor('GeoPosition') }}, the distance is computed in meters, so the
+distance between `[44.133254, 12.237770]` and `[44.146680, 12.258627]` is about `2240` (meters).
+
+```yaml
+network-model:
+  type: ConnectWithinDistance
+  # Link together all the nodes closer than 100 according to the distance function
+  parameters: [100]
 ```
 
 ## Writing behaviors (Reactions)
@@ -448,3 +363,48 @@ terminate:
   - type: StableForSteps
     parameters: [100, 10]
 ```
+
+## Controlling the reproducibility
+
+Alchemist simulations can be reproduced by feeding them the same random number generator.
+This assumption is true as far as the custom component in use:
+* do not use any other random generators but the one provided by the simulation framework (all the standard components are guaranteed to do so);
+* do not iterate over collections with no predicible iteration order (i.e., `Set` and `Map`) containing elements (or
+  keys) whose `hashCode()` has not been overridden to return the same value regardless of the specific JVM in use;
+* do not run operations in parallel.
+
+The `seeds` section may contain two optional values: `scenario` and `simulation`.
+The former is the seed of the pseudo-random generator used during the creation of the simulation, e.g. for displacing
+nodes in random arrangements.
+The latter is the seed of the pseudo-random generator used during the simulation, e.g. for computing time distributions
+or generating random positions.
+A typical example in which one may want to have different values, is to keep the same random displacement of devices in
+some scenario but allow events to happen with different timings.
+
+A typical `seed` section may look like:
+
+```yaml
+seeds:
+  scenario: 0
+  simulation: 1
+```
+
+Usually, in batches, you wan to run multiple runs per experiment, varying the simulation seed, in order to get more
+reliable data (and appropriate error bars).
+As per any other value, variables can be feeded as random generator seeds.
+In the following example, 100 simulations are generated with different seeds (both for environment configuration and
+simulation execution)
+
+```yaml
+variables:
+  random: &random
+    min: 0
+    max: 9
+    step: 1
+    default: 0
+seeds:
+  # reference to the `random` variable
+  scenario: *random
+  simulation: *random
+```
+

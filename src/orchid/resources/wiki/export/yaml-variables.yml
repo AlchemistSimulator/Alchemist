@@ -64,7 +64,7 @@ variables:
   e.g. if `a` is defined as `2 * b + 1`, and `b` is defined as `4 - a`, the system **won't** bind `a` to `3` and `b` to `1`,
   but will simply fail complaining about circular dependencies.
 
-  ### Using different languages
+### Using different languages
 
   In order to use a language different than Groovy, the user may specify it explicitly by using the `language` keyword.
 For example, Scala can be used:
@@ -122,4 +122,30 @@ Alchemist provides a number of ready-to use interpreters. Besides Groovy (used b
   In case they are provided, such engines can be used without any additional effort.
   Javascript used to be the default for Alchemist, but it has been replaced by Groovy since
   [Nashorn, the interpreter embedded in OpenJDK, is deprecated](https://openjdk.java.net/jeps/335).
+
+#### Multiline programs
+
+Sometimes data manipulation can get tricky and trivial scripting may no longer be enough.
+In such cases, and especially with modern languages that allow for a reduced usage of cerimonial semicolons (such as Kotlin and Scala), it can be useful to write multiline programs.
+This can be achieved in YAML by using the pipe `|` operator, as exemplified in the following snippet:
+
+```yaml
+variables:
+a:
+  formula: 22 + 1
+  language: kt
+test:
+  formula: |
+    import com.google.common.reflect.TypeToken
+    import com.google.gson.Gson
+    Gson().fromJson<Map<String, List<List<List<Double>>>>>(
+        ClassLoader.getSystemResourceAsStream("explorable-area.json")?.reader(),
+        object: TypeToken<Map<String, List<List<List<Double>>>>>() {}.type
+    )
+    .get("coordinates")!!
+    .first()
+    .map { Pair(it.last(), it.first()) }
+  language: kotlin
+```
+If the string begins with a `|`, its contents preserve newlines, thus allowing for multiline scripts of arbitrary complexity.
 

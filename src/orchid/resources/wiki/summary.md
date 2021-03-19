@@ -10,7 +10,7 @@
   - [Running Alchemist stand-alone](prepare/run-stand-alone.md)
   - [Graphical interface](prepare/default-gui.md)
 - [](use.md)
-  - [Basics](use/yaml.md)
+  - [](use/basics.md)
   - [Don't repeat yourself](use/dry.md)
   - [Step-by-step tutorial](use/tutorial.md)
 - [](incarnations.md)

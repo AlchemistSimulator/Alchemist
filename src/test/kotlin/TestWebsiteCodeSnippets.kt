@@ -3,7 +3,10 @@ import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.ClassPathScanner
+import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.model.implementations.times.DoubleTime
+import java.net.URL
 
 /*
  * Copyright (C) 2010-2021, Danilo Pianini and contributors
@@ -16,11 +19,22 @@ import it.unibo.alchemist.loader.LoadAlchemist
 
 class TestWebsiteCodeSnippets : FreeSpec(
     {
-        "all snippets should load correctly" {
-            ClassPathScanner.resourcesMatching(".*", "website-snippets")
-                .also { it shouldNot beEmpty() }
-                .onEach { it shouldNot beNull() }
-                .forEach { LoadAlchemist.from(it).getDefault<Any, Nothing>().environment shouldNot beNull() }
+        val allSpecs = ClassPathScanner.resourcesMatching(".*", "website-snippets")
+            .also { it shouldNot beEmpty() }
+            .onEach { it shouldNot beNull() }
+        "all snippets should load correctly and run for a bit" {
+                allSpecs.load().forEach { Engine(it, DoubleTime(10.0)).run() }
+        }
+        "snippets with displacements should have nodes" {
+            allSpecs.asSequence()
+                .filter { it.readText().contains("^displacements:") }
+                .load()
+                .forEach { it.nodes shouldNot beEmpty() }
         }
     }
-)
+) {
+    companion object {
+        fun List<URL>.load() = asSequence().load()
+        fun Sequence<URL>.load() = map { LoadAlchemist.from(it).getDefault<Any, Nothing>().environment }
+    }
+}

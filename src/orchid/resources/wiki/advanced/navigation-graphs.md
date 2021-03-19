@@ -24,7 +24,7 @@ If your environment is codified as an image (such as the planimetry showed above
 
 ![navigation graph generation]({{ 'assets/media/usage/navigation-graph-generation.jpeg'|asset }})
 
-Once you have your image ready for the generation of the navigation graph, you can exploit the `ImageEnvironmentWithGraph` class to produce it for you. This will read your image, extract the positions you marked blue and pass them to the NaviGator algorithm. Assuming you already know [how to write simulations in YAML](../use/yaml.md), instancing an `ImageEnvironmentWithGraph` in a simulation file is straight-forward:
+Once you have your image ready for the generation of the navigation graph, you can exploit the `ImageEnvironmentWithGraph` class to produce it for you. This will read your image, extract the positions you marked blue and pass them to the NaviGator algorithm. Assuming you already know [how to write simulations in YAML](../use/basics.md), instancing an `ImageEnvironmentWithGraph` in a simulation file is straight-forward:
 ```yaml
 environment:
   type: ImageEnvironmentWithGraph

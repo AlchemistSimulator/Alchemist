@@ -38,36 +38,34 @@ incarnation: biochemistry
 
 ## Loading arbitrary Java classes with the `type`/`parameters` syntax
 
-One important aspect of the Alchemist YAML is the ability to let the user control which actual Java classes should be
+Alchemist YAML lets the user control which actual Java classes should be
 loaded inside a simulation, and which constructor should be used to do so.
-Almost every entity of an Alchemist simulation can be instanced using arbitrary Java classes that implement the required
-interfaces.
-When the alchemist YAML parser encounters a YAML Map providing the keys `type` and `parameters`, it tries to resolve the
-value of the value associated to `type` to a class name, then tries to create the object by calling the constructor with
-parameters most suited to the value of `parameters`.
+Almost every entity of an Alchemist simulation can be instanced through arbitrary Java classes implementing the required interfaces.
+When the alchemist parser encounters a map providing the keys `type` and `parameters`, it tries to resolve the
+value of the value associated to `type` to a class name, then tries to create the object by
+searching a constructor compatible with the parameters known by the context plus those provided in `parameters`.
 
 **Class name resolution**
 
 The value associated with `type` must be a string representing a valid Java identifier.
 If the value contains one or more `.` characters, then it will be interpreted as a fully qualified name.
-If no such character is included, then *the default package for the desired alchemist entity will be prefixed*.
-Alchemist won't ever attempt to load a class situated in the default package (so don't put your classes there, it's a
-bad practice anyway).
+If no such character is included, then it will be interpreted as a simple name.
+Multiple classes with a common supertype and the same simple name may conflict, in which case the simulator raises an error.
 
 **Object instancing**
 
-If the class gets loaded correctly (meaning if a class is present in the classpath with the fully qualified name,
-whether it was passed or guessed by Alchemist), then its constructors get sorted based on the number and type of
-parameters.
+If the class gets loaded correctly, then its constructors get sorted based on the number and type of parameters.
 The system tries to build an object with all the available constructors until one of them provides an instanced object,
 in an order that considers both the current context (namely, the entities that have already been instanced) and the
 value of `parameters`.
 
 For instance, imagine that you are trying to build an instance of a {{ anchor('Reaction') }}, whose only constructor requires an
 {{ anchor('Environment') }}, a {{ anchor('Node') }}, an `int` and a `String`.
-In this case, an Environment and a Node must have already been created (or the YAML loader won't be at this point).
+In this case, an Environment and a Node must have already been created
+(or the simulation loading process would have failed already).
 As a consequence, the first two parameters are automatically inferred by the current context and passed to the constructor.
-The other two parameters can not be inferred this way; instead, the value associated to `parameters` is used to extract the proper values (if possible).
+The other two parameters can not be inferred this way;
+instead, the value associated to `parameters` is used to extract the proper values (if possible).
 In this case, this would have been a valid `parameters` entry:
 
 ```yaml

@@ -22,11 +22,19 @@ object YamlProvider : AlchemistModelProvider {
 
     override val fileExtensions: Regex = "[yY][aA]?[mM][lL]".toRegex()
 
-    override fun from(input: String): Map<String, Any> = Yaml().load(input)
+    override fun from(input: String): Map<String, Any> = Yaml().load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: Reader): Map<String, Any> = Yaml().load(input)
+    override fun from(input: Reader): Map<String, Any> = Yaml().load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: InputStream): Map<String, Any> = Yaml().load(input)
+    override fun from(input: InputStream): Map<String, Any> = Yaml().load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: URL): Map<String, Any> = Yaml().load(input.openStream())
+    override fun from(input: URL): Map<String, Any> =
+        Yaml().load<Map<String, Any>>(input.openStream()).checkNotNull(input)
+
+    private inline fun <reified T> T?.checkNotNull(input: Any): T {
+        require(this != null) {
+            "The Alchemist YAML parser for $input could not load anything: maybe the YAML resource is an empty file?"
+        }
+        return this
+    }
 }

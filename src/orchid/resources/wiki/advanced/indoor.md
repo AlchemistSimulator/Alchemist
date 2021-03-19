@@ -1,6 +1,6 @@
 ---
 
-title: "Simulation of indoor environments"
+title: "Indoor environments"
 
 ---
 

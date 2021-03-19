@@ -1,6 +1,6 @@
 ---
 
-title: Troubleshooting and known issues
+title: "Known issues: troubleshooting"
 
 ---
 

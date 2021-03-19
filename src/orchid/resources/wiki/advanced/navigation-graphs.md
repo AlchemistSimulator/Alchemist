@@ -1,6 +1,6 @@
 ---
 
-title: Generating navigation graphs
+title: Pathfinding and navigation meshes
 
 ---
 A *navigation graph* of an environment with obstacles is a graph whose nodes are convex shapes representing portions of the environment which are traversable by agents (namely, walkable areas), and edges represent connections between them. The image below shows a bidimensional environment with obstacles on the left and the associated navigation graph on the right (nodes are painted blue, edges are represented as line segments connecting the centroid of a node to the associated crossing, which is painted green).
@@ -24,7 +24,7 @@ If your environment is codified as an image (such as the planimetry showed above
 
 ![navigation graph generation]({{ 'assets/media/usage/navigation-graph-generation.jpeg'|asset }})
 
-Once you have your image ready for the generation of the navigation graph, you can exploit the `ImageEnvironmentWithGraph` class to produce it for you. This will read your image, extract the positions you marked blue and pass them to the NaviGator algorithm. Assuming you already know [how to write simulations in YAML](yaml.md), instancing an `ImageEnvironmentWithGraph` in a simulation file is straight-forward:
+Once you have your image ready for the generation of the navigation graph, you can exploit the `ImageEnvironmentWithGraph` class to produce it for you. This will read your image, extract the positions you marked blue and pass them to the NaviGator algorithm. Assuming you already know [how to write simulations in YAML](../use/yaml.md), instancing an `ImageEnvironmentWithGraph` in a simulation file is straight-forward:
 ```yaml
 environment:
   type: ImageEnvironmentWithGraph

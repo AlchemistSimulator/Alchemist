@@ -1,6 +1,6 @@
 ---
 
-title: "Writing Alchemist simulations"
+title: "Basics of an Alchemist simulation"
 
 ---
 
@@ -10,7 +10,8 @@ My suggestion is to use the tutorial "[Learn X in Y minutes where X = YAML](http
 it should provide a good YAML guide (surely sufficient to follow the tutorial).
 
 Alchemist expects a YAML map as input. In the following section, we'll discuss which keys it expects.
-Of course, users are free to use all the YAML features (e.g. anchors) to organize their code and reduce duplication.
+Of course, users are free to use all the YAML features (e.g. anchors and merge keys)
+to organize their code and reduce duplication.
 
 ## Choosing an incarnation
 
@@ -69,14 +70,12 @@ parameters: [4, foo]
 
 As you can easily infer, the value of `parameters` must be a YAML list.
 
-Don't despair if the class loading system is still unclear: it is used pervasively and it will become clearer with the examples in the next sections.
+Don't despair if the class loading system is still unclear: it will become clearer with the examples in the forthcoming sections.
 
 ## Setting up the environment
 
 The `environment` key is used to load the {{ anchor('Environment') }} implementation.
 It is optional and it defaults to a {{ anchor('continuous bidimensional space', 'Continuous2DEnvironment') }}.
-If no fully qualified environment name is provided for class loading, Alchemist uses the package
-{{ anchor('it.unibo.alchemist.model.implementations.environments') }} to search for the class.
 
 ### Examples
 
@@ -91,162 +90,22 @@ The following simulations are equivalent, and load the default environment (whic
 
 {{ snippet("just-loading/envtype-explicitparameters-protelis.yml") }}
 
-{{ anchor('OSMEnvironment') }} allows for running simulations over real world maps. The following simulation
-loads data from an Openstreetmap file (OSM, XML and PBF formats are supported) located in the classpath in the folder
-`maps`:
-```yaml
-incarnation: protelis
-environment:
-  type: OSMEnvironment
-  parameters: [maps/foo.pbf]
-```
+Alchemist supports
+{{ anchor('real world maps', 'Maps and GPS traces') }}
+and 
+{{ anchor('indoor environments with obstacles', 'Indoor environments') }}.
 
-{{ anchor('ImageEnvironment') }} loads data from a black and white raster image file (in this example, located in the
-classpath in the folder `images`), interpreting the black pixels as obstacles (areas that cannot be accessed by nodes):
-```yaml
-incarnation: protelis
-environment:
-  type: ImageEnvironment
-  parameters: [images/foo.png]
-```
-
-Finally, if you write your own custom class named `my.package.FooEnv` implementing {{ anchor('Environment') }}, whose
-constructor requires a String and a double, you can use it in the simulator by writing, for instance:
-```yaml
-incarnation: protelis
-environment:
-  type: my.package.FooEnv
-  parameters: [bar, 2.2]
-```
+Of course, in case you have a custom {{ anchor('Environment') }} implementation,
+you can load it using the `type`/`parameters` syntax.
 
 The environments shipped with the distribution can be found in the package
 {{ anchor('it.unibo.alchemist.model.implementations.environments') }}.
 
-## Declaring variables
+## Displacing nodes
 
-The `variables` section lists variable simulation values.
-A variable defines some kind of value that can be referenced in the simulation file.
+Once the environment is defined
 
-There are two kinds of variables: free and dependent variables.
-The difference is that variables of the latter kind can always be computed given the values of all the other variables.
-
-### Free variables
-
-Free variables define a set of values and a default.
-Their main scope is enabling Alchemist to run a set of simulations with different parameters (values of variables)
-without the need to duplicate the simulation code.
-When used in this mode (called "batch mode"),
-Alchemist by default produces the cartesian product of all the variables values' selected for the batch,
-and runs a simulation for each combination.
-If the simulation is not executed as batch, then the default value is used.
-
-#### Linear variables
-
-#### Geometric variables
-
-#### Arbitrary-valued variables
-
-```yaml
-variables:
-  myvar: &myvar
-    type: ArbitraryVariable
-    parameters: ["defaultValue", ["value1","value2","value3"]]
-```
-
-### Dependent variables
-
-Some variables are combination of free parameters.
-Let's suppose that we want to deploy on a circle, but for some reason (e.g. because it is required by the constructor of some action) we need to compute and have available radius and perimeter.
-We don't need to control both of them: the perimeter can be computed.
-Alchemist provides support for performing computation over variables.
-Let's first define our radius.
-We want it to be a free variable, ranging geometrically from 0.1 to 10 in nine steps, and defaulting to 1.
-```yaml
-variables:
-  radius: &radius
-    type: GeometricVariable
-    parameters: [1, 0.1, 10, 9]
-```
-Now we want to compute the diameter.
-We can do so by using the `formula` syntax:
-```yaml
-variables:
-  radius: &radius
-    type: GeometricVariable
-    parameters: [1, 0.1, 10, 9]
-  diameter: &diam
-    formula: Math.PI * 2 * radius
-```
-How does it work?
-Alchemist feeds the formula String to an interpreter and takes the result of the interpretation.
-By default, [Groovy](https://groovy-lang.org/) is used as language to interpret the formula, but other languages can be used.
-
-Variables can be defined in any order.
-Alchemist figures out the dependencies automatically, as far as there are no cyclic dependencies (e.g. variable `a` requires `b`, and `b` requires `a`).
-Please note that the simulator variable dependency resolution system is not designed to solve mathematical systems,
-so even though the problem has a well formed mathematical solution the actual variable resolution may fail;
-e.g. if `a` is defined as `2 * b + 1`, and `b` is defined as `4 - a`, the system **won't** bind `a` to `3` and `b` to `1`,
-but will simply fail complaining about circular dependencies.
-
-### Using different languages
-
-In order to use a language different than Groovy, the user may specify it explicitly by using the `language` keyword.
-For example, Scala can be used:
-```yaml
-variables:
-  radius: &radius
-    type: GeometricVariable
-    parameters: [1, 0.1, 10, 9]
-  diameter: &diam
-    formula: Math.PI * 2 * radius
-    language: scala
-```
-Or Kotlin:
-```yaml
-variables:
-  radius: &radius
-    type: GeometricVariable
-    parameters: [1, 0.1, 10, 9]
-  diameter: &diam
-    formula: listOf(Math.PI, 2.0, 0.3).fold(1.0) { a, b -> a * b  }
-    language: kotlin
-```
-
-The system is [JSR-233](http://archive.fo/PGdk8)-compatible, as such, every language with a valid JSR-233 implementation could be used.
-The only requirement for the language to be available is the availability in the runtime classpath of a JSR-233 compatible version of the desired language.
-If Alchemist is being used (as recommended) in conjunction with Gradle,
-and you want to embed your favorite JSR-233 compatible scripting language, you should have a dependency declaration similar to:
-
-```kotlin
-dependencies {
-    ...
-    runtimeOnly("my.favorite.scripting.language:supporting-jsr233:0.1.0")
-    ...
-}
-``` 
-
-For instance, Alchemist supports Kotlin and Groovy natively by simply providing in its `build.gradle.kts` something similar to:
-```kotlin
-dependencies {
-    ...
-    runtimeOnly("org.codehaus.groovy:groovy-jsr223:2.5.7")
-    runtimeOnly("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:1.3.40")
-    runtimeOnly("org.jetbrains.kotlin:kotlin-script-runtime:1.3.40")
-    runtimeOnly("org.jetbrains.kotlin:kotlin-script-util:1.3.40")}
-    ...
-``` 
-Alchemist provides a number of ready-to use interpreters. Besides Groovy (used by default) it includes:
-
-* [Scala](https://www.scala-lang.org/)
-* [Kotlin](https://kotlinlang.org/)
-
-Moreover, several implementations of the Java Virtual Machine feature internal interpreters for
-[ECMAScript](https://www.ecma-international.org/publications/standards/Ecma-262.htm)/
-[Javascript](https://en.wikipedia.org/wiki/JavaScript).
-In case they are provided, such engines can be used without any additional effort.
-Javascript used to be the default for Alchemist, but it has been replaced by Groovy since
-[Nashorn, the interpreter embedded in OpenJDK, is deprecated](https://openjdk.java.net/jeps/335).
-
+## Connecting nodes
 
 #### Multiline programs
 

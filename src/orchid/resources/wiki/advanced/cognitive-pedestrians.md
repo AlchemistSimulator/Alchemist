@@ -1,6 +1,6 @@
 ---
 
-title: "Using Cognitive Pedestrians"
+title: "Cognitive Pedestrians"
 
 ---
 
@@ -11,7 +11,10 @@ Alchemist is capable of simulating the movement of pedestrians with sophisticate
 The animation above shows an adult male with no previous knowledge of the environment trying to reach the destination marked green.
 
 ### Prerequisites
-This guide assumes you already know [the Alchemist metamodel](../simulator/metamodel.md), [how to write simulations in YAML](yaml.md) and [how to generate a navigation graph](navigation-graphs.md).
+This guide assumes you already know
+{{ anchor('the Alchemist metamodel', 'The Alchemist Simulator metamodel') }},
+{{ anchor('how to write simulations', 'Basics of an Alchemist simulation') }},
+and {{ anchor('how to generate a navigation graph', 'Pathfinding and navigation meshes') }}.
 
 ### Types of pedestrian
 There are three basic types of pedestrian, each representing a more sophisticated version of the previous one. These are derived from the work of [van der Wal et al](https://doi.org/10.1007/978-3-319-70647-4_11).

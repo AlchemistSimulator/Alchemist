@@ -114,6 +114,16 @@ The following example places a single node in the (0, 0) {{ anchor('Point') }}.
 
 ### Displacing multiple nodes on specific positions
 
+Multiple nodes can be set up by listing them in YAML list, or in a YAML map,
+or in an arbitrarily nested combination of the two.
+
+{{ snippet("has-nodes/diplacements-in-three-points.yml") }}
+
+The Alchemist loading system is smart enough to search for displacements recursively.
+
+{{ snippet("has-nodes/diplacements-in-three-points-nested.yml") }}
+
+
 ```yaml
 displacements:
   - in:

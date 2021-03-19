@@ -1,0 +1,8 @@
+incarnation: protelis
+displacements:
+  - type: Point
+    parameters: [0, 0]
+  - type: Point
+    parameters: [0.5, 0.85]
+  - type: Point
+    parameters: [-0.5, 0.85]

@@ -23,7 +23,7 @@ class TestWebsiteCodeSnippets : FreeSpec(
             .also { it shouldNot beEmpty() }
             .onEach { it shouldNot beNull() }
         "all snippets should load correctly and run for a bit" {
-                allSpecs.load().forEach { env -> Engine(env, DoubleTime(10.0)).also { it.play() }.run() }
+            allSpecs.load().forEach { env -> Engine(env, DoubleTime(10.0)).also { it.play() }.run() }
         }
         "snippets with displacements should have nodes" {
             allSpecs.asSequence()

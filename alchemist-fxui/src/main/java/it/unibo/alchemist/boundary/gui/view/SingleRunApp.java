@@ -165,7 +165,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     public void start(final Stage primaryStage) {
         // load the keybinds from file or classpath
         FX.registerApplication(this, primaryStage);
-        Keybinds.Companion.load();
+        Keybinds.INSTANCE.load();
         parseParams(getParams());
         final Optional<Simulation<T, P>> optSim = getSimulation();
         optSim.ifPresent(sim -> {
@@ -275,7 +275,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      */
     protected void initKeybindings(final Scene scene, final KeyboardActionListener listener) {
         scene.setOnKeyPressed(e -> {
-            if (Keybinds.Companion.get(ActionFromKey.PLAY_AND_PAUSE)
+            if (Keybinds.INSTANCE.get(ActionFromKey.PLAY_AND_PAUSE)
                     .filter(key -> key.equals(e.getCode())).isPresent()
             ) {
                 playPauseMonitor.fireEvent(new ActionEvent(e.getSource(), playPauseMonitor));

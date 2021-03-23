@@ -107,6 +107,7 @@ class RangedDoubleProperty @JvmOverloads constructor(
      *
      * @param output The output stream
      */
+    @Suppress("UnusedPrivateMember")
     private fun writeObject(output: ObjectOutputStream) {
         output.writeUTF(name)
         output.writeDouble(lowerBound)
@@ -133,6 +134,7 @@ class RangedDoubleProperty @JvmOverloads constructor(
      *
      * @param input The input stream
      */
+    @Suppress("UnusedPrivateMember")
     private fun readObject(input: ObjectInputStream) {
         name = input.readUTF()
         lowerBound = input.readDouble()
@@ -150,6 +152,7 @@ class RangedDoubleProperty @JvmOverloads constructor(
         abs(upperBound - other.upperBound) < Double.MIN_VALUE
 
     companion object {
+        private const val serialVersionUID: Long = 1L
         /**
          * Returns a [JsonSerializer][com.google.gson.JsonSerializer] and
          * [JsonDeserializer][com.google.gson.JsonDeserializer] combo class

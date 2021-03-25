@@ -49,11 +49,11 @@ The world of Alchemist is composed of the following entities:
 
 The following image is a visualization of such model:
 
-![Alchemist model]({{ 'assets/media/simulator/model.png'|asset }})
+![Alchemist model]({{ 'assets/media/simulator/model.svg' | asset }})
 
 The behavior of the system is described in terms of reactions. As such, here's a pictorial representation of a reaction:
 
-![Alchemist reaction]({{ 'assets/media/simulator/reaction.png'|asset }})
+![Alchemist reaction]({{ 'assets/media/simulator/reaction.svg' | asset }})
 
 
 ### Incarnations

@@ -458,7 +458,7 @@ object SimulationModel {
                     logger.warn(
                         "No seeds specified, defaulting to 0 for both {} and {}",
                         DocumentRoot.Seeds.scenario,
-                        DocumentRoot.Seeds.scenario
+                        DocumentRoot.Seeds.simulation
                     )
                 }
             is Map<*, *> -> {

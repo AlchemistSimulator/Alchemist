@@ -39,13 +39,15 @@ import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
  */
 @Deprecated
 public final class EffectSerializationFactory {
-    private static final RuntimeTypeAdapterFactory<Effect> RTA = RuntimeTypeAdapterFactory.of(Effect.class);
+    private static final RuntimeTypeAdapterFactory<Effect> RUNTIME_TYPE_ADAPTER_FACTORY =
+            RuntimeTypeAdapterFactory.of(Effect.class);
 
     static {
-        ClassPathScanner.subTypesOf(Effect.class).forEach(e -> RTA.registerSubtype(e, e.toString()));
+        ClassPathScanner.subTypesOf(Effect.class)
+            .forEach(e -> RUNTIME_TYPE_ADAPTER_FACTORY.registerSubtype(e, e.toString()));
     }
 
-    private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(RTA)
+    private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(RUNTIME_TYPE_ADAPTER_FACTORY)
             .registerTypeHierarchyAdapter(CollectionWithCurrentElement.class,
                     new TypeAdapter<ImmutableCollectionWithCurrentElement<?>>() {
                         @Override
@@ -129,8 +131,7 @@ public final class EffectSerializationFactory {
      */
     public static void effectsToFile(final File effectFile, final List<Effect> effects) throws IOException {
         try (Writer fw = new OutputStreamWriter(new FileOutputStream(effectFile), Charsets.UTF_8)) {
-            GSON.toJson(effects, new TypeToken<List<Effect>>() {
-            }.getType(), fw);
+            GSON.toJson(effects, new TypeToken<List<Effect>>() { }.getType(), fw);
         }
     }
 }

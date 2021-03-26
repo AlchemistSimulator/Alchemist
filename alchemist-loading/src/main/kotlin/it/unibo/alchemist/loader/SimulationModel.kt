@@ -259,7 +259,12 @@ object SimulationModel {
                         visitBuilding<Shape<P>>(context, shape)
                     }
                     logger.debug("Shapes: {}", shapes)
-                    val molecule = incarnation.createMolecule(element[moleculeKey]?.toString())
+                    val moleculeElement = element[moleculeKey]
+                    require (moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
+                        "molecule $moleculeElement:${moleculeElement!!::class.java.simpleName} is not a scalar value." +
+                            "This might be caused by a missing quotation of a String."
+                    }
+                    val molecule = incarnation.createMolecule(moleculeElement?.toString())
                     logger.debug("Molecule: {}", molecule)
                     val concentrationKey = DocumentRoot.Displacement.Contents.concentration
                     val concentrationMaker: () -> T = {

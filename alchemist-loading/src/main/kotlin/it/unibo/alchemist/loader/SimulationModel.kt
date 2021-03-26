@@ -260,7 +260,7 @@ object SimulationModel {
                     }
                     logger.debug("Shapes: {}", shapes)
                     val moleculeElement = element[moleculeKey]
-                    require (moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
+                    require(moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
                         "molecule $moleculeElement:${moleculeElement!!::class.java.simpleName} is not a scalar value." +
                             "This might be caused by a missing quotation of a String."
                     }

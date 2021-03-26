@@ -116,7 +116,7 @@ object Alchemist {
                         sortedLaunchers.first().launch(options)
                     } else {
                         L.error(
-                            "Unable to select an execution strategy with options {}, available strategies: {}",
+                            "Multiple execution strategies match options {} with the same priority, available: {}",
                             options,
                             sortedLaunchers,
                         )

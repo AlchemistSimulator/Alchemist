@@ -13,6 +13,7 @@ import it.unibo.alchemist.ClassPathScanner
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
+import java.lang.reflect.Constructor
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -155,7 +156,7 @@ sealed class JVMConstructor(val typeName: String) {
             logger(
                 "Constructor {} failed for {} ",
                 arrayOf(
-                    constructor,
+                    constructor.shorterToString(),
                     if (errorMessages.isEmpty()) "unknown reasons" else "the following reasons:",
                 )
             )
@@ -246,11 +247,13 @@ sealed class JVMConstructor(val typeName: String) {
             creationResult.exceptions.forEach { (_, exception) -> masterException.addSuppressed(exception) }
             throw masterException
         }.also {
-            creationResult.logErrors { message, arguments -> logger.warn(message, *arguments) }
+            creationResult.logErrors { message, arguments -> logger.info(message, *arguments) }
         }
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(JVMConstructor::class.java)
+        private fun Constructor<*>.shorterToString() =
+            declaringClass.simpleName + parameterTypes.joinToString(prefix = "(", postfix = ")") { it.simpleName }
     }
 }

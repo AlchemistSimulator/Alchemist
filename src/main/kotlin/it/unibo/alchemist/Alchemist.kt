@@ -116,9 +116,9 @@ object Alchemist {
                         sortedLaunchers.first().launch(options)
                     } else {
                         L.error(
-                            "Unable to select an execution strategy among {} with options {}",
+                            "Unable to select an execution strategy with options {}, available strategies: {}",
+                            options,
                             sortedLaunchers,
-                            options
                         )
                         exitWith(ExitStatus.INVALID_CLI)
                     }

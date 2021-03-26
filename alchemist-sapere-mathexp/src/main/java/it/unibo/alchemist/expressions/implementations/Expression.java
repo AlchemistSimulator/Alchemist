@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import it.unibo.alchemist.expressions.parser.ParseException;
 import org.danilopianini.lang.HashString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -321,11 +322,15 @@ public final class Expression implements IExpression {
     public Expression(final String s) {
         Exp parser;
         parser = new Exp(new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8)));
-        ast = parser.Init();
-        rootNode = ast.getRoot();
-        astType = rootNode.getType();
-        astData = rootNode.getData();
-        syntactic = ast.toHashString();
+        try {
+            ast = parser.Init();
+            rootNode = ast.getRoot();
+            astType = rootNode.getType();
+            astData = rootNode.getData();
+            syntactic = ast.toHashString();
+        } catch (ParseException e) {
+            throw new IllegalStateException("Unable to parse LSA <" + s + ">", e);
+        }
     }
 
     @Override

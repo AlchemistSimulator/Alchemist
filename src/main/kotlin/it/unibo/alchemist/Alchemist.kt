@@ -92,18 +92,6 @@ object Alchemist {
             println("Alchemist could not load the output module (broken SLF4J depedencies?)") // NOPMD
             exitWith(ExitStatus.NO_LOGGER)
         }
-        require(SupportedIncarnations.getAvailableIncarnations().isNotEmpty()) {
-            logger.error(
-                """
-                Alchemist requires an incarnation to execute, but none was found in the classpath.
-                Please refer to the alchemist manual at https://alchemistsimulator.github.io to learn more on
-                how to include incarnations in your project.
-                If you believe this is a bug, please open a report at:
-                https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
-                """.trimIndent().trim().replace('\n', ' ')
-            )
-            "There are no incarnations in the classpath, no simulation can get executed"
-        }
         val opts = CLIMaker.getOptions()
         fun printHelp() = HelpFormatter().printHelp("java -jar alchemist-redist-{version}.jar", opts)
         val parser: CommandLineParser = DefaultParser()
@@ -114,6 +102,18 @@ object Alchemist {
             if (options.isEmpty || options.help) {
                 printHelp()
                 exitWith(if (options.help) ExitStatus.OK else ExitStatus.INVALID_CLI)
+            }
+            require(SupportedIncarnations.getAvailableIncarnations().isNotEmpty()) {
+                logger.error(
+                    """
+                    Alchemist requires an incarnation to execute, but none was found in the classpath.
+                    Please refer to the alchemist manual at https://alchemistsimulator.github.io to learn more on
+                    how to include incarnations in your project.
+                    If you believe this is a bug, please open a report at:
+                    https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
+                    """.trimIndent().trim().replace('\n', ' ')
+                )
+                "There are no incarnations in the classpath, no simulation can get executed"
             }
             val (validLaunchers, invalidLaunchers) = options.classifyLaunchers()
             val sortedLaunchers: List<ValidLauncher> = validLaunchers

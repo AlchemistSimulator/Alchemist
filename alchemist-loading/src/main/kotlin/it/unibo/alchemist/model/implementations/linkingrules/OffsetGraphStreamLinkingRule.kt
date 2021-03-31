@@ -20,15 +20,20 @@ import kotlin.streams.toList
 
 /**
  * A [LinkingRule] that statically connects nodes as they were configured by GraphStream.
- * An [offset] is used to determine the id of the environment's nodes when comparted to the one of the
+ * An [offset] is used to determine the id of the environment's nodes when compared to the one of the
  * provided [graph].
  */
 class OffsetGraphStreamLinkingRule<T, P : Position<P>>(val offset: Int, val graph: Graph) : LinkingRule<T, P> {
 
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> {
-        val graphNode = graph.getNode(center.id + offset)
-        val neighborsIds = graphNode.neighborNodes().mapToInt { it.index + offset }.toList()
-        val neighbors = environment.nodes.asSequence().filter { it.id in neighborsIds }
+        val actualId = center.id - offset
+        val graphNode = if (graph.nodeCount > actualId) graph.getNode(actualId) else null
+        val neighborsIds = graphNode?.neighborNodes()?.mapToInt { it.index + offset }?.toList() ?: emptyList()
+        val neighbors = if (neighborsIds.isEmpty()) {
+            emptySequence()
+        } else {
+            environment.nodes.asSequence().filter { it.id in neighborsIds }
+        }
         return Neighborhoods.make(environment, center, neighbors.asIterable())
     }
 

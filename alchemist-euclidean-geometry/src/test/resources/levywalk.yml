@@ -7,9 +7,8 @@ displacements:
       type: CircleNode
       parameters: [1]
     programs:
-      -
-        - time-distribution: 1
-          type: ChemicalReaction
-          actions:
-            - type: LevyWalk
-              parameters: [1.4]
+      - time-distribution: 1
+        type: ChemicalReaction
+        actions:
+          - type: LevyWalk
+            parameters: [1.4]

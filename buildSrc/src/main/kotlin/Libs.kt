@@ -20,7 +20,7 @@ fun apacheCommons(module: String) = when(module) {
     else -> modularizedLibrary("org.apache.commons:commons", module)
 }
 fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
-fun graphStream(module: String = "") = modularizedLibrary("org.danilopianini:graphstream-gs", module)
+fun graphStream(module: String = "") = modularizedLibrary("org.graphstream:gs", module)
 fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
 fun junit(module: String) = modularizedLibrary("org.junit.jupiter:junit-jupiter", module)
 fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)

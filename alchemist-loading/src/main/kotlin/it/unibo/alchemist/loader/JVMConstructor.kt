@@ -12,6 +12,7 @@ package it.unibo.alchemist.loader
 import it.unibo.alchemist.ClassPathScanner
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
+import org.danilopianini.jirf.InstancingImpossibleException
 import org.slf4j.LoggerFactory
 import java.lang.reflect.Constructor
 import java.lang.reflect.Modifier
@@ -63,8 +64,7 @@ class NamedParametersConstructor(
         }
         val orderedParameters = usableParameters.map { parameterList ->
             parameterList.sortedBy { it.index }.map { parametersMap[it.name] }.filterNotNull()
-        }
-            .distinct()
+        }.distinct()
         if (orderedParameters.size > 1) {
             throw IllegalArgumentException(
                 """
@@ -73,7 +73,7 @@ class NamedParametersConstructor(
                 """
             )
         }
-        return orderedParameters
+        return orderedParameters.first()
     }
 
     private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +
@@ -117,7 +117,7 @@ sealed class JVMConstructor(val typeName: String) {
                         IllegalStateException(
                             """
                             |No valid match for type $typeName among subtypes of ${type.simpleName}.
-                            |Valid subtypes are: $subtypes
+                            |Valid subtypes are: ${subtypes.map { it.simpleName }}
                             """.trimMargin()
                         )
                     )
@@ -227,22 +227,31 @@ sealed class JVMConstructor(val typeName: String) {
         return creationResult.createdObject.orElseGet {
             val implicits =
                 """
-                |${'\t'} implicitly available singleton objects:
-                ${jirf.singletonObjects.map { (type, it) -> "|\t\t * ${type.simpleName} -> $it" }.joinToString("\n") }}"
+                |implicitly available singleton objects:
+                ${jirf.singletonObjects.map { (type, it) -> "|  * ${type.simpleName} -> $it" }.joinToString("\n") }}"
                 """.trim()
             val exceptionsummary = creationResult.exceptions.asSequence().map { (constructor, exception) ->
-                """
-                |${'\t'}- constructor: $constructor"
-                |${'\t'}  failure message: ${exception.message ?: "no message"}"
-                """.trim()
+                val causalChain = generateSequence<Throwable>(exception) { it.cause }
+                    .mapIndexed { index, cause ->
+                        val message = cause.takeIf { it is InstancingImpossibleException }?.message
+                            ?.replace("it.unibo.alchemist.model.interfaces.", "")
+                            ?.replace("it.unibo.alchemist.model.", "i.u.a.m.")
+                            ?.replace("it.unibo.alchemist.", "i.u.a.")
+                            ?.replace("java.lang.", "")
+                            ?.replace("kotlin.", "")
+                            ?: cause.message ?: "No message"
+                        "|    failure message ${index + 1} of ${cause::class.simpleName}: $message"
+                    }
+                    .joinToString(separator = "\n")
+                "|  - constructor: ${constructor.shorterToString()}\n$causalChain".trim()
             }.joinToString(separator = "\n")
             val errorMessage =
                 """
                 |Could not create $this, requested as instance of ${target.simpleName}.
+                |Actual parameters: $parameters
                 $exceptionsummary
                 $implicits
                 """.trimMargin().trim()
-            logger.error(errorMessage)
             val masterException = IllegalArgumentException("Illegal Alchemist specification: $errorMessage")
             creationResult.exceptions.forEach { (_, exception) -> masterException.addSuppressed(exception) }
             throw masterException

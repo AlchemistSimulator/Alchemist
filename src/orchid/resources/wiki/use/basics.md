@@ -112,27 +112,21 @@ Each deployment type extends the interface {{ anchor('Deployment') }}.
 The following example places a single node in the (0, 0) {{ anchor('Point') }}.
 {{ snippet("deployment-in-point.yml") }}
 
-### Deploying multiple nodes on specific positions
-
 Multiple nodes can be set up by listing them in YAML list, or in a YAML map,
 or in an arbitrarily nested combination of the two.
 
-{{ snippet("diplacements-in-three-points.yml") }}
+{{ snippet("deployment-in-three-points.yml") }}
 
 The Alchemist loading system is smart enough to search for deployments recursively.
 
-{{ snippet("diplacements-in-three-points-nested.yml") }}
-
-If multiple nodes are to be dispka
-
-```yaml
-deployments:
-  - in:
-      type: SpecificPositions
-      parameters: [[0,1],[2,2],[3,4]]
-```
+{{ snippet("deployment-in-three-points-nested.yml") }}
 
 ### Deploying multiple nodes at once
+
+If multiple nodes are to be deployed with the same contents and program in multiple arbitrarily picked locations,
+a dedicated Deployment is present:
+
+{{ snippet("deployment-specific-positions.yml") }}
 
 This example places 10000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.
 ```yaml

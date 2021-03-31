@@ -723,10 +723,14 @@ object SimulationModel {
             // DISPLACEMENTS
             setCurrentRandomGenerator(scenarioRNG)
             val displacementsSource = root.getOrEmpty(DocumentRoot.displacements)
-            val displacementDescriptors: List<Pair<Displacement<P>, Map<*, *>>> =
+            val displacementDescriptors: List<Displacement<P>> =
                 visitRecursively(context, displacementsSource, syntax = DocumentRoot.Displacement) { element ->
                     (element as? Map<*, *>)?.let {
-                        visitBuilding<Displacement<P>>(context, element) ?.map { it to element }
+                        setCurrentRandomGenerator(scenarioRNG)
+                        visitBuilding<Displacement<P>>(context, element)?.onSuccess {
+                            setCurrentRandomGenerator(simulationRNG)
+                            populateDisplacement(simulationRNG, incarnation, environment, it, element)
+                        }
                     }
                 }
             if (displacementDescriptors.isEmpty()) {
@@ -734,8 +738,6 @@ object SimulationModel {
             } else {
                 logger.debug("Displacement descriptors: {}", displacementDescriptors)
             }
-            setCurrentRandomGenerator(simulationRNG)
-            populateEnvironment<T, P>(simulationRNG, incarnation, environment, linkingRule, displacementDescriptors)
             // EXPORTS
             val exports = visitRecursively(context, root.getOrEmpty(DocumentRoot.export)) {
                 visitExports(incarnation, context, it)
@@ -743,58 +745,56 @@ object SimulationModel {
             return EnvironmentAndExports(environment, exports)
         }
 
-        private fun <T, P : Position<P>> populateEnvironment(
+        private fun <T, P : Position<P>> populateDisplacement(
             simulationRNG: RandomGenerator,
             incarnation: Incarnation<T, P>,
             environment: Environment<T, P>,
-            linkingRule: LinkingRule<T, P>,
-            displacementDescriptors: List<Pair<Displacement<P>, Map<*, *>>>
+            displacement: Displacement<P>,
+            descriptor: Map<*, *>,
         ) {
-            for ((displacement, descriptor) in displacementDescriptors) {
-                logger.debug("Processing displacement: {} with descriptor: {}", displacement, descriptor)
-                val nodeDescriptor = descriptor[DocumentRoot.Displacement.nodes]
-                if (descriptor.containsKey(DocumentRoot.Displacement.nodes)) {
-                    requireNotNull(nodeDescriptor) { "Invalid node type descriptor: $nodeDescriptor" }
-                    if (nodeDescriptor is Map<*, *>) {
-                        JavaType.validateDescriptor(nodeDescriptor)
+            logger.debug("Processing displacement: {} with descriptor: {}", displacement, descriptor)
+            val nodeDescriptor = descriptor[DocumentRoot.Displacement.nodes]
+            if (descriptor.containsKey(DocumentRoot.Displacement.nodes)) {
+                requireNotNull(nodeDescriptor) { "Invalid node type descriptor: $nodeDescriptor" }
+                if (nodeDescriptor is Map<*, *>) {
+                    JavaType.validateDescriptor(nodeDescriptor)
+                }
+            }
+            // ADDITIONAL LINKING RULES
+            displacement.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
+                val composedLinkingRule = when (val linkingRule = environment.linkingRule) {
+                    is NoLinks -> newLinkingRule
+                    is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
+                    else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
+                }
+                environment.linkingRule = composedLinkingRule
+                registerSingleton<LinkingRule<T, P>>(composedLinkingRule)
+            }
+            val contents = visitContents(incarnation, context, descriptor)
+            val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Displacement.programs)
+            displacement.stream().forEach { position ->
+                val node = visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
+                registerSingleton<Node<T>>(node)
+                // NODE CONTENTS
+                contents.forEach { (shapes, molecule, concentrationMaker) ->
+                    if (shapes.isEmpty() || shapes.any { position in it }) {
+                        val concentration = concentrationMaker()
+                        logger.debug("Injecting {} ==> {} in node {}", molecule, concentration, node.id)
+                        node.setConcentration(molecule, concentration)
                     }
                 }
-                // ADDITIONAL LINKING RULES
-                displacement.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
-                    val composedLinkingRule = when (linkingRule) {
-                        is NoLinks -> newLinkingRule
-                        is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
-                        else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
+                // PROGRAMS
+                val programs = visitRecursively<Reaction<T>>(context, programDescriptor, ProgramSyntax) { program ->
+                    requireNotNull(program) { "null is not a valid program in $descriptor. ${ProgramSyntax.guide}" }
+                    (program as? Map<*, *>)?.let {
+                        visitProgram(simulationRNG, incarnation, environment, node, context, it)
+                            ?.onSuccess(node::addReaction)
                     }
-                    environment.linkingRule = composedLinkingRule
-                    registerSingleton<LinkingRule<T, P>>(composedLinkingRule)
                 }
-                val contents = visitContents(incarnation, context, descriptor)
-                val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Displacement.programs)
-                displacement.stream().forEach { position ->
-                    val node = visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
-                    registerSingleton<Node<T>>(node)
-                    // NODE CONTENTS
-                    contents.forEach { (shapes, molecule, concentrationMaker) ->
-                        if (shapes.isEmpty() || shapes.any { position in it }) {
-                            val concentration = concentrationMaker()
-                            logger.debug("Injecting {} ==> {} in node {}", molecule, concentration, node.id)
-                            node.setConcentration(molecule, concentration)
-                        }
-                    }
-                    // PROGRAMS
-                    val programs = visitRecursively<Reaction<T>>(context, programDescriptor, ProgramSyntax) { program ->
-                        requireNotNull(program) { "null is not a valid program in $descriptor. ${ProgramSyntax.guide}" }
-                        (program as? Map<*, *>)?.let {
-                            visitProgram(simulationRNG, incarnation, environment, node, context, it)
-                                ?.onSuccess(node::addReaction)
-                        }
-                    }
-                    logger.debug("Programs: {}", programs)
-                    environment.addNode(node, position)
-                    logger.debug("Added node {} at {}", node.id, position)
-                    factory.deregisterSingleton(node)
-                }
+                logger.debug("Programs: {}", programs)
+                environment.addNode(node, position)
+                logger.debug("Added node {} at {}", node.id, position)
+                factory.deregisterSingleton(node)
             }
         }
 

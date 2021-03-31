@@ -277,18 +277,30 @@ allprojects {
                 val interceptError = ByteArrayOutputStream()
                 standardOutput = interceptOutput
                 errorOutput = interceptError
+                isIgnoreExitValue = true
                 doLast {
-                    executionResult.get().assertNormalExitValue()
-                    listOf(interceptOutput, interceptError).forEach { stream ->
-                        val text = String(stream.toByteArray(), Charsets.UTF_8)
-                        for (illegalKeyword in listOf("SLF4J", "NOP")) {
-                            require(illegalKeyword !in text) {
-                                """
+                    val exit = executionResult.get().exitValue
+                    require(exit == 0) {
+                        val outputs = listOf(interceptOutput, interceptError).map {
+                            String(it.toByteArray(), Charsets.UTF_8)
+                        }
+                        outputs.forEach { text ->
+                            for (illegalKeyword in listOf("SLF4J", "NOP")) {
+                                require(illegalKeyword !in text) {
+                                    """
                                 $illegalKeyword found while printing the help. Complete output:
                                 $text
-                                """.trimIndent()
+                                    """.trimIndent()
+                                }
                             }
                         }
+                        """
+                            Process '${command.joinToString(" ")}' exited with $exit
+                            Output:
+                            ${outputs[0]}
+                            Error:
+                            ${outputs[0]}
+                        """.trimIndent()
                     }
                 }
             }

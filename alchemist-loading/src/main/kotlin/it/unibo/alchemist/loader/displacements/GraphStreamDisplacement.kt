@@ -34,6 +34,9 @@ class GraphStreamDisplacement<T, P>(
         environment: Environment<T, P>,
         randomGenerator: RandomGenerator,
         nodeCount: Int,
+        offsetX: Double = 0.0,
+        offsetY: Double = 0.0,
+        zoom: Double = 1.0,
         layoutQuality: Double = 1.0,
         createLinks: Boolean = true,
         generatorName: String,
@@ -43,7 +46,10 @@ class GraphStreamDisplacement<T, P>(
         GraphStreamSupport.generateGraphStream(
             environment,
             nodeCount,
-            generatorName,
+            offsetX,
+            offsetY,
+            zoom = zoom,
+            generatorName = generatorName,
             layoutQuality = layoutQuality.coerceIn(0.0..1.0),
             uniqueId = randomGenerator.nextLong(),
             parameters = parameters

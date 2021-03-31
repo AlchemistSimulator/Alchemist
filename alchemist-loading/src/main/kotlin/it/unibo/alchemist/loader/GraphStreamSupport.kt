@@ -17,11 +17,19 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Position
 import it.unimi.dsi.util.SplitMix64Random
+import org.apache.commons.math3.util.MathArrays
+import org.apache.commons.math3.util.MathArrays.ebeAdd
+import org.apache.commons.math3.util.MathArrays.ebeDivide
+import org.apache.commons.math3.util.MathArrays.ebeMultiply
+import org.apache.commons.math3.util.MathArrays.ebeSubtract
 import org.danilopianini.jirf.Factory
 import org.danilopianini.jirf.FactoryBuilder
 import org.graphstream.algorithm.generator.BaseGenerator
 import org.graphstream.graph.implementations.SingleGraph
 import org.graphstream.ui.layout.springbox.implementations.SpringBox
+import kotlin.math.max
+import kotlin.math.nextUp
+import kotlin.streams.toList
 
 /**
  * Support class for GraphStream, composed of a [linkingRule] and a [displacement].
@@ -99,6 +107,10 @@ class GraphStreamSupport<T, P : Position<out P>>(
         fun <T, P : Position<out P>> generateGraphStream(
             environment: Environment<T, P>,
             nodeCount: Int,
+            offsetX: Double = 0.0,
+            offsetY: Double = 0.0,
+            offsetZ: Double = 0.0,
+            zoom: Double = 1.0,
             generatorName: String = "EuclideanRandom",
             uniqueId: Long = 0,
             layoutQuality: Double = 1.0,
@@ -109,41 +121,53 @@ class GraphStreamSupport<T, P : Position<out P>>(
             val randomGenerator = SplitMix64Random(uniqueId)
             val layout = SpringBox(is3D, randomGenerator)
             val graph = SingleGraph(generatorName)
+            require(layoutQuality in 0.0..1.0) {
+                "Invalid layout quality for graph generator $generatorName, must be in [0, 1]"
+            }
             with(layout) {
                 addSink(graph)
-                quality = layoutQuality.coerceIn(0.0, 1.0)
+                quality = layoutQuality
             }
             with(generator) {
                 addNodeLabels(false)
                 setRandomSeed(randomGenerator.nextLong())
-                addSink(graph)
+//                addSink(graph)
                 addSink(layout)
                 begin()
                 // One node is inserted by GraphStream automatically
-                repeat(nodeCount - 1) { nextEvents() }
+                while (graph.nodeCount < nodeCount) {
+                    nextEvents()
+                }
                 end()
             }
-            while (layout.stabilization < 1) {
-                layout.compute()
-            }
+            do { layout.compute() } while (layout.stabilization < max(layoutQuality, 0.0.nextUp()))
+            val originalCoordinates = graph.nodes()
+                .map { it.getAttribute("xyz") }
+                .map { coordinates ->
+                    require(coordinates is Array<*>) {
+                        "Unexpected type '${coordinates?.let { it::class }}', an array was expected"
+                    }
+                    coordinates.map { (it as Number).toDouble() }
+                }
+                .map { coordinate -> coordinate.map { (it as Number).toDouble() }.toDoubleArray() }
+                .toList()
+            val sum = originalCoordinates.reduce(MathArrays::ebeAdd)
+            val sizes = DoubleArray(sum.size) { graph.nodeCount.toDouble() }
+            val barycenter = ebeDivide(sum, sizes)
+            val zooms = DoubleArray(sum.size) { zoom }
+            val offsets = doubleArrayOf(offsetX, offsetY, offsetZ)
+            val shift = ebeAdd(barycenter, offsets)
+            fun DoubleArray.zoomAndPan(): DoubleArray =
+                ebeAdd(shift, ebeMultiply(zooms, ebeSubtract(this, barycenter)))
             return GraphStreamSupport(OffsetGraphStreamLinkingRule<T, P>(environment.nodeCount, graph)) {
-                graph.nodes()
-                    .map { it.getAttribute("xyz") }
-                    .map {
-                        if (it is Array<*>) {
-                            it
-                        } else {
-                            throw IllegalStateException("Unexpected type ${it::class}, an array was expected")
-                        }
+                originalCoordinates.stream().map {
+                    val shifted = it.zoomAndPan()
+                    if (is3D) {
+                        environment.makePosition(*shifted.toTypedArray())
+                    } else {
+                        environment.makePosition(shifted[0], shifted[1])
                     }
-                    .map { coordinate -> coordinate.map { it as Number } }
-                    .map { (x, y, z) ->
-                        if (is3D) {
-                            environment.makePosition(x, y, z)
-                        } else {
-                            environment.makePosition(x, y)
-                        }
-                    }
+                }
             }
         }
     }

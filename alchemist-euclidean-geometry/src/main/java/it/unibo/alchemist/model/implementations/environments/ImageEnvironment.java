@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -129,10 +130,16 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
             final double dy
     ) throws IOException {
         super(incarnation);
-        final InputStream resource = ResourceLoader.getResourceAsStream(path);
-        final BufferedImage img = resource == null 
-                ? ImageIO.read(new File(path))
-                : ImageIO.read(resource);
+        InputStream resource = ResourceLoader.getResourceAsStream(path);
+        if (resource == null) {
+            final var file = new File(path);
+            if (file.exists()) {
+                resource = new FileInputStream(file);
+            } else {
+                throw new IllegalArgumentException("Nor resource " + path + " nor file " + file.getAbsolutePath() + " exist");
+            }
+        }
+        final BufferedImage img = ImageIO.read(resource);
         findMarkedRegions(obstacleColor, img).forEach(obstacle ->
                 addObstacle(mapToEnv(obstacle, zoom, dx, dy, img.getHeight()))
         );

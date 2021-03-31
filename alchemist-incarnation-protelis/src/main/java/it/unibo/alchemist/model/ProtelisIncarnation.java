@@ -262,7 +262,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 new CacheKey(
                     Objects.requireNonNull(node),
                     Objects.requireNonNull(molecule),
-                    Objects.requireNonNull(property)
+                    property == null ? "" : property
                 )
             );
             final Object val = vm.runCycle();

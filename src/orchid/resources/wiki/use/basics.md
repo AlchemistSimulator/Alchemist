@@ -101,18 +101,18 @@ you can load it using the `type`/`parameters` syntax.
 The environments shipped with the distribution can be found in the package
 {{ anchor('it.unibo.alchemist.model.implementations.environments') }}.
 
-## Displacing nodes
+## Deploying nodes
 
 Once the environment is set up, it is time to populate it with nodes.
 The `deployments` section lists the node locations at the beginning of the simulation.
 Each deployment type extends the interface {{ anchor('Deployment') }}.
 
-### Displacing on specific positions
+### Deploying on specific positions
 
 The following example places a single node in the (0, 0) {{ anchor('Point') }}.
-{{ snippet("diplacements-in-point.yml") }}
+{{ snippet("deployment-in-point.yml") }}
 
-### Displacing multiple nodes on specific positions
+### Deploying multiple nodes on specific positions
 
 Multiple nodes can be set up by listing them in YAML list, or in a YAML map,
 or in an arbitrarily nested combination of the two.
@@ -132,7 +132,7 @@ deployments:
       parameters: [[0,1],[2,2],[3,4]]
 ```
 
-### Displacing multiple nodes at once
+### Deploying multiple nodes at once
 
 This example places 10000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.
 ```yaml
@@ -385,7 +385,7 @@ This assumption is true as far as the custom component in use:
 * do not run operations in parallel.
 
 The `seeds` section may contain two optional values: `scenario` and `simulation`.
-The former is the seed of the pseudo-random generator used during the creation of the simulation, e.g. for displacing
+The former is the seed of the pseudo-random generator used during the creation of the simulation, e.g. for deploying
 nodes in random arrangements.
 The latter is the seed of the pseudo-random generator used during the simulation, e.g. for computing time distributions
 or generating random positions.

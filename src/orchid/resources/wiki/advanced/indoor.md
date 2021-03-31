@@ -33,7 +33,7 @@ environment:
         type: Event
         actions:
           - { type: BrownianMove, parameters: [1] }
-  displacements:
+  deployments:
     - in: { type: Circle, parameters: [100, 700, 700, 300] }
       programs: 
         - *move

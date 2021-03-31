@@ -14,7 +14,7 @@ _pool: &program
         parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]
   - program: send
 
-displacements:
+deployments:
   - type: Point
     parameters: [4,4]
     programs: *program

@@ -17,7 +17,7 @@ variables:
     formula: *create_friends
     language: kotlin
 
-displacements:
+deployments:
   - type: Circle
     parameters: [10, 100, 20, 10]
     nodes:

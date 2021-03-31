@@ -23,7 +23,7 @@ There are three basic types of pedestrian, each representing a more sophisticate
 Homogeneous pedestrians are _Nodes_ with no peculiar characteristic each other.
 
 ```yaml
-displacements:
+deployments:
   - type: Circle
     parameters: [100, 0, 0, 20]
     nodes:
@@ -35,7 +35,7 @@ Heterogeneous pedestrians have an age and a gender, based on which their speed, 
 The age groups available are: *child*, *adult*, *elderly*; alternatively you can specify the exact age. The genders available are: *male*, *female*.
 
 ```yaml
-displacements:
+deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:
@@ -58,7 +58,7 @@ _reactions: &behavior
       parameters: [1.0]
     type: CognitiveBehavior
 
-displacements:
+deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:
@@ -82,7 +82,7 @@ As shown in the animation on the top of the page, pedestrians can be equipped wi
 These are homogeneous pedestrians that can be equipped with a given knowledge degree of the environment. Such quantity is a `Double` value in [0,1] describing the percentage of environment the pedestrian is familiar with prior to the start of the simulation (thus it does not take into account the knowledge the pedestrian will gain during it). Note that despite their name ("homogeneous"), knowledge degrees of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment. Be also aware that orienting pedestrians can only be placed in an `EnvironmentWithGraph`, which is a type of environment providing a navigation graph (see [how to generate navigation graphs](navigation-graphs.md)). 
 
 ```yaml
-displacements:
+deployments:
   - type: Point
     parameters: [15, 15]
     nodes:
@@ -100,7 +100,7 @@ _reactions: &behavior
       parameters: [1.0]
     type: CognitiveBehavior
 
-displacements:
+deployments:
   - type: Point
     parameters: [0, 0]
     nodes:
@@ -130,7 +130,7 @@ variables:
     formula: it.unibo.alchemist.model.implementations.groups.Friends<Any>()
     language: kotlin
 
-displacements:
+deployments:
   - type: Circle
     parameters: [10, 0, 0, 20]
     nodes:
@@ -171,7 +171,7 @@ _reactions: &behavior
       - type: CognitiveAgentObstacleAvoidance
         parameters: [4]
 
-displacements:
+deployments:
   - type: Circle
     parameters: [50, 0, 0, 25]
     nodes:
@@ -208,7 +208,7 @@ _reactions: &behavior
       - type: CognitiveAgentFlee
         parameters: [500, -500]
 
-displacements:
+deployments:
   - type: Point
     parameters: [0, 0]
     nodes:
@@ -253,7 +253,7 @@ _reactions: &behavior
       - type: CognitiveAgentCognitiveAgentAvoidLayer
         parameters: [*danger]
 
-displacements:
+deployments:
   - type: Circle
     parameters: [100, 0, 0, 50]
     nodes:
@@ -314,7 +314,7 @@ _reactions: &behavior
       - type: CognitiveAgentFlee
         parameters: [500, -500]
 
-displacements:
+deployments:
   - type: Point
     parameters: [0, 0]
     nodes:

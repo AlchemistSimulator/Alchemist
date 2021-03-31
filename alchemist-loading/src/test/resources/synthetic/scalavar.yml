@@ -9,6 +9,6 @@ variables:
     formula: List(10, 3, 4).max
 
 
-displacements:
+deployments:
   - type: Point
     parameters: [*var, *var2]

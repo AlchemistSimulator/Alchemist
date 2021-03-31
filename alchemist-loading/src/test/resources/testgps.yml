@@ -12,7 +12,7 @@ _pools:
         - type: ReproduceGPSTrace
           parameters: ["gpsTrace", true, "AlignToSimulationTime"]
 
-displacements:
+deployments:
   - type: FromGPSTrace
     parameters: [7, "gpsTrace", true, "AlignToSimulationTime"]
     programs:

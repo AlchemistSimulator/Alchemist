@@ -34,7 +34,7 @@ _reactions: &behavior
       - type: CognitiveAgentFollowLayer
         parameters: [*exit1]
 
-displacements:
+deployments:
   - type: Circle
     parameters: [50, 0, 0, 33]
     nodes:

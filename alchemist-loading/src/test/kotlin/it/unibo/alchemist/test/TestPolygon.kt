@@ -13,7 +13,7 @@ import com.google.gson.reflect.TypeToken
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.loader.displacements.Polygon
+import it.unibo.alchemist.loader.deployments.Polygon
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import it.unibo.alchemist.model.interfaces.Position2D

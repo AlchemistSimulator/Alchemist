@@ -28,7 +28,7 @@ _reactions: &behavior
       - type: CognitiveAgentObstacleAvoidance
         parameters: [50]
 
-displacements:
+deployments:
   - type: Circle
     parameters: [20, -100, 240, 30]
     nodes:

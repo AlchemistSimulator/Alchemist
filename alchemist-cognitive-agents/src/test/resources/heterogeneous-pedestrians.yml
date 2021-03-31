@@ -7,7 +7,7 @@ seeds:
   scenario: 0
   simulation: 1
 
-displacements:
+deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:

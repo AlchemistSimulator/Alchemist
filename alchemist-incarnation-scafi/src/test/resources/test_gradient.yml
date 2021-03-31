@@ -12,7 +12,7 @@ _pool: &program
         parameters: [it.unibo.alchemist.scafi.test.ScafiGradientProgram]
   - program: send
   
-displacements:
+deployments:
   - type: Rectangle
     parameters: [20, 0, 0, 10, 10]
     programs: 

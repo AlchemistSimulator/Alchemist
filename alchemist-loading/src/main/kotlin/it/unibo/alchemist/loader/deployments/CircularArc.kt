@@ -1,4 +1,4 @@
-package it.unibo.alchemist.loader.displacements
+package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position2D
@@ -17,7 +17,7 @@ import kotlin.math.sin
  * for radius [radiusRandomness] and for angle [angleRandomness],
  * a [startAngle], and an [endAngle].
  *
- * Default values generate a uniform displacement on a circumference.
+ * Default values generate a uniform deployment on a circumference.
  */
 data class CircularArc<P : Position2D<P>> @JvmOverloads constructor(
     val environment: Environment<*, P>,
@@ -30,10 +30,10 @@ data class CircularArc<P : Position2D<P>> @JvmOverloads constructor(
     val angleRandomness: Double = 0.0,
     val startAngle: Double = 0.0,
     val endAngle: Double = 2 * PI
-) : Displacement<P> {
+) : Deployment<P> {
     private val step = (endAngle - startAngle) / nodeCount
     /**
-     * @return a [Stream] over the positions of this [Displacement]
+     * @return a [Stream] over the positions of this [Deployment]
      */
     override fun stream(): Stream<P> = IntStream.range(0, nodeCount)
         .mapToDouble { step * it + startAngle } // actual angle

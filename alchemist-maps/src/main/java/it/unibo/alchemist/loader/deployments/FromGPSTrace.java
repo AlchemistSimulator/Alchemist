@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.loader.displacements;
+package it.unibo.alchemist.loader.deployments;
 
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
 /**
  * Distributes nodes in the first positions of {@link it.unibo.alchemist.model.interfaces.GPSTrace}.
  */
-public final class FromGPSTrace implements Displacement {
+public final class FromGPSTrace implements Deployment {
 
     private final TraceLoader traces;
     private final int numNode;

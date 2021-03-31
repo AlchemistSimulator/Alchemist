@@ -8,7 +8,7 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.SupportedIncarnations;
-import it.unibo.alchemist.loader.displacements.Grid;
+import it.unibo.alchemist.loader.deployments.Grid;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import org.apache.commons.math3.random.MersenneTwister;

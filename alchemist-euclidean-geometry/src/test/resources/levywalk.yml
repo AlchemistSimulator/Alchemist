@@ -1,6 +1,6 @@
 incarnation: protelis
 
-displacements:
+deployments:
   - type: Circle
     parameters: [50, 0, 0, 200]
     nodes:

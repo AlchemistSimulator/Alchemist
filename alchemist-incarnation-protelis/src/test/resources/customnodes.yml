@@ -3,7 +3,7 @@ incarnation: protelis
 environment:
   type: Continuous2DEnvironment
 
-displacements:
+deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:

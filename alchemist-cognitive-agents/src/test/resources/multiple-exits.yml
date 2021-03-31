@@ -62,7 +62,7 @@ _reactions: &behavior
     actions:
       - type: HeadTowardRandomDirection
 
-displacements:
+deployments:
   - type: Circle
     parameters: [75, 10, 10, 10]
     nodes:

@@ -4,7 +4,7 @@ network-model:
   type: ConnectWithinDistance
   parameters: [5]
   
-displacements:
+deployments:
   - type: Point
     parameters: [0, 0]
   - type: Point

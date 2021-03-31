@@ -52,7 +52,7 @@ _contents:
       molecule: *testRef
       concentration: *testVar
     
-displacements:
+deployments:
   - type: Circle
     parameters: [100, 0, 0, 2.8]
     contents:

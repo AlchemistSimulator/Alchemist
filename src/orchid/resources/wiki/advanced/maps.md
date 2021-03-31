@@ -33,18 +33,18 @@ environment:
   parameters: [maps/foo.pbf]
 ```
 
-## Using GPS traces to displace nodes
+## Using GPS traces to deploy nodes
 
-GPS traces can be used to displace nodes on a map.
+GPS traces can be used to deploy nodes on a map.
 In order to set the initial position of the nodes with the first position of the GPS traces,
-you need to use the displacement {{ anchor('FromGPSTrace') }}.
-The displacement `FromGPSTrace` require the following parameters:
+you need to use the deployment {{ anchor('FromGPSTrace') }}.
+The deployment `FromGPSTrace` require the following parameters:
 
-0. number of nodes to displace
+0. number of nodes to deploy
 0. file with the GPS traces to use
 0. boolean that indicates if the list of GPS trace is cyclic.
-   If `true` and the GPS traces are less than the number of nodes to be displaced,
-   then the traces are cyclically re-used to displace nodes.
+   If `true` and the GPS traces are less than the number of nodes to be deployed,
+   then the traces are cyclically re-used to deploy nodes.
 0. a {{ anchor('GPSTimeAlignment') }} to define how to align the time of all the GPS points of all GPS traces. 
     There are present several strategy in the package {{ anchor('it.unibo.alchemist.boundary.gpsload.api') }} 
     and introduced in the following subsection.
@@ -56,7 +56,7 @@ in order to consider only the GPS points with attribute `time` greater than the 
 (in milliseconds from epoch).
 
 ```yaml
-displacements:
+deployments:
   - in:
       type: FromGPSTrace
       parameters: [1497, "vcmuser.gpx", false, "AlignToTime", 1365922800, false, false]

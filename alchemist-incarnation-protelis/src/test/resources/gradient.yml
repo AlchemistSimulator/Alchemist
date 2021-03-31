@@ -12,7 +12,7 @@ _gradient: &gradient
         parameters: [distanceTo, 1.01]
   - program: send
 
-displacements:
+deployments:
   - type: Point
     parameters: [0,0]
     contents:

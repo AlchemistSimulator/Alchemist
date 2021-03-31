@@ -6,7 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.displacements
+package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -17,7 +17,7 @@ import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.Pair
 
 /**
- * A generic [Displacement] that displaces a certain [nodeCount] of nodes in the proximity of a number of [sources].
+ * A generic [Deployment] that displaces a certain [nodeCount] of nodes in the proximity of a number of [sources].
  * Higher [variance] implies higher dispersion.
  * Subclasses must identify the [sources]
  */
@@ -26,7 +26,7 @@ abstract class AbstractCloseTo<T, P : Position<P>> constructor(
     protected val environment: Environment<T, P>,
     protected val nodeCount: Int,
     protected val variance: Double
-) : Displacement<P> {
+) : Deployment<P> {
 
     init {
         require(nodeCount >= 0) { "The node count must be positive or zero: $nodeCount" }

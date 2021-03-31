@@ -14,7 +14,7 @@ _reactions: &behavior
       parameters: [1.0]
     type: OrientingBehavior2D
 
-displacements:
+deployments:
   - type: Circle
     parameters: [130, 70, 52, 5]
     nodes:

@@ -6,7 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.displacements
+package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
@@ -37,7 +37,7 @@ open class Polygon<P : Position2D<out P>>(
     randomGenerator: RandomGenerator,
     nodes: Int,
     pointsInput: List<*>
-) : AbstractRandomDisplacement<P>(environment, randomGenerator, nodes) {
+) : AbstractRandomDeployment<P>(environment, randomGenerator, nodes) {
 
     private val points: List<Point2D> = pointsInput.map {
         val error: () -> String = { "$it cannot get converted to Pair<out Number, out Number>" }
@@ -80,7 +80,7 @@ open class Polygon<P : Position2D<out P>>(
     init {
         if (points.size < 3) {
             throw IllegalArgumentException(
-                "At least three points are required for a polygonal displacement (provided: ${points.size}: $points)"
+                "At least three points are required for a polygonal deployment (provided: ${points.size}: $points)"
             )
         }
         if (!polygon.isPolygonal) {

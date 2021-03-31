@@ -10,7 +10,7 @@ _program: &program
   - time-distribution: 1
     program: "{A, 1}-->{A, 1}"
 
-displacements:
+deployments:
   type: Rectangle
   parameters: [10, 0, 0, 10, 10]
   contents:

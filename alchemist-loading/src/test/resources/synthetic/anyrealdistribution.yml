@@ -1,6 +1,6 @@
 incarnation: sapere
 
-displacements:
+deployments:
   - type: Point
     parameters: [0, 0]
     programs:

@@ -2,7 +2,7 @@ incarnation: protelis
 network-model:
   type: EuclideanDistance
   parameters: [10]
-displacements:
+deployments:
   - type: Circle
     parameters: [500, 0, 0, 50]
     programs:

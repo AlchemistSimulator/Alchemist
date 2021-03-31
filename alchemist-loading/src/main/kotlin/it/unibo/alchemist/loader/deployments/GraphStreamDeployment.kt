@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.displacements
+package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.loader.GraphStreamSupport
 import it.unibo.alchemist.model.interfaces.Environment
@@ -18,10 +18,10 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * A deployment based on a [GraphStream](https://graphstream-project.org/) graph.
  */
-class GraphStreamDisplacement<T, P>(
+class GraphStreamDeployment<T, P>(
     private val createLinks: Boolean,
     private val graphStreamSupport: GraphStreamSupport<T, P>,
-) : Displacement<P> by graphStreamSupport.displacement
+) : Deployment<P> by graphStreamSupport.deployment
     where P : Position<out P> {
 
     /**
@@ -57,8 +57,8 @@ class GraphStreamDisplacement<T, P>(
     )
 
     /**
-     * The [LinkingRule] associated with this [GraphStreamDisplacement],
-     * or null if the displacement has been created without static linking.
+     * The [LinkingRule] associated with this [GraphStreamDeployment],
+     * or null if the deployment has been created without static linking.
      */
     @Suppress("UNCHECKED_CAST")
     override fun <T> getAssociatedLinkingRule(): LinkingRule<T, P>? =

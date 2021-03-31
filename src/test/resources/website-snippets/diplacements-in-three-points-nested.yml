@@ -1,5 +1,5 @@
 incarnation: protelis
-displacements:
+deployments:
   the_bottom_point:
     type: Point
     parameters: [0, 0]

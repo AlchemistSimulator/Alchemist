@@ -11,7 +11,7 @@ package it.unibo.alchemist.loader
 
 import arrow.core.Either
 import it.unibo.alchemist.ClassPathScanner
-import it.unibo.alchemist.loader.displacements.Displacement
+import it.unibo.alchemist.loader.deployments.Deployment
 import it.unibo.alchemist.model.implementations.linkingrules.OffsetGraphStreamLinkingRule
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.LinkingRule
@@ -32,11 +32,11 @@ import kotlin.math.nextUp
 import kotlin.streams.toList
 
 /**
- * Support class for GraphStream, composed of a [linkingRule] and a [displacement].
+ * Support class for GraphStream, composed of a [linkingRule] and a [deployment].
  */
 class GraphStreamSupport<T, P : Position<out P>>(
     val linkingRule: LinkingRule<T, P>,
-    val displacement: Displacement<P>,
+    val deployment: Deployment<P>,
 ) {
     companion object {
 

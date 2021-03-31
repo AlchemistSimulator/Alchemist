@@ -1,6 +1,6 @@
 incarnation: sapere
 
-displacements:
+deployments:
   type: Circle
   parameters: [100, 0, 0, 5]
   nodes:

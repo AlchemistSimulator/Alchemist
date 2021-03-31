@@ -18,7 +18,7 @@ import it.unibo.alchemist.loader.LoadAlchemist
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestGraphStream : FreeSpec({
-    "the lobster displacement should" - {
+    "the lobster deployment should" - {
         val environment = LoadAlchemist.from(ResourceLoader.getResource("graphstream/testlobster.yml"))
             .getDefault<Nothing, Nothing>()
             .environment

@@ -17,7 +17,7 @@ _reactions: &behavior
       - type: CognitiveAgentReachKnownDestination
         parameters: [135, 15]
 
-displacements:
+deployments:
   - type: Point
     parameters: [15, 15]
     nodes:

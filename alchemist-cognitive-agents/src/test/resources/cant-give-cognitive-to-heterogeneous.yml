@@ -13,7 +13,7 @@ _reactions: &behavior
       parameters: [1.0]
     type: CognitiveBehavior
 
-_displacement_hetero: &male-displacement
+_deployment_hetero: &male-deployment
   type: Circle
     parameters: [ 50, 0, 0, 20 ]
     nodes:
@@ -21,9 +21,9 @@ _displacement_hetero: &male-displacement
       parameters: [ "adult", "male" ]
     programs: *behavior
 
-displacements:
-  - *male-displacement
-  - <<: *male-displacement
+deployments:
+  - *male-deployment
+  - <<: *male-deployment
     nodes:
       type: HeterogeneousPedestrian2D
       parameters: ["adult", "female"]

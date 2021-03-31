@@ -20,7 +20,7 @@ _pool: &program
  - time-distribution: null
    program: send
 
-displacements:
+deployments:
   type: Grid
   parameters: [0, 0, 10, 10, 1, 1, 0.1, 0.1]
   programs: *program

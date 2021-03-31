@@ -12,7 +12,7 @@ _pool: &program
         parameters: [it.unibo.alchemist.scafi.test.ScafiEnvProgram]
   - program: send
 
-displacements:
+deployments:
   - type: Point
     parameters: [4,4]
     programs: 

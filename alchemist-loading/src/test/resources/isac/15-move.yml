@@ -42,7 +42,7 @@ _move: &move
     - type: BrownianMove
       parameters: [0.1]
 
-displacements:
+deployments:
     type: Grid
     parameters: [*mSize, *mSize, *size, *size, 0.25, 0.25, 0.1, 0.1]
     contents:

@@ -40,7 +40,7 @@ _reactions: &behavior
       - type: CognitiveAgentAvoidLayer
         parameters: [*exit]
 
-displacements:
+deployments:
   - type: Circle
     parameters: [8, 0, 0, 15]
     nodes:

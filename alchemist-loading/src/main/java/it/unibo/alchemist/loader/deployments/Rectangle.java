@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.loader.displacements;
+package it.unibo.alchemist.loader.deployments;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <P> position type
  */
-public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
+public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDeployment<P> {
 
     private final double x, y, width, height;
 

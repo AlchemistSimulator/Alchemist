@@ -12,7 +12,7 @@
 - [](use.md)
   - [](use/basics.md)
   - [Don't repeat yourself](use/dry.md)
-  - [Step-by-step tutorial](use/tutorial.md)
+  - [](use/tutorial.md)
 - [](incarnations.md)
   - [Biochemistry](use/biochemistry.md)
   - [Protelis](incarnations/protelis.md)

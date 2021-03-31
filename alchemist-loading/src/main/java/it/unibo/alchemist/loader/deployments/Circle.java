@@ -8,7 +8,7 @@
 /**
  * 
  */
-package it.unibo.alchemist.loader.displacements;
+package it.unibo.alchemist.loader.deployments;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -22,7 +22,7 @@ import static org.apache.commons.math3.util.FastMath.sqrt;
 /**
  * @param <P> {@link Position} type
  */
-public final class Circle<P extends Position<? extends P>> extends AbstractRandomDisplacement<P> {
+public final class Circle<P extends Position<? extends P>> extends AbstractRandomDeployment<P> {
 
     private final double centerx, centery, radius;
 

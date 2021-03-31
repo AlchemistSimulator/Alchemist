@@ -13,7 +13,7 @@ _reactions: &behavior
       parameters: [1.0]
     type: CognitiveBehavior
 
-displacements:
+deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:

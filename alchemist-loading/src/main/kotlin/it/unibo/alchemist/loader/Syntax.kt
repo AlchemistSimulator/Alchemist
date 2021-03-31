@@ -129,7 +129,7 @@ internal object DocumentRoot : SyntaxElement {
             }
         )
     }
-    object Displacement : SyntaxElement {
+    object Deployment : SyntaxElement {
         val contents by OwnName()
         val nodes by OwnName()
         val programs by OwnName()
@@ -207,7 +207,7 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor { mandatory(min, max, default, step) }
         )
     }
-    val displacements by OwnName()
+    val deployments by OwnName()
     val environment by OwnName()
     val export by OwnName()
     val incarnation by OwnName()

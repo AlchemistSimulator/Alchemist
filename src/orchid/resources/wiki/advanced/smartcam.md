@@ -63,7 +63,7 @@ environment:
   type: Rectangular2DEnvironment
   parameters: [*EnvironmentSize, *EnvironmentSize]
 
-displacements:
+deployments:
   - in: # possible targets
       type: Rectangle
       parameters: [*NumHumans, *EnvironmentOrigin, *EnvironmentOrigin, *EnvironmentSize, *EnvironmentSize]
@@ -110,7 +110,7 @@ programs:
         - type: CameraSee
           parameters: [*CameraFoVDistance, *CameraFoVAngle, vision]
 
-displacements:
+deployments:
   - in: # possible targets
       type: Rectangle
       parameters: [*NumHumans, *EnvironmentOrigin, *EnvironmentOrigin, *EnvironmentSize, *EnvironmentSize]
@@ -172,7 +172,7 @@ programs:
         - type: CameraSee
           parameters: [*CameraFoVDistance, *CameraFoVAngle, vision]
 
-displacements:
+deployments:
   - in: # possible targets
       type: Rectangle
       parameters: [*NumHumans, *EnvironmentOrigin, *EnvironmentOrigin, *EnvironmentSize, *EnvironmentSize]
@@ -256,7 +256,7 @@ programs:
         - type: FollowAtDistance
           parameters: [target, *CameraDistanceFromTarget, *CameraSpeed]
 
-displacements:
+deployments:
   - in: # possible targets
       type: Rectangle
       parameters: [*NumHumans, *EnvironmentOrigin, *EnvironmentOrigin, *EnvironmentSize, *EnvironmentSize]
@@ -348,7 +348,7 @@ programs:
         - type: ConstantDistanceRandomMove
           parameters: [*HalfEnvironmentSize, *CameraSpeed]
 
-displacements:
+deployments:
   - in: # possible targets
       type: Rectangle
       parameters: [*NumHumans, *EnvironmentOrigin, *EnvironmentOrigin, *EnvironmentSize, *EnvironmentSize]

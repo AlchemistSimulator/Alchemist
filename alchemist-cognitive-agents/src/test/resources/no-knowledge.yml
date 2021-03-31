@@ -18,7 +18,7 @@ _reactions: &behavior
         parameters: [135, 15]
         # destination is unknown as pedestrian's cognitive map is empty
 
-displacements:
+deployments:
   - type: Point
     parameters: [15, 15]
     nodes:

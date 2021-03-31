@@ -10,7 +10,7 @@ _send: &grad
   - program: >
       {token, N}{token, def: N2>=N} --> {token, N}
  
-displacements:
+deployments:
   type: Grid
   parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
   contents:

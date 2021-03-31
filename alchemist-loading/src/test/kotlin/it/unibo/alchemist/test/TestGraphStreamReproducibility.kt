@@ -25,7 +25,7 @@ typealias EnvironmentDisplacement = List<Pair<List<Double>, List<Int>>>
  */
 private val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("sapere").get()
 class TestGraphStreamReproducibility : FreeSpec({
-    "GraphStream displacement" - {
+    "GraphStream deployment" - {
         mapOf(
             "Lobster" to listOf(2, 10),
             "RandomEuclidean" to emptyList(),
@@ -45,7 +45,7 @@ class TestGraphStreamReproducibility : FreeSpec({
                         parameters = parameters.toTypedArray()
                     )
                     environment.linkingRule = graphStream.linkingRule
-                    graphStream.displacement.forEach {
+                    graphStream.deployment.forEach {
                         environment.addNode(
                             object : AbstractNode<Any>(environment) { override fun createT(): Any = Any() },
                             it

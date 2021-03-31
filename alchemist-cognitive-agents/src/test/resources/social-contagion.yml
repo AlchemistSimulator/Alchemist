@@ -46,7 +46,7 @@ _nodes: &nodes
     parameters: ["adult", "male", *danger]
   programs: *behavior
 
-displacements:
+deployments:
   - type: Circle
     parameters: [25, 0, 0, 8]
     <<: *nodes

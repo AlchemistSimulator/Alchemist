@@ -18,7 +18,7 @@ _reactions: &behavior
         parameters: [135, 15]
         # CognitiveAgentGoalOrientedExplore assumes the destination is unknown
 
-displacements:
+deployments:
   type: Point
   parameters: [15, 15]
   nodes:

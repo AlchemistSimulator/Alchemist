@@ -6,7 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.displacements
+package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
@@ -14,10 +14,10 @@ import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * This [Displacement] places new nodes in the proximity of those already included in the environment.
+ * This [Deployment] places new nodes in the proximity of those already included in the environment.
  * Behaviour if there are no nodes already inserted is undefined.
  */
-class CloseToAlreadyDisplaced<T, P : Position<P>> (
+class CloseToAlreadyDeployed<T, P : Position<P>> (
     randomGenerator: RandomGenerator,
     environment: Environment<T, P>,
     nodeCount: Int,

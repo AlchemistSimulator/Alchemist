@@ -12,7 +12,7 @@ package it.unibo.alchemist.loader
 import arrow.core.Either
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.DocumentRoot.JavaType
-import it.unibo.alchemist.loader.displacements.Displacement
+import it.unibo.alchemist.loader.deployments.Deployment
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.MoleculeReader
@@ -44,7 +44,7 @@ import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
-import it.unibo.alchemist.loader.DocumentRoot.Displacement.Program as ProgramSyntax
+import it.unibo.alchemist.loader.DocumentRoot.Deployment.Program as ProgramSyntax
 import it.unibo.alchemist.loader.DocumentRoot.Layer as LayerSyntax
 
 /**
@@ -246,15 +246,15 @@ object SimulationModel {
         root: Map<*, *>
     ): List<Triple<List<Shape<P>>, Molecule, () -> T>> {
         logger.debug("Visiting contents: {}", root)
-        val allContents = root[DocumentRoot.Displacement.contents] ?: emptyList<Any>()
+        val allContents = root[DocumentRoot.Deployment.contents] ?: emptyList<Any>()
         return visitRecursively(context, allContents) { element ->
             logger.debug("Visiting as content: {}", element)
-            val moleculeKey = DocumentRoot.Displacement.Contents.molecule
+            val moleculeKey = DocumentRoot.Deployment.Contents.molecule
             (element as? Map<*, *>)
                 ?.takeIf { element.containsKey(moleculeKey) }
                 ?.let {
                     logger.debug("Found content descriptor: {}", it)
-                    val shapesKey = DocumentRoot.Displacement.Contents.shapes
+                    val shapesKey = DocumentRoot.Deployment.Contents.shapes
                     val shapes = visitRecursively(context, element[shapesKey] ?: emptyList<Any>()) { shape ->
                         visitBuilding<Shape<P>>(context, shape)
                     }
@@ -266,7 +266,7 @@ object SimulationModel {
                     }
                     val molecule = incarnation.createMolecule(moleculeElement?.toString())
                     logger.debug("Molecule: {}", molecule)
-                    val concentrationKey = DocumentRoot.Displacement.Contents.concentration
+                    val concentrationKey = DocumentRoot.Deployment.Contents.concentration
                     val concentrationMaker: () -> T = {
                         element[concentrationKey]?.toString().let { incarnation.createConcentration(it) }
                     }
@@ -722,21 +722,21 @@ object SimulationModel {
             registerSingleton<LinkingRule<T, P>>(linkingRule)
             // DISPLACEMENTS
             setCurrentRandomGenerator(scenarioRNG)
-            val displacementsSource = root.getOrEmpty(DocumentRoot.displacements)
-            val displacementDescriptors: List<Displacement<P>> =
-                visitRecursively(context, displacementsSource, syntax = DocumentRoot.Displacement) { element ->
+            val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
+            val deploymentDescriptors: List<Deployment<P>> =
+                visitRecursively(context, displacementsSource, syntax = DocumentRoot.Deployment) { element ->
                     (element as? Map<*, *>)?.let {
                         setCurrentRandomGenerator(scenarioRNG)
-                        visitBuilding<Displacement<P>>(context, element)?.onSuccess {
+                        visitBuilding<Deployment<P>>(context, element)?.onSuccess {
                             setCurrentRandomGenerator(simulationRNG)
                             populateDisplacement(simulationRNG, incarnation, environment, it, element)
                         }
                     }
                 }
-            if (displacementDescriptors.isEmpty()) {
+            if (deploymentDescriptors.isEmpty()) {
                 logger.warn("There are no displacements in the specification, the environment won't have any node")
             } else {
-                logger.debug("Displacement descriptors: {}", displacementDescriptors)
+                logger.debug("Deployment descriptors: {}", deploymentDescriptors)
             }
             // EXPORTS
             val exports = visitRecursively(context, root.getOrEmpty(DocumentRoot.export)) {
@@ -749,19 +749,19 @@ object SimulationModel {
             simulationRNG: RandomGenerator,
             incarnation: Incarnation<T, P>,
             environment: Environment<T, P>,
-            displacement: Displacement<P>,
+            deployment: Deployment<P>,
             descriptor: Map<*, *>,
         ) {
-            logger.debug("Processing displacement: {} with descriptor: {}", displacement, descriptor)
-            val nodeDescriptor = descriptor[DocumentRoot.Displacement.nodes]
-            if (descriptor.containsKey(DocumentRoot.Displacement.nodes)) {
+            logger.debug("Processing deployment: {} with descriptor: {}", deployment, descriptor)
+            val nodeDescriptor = descriptor[DocumentRoot.Deployment.nodes]
+            if (descriptor.containsKey(DocumentRoot.Deployment.nodes)) {
                 requireNotNull(nodeDescriptor) { "Invalid node type descriptor: $nodeDescriptor" }
                 if (nodeDescriptor is Map<*, *>) {
                     JavaType.validateDescriptor(nodeDescriptor)
                 }
             }
             // ADDITIONAL LINKING RULES
-            displacement.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
+            deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
                 val composedLinkingRule = when (val linkingRule = environment.linkingRule) {
                     is NoLinks -> newLinkingRule
                     is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
@@ -771,8 +771,8 @@ object SimulationModel {
                 registerSingleton<LinkingRule<T, P>>(composedLinkingRule)
             }
             val contents = visitContents(incarnation, context, descriptor)
-            val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Displacement.programs)
-            displacement.stream().forEach { position ->
+            val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Deployment.programs)
+            deployment.stream().forEach { position ->
                 val node = visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
                 registerSingleton<Node<T>>(node)
                 // NODE CONTENTS

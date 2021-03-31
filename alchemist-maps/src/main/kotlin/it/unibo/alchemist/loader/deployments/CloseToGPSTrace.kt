@@ -6,7 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.displacements
+package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader
 import it.unibo.alchemist.model.implementations.times.DoubleTime
@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * This [Displacement] displaces nodes in the proximity of a GPS trace.
+ * This [Deployment] displaces nodes in the proximity of a GPS trace.
  * Given a time interval [from] some time [to] another,
  * it creates a [TraceLoader], then uses the points in the interval to generate the sources for a
  * Gaussian bivariate function and uses its probability density to deploy.

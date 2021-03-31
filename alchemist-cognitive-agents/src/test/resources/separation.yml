@@ -16,7 +16,7 @@ _reactions: &behavior
       - type: CognitiveAgentSeparation
       - type: HeadTowardRandomDirection
 
-displacements:
+deployments:
   - type: Circle
     parameters: [30, 0, 0, 20]
     nodes:

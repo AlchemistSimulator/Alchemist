@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.loader.displacements
+package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -22,11 +22,11 @@ import org.apache.commons.math3.random.RandomGenerator
  * the number of nodes
  * @param <P>
  */
-abstract class AbstractRandomDisplacement<P : Position<out P>> (
+abstract class AbstractRandomDeployment<P : Position<out P>> (
     protected val environment: Environment<*, P>,
     protected val randomGenerator: RandomGenerator,
     protected val nodeCount: Int
-) : Displacement<P> {
+) : Deployment<P> {
 
     override fun stream(): Stream<P> = IntStream.range(0, nodeCount).mapToObj { this.indexToPosition(it) }
 

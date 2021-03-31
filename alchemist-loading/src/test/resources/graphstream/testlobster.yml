@@ -8,6 +8,6 @@ seeds:
   scenario: 0
   simulation: 0
 
-displacements:
-  type: GraphStreamDisplacement
+deployments:
+  type: GraphStreamDeployment
   parameters: [400, "Lobster", 2, 10]

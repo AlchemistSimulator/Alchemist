@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.loader.displacements
+package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -54,7 +54,7 @@ open class Grid @JvmOverloads constructor(
     private val yRand: Double = 0.0,
     private val xShift: Double = 0.0,
     private val yShift: Double = 0.0
-) : Displacement<Position<*>> {
+) : Deployment<Position<*>> {
 
     override fun stream(): Stream<Position<*>> {
         val positions = (1 until stepCount(yStart, yEnd, yStep)).map { yn ->

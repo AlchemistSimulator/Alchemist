@@ -26,7 +26,7 @@ _reactions: &behavior
         parameters: [0.0, 0.0]
       - type: HeadTowardRandomDirection
 
-_displacement_males: &males
+_deployment_males: &males
   type: Circle
   parameters: [ 50, 0, 0, 20 ]
   nodes:
@@ -34,7 +34,7 @@ _displacement_males: &males
     parameters: [ "adult", "male", *danger ]
   programs: *behavior
 
-displacements:
+deployments:
   - *males
   - <<: *males
     nodes:

@@ -13,7 +13,7 @@ _ionic: &waterDissociation
       program: >
         [] --> [BrownianMove(10)]
 
-displacements:
+deployments:
   - type: Circle
     parameters: [4, 0, 0, 5]
     nodes:

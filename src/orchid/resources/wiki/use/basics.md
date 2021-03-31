@@ -23,11 +23,11 @@ name is closest to the string.
 
 **Examples**
 
-{{ snippet("just-loading/minimal-sapere.yml") }}
+{{ snippet("minimal-sapere.yml") }}
 
-{{ snippet("just-loading/minimal-protelis.yml") }}
+{{ snippet("minimal-protelis.yml") }}
 
-{{ snippet("just-loading/minimal-biochemistry.yml") }}
+{{ snippet("minimal-biochemistry.yml") }}
 
 *Note:* this is also the most minimal valid alchemist specification
 
@@ -82,13 +82,13 @@ It is optional and it defaults to a {{ anchor('continuous bidimensional space', 
 The following simulations are equivalent, and load the default environment (which is incarnation independent, here
 `protelis` is picked, but it works for any other incarnation as well):
 
-{{ snippet("just-loading/minimal-protelis.yml") }}
+{{ snippet("minimal-protelis.yml") }}
 
-{{ snippet("just-loading/envtype-protelis.yml") }}
+{{ snippet("envtype-protelis.yml") }}
 
-{{ snippet("just-loading/envtype-fullyqualified-protelis.yml") }}
+{{ snippet("envtype-fullyqualified-protelis.yml") }}
 
-{{ snippet("just-loading/envtype-explicitparameters-protelis.yml") }}
+{{ snippet("envtype-explicitparameters-protelis.yml") }}
 
 Alchemist supports
 {{ anchor('real world maps', 'Maps and GPS traces') }}
@@ -104,28 +104,29 @@ The environments shipped with the distribution can be found in the package
 ## Displacing nodes
 
 Once the environment is set up, it is time to populate it with nodes.
-The `displacements` section lists the node locations at the beginning of the simulation.
-Each displacement type extends the interface {{ anchor('Displacement') }}.
+The `deployments` section lists the node locations at the beginning of the simulation.
+Each deployment type extends the interface {{ anchor('Deployment') }}.
 
 ### Displacing on specific positions
 
 The following example places a single node in the (0, 0) {{ anchor('Point') }}.
-{{ snippet("has-nodes/diplacements-in-point.yml") }}
+{{ snippet("diplacements-in-point.yml") }}
 
 ### Displacing multiple nodes on specific positions
 
 Multiple nodes can be set up by listing them in YAML list, or in a YAML map,
 or in an arbitrarily nested combination of the two.
 
-{{ snippet("has-nodes/diplacements-in-three-points.yml") }}
+{{ snippet("diplacements-in-three-points.yml") }}
 
-The Alchemist loading system is smart enough to search for displacements recursively.
+The Alchemist loading system is smart enough to search for deployments recursively.
 
-{{ snippet("has-nodes/diplacements-in-three-points-nested.yml") }}
+{{ snippet("diplacements-in-three-points-nested.yml") }}
 
+If multiple nodes are to be dispka
 
 ```yaml
-displacements:
+deployments:
   - in:
       type: SpecificPositions
       parameters: [[0,1],[2,2],[3,4]]
@@ -135,7 +136,7 @@ displacements:
 
 This example places 10000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.
 ```yaml
-displacements:
+deployments:
   - type: Circle
     parameters: [10000, 0, 0, 10]
 ```
@@ -143,7 +144,7 @@ displacements:
 Here instead nodes are located in a {{ anchor('Grid') }} centered in (0, 0), with nodes distanced of 0.25 both
 horizontally and vertically, and whose position is not exact but randomly perturbed (±0.1 distance units).
 ```yaml
-displacements:
+deployments:
   - type: Grid
     parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
 ```
@@ -156,7 +157,7 @@ followed by the name of the class and the parameters required to build it.
 100 `MyCustomNodeImpl` nodes, whose constructor needs only the environment, placed in a circle with center in (0, 0) and
 radius 20.
 ```yaml
-displacements:
+deployments:
   - type: Circle
     parameters: [100, 0, 0, 20]
     nodes:
@@ -166,7 +167,7 @@ displacements:
 
 The empty parameters section can be omitted (as per custom class loading mechanism):
 ```yaml
-displacements:
+deployments:
   - type: Circle
     parameters: [100, 0, 0, 20]
     nodes:
@@ -185,7 +186,7 @@ As stated before, it would only make sense if the incarnation supports integer c
 a valid molecule from the `"foo"` String.
 
 ```yaml
-displacements:
+deployments:
   - type: Grid
     parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     contents:
@@ -198,7 +199,7 @@ if we want to also have a molecule named `bar` with value `0` along with `foo`,
 we can just add another entry to the list:
 
 ```yaml
-displacements:
+deployments:
   - type: Grid
     parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     contents:
@@ -214,7 +215,7 @@ In the following example, only the nodes inside the {{ anchor('Rectangle') }} ar
 the `source` molecule.
 
 ```yaml
-displacements:
+deployments:
   - type: Grid
     parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     contents:
@@ -280,7 +281,7 @@ gradient: &gradient
     # Make sure that the program folder is part of the project classpath
     program: program:package:distanceTo
   - program: send
-displacements:
+deployments:
   - type: Grid
     parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     programs:
@@ -388,7 +389,7 @@ The former is the seed of the pseudo-random generator used during the creation o
 nodes in random arrangements.
 The latter is the seed of the pseudo-random generator used during the simulation, e.g. for computing time distributions
 or generating random positions.
-A typical example in which one may want to have different values, is to keep the same random displacement of devices in
+A typical example in which one may want to have different values, is to keep the same random deployment of devices in
 some scenario but allow events to happen with different timings.
 
 A typical `seed` section may look like:

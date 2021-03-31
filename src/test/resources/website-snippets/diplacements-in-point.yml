@@ -1,4 +1,4 @@
 incarnation: protelis
-displacements:
+deployments:
   type: Point
   parameters: [0, 0]

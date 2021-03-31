@@ -16,7 +16,7 @@ _reactions: &behavior
     actions:
       - type: CognitiveAgentExplore
 
-displacements:
+deployments:
   - type: Point
     parameters: [15, 15]
     nodes:

@@ -62,8 +62,6 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
       def inputMolecule = getValue[Int]("number")
       def outputMolecule = getValue[Int]("number2")
 
-      print(getValue("out"))
-
       if(node.getId==0) {
         inputMolecule shouldBe 77
         outputMolecule shouldBe 177

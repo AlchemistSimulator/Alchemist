@@ -341,8 +341,8 @@ object SimulationModel {
         if (root.containsKey(JavaType.type)) {
             val type: String = root[JavaType.type].toString()
             when (val parameters = visitParameters(context, root[JavaType.parameters])) {
-                is Either.Left -> OrderedParametersConstructor(type, parameters.a)
-                is Either.Right -> NamedParametersConstructor(type, parameters.b)
+                is Either.Left -> OrderedParametersConstructor(type, parameters.value)
+                is Either.Right -> NamedParametersConstructor(type, parameters.value)
             }
         } else {
             null
@@ -370,10 +370,10 @@ object SimulationModel {
         } ?: cantBuildWith<Node<T>>(root)
 
     private fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
-        null -> Either.left(emptyList<Any>())
-        is Iterable<*> -> Either.left(root.map { visitParameter(context, it) })
-        is Map<*, *> -> Either.right(root.map { it.key.toString() to visitParameter(context, it.value) }.toMap())
-        else -> Either.left(listOf(visitParameter(context, root)))
+        null -> Either.Left(emptyList<Any>())
+        is Iterable<*> -> Either.Left(root.map { visitParameter(context, it) })
+        is Map<*, *> -> Either.Right(root.map { it.key.toString() to visitParameter(context, it.value) }.toMap())
+        else -> Either.Left(listOf(visitParameter(context, root)))
     }
 
     private fun visitRandomGenerator(context: Context, root: Any): RandomGenerator =

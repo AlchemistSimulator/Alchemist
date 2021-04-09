@@ -58,21 +58,21 @@ class GraphStreamSupport<T, P : Position<out P>>(
                 .map { factory.build(it, parameterList) }
                 .map { construction ->
                     if (construction.createdObject.isPresent) {
-                        Either.right(construction.createdObject.get())
+                        Either.Right(construction.createdObject.get())
                     } else {
-                        Either.left(construction.exceptions)
+                        Either.Left(construction.exceptions)
                     }
                 }
                 .reduceOrNull { a, b ->
                     when {
-                        a is Either.Left && b is Either.Left -> Either.left(a.a + b.a)
+                        a is Either.Left && b is Either.Left -> Either.Left(a.value + b.value)
                         a is Either.Right -> a
                         else -> b
                     }
                 }
             return when (created) {
-                is Either.Left -> throw created.a.values.reduce { a, b -> a.also { it.addSuppressed(b) } }
-                is Either.Right -> created.b
+                is Either.Left -> throw created.value.values.reduce { a, b -> a.also { it.addSuppressed(b) } }
+                is Either.Right -> created.value
                 null ->
                     throw IllegalArgumentException(
                         "No suitable graph generator for name $generatorName," +

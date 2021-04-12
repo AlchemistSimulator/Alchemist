@@ -121,27 +121,39 @@ The Alchemist loading system is smart enough to search for deployments recursive
 
 {{ snippet("deployment-in-three-points-nested.yml") }}
 
-### Deploying multiple nodes at once
-
 If multiple nodes are to be deployed with the same contents and program in multiple arbitrarily picked locations,
-a dedicated Deployment is present:
+a dedicated Deployment with arbitrary positions is present:
 
 {{ snippet("deployment-specific-positions.yml") }}
 
+### Deploying a grid of nodes
+
+Here instead nodes are located in a {{ anchor('Grid') }} centered in (0, 0), with nodes distanced of 0.25 both
+horizontally and vertically.
+
+{{ snippet("deployment-grid.yml") }}
+
+Often however, symmetric structures may induce corner behaviors in self-organising systems,
+and real-world "grid" deployments are not usually geometrically perfect.
+It is easy in Alchemist to create a perturbed grid, for instance in the following example nodes' positions 
+are not exactly in the grid, but randomly perturbed (±0.1 distance units).
+
+{{ snippet("deployment-grid-perturbed.yml") }}
+
+### Deploying nodes randomly inside a shape
+
+Sometimes it is useful to deploy a bunch of nodes randomly inside some area marked by a shape.
+Circles and polygons are first-class citizens,
+but of course users may create their own deployments by implementing {{ anchor('Deployment') }}.
+
 This example places 10000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.
+
 ```yaml
 deployments:
   - type: Circle
     parameters: [10000, 0, 0, 10]
 ```
 
-Here instead nodes are located in a {{ anchor('Grid') }} centered in (0, 0), with nodes distanced of 0.25 both
-horizontally and vertically, and whose position is not exact but randomly perturbed (±0.1 distance units).
-```yaml
-deployments:
-  - type: Grid
-    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
-```
 
 ### Customizing the node type
 

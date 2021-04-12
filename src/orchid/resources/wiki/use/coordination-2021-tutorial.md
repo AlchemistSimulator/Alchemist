@@ -61,7 +61,7 @@ value, shifting from red (low) towards blue (high).
 
 ## Arbitrary network graphs
 
-This example showcases some of the complex deployments made possible by Alchemist via [Graphstream](https://graphstream-project.org/)
+This example showcases some complex deployments made possible by Alchemist via [Graphstream](https://graphstream-project.org/)
 
 {{ snippet("advanced-deployments.yml") }}
 

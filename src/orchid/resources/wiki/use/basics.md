@@ -146,41 +146,35 @@ Sometimes it is useful to deploy a bunch of nodes randomly inside some area mark
 Circles and polygons are first-class citizens,
 but of course users may create their own deployments by implementing {{ anchor('Deployment') }}.
 
-This example places 10000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.
+This example places 1000 nodes randomly in a {{ anchor('Circle') }} with center in (0, 0) and radius 10.
 
-```yaml
-deployments:
-  - type: Circle
-    parameters: [10000, 0, 0, 10]
-```
+{{ snippet("deployment-circle.yml") }}
 
+In the following example, they are instead deployed randomly within a 10x20 rectangle originating in (0,0).
+
+{{ snippet("deployment-rectangle.yml") }}
+
+Polygons can be used by providing all vertices.
+In the following example we anticipate some advanced features of the simulator by deploying some nodes within
+the Venice lagoon.
+
+{{ snippet("maps-simple.yml") }}
 
 ### Customizing the node type
 
 In order to specify a particular node implementation you want to put inside the environment you can use the `nodes` key
-followed by the name of the class and the parameters required to build it.
+followed by the name of the class, and the parameters required to build it.
 
-100 `MyCustomNodeImpl` nodes, whose constructor needs only the environment, placed in a circle with center in (0, 0) and
-radius 20.
 ```yaml
 deployments:
-  - type: Circle
-    parameters: [100, 0, 0, 20]
-    nodes:
-      type: MyCustomNodeImpl
-      parameters: []
+  type: ...
+  parameters: ...
+  nodes:
+    type: MyCustomNodeImpl
+    parameters: [...]
 ```
 
-The empty parameters section can be omitted (as per custom class loading mechanism):
-```yaml
-deployments:
-  - type: Circle
-    parameters: [100, 0, 0, 20]
-    nodes:
-      type: MyCustomNodeImpl
-```
-
-### Customizing the nodes content
+### Customizing the nodes' content
 
 It is possible to set the content of the nodes in a deployment.
 Node contents are defined in terms of molecules and their corresponding concentration.

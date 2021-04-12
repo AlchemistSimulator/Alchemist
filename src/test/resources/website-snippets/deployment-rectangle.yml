@@ -1,0 +1,4 @@
+incarnation: sapere
+deployments:
+  type: Rectangle
+  parameters: [1000, 0, 0, 10, 20]

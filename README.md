@@ -2,6 +2,34 @@
 
 ![Alchemist logo](https://alchemistsimulator.github.io/latest/assets/media/logo.svg)
 
+### Note for academics
+
+The Alchemist simulator license obliges those who use this software for an academic publication to provide proper attribution.
+This should be to the paper introducing Alchemist:
+
+Pianini, D., Montagna, S., & Viroli, M. (2013). *Chemical-oriented simulation of computational systems with ALCHEMIST.*
+Journal of Simulation, 7(3), 202–215. [https://doi.org/10.1057/jos.2012.27](https://doi.org/10.1057/jos.2012.27)
+
+A BibTeX entry for LaTeX users is:
+
+```bibtex
+@article{Pianini2013,
+  doi = {10.1057/jos.2012.27},
+  url = {https://doi.org/10.1057/jos.2012.27},
+  year = {2013},
+  month = aug,
+  publisher = {Informa {UK} Limited},
+  volume = {7},
+  number = {3},
+  pages = {202--215},
+  author = {D Pianini and S Montagna and M Viroli},
+  title = {Chemical-oriented simulation of computational systems with {ALCHEMIST}},
+  journal = {Journal of Simulation}
+}
+```
+
+## What is Alchemist
+
 Alchemist is a simulator for pervasive, aggregate, and nature-inspired computing.
 At the moment, the simulator features:
 

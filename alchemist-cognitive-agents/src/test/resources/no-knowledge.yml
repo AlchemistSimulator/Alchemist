@@ -4,17 +4,11 @@ environment:
   type: ImageEnvironmentWithGraph
   parameters: [images/building-planimetry.png, 0.1]
 
-positions:
-  type: EuclideanPosition2D
-
-network-model:
-  type: NoLinks
-
 seeds:
   scenario: 0
   simulation: 1
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [3.0]
@@ -24,10 +18,9 @@ reactions: &behavior
         parameters: [135, 15]
         # destination is unknown as pedestrian's cognitive map is empty
 
-displacements:
-  - in:
-      type: Point
-      parameters: [15, 15]
+deployments:
+  - type: Point
+    parameters: [15, 15]
     nodes:
       type: HomogeneousOrientingPedestrian2D
       parameters: [0.0]

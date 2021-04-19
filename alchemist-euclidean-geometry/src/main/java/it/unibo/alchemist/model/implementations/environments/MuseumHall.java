@@ -12,6 +12,7 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
@@ -26,6 +27,13 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
     private static final int UPPER = 9;
     private static final int CENTRALUP = 7;
     private static final int CENTRALDOWN = 6;
+
+    /**
+     * @param incarnation the incarnation
+     */
+    public MuseumHall(final Incarnation<T, Euclidean2DPosition> incarnation) {
+        super(incarnation);
+    }
 
     /**
      * @param x

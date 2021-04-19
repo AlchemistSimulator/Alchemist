@@ -68,7 +68,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      *            the time distribution this reaction should follow
      */
     public AbstractReaction(final Node<T> node, final TimeDistribution<T> timeDistribution) {
-        hash = Hashes.hash32(node.hashCode(), node.getChemicalSpecies(), node.getReactions().size());
+        hash = Hashes.hash32(node.hashCode(), node.getMoleculeCount(), node.getReactions().size());
         this.timeDistribution = timeDistribution;
         this.node = node;
     }

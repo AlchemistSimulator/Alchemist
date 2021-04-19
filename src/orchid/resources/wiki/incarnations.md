@@ -1,0 +1,5 @@
+---
+
+title: Incarnations in detail
+
+---

@@ -8,6 +8,7 @@
 
 package it.unibo.alchemist.model.implementations.environments;
 
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.CellNode;
@@ -38,6 +39,10 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
      * @param maxY maximum Y coordinate
      */
     public BioRect2DEnvironment(final double minX, final double maxX, final double minY, final double maxY) {
+        super(
+            SupportedIncarnations.<Double, Euclidean2DPosition>get("biochemistry")
+                .orElseThrow(() -> new IllegalStateException())
+        );
         if (maxX <= minX || maxY <= minY) {
             L.warn("A maximum bound for this environment is greather than the correspoding minimum bound. "
                     + "Falling back to -1, 1 for all bounds");
@@ -57,10 +62,7 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
      * Builds a BioRect2DEnvironment with infinite bounds.
      */
     public BioRect2DEnvironment() {
-        minX = Double.NEGATIVE_INFINITY;
-        maxX = Double.POSITIVE_INFINITY;
-        minY = Double.NEGATIVE_INFINITY;
-        maxY = Double.POSITIVE_INFINITY;
+        this(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
     @Override

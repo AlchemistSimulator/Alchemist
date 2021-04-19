@@ -14,8 +14,9 @@ dependencies {
     implementation(konf())
     implementation(jgrapht("core"))
 
-    testImplementation(incarnation("protelis"))
     testImplementation(alchemist("test"))
+    testImplementation(incarnation("protelis"))
+    testImplementation(apacheCommons("collections4"))
 }
 
 publishing.publications {

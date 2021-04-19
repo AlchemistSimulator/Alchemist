@@ -1,0 +1,10 @@
+incarnation: protelis
+deployments:
+  the_bottom_point:
+    type: Point
+    parameters: [0, 0]
+  the_top_points:
+    - type: Point
+      parameters: [0.5, 0.85]
+    - type: Point
+      parameters: [-0.5, 0.85]

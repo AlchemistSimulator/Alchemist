@@ -12,7 +12,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -45,8 +46,8 @@ public class TestNodeCloning<P extends Position<P>> {
     private static final long SIMULATED_STEPS = 5000;
     private static final long ENABLE_STEP = 50;
     private static final long ENABLE_CHECKS = ENABLE_STEP + 10;
-    private Environment<Object, P> env;
-    private Simulation<Object, P> sim;
+    private Environment<Object, P> environment;
+    private Simulation<Object, P> simulation;
 
     /***
      * Prepare the simulation.
@@ -54,16 +55,16 @@ public class TestNodeCloning<P extends Position<P>> {
     @BeforeEach
     public void setUp() {
         final String pathYaml = "gradient.yml";
-        final YamlLoader loader = new YamlLoader(ResourceLoader.getResourceAsStream(pathYaml));
-        env = loader.getWith(Collections.emptyMap());
-        sim = new Engine<>(env, SIMULATED_STEPS);
+        final Loader loader = LoadAlchemist.from(ResourceLoader.getResource(pathYaml));
+        environment = loader.<Object, P>getWith(Collections.emptyMap()).getEnvironment();
+        simulation = new Engine<>(environment, SIMULATED_STEPS);
     }
 
     private void makeNode(final double x, final double y, final boolean enabled, final boolean source) {
-        final Node<Object> node1 = env.getNodeByID(0).cloneNode(Time.ZERO);
+        final Node<Object> node1 = environment.getNodeByID(0).cloneNode(Time.ZERO);
         node1.setConcentration(SOURCEMOL, source);
         node1.setConcentration(ENABLEDMOL, enabled);
-        env.addNode(node1, env.makePosition(x, y));
+        environment.addNode(node1, environment.makePosition(x, y));
     }
 
     /***
@@ -74,21 +75,22 @@ public class TestNodeCloning<P extends Position<P>> {
     @Test
     public void test() throws Throwable {
         // CHECKSTYLE: MagicNumber OFF - values are taken from a real experiment causing the bug.
-        sim.schedule(() -> {
-            final Node<Object> node0 = env.getNodeByID(0);
+        simulation.schedule(() -> {
+            final Node<Object> node0 = environment.getNodeByID(0);
             node0.setConcentration(SOURCEMOL, false);
             node0.setConcentration(ENABLEDMOL, true);
             // CHECKSTYLE:OFF - positions are copied from a real experiment
-            env.moveNodeToPosition(node0, env.makePosition(-30.72191619873047, -9.75));
+            environment.moveNodeToPosition(node0, environment.makePosition(-30.72191619873047, -9.75));
             makeNode(-34.62321853637695, -6.039149761199951, true, false);
             makeNode(-33.585994720458987, -1.3899999856948853, true, true);
             makeNode(-26.3700008392334, -9.899999618530274, false, false);
             //CHECKSTYLE:ON
         });
         // 2(S) -- 1 -- 0 -- 3
-        final Function<Integer, Node<Object>> nid = i -> env.getNodeByID(i);
-        final BiFunction<Integer, Integer, Double> dist = (a, b) -> env.getDistanceBetweenNodes(nid.apply(a), nid.apply(b));
-        sim.addOutputMonitor(new OutputMonitor<>() {
+        final Function<Integer, Node<Object>> nid = i -> environment.getNodeByID(i);
+        final BiFunction<Integer, Integer, Double> distance =
+                (a, b) -> environment.getDistanceBetweenNodes(nid.apply(a), nid.apply(b));
+        simulation.addOutputMonitor(new OutputMonitor<>() {
             private static final long serialVersionUID = 1L;
             @Override
             public void stepDone(
@@ -99,16 +101,16 @@ public class TestNodeCloning<P extends Position<P>> {
             ) {
                 final ImmutableMap<Node<Object>, Double> expectations = ImmutableMap.of(
                         nid.apply(2), 0d,
-                        nid.apply(1), dist.apply(2, 1),
-                        nid.apply(0), dist.apply(2, 1) + dist.apply(1, 0),
-                        nid.apply(3), dist.apply(2, 1) + dist.apply(1, 0) + dist.apply(0, 3));
+                        nid.apply(1), distance.apply(2, 1),
+                        nid.apply(0), distance.apply(2, 1) + distance.apply(1, 0),
+                        nid.apply(3), distance.apply(2, 1) + distance.apply(1, 0) + distance.apply(0, 3));
 //                System.out.println("step: " + step + ", time: " + time + " --- " + expectations);
 //                System.out.println("Just executed: " + r.getClass().getSimpleName() + "@" + r.getNode());
 //                for (Node<Object> n: env) {
 //                    System.out.println(n + ": " + n.getConcentration(DATAMOL));
 //                }
                 if (step == ENABLE_STEP) {
-                    sim.schedule(() -> environment.getNodeByID(3).setConcentration(ENABLEDMOL, true));
+                    simulation.schedule(() -> environment.getNodeByID(3).setConcentration(ENABLEDMOL, true));
                 }
                 if (step > ENABLE_CHECKS) {
                     expectations.forEach((node, expected) -> assertEquals(expected, node.getConcentration(DATAMOL)));
@@ -119,10 +121,10 @@ public class TestNodeCloning<P extends Position<P>> {
             @Override
             public void finished(final Environment<Object, P> environment, final Time time, final long step) { }
         });
-        sim.play();
-        sim.run();
-        if (sim.getError().isPresent()) {
-            throw sim.getError().get();
+        simulation.play();
+        simulation.run();
+        if (simulation.getError().isPresent()) {
+            throw simulation.getError().get();
         }
     }
 

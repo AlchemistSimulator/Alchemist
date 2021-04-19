@@ -10,8 +10,11 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.beEmpty
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
+import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
@@ -20,6 +23,7 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import loadYamlSimulation
+import org.apache.commons.collections4.queue.CircularFifoQueue
 import startSimulation
 
 /**
@@ -48,26 +52,32 @@ class TestOrientingBehavior<T, P> : StringSpec({
      * asserts that the distance of each pedestrian from the target position specified
      * with [coords] is less than the given [tolerance].
      */
-    fun runSimulation(simulation: String, tolerance: Double, steps: Long, vararg coords: Number) {
+    fun runSimulation(
+        simulation: String,
+        tolerance: Double,
+        steps: Long,
+        vararg coords: Number
+    ) {
         loadYamlSimulation<T, P>(simulation).startSimulation(
+            initialized = { it.nodes shouldNot beEmpty() },
             finished = { env, _, _ -> assertPedestriansReached(env, tolerance, *coords) },
-            steps = steps
+            steps = steps,
         )
     }
 
     "exploring behavior keeps moving the pedestrian indefinitely" {
-        /*
-         * On a stable version of the behavior it was observed that after 3k steps of execution the
-         * pedestrian was in the position specified with coords. This test (which aims to verify that
-         * the pedestrian doesn't stop moving) is slightly weak as he/she could stop moving exactly
-         * in that position and this test would pass.
-         */
-        runSimulation(
-            "explore.yml",
-            0.1,
-            3000,
-            44.910744827515124,
-            19.554979285729484
+        val expectedSize = 2
+        val previousPositions: MutableCollection<P?> = CircularFifoQueue(expectedSize)
+        loadYamlSimulation<T, P>("explore.yml").startSimulation(
+            steps = 3000,
+            initialized = { it.nodes.size shouldBe 1 },
+            stepDone = { environment: Environment<T, P>, _, _, _ ->
+                val currentPosition = environment.getPosition(environment.nodes.first())
+                previousPositions.add(currentPosition)
+                if (previousPositions.size == expectedSize) {
+                    previousPositions.distinct() shouldNotBe 1
+                }
+            },
         )
     }
 
@@ -108,7 +118,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
     }
 
     "destination reaching should obtain a route from the pedestrian's cognitive map and use it" {
-        runSimulation("partial-knowledge.yml", 1.0, 320, 135, 15)
+        runSimulation("partial-knowledge.yml", 1.0, 500, 135, 15)
     }
 
     "destination reaching behavior should allow to reach an unknown destination found along the way to a known one" {

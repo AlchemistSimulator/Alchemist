@@ -46,7 +46,7 @@ network-model:
   type: ConnectWithinDistance
   parameters: [*range]
 
-pools:
+_pools:
   - pool: &program
     - time-distribution:
         type: RandomDiracComb
@@ -69,10 +69,9 @@ pools:
         - type: MoveToTarget
           parameters: [target, *speed]
 
-displacements:
-  - in:
-      type: Rectangle
-      parameters: [*n, 0, 0, *w, *h]
+deployments:
+  - type: Rectangle
+    parameters: [*n, 0, 0, *w, *h]
     contents:
       - molecule: time
         concentration: *time
@@ -83,4 +82,3 @@ displacements:
     programs:
       - *program
       - *move
-  

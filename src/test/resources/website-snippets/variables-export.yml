@@ -1,0 +1,38 @@
+incarnation: protelis
+variables:
+  zoom: &zoom
+    formula: 0.1 # Must be a valid Groovy snippet
+  image_name: { formula: "'chiaravalle.png'" }
+  image_path: &image_path
+    language: kotlin # Pick whatever JSR223 language you like and add it to the classpath
+    formula: > # The following is pure Kotlin code. other variables can be referenced!
+      import java.io.File
+      File("../..").walkTopDown().find { image_name in it.name }?.absolutePath ?: image_name
+  # Linear free variable
+  walking_speed: &walk-speed { default: 1.4, min: 1, max: 2, step: 0.1 }
+  seed: &seed { default: 0, min: 0, max: 99, step: 1 } # 100 samples
+  scenario_seed: &scenario_seed { formula: (seed + 31) * seed } # Variable-dependent
+  people_count: &people_count
+    type: GeometricVariable # A variable scanning a space with geometric segmentation
+    parameters: [300, 50, 500, 9] # default 300, minimum 50, maximum 100, 9 samples
+seeds: { simulation: *seed, scenario: *scenario_seed}
+export:
+  - time
+  - molecule: "default_module:default_program"
+    aggregators: [mean, max, min, variance, median] # From Apache's UnivariateStatistic
+    value-filter: onlyfinite # discards NaN and Infinity
+environment: { type: ImageEnvironment, parameters: [*image_path, *zoom] }
+network-model: { type: ObstaclesBreakConnection, parameters: [50] }
+deployments:
+  type: Rectangle
+  parameters: [*people_count, 62, 15, 95, 200]
+  programs:
+    - time-distribution: 1
+      program: >
+        import protelis:coord:spreading
+        let source = [110, 325]
+        let vector = self.getCoordinates() - source
+        let distance = hypot(vector.get(0), vector.get(1))
+        distanceTo(distance < 50)
+    - program: send
+    - { type: Event, time-distribution: 1, actions: { type: LevyWalk, parameters: [*walk-speed] } }

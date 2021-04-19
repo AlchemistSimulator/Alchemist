@@ -11,30 +11,39 @@ dependencies {
 
     implementation(alchemist("euclidean-geometry"))
     implementation(arrowKt("core"))
-    implementation(Libs.commons_lang3)
+    implementation(apacheCommons("lang3"))
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
-    implementation(graphStream("ui-swing"))
     implementation(Libs.guava)
+    implementation(Libs.gson)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
     implementation(Libs.dsiutil)
+    implementation("io.arrow-kt:arrow-core:_")
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
-    runtimeOnly("org.scala-lang:scala-compiler:2.13.2")
+    runtimeOnly("org.scala-lang:scala-compiler:_")
 
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-maps"))
+    testImplementation(Libs.caffeine)
     testImplementation(Libs.gson)
-    testRuntimeOnly("org.scala-lang:scala-compiler:2.13.2")
+    testRuntimeOnly("org.scala-lang:scala-compiler:_")
 
-    testRuntimeOnly(project(":alchemist-incarnation-sapere"))
+    testRuntimeOnly(incarnation("sapere"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
     maxHeapSize = "1500m"
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += listOf("-Xallow-result-return-type")
+    }
 }
 
 publishing.publications {

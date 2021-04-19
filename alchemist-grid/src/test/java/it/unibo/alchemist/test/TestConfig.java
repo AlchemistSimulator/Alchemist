@@ -10,8 +10,8 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
+import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,8 @@ import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -37,7 +37,7 @@ public class TestConfig {
     @Test
     public void testGeneralSimulationConfig() throws URISyntaxException, IOException {
         final String resource = "config/00-dependencies.yml";
-        final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
+        final var yaml = ResourceLoader.getResource(resource);
         Assertions.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
         final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, Time.INFINITY);
@@ -54,7 +54,7 @@ public class TestConfig {
     @Test
     public void testWorkingDirectory() throws IOException {
         final String resource = "config/00-dependencies.yml";
-        final InputStream yaml = ResourceLoader.getResourceAsStream(resource);
+        final var yaml = ResourceLoader.getResource(resource);
         Assertions.assertNotNull(yaml);
         final Loader l = this.getLoader(yaml);
         final GeneralSimulationConfig gsc = new LocalGeneralSimulationConfig(l, 0, Time.INFINITY);
@@ -76,8 +76,8 @@ public class TestConfig {
     }
 
 
-    private Loader getLoader(final InputStream yaml) {
-        return new YamlLoader(yaml);
+    private Loader getLoader(final URL yaml) {
+        return LoadAlchemist.from(yaml);
     }
 
 }

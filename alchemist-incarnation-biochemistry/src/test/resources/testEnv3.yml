@@ -8,23 +8,21 @@ environment:
   type: BioRect2DEnvironment
   parameters: []
 
-reactions: &reactions
+_reactions: &reactions
     - time-distribution: 0.1
       program: >
         [A in env] --> [A in cell]
 
-displacements:
-  - in:
-      type: Point
-      parameters: [0, 0]
+deployments:
+  - type: Point
+    parameters: [0, 0]
     nodes:
       type: CellNodeImpl
       parameters: []
     programs:
       - *reactions
-  - in:
-      type: Point
-      parameters: [1, 0]
+  - type: Point
+    parameters: [1, 0]
     nodes:
       type: EnvironmentNodeImpl
       parameters: []

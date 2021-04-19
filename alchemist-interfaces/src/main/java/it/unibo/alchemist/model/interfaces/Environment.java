@@ -238,13 +238,6 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     void removeNode(Node<T> node);
 
     /**
-     * @param incarnation
-     *            the {@link Incarnation} that will be used for creating the
-     *            entities of this environment
-     */
-    void setIncarnation(Incarnation<T, P> incarnation);
-
-    /**
      * @param rule
      *            the rule to set
      */

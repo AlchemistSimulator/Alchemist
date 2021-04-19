@@ -20,3 +20,7 @@ and distribute the resulting executable under terms of your choice, provided tha
 module, the terms and conditions of the license of that module.  An independent module is a module which is not derived
 from or based on this code.  If you modify this code, you may extend this exception to your version of the code, but
 you are not obligated to do so.  If you do not wish to do so, delete this exception statement from your version.
+
+Over and above the legal restrictions imposed by this license, if you use this software for an academic publication then
+you are obliged to provide proper attribution. This should be to the paper that describes this simulator, described in
+the CITATION file that comes with this software distribution.

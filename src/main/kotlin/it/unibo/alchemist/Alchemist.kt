@@ -39,7 +39,7 @@ object Alchemist {
     private const val PARALLELISM = 'p'
     private const val TIME = 't'
     private const val YAML = 'y'
-    private val L = LoggerFactory.getLogger(Alchemist::class.java)
+    private val logger = LoggerFactory.getLogger(Alchemist::class.java)
     private val launchers: List<Launcher> = ClassPathScanner
         .subTypesOf(Launcher::class.java, inPackage = "it.unibo.alchemist")
         .map { clazz ->
@@ -103,6 +103,18 @@ object Alchemist {
                 printHelp()
                 exitWith(if (options.help) ExitStatus.OK else ExitStatus.INVALID_CLI)
             }
+            require(SupportedIncarnations.getAvailableIncarnations().isNotEmpty()) {
+                logger.error(
+                    """
+                    Alchemist requires an incarnation to execute, but none was found in the classpath.
+                    Please refer to the alchemist manual at https://alchemistsimulator.github.io to learn more on
+                    how to include incarnations in your project.
+                    If you believe this is a bug, please open a report at:
+                    https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
+                    """.trimIndent().trim().replace('\n', ' ')
+                )
+                "There are no incarnations in the classpath, no simulation can get executed"
+            }
             val (validLaunchers, invalidLaunchers) = options.classifyLaunchers()
             val sortedLaunchers: List<ValidLauncher> = validLaunchers
                 .map { (validation, launcher) ->
@@ -115,27 +127,27 @@ object Alchemist {
                     if (sortedLaunchers.priorityOf(0) > sortedLaunchers.priorityOf(1)) {
                         sortedLaunchers.first().launch(options)
                     } else {
-                        L.error(
-                            "Unable to select an execution strategy among {} with options {}",
+                        logger.error(
+                            "Multiple execution strategies match options {} with the same priority, available: {}",
+                            options,
                             sortedLaunchers,
-                            options
                         )
                         exitWith(ExitStatus.INVALID_CLI)
                     }
                 else -> {
-                    L.error("No valid launchers for {}", options)
+                    logger.error("No valid launchers for {}", options)
                     printLaunchers()
-                    L.error("Available launchers: {}", launchers.map { it.name })
+                    logger.error("Available launchers: {}", launchers.map { it.name })
                     invalidLaunchers.forEach { (validation, launcher) ->
                         if (validation is Validation.Invalid) {
-                            L.error("{}: {}", launcher::class.java.simpleName, validation.reason)
+                            logger.error("{}: {}", launcher::class.java.simpleName, validation.reason)
                         }
                     }
                     exitWith(ExitStatus.INVALID_CLI)
                 }
             }
         } catch (e: ParseException) {
-            L.error("Your command sequence could not be parsed.", e)
+            logger.error("Your command sequence could not be parsed.", e)
             printHelp()
             exitWith(ExitStatus.INVALID_CLI)
         }
@@ -146,7 +158,7 @@ object Alchemist {
         .partition { (validation, _) -> validation is Validation.OK }
 
     private fun printLaunchers() {
-        L.warn("Available launchers: {}", launchers.map { it.name })
+        logger.warn("Available launchers: {}", launchers.map { it.name })
     }
 
     private fun List<ValidLauncher>.priorityOf(index: Int) = get(index).first.priority
@@ -191,8 +203,8 @@ object Alchemist {
 
     private fun exitBecause(reason: String, status: ExitStatus, exception: Exception? = null): Nothing {
         when {
-            exception == null -> L.error(reason)
-            else -> L.error(reason, exception)
+            exception == null -> logger.error(reason)
+            else -> logger.error(reason, exception)
         }
         exitWith(status)
     }

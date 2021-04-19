@@ -50,11 +50,13 @@ public final class MoleculeReader implements Extractor {
      *            aggregating data. If an empty list is passed, then the values
      *            will be logged indipendently for each node.
      */
-    public MoleculeReader(final String molecule,
-                          final String property,
-                          final Incarnation<?, ?> incarnation,
-                          final FilteringPolicy filter,
-                          final List<String> aggregators) {
+    public MoleculeReader(
+        final String molecule,
+        final String property,
+        final Incarnation<?, ?> incarnation,
+        final FilteringPolicy filter,
+        final List<String> aggregators
+    ) {
         this.property = property;
         this.mol = incarnation.createMolecule(molecule);
         this.filter = Objects.requireNonNull(filter);

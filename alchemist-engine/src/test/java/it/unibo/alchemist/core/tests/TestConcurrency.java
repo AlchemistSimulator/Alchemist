@@ -10,6 +10,7 @@ package it.unibo.alchemist.core.tests;
 
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
@@ -50,7 +51,7 @@ public class TestConcurrency {
      */
     @BeforeEach
     public void setUp() {
-        env = new Continuous2DEnvironment<>();
+        env = new Continuous2DEnvironment<>(SupportedIncarnations.<Object, Euclidean2DPosition>get("sapere").get());
         final Node<Object> n = new DummyNode(env);
         env.setLinkingRule(new NoLinks<>());
         final TimeDistribution<Object> td = new DiracComb<>(1);

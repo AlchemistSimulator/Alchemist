@@ -82,6 +82,18 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private long currentStep;
     private Thread myThread;
 
+    /**
+     * Builds a simulation for a given environment. By default it uses a
+     * DependencyGraph and an IndexedPriorityQueue internally. If you want to
+     * use your own implementations of {@link DependencyGraph} and
+     * {@link Scheduler} interfaces, don't use this constructor.
+     *
+     * @param e
+     *            the environment at the initial time
+     */
+    public Engine(final Environment<T, P> e) {
+        this(e, Time.INFINITY);
+    }
 
     /**
      * Builds a simulation for a given environment. By default it uses a

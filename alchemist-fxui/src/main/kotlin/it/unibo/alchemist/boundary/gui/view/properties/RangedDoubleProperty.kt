@@ -6,15 +6,6 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-
-/*******************************************************************************
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
- *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
- ******************************************************************************/
 package it.unibo.alchemist.boundary.gui.view.properties
 
 import com.google.gson.JsonDeserializationContext
@@ -107,6 +98,7 @@ class RangedDoubleProperty @JvmOverloads constructor(
      *
      * @param output The output stream
      */
+    @Suppress("UnusedPrivateMember")
     private fun writeObject(output: ObjectOutputStream) {
         output.writeUTF(name)
         output.writeDouble(lowerBound)
@@ -133,6 +125,7 @@ class RangedDoubleProperty @JvmOverloads constructor(
      *
      * @param input The input stream
      */
+    @Suppress("UnusedPrivateMember")
     private fun readObject(input: ObjectInputStream) {
         name = input.readUTF()
         lowerBound = input.readDouble()
@@ -150,6 +143,7 @@ class RangedDoubleProperty @JvmOverloads constructor(
         abs(upperBound - other.upperBound) < Double.MIN_VALUE
 
     companion object {
+        private const val serialVersionUID: Long = 1L
         /**
          * Returns a [JsonSerializer][com.google.gson.JsonSerializer] and
          * [JsonDeserializer][com.google.gson.JsonDeserializer] combo class

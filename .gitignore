@@ -42,3 +42,4 @@ vcs.xml
 compiler.xml
 misc.xml
 .name
+.idea/libraries-with-intellij-classes.xml

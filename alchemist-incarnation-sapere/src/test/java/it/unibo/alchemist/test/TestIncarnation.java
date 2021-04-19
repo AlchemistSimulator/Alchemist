@@ -57,7 +57,7 @@ public final class TestIncarnation {
      */
     @BeforeEach
     public void setUp() {
-        env = new Continuous2DEnvironment<>();
+        env = new Continuous2DEnvironment<>(incarnation);
         node = new LsaNode(env);
         rand = new MersenneTwister();
         time = new SAPEREExponentialTime("1", rand);

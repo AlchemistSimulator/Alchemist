@@ -11,8 +11,9 @@ import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.providers.YamlProvider;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -120,7 +121,7 @@ public class TestYAMLLoader {
     @Test
     public void testMultipleMolecules() {
         final Environment<?, ?> env = testNoVar("synthetic/multiplemolecule.yml");
-        env.forEach(n -> assertEquals(4, n.getChemicalSpecies()));
+        env.forEach(n -> assertEquals(4, n.getMoleculeCount()));
     }
 
     /**
@@ -154,10 +155,10 @@ public class TestYAMLLoader {
      */
     @Test
     public void testDependencies() {
-        final InputStream is = ResourceLoader.getResourceAsStream("isac/16-dependencies.yaml");
+        final var is = ResourceLoader.getResource("isac/16-dependencies.yaml");
         assertNotNull(is);
-        final Loader loader = new YamlLoader(is);
-        final List<String> dependencies = loader.getDependencies();
+        final Loader loader = LoadAlchemist.from(is);
+        final List<String> dependencies = loader.getRemoteDependencies();
         assertEquals(dependencies.size(), 2);
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }
@@ -167,7 +168,7 @@ public class TestYAMLLoader {
             final Map<String, Double> vars
     ) {
         assertNotNull(resource, "Missing test resource " + resource);
-        final Environment<T, P> env = new YamlLoader(resource).getWith(vars);
+        final Environment<T, P> env = LoadAlchemist.from(resource, YamlProvider.INSTANCE).<T, P>getWith(vars).getEnvironment();
         final Simulation<T, P> sim = new Engine<>(env, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {

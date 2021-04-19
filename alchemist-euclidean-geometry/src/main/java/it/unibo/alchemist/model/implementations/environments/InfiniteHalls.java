@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
  * @param <T> concentration type
@@ -24,35 +25,39 @@ public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
 
     /**
      * Default builder. Builds halls of size 10 with open doors.
+     * @param incarnation the incarnation to be used.
      */
-    public InfiniteHalls() {
-        this(DEFAULT_SIZE);
+    public InfiniteHalls(final Incarnation<T, Euclidean2DPosition> incarnation) {
+        this(incarnation, DEFAULT_SIZE);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param size
      *            the size of a single hall
      */
-    public InfiniteHalls(final double size) {
-        this(size, true);
+    public InfiniteHalls(final Incarnation<T, Euclidean2DPosition> incarnation, final double size) {
+        this(incarnation, size, true);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param allOpen
      *            sets all the doors to open.
      */
-    public InfiniteHalls(final boolean allOpen) {
-        this(DEFAULT_SIZE, allOpen);
+    public InfiniteHalls(final Incarnation<T, Euclidean2DPosition> incarnation, final boolean allOpen) {
+        this(incarnation, DEFAULT_SIZE, allOpen);
     }
 
     /**
+     * @param incarnation the incarnation to be used.
      * @param size
      *            the size of a single hall
      * @param allOpen
      *            sets all the doors to open.
      */
-    public InfiniteHalls(final double size, final boolean allOpen) {
-        super();
+    public InfiniteHalls(final Incarnation<T, Euclidean2DPosition> incarnation, final double size, final boolean allOpen) {
+        super(incarnation);
         doorsOpen = allOpen;
         s = size;
         ex = size * BORDERS[EXI];

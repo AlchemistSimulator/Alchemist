@@ -38,7 +38,7 @@ object SingleRunFXUI : SimulationLauncher() {
             GraphicsEnvironment.isHeadless() -> Invalid(
                 "The JVM graphic environment is marked as headless. Cannot show a graphical interface. "
             )
-            graphics != null || fxui -> OK(Priority.High("Graphical effects and FXUI requested, priority shifts up"))
+            graphics != null && fxui -> OK(Priority.High("Graphical effects and FXUI requested, priority shifts up"))
             else -> OK(Priority.Fallback("FXUI not requested, default GUI is Swing"))
         }
     }

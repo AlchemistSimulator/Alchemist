@@ -13,17 +13,16 @@ import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.loader.InitializedEnvironment
+import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.YamlLoader
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 import java.io.Serializable
-import kotlin.streams.toList
 
 /**
  * A launcher stub for simulation execution.
@@ -45,9 +44,9 @@ abstract class SimulationLauncher : AbstractLauncher() {
         if (configuration == null) {
             throw IllegalStateException("Invalid configuration $configuration")
         }
-        val loader = YamlLoader(
-            ResourceLoader.getResource(configuration)?.openStream()
-                ?: File(configuration).takeIf { it.exists() && it.isFile }?.inputStream()
+        val loader = LoadAlchemist.from(
+            ResourceLoader.getResource(configuration)
+                ?: File(configuration).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
                 ?: throw IllegalStateException("No classpath resource or file $configuration was found")
         )
         launch(loader, parameters)
@@ -69,8 +68,8 @@ abstract class SimulationLauncher : AbstractLauncher() {
         parameters: AlchemistExecutionOptions,
         variables: Map<String, *>
     ): Simulation<T, P> {
-        val environment: Environment<T, P> = loader.getWith(variables)
-        val simulation = Engine(environment, DoubleTime(parameters.endTime))
+        val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
+        val simulation = Engine(initialized.environment, DoubleTime(parameters.endTime))
         if (parameters.export != null) {
             val variablesDescriptor = variables
                 .map { (name, value) -> "$name-$value" }
@@ -80,7 +79,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
                 .mapValues { (variableName, variable) -> variables[variableName] ?: variable.default }
                 .map { (variableName, variableValue) -> "$variableName = $variableValue" }
                 .joinToString()
-            simulation.addOutputMonitor(Exporter(filename, parameters.interval, header, loader.dataExtractors))
+            simulation.addOutputMonitor(Exporter(filename, parameters.interval, header, initialized.dataExtractors))
         }
         return simulation
     }

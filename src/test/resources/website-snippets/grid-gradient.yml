@@ -1,0 +1,20 @@
+incarnation: sapere
+network-model: { type: ConnectWithinDistance, parameters: [0.5] }
+deployments:
+  type: Grid
+  parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  contents:
+    in: { type: Rectangle, parameters: [-0.5, -0.5, 1, 1] }
+    molecule: source # Here is the source of the gradient
+  programs:
+    - time-distribution: 0.1 # Exponential with λ=0.1
+      # If there is a source, then the gradient is zero.
+      program: "{source} --> {source} {gradient, 0}"
+    - time-distribution: 1 # Exponential distribution with λ=1
+      # Send all neighbors your gradient value plus one
+      program: "{gradient, N} --> {gradient, N} *{gradient, N+1}"
+      # In case of multiple gradients, take the shortest
+    - program: "{gradient, N}{gradient, def: N2>=N} --> {gradient, N}"
+    - time-distribution: 0.1
+      program: "{gradient, N} --> {gradient, N + 1}" # Aging process
+    - program: "{gradient, def: N > 30} -->" # Death process

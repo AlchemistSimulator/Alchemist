@@ -61,8 +61,8 @@ internal interface SyntaxElement {
                 require(unkownKeys.isEmpty()) {
                     val matched = descriptor.keys.intersect(validDescriptor.mandatoryKeys)
                     """
-                    |Mandatory keys $matched were present in the provided $typeName descriptor.
-                    |However, there are also unknown keys: $unkownKeys. $guide
+                    |Mandatory keys $matched were present in the provided $typeName descriptor,
+                    |however, there are also unknown keys: $unkownKeys. $guide
                     |If you need private keys (e.g. for internal use), prefix them with underscore (_)
                     |$problematicSegment
                     """.trimMargin()

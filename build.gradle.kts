@@ -60,10 +60,7 @@ allprojects {
     }
 
     repositories {
-        // Prefer Google mirrors, they're more stable
-        listOf("", "-eu", "-asia").forEach {
-            maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
-        }
+        google()
         mavenCentral()
         jcenter {
             content {

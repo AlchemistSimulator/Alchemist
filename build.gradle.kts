@@ -66,9 +66,6 @@ allprojects {
             content {
                 onlyForConfigurations(
                     "detekt",
-                    "dokkaJavadocPlugin",
-                    "dokkaJavadocRuntime",
-                    "dokkaRuntime",
                     "orchidCompileClasspath",
                     "orchidRuntimeClasspath"
                 )

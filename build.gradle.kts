@@ -326,21 +326,6 @@ dependencies {
 
 // WEBSITE
 
-tasks.dokkaJavadoc {
-    dokkaSourceSets {
-        val config = project("alchemist-full").configurations.runtimeClasspath
-        tasks.dokkaJavadoc.get().dokkaSourceSets {
-            create("global") {
-                subprojects.asSequence()
-                    .flatMap { it.sourceSets.asSequence() }
-                    .flatMap { it.allSource.asSequence() }
-                    .map { it.path }
-                    .forEach { sourceRoot(it) }
-            }
-        }
-    }
-}
-
 val projectVersion = rootProject.version.toString().toVersion()
 @ExperimentalUnsignedTypes
 val isMarkedStable = !projectVersion.isPreRelease

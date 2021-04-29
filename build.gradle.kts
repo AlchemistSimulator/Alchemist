@@ -12,6 +12,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KOTLIN_VERSION
 
 plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
@@ -77,6 +78,16 @@ allprojects {
             url = uri("https://oss.sonatype.org/content/repositories/snapshots")
             content {
                 includeGroup("no.tornado")
+            }
+        }
+    }
+
+    // Enforce Kotlin version coherence
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin")) {
+                useVersion(KOTLIN_VERSION)
+                because("All Kotlin modules should use the same version, and compiler uses $KOTLIN_VERSION")
             }
         }
     }

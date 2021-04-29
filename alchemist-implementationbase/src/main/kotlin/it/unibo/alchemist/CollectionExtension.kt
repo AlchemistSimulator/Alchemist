@@ -9,5 +9,16 @@
 
 package it.unibo.alchemist
 
-inline fun <reified T> Collection<T>.meanOf(default: Double = 0.0, toDouble: T.() -> Double): Double =
+/**
+ * Computes the mean of the values in a collection, provided a way to map the contents [toDouble].
+ * If the collection is empty, returns 0.0.
+ */
+inline fun <reified T> Collection<T>.meanOrZero(toDouble: T.() -> Double): Double =
+    meanOf(0.0, toDouble)
+
+/**
+ * Computes the mean of the values in a collection, provided a way to map the contents [toDouble] and a [default]
+ * value to return in case of empty collection ([default] defaults to [Double.NaN]).
+ */
+inline fun <reified T> Collection<T>.meanOf(default: Double = Double.NaN, toDouble: T.() -> Double): Double =
     default.takeIf { isEmpty() } ?: (sumOf(toDouble) / size)

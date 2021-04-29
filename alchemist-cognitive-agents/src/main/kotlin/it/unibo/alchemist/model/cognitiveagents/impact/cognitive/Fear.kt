@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
-import it.unibo.alchemist.meanOf
+import it.unibo.alchemist.meanOrZero
 import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.advancedLogistic
 
@@ -31,5 +31,5 @@ class Fear(
         )
     )
 
-    private fun List<CognitiveAgent>.aggregateFears() = meanOf { cognitive.fear() }
+    private fun List<CognitiveAgent>.aggregateFears() = meanOrZero { cognitive.fear() }
 }

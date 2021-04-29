@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
+import it.unibo.alchemist.meanOf
 import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 
 /**
@@ -26,6 +27,5 @@ class BeliefDanger(
         (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) / (affectiveBiasingOmega + 1)
     )
 
-    private fun List<CognitiveAgent>.aggregateDangerBeliefs() =
-        0.0.takeIf { isEmpty() } ?: sumOf { it.cognitive.dangerBelief() } / size
+    private fun List<CognitiveAgent>.aggregateDangerBeliefs() = meanOf { cognitive.dangerBelief() }
 }

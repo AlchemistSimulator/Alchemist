@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
+import it.unibo.alchemist.meanOf
 import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.advancedLogistic
 
@@ -30,8 +31,5 @@ class Fear(
         )
     )
 
-    private fun List<CognitiveAgent>.aggregateFears() =
-        if (size > 0) {
-            this.sumByDouble { it.cognitive.fear() } / this.size
-        } else 0.0
+    private fun List<CognitiveAgent>.aggregateFears() = meanOf { cognitive.fear() }
 }

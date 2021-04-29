@@ -27,7 +27,5 @@ class BeliefDanger(
     )
 
     private fun List<CognitiveAgent>.aggregateDangerBeliefs() =
-        if (size > 0) {
-            this.sumByDouble { it.cognitive.dangerBelief() } / size
-        } else 0.0
+        0.0.takeIf { isEmpty() } ?: sumOf { it.cognitive.dangerBelief() } / size
 }

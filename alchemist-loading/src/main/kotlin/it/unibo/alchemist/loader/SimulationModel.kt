@@ -280,7 +280,7 @@ object SimulationModel {
             if (root.containsKey(DocumentRoot.DependentVariable.formula)) {
                 val formula = root[DocumentRoot.DependentVariable.formula]
                 if (formula is String) {
-                    val language = root[DocumentRoot.DependentVariable.language]?.toString()?.toLowerCase() ?: "groovy"
+                    val language = root[DocumentRoot.DependentVariable.language]?.toString()?.lowercase() ?: "groovy"
                     Result.success(JSR223Variable<Any>(language, formula))
                 } else {
                     Result.success(Constant(formula))

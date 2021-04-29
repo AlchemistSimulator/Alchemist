@@ -225,5 +225,5 @@ internal object DocumentRoot : SyntaxElement {
 }
 
 internal class OwnName {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): String = property.name.toLowerCase()
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): String = property.name.lowercase()
 }

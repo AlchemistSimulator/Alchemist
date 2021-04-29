@@ -21,13 +21,11 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
     /**
      * x coordinate.
      */
-    @JvmDefault
     val x get() = this[0]
 
     /**
      * y coordinate.
      */
-    @JvmDefault
     val y get() = this[1]
 
     /**
@@ -35,20 +33,17 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
      *
      * @return atan2(y, x) (in radians)
      */
-    @JvmDefault
     val asAngle: Double get() = atan2(y, x)
 
     /**
      * Dot product between bidimensional vectors.
      */
-    @JvmDefault
     override fun dot(other: P) = x * other.x + y * other.y
 
     /**
      * Checks whether the given point is inside a rectangular region described by an [origin]
      * point and [width] and [height] values (only positive).
      */
-    @JvmDefault
     fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double): Boolean =
         x >= origin.x && y >= origin.y && x <= origin.x + width && y <= origin.y + height
 
@@ -60,25 +55,21 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
     /**
      * Allows subtraction with a [Pair].
      */
-    @JvmDefault
     operator fun minus(other: Pair<Double, Double>) = newFrom(x - other.first, y - other.second)
 
     /**
      * Normalizes the vector.
      */
-    @JvmDefault
     override fun normalized(): P = times(1.0 / sqrt(x * x + y * y))
 
     /**
      * Allows summaction with a [Pair].
      */
-    @JvmDefault
     operator fun plus(other: Pair<Double, Double>) = newFrom(x + other.first, y + other.second)
 
     /**
      * Computes a point which is at a certain [distance] and [angle] (in radians) from this one.
      */
-    @JvmDefault
     fun surroundingPointAt(angle: Double, distance: Double) =
         newFrom(x + cos(angle) * distance, y + sin(angle) * distance)
 
@@ -86,7 +77,6 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
      * Computes a point which is at a certain [distance] and angle (expressed as a [versor] centered in this node)
      * from this one.
      */
-    @JvmDefault
     fun surroundingPointAt(versor: P, distance: Double) = surroundingPointAt(versor.asAngle, distance)
 
     /**
@@ -97,7 +87,6 @@ interface Vector2D<P : Vector2D<P>> : Vector<P> {
      * @param count
      *          the number of positions to generate.
      */
-    @JvmDefault
     // @JvmOverloads disabled due to https://youtrack.jetbrains.com/issue/KT-12224
     fun surrounding(radius: Double, count: Int = 12): List<P> = (1..count)
         .map {

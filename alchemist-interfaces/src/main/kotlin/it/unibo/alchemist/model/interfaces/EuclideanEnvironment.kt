@@ -34,12 +34,10 @@ where P : Position<P>, P : Vector<P> {
     /**
      * Creates a [Position] compatible with this environment given its [coordinates].
      */
-    @JvmDefault
     fun makePosition(vararg coordinates: Double): P
 
     /**
      * Create a position corresponding to the origin of this environment.
      */
-    @JvmDefault
     val origin: P get() = makePosition(*DoubleArray(dimensions).toTypedArray())
 }

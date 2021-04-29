@@ -121,7 +121,10 @@ allprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xjvm-default=enable") // Enable default methods in Kt interfaces
+            freeCompilerArgs = listOf(
+                // Java interoperability with default interface methods, see: https://archive.is/ajePl
+                "-Xjvm-default=all",
+            )
             allWarningsAsErrors = true
         }
     }

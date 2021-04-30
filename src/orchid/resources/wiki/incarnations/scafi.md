@@ -15,7 +15,7 @@ documentation in the [official site](https://scafi.github.io/docs/)
 where you can find a description of how to integrate ScaFi toolkit
 with Alchemist. Furthermore, the following two repositories are a great resource to experiment
 rapidly with both:
-* https://bitbucket.org/gaudrito/alchemist-example/src/master/
-* https://github.com/scafi/learning-scafi-alchemist
+* [Alchemist examples with ScaFi and Protelis](https://bitbucket.org/gaudrito/alchemist-example/src/master/)
+* [Alchemist integration with ScaFi](https://github.com/scafi/learning-scafi-alchemist)
 
     

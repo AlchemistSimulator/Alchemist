@@ -5,7 +5,7 @@ title: Running Alchemist stand-alone
 ---
 Another way of running Alchemist is by using the redistributable jar file.
 However, using the simulator via [Gradle](https://gradle.org) is recommended.
-For further information, see how to [Run Alchemist via Gradle](run-gradle).
+For further information, see how to {{ anchor('Running Alchemist via Gradle', 'Running Alchemist via Gradle') }}.
 
 Such jar file can be downloaded from the [releases section on github](https://github.com/AlchemistSimulator/Alchemist/releases).
 

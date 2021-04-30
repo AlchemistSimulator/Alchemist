@@ -17,7 +17,7 @@ Open the terminal and follow these steps
   * Windows native (cmd.exe, Powershell): `gradlew.bat runAll`
 4. Wait for the simulator components to be downloaded (about five minutes on a reasonable connection)
 5. A GUI pops up
-6. Press the `P` button to start the simlation. Other relevant buttons are described [here](use/default-gui)
+6. Press the `P` button to start the simlation. Other relevant buttons are described [here](prepare/default-gui)
 
 Something went **wrong** along the line?
 [Open an issue](https://github.com/AlchemistSimulator/Alchemist/issues/new/choose) and we'll get back to you.

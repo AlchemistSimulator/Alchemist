@@ -270,8 +270,11 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     public final void setSimulation(final Simulation<T, P> s) {
         if (simulation == null) {
             simulation = s;
-        } else {
-            throw new IllegalStateException();
+        } else if (!simulation.equals(s)) {
+            throw new IllegalStateException(
+                "Inconsistent simulation configuration for " + this + ": simulation was set to " + simulation
+                    + "and then switched to " + s
+            );
         }
     }
 

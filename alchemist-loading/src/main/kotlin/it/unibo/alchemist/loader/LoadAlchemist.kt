@@ -10,6 +10,7 @@
 package it.unibo.alchemist.loader
 
 import it.unibo.alchemist.ClassPathScanner
+import it.unibo.alchemist.loader.m2m.SimulationModel
 import java.io.File
 import java.io.InputStream
 import java.io.Reader

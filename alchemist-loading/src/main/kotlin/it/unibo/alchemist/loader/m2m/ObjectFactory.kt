@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader
+package it.unibo.alchemist.loader.m2m
 
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.export.FilteringPolicy
@@ -37,7 +37,7 @@ import org.apache.commons.math3.util.Pair as CommonsMathPair
 /**
  *
  */
-object ObjectFactory {
+internal object ObjectFactory {
 
     fun makeBaseFactory(): Factory {
         val factory = FactoryBuilder()

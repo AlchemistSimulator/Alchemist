@@ -7,17 +7,18 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader
+package it.unibo.alchemist.loader.m2m
 
 import arrow.core.Either
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.loader.DocumentRoot.JavaType
-import it.unibo.alchemist.loader.deployments.Deployment
+import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.MoleculeReader
 import it.unibo.alchemist.loader.export.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
+import it.unibo.alchemist.loader.m2m.DocumentRoot.JavaType
+import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
 import it.unibo.alchemist.loader.shapes.Shape
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
@@ -41,11 +42,9 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
-import org.danilopianini.jirf.Factory
-import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
-import it.unibo.alchemist.loader.DocumentRoot.Deployment.Program as ProgramSyntax
-import it.unibo.alchemist.loader.DocumentRoot.Layer as LayerSyntax
+import it.unibo.alchemist.loader.m2m.DocumentRoot.Deployment.Program as ProgramSyntax
+import it.unibo.alchemist.loader.m2m.DocumentRoot.Layer as LayerSyntax
 
 /**
  * Contains the model-to-model translation between the Alchemist YAML specification and the
@@ -58,9 +57,7 @@ private typealias ReactionComponentFunction<T, P, R> =
 /**
  * Converts a representation of an Alchemist simulation into an executable simulation.
  */
-object SimulationModel {
-
-    private val logger = LoggerFactory.getLogger(SimulationModel::class.java)
+internal object SimulationModel {
 
     /**
      * Converts an alchemist model defined as a Map into a loadable simulation environment and relative exports.
@@ -133,7 +130,7 @@ object SimulationModel {
         }
     }
 
-    private fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?) =
+    fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?) =
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
                 "Invalid incarnation descriptor: $root. " +
@@ -141,7 +138,7 @@ object SimulationModel {
             )
         }
 
-    private fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
+    fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
         val linkingRules = visitRecursively(localContext, root, JavaType) { element ->
             visitBuilding<LinkingRule<T, P>>(localContext, element)
         }
@@ -167,7 +164,7 @@ object SimulationModel {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun inject(context: Context, root: Map<String, *>): Map<String, Any> =
+    fun inject(context: Context, root: Map<String, *>): Map<String, Any> =
         (replaceKnownRecursively(context, root) as Map<String, Any>).also { logger.debug("New model: {}", it) }
 
     private fun makeDefaultRandomGenerator(seed: Long) = MersenneTwister(seed)
@@ -194,7 +191,7 @@ object SimulationModel {
             else -> root
         }
 
-    private inline fun <reified T : Any> visitBuilding(context: Context, root: Any?): Result<T>? =
+    inline fun <reified T : Any> visitBuilding(context: Context, root: Any?): Result<T>? =
         when (root) {
             is T -> Result.success(root)
             is Map<*, *> ->
@@ -240,7 +237,7 @@ object SimulationModel {
         return constant?.let { Result.success(it) }
     }
 
-    private fun <T, P : Position<P>> visitContents(
+    fun <T, P : Position<P>> visitContents(
         incarnation: Incarnation<T, P>,
         context: Context,
         root: Map<*, *>
@@ -297,7 +294,7 @@ object SimulationModel {
             ?.onSuccess { if (root is Map<*, *>) context.registerVariable(name, root) }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T, P : Position<P>> visitEnvironment(
+    fun <T, P : Position<P>> visitEnvironment(
         incarnation: Incarnation<*, *>,
         context: Context,
         root: Any?
@@ -310,7 +307,7 @@ object SimulationModel {
                 ?: cantBuildWith<Environment<T, P>>(root, JavaType)
         }
 
-    private fun visitExports(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
+    fun visitExports(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
         when {
             root is String && root.equals(DocumentRoot.Export.time, ignoreCase = true) -> Result.success(Time())
             root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
@@ -348,7 +345,7 @@ object SimulationModel {
             null
         }
 
-    private fun <T, P : Position<P>> visitLayers(incarnation: Incarnation<T, P>, context: Context, root: Any?) =
+    fun <T, P : Position<P>> visitLayers(incarnation: Incarnation<T, P>, context: Context, root: Any?) =
         visitRecursively(context, root ?: emptyList<Any>(), LayerSyntax) { origin ->
             (origin as? Map<*, *>)?.let {
                 visitBuilding<Layer<T, P>>(context, origin)
@@ -356,7 +353,7 @@ object SimulationModel {
             }
         }
 
-    private fun <T, P : Position<P>> visitNode(
+    fun <T, P : Position<P>> visitNode(
         randomGenerator: RandomGenerator,
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
@@ -369,14 +366,14 @@ object SimulationModel {
             else -> null
         } ?: cantBuildWith<Node<T>>(root)
 
-    private fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
+    fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
         null -> Either.Left(emptyList<Any>())
         is Iterable<*> -> Either.Left(root.map { visitParameter(context, it) })
         is Map<*, *> -> Either.Right(root.map { it.key.toString() to visitParameter(context, it.value) }.toMap())
         else -> Either.Left(listOf(visitParameter(context, root)))
     }
 
-    private fun visitRandomGenerator(context: Context, root: Any): RandomGenerator =
+    fun visitRandomGenerator(context: Context, root: Any): RandomGenerator =
         when (root) {
             is Map<*, *> -> visitBuilding<RandomGenerator>(context, root)
             else -> visitBuilding<Long>(context, root) ?.map { makeDefaultRandomGenerator(it) }
@@ -384,7 +381,7 @@ object SimulationModel {
             ?.getOrThrow()
             ?: cantBuildWith<RandomGenerator>(root)
 
-    private fun <T, P : Position<P>> visitProgram(
+    fun <T, P : Position<P>> visitProgram(
         simulationRNG: RandomGenerator,
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
@@ -456,7 +453,7 @@ object SimulationModel {
             ?: cantBuildWith<Reaction<T>>(root)
     }
 
-    private fun visitSeeds(context: Context, root: Any?): Seeds =
+    fun visitSeeds(context: Context, root: Any?): Seeds =
         when (root) {
             null -> makeDefaultRandomGenerator(0) to makeDefaultRandomGenerator(0)
                 .also {
@@ -506,7 +503,7 @@ object SimulationModel {
         else -> incarnation.createTimeDistribution(simulationRNG, environment, node, root?.toString())
     }
 
-    private inline fun <reified T : Any> visitRecursively(
+    inline fun <reified T : Any> visitRecursively(
         context: Context,
         root: Any?,
         syntax: SyntaxElement? = null,
@@ -598,250 +595,5 @@ object SimulationModel {
             }
         }.toMap()
 
-    private data class Context constructor(
-        private val namedLookup: MutableMap<String, Map<*, *>>,
-        private val elementLookup: MutableMap<Map<*, *>, Any?> = mutableMapOf(),
-        val factory: Factory = ObjectFactory.makeBaseFactory(),
-    ) {
-
-        private var backingConstants: MutableMap<String, Any?> = mutableMapOf()
-        private val fixedVariables = mutableSetOf<String>()
-
-        val constants: Map<String, Any?> get() = backingConstants
-
-        constructor() : this(namedLookup = mutableMapOf())
-
-        fun child(): Context = Context(namedLookup = this.namedLookup)
-
-        fun registerConstant(name: String, representation: Map<*, *>, value: Any?) {
-            logger.debug("Injecting constant {} with value {} represented by {}", name, value, representation)
-            if (constants.containsKey(name)) {
-                val previous = elementLookup[representation]
-                require(value == previous) {
-                    """
-                    Inconsistent definition of constant named $name:
-                      - previous evaluation: ${elementLookup[representation]}
-                      - current value: $value
-                    Item originating this issue: $representation
-                    Context at time of failure: $this
-                    """.trimIndent()
-                }
-            }
-            namedLookup[name] = representation
-            elementLookup[representation] = value
-            backingConstants[name] = value
-        }
-
-        fun registerVariable(name: String, representation: Map<*, *>) {
-            logger.debug("Injecting variable {} represented by {}", name, representation)
-            namedLookup[name] = representation
-            elementLookup[representation] = PlaceHolderForVariables(name)
-        }
-
-        fun fixVariableValue(name: String, value: Any?) {
-            val key = requireNotNull(namedLookup[name]) {
-                """
-                    There is no known "$name" object in the lookup table, although there should be by construction.
-                    Known object names: ${namedLookup.keys}
-                    This sounds like a bug in Alchemist.
-                """.trimIndent()
-            }
-            elementLookup[key] = value
-            fixedVariables += name
-            logger.debug("Contextually set {} = {}. Currently fixed: {}.", name, value, fixedVariables)
-        }
-
-        /**
-         * Returns null if the element is not a resolvable entity.
-         * Othewise, returns a Result with the resolution result.
-         */
-        fun lookup(representation: Map<*, *>): Any? =
-            if (elementLookup.containsKey(representation)) elementLookup[representation] else null
-
-        /**
-         * Returns null if the element is not a resolvable entity.
-         * Othewise, returns a Result with the resolution result.
-         */
-        fun lookup(placeholder: PlaceHolderForVariables): Any? =
-            placeholder.takeUnless { placeholder.name in fixedVariables }
-                ?: requireNotNull(namedLookup[placeholder.name]) {
-                    "Bug in Alchemist: unresolvable variable ${placeholder.name}"
-                }.let { lookup(it) }
-    }
-
-    private data class PlaceHolderForVariables(val name: String)
-
-    private abstract class LoadingSystem(originalContext: Context, private val originalRoot: Map<String, *>) : Loader {
-
-        private val context: Context = originalContext.child()
-
-        override fun <T : Any?, P : Position<P>> getWith(values: Map<String, *>): EnvironmentAndExports<T, P> {
-            val unknownVariableNames = values.keys - variables.keys
-            require(unknownVariableNames.isEmpty()) {
-                "Unknown variables provided: $unknownVariableNames." +
-                    " Valid names: ${variables.keys}. Provided: ${values.keys}"
-            }
-            var root = originalRoot
-            // VARIABLE REIFICATION
-            val variableValues = this.variables.mapValues { (name, previous) ->
-                if (values.containsKey(name)) values[name] else previous.default
-            }
-            val knownValues: Map<String, Any?> = computeAllKnownValues(constants + variableValues)
-            logger.debug("Known values: {}", knownValues)
-            knownValues.forEach { (name, value) -> context.fixVariableValue(name, value) }
-            root = inject(context, root)
-            logger.debug("Complete simulation model: {}", root)
-            // SEEDS
-            val (scenarioRNG, simulationRNG) = visitSeeds(context, root[DocumentRoot.seeds])
-            setCurrentRandomGenerator(simulationRNG)
-            // INCARNATION
-            val incarnation = visitIncarnation<P, T>(root[DocumentRoot.incarnation])
-            registerSingleton<Incarnation<T, P>>(incarnation)
-            registerImplicit<String, Molecule>(incarnation::createMolecule)
-            registerImplicit<String, Any?>(incarnation::createConcentration)
-            // ENVIRONMENT
-            val environment: Environment<T, P> = visitEnvironment(incarnation, context, root[DocumentRoot.environment])
-            logger.info("Created environment: {}", environment)
-            registerSingleton<Environment<T, P>>(environment)
-            // LAYERS
-            val layers: List<Pair<Molecule, Layer<T, P>>> = visitLayers(incarnation, context, root[DocumentRoot.layers])
-            layers.groupBy { it.first }
-                .mapValues { (_, pair) -> pair.map { it.second } }
-                .forEach { (molecule, layers) ->
-                    require(layers.size == 1) {
-                        "Inconsistent layer definition for molecule $molecule: $layers." +
-                            "There must be a single layer per molecule"
-                    }
-                    val layer = layers.first()
-                    environment.addLayer(molecule, layer)
-                    logger.debug("Pushed layer {} -> {}", molecule, layer)
-                }
-            // LINKING RULE
-            val linkingRule = visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.linkingRule))
-            environment.linkingRule = linkingRule
-            registerSingleton<LinkingRule<T, P>>(linkingRule)
-            // DISPLACEMENTS
-            setCurrentRandomGenerator(scenarioRNG)
-            val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
-            val deploymentDescriptors: List<Deployment<P>> =
-                visitRecursively(context, displacementsSource, syntax = DocumentRoot.Deployment) { element ->
-                    (element as? Map<*, *>)?.let {
-                        setCurrentRandomGenerator(scenarioRNG)
-                        visitBuilding<Deployment<P>>(context, element)?.onSuccess {
-                            setCurrentRandomGenerator(simulationRNG)
-                            populateDisplacement(simulationRNG, incarnation, environment, it, element)
-                        }
-                    }
-                }
-            if (deploymentDescriptors.isEmpty()) {
-                logger.warn("There are no displacements in the specification, the environment won't have any node")
-            } else {
-                logger.debug("Deployment descriptors: {}", deploymentDescriptors)
-            }
-            // EXPORTS
-            val exports = visitRecursively(context, root.getOrEmpty(DocumentRoot.export)) {
-                visitExports(incarnation, context, it)
-            }
-            return EnvironmentAndExports(environment, exports)
-        }
-
-        private fun <T, P : Position<P>> populateDisplacement(
-            simulationRNG: RandomGenerator,
-            incarnation: Incarnation<T, P>,
-            environment: Environment<T, P>,
-            deployment: Deployment<P>,
-            descriptor: Map<*, *>,
-        ) {
-            logger.debug("Processing deployment: {} with descriptor: {}", deployment, descriptor)
-            val nodeDescriptor = descriptor[DocumentRoot.Deployment.nodes]
-            if (descriptor.containsKey(DocumentRoot.Deployment.nodes)) {
-                requireNotNull(nodeDescriptor) { "Invalid node type descriptor: $nodeDescriptor" }
-                if (nodeDescriptor is Map<*, *>) {
-                    JavaType.validateDescriptor(nodeDescriptor)
-                }
-            }
-            // ADDITIONAL LINKING RULES
-            deployment.getAssociatedLinkingRule<T>()?.let { newLinkingRule ->
-                val composedLinkingRule = when (val linkingRule = environment.linkingRule) {
-                    is NoLinks -> newLinkingRule
-                    is CombinedLinkingRule -> CombinedLinkingRule(linkingRule.subRules + listOf(newLinkingRule))
-                    else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
-                }
-                environment.linkingRule = composedLinkingRule
-                registerSingleton<LinkingRule<T, P>>(composedLinkingRule)
-            }
-            val contents = visitContents(incarnation, context, descriptor)
-            val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Deployment.programs)
-            deployment.stream().forEach { position ->
-                val node = visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
-                registerSingleton<Node<T>>(node)
-                // NODE CONTENTS
-                contents.forEach { (shapes, molecule, concentrationMaker) ->
-                    if (shapes.isEmpty() || shapes.any { position in it }) {
-                        val concentration = concentrationMaker()
-                        logger.debug("Injecting {} ==> {} in node {}", molecule, concentration, node.id)
-                        node.setConcentration(molecule, concentration)
-                    }
-                }
-                // PROGRAMS
-                val programs = visitRecursively<Reaction<T>>(context, programDescriptor, ProgramSyntax) { program ->
-                    requireNotNull(program) { "null is not a valid program in $descriptor. ${ProgramSyntax.guide}" }
-                    (program as? Map<*, *>)?.let {
-                        visitProgram(simulationRNG, incarnation, environment, node, context, it)
-                            ?.onSuccess(node::addReaction)
-                    }
-                }
-                logger.debug("Programs: {}", programs)
-                environment.addNode(node, position)
-                logger.debug("Added node {} at {}", node.id, position)
-                factory.deregisterSingleton(node)
-            }
-        }
-
-        private fun computeAllKnownValues(allVariableValues: Map<String, Any?>): Map<String, *> {
-            val knownValues = allVariableValues.toMutableMap()
-            var previousToVisitSize: Int? = null
-            val toVisit = dependentVariables.toMutableMap()
-            val failures = mutableListOf<Throwable>()
-            while (toVisit.isNotEmpty() && toVisit.size != previousToVisitSize) {
-                logger.debug("Variables to visit: {}", toVisit)
-                failures.clear()
-                previousToVisitSize = toVisit.size
-                val iterator = toVisit.entries.iterator()
-                while (iterator.hasNext()) {
-                    val (name, variable) = iterator.next()
-                    runCatching { variable.getWith(knownValues) }
-                        .onSuccess { result ->
-                            iterator.remove()
-                            assert(previousToVisitSize != toVisit.size)
-                            logger.debug("Created {}: {}", name, variable)
-                            knownValues[name] = result
-                        }
-                        .onFailure { exception ->
-                            failures.add(exception)
-                            logger.debug("Could not create {}: {}", name, exception.message)
-                        }
-                }
-            }
-            failures.forEach { throw it }
-            require(knownValues.size == constants.size + dependentVariables.size + variables.size) {
-                val originalKeys = constants.keys + dependentVariables.keys + variables.keys
-                val groups = listOf(knownValues.keys, originalKeys)
-                val difference = groups.maxByOrNull { it.size }!! - groups.minByOrNull { it.size }
-                "Something very smelly going on (a bug in Alchemist?): there are unknown variables: $difference"
-            }
-            return knownValues
-        }
-
-        private fun setCurrentRandomGenerator(randomGenerator: RandomGenerator) =
-            factory.registerSingleton(RandomGenerator::class.java, randomGenerator)
-
-        private val factory: Factory get() = context.factory
-
-        private inline fun <reified T> registerSingleton(target: T) = factory.registerSingleton(T::class.java, target)
-        private inline fun <reified T, reified R> registerImplicit(noinline translator: (T) -> R) =
-            factory.registerImplicit(T::class.java, R::class.java, translator)
-        private fun Map<*, *>.getOrEmpty(key: String) = get(key) ?: emptyList<Any>()
-        private fun Map<*, *>.getOrEmptyMap(key: String) = get(key) ?: emptyMap<String, Any>()
-    }
+    internal data class PlaceHolderForVariables(val name: String)
 }

@@ -12,6 +12,7 @@ package it.unibo.alchemist.launch
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
+import org.slf4j.LoggerFactory
 import java.awt.GraphicsEnvironment
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
@@ -21,6 +22,9 @@ import java.util.concurrent.TimeUnit
  * Executes simulations locally in a headless environment.
  */
 object HeadlessSimulationLauncher : SimulationLauncher() {
+
+    override val name = "Alchemist headless runner"
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
@@ -68,6 +72,7 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
                     simulation.play()
                     simulation.run()
                     simulation.error.ifPresent {
+                        logger.error("A SIMULATION TERMINATED WITH AN ERROR", it)
                         errorQueue.add(it)
                         executor.shutdownNow()
                     }
@@ -82,6 +87,4 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
             }
         }
     }
-
-    override val name = "Alchemist headless runner"
 }

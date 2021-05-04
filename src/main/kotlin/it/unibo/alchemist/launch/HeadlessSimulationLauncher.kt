@@ -68,12 +68,22 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
             .cartesianProductOf(parameters.variables)
             .forEach { variables ->
                 executor.submit {
-                    val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, parameters, variables)
-                    simulation.play()
-                    simulation.run()
-                    simulation.error.ifPresent {
-                        logger.error("A SIMULATION TERMINATED WITH AN ERROR", it)
-                        errorQueue.add(it)
+                    val simulationCreation = runCatching<Simulation<Any, Nothing>> {
+                        prepareSimulation(loader, parameters, variables)
+                    }
+                    simulationCreation.onFailure {
+                        logger.error("Something went wrong during the preparation of the simulation: $variables", it)
+                    }
+                    val error: Throwable? = simulationCreation.exceptionOrNull()
+                        ?: simulationCreation.map { simulation ->
+                            simulation.play()
+                            simulation.run()
+                            simulation.error.takeIf { it.isPresent }?.get()?.also {
+                                logger.error("Something went wrong during the execution of: $variables", it)
+                            }
+                        }.getOrNull()
+                    if (error != null) {
+                        errorQueue.add(error)
                         executor.shutdownNow()
                     }
                 }

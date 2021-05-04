@@ -19,5 +19,5 @@ plugins {
 }
 
 application {
-    mainClassName = "it.unibo.alchemist.Alchemist"
+    mainClass.set("it.unibo.alchemist.Alchemist")
 }

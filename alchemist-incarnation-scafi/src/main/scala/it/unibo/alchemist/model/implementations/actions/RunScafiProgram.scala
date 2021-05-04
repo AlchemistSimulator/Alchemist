@@ -8,7 +8,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import java.util.concurrent.TimeUnit
-
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
 import it.unibo.alchemist.model.interfaces.{Time => AlchemistTime, _}
@@ -22,6 +21,7 @@ import org.kaikikm.threadresloader.ResourceLoader
 
 import scala.collection.MapView
 import scala.concurrent.duration.FiniteDuration
+import scala.util.{Failure, Try}
 
 sealed class DefaultRunScafiProgram[P <: Position[P]](
   environment: Environment[Any, P],
@@ -82,7 +82,11 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     val position: P = environment.getPosition(node)
     // NB: We assume it.unibo.alchemist.model.interfaces.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
-    val alchemistCurrentTime = environment.getSimulation.getTime
+    val alchemistCurrentTime = Try { environment.getSimulation }
+      .map { _.getTime }
+      .orElse(
+        Failure { new IllegalStateException("The simulation is uninitialized (did you serialize the environment?)") }
+      ).get
     def alchemistTimeToNanos(time: AlchemistTime): Long = (time.toDouble * 1_000_000_000).toLong
     val currentTime: Long = alchemistTimeToNanos(alchemistCurrentTime)
     if(!nbrData.contains(node.getId)) {

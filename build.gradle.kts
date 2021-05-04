@@ -60,18 +60,12 @@ allprojects {
     }
 
     repositories {
-        // Prefer Google mirrors, they're more stable
-        listOf("", "-eu", "-asia").forEach {
-            maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
-        }
+        google()
         mavenCentral()
         jcenter {
             content {
                 onlyForConfigurations(
                     "detekt",
-                    "dokkaJavadocPlugin",
-                    "dokkaJavadocRuntime",
-                    "dokkaRuntime",
                     "orchidCompileClasspath",
                     "orchidRuntimeClasspath"
                 )
@@ -194,13 +188,6 @@ allprojects {
     tasks.withType<Javadoc> {
         // Disable Javadoc, use Dokka.
         enabled = false
-        options {
-            quiet()
-            if (this is CoreJavadocOptions) {
-                addStringOption("Xwerror")
-            }
-            encoding = "UTF-8"
-        }
     }
 
     if (System.getenv("CI") == true.toString()) {
@@ -335,21 +322,6 @@ dependencies {
 }
 
 // WEBSITE
-
-tasks.dokkaJavadoc {
-    dokkaSourceSets {
-        val config = project("alchemist-full").configurations.runtimeClasspath
-        tasks.dokkaJavadoc.get().dokkaSourceSets {
-            create("global") {
-                subprojects.asSequence()
-                    .flatMap { it.sourceSets.asSequence() }
-                    .flatMap { it.allSource.asSequence() }
-                    .map { it.path }
-                    .forEach { sourceRoot(it) }
-            }
-        }
-    }
-}
 
 val projectVersion = rootProject.version.toString().toVersion()
 @ExperimentalUnsignedTypes

@@ -35,7 +35,7 @@ gradlew.bat runAll
 ```
 
 Press P and you should see things changing.
-For further information about the graphical interface, see the [this page](default-gui.md).
+For further information about the graphical interface, see the [this page](default-gui).
 
 ### Using the Command Line Interface
 

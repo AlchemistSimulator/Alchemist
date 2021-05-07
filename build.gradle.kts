@@ -10,8 +10,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
 import java.io.ByteArrayOutputStream
+import java.net.URL
+import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KOTLIN_VERSION
 
 plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
@@ -114,6 +115,16 @@ allprojects {
         pmd(pmdModule("java"))
         pmd(pmdModule("scala"))
         pmd(pmdModule("kotlin"))
+    }
+
+    // Enforce Kotlin version coherence
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin")) {
+                useVersion(KOTLIN_VERSION)
+                because("All Kotlin modules should use the same version, and compiler uses $KOTLIN_VERSION")
+            }
+        }
     }
 
     // COMPILE

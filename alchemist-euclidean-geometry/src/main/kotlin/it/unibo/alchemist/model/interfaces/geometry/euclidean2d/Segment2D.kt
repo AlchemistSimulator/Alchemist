@@ -25,44 +25,37 @@ interface Segment2D<P : Vector2D<P>> {
     /**
      * The length of the segment.
      */
-    @JvmDefault
     val length: Double get() = toVector.magnitude
 
     /**
      * Indicates if the two endpoints coincide (= segment has zero length).
      */
-    @JvmDefault
     val isDegenerate: Boolean get() = fuzzyEquals(first, second)
 
     /**
      * Indicates if the segment is aligned to the x-axis, this is true if [isDegenerate].
      */
-    @JvmDefault
     val isHorizontal: Boolean get() = fuzzyEquals(first.y, second.y)
 
     /**
      * Indicates if the segment is aligned to the y-axis, this is true if [isDegenerate].
      */
-    @JvmDefault
     val isVertical: Boolean get() = fuzzyEquals(first.x, second.x)
 
     /**
      * The medium point of the segment.
      */
-    @JvmDefault
     val midPoint: P get() = first.newFrom((first.x + second.x) / 2, (first.y + second.y) / 2)
 
     /**
      * The vector representing the movement from [first] to [second].
      */
-    @JvmDefault
     val toVector: P get() = second - first
 
     /**
      * @returns the [Line2D] passing through [first] and [second]. Throws an [UnsupportedOperationException] if the
      * segment [isDegenerate].
      */
-    @JvmDefault
     fun toLine(): Line2D<P> = when {
         isDegenerate -> throw UnsupportedOperationException("degenerate segment can't be converted to line")
         else -> SlopeInterceptLine2D.fromSegment(this)
@@ -76,7 +69,6 @@ interface Segment2D<P : Vector2D<P>> {
     /**
      * Checks if the segment contains a [point].
      */
-    @JvmDefault
     fun contains(point: P): Boolean = isCollinearWith(point) &&
         point.x fuzzyIn rangeFromUnordered(first.x, second.x) &&
         point.y fuzzyIn rangeFromUnordered(first.y, second.y)
@@ -84,7 +76,6 @@ interface Segment2D<P : Vector2D<P>> {
     /**
      * Finds the point of the segment which is closest to the provided [point].
      */
-    @JvmDefault
     fun closestPointTo(point: P): P = when {
         isDegenerate -> first
         contains(point) -> point
@@ -108,13 +99,11 @@ interface Segment2D<P : Vector2D<P>> {
     /**
      * Computes the shortest distance between the segment and the given [point].
      */
-    @JvmDefault
     fun distanceTo(point: P): Double = closestPointTo(point).distanceTo(point)
 
     /**
      * Computes the shortest distance between two segments (= the shortest distance between any two of their points).
      */
-    @JvmDefault
     fun distanceTo(other: Segment2D<P>): Double = when {
         intersect(other) !is Intersection2D.None -> 0.0
         else -> listOf(
@@ -129,7 +118,6 @@ interface Segment2D<P : Vector2D<P>> {
      * Checks if two segments are parallel. Throws an [UnsupportedOperationException] if any of the two segment
      * [isDegenerate].
      */
-    @JvmDefault
     fun isParallelTo(other: Segment2D<P>): Boolean = when {
         isDegenerate || other.isDegenerate ->
             throw UnsupportedOperationException("parallelism check is meaningless for degenerate segments")
@@ -139,13 +127,11 @@ interface Segment2D<P : Vector2D<P>> {
     /**
      * Checks if [first], [second] and [point] lie on a single line.
      */
-    @JvmDefault
     fun isCollinearWith(point: P): Boolean = isDegenerate || toLine().contains(point)
 
     /**
      * Checks if two segments lie on a single line.
      */
-    @JvmDefault
     fun isCollinearWith(other: Segment2D<P>): Boolean = when {
         isDegenerate -> other.isCollinearWith(first)
         else -> isCollinearWith(other.first) && isCollinearWith(other.second)
@@ -154,14 +140,12 @@ interface Segment2D<P : Vector2D<P>> {
     /**
      * Checks if two segments overlap (= are collinear and share one or more points).
      */
-    @JvmDefault
     fun overlapsWith(other: Segment2D<P>): Boolean = isCollinearWith(other) &&
         (contains(other.first) || contains(other.second) || other.contains(first) || other.contains(second))
 
     /**
      * Intersects two segments.
      */
-    @JvmDefault
     fun intersect(other: Segment2D<P>): Intersection2D<P> = when {
         isDegenerate ->
             Intersection2D.None.takeUnless { other.contains(first) } ?: Intersection2D.SinglePoint(first)
@@ -184,7 +168,6 @@ interface Segment2D<P : Vector2D<P>> {
     /**
      * Intersects a segment and a circle.
      */
-    @JvmDefault
     fun intersectCircle(center: P, radius: Double): Intersection2D<P> = when {
         isDegenerate ->
             Intersection2D.None
@@ -198,7 +181,6 @@ interface Segment2D<P : Vector2D<P>> {
      * @returns a shrunk version of the segment, [factor] is a percentage in [0, 0.5] indicating how much
      * the segment should be reduced on each size.
      */
-    @JvmDefault
     fun shrunk(factor: Double): Segment2D<P> = when (factor) {
         !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
         else -> copyWith(
@@ -211,7 +193,6 @@ interface Segment2D<P : Vector2D<P>> {
      * Checks if this segment is inside a rectangular region described by an [origin], [width] and
      * [height] (must be positive).
      */
-    @JvmDefault
     fun isInRectangle(origin: Vector2D<*>, width: Double, height: Double) =
         first.isInRectangle(origin, width, height) && second.isInRectangle(origin, width, height)
 
@@ -222,7 +203,6 @@ interface Segment2D<P : Vector2D<P>> {
      * This can be useful e.g. to represent portions of axis-aligned segments without creating
      * new ones.
      */
-    @JvmDefault
     fun toRange(getXCoords: Boolean = this.isHorizontal): ClosedRange<Double> = when {
         getXCoords -> rangeFromUnordered(first.x, second.x)
         else -> rangeFromUnordered(first.y, second.y)

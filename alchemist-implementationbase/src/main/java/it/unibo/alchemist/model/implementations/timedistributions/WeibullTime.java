@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
+import it.unibo.alchemist.model.interfaces.Node;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.special.Gamma;
@@ -164,7 +165,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
      * {@inheritDoc}
      */
     @Override
-    public WeibullTime<T> clone(final Time currentTime) {
+    public WeibullTime<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
         return new WeibullTime<>(rand, dist, offset, currentTime);
     }
 }

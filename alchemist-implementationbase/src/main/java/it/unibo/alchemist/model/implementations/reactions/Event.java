@@ -50,6 +50,6 @@ public final class Event<T> extends AbstractReaction<T> {
 
     @Override
     public Event<T> cloneOnNewNode(final Node<T> node, final Time currentTime) {
-        return makeClone(() -> new Event<>(node, getTimeDistribution().clone(currentTime)));
+        return makeClone(() -> new Event<>(node, getTimeDistribution().cloneOnNewNode(node, currentTime)));
     }
 }

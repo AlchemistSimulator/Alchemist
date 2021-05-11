@@ -192,10 +192,13 @@ public final class TraceLoader implements Iterable<GPSTrace> {
                     .orElse("")
                 + " ]");
         }
-        MUTEX.acquireUninterruptibly();
-        final var buildResult = FACTORY.build(targetClass.get(), args);
-        MUTEX.release();
-        return buildResult.getCreatedObjectOrThrowException();
+        try {
+            MUTEX.acquireUninterruptibly();
+            final var buildResult = FACTORY.build(targetClass.get(), args);
+            return buildResult.getCreatedObjectOrThrowException();
+        } finally {
+            MUTEX.release();
+        }
     }
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {

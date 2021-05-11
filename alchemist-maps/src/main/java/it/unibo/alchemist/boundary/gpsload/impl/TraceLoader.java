@@ -185,12 +185,12 @@ public final class TraceLoader implements Iterable<GPSTrace> {
             ? AVAILABLE_GPS_TIME_ALIGNMENT.stream().filter(clazz -> clazz.getName().equals(clazzName)).findFirst()
             : AVAILABLE_GPS_TIME_ALIGNMENT.stream().filter(clazz -> clazz.getSimpleName().equals(clazzName)).findFirst();
         if (targetClass.isEmpty()) {
-            throw new IllegalArgumentException("Normalizer with claas name: " + clazzName + " not found." +
-                "Available GPSTimeAlignment are: [" + AVAILABLE_GPS_TIME_ALIGNMENT.stream()
+            throw new IllegalArgumentException("Normalizer with claas name: " + clazzName + " not found."
+                + "Available GPSTimeAlignment are: [" + AVAILABLE_GPS_TIME_ALIGNMENT.stream()
                     .map(Class::getName)
                     .reduce((c1, c2) -> c1 + ", " + c2)
-                    .orElse("") +
-                " ]");
+                    .orElse("")
+                + " ]");
         }
         MUTEX.acquireUninterruptibly();
         var buildResult = FACTORY.build(targetClass.get(), args);

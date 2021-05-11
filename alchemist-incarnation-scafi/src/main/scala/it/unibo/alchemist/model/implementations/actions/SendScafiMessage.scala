@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.interfaces._
 
 import java.util.ArrayList
+import java.util.stream.Collectors
 
 class SendScafiMessage[T, P<:Position[P]](
   env: Environment[T, P],
@@ -38,12 +39,11 @@ class SendScafiMessage[T, P<:Position[P]](
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = {
     n match {
       case destinationNode: ScafiNode[T, P] =>
-        val possibleRef = new ArrayList[RunScafiProgram[T, P]]()
-        destinationNode.getReactions.stream()
+        val possibleRef = destinationNode.getReactions.stream()
           .flatMap { reaction => reaction.getActions.stream() }
           .filter { action => action.isInstanceOf[RunScafiProgram[T, P]] }
           .map { action => action.asInstanceOf[RunScafiProgram[T, P]] }
-          .forEach(act => possibleRef.add(act))
+          .collect(Collectors.toList[RunScafiProgram[T, P]])
         if (possibleRef.size() == 1) {
           return new SendScafiMessage(env, destinationNode, reaction, possibleRef.get(0))
         }

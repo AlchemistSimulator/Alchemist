@@ -182,8 +182,8 @@ public final class TraceLoader implements Iterable<GPSTrace> {
 
     private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
         final var targetClass = clazzName.contains(".")
-            ? AVAILABLE_GPS_TIME_ALIGNMENT.stream().filter(clazz -> clazz.getName().equals(clazzName)).findFirst()
-            : AVAILABLE_GPS_TIME_ALIGNMENT.stream().filter(clazz -> clazz.getSimpleName().equals(clazzName)).findFirst();
+            ? findClassWithName(Class::getName, clazzName)
+            : findClassWithName(Class::getSimpleName, clazzName);
         if (targetClass.isEmpty()) {
             throw new IllegalArgumentException("Normalizer with claas name: " + clazzName + " not found."
                 + "Available GPSTimeAlignment are: [" + AVAILABLE_GPS_TIME_ALIGNMENT.stream()
@@ -199,6 +199,13 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         } finally {
             MUTEX.release();
         }
+    }
+
+    private static Optional<Class<? extends GPSTimeAlignment>> findClassWithName(
+        final Function<Class<? extends GPSTimeAlignment>, String> classToName, final String targetName) {
+        return AVAILABLE_GPS_TIME_ALIGNMENT.stream()
+            .filter(clazz -> classToName.apply(clazz).equals(targetName))
+            .findFirst();
     }
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {

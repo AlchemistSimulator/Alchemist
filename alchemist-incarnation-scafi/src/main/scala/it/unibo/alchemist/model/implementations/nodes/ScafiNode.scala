@@ -19,7 +19,7 @@ class ScafiNode[T, P<:Position[P]](env: Environment[T, P]) extends AbstractNode[
     super.getConcentration(mol)
   }
 
-  override def cloneNode(currentTime: Time): AbstractNode[T] = {
+  override def cloneNode(currentTime: Time): ScafiNode[T, P] = {
     val clone = new ScafiNode(env)
     getContents.forEach { (mol, value) => clone.setConcentration(mol, value) }
     getReactions.forEach { reaction => clone.addReaction(reaction.cloneOnNewNode(clone, currentTime))}

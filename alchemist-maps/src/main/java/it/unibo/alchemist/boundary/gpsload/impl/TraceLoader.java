@@ -181,7 +181,7 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
-        final Optional<Class<? extends GPSTimeAlignment>> targetClass = clazzName.contains(".")
+        final var targetClass = clazzName.contains(".")
             ? AVAILABLE_GPS_TIME_ALIGNMENT.stream().filter(clazz -> clazz.getName().equals(clazzName)).findFirst()
             : AVAILABLE_GPS_TIME_ALIGNMENT.stream().filter(clazz -> clazz.getSimpleName().equals(clazzName)).findFirst();
         if (targetClass.isEmpty()) {
@@ -193,7 +193,7 @@ public final class TraceLoader implements Iterable<GPSTrace> {
                 + " ]");
         }
         MUTEX.acquireUninterruptibly();
-        var buildResult = FACTORY.build(targetClass.get(), args);
+        final var buildResult = FACTORY.build(targetClass.get(), args);
         MUTEX.release();
         return buildResult.getCreatedObjectOrThrowException();
     }

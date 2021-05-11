@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -46,10 +47,7 @@ public abstract class AbstractNode<T> implements Node<T> {
     private final int id;
     private final Environment<T, ?> environment;
     private final List<Reaction<T>> reactions = new ArrayList<>();
-    private final ConcurrentMap<Molecule, T> molecules = new ConcurrentLinkedHashMap.Builder<Molecule, T>()
-            .maximumWeightedCapacity(Long.MAX_VALUE)
-            .concurrencyLevel(2)
-            .build();
+    private final Map<Molecule, T> molecules = new LinkedHashMap<>();
 
     private static int idFromEnv(final Environment<?, ?> env) {
         MUTEX.acquireUninterruptibly();

@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.implementations.nodes;
 
 import com.google.common.collect.MapMaker;
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -71,9 +70,9 @@ public abstract class AbstractNode<T> implements Node<T> {
     }
 
     @Override
-    public final void addReaction(final Reaction<T> r) {
-        reactions.add(r);
-        environment.getSimulation().reactionAdded(r);
+    public final void addReaction(final Reaction<T> reactionToAdd) {
+        reactions.add(reactionToAdd);
+        environment.getSimulation().reactionAdded(reactionToAdd);
     }
 
     /**
@@ -85,12 +84,12 @@ public abstract class AbstractNode<T> implements Node<T> {
     }
 
     @Override
-    public final int compareTo(@NotNull final Node<T> o) {
-        if (o instanceof AbstractNode<?>) {
-            if (id > ((AbstractNode<?>) o).id) {
+    public final int compareTo(@NotNull final Node<T> other) {
+        if (other instanceof AbstractNode<?>) {
+            if (id > ((AbstractNode<?>) other).id) {
                 return 1;
             }
-            if (id < ((AbstractNode<?>) o).id) {
+            if (id < ((AbstractNode<?>) other).id) {
                 return -1;
             }
         }
@@ -101,8 +100,8 @@ public abstract class AbstractNode<T> implements Node<T> {
      * {@inheritDoc}
      */
     @Override
-    public boolean contains(final Molecule m) {
-        return molecules.containsKey(m);
+    public boolean contains(final Molecule molecule) {
+        return molecules.containsKey(molecule);
     }
 
     /**
@@ -111,9 +110,9 @@ public abstract class AbstractNode<T> implements Node<T> {
     protected abstract T createT();
 
     @Override
-    public final boolean equals(final Object o) {
-        if (o instanceof AbstractNode<?>) {
-            return ((AbstractNode<?>) o).id == id;
+    public final boolean equals(final Object other) {
+        if (other instanceof AbstractNode<?>) {
+            return ((AbstractNode<?>) other).id == id;
         }
         return false;
     }
@@ -135,8 +134,8 @@ public abstract class AbstractNode<T> implements Node<T> {
      * {@inheritDoc}
      */
     @Override
-    public T getConcentration(final Molecule mol) {
-        final T res = molecules.get(mol);
+    public T getConcentration(final Molecule molecule) {
+        final T res = molecules.get(molecule);
         if (res == null) {
             return createT();
         }
@@ -175,24 +174,24 @@ public abstract class AbstractNode<T> implements Node<T> {
      * {@inheritDoc}
      */
     @Override
-    public void removeConcentration(final Molecule mol) {
-        if (molecules.remove(mol) == null) {
-            throw new NoSuchElementException(mol + " was not present in node " + getId());
+    public void removeConcentration(final Molecule moleculeToRemove) {
+        if (molecules.remove(moleculeToRemove) == null) {
+            throw new NoSuchElementException(moleculeToRemove + " was not present in node " + getId());
         }
     }
 
     @Override
-    public final void removeReaction(final Reaction<T> r) {
-        reactions.remove(r);
-        environment.getSimulation().reactionRemoved(r);
+    public final void removeReaction(final Reaction<T> reactionToRemove) {
+        reactions.remove(reactionToRemove);
+        environment.getSimulation().reactionRemoved(reactionToRemove);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setConcentration(final Molecule mol, final T c) {
-        molecules.put(mol, c);
+    public void setConcentration(final Molecule molecule, final T concentration) {
+        molecules.put(molecule, concentration);
     }
 
     @Override

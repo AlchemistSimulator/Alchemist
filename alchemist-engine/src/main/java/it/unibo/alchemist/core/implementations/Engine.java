@@ -317,7 +317,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     @Override
     public void nodeAdded(final Node<T> node) {
         checkCaller();
-        afterExecutionUpdates.add(new Addition(node));
+        afterExecutionUpdates.add(new NodeAddition(node));
     }
 
     @Override
@@ -329,7 +329,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     @Override
     public void nodeRemoved(final Node<T> node, final Neighborhood<T> oldNeighborhood) {
         checkCaller();
-        afterExecutionUpdates.add(new Removal(node));
+        afterExecutionUpdates.add(new NodeRemoval(node));
     }
 
     @Override
@@ -342,10 +342,22 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         newStatus(RUNNING);
     }
 
+    @Override
+    public void reactionAdded(final Reaction<T> reactionToAdd) {
+        checkCaller();
+        afterExecutionUpdates.add(new ReactionAddition(reactionToAdd));
+    }
+
+    @Override
+    public void reactionRemoved(final Reaction<T> reactionToRemove) {
+        checkCaller();
+        afterExecutionUpdates.add(new ReactionRemoval(reactionToRemove));
+    }
+
     private Stream<Reaction<T>> reactionsToUpdateAfterExecution() {
         return afterExecutionUpdates.stream()
-            .flatMap(Update::getReactionsToUpdate)
-            .distinct();
+                .flatMap(Update::getReactionsToUpdate)
+                .distinct();
     }
 
     private void processCommand(final CheckedRunnable command) throws Throwable {
@@ -487,14 +499,14 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             this.source = source;
         }
 
-        public final Stream<Reaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
+        protected final Stream<Reaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
             return Stream.of(
                     source.getReactions().stream(),
                     neighborhood.getNeighbors().stream()
                             .flatMap(node -> node.getReactions().stream())
                             .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
                     dependencyGraph.globalInputContextReactions().stream())
-                .reduce(Stream.empty(), Stream::concat);
+                    .reduce(Stream.empty(), Stream::concat);
         }
 
         public Stream<Reaction<T>> getReactionsToUpdate() {
@@ -523,28 +535,79 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     }
 
-    private final class Removal extends Update {
+    private class UpdateOnNode extends Update {
 
-        private Removal(final Node<T> source) {
+        private final Function<Reaction<T>, Update> reactionLevelOperation;
+
+        private UpdateOnNode(final Node<T> source, Function<Reaction<T>, Update> reactionLevelOperation) {
             super(source);
+            this.reactionLevelOperation = reactionLevelOperation;
         }
 
         @Override
-        public void performChanges() {
-            for (final Reaction<T> r : getSource().getReactions()) {
-                dependencyGraph.removeDependencies(r);
-                scheduler.removeReaction(r);
-            }
+        public final void performChanges() {
+            getSource().getReactions().stream()
+                    .map(reactionLevelOperation)
+                    .forEach(Update::performChanges);
         }
     }
 
-    private final class Addition extends Update {
-        private Addition(final Node<T> source) {
+    private final class NodeRemoval extends UpdateOnNode {
+        private NodeRemoval(final Node<T> source) {
+            super(source, ReactionRemoval::new);
+        }
+    }
+
+    private final class NodeAddition extends UpdateOnNode {
+        private NodeAddition(final Node<T> source) {
+            super(source, ReactionAddition::new);
+        }
+    }
+
+    private abstract class UpdateOnReaction extends Update {
+
+        private final Reaction<T> actualSource;
+
+        private UpdateOnReaction(final Reaction<T> source) {
+            super(source.getNode());
+            actualSource = source;
+        }
+
+        @Override
+        public final Stream<Reaction<T>> getReactionsToUpdate() {
+            return Stream.of(actualSource);
+        }
+
+        @Override
+        public abstract void performChanges();
+
+        protected Reaction<T> getSourceReaction() {
+            return actualSource;
+        }
+    }
+
+    private final class ReactionRemoval extends UpdateOnReaction {
+
+        private ReactionRemoval(final Reaction<T> source) {
             super(source);
         }
+
         @Override
         public void performChanges() {
-            getSource().getReactions().forEach(Engine.this::scheduleReaction);
+            dependencyGraph.removeDependencies(getSourceReaction());
+            scheduler.removeReaction(getSourceReaction());
+        }
+    }
+
+    private final class ReactionAddition extends UpdateOnReaction {
+
+        private ReactionAddition(final Reaction<T> source) {
+            super(source);
+        }
+
+        @Override
+        public void performChanges() {
+            Engine.this.scheduleReaction(getSourceReaction());
         }
     }
 
@@ -568,13 +631,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                             // source, target, and all their neighbors are candidates.
                             Stream.of(getSource(), target),
                             Stream.of(environment.getNeighborhood(getSource()), environment.getNeighborhood(getTarget()))
-                                .flatMap(it -> it.getNeighbors().stream()))
-                        .distinct()
-                        .flatMap(it -> it.getReactions().stream())
-                        .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
-                        // Global reactions
+                                    .flatMap(it -> it.getNeighbors().stream()))
+                            .distinct()
+                            .flatMap(it -> it.getReactions().stream())
+                            .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
+                    // Global reactions
                     dependencyGraph.globalInputContextReactions().stream())
-                .reduce(Stream.empty(), Stream::concat);
+                    .reduce(Stream.empty(), Stream::concat);
         }
     }
 

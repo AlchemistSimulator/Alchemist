@@ -11,6 +11,7 @@ package it.unibo.alchemist.core.interfaces;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import it.unibo.alchemist.model.interfaces.Reaction;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
@@ -170,6 +171,18 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * There is no guarantee on when this command will be actually processed.
      */
     void play();
+
+    /**
+     * Adds a reaction during the simulation to the scheduler.
+     * @param reactionToAdd the reaction to add
+     */
+    void reactionAdded(final Reaction<T> reactionToAdd);
+
+    /**
+     * Removes a reaction during the simulation from the scheduler.
+     * @param reactionToRemove the reaction to remove
+     */
+    void reactionRemoved(final Reaction<T> reactionToRemove);
 
     /**
      * Removes an {@link OutputMonitor} to this simulation. If the

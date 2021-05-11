@@ -35,7 +35,6 @@ public final class FromGPSTrace implements Deployment {
      * @param args
      *            args to use to create GPSTimeNormalizer
      * @throws IOException if there are errors accessing the file system
-     * @throws InterruptedException in case of interrupt during semaphore acquisition
      */
     public FromGPSTrace(
             final int nodeCount,
@@ -43,7 +42,7 @@ public final class FromGPSTrace implements Deployment {
             final boolean cycle,
             final String normalizer,
             final Object... args
-    ) throws IOException, InterruptedException {
+    ) throws IOException {
         traces = new TraceLoader(path, cycle, normalizer, args);
         if (traces.size().map(size -> size < nodeCount).orElse(false)) {
             throw new IllegalArgumentException(

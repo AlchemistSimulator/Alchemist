@@ -542,7 +542,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
         private final Function<Reaction<T>, Update> reactionLevelOperation;
 
-        private UpdateOnNode(final Node<T> source, Function<Reaction<T>, Update> reactionLevelOperation) {
+        private UpdateOnNode(final Node<T> source, final Function<Reaction<T>, Update> reactionLevelOperation) {
             super(source);
             this.reactionLevelOperation = reactionLevelOperation;
         }

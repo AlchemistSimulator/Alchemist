@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.interfaces.{Environment, Molecule, Position}
+import it.unibo.alchemist.model.interfaces.{Environment, Molecule, Position, Time}
 
 class ScafiNode[T, P<:Position[P]](env: Environment[T, P]) extends AbstractNode[T](env) {
   private var lastAccessedMolecule: Molecule = null
@@ -19,4 +19,10 @@ class ScafiNode[T, P<:Position[P]](env: Environment[T, P]) extends AbstractNode[
     super.getConcentration(mol)
   }
 
+  override def cloneNode(currentTime: Time): ScafiNode[T, P] = {
+    val clone = new ScafiNode(env)
+    getContents.forEach { (mol, value) => clone.setConcentration(mol, value) }
+    getReactions.forEach { reaction => clone.addReaction(reaction.cloneOnNewNode(clone, currentTime))}
+    clone
+  }
 }

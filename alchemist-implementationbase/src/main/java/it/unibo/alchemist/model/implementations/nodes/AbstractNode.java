@@ -186,7 +186,10 @@ public abstract class AbstractNode<T> implements Node<T> {
     @Override
     public final void removeReaction(final Reaction<T> reactionToRemove) {
         reactions.remove(reactionToRemove);
-        environment.getSimulation().reactionRemoved(reactionToRemove);
+        final var simulation = environment.getSimulation();
+        if (simulation != null) {
+            simulation.reactionRemoved(reactionToRemove);
+        }
     }
 
     /**

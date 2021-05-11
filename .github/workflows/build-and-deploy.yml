@@ -128,7 +128,7 @@ jobs:
   Automerge:
     needs: CI-Complete
     runs-on: ubuntu-latest
-    if: always() && github.event_name == 'push'
+    if: always()
     steps:
       - name: automerge
         uses: "DanySK/yaagha@master"

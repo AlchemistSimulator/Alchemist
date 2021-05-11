@@ -59,6 +59,8 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         .withNarrowingConversions()
         .withAutoBoxing()
         .build();
+    private static final List<Class<? extends GPSTimeAlignment>> AVAILABLE_GPS_TIME_ALIGNMENT =
+            ClassPathScanner.subTypesOf(GPSTimeAlignment.class);
     private static final Semaphore MUTEX = new Semaphore(1);
 
     /**
@@ -179,23 +181,21 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
-        final String fullName = clazzName.contains(".")
-                ? clazzName
-                : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
-        try {
-            final Class<?> targetClass = ResourceLoader.classForName(fullName);
-            if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
-                MUTEX.acquireUninterruptibly();
-                var normalizer = (GPSTimeAlignment) FACTORY.build(targetClass, args).getCreatedObjectOrThrowException();
-                MUTEX.release();
-                return normalizer;
-            }
-            throw new IllegalArgumentException(
-                    fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName()
-            );
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(fullName + " could not be found", e);
+        final Optional<Class<? extends GPSTimeAlignment>> targetClass = clazzName.contains(".")
+            ? AVAILABLE_GPS_TIME_ALIGNMENT.stream().filter(clazz -> clazz.getName().equals(clazzName)).findFirst()
+            : AVAILABLE_GPS_TIME_ALIGNMENT.stream().filter(clazz -> clazz.getSimpleName().equals(clazzName)).findFirst();
+        if (targetClass.isEmpty()) {
+            throw new IllegalArgumentException("Normalizer with claas name: " + clazzName + " not found." +
+                "Available GPSTimeAlignment are: [" + AVAILABLE_GPS_TIME_ALIGNMENT.stream()
+                    .map(Class::getName)
+                    .reduce((c1, c2) -> c1 + ", " + c2)
+                    .orElse("") +
+                " ]");
         }
+        MUTEX.acquireUninterruptibly();
+        var buildResult = FACTORY.build(targetClass.get(), args);
+        MUTEX.release();
+        return buildResult.getCreatedObjectOrThrowException();
     }
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {

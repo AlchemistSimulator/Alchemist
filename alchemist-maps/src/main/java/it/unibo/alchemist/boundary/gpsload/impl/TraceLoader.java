@@ -87,11 +87,12 @@ public final class TraceLoader implements Iterable<GPSTrace> {
      * @param normalizerArgs
      *            args to use to create GPSTimeNormalizer
      * @throws IOException in case of I/O errors
+     * @throws InterruptedException in case of interrupt during semaphore acquisition
      */
     public TraceLoader(final String path,
             final boolean cycle,
             final String timeNormalizerClass,
-            final Object... normalizerArgs) throws IOException {
+            final Object... normalizerArgs) throws IOException, InterruptedException {
         this(path, cycle, makeNormalizer(timeNormalizerClass, normalizerArgs));
     }
 
@@ -116,10 +117,11 @@ public final class TraceLoader implements Iterable<GPSTrace> {
      * @param normalizerArgs
      *            args to use to create GPSTimeNormalizer
      * @throws IOException in case of I/O errors
+     * @throws InterruptedException in case of interrupt during semaphore acquisition
      */
     public TraceLoader(final String path,
             final String timeNormalizerClass,
-            final Object... normalizerArgs) throws IOException {
+            final Object... normalizerArgs) throws IOException, InterruptedException {
         this(path, false, timeNormalizerClass, normalizerArgs);
     }
 
@@ -178,21 +180,17 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         return Optional.ofNullable(cyclic ? null : traces.size());
     }
 
-    private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
+    private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) throws InterruptedException {
         final String fullName = clazzName.contains(".")
                 ? clazzName
                 : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
         try {
             final Class<?> targetClass = ResourceLoader.classForName(fullName);
             if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
-                try {
-                    SEMAPHORE.acquire();
-                    return (GPSTimeAlignment) FACTORY.build(targetClass, args).getCreatedObjectOrThrowException();
-                } catch (InterruptedException e) {
-                    throw new IllegalStateException("semaphore acquire", e);
-                } finally {
-                    SEMAPHORE.release();
-                }
+                SEMAPHORE.acquire();
+                var normalizer = (GPSTimeAlignment) FACTORY.build(targetClass, args).getCreatedObjectOrThrowException();
+                SEMAPHORE.release();
+                return normalizer;
             }
             throw new IllegalArgumentException(
                     fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName()

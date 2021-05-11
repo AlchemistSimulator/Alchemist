@@ -84,9 +84,10 @@ public class TestGPSLoader {
     /**
      * Tests traces alignment.
      * @throws IOException causes failure
+     * @throws InterruptedException causes failure
      */
     @Test
-    public void testAlignment() throws IOException {
+    public void testAlignment() throws IOException, InterruptedException {
         for (final String normalizer : CLASS_ALIGNMENT_NO_ARG) {
             assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, normalizer).size().orElseThrow(unexpectedCyclicTrace()));
         }
@@ -109,9 +110,10 @@ public class TestGPSLoader {
     /**
      * Tests error reporting.
      * @throws IOException causes failure
+     * @throws InterruptedException causes failure
      */
     @Test
-    public void testError() throws IOException {
+    public void testError() throws IOException, InterruptedException {
         for (final String error : ERRORS) {
             try {
                 fail("Expected error during object creation for " + error + ", got: "

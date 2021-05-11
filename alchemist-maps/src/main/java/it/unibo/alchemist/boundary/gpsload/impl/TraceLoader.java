@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,6 +59,7 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         .withNarrowingConversions()
         .withAutoBoxing()
         .build();
+    private static final Semaphore SEMAPHORE = new Semaphore(1);
 
     /**
      * 
@@ -183,7 +185,14 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         try {
             final Class<?> targetClass = ResourceLoader.classForName(fullName);
             if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
-                return (GPSTimeAlignment) FACTORY.build(targetClass, args).getCreatedObjectOrThrowException();
+                try {
+                    SEMAPHORE.acquire();
+                    return (GPSTimeAlignment) FACTORY.build(targetClass, args).getCreatedObjectOrThrowException();
+                } catch (InterruptedException e) {
+                    throw new IllegalStateException("semaphore acquire", e);
+                } finally {
+                    SEMAPHORE.release();
+                }
             }
             throw new IllegalArgumentException(
                     fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName()

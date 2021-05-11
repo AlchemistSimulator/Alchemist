@@ -4,7 +4,6 @@ network-model:
   type: ConnectWithinDistance
   parameters: [0.5]
   
-displacements:
-  - in:
-      type: Circle
-      parameters: [10000, 0, 0, 10]
+deployments:
+  type: Circle
+  parameters: [10000, 0, 0, 10]

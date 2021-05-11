@@ -51,7 +51,7 @@ public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
      * 
      */
     private static final long serialVersionUID = 5687806032498247246L;
-    private static final String EXT = ".aes", DESC = "Alchemist Effect Stack";
+    private static final String EXT = ".json", DESC = "Alchemist Effect Stack in JSON format";
     private static final String EFFECT_TAB = LocalizedResourceBundle.getString("effect_tab");
     private static final String EFFECTS_GROUP = LocalizedResourceBundle.getString("effects_group");
     private static final String DRAW_LINKS = LocalizedResourceBundle.getString("draw_links");

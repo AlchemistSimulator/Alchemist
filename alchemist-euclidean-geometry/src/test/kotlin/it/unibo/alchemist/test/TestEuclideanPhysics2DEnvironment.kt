@@ -6,6 +6,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.CircleNode
@@ -26,7 +27,7 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
 
     override fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)
-        env = Continuous2DEnvironment()
+        env = Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").get())
         env.linkingRule = NoLinks()
         node1 = CircleNode(env, DEFAULT_SHAPE_SIZE / 2)
         node2 = CircleNode(env, DEFAULT_SHAPE_SIZE / 2)

@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.implementations.environments
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
@@ -26,9 +27,9 @@ import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 /**
  * Implementation of [Physics2DEnvironment].
  */
-open class Continuous2DEnvironment<T> :
+open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
     Euclidean2DEnvironment<T>,
-    Abstract2DEnvironment<T, Euclidean2DPosition>(),
+    Abstract2DEnvironment<T, Euclidean2DPosition>(incarnation),
     Physics2DEnvironment<T> {
 
     companion object {

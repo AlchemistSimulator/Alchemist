@@ -11,6 +11,7 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.HomogeneousPedestrian2D
@@ -26,7 +27,7 @@ import org.apache.commons.math3.random.MersenneTwister
 class TestSensory<T> : StringSpec({
 
     "field of view" {
-        val env = Continuous2DEnvironment<T>()
+        val env = Continuous2DEnvironment<T>(SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow())
         val rand = MersenneTwister(1)
         env.linkingRule = NoLinks()
         val observed = HomogeneousPedestrian2D(env, rand)

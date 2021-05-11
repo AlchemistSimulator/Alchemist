@@ -60,18 +60,12 @@ allprojects {
     }
 
     repositories {
-        // Prefer Google mirrors, they're more stable
-        listOf("", "-eu", "-asia").forEach {
-            maven(url = "https://maven-central$it.storage-download.googleapis.com/repos/central/data/")
-        }
+        google()
         mavenCentral()
         jcenter {
             content {
                 onlyForConfigurations(
                     "detekt",
-                    "dokkaJavadocPlugin",
-                    "dokkaJavadocRuntime",
-                    "dokkaRuntime",
                     "orchidCompileClasspath",
                     "orchidRuntimeClasspath"
                 )
@@ -88,22 +82,18 @@ allprojects {
     }
 
     dependencies {
-        // Support functions
-        fun junit(module: String) = "org.junit.jupiter:junit-jupiter-$module:_"
         // Code quality control
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         // Compilation only
         compileOnly(Libs.annotations)
-        compileOnly(Libs.spotbugs)
+        compileOnly(spotBugsModule("annotations"))
         // Implementation
         implementation(Libs.slf4j_api)
         implementation(kotlin("stdlib-jdk8"))
         implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
         // Test compilation only
-        testCompileOnly(Libs.spotbugs) {
-            exclude(group = "commons-lang")
-        }
+        testCompileOnly(spotBugsModule("annotations"))
         // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
         testImplementation(junit("api"))
         testImplementation(Libs.kotest_runner_junit5)
@@ -198,13 +188,6 @@ allprojects {
     tasks.withType<Javadoc> {
         // Disable Javadoc, use Dokka.
         enabled = false
-        options {
-            quiet()
-            if (this is CoreJavadocOptions) {
-                addStringOption("Xwerror")
-            }
-            encoding = "UTF-8"
-        }
     }
 
     if (System.getenv("CI") == true.toString()) {
@@ -281,18 +264,30 @@ allprojects {
                 val interceptError = ByteArrayOutputStream()
                 standardOutput = interceptOutput
                 errorOutput = interceptError
+                isIgnoreExitValue = true
                 doLast {
-                    executionResult.get().assertNormalExitValue()
-                    listOf(interceptOutput, interceptError).forEach { stream ->
-                        val text = String(stream.toByteArray(), Charsets.UTF_8)
-                        for (illegalKeyword in listOf("SLF4J", "NOP")) {
-                            require(illegalKeyword !in text) {
-                                """
+                    val exit = executionResult.get().exitValue
+                    require(exit == 0) {
+                        val outputs = listOf(interceptOutput, interceptError).map {
+                            String(it.toByteArray(), Charsets.UTF_8)
+                        }
+                        outputs.forEach { text ->
+                            for (illegalKeyword in listOf("SLF4J", "NOP")) {
+                                require(illegalKeyword !in text) {
+                                    """
                                 $illegalKeyword found while printing the help. Complete output:
                                 $text
-                                """.trimIndent()
+                                    """.trimIndent()
+                                }
                             }
                         }
+                        """
+                            Process '${command.joinToString(" ")}' exited with $exit
+                            Output:
+                            ${outputs[0]}
+                            Error:
+                            ${outputs[0]}
+                        """.trimIndent()
                     }
                 }
             }
@@ -311,15 +306,15 @@ dependencies {
     listOf("interfaces", "engine", "loading") // Execution requirements
         .map { project(":alchemist-$it") }
         .forEach { api(it) }
-    implementation(Libs.commons_io)
-    implementation(Libs.commons_cli)
+    implementation(apacheCommons("io"))
+    implementation(apacheCommons("lang3"))
+    implementation(apacheCommons("cli"))
     implementation(Libs.logback_classic)
-    implementation(Libs.commons_lang3)
-    runtimeOnly(Libs.logback_classic)
     testRuntimeOnly(incarnation("protelis"))
+    testRuntimeOnly(incarnation("sapere"))
+    testRuntimeOnly(incarnation("biochemistry"))
 
     // Populate the dependencies for Orchid
-    fun orchidModule(module: String) = "io.github.javaeden.orchid:Orchid$module:_"
     orchidImplementation(orchidModule("Core"))
     listOf("Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki").forEach {
         orchidRuntimeOnly(orchidModule(it))
@@ -327,21 +322,6 @@ dependencies {
 }
 
 // WEBSITE
-
-tasks.dokkaJavadoc {
-    dokkaSourceSets {
-        val config = project("alchemist-full").configurations.runtimeClasspath
-        tasks.dokkaJavadoc.get().dokkaSourceSets {
-            create("global") {
-                subprojects.asSequence()
-                    .flatMap { it.sourceSets.asSequence() }
-                    .flatMap { it.allSource.asSequence() }
-                    .map { it.path }
-                    .forEach { sourceRoot(it) }
-            }
-        }
-    }
-}
 
 val projectVersion = rootProject.version.toString().toVersion()
 @ExperimentalUnsignedTypes

@@ -7,7 +7,9 @@
  */
 package it.unibo.alchemist.test
 
+import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.ImageEnvironment
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.kaikikm.threadresloader.ResourceLoader
@@ -42,9 +44,10 @@ class TestImageEnvironment {
      */
     @Test
     fun testLoadingImages() {
+        val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseGet { TODO() }
         images.asSequence()
             .map { ResourceLoader.getResource(it).path }
-            .flatMap { sequenceOf(ImageEnvironment<Any>(it), ImageEnvironment(it, MAX, MAX, MAX)) }
+            .flatMap { sequenceOf(ImageEnvironment<Any>(incarnation, it), ImageEnvironment(incarnation, it, MAX, MAX, MAX)) }
             .map { it.obstacles }
             .forEach { Assertions.assertTrue(it.isNotEmpty()) }
     }

@@ -10,6 +10,7 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
@@ -28,28 +29,33 @@ import org.junit.jupiter.api.Test
 import org.protelis.lang.datatype.DatatypeFactory
 
 class TestGetPosition {
-    private val env: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment()
-    private val node = ProtelisNode(env)
-    private val rng = MersenneTwister(0)
-    private val reaction = Event(node, ExponentialTime(1.0, rng))
-    private val action = RunProtelisProgram(env, node, reaction, rng, "self.getCoordinates()")
+    private val environment: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment(ProtelisIncarnation())
+    private val node = ProtelisNode(environment)
+    private val randomGenerator = MersenneTwister(0)
+    private val reaction = Event(node, ExponentialTime(1.0, randomGenerator))
+    private val action = RunProtelisProgram(environment, node, reaction, randomGenerator, "self.getCoordinates()")
 
     @BeforeEach
     fun setUp() {
-        env.linkingRule = NoLinks()
+        environment.linkingRule = NoLinks()
         reaction.actions = listOf(action)
         node.addReaction(reaction)
-        env.addNode(node, env.makePosition(1, 1))
+        environment.addNode(node, environment.makePosition(1, 1))
     }
 
     @Test
     fun testGetPosition() {
-        val sim: Simulation<Any, Euclidean2DPosition> = Engine(env, 100)
+        val sim: Simulation<Any, Euclidean2DPosition> = Engine(environment, 100)
         sim.addOutputMonitor(
             object : OutputMonitor<Any, Euclidean2DPosition> {
                 override fun finished(environment: Environment<Any, Euclidean2DPosition>?, time: Time?, step: Long) = Unit
                 override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) = Unit
-                override fun stepDone(environment: Environment<Any, Euclidean2DPosition>?, reaction: Reaction<Any>?, time: Time?, step: Long) {
+                override fun stepDone(
+                    environment: Environment<Any, Euclidean2DPosition>?,
+                    reaction: Reaction<Any>?,
+                    time: Time?,
+                    step: Long
+                ) {
                     if (step > 0) {
                         Assertions.assertEquals(
                             DatatypeFactory.createTuple(1.0, 1.0),

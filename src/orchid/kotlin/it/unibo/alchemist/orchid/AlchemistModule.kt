@@ -16,7 +16,7 @@ import com.eden.orchid.api.registration.OrchidModule
 class AlchemistModule : OrchidModule() {
 
     override fun configure() {
-        addToSet(TemplateFunction::class.java, ShortenPackage::class.java)
-        addToSet(TemplateTag::class.java, EmbedCode::class.java)
+        addToSet(TemplateFunction::class.java, ShortenPackage::class.java, Snippet::class.java)
+        addToSet(TemplateTag::class.java, GistIt::class.java)
     }
 }

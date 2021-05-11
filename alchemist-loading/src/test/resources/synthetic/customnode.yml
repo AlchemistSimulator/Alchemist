@@ -1,8 +1,7 @@
 incarnation: sapere
 
-displacements:
-  - in:
-      type: Circle
-      parameters: [100, 0, 0, 5]
-    nodes:
-        type: it.unibo.alchemist.test.util.TestNode
+deployments:
+  type: Circle
+  parameters: [100, 0, 0, 5]
+  nodes:
+    type: it.unibo.alchemist.test.util.TestNode

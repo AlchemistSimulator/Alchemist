@@ -1,0 +1,14 @@
+incarnation: sapere
+network-model: { type: ConnectWithinDistance, parameters: [0.5] }
+deployments:
+  type: Grid
+  parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1] # A perturbed grid of devices
+  contents:
+    - molecule: "{hit, 0}" # Everywhere, no one has been hit
+    - in: { type: Rectangle, parameters: [-0.5, -0.5, 1, 1] } # Inside this shape...
+      molecule: ball # ...every node has a ball
+  programs:
+    - time-distribution: 1 # This is a frequency, time distribution type is left to the incarnation
+      # 'program' specs are passed down to the incarnation for being interpreted as reactions
+      program: "{ball} {hit, N} --> {hit, N + 1} {launching}" # If hit, count the hit
+    - program: "{launching} --> +{ball}" # As soon as possible, throw the ball to a neighbor

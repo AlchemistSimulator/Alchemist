@@ -15,13 +15,13 @@ import io.kotest.matchers.longs.shouldBeExactly
 import io.kotest.matchers.maps.haveSize
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.loader.YamlLoader
+import it.unibo.alchemist.loader.LoadAlchemist
 import org.kaikikm.threadresloader.ResourceLoader
 
 class RegressionTestOnRealCases : FreeSpec(
     {
         "convoluted variable loading should work" {
-            val loader = YamlLoader(ResourceLoader.getResourceAsStream("synthetic/convoluted_variables.yml"))
+            val loader = LoadAlchemist.from(ResourceLoader.getResource("synthetic/convoluted_variables.yml"))
             loader.getDefault<Nothing, Nothing>() shouldNotBe null
             loader.variables should haveSize(3)
             loader.variables.keys shouldContain "algorithm"

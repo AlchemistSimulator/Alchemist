@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.loader.YamlLoader;
+import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -22,13 +22,14 @@ import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
@@ -72,9 +73,18 @@ public class TestLoadGPSTrace {
      */
     @Test
     public <T> void testLoadGPSTrace() {
-        final InputStream res = ResourceLoader.getResourceAsStream("testgps.yml");
+        final var res = ResourceLoader.getResource("testgps.yml");
         assertNotNull(res, "Missing test resource " + "testgps.yml");
-        final Environment<T, GeoPosition> env = new YamlLoader(res).getDefault();
+        final Environment<T, GeoPosition> env = LoadAlchemist.from(res).<T, GeoPosition>getDefault().getEnvironment();
+        assertTrue(env.getNodeCount() > 0);
+        env.getNodes().forEach(node -> {
+            final var reactions = node.getReactions();
+            assertFalse(reactions.isEmpty());
+            reactions.forEach(reaction -> {
+                assertTrue(reaction.getConditions().isEmpty());
+                assertEquals(1, reaction.getActions().size());
+            });
+        });
         final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
 
@@ -84,7 +94,13 @@ public class TestLoadGPSTrace {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
                     final GeoPosition realArrive = Objects.requireNonNull(env.getPosition(node));
-                    assertEquals(0.0, idealArrive.distanceTo(realArrive), DELTA);
+                    assertEquals(
+                        0.0,
+                        idealArrive.distanceTo(realArrive),
+                        DELTA,
+                        "simulation completed at time " + time + " after " + step + " steps.\n"
+                            + "Start at " + start + ", ideal arrive " + idealArrive + ", actual arrive " + realArrive
+                    );
                 }
             }
 

@@ -4,7 +4,7 @@ environment:
 
 incarnation: sapere
 
-pools:
+_pools:
   - pool: &move
     - time-distribution: 0.1
       type: Event
@@ -12,9 +12,8 @@ pools:
         - type: ReproduceGPSTrace
           parameters: ["gpsTrace", true, "AlignToSimulationTime"]
 
-displacements:
-  - in:
-      type: FromGPSTrace
-      parameters: [7, "gpsTrace", true, "AlignToSimulationTime"]
+deployments:
+  - type: FromGPSTrace
+    parameters: [7, "gpsTrace", true, "AlignToSimulationTime"]
     programs:
       - *move

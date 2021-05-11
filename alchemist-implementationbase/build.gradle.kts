@@ -8,14 +8,14 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    api(Libs.commons_math3)
+    api(apacheCommons("math3"))
     api(Libs.java_quadtree)
     api(Libs.guava)
+    api(apacheCommons("lang3"))
     implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.classgraph)
-    implementation(Libs.commons_lang3)
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)

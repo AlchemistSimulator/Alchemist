@@ -35,7 +35,7 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
     */
   test("build") {
     val rng = new MersenneTwister(0)
-    val env = new Continuous2DEnvironment[Any]
+    val env = new Continuous2DEnvironment[Any](INC)
     val node = INC.createNode(rng, env, null)
     assertNotNull(node)
 

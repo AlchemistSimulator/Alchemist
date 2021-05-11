@@ -13,8 +13,9 @@ dependencies {
     implementation(Libs.guava)
     implementation(Libs.trove4j)
 
-    testImplementation(project(":alchemist-implementationbase"))
-    testImplementation(project(":alchemist-euclidean-geometry"))
+    testImplementation(alchemist("implementationbase"))
+    testImplementation(alchemist("euclidean-geometry"))
+    testRuntimeOnly(incarnation("sapere"))
 }
 
 publishing.publications {

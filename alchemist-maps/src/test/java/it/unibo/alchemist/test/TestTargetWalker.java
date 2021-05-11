@@ -6,8 +6,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.test;
+
 import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.actions.TargetWalker;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
@@ -17,6 +19,7 @@ import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -37,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class TestTargetWalker {
 
+    private static final Incarnation<Object, GeoPosition> INCARNATION =
+            SupportedIncarnations.<Object, GeoPosition>get("protelis").orElseThrow();
     private static final String TESTMAP = "maps/cesena.pbf";
     private static final Molecule TRACK = new SimpleMolecule("track");
     private static final Molecule INTERACTING = new SimpleMolecule("interacting");
@@ -66,9 +71,9 @@ public class TestTargetWalker {
     @BeforeEach
     public void setUp() throws ClassNotFoundException, IOException {
         try {
-            env = new OSMEnvironment<>(TESTMAP, true, true);
+            env = new OSMEnvironment<>(INCARNATION, TESTMAP, true, true);
             env.setLinkingRule(new NoLinks<>());
-            node = new AbstractNode<Object>(env) {
+            node = new AbstractNode<>(env) {
                 private static final long serialVersionUID = -3982001064673078159L;
                 @Override
                 protected Object createT() {

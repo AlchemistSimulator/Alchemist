@@ -7,11 +7,12 @@
  */
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DObstacles;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.IntNode;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,8 @@ public class TestContinuous2DObstacle {
      */
     @Test
     public void test() {
-        final Continuous2DObstacles<Integer> env = new Continuous2DObstacles<>();
+        final var incarnation = SupportedIncarnations.<Integer, Euclidean2DPosition>get("protelis").orElseThrow();
+        final Continuous2DObstacles<Integer> env = new Continuous2DObstacles<>(incarnation);
         env.setLinkingRule(new NoLinks<>());
         env.addObstacle(R1021);
         env.addObstacle(R0527);

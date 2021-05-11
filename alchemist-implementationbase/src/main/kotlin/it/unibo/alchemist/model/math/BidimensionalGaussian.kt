@@ -36,4 +36,8 @@ class BidimensionalGaussian(
      * @return The computed value of the integral.
      */
     fun integral() = 2 * Math.PI * amplitude * sigmaX * sigmaY
+
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }

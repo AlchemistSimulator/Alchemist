@@ -46,7 +46,7 @@ data class JSR223Variable<R>(val language: String, val formula: String) : Depend
      * unassigned required variables
      */
     @Suppress("UNCHECKED_CAST")
-    override fun getWith(variables: Map<String, Any>): R = try {
+    override fun getWith(variables: Map<String, Any?>): R = try {
         synchronized(engine) {
             engine.eval(formula, variables.asBindings()) as R
         }
@@ -54,6 +54,6 @@ data class JSR223Variable<R>(val language: String, val formula: String) : Depend
         throw IllegalStateException("Unable to evaluate $formula with bindings: $variables", e)
     }
 
-    private fun Map<String, Any>.asBindings(): Bindings =
-        object : Bindings, MutableMap<String, Any> by this.toMutableMap() { }
+    private fun Map<String, Any?>.asBindings(): Bindings =
+        object : Bindings, MutableMap<String, Any?> by this.toMutableMap() { }
 }

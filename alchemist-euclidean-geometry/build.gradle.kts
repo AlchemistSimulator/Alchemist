@@ -13,12 +13,11 @@ dependencies {
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.classgraph)
-    implementation(Libs.commons_lang3)
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
     testImplementation(alchemist("loading"))
-    testRuntimeOnly(alchemist("incarnation-protelis"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 publishing.publications {

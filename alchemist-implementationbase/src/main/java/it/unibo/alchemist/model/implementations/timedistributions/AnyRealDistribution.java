@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
+import it.unibo.alchemist.model.interfaces.Node;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -135,7 +136,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
      * {@inheritDoc}
      */
     @Override
-    public AbstractDistribution<T> clone(final Time currentTime) {
+    public AbstractDistribution<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
         return new AnyRealDistribution<>(currentTime, distribution);
     }
 

@@ -15,11 +15,11 @@ dependencies {
     // IMPLEMENTATION
     implementation(project(":alchemist-euclidean-geometry"))
     implementation(project(":alchemist-maps"))
-    implementation(Libs.commons_lang3)
+    implementation(apacheCommons("lang3"))
     // TESTING
     testImplementation(project(":alchemist-loading"))
     testImplementation(project(":alchemist-engine"))
-    testImplementation(Libs.commons_io)
+    testImplementation(apacheCommons("io"))
 }
 
 publishing.publications {

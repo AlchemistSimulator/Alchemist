@@ -9,6 +9,7 @@ package it.unibo.alchemist.model.implementations.timedistributions;
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
@@ -58,7 +59,7 @@ public class DiracComb<T> extends AbstractDistribution<T> {
     }
 
     @Override
-    public final DiracComb<T> clone(final Time currentTime) {
+    public final DiracComb<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
         return new DiracComb<>(currentTime, 1 / timeInterval);
     }
 

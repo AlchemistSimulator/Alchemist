@@ -16,6 +16,7 @@ import com.github.davidmoten.rtree.internal.EntryDefault;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +36,10 @@ public class Continuous2DObstacles<T>
     private static final double TOLERANCE_MULTIPLIER = 0.01;
     private static final long serialVersionUID = 69931743897405107L;
     private transient RTree<RectObstacle2D<Euclidean2DPosition>, Rectangle> rtree = RTree.create();
+
+    public Continuous2DObstacles(final Incarnation<T, Euclidean2DPosition> incarnation) {
+        super(incarnation);
+    }
 
     @Override
     public final void addObstacle(@NotNull final RectObstacle2D<Euclidean2DPosition> o) {

@@ -56,7 +56,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             justification = "All provided RandomGenerator implementations are actually Serializable"
     )
     private final RandomGenerator rng;
-    private final SAPERETimeDistribution timedist;
+    private final SAPERETimeDistribution timeDistribution;
 
     private boolean emptyExecution;
     private boolean modifiesOnlyLocally = true;
@@ -116,9 +116,9 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     ) {
         super(node, timeDistribution);
         if (getTimeDistribution() instanceof SAPERETimeDistribution) {
-            timedist = (SAPERETimeDistribution) getTimeDistribution();
+            this.timeDistribution = (SAPERETimeDistribution) getTimeDistribution();
         } else {
-            timedist = null;
+            this.timeDistribution = null;
         }
         rng = randomGenerator;
         this.environment = environment;
@@ -126,7 +126,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
     @Override
     public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> node, final Time currentTime) {
-        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) node, rng, timedist.clone(currentTime));
+        final var timeDistributionClone = timeDistribution.cloneOnNewNode(node, currentTime);
+        final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) node, rng, timeDistributionClone);
         final ArrayList<Condition<List<ILsaMolecule>>> c = new ArrayList<>();
         for (final Condition<List<ILsaMolecule>> cond : getConditions()) {
             c.add(cond.cloneCondition(node, res));
@@ -315,8 +316,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
                      * For each possible match, compute the propensity
                      */
                     for (final Map<HashString, ITreeNode<?>> match : possibleMatches) {
-                        timedist.setMatches(match);
-                        final double p = timedist.getRate();
+                        timeDistribution.setMatches(match);
+                        final double p = timeDistribution.getRate();
                         propensities.add(p);
                         totalPropensity += p;
                         if (totalPropensity == Double.POSITIVE_INFINITY) {
@@ -329,7 +330,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     private boolean numericRate() {
-        return timedist == null || timedist.isStatic();
+        return timeDistribution == null || timeDistribution.isStatic();
     }
 
     @Override
@@ -339,7 +340,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
 
     @Override
     public String getRateAsString() {
-        return numericRate() ? Double.toString(getTimeDistribution().getRate()) : timedist.getRateEquation().toString();
+        return numericRate() ? Double.toString(getTimeDistribution().getRate()) : timeDistribution.getRateEquation().toString();
     }
 
     /**

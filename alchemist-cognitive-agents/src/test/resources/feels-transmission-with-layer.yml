@@ -2,16 +2,10 @@ incarnation: protelis
 
 variables:
   danger: &danger
-    formula: "\"danger\""
+    formula: '"danger"'
 
 environment:
   type: Continuous2DEnvironment
-
-positions:
-  type: EuclideanPosition2D
-
-network-model:
-  type: NoLinks
 
 seeds:
   scenario: 0
@@ -22,7 +16,7 @@ layers:
     molecule: *danger
     parameters: [0.0, 0.0, 2.0, 5.0]
 
-reactions: &behavior
+_reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
@@ -32,20 +26,17 @@ reactions: &behavior
         parameters: [0.0, 0.0]
       - type: HeadTowardRandomDirection
 
-displacements:
-  - in:
-      type: Circle
-      parameters: [50, 0, 0, 20]
-    nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "male", *danger]
-    programs:
-      - *behavior
-  - in:
-      type: Circle
-      parameters: [50, 0, 0, 20]
+_deployment_males: &males
+  type: Circle
+  parameters: [ 50, 0, 0, 20 ]
+  nodes:
+    type: CognitivePedestrian2D
+    parameters: [ "adult", "male", *danger ]
+  programs: *behavior
+
+deployments:
+  - *males
+  - <<: *males
     nodes:
       type: CognitivePedestrian2D
       parameters: ["adult", "female", *danger]
-    programs:
-      - *behavior

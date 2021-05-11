@@ -38,7 +38,7 @@ public class ChemicalReaction<T> extends AbstractReaction<T> {
      */
     @Override
     public ChemicalReaction<T> cloneOnNewNode(final Node<T> node, final Time currentTime) {
-        return makeClone(() -> new ChemicalReaction<>(node, getTimeDistribution().clone(currentTime)));
+        return makeClone(() -> new ChemicalReaction<>(node, getTimeDistribution().cloneOnNewNode(node, currentTime)));
     }
 
     @Override

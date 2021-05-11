@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
 
 /**
@@ -20,6 +21,11 @@ import it.unibo.alchemist.model.interfaces.Node;
 public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
 
     private static final long serialVersionUID = -7838255122589911058L;
+
+
+    public LimitedContinuos2D(final Incarnation<T, Euclidean2DPosition> incarnation) {
+        super(incarnation);
+    }
 
     /**
      * {@inheritDoc}

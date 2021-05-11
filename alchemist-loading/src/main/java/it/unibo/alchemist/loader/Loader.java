@@ -7,19 +7,17 @@
  */
 package it.unibo.alchemist.loader;
 
-import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.variables.DependentVariable;
 import it.unibo.alchemist.loader.variables.Variable;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
- * An entity which is able to produce an Alchemist {@link Environment}, possibly
- * with user defined variable values.
+ * An entity which is able to produce an Alchemist {@link InitializedEnvironment}, resolving user defined variable values.
  */
 public interface Loader extends Serializable {
 
@@ -27,10 +25,12 @@ public interface Loader extends Serializable {
      * @param <T>
      *            concentration type
      * @param <P> position type
-     * @return an {@link Environment} with all the variables set at their
+     * @return an {@link InitializedEnvironment} with all the variables set at their
      *         default values
      */
-    <T, P extends Position<P>> Environment<T, P> getDefault();
+    default <T, P extends Position<P>> InitializedEnvironment<T, P> getDefault() {
+        return getWith(Collections.emptyMap());
+    }
 
     /**
      * Allows to access the currently defined dependent variable (those variables whose value can be determined given a
@@ -55,11 +55,11 @@ public interface Loader extends Serializable {
      *            concentration type
      * @param <P>
      *            position type
-     * @return an {@link Environment} with all the variables set at the
+     * @return an {@link InitializedEnvironment} with all the variables set at the
      *         specified values. If the value is unspecified, the default is
      *         used instead
      */
-    <T, P extends Position<P>> Environment<T, P> getWith(Map<String, ?> values);
+    <T, P extends Position<P>> InitializedEnvironment<T, P> getWith(Map<String, ?> values);
 
     /**
      * Allows to access the currently defined constants, namely variables defined in the simulation file whose value is
@@ -70,14 +70,8 @@ public interface Loader extends Serializable {
     Map<String, Object> getConstants();
 
     /**
-     * @return The data extractors
-     */
-    List<Extractor> getDataExtractors();
-
-    /**
      * 
      * @return dependencies files
      */
-    List<String> getDependencies();
-
+    List<String> getRemoteDependencies();
 }

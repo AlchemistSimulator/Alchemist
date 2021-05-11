@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.boundary.wormhole.implementation.AbstractWormhole2D;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
@@ -27,7 +28,8 @@ public class TestWormhole2D {
      */
     @Test
     public void testZeroSizeEnvironment() {
-        final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>();
+        final var incarnation = SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").orElseThrow();
+        final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>(incarnation);
         final AbstractWormhole2D<Euclidean2DPosition> worm = new TestPurposeWormhole<>(env);
         worm.center();
     }

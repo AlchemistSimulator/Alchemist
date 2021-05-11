@@ -1,0 +1,18 @@
+incarnation: protelis
+environment: { type: ImageEnvironment, parameters: [chiaravalle.png, 0.1] }
+network-model: { type: ObstaclesBreakConnection, parameters: [50] }
+deployments:
+  type: Rectangle
+  parameters: [300, 62, 15, 95, 200]
+  programs:
+    - time-distribution: 1
+      program: >
+        import protelis:coord:spreading
+        let source = [110, 325]
+        let vector = self.getCoordinates() - source
+        let distance = hypot(vector.get(0), vector.get(1))
+        distanceTo(distance < 50)
+    - program: send # Actual network message delivery
+    - type: Event
+      time-distribution: 1
+      actions: { type: LevyWalk, parameters: [1.4] }

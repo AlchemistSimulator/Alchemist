@@ -7,9 +7,9 @@
  */
 
 dependencies {
+    api(apacheCommons("math3"))
     api(Libs.listset)
-    api(Libs.jool_java_8)
-    api(Libs.commons_math3)
+    api(Libs.jool)
 }
 
 publishing.publications {

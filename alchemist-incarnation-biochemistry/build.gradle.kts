@@ -14,12 +14,12 @@ dependencies {
     antlr(Libs.antlr4)
     api(project(":alchemist-implementationbase"))
     api(project(":alchemist-euclidean-geometry"))
-    implementation(Libs.commons_lang3)
+    implementation(apacheCommons("lang3"))
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)
     runtimeOnly(Libs.antlr4_runtime)
-    runtimeOnly("org.apache.bcel:bcel:_")
+//    runtimeOnly(Libs.bcel)
     testImplementation(project(":alchemist-engine"))
     testImplementation(project(":alchemist-loading"))
 }
@@ -47,6 +47,8 @@ tasks.generateGrammarSource {
 
 tasks.compileJava { dependsOn(tasks.generateGrammarSource) }
 tasks.compileKotlin { dependsOn(tasks.generateGrammarSource) }
+tasks.compileTestJava { dependsOn(tasks.generateTestGrammarSource) }
+tasks.compileTestKotlin { dependsOn(tasks.generateTestGrammarSource) }
 
 val sourceSetsToCheck = listOf(project.sourceSets.main.get(), project.sourceSets.test.get())
 checkstyle {

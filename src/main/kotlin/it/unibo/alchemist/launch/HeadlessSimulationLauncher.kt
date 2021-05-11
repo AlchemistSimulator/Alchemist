@@ -12,6 +12,7 @@ package it.unibo.alchemist.launch
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
+import org.slf4j.LoggerFactory
 import java.awt.GraphicsEnvironment
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
@@ -21,6 +22,9 @@ import java.util.concurrent.TimeUnit
  * Executes simulations locally in a headless environment.
  */
 object HeadlessSimulationLauncher : SimulationLauncher() {
+
+    override val name = "Alchemist headless runner"
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
         when {
@@ -64,11 +68,22 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
             .cartesianProductOf(parameters.variables)
             .forEach { variables ->
                 executor.submit {
-                    val simulation: Simulation<Any, Nothing> = prepareSimulation(loader, parameters, variables)
-                    simulation.play()
-                    simulation.run()
-                    simulation.error.ifPresent {
-                        errorQueue.add(it)
+                    val simulationCreation = runCatching<Simulation<Any, Nothing>> {
+                        prepareSimulation(loader, parameters, variables)
+                    }
+                    simulationCreation.onFailure {
+                        logger.error("Something went wrong during the preparation of the simulation: $variables", it)
+                    }
+                    val error: Throwable? = simulationCreation.exceptionOrNull()
+                        ?: simulationCreation.map { simulation ->
+                            simulation.play()
+                            simulation.run()
+                            simulation.error.takeIf { it.isPresent }?.get()?.also {
+                                logger.error("Something went wrong during the execution of: $variables", it)
+                            }
+                        }.getOrNull()
+                    if (error != null) {
+                        errorQueue.add(error)
                         executor.shutdownNow()
                     }
                 }
@@ -82,6 +97,4 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
             }
         }
     }
-
-    override val name = "Alchemist headless runner"
 }

@@ -356,8 +356,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     private Stream<Reaction<T>> reactionsToUpdateAfterExecution() {
         return afterExecutionUpdates.stream()
-                .flatMap(Update::getReactionsToUpdate)
-                .distinct();
+            .flatMap(Update::getReactionsToUpdate)
+            .distinct();
     }
 
     private void processCommand(final CheckedRunnable command) throws Throwable {
@@ -506,7 +506,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                             .flatMap(node -> node.getReactions().stream())
                             .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
                     dependencyGraph.globalInputContextReactions().stream())
-                    .reduce(Stream.empty(), Stream::concat);
+                .reduce(Stream.empty(), Stream::concat);
         }
 
         public Stream<Reaction<T>> getReactionsToUpdate() {

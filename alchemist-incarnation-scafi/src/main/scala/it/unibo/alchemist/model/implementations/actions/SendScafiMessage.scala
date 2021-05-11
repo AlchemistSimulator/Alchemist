@@ -13,6 +13,8 @@ import it.unibo.alchemist.model.ScafiIncarnationUtils
 import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.interfaces._
 
+import java.util.ArrayList
+
 class SendScafiMessage[T, P<:Position[P]](
   env: Environment[T, P],
   node: ScafiNode[T, P],
@@ -34,7 +36,20 @@ class SendScafiMessage[T, P<:Position[P]](
    * @return the cloned action
    */
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = {
-    new SendScafiMessage(env, n.asInstanceOf[ScafiNode[T, P]], r, program.cloneAction(n,r))
+    n match {
+      case destinationNode: ScafiNode[T, P] =>
+        val possibleRef = new ArrayList[RunScafiProgram[T, P]]()
+        destinationNode.getReactions.stream()
+          .flatMap { reaction => reaction.getActions.stream() }
+          .filter { action => action.isInstanceOf[RunScafiProgram[T, P]] }
+          .map { action => action.asInstanceOf[RunScafiProgram[T, P]] }
+          .forEach(act => possibleRef.add(act))
+        if (possibleRef.size() == 1) {
+          return new SendScafiMessage(env, destinationNode, reaction, possibleRef.get(0))
+        }
+        throw new IllegalStateException("There must be one and one only unconfigured " + RunScafiProgram.getClass.getSimpleName)
+      case _ => throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
+    }
   }
 
   /**

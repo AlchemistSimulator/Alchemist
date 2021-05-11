@@ -182,20 +182,6 @@ Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>
     * [FindBugs-IDEA](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
     * [PMDPlugin](https://plugins.jetbrains.com/plugin/1137-pmdplugin)
 
-#### Forking the project
-To contribute to this project we suggest to fork it and work on your copy.
-Working on your copy allows you to:
-* push all your commits and save your work in remote
-* use CI jobs to check the project status
-* open pull request easily directly from GitHub
-
-This project defines several CI jobs. One of them (`automerge`) requires a secret with:
-
-* name = AUTOMERGE_TOKEN
-* value = a github token with `public_repo` scope. If you already have a token with the required scope, then you can use it, otherwise you have to [create a new token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
-
-If you don't provide it, then the CI workflow will fail even though the project status is correct.
-
 #### Importing the project
 
 1. Clone this repository in a folder of your preference using `git clone --recurse-submodules <ALCHEMIST_REPO_URI>`.

@@ -59,7 +59,7 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         .withNarrowingConversions()
         .withAutoBoxing()
         .build();
-    private static final Semaphore SEMAPHORE = new Semaphore(1);
+    private static final Semaphore MUTEX = new Semaphore(1);
 
     /**
      * 
@@ -187,9 +187,9 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         try {
             final Class<?> targetClass = ResourceLoader.classForName(fullName);
             if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
-                SEMAPHORE.acquire();
+                MUTEX.acquire();
                 var normalizer = (GPSTimeAlignment) FACTORY.build(targetClass, args).getCreatedObjectOrThrowException();
-                SEMAPHORE.release();
+                MUTEX.release();
                 return normalizer;
             }
             throw new IllegalArgumentException(

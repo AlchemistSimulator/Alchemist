@@ -72,7 +72,7 @@ public abstract class AbstractNode<T> implements Node<T> {
     @Override
     public final void addReaction(final Reaction<T> reactionToAdd) {
         reactions.add(reactionToAdd);
-        var simulation = environment.getSimulation();
+        final var simulation = environment.getSimulation();
         if (simulation != null) {
             simulation.reactionAdded(reactionToAdd);
         }

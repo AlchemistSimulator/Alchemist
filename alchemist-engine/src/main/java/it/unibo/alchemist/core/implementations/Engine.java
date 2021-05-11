@@ -344,14 +344,17 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     @Override
     public void reactionAdded(final Reaction<T> reactionToAdd) {
-        checkCaller();
-        afterExecutionUpdates.add(new ReactionAddition(reactionToAdd));
+        reactionChanged(new ReactionAddition(reactionToAdd));
     }
 
     @Override
     public void reactionRemoved(final Reaction<T> reactionToRemove) {
+        reactionChanged(new ReactionRemoval(reactionToRemove));
+    }
+
+    private void reactionChanged(final UpdateOnReaction update) {
         checkCaller();
-        afterExecutionUpdates.add(new ReactionRemoval(reactionToRemove));
+        afterExecutionUpdates.add(update);
     }
 
     private Stream<Reaction<T>> reactionsToUpdateAfterExecution() {

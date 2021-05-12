@@ -44,7 +44,6 @@ public abstract class AbstractNode<T> implements Node<T> {
             .weakKeys().makeMap();
     private static final Semaphore MUTEX = new Semaphore(1);
     private final int id;
-    private final Environment<T, ?> environment;
     private final List<Reaction<T>> reactions = new ArrayList<>();
     private final Map<Molecule, T> molecules = new LinkedHashMap<>();
 
@@ -64,18 +63,13 @@ public abstract class AbstractNode<T> implements Node<T> {
      *            the environment, used to generate sequential ids for each
      *            environment, always starting from 0.
      */
-    public AbstractNode(final Environment<T, ?> env) {
-        this.environment = env;
+    public AbstractNode(final Environment<?, ?> env) {
         id = idFromEnv(env);
     }
 
     @Override
     public final void addReaction(final Reaction<T> reactionToAdd) {
         reactions.add(reactionToAdd);
-        final var simulation = environment.getSimulation();
-        if (simulation != null) {
-            simulation.reactionAdded(reactionToAdd);
-        }
     }
 
     /**
@@ -186,10 +180,6 @@ public abstract class AbstractNode<T> implements Node<T> {
     @Override
     public final void removeReaction(final Reaction<T> reactionToRemove) {
         reactions.remove(reactionToRemove);
-        final var simulation = environment.getSimulation();
-        if (simulation != null) {
-            simulation.reactionRemoved(reactionToRemove);
-        }
     }
 
     /**

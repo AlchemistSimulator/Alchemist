@@ -173,16 +173,20 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
     void play();
 
     /**
-     * Adds a reaction during the simulation to the scheduler.
+     * Adds a reaction during the simulation to the scheduler and start to execute it.
+     * The reaction addition is not propagated in the {@link Node} entity.
+     * To do that call also the method {@link Node#addReaction(Reaction)}.
      * @param reactionToAdd the reaction to add
      */
-    void reactionAdded(final Reaction<T> reactionToAdd);
+    void reactionAdded(Reaction<T> reactionToAdd);
 
     /**
-     * Removes a reaction during the simulation from the scheduler.
+     * Removes a reaction during the simulation from the scheduler and stop to execute it.
+     * The reaction removal is not propagated in the {@link Node} entity.
+     * To do that call also the method {@link Node#removeReaction(Reaction)}.
      * @param reactionToRemove the reaction to remove
      */
-    void reactionRemoved(final Reaction<T> reactionToRemove);
+    void reactionRemoved(Reaction<T> reactionToRemove);
 
     /**
      * Removes an {@link OutputMonitor} to this simulation. If the

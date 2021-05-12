@@ -112,7 +112,7 @@ public class TestConcurrency {
 
     private static final class DummyNode extends AbstractNode<Object> {
         private static final long serialVersionUID = 1L;
-        private DummyNode(final Environment<Object, ?> env) {
+        private DummyNode(final Environment<?, ?> env) {
             super(env);
         }
         @Override

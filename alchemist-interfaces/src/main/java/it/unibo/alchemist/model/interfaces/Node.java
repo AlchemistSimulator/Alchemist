@@ -21,7 +21,10 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
 
     /**
      * Adds a reaction to this node.
-     * 
+     * The reaction is added only in the node,
+     * but not in the {@link Simulation} scheduler, so it will never be executed.
+     * To add the reaction also in the scheduler (and start to execute it),
+     * you have to call also the method {@link Simulation#reactionAdded(Reaction)}.
      * @param r
      *            the reaction to be added
      */
@@ -92,6 +95,11 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
 
     /**
      * Removes a reaction from this node.
+     * The reaction is removed only in the node,
+     * but not in the {@link Simulation} scheduler,
+     * so the scheduler will continue to execute the reaction.
+     * To remove the reaction also in the scheduler (and stop to execute it),
+     * you have to call also the method {@link Simulation#reactionRemoved(Reaction)}.
      * 
      * @param r
      *            the reaction to be removed

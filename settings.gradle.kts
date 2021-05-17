@@ -5,20 +5,15 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-import de.fayard.refreshVersions.bootstrapRefreshVersions
 import org.danilopianini.VersionAliases.justAdditionalAliases
 buildscript {
     repositories {
-        gradlePluginPortal()
         mavenCentral()
     }
     dependencies {
-        classpath("de.fayard.refreshVersions:refreshVersions:0.9.7")
         classpath("org.danilopianini:refreshversions-aliases:+")
     }
 }
-
-bootstrapRefreshVersions(justAdditionalAliases)
 
 include(
     "alchemist-cognitive-agents",
@@ -48,7 +43,12 @@ include(
 rootProject.name = "alchemist"
 
 plugins {
-    id("com.gradle.enterprise") version "3.2"
+    id("com.gradle.enterprise") version "3.6.1"
+    id("de.fayard.refreshVersions") version "0.10.0"
+}
+
+refreshVersions {
+    extraArtifactVersionKeyRules = justAdditionalAliases
 }
 
 gradleEnterprise {

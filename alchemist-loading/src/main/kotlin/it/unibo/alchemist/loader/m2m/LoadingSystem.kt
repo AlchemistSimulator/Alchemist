@@ -27,6 +27,7 @@ import org.danilopianini.jirf.Factory
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
 import java.lang.IllegalStateException
 import java.util.concurrent.Semaphore
+import java.util.function.Predicate
 
 internal abstract class LoadingSystem(
     private val originalContext: Context,
@@ -116,6 +117,12 @@ internal abstract class LoadingSystem(
                         }
                     }
                 }
+            setCurrentRandomGenerator(simulationRNG)
+            val terminators: List<Predicate<Environment<T, P>>> =
+                SimulationModel.visitRecursively(context, root.getOrEmpty(DocumentRoot.terminate)) { terminator ->
+                    (terminator as? Map<*, *>)?.let { SimulationModel.visitBuilding(context, it) }
+                }
+            terminators.forEach(environment::addTerminator)
             if (deploymentDescriptors.isEmpty()) {
                 logger.warn("There are no displacements in the specification, the environment won't have any node")
             } else {

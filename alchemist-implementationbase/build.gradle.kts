@@ -7,7 +7,7 @@
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
+    api(alchemist("interfaces"))
     api(apacheCommons("math3"))
     api(Libs.java_quadtree)
     api(Libs.guava)
@@ -19,6 +19,9 @@ dependencies {
     implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
+    testImplementation(alchemist("loading"))
+    testImplementation(alchemist("engine"))
+    testImplementation(alchemist("incarnation-protelis"))
 }
 
 publishing.publications {

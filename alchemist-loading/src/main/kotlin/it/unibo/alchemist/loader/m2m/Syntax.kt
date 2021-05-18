@@ -215,6 +215,7 @@ internal object DocumentRoot : SyntaxElement {
     const val linkingRule = "network-model"
     const val remoteDependencies = "remote-dependencies"
     val seeds by OwnName()
+    val terminate by OwnName()
     val variables by OwnName()
     override val validDescriptors = setOf(
         validDescriptor {

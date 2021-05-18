@@ -42,10 +42,11 @@ public interface TimeDistribution<T> extends Cloneable, Serializable {
     double getRate();
 
     /**
+     * @param destination the node where the newly created time distribution will be placed
      * @param currentTime
      *            the time at which the cloning operation happened
      * @return an exact copy of this {@link TimeDistribution}
      */
-    TimeDistribution<T> clone(Time currentTime);
+    TimeDistribution<T> cloneOnNewNode(Node<T> destination, Time currentTime);
 
 }

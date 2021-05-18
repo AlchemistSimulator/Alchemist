@@ -87,7 +87,8 @@ class PropertySerializationTester<T : Property<E>, E : Any>(
         return if (deserialized == null) {
             "deserialized property is null"
         } else {
-            "property \"${origin.name}: ${origin.value}\" is different from property \"${deserialized.name}: ${deserialized.value}\""
+            "property \"${origin.name}: ${origin.value}\" " +
+                "is different than property \"${deserialized.name}: ${deserialized.value}\""
         }
     }
 }
@@ -185,7 +186,7 @@ class SerializableEnumPropertySerializationTest : PropertySerializationTest() {
     }
 
     @Suppress("unused")
-    protected enum class TestEnum {
+    enum class TestEnum {
         FOO, BAR, TEST
     }
 

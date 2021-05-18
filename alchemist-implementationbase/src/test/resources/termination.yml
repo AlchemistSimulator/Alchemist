@@ -1,0 +1,25 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [30]
+
+deployments:
+  - type: Rectangle
+    parameters: [100, 62, 15, 95, 200]
+    contents:
+      - molecule: "source"
+        concentration: true
+        in:
+          type: Circle
+          parameters: [107.96487911806524, 102.49167432603535, 10]
+    programs:
+      - time-distribution: 1 # This is a frequency
+        program: >
+           import protelis:coord:spreading
+           distanceTo(self.getDeviceUID().getId() == 0)
+      - program: send
+
+terminate:
+  - type: AfterTime
+    parameters: 1

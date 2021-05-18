@@ -47,7 +47,9 @@ class TestImageEnvironment {
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseGet { TODO() }
         images.asSequence()
             .map { ResourceLoader.getResource(it).path }
-            .flatMap { sequenceOf(ImageEnvironment<Any>(incarnation, it), ImageEnvironment(incarnation, it, MAX, MAX, MAX)) }
+            .flatMap {
+                sequenceOf(ImageEnvironment<Any>(incarnation, it), ImageEnvironment(incarnation, it, MAX, MAX, MAX))
+            }
             .map { it.obstacles }
             .forEach { Assertions.assertTrue(it.isNotEmpty()) }
     }

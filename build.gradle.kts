@@ -158,7 +158,7 @@ allprojects {
     spotbugs {
         setEffort("max")
         setReportLevel("low")
-        showProgress.set(true)
+        showProgress.set(false)
         val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
         if (excludeFile.exists()) {
             excludeFilter.set(excludeFile)

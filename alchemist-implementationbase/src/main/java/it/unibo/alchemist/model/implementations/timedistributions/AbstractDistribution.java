@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.implementations.timedistributions;
 
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
@@ -86,6 +87,6 @@ public abstract class AbstractDistribution<T> implements TimeDistribution<T> {
     protected abstract void updateStatus(Time currentTime, boolean executed, double param, Environment<T, ?> environment);
 
     @Override
-    public abstract AbstractDistribution<T> clone(Time currentTime);
+    public abstract AbstractDistribution<T> cloneOnNewNode(Node<T> destination, Time currentTime);
 
 }

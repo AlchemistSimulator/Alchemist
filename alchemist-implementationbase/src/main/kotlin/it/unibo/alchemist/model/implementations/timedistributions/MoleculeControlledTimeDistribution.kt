@@ -135,9 +135,8 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         super.updateStatus(currentTime, executed, param, environment)
     }
 
-    override fun clone(currentTime: Time?): AbstractDistribution<T> {
-        TODO("Not yet implemented")
-    }
+    override fun cloneOnNewNode(destination: Node<T>, currentTime: Time?): MoleculeControlledTimeDistribution<T> =
+        MoleculeControlledTimeDistribution(incarnation, destination, molecule, property, start, errorDistribution)
 
     companion object {
         private fun <T> readCurrentValue(

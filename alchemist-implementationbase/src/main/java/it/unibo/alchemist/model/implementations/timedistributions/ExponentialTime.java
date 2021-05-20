@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
+import it.unibo.alchemist.model.interfaces.Node;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
@@ -107,7 +108,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
      * @return a new ExponentialTime
      */
     @Override
-    public ExponentialTime<T> clone(final Time currentTime) {
+    public ExponentialTime<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
         return new ExponentialTime<>(rate, Time.ZERO, rand);
     }
 

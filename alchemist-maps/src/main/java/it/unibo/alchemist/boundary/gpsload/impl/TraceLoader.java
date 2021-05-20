@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,6 +59,9 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         .withNarrowingConversions()
         .withAutoBoxing()
         .build();
+    private static final List<Class<? extends GPSTimeAlignment>> AVAILABLE_GPS_TIME_ALIGNMENT =
+            ClassPathScanner.subTypesOf(GPSTimeAlignment.class);
+    private static final Semaphore MUTEX = new Semaphore(1);
 
     /**
      * 
@@ -177,20 +181,31 @@ public final class TraceLoader implements Iterable<GPSTrace> {
     }
 
     private static GPSTimeAlignment makeNormalizer(final String clazzName, final Object... args) {
-        final String fullName = clazzName.contains(".")
-                ? clazzName
-                : GPSTimeAlignment.class.getPackage().getName() + "." + clazzName;
-        try {
-            final Class<?> targetClass = ResourceLoader.classForName(fullName);
-            if (GPSTimeAlignment.class.isAssignableFrom(targetClass)) {
-                return (GPSTimeAlignment) FACTORY.build(targetClass, args).getCreatedObjectOrThrowException();
-            }
-            throw new IllegalArgumentException(
-                    fullName + " is not a valid subclass of " + GPSTimeAlignment.class.getSimpleName()
-            );
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(fullName + " could not be found", e);
+        final var targetClass = clazzName.contains(".")
+            ? findClassWithName(Class::getName, clazzName)
+            : findClassWithName(Class::getSimpleName, clazzName);
+        if (targetClass.isEmpty()) {
+            throw new IllegalArgumentException("Normalizer with claas name: " + clazzName + " not found."
+                + "Available GPSTimeAlignment are: [" + AVAILABLE_GPS_TIME_ALIGNMENT.stream()
+                    .map(Class::getName)
+                    .reduce((c1, c2) -> c1 + ", " + c2)
+                    .orElse("")
+                + " ]");
         }
+        try {
+            MUTEX.acquireUninterruptibly();
+            final var buildResult = FACTORY.build(targetClass.get(), args);
+            return buildResult.getCreatedObjectOrThrowException();
+        } finally {
+            MUTEX.release();
+        }
+    }
+
+    private static Optional<Class<? extends GPSTimeAlignment>> findClassWithName(
+        final Function<Class<? extends GPSTimeAlignment>, String> classToName, final String targetName) {
+        return AVAILABLE_GPS_TIME_ALIGNMENT.stream()
+            .filter(clazz -> classToName.apply(clazz).equals(targetName))
+            .findFirst();
     }
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {

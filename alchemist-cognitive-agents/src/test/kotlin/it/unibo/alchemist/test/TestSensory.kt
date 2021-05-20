@@ -27,7 +27,9 @@ import org.apache.commons.math3.random.MersenneTwister
 class TestSensory<T> : StringSpec({
 
     "field of view" {
-        val env = Continuous2DEnvironment<T>(SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow())
+        val env = Continuous2DEnvironment<T>(
+            SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow()
+        )
         val rand = MersenneTwister(1)
         env.linkingRule = NoLinks()
         val observed = HomogeneousPedestrian2D(env, rand)

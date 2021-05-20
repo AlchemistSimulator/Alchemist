@@ -61,7 +61,10 @@ class TestHashes {
 
     private fun testOrder(hash: (Any) -> Int) {
         sequenceOf("5", '5', 5, true).let { sequence ->
-            assertNotEquals(hash(sequence.sortedByDescending { it.hashCode() }), hash(sequence.sortedBy { it.hashCode() }))
+            assertNotEquals(
+                hash(sequence.sortedByDescending { it.hashCode() }),
+                hash(sequence.sortedBy { it.hashCode() })
+            )
         }
     }
 }

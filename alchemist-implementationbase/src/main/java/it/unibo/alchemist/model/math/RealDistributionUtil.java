@@ -51,7 +51,7 @@ public final class RealDistributionUtil {
             final double... arguments
     ) {
         final String name = shortname + (
-                shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution"
+            shortname.endsWith("distribution") || shortname.endsWith("Distribution") ? "" : "distribution"
         );
         final var result = REAL_DISTRIBUTIONS.stream()
             .filter(stat -> stat.getSimpleName().equalsIgnoreCase(requireNonNull(name)))
@@ -65,19 +65,20 @@ public final class RealDistributionUtil {
             .findAny()
             .map(c -> {
                 final Object[] actualArguments = Stream.concat(
-                        Stream.of(randomGenerator),
-                        Arrays.stream(arguments).boxed()
+                    Stream.of(randomGenerator),
+                    Arrays.stream(arguments).boxed()
                 ).toArray();
                 try {
                     return c.newInstance(actualArguments);
                 } catch (
-                        IllegalAccessException
-                        | InstantiationException
-                        | IllegalArgumentException
-                        | InvocationTargetException e
+                    IllegalAccessException
+                    | InstantiationException
+                    | IllegalArgumentException
+                    | InvocationTargetException e
                 ) {
                     throw new IllegalArgumentException(
-                        "Could not initialize " + name + " with " + c + " and arguments " + Arrays.toString(arguments), e
+                        "Could not initialize " + name + " with " + c + " and arguments " + Arrays.toString(arguments),
+                        e
                     );
                 }
             })

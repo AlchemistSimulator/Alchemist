@@ -65,7 +65,6 @@ allprojects {
         jcenter {
             content {
                 onlyForConfigurations(
-                    "detekt",
                     "orchidCompileClasspath",
                     "orchidRuntimeClasspath"
                 )

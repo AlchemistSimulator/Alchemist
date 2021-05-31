@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
 @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
-public class TestNodeCloning<P extends Position<P>> {
+class TestNodeCloning<P extends Position<P>> {
 
     private static final Molecule SOURCEMOL = new SimpleMolecule("source");
     private static final Molecule ENABLEDMOL = new SimpleMolecule("enabled");
@@ -73,7 +73,7 @@ public class TestNodeCloning<P extends Position<P>> {
      * @throws Throwable in case of simulation errors
      */
     @Test
-    public void test() throws Throwable {
+    void test() throws Throwable {
         // CHECKSTYLE: MagicNumber OFF - values are taken from a real experiment causing the bug.
         simulation.schedule(() -> {
             final Node<Object> node0 = environment.getNodeByID(0);

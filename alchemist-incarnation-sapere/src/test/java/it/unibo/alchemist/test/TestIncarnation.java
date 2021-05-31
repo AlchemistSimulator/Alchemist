@@ -67,7 +67,7 @@ public final class TestIncarnation {
      * Test molecule creation.
      */
     @Test
-    public void testCreateMolecule() {
+    void testCreateMolecule() {
         mkMol("  source, Distance  ", 2, false);
         mkMol("gradient,   Distance, #O", 3, false);
         mkMol("gradient, Distance, Dest", 3, false);
@@ -93,7 +93,7 @@ public final class TestIncarnation {
      * Test the creation of various time distributions.
      */
     @Test
-    public void testCreateTimeDistribution() {
+    void testCreateTimeDistribution() {
         testTD(null, Double.POSITIVE_INFINITY, 0);
         testTD("", Double.POSITIVE_INFINITY, 0);
         testTD("Infinity", Double.POSITIVE_INFINITY, 0);
@@ -137,7 +137,7 @@ public final class TestIncarnation {
      * Test various flavors of reaction creation.
      */
     @Test
-    public void testCreateReaction() {
+    void testCreateReaction() {
         testR(null, 0, 0, 0, 0, 0);
         testR("", 0, 0, 0, 0, 0);
         testR("-->", 0, 0, 0, 0, 0);

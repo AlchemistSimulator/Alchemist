@@ -14,21 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * JUnit test for {@link DrawLinks} effect serialization.
  */
-public final class DrawLinksSerializationTest extends AbstractEffectSerializationTest<DrawLinks<?>> {
+final class DrawLinksSerializationTest extends AbstractEffectSerializationTest<DrawLinks<?>> {
     private static final String TEST_NAME = "TestLinks";
     private static final double TEST_SIZE = 12.0;
 
     @Test
-    @Override
-    public void testJavaSerialization() throws IOException, ClassNotFoundException {
+    void testJavaSerialization() throws IOException, ClassNotFoundException {
         final var effect = new DrawLinks<>(TEST_NAME);
         effect.setSize(TEST_SIZE);
         testSerializationOf(effect);
     }
 
     @Test
-    @Override
-    public void testGsonSerialization() throws IOException {
+    void testGsonSerialization() throws IOException {
         final File file = TemporaryFile.create();
         final DrawLinks<Position2D<? extends Position2D<?>>> effect = new DrawLinks<>(TEST_NAME);
         effect.setSize(TEST_SIZE);

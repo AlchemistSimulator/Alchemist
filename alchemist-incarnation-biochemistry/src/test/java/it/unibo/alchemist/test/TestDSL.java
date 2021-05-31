@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Tests for domain specific language of the incarnation.
  */
-public class TestDSL {
+class TestDSL {
 
     private static BiochemistrydslParser getParser(final String reaction) {
         final CharStream in = CharStreams.fromString(reaction);
@@ -91,7 +91,7 @@ public class TestDSL {
      * Tests.
      */
     @Test
-    public void test() { // NOPMD on NCSS line count
+    void test() { // NOPMD on NCSS line count
         /* ********* Valid reactions **********/
         testValidReaction("[] --> []");
         testValidReaction("[a] --> []");

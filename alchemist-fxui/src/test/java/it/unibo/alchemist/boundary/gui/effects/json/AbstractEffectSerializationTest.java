@@ -2,7 +2,6 @@ package it.unibo.alchemist.boundary.gui.effects.json;
 
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.test.TemporaryFile;
-import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,25 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @param <T>
  *            the type of effect
  */
-public abstract class AbstractEffectSerializationTest<T extends EffectFX<?>> {
-
-    /**
-     * Tests (de)serialization with default Java serialization engine.
-     * 
-     * @throws Exception
-     *             if something goes wrong
-     */
-    @Test
-    public abstract void testJavaSerialization() throws Exception;
-
-    /**
-     * Tests (de)serialization with Google Gson serialization engine.
-     * 
-     * @throws Exception
-     *             if something goes wrong
-     */
-    @Test
-    public abstract void testGsonSerialization() throws Exception;
+public class AbstractEffectSerializationTest<T extends EffectFX<?>> {
 
     /**
      * Method that generate {@link org.junit.jupiter.api.Assertions#assertTrue(boolean)}

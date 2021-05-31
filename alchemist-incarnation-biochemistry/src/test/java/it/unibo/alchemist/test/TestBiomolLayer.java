@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * 
  *
  */
-public class TestBiomolLayer {
+class TestBiomolLayer {
 
     private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
 
@@ -42,7 +42,7 @@ public class TestBiomolLayer {
      * Test if cell status is correctly updated in movement.
      */
     @Test
-    public void testBiomolStepLayer() {
+    void testBiomolStepLayer() {
         final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
         final Biomolecule b = new Biomolecule("B");
         final Layer<Double, Euclidean2DPosition> bLayer = new StepLayer<>(10_000.0, 0d);

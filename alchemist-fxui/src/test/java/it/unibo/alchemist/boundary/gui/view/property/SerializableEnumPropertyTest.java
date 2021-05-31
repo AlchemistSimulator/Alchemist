@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * JUnit test for custom {@link javafx.beans.property.Property} serialization.
  */
-public class SerializableEnumPropertyTest {
+class SerializableEnumPropertyTest {
     /**
      * Tests if {@link SerializableEnumProperty#values()} method works
      * correctly.
      */
     @Test
-    public void testValues() {
+    void testValues() {
         final SerializableEnumProperty<TestEnum> serializableEnumProperty = new SerializableEnumProperty<>("Test", TestEnum.FOO);
         assertArrayEquals(serializableEnumProperty.values(), TestEnum.values());
         final SerializableEnumProperty<TestEnum> enumProperty2 = new SerializableEnumProperty<>();

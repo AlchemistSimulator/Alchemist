@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests loading of a custom {@link it.unibo.alchemist.loader.export.Exporter}.
  */
-public class PreventRegressions {
+class PreventRegressions {
 
     /**
      * Test the ability to inject variables.
      */
     @Test
-    public void testLoadCustomExport() {
+    void testLoadCustomExport() {
         final List<Extractor> extractors = LoadAlchemist.from(ResourceLoader.getResource("testCustomExport.yml"))
             .getDefault()
             .getDataExtractors();
@@ -42,7 +42,7 @@ public class PreventRegressions {
      * Test environment serialization and incarnation restoration.
      */
     @Test
-    public void testLoadAndSerialize() {
+    void testLoadAndSerialize() {
         final Environment<?, ?> env = LoadAlchemist
             .from(ResourceLoader.getResource("testCustomExport.yml"))
             .getDefault()

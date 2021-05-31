@@ -42,7 +42,7 @@ public class TestExpression {
      * 
      */
     @Test
-    public void testBuildVars() {
+    void testBuildVars() {
         for (final String s : VAR) {
             final Expression e = new Expression(s);
             assertNotNull(e);
@@ -54,7 +54,7 @@ public class TestExpression {
      * 
      */
     @Test
-    public void testBuildConst() {
+    void testBuildConst() {
         for (final String s : CONST) {
             final Expression e = new Expression(s);
             assertNotNull(e);
@@ -66,7 +66,7 @@ public class TestExpression {
      * 
      */
     @Test
-    public void testBuildOperator() {
+    void testBuildOperator() {
         for (final String s : OPERATOR) {
             final Expression e = new Expression(s);
             assertNotNull(e);
@@ -78,7 +78,7 @@ public class TestExpression {
      * 
      */
     @Test
-    public void testBuildList() {
+    void testBuildList() {
         for (final String s : LIST) {
             final Expression e = new Expression(s);
             assertNotNull(e);
@@ -90,7 +90,7 @@ public class TestExpression {
      * 
      */
     @Test
-    public void testBuildComparator() {
+    void testBuildComparator() {
         for (final String s : COMPARATOR) {
             final Expression e = new Expression(s);
             assertNotNull(e);
@@ -102,7 +102,7 @@ public class TestExpression {
      * 
      */
     @Test
-    public void testListComparator() {
+    void testListComparator() {
         final Expression le = new Expression("def: A has [a;]");
         assertFalse(le.matches(new Expression("A"), null));
         assertFalse(le.matches(new Expression("B"), null));
@@ -122,7 +122,7 @@ public class TestExpression {
      * 
      */
     @Test
-    public void testList() {
+    void testList() {
         final Expression empty = new Expression("[]");
         final Expression le = new Expression("[a;b;c;]");
         assertTrue(le.matches(new Expression("A"), null));

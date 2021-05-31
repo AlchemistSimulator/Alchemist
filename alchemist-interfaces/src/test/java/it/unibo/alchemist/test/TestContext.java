@@ -18,13 +18,13 @@ import org.junit.jupiter.api.Test;
 
 /**
  */
-public class TestContext {
+class TestContext {
 
     /**
      * 
      */
     @Test
-    public final void test() {
+    final void test() {
         assertEquals(LOCAL, getWider(LOCAL, LOCAL));
         assertEquals(NEIGHBORHOOD, getWider(LOCAL, NEIGHBORHOOD));
         assertEquals(GLOBAL, getWider(LOCAL, GLOBAL));

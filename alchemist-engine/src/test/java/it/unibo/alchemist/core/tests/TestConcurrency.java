@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * This class tests some basic Commands, like pause and start.
  */
-public class TestConcurrency {
+class TestConcurrency {
 
     private Environment<Object, Euclidean2DPosition> env;
 
@@ -72,7 +72,7 @@ public class TestConcurrency {
             value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE",
             justification = "We don't need the status of the Runnable"
     )
-    public void testCommandInterleaving() throws InterruptedException, ExecutionException {
+    void testCommandInterleaving() throws InterruptedException, ExecutionException {
         final int inWaitCount = 100;
         final Simulation<?, ?> sim = new Engine<>(env, 10);
         sim.pause();

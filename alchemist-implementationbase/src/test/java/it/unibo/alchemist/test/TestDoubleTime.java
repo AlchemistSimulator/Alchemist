@@ -17,13 +17,13 @@ import org.junit.jupiter.api.Test;
 
 /**
  */
-public class TestDoubleTime {
+class TestDoubleTime {
 
     /**
      * 
      */
     @Test
-    public void testDoubleTime() {
+    void testDoubleTime() {
         final Time t = new DoubleTime(1);
         assertNotNull(t);
         assertEquals(new DoubleTime(1), t);

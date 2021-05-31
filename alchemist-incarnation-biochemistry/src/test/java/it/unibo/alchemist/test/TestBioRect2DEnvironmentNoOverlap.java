@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
-public class TestBioRect2DEnvironmentNoOverlap {
+class TestBioRect2DEnvironmentNoOverlap {
 
     /**
      * The test seems to work for values of delta up to 2*10^(-8)
@@ -120,7 +120,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      *
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         env = new BioRect2DEnvironmentNoOverlap();
         env.setLinkingRule(new NoLinks<>());
         ng1 = new CellNodeImpl<>(env, BIG_CELL_DIAMETER);
@@ -137,7 +137,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if the node are correctly added, given their dimension in space.
      */
     @Test
-    public void testAddNode() {
+    void testAddNode() {
         final CellWithCircularArea<Euclidean2DPosition> n1 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         final CellWithCircularArea<Euclidean2DPosition> n2 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         final CellWithCircularArea<Euclidean2DPosition> n3 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
@@ -206,7 +206,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode1() {
+    void testMoveNode1() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove1 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove1, originalPos);
         final Euclidean2DPosition p1 = new Euclidean2DPosition(40, 0);
@@ -226,7 +226,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode2() {
+    void testMoveNode2() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove2 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove2, originalPos);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(40, 5);
@@ -250,7 +250,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode3() {
+    void testMoveNode3() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove3 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove3, originalPos);
         final Euclidean2DPosition p4 = new Euclidean2DPosition(10, 0);
@@ -270,7 +270,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode4() {
+    void testMoveNode4() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove4 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove4, originalPos);
         final Euclidean2DPosition p5 = new Euclidean2DPosition(
@@ -293,7 +293,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode5() {
+    void testMoveNode5() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove5 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove5, originalPos);
         final Euclidean2DPosition p6 = new Euclidean2DPosition(20, 10);
@@ -313,7 +313,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode6() {
+    void testMoveNode6() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove6 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove6, originalPos);
         final Euclidean2DPosition p7 = new Euclidean2DPosition(-40, 0);
@@ -333,7 +333,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode7() {
+    void testMoveNode7() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove7 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove7, originalPos);
         final Euclidean2DPosition p8 = new Euclidean2DPosition(40, 40);
@@ -341,7 +341,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(c8, p8);
         env.moveNode(cellToMove7, POSITION_TO_MOVE7);
         assertTrueJUnit4("cellToMove7 is in position: " + env.getPosition(cellToMove7).toString(),
-                env.getPosition(cellToMove7).equals(EXPECTED_POS7));
+                EXPECTED_POS7.equals(env.getPosition(cellToMove7)));
         env.removeNode(cellToMove7);
         env.removeNode(c8);
     }
@@ -350,7 +350,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode8() {
+    void testMoveNode8() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove8 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove8, originalPos);
         final Euclidean2DPosition p9 = new Euclidean2DPosition(-40, -40);
@@ -358,7 +358,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(c9, p9);
         env.moveNode(cellToMove8, POSITION_TO_MOVE8);
         assertTrueJUnit4("cellToMove8 is in position: " + env.getPosition(cellToMove8).toString(),
-                env.getPosition(cellToMove8).equals(EXPECTED_POS8));
+                EXPECTED_POS8.equals(env.getPosition(cellToMove8)));
         env.removeNode(cellToMove8);
         env.removeNode(c9);
     }
@@ -371,7 +371,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if the node are correctly added, given their dimension in space.
      */
     @Test
-    public void testAddDifferentDiam1() {
+    void testAddDifferentDiam1() {
         env.addNode(ng1, originalPos);
 
         final Euclidean2DPosition p1 = new Euclidean2DPosition(10, 0);
@@ -392,7 +392,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if the node are correctly added, given their dimension in space.
      */
     @Test
-    public void testAddDifferentDiam2() {
+    void testAddDifferentDiam2() {
         env.addNode(np1, originalPos);
         final Euclidean2DPosition p1 = new Euclidean2DPosition(10, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(20, 0);
@@ -416,7 +416,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if the node are correctly added, given their dimension in space.
      */
     @Test
-    public void testAddDifferentDiam3() {
+    void testAddDifferentDiam3() {
         env.addNode(np1, originalPos);
         final Euclidean2DPosition p1 = new Euclidean2DPosition(20, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(0, 15);
@@ -439,7 +439,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveDifferentDiam1() {
+    void testMoveDifferentDiam1() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove1 = np1;
         env.addNode(cellToMove1, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
@@ -455,7 +455,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveDifferentDiam2() {
+    void testMoveDifferentDiam2() {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
         final CellWithCircularArea<Euclidean2DPosition> cellToMove2 = np2;
         env.addNode(cellToMove2, originalPos);
@@ -471,7 +471,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveDifferentDiam3() {
+    void testMoveDifferentDiam3() {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
         final CellWithCircularArea<Euclidean2DPosition> cellToMove3 = np3;
         env.addNode(cellToMove3, originalPos);
@@ -479,20 +479,24 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(25, 0);
         env.addNode(ng1, p1);
         env.moveNode(cellToMove3, pd);
-        assertTrueJUnit4("cellToMove3 is in position: " + env.getPosition(cellToMove3),
-                env.getPosition(cellToMove3).equals(EXPECTED_POS_DIFFDIAM3_1));
+        assertTrueJUnit4(
+            "cellToMove3 is in position: " + env.getPosition(cellToMove3),
+            EXPECTED_POS_DIFFDIAM3_1.equals(env.getPosition(cellToMove3))
+        );
         env.removeNode(ng1);
         env.addNode(nm1, p1);
         env.moveNode(cellToMove3, pd);
-        assertTrueJUnit4("cellToMove3 is in position: " + env.getPosition(cellToMove3),
-                env.getPosition(cellToMove3).equals(EXPECTED_POS_DIFFDIAM3_2));
+        assertTrueJUnit4(
+            "cellToMove3 is in position: " + env.getPosition(cellToMove3),
+            EXPECTED_POS_DIFFDIAM3_2.equals(env.getPosition(cellToMove3))
+        );
     }
 
     /**
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveDifferentDiam4() {
+    void testMoveDifferentDiam4() {
         final Euclidean2DPosition pd = new Euclidean2DPosition(-50, 0);
         final CellWithCircularArea<Euclidean2DPosition> cellToMove4 = np3;
         env.addNode(cellToMove4, originalPos);
@@ -500,20 +504,24 @@ public class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(-25, 0);
         env.addNode(ng1, p1);
         env.moveNode(cellToMove4, pd);
-        assertTrueJUnit4("cellToMove4 is in position: " + env.getPosition(cellToMove4),
-                env.getPosition(cellToMove4).equals(EXPECTED_POS_DIFFDIAM4_1));
+        assertTrueJUnit4(
+            "cellToMove4 is in position: " + env.getPosition(cellToMove4),
+            EXPECTED_POS_DIFFDIAM4_1.equals(env.getPosition(cellToMove4))
+        );
         env.removeNode(ng1);
         env.addNode(nm1, p1);
         env.moveNode(cellToMove4, pd);
-        assertTrueJUnit4("cellToMove4 is in position: " + env.getPosition(cellToMove4),
-                env.getPosition(cellToMove4).equals(EXPECTED_POS_DIFFDIAM4_2));
+        assertTrueJUnit4(
+            "cellToMove4 is in position: " + env.getPosition(cellToMove4),
+            EXPECTED_POS_DIFFDIAM4_2.equals(env.getPosition(cellToMove4))
+        );
     }
 
     /**
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveDifferentDiam5() {
+    void testMoveDifferentDiam5() {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 50);
         final CellWithCircularArea<Euclidean2DPosition> cellToMove5 = np3;
         env.addNode(cellToMove5, originalPos);
@@ -540,7 +548,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveDifferentDiam6() {
+    void testMoveDifferentDiam6() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove6 = np1;
         env.addNode(cellToMove6, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
@@ -560,7 +568,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveDifferentDiam7() {
+    void testMoveDifferentDiam7() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove7 = np1;
         env.addNode(cellToMove7, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
@@ -578,7 +586,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveDifferentDiam8() {
+    void testMoveDifferentDiam8() {
         final CellWithCircularArea<Euclidean2DPosition> cellToMove8 = np1;
         env.addNode(cellToMove8, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
@@ -597,7 +605,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * correctly updated.
      */
     @Test
-    public void testMoveInTwoSteps1() {
+    void testMoveInTwoSteps1() {
         final CellWithCircularArea<Euclidean2DPosition> c1 = np1;
         env.addNode(c1, originalPos);
         final Euclidean2DPosition pd1 = new Euclidean2DPosition(50, 0);
@@ -616,7 +624,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode9() {
+    void testMoveNode9() {
         final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, 1);
         final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, 1);
         env.addNode(c2, NODE_POS9);
@@ -630,7 +638,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode10() {
+    void testMoveNode10() {
         final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, 1);
         final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, 1);
         env.addNode(c2, NODE_POS10);
@@ -644,7 +652,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode11() {
+    void testMoveNode11() {
         final double diameter = 1;
         final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, diameter);
         final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, diameter);
@@ -667,7 +675,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode12() {
+    void testMoveNode12() {
         final double diameter = 1;
         final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, diameter);
         final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, diameter);
@@ -690,7 +698,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Testing if node moves respecting dimension of all the others.
      */
     @Test
-    public void testMoveNode13() {
+    void testMoveNode13() {
         final double diameter = 1;
         final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, diameter);
         final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, diameter);
@@ -716,7 +724,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Test in a simulation if there's no overlapping between cells.
      */
     @Test
-    public void testNoOverlapInSimulation1() {
+    void testNoOverlapInSimulation1() {
         testLoading("provaBCReaction.yml");
     }
 
@@ -724,7 +732,7 @@ public class TestBioRect2DEnvironmentNoOverlap {
      * Test in a simulation if there's no overlapping between cells.
      */
     @Test
-    public void testNoOverlapInSimulation2() {
+    void testNoOverlapInSimulation2() {
         testLoading("provaBCReaction2.yml");
     }
 

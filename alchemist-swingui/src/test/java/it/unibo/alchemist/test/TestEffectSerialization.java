@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Test for bugs in {@link it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D}.
  */
-public class TestEffectSerialization {
+class TestEffectSerialization {
 
     private static final String FILEPATH = "test.aes";
     private static final File FILE = new File(FILEPATH);
@@ -36,7 +36,7 @@ public class TestEffectSerialization {
      *             if some very serious bug happen
      */
     @Test
-    public void testGsonEffectSerialization() throws IOException, ClassNotFoundException {
+    void testGsonEffectSerialization() throws IOException, ClassNotFoundException {
         EffectSerializationFactory.effectToFile(FILE, E);
         EffectSerializationFactory.effectsFromFile(FILE);
     }
@@ -50,7 +50,7 @@ public class TestEffectSerialization {
      *             if some very serious bug happen
      */
     @Test
-    public void testDefaultEffectSerialization() throws IOException, ClassNotFoundException {
+    void testDefaultEffectSerialization() throws IOException, ClassNotFoundException {
         FileUtilities.objectToFile(E, FILEPATH, false);
         FileUtilities.fileToObject(FILEPATH);
     }
@@ -65,7 +65,7 @@ public class TestEffectSerialization {
      *             if some very serious bug happen
      */
     @Test
-    public void testBackwardCompatibilitySingleEffect() throws IOException, ClassNotFoundException {
+    void testBackwardCompatibilitySingleEffect() throws IOException, ClassNotFoundException {
         FileUtilities.objectToFile(E, FILEPATH, false);
         EffectSerializationFactory.effectsFromFile(FILE);
     }
@@ -80,7 +80,7 @@ public class TestEffectSerialization {
      *             if some very serious bug happen
      */
     @Test
-    public void testBackwardCompatibilityEffects() throws IOException, ClassNotFoundException {
+    void testBackwardCompatibilityEffects() throws IOException, ClassNotFoundException {
         final List<Effect> effects = new ArrayList<>();
         effects.add(E);
         FileUtilities.objectToFile(effects, FILE, false);

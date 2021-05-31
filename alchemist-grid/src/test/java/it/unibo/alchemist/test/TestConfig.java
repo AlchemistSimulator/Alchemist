@@ -26,16 +26,15 @@ import java.nio.file.Paths;
 
 /**
  */
-public class TestConfig {
+class TestConfig {
     private static final String DEPENDENCY_FILE = "config/dependencies_test.txt";
-
 
     /**
      * @throws URISyntaxException indicates failure
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testGeneralSimulationConfig() throws URISyntaxException, IOException {
+    void testGeneralSimulationConfig() throws URISyntaxException, IOException {
         final String resource = "config/00-dependencies.yml";
         final var yaml = ResourceLoader.getResource(resource);
         Assertions.assertNotNull(yaml);
@@ -52,7 +51,7 @@ public class TestConfig {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWorkingDirectory() throws IOException {
+    void testWorkingDirectory() throws IOException {
         final String resource = "config/00-dependencies.yml";
         final var yaml = ResourceLoader.getResource(resource);
         Assertions.assertNotNull(yaml);
@@ -74,7 +73,6 @@ public class TestConfig {
         }
         Assertions.assertFalse(test.exists());
     }
-
 
     private Loader getLoader(final URL yaml) {
         return LoadAlchemist.from(yaml);

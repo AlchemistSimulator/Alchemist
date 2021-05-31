@@ -35,7 +35,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
  */
-public class TestIncarnation {
+class TestIncarnation {
 
     private static final ProtelisIncarnation<Euclidean2DPosition> INCARNATION = new ProtelisIncarnation<>();
 
@@ -44,7 +44,7 @@ public class TestIncarnation {
      * Alchemist entities for running Protelis.
      */
     @Test
-    public void testBuild() {
+    void testBuild() {
         final RandomGenerator rng = new MersenneTwister(0);
         final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>(INCARNATION);
         final Node<Object> node = INCARNATION.createNode(rng, env, null);
@@ -112,7 +112,7 @@ public class TestIncarnation {
      * Verifies that the incarnation can properly init new concentrations.
      */
     @Test
-    public void testCreateConcentration() {
+    void testCreateConcentration() {
         assertEquals("aString", INCARNATION.createConcentration("aString"));
         assertEquals(1.0, INCARNATION.createConcentration("1"));
         assertEquals("foo", INCARNATION.createConcentration("let a = \"foo\"; a"));

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  *
  */
-public class TestLatLongPosition {
+class TestLatLongPositionJava {
 
     private static final LatLng NORTH_CAPE = new LatLng(71.172_5, 25.784_444);
     private static final LatLng INVERCAGILL = new LatLng(-46.412_652, 168.368_963);
@@ -27,7 +27,7 @@ public class TestLatLongPosition {
      * 
      */
     @Test
-    public void testDistance() {
+    void testDistance() {
         for (final DistanceFormula df1 : DistanceFormula.values()) {
             final double dist = LatLongPosition.distance(NORTH_CAPE, INVERCAGILL, df1);
             final double dist2 = LatLongPosition.distance(INVERCAGILL, NORTH_CAPE, df1);

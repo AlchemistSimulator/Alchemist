@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  *
  */
-class TestLatLongPosition2 {
+class TestLatLongPositionJava {
 
     private static final LatLng NORTH_CAPE = new LatLng(71.172_5, 25.784_444);
     private static final LatLng INVERCAGILL = new LatLng(-46.412_652, 168.368_963);

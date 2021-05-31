@@ -27,7 +27,7 @@ public class TestLsaMolecule {
      * 
      */
     @Test
-    public void test() {
+    void test() {
         final ILsaMolecule empty = new LsaMolecule();
         assertNotNull(empty);
         final ILsaMolecule parsedGround = new LsaMolecule("a,b,c,[a;b;c;],d");

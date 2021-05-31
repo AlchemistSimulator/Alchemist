@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  */
-public class TestContinuous2DObstacle {
+class TestContinuous2DObstacle {
 
     private static final RectObstacle2D<Euclidean2DPosition> R1021 = new RectObstacle2D<>(1, 0, 1, 1);
     private static final RectObstacle2D<Euclidean2DPosition> R0527 = new RectObstacle2D<>(0, 5, 2, -2);
@@ -29,7 +29,7 @@ public class TestContinuous2DObstacle {
      * 
      */
     @Test
-    public void test() {
+    void test() {
         final var incarnation = SupportedIncarnations.<Integer, Euclidean2DPosition>get("protelis").orElseThrow();
         final Continuous2DObstacles<Integer> env = new Continuous2DObstacles<>(incarnation);
         env.setLinkingRule(new NoLinks<>());

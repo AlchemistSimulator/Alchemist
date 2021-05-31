@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  *
  */
-public class TestGPSTraceImpl {
+class TestGPSTraceImpl {
 
     /**
      * 
      */
     @Test
-    public void testConstructionWithList() {
+    void testConstructionWithList() {
         assertNotNull(new GPSTraceImpl(ImmutableList.of(
                 new GPSPointImpl(0d,  0d, Time.ZERO))));
     }

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * 
  */
-public class TestGPSLoader {
+class TestGPSLoader {
 
     private static final String BASE_DIR = "trace/";
     private static final String BASE_OK_TEST = BASE_DIR + "ok/";
@@ -86,7 +86,7 @@ public class TestGPSLoader {
      * @throws IOException causes failure
      */
     @Test
-    public void testAlignment() throws IOException {
+    void testAlignment() throws IOException {
         for (final String normalizer : CLASS_ALIGNMENT_NO_ARG) {
             assertEquals(3, new TraceLoader(DIRECTORY_WITH_FILES, normalizer).size().orElseThrow(unexpectedCyclicTrace()));
         }
@@ -111,7 +111,7 @@ public class TestGPSLoader {
      * @throws IOException causes failure
      */
     @Test
-    public void testError() throws IOException {
+    void testError() throws IOException {
         for (final String error : ERRORS) {
             try {
                 fail("Expected error during object creation for " + error + ", got: "

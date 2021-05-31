@@ -144,7 +144,7 @@ public final class EffectSerializer {
         classes.stream()
                 .filter(c -> Arrays.stream(c.getMethods())
                         .filter(m -> Modifier.isStatic(m.getModifiers()))
-                        .anyMatch(m -> m.getName().equals(TARGET_METHOD_NAME)))
+                        .anyMatch(m -> TARGET_METHOD_NAME.equals(m.getName())))
                 .forEach(c -> {
                     try {
                         builder.registerTypeAdapter(c, c.getMethod(TARGET_METHOD_NAME).invoke(null));

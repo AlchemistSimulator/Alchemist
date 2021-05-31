@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 
  *
  */
-public class TestDeformableCell {
+class TestDeformableCell {
 
     private static final double PRECISION = 1e-13;
     private static final double XMIN = -10;
@@ -99,7 +99,7 @@ public class TestDeformableCell {
      * Testing if CircularDeformableCells are added correctly.
      */
     @Test
-    public void testAddNode1() {
+    void testAddNode1() {
         env.addNode(cellNode1, CELL_POS1_1);
         env.addNode(cellNode2, CELL_POS1_2);
         env.addNode(cellNode3, CELL_POS1_3);
@@ -114,7 +114,7 @@ public class TestDeformableCell {
      * Testing if Environment updates correctly after node's remotion.
      */
     @Test
-    public void testAddAndRemoveNode() {
+    void testAddAndRemoveNode() {
         env.addNode(cellNode1, CELL_POS2_1);
         env.addNode(cellNode2, CELL_POS2_2);
         env.addNode(cellNode3, CELL_POS2_3);
@@ -139,7 +139,7 @@ public class TestDeformableCell {
      */
     @Test
     @SuppressWarnings("CPD-START")
-    public void testTensionPresent1() {
+    void testTensionPresent1() {
         env.addNode(cellNode1, CELL_POS_TENSPRES1_1);
         env.addNode(cellNode2, CELL_POS_TENSPRES1_2);
         cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [A] if TensionPresent()"));
@@ -169,7 +169,7 @@ public class TestDeformableCell {
      * Testing {@link TensionPresent}.
      */
     @Test
-    public void testTensionPresent2() {
+    void testTensionPresent2() {
         env.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode3, new Euclidean2DPosition(0, 1));
         cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, "[] --> [A] if TensionPresent()"));
@@ -209,7 +209,7 @@ public class TestDeformableCell {
      * Testing {@link CellTensionPolarization}.
      */
     @Test
-    public void testTensionPolarization1() {
+    void testTensionPolarization1() {
         env.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode3, new Euclidean2DPosition(0, 1));
         cellNode1.addReaction(inc.createReaction(rand, env, cellNode1, time, CELL_TENSION_POLARIZATION)); 
@@ -236,7 +236,7 @@ public class TestDeformableCell {
      * Testing {@link CellTensionPolarization}.
      */
     @Test
-    public void testTensionPolarization2() {
+    void testTensionPolarization2() {
         env.addNode(cellNode1, new Euclidean2DPosition(0, 0)); 
         env.addNode(cellNode3, new Euclidean2DPosition(0, 1)); 
         env.addNode(cellNode2, MOVE_TO_POS_TENSPOL2_3);
@@ -262,7 +262,7 @@ public class TestDeformableCell {
      * Testing {@link CellTensionPolarization}.
      */
     @Test
-    public void testTensionPolarization3() {
+    void testTensionPolarization3() {
         env.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode3, new Euclidean2DPosition(-1, 1));
         env.addNode(cellNode5, new Euclidean2DPosition(-1, -1));
@@ -299,7 +299,7 @@ public class TestDeformableCell {
      * Testing {@link CellTensionPolarization}.
      */
     @Test
-    public void testTensionPolarization4() {
+    void testTensionPolarization4() {
         env.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode5, new Euclidean2DPosition(-1, 0));
         env.addNode(cellNode2, CELL_POS_TENSPOL4_1);
@@ -315,7 +315,7 @@ public class TestDeformableCell {
      * Testing {@link CellTensionPolarization}.
      */
     @Test
-    public void testTensionPolarization5() {
+    void testTensionPolarization5() {
         env.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode5, new Euclidean2DPosition(-1, 0));
         env.addNode(cellNode2, CELL_POS_TENSPOL5_1);
@@ -331,7 +331,7 @@ public class TestDeformableCell {
      * Testing {@link CellTensionPolarization}.
      */
     @Test
-    public void testTensionPolarization6() {
+    void testTensionPolarization6() {
         env.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode4, CELL_POS_TENSPOL6_1);
         env.addNode(cellNode2, CELL_POS_TENSPOL6_2);
@@ -347,7 +347,7 @@ public class TestDeformableCell {
      * Test if cell, in motion, stops when meets another cell.
      */
     @Test
-    public void testMoveNode1() {
+    void testMoveNode1() {
         env.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         env.addNode(cellNode2, CELL_POS_MOV1);
         env.moveNodeToPosition(cellNode1, new Euclidean2DPosition(0, 10));

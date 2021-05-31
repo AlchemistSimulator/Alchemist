@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test for biochemistry incarnation.
  */
-public class TestIncarnation {
+class TestIncarnation {
 
     private static final BiochemistryIncarnation<Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
     private CellNode<Euclidean2DPosition> node;
@@ -74,7 +74,7 @@ public class TestIncarnation {
     /**
      */
     @Test
-    public void testCreateMolecule() {
+    void testCreateMolecule() {
         makeMol("C");
         makeMol("H");
         makeMol("OH");
@@ -132,7 +132,7 @@ public class TestIncarnation {
      * Test various flavors of reaction creation.
      */
     @Test
-    public void testCreateReaction() {
+    void testCreateReaction() {
         //CHECKSTYLE: MagicNumber OFF
         testR("[] --> []", 0, 0, 0, 0, 0, 0, 0, 0);
         testR("[] + [] --> [] + []", 0, 0, 0, 0, 0, 0, 0, 0);
@@ -194,7 +194,7 @@ public class TestIncarnation {
      * 
      */
     @Test
-    public void testCreateNode() {
+    void testCreateNode() {
         assertThrows(IllegalArgumentException.class, () -> INCARNATION.createNode(rand, env, "foo"));
     }
 

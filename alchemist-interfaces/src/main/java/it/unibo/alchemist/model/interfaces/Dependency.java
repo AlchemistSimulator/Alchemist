@@ -62,7 +62,7 @@ public interface Dependency extends Serializable {
      *            the dependency
      * @return true if this dependency generates a dependency with the provided one
      */
-    default boolean dependsOn(Dependency dependency) {
+    default boolean dependsOn(final Dependency dependency) {
         return equals(dependency);
     }
 
@@ -74,7 +74,7 @@ public interface Dependency extends Serializable {
      *            the dependency
      * @return true if this dependency generates a dependency with the provided one
      */
-    default boolean makesDependent(Dependency dependency) {
+    default boolean makesDependent(final Dependency dependency) {
         return dependsOn(dependency);
     }
 

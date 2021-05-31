@@ -36,6 +36,11 @@ plugins {
 
 apply(plugin = "com.eden.orchidPlugin")
 
+val additionalTools: Configuration by configurations.creating
+dependencies {
+    additionalTools("org.jacoco:org.jacoco.core:_")
+}
+
 allprojects {
 
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
@@ -125,7 +130,7 @@ allprojects {
         }
     }
 
-    // TEST
+    // TEST AND COVERAGE
 
     tasks.withType<Test> {
         testLogging {
@@ -133,6 +138,13 @@ allprojects {
             exceptionFormat = TestExceptionFormat.FULL
         }
         useJUnitPlatform()
+    }
+
+    jacoco {
+        toolVersion = additionalTools.resolvedConfiguration.resolvedArtifacts
+            .find { "jacoco" in it.moduleVersion.id.name }
+            ?.moduleVersion?.id?.version
+            ?: toolVersion
     }
 
     tasks.jacocoTestReport {

@@ -176,7 +176,7 @@ allprojects {
     }
 
     detekt {
-        failFast = true
+        allRules = true
         buildUponDefaultConfig = true
         config = files("${rootProject.projectDir}/config/detekt/detekt.yml")
         reports {

@@ -40,8 +40,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
 ) {
     companion object {
 
-        private val generators = ClassPathScanner
-            .subTypesOf<BaseGenerator>("org.graphstream")
+        private val generators = ClassPathScanner.subTypesOf<BaseGenerator>("org.graphstream")
 
         private val factory: Factory = FactoryBuilder()
             .withAutoBoxing<Int>()

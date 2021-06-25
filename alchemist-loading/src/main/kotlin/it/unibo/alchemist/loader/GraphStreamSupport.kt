@@ -104,7 +104,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
          * and possibly a flag to decide whether or not to compute z-dimensions [is3D].
          */
         @JvmOverloads
-        fun <T, P : Position<out P>> generateGraphStream(
+        fun <T, P : Position<P>> generateGraphStream(
             environment: Environment<T, P>,
             nodeCount: Int,
             offsetX: Double = 0.0,

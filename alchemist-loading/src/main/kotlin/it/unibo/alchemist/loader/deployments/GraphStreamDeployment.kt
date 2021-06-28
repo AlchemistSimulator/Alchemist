@@ -18,11 +18,11 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * A deployment based on a [GraphStream](https://graphstream-project.org/) graph.
  */
-class GraphStreamDeployment<T, P>(
+class GraphStreamDeployment<P>(
     private val createLinks: Boolean,
-    private val graphStreamSupport: GraphStreamSupport<T, P>,
+    private val graphStreamSupport: GraphStreamSupport<*, P>,
 ) : Deployment<P> by graphStreamSupport.deployment
-    where P : Position<out P> {
+    where P : Position<P> {
 
     /**
      * Builds a new GraphStream-based deployment, given the [nodeCount],
@@ -31,7 +31,7 @@ class GraphStreamDeployment<T, P>(
      * and its [parameters].
      */
     @JvmOverloads constructor(
-        environment: Environment<T, P>,
+        environment: Environment<*, P>,
         randomGenerator: RandomGenerator,
         nodeCount: Int,
         offsetX: Double = 0.0,

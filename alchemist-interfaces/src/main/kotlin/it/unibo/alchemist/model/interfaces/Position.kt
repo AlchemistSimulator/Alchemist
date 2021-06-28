@@ -60,11 +60,11 @@ interface Position<P : Position<P>> : Serializable {
      * Computes the distance between this position and another compatible
      * position.
      *
-     * @param p
+     * @param otherPosition
      *            the position you want to know the distance to
      * @return the distance between this and p
      */
-    fun distanceTo(p: P): Double
+    fun distanceTo(otherPosition: P): Double
 
     /**
      * Considers both positions as vectors, and sums them.

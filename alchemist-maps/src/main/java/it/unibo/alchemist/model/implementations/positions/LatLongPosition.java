@@ -181,11 +181,11 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double distanceTo(@NotNull final GeoPosition p) {
-        if (p instanceof LatLongPosition) {
-            return distance(latlng, ((LatLongPosition) p).latlng, df);
+    public double distanceTo(@NotNull final GeoPosition otherPosition) {
+        if (otherPosition instanceof LatLongPosition) {
+            return distance(latlng, ((LatLongPosition) otherPosition).latlng, df);
         }
-        return distance(latlng, new LatLng(p.getLatitude(), p.getLongitude()), df);
+        return distance(latlng, new LatLng(otherPosition.getLatitude(), otherPosition.getLongitude()), df);
     }
 
     /**

@@ -133,7 +133,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * @return the distance
      */
     public double distanceTo(final int target) {
-        return distanceTo((ProtelisNode) environment.getNodeByID(target));
+        return distanceTo((ProtelisNode<?>) environment.getNodeByID(target));
     }
 
     @Override

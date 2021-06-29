@@ -5,8 +5,6 @@
  * GNU General Public License) with a linking exception)
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-import java.time.Duration
-
 plugins {
     scala
     id("com.github.maiflai.scalatest")
@@ -27,7 +25,6 @@ dependencies {
     testImplementation(project(":alchemist-loading"))
     testImplementation("org.scalatest:scalatest_2.13:_")
     testImplementation("org.scalatestplus:scalatestplus-junit_2.13:_")
-    testRuntimeOnly("com.vladsch.flexmark:flexmark-profile-pegdown:_")
 }
 
 tasks.withType<ScalaCompile> {
@@ -49,5 +46,7 @@ publishing.publications {
 }
 
 tasks.withType<Test> {
-    timeout.set(Duration.ofMinutes(3))
+    reports {
+        html.required.set(false)
+    }
 }

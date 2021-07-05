@@ -1,3 +1,6 @@
 #!/bin/bash
 set -e
-./gradlew assemble shadowJar dokkaJavadoc orchidBuild --parallel --scan --stacktrace
+./gradlew assemble shadowJar dokkaJavadoc --parallel --scan --stacktrace
+if $REFERENCE; then
+    ./gradlew orchidBuild --parallel --scan --stacktrace
+fi

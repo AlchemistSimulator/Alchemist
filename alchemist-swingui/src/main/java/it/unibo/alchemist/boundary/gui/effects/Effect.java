@@ -37,7 +37,7 @@ public interface Effect extends Serializable {
      * @deprecated use {@link #apply(Graphics2D, Node, Environment, Wormhole2D)} instead.
      */
     @Deprecated
-    default void apply(Graphics2D graphic, Node<?> node, int x, int y) {
+    default void apply(final Graphics2D graphic, final Node<?> node, final int x, final int y) {
         // deprecated, defaults to nothing.
     }
 
@@ -53,10 +53,10 @@ public interface Effect extends Serializable {
      */
     @SuppressWarnings("deprecation")
     default <T, P extends Position2D<P>> void apply(
-            Graphics2D g,
-            Node<T> n,
-            Environment<T, P> env,
-            Wormhole2D<P> wormhole
+            final Graphics2D g,
+            final Node<T> n,
+            final Environment<T, P> env,
+            final Wormhole2D<P> wormhole
     ) {
         final Point viewPoint = wormhole.getViewPoint(env.getPosition(n));
         apply(g, n, viewPoint.x, viewPoint.y); // preserve backward compatibility

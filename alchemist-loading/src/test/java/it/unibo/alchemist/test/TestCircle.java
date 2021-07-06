@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
-public class TestCircle {
+class TestCircle {
 
     private final Shape<GeoPosition> s = new Circle<>(0, 0, 1);
 
@@ -27,7 +27,7 @@ public class TestCircle {
      * 
      */
     @Test
-    public void test() {
+    void test() {
         assertTrue(check(0, 0));
         assertTrue(check(0.5, 0.5));
         assertTrue(check(-0.5, 0.5));

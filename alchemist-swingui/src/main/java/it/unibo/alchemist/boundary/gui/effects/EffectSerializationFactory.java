@@ -13,12 +13,16 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.SupportedIncarnations;
+import org.danilopianini.lang.CollectionWithCurrentElement;
+import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,11 +31,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
-import org.danilopianini.io.FileUtilities;
-import org.danilopianini.lang.CollectionWithCurrentElement;
-import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 
 /**
  * Serialize Alchemist effects from/to file in human readable format.
@@ -39,6 +39,7 @@ import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
  */
 @Deprecated
 public final class EffectSerializationFactory {
+
     private static final RuntimeTypeAdapterFactory<Effect> RUNTIME_TYPE_ADAPTER_FACTORY =
             RuntimeTypeAdapterFactory.of(Effect.class);
 
@@ -48,20 +49,44 @@ public final class EffectSerializationFactory {
     }
 
     private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(RUNTIME_TYPE_ADAPTER_FACTORY)
-            .registerTypeHierarchyAdapter(CollectionWithCurrentElement.class,
-                    new TypeAdapter<ImmutableCollectionWithCurrentElement<?>>() {
-                        @Override
-                        public void write(final JsonWriter out, final ImmutableCollectionWithCurrentElement<?> value)
-                                throws IOException {
-                            out.value(value.getCurrent().toString());
+            .registerTypeHierarchyAdapter(
+                CollectionWithCurrentElement.class,
+                new TypeAdapter<ImmutableCollectionWithCurrentElement<?>>() {
+                    @Override
+                    public void write(final JsonWriter out, final ImmutableCollectionWithCurrentElement<?> value)
+                            throws IOException {
+                        out.value(value.getCurrent().toString());
+                    }
+                    @Override
+                    public ImmutableCollectionWithCurrentElement<?> read(final JsonReader in) throws IOException {
+                        return new ImmutableCollectionWithCurrentElement<>(
+                                SupportedIncarnations.getAvailableIncarnations(), in.nextString());
+                    }
+                }
+            )
+            .registerTypeHierarchyAdapter(
+                Color.class,
+                new TypeAdapter<Color>() {
+                    @Override
+                    public void write(final JsonWriter out, final Color value) throws IOException {
+                        out.beginObject();
+                        out.name("value");
+                        out.value(value.getRGB());
+                        out.endObject();
+                    }
+                    @Override
+                    public Color read(final JsonReader in) throws IOException {
+                        in.beginObject();
+                        in.nextName();
+                        final int value = in.nextInt();
+                        while (in.peek() != JsonToken.END_OBJECT) {
+                            in.skipValue();
                         }
-
-                        @Override
-                        public ImmutableCollectionWithCurrentElement<?> read(final JsonReader in) throws IOException {
-                            return new ImmutableCollectionWithCurrentElement<>(
-                                    SupportedIncarnations.getAvailableIncarnations(), in.nextString());
-                        }
-                    })
+                        in.endObject();
+                        return new Color(value);
+                    }
+                }
+            )
             .setPrettyPrinting().create();
 
     private EffectSerializationFactory() {
@@ -83,23 +108,8 @@ public final class EffectSerializationFactory {
     @SuppressWarnings("unchecked")
     @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION", justification = "RuntimeException is willingly caught")
     public static List<Effect> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
-        // Try to deserialize a JSON file at first
-        final Reader fr = new InputStreamReader(new FileInputStream(effectFile), Charsets.UTF_8);
-        try {
-            final List<Effect> effects = GSON.fromJson(fr, new TypeToken<List<Effect>>() {
-            }.getType());
-            fr.close();
-            return effects;
-        } catch (final Exception e) { // NOPMD
-            fr.close();
-            final Object res = FileUtilities.fileToObject(effectFile);
-            if (res instanceof Effect) {
-                final List<Effect> effects = new ArrayList<>();
-                effects.add((Effect) res);
-                return effects;
-            }
-            // Backward compatibility: try to deserialize a binary file
-            return (List<Effect>) FileUtilities.fileToObject(effectFile);
+        try (Reader fr = new InputStreamReader(new FileInputStream(effectFile), Charsets.UTF_8)) {
+            return GSON.fromJson(fr, new TypeToken<List<Effect>>() { }.getType());
         }
     }
 
@@ -114,9 +124,7 @@ public final class EffectSerializationFactory {
      *             Exception in handling the file
      */
     public static void effectToFile(final File effectFile, final Effect effect) throws IOException {
-        final List<Effect> effects = new ArrayList<>();
-        effects.add(effect);
-        effectsToFile(effectFile, effects);
+        effectsToFile(effectFile, List.of(effect));
     }
 
     /**

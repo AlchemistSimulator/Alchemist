@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 /**
  *
  */
-public class TestOSMEnvironment {
+class TestOSMEnvironment {
 
     /**
      * Tests for parallel creation of {@link OSMEnvironment}.
@@ -32,7 +32,7 @@ public class TestOSMEnvironment {
      * @throws Throwable if any exception occurs, it gets re-thrown, making the test fail.
      */
     @Test
-    public void testConcurrentInit() throws Throwable {
+    void testConcurrentInit() throws Throwable {
         final ExecutorService executor = Executors.newFixedThreadPool(100);
         final Incarnation<Object, GeoPosition> incarnation =
                 SupportedIncarnations.<Object, GeoPosition>get("protelis").orElseThrow();

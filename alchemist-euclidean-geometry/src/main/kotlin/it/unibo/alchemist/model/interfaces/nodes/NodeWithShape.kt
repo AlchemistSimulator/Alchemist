@@ -21,6 +21,5 @@ interface NodeWithShape<T, S : Vector<S>, A : GeometricTransformation<S>> : Node
     /**
      * The shape of the node.
      */
-    @JvmDefault
     val shape: GeometricShape<S, A>
 }

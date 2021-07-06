@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * 
  */
 @SuppressWarnings("CPD-START")
-public class TestChemotaxis {
+class TestChemotaxis {
 
     private static final double CONCENTRATION1 = 5;
     private static final double CONCENTRATION2 = 10;
@@ -73,7 +73,7 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemotacticPolarization1() {
+    void testChemotacticPolarization1() {
         final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
         final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
@@ -103,7 +103,7 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemotacticPolarization2() {
+    void testChemotacticPolarization2() {
         final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
         final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
@@ -133,7 +133,7 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemotacticPolarization3() {
+    void testChemotacticPolarization3() {
         final Euclidean2DPosition p1 =  new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
         final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
@@ -160,7 +160,7 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemotacticPolarization4() {
+    void testChemotacticPolarization4() {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(0.5, 0.5);
         env.addNode(cellNode1, p1);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
@@ -179,7 +179,7 @@ public class TestChemotaxis {
      * Testing if cell is polarized correctly.
      */
     @Test
-    public void testChemotacticPolarization5() {
+    void testChemotacticPolarization5() {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
         final Euclidean2DPosition p3 = new Euclidean2DPosition(-1, 0);
@@ -208,7 +208,7 @@ public class TestChemotaxis {
      * Testing if cell moves according to the given polarization.
      */
     @Test
-    public void testChemotacticMove1() {
+    void testChemotacticMove1() {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
         final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
@@ -234,7 +234,7 @@ public class TestChemotaxis {
      * Testing if cell moves according to the given polarization.
      */
     @Test
-    public void testChemotacticMove2() {
+    void testChemotacticMove2() {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
         final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
@@ -267,7 +267,7 @@ public class TestChemotaxis {
      * Testing if cell moves according to the given polarization.
      */
     @Test
-    public void testChemotacticMove3() {
+    void testChemotacticMove3() {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
         final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);

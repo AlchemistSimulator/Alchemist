@@ -35,13 +35,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
  */
-public class TestInSimulator {
+class TestInSimulator {
 
     /**
      * Basic loading capabilities.
      */
     @Test
-    public void testBase() {
+    void testBase() {
         testNoVar("testbase.yml");
     }
 
@@ -49,7 +49,7 @@ public class TestInSimulator {
      * Tests loading custom nodes.
      */
     @Test
-    public void testCustomNodes() {
+    void testCustomNodes() {
         testNoVar("customnodes.yml");
     }
 
@@ -57,7 +57,7 @@ public class TestInSimulator {
      * Test the ability to load a Protelis module from classpath.
      */
     @Test
-    public void testLoadProtelisModule() {
+    void testLoadProtelisModule() {
         testNoVar("test00.yml");
     }
 
@@ -70,7 +70,7 @@ public class TestInSimulator {
      * @throws InterruptedException causes failure
      */
     @Test
-    public void testThreadDependentLoadModule() throws IOException, URISyntaxException, ExecutionException, InterruptedException {
+    void testThreadDependentLoadModule() throws IOException, URISyntaxException, ExecutionException, InterruptedException {
         final Callable<Void> c = () -> {
             testNoVar("18-export.yml");
             return null;
@@ -108,7 +108,7 @@ public class TestInSimulator {
      * Test the ability to inject variables.
      */
     @Test
-    public void testLoadWithVariable() {
+    void testLoadWithVariable() {
         final Map<String, Double> map = Maps.newLinkedHashMap();
         map.put("testVar", 10d);
         testLoading("test00.yml", map);

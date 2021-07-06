@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A series of tests checking that our Yaml Loader is working as expected.
  */
 @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
-public class TestLoadGPSTrace {
+class TestLoadGPSTrace {
 
     private static final Map<LatLongPosition, LatLongPosition> START_ARRIVE_POSITION = new HashMap<>();
     private static final Map<Node<?>, LatLongPosition> NODE_START_POSITION = new HashMap<>();
@@ -72,7 +72,7 @@ public class TestLoadGPSTrace {
      * @param <T> Used for internal consistency
      */
     @Test
-    public <T> void testLoadGPSTrace() {
+    <T> void testLoadGPSTrace() {
         final var res = ResourceLoader.getResource("testgps.yml");
         assertNotNull(res, "Missing test resource " + "testgps.yml");
         final Environment<T, GeoPosition> env = LoadAlchemist.from(res).<T, GeoPosition>getDefault().getEnvironment();

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  *
  */
-public class TestGrid {
+class TestGrid {
 
     private static Continuous2DEnvironment env() {
         return new Continuous2DEnvironment<Object>(SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").get());
@@ -34,7 +34,7 @@ public class TestGrid {
      * 
      */
     @Test
-    public void testVerticalLine() {
+    void testVerticalLine() {
         test(9, 1, 9.9);
         assertEquals(10L, new Grid(env(), rand(), 0, 0, 1, 10, 1, 1, 0, 0).stream().count());
     }
@@ -43,7 +43,7 @@ public class TestGrid {
      * 
      */
     @Test
-    public void testHorizontalLine() {
+    void testHorizontalLine() {
         test(10, 10, 1);
     }
 
@@ -51,7 +51,7 @@ public class TestGrid {
      * 
      */
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         test(0, 0, 0);
     }
 
@@ -59,7 +59,7 @@ public class TestGrid {
      * 
      */
     @Test
-    public void test1x1() {
+    void test1x1() {
         test(1, 1, 1);
     }
 
@@ -67,7 +67,7 @@ public class TestGrid {
      * 
      */
     @Test
-    public void test10x10() {
+    void test10x10() {
         test(100, 10, 10);
     }
 
@@ -75,7 +75,7 @@ public class TestGrid {
      *
      */
     @Test
-    public void testbug73() {
+    void testbug73() {
         assertEquals(20L * 20, new Grid(env(), rand(), 0, 0, 20, 20, 1, 1, 0.8, 0.8).stream().distinct().count());
     }
 
@@ -83,7 +83,7 @@ public class TestGrid {
      * 
      */
     @Test
-    public void test10x10negative() {
+    void test10x10negative() {
         test(100, -10, -10);
     }
 

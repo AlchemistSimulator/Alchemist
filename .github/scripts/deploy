@@ -5,9 +5,9 @@ if [ $GITHUB_REPOSITORY = 'AlchemistSimulator/Alchemist' ]
     ./gradlew publishKotlinMavenPublicationToCentralS01Repository
     # Publish on GitHub. Fails due to overwritings, so it's ok to give up
     ./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
-    ./gradlew orchidDeploy
     if [ -n "$TAG" ] || [ "$BRANCH" = 'develop' ]
     then
+        ./gradlew orchidDeploy
         echo Installing surge
         sudo npm install --global surge
         echo Deploying ${STABILITY_MARKER}javadoc on surge

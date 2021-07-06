@@ -56,19 +56,16 @@ interface Vector<S : Vector<S>> {
      * Division by a Double.
      * @return the resulting vector, the operation is not performed in-place.
      */
-    @JvmDefault
     operator fun div(other: Double): S = times(1 / other)
 
     /**
      * Finds the magnitude of a vector.
      */
-    @JvmDefault
     val magnitude get() = sqrt(coordinates.map { it * it }.sum())
 
     /**
      * Computes the dot product between two vectors.
      */
-    @JvmDefault
     fun dot(other: S): Double = coordinates
         .zip(other.coordinates)
         .map { (a, b) -> a * b }
@@ -77,7 +74,6 @@ interface Vector<S : Vector<S>> {
     /**
      * Computes the angle in radians between two vectors.
      */
-    @JvmDefault
     fun angleBetween(other: S): Double = acos(dot(other) / (magnitude * other.magnitude))
 
     /**
@@ -90,7 +86,6 @@ interface Vector<S : Vector<S>> {
      * @return a resized version of the vector, whose magnitude is equal to [newLen].
      * Direction and verse of the original vector are preserved.
      */
-    @JvmDefault
     fun resized(newLen: Double): S = normalized().times(newLen)
 
     /**
@@ -108,7 +103,6 @@ interface Vector<S : Vector<S>> {
      * @return this vector if its [magnitude] is smaller than or equal to [maximumMagnitude] or a resized version
      * of [maximumMagnitude] otherwise.
      */
-    @JvmDefault
     fun coerceAtMost(maximumMagnitude: Double): S =
         resizedIf(magnitude > maximumMagnitude, maximumMagnitude)
 
@@ -116,14 +110,12 @@ interface Vector<S : Vector<S>> {
      * @return this vector if its [magnitude] is greater than or equal to [minimumMagnitude] or a resized version
      * of [minimumMagnitude] otherwise.
      */
-    @JvmDefault
     fun coerceAtLeast(minimumMagnitude: Double): S =
         resizedIf(magnitude < minimumMagnitude, minimumMagnitude)
 
     /**
      * Performs a coercion at least and at most.
      */
-    @JvmDefault
     fun coerceIn(minimumMagnitude: Double, maximumMagnitude: Double): S =
         coerceAtLeast(minimumMagnitude).coerceAtMost(maximumMagnitude)
 

@@ -133,7 +133,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * @return the distance
      */
     public double distanceTo(final int target) {
-        return distanceTo((ProtelisNode) environment.getNodeByID(target));
+        return distanceTo((ProtelisNode<?>) environment.getNodeByID(target));
     }
 
     @Override
@@ -211,12 +211,12 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * @return The same behavior of MIT Proto's nbrdelay (forward view).
      */
     @Override
-    public Field nbrDelay() {
+    public Field<Number> nbrDelay() {
         return buildField(Function.identity(), getDeltaTime());
     }
 
     @Override
-    public Field nbrLag() {
+    public Field<Double> nbrLag() {
         return buildField(time -> getCurrentTime().doubleValue() - time, getCurrentTime().doubleValue());
     }
 

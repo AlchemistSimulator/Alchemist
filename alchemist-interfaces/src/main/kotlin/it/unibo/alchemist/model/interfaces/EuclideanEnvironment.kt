@@ -15,8 +15,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * An Euclidean space, where [Position]s [P] are valid [Vector]s,
  * supporting any concentration type [T].
  */
-interface EuclideanEnvironment<T, P> : Environment<T, P>
-where P : Position<P>, P : Vector<P> {
+interface EuclideanEnvironment<T, P> : Environment<T, P> where P : Position<P>, P : Vector<P> {
 
     /**
      * This method moves a [node] in the environment toward some [direction]. If
@@ -34,12 +33,10 @@ where P : Position<P>, P : Vector<P> {
     /**
      * Creates a [Position] compatible with this environment given its [coordinates].
      */
-    @JvmDefault
     fun makePosition(vararg coordinates: Double): P
 
     /**
      * Create a position corresponding to the origin of this environment.
      */
-    @JvmDefault
     val origin: P get() = makePosition(*DoubleArray(dimensions).toTypedArray())
 }

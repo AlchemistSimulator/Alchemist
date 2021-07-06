@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * JUnit test for EffectSerializer class.
  */
-public class EffectSerializerTest {
+class EffectSerializerTest {
     private static final String TEST_EFFECTS = "it/unibo/alchemist/gui/effects/json/TestEffects.json";
     private static final double TEST_SIZE = 6.0;
     private static final double TEST_SIZE_LIST = 7.0;
@@ -39,7 +39,7 @@ public class EffectSerializerTest {
      * @throws IOException if something goes wrong
      */
     @Test
-    public void testMultipleEffectGroupsSerialization() throws IOException {
+    void testMultipleEffectGroupsSerialization() throws IOException {
         final File file = TemporaryFile.create();
         final List<EffectGroup<Position2D<? extends Position2D<?>>>> groups = initList();
         EffectSerializer.effectGroupsToFile(file, groups);
@@ -53,7 +53,7 @@ public class EffectSerializerTest {
      * @throws IOException if something goes wrong
      */
     @Test
-    public void testListOfEffectSerialization() throws IOException {
+    void testListOfEffectSerialization() throws IOException {
         final File file = TemporaryFile.create();
         final Type type = new TypeToken<List<EffectFX<Position2D<? extends Position2D<?>>>>>() {
         }.getType();
@@ -104,7 +104,7 @@ public class EffectSerializerTest {
      * @throws IOException if something goes wrong
      */
     @Test
-    public void testResourceSerialization() throws IOException {
+    void testResourceSerialization() throws IOException {
         final EffectGroup<Position2D<? extends Position2D<?>>> group = new EffectStack<>("Default Effects");
         final DrawDot<Position2D<? extends Position2D<?>>> effect = new DrawDot<>("Draw the dots");
         effect.setSize(TEST_SIZE);

@@ -20,14 +20,14 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for bugs in {@link AbstractWormhole2D}.
  */
-public class TestWormhole2D {
+class TestWormhole2D {
 
     /**
      * Ensure that no exception is thrown when a zero-sized environment is
      * requested.
      */
     @Test
-    public void testZeroSizeEnvironment() {
+    void testZeroSizeEnvironment() {
         final var incarnation = SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").orElseThrow();
         final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>(incarnation);
         final AbstractWormhole2D<Euclidean2DPosition> worm = new TestPurposeWormhole<>(env);

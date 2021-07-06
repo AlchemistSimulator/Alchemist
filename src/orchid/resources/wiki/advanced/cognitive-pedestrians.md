@@ -250,7 +250,7 @@ _reactions: &behavior
       parameters: [1.0]
     type: PrioritySteering
     actions:
-      - type: CognitiveAgentCognitiveAgentAvoidLayer
+      - type: CognitiveAgentAvoidLayer
         parameters: [*danger]
 
 deployments:

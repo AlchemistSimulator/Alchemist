@@ -27,6 +27,7 @@ buildProfile/
 .idea/codeStyleSettings.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/jarRepositories.xml
+.idea/dataSources.local.xml
 
 # MacOS
 .DS_Store

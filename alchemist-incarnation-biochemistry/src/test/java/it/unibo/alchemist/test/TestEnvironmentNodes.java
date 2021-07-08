@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 
 @SuppressWarnings("ALL")
-public final class TestEnvironmentNodes {
+final class TestEnvironmentNodes {
 
     private static final double PRECISION = 1e-12;
     private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
@@ -78,7 +78,7 @@ public final class TestEnvironmentNodes {
      * test a simple reaction "[A] --> [A in env]".
      */
     @Test
-    public void test1() {
+    void test1() {
         final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
         final EnvironmentNode envNode = new EnvironmentNodeImpl(env);
         final Molecule a = new Biomolecule("A");
@@ -97,7 +97,7 @@ public final class TestEnvironmentNodes {
      * test a simple reaction "[A] --> [A in env]".
      */
     @Test
-    public void test2() {
+    void test2() {
         final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
         final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
         final Molecule a = new Biomolecule("A");
@@ -147,7 +147,7 @@ public final class TestEnvironmentNodes {
      * Test if env nodes are selected randomly.
      */
     @Test
-    public void testDiffusionWithEnvironmentNodes() {
+    void testDiffusionWithEnvironmentNodes() {
         testDiffusion(new EnvironmentNodeImpl(env));
     }
 
@@ -155,7 +155,7 @@ public final class TestEnvironmentNodes {
      * Test if env nodes with same concentration are selected randomly.
      */
     @Test
-    public void testDiffusionWithCellNodes() {
+    void testDiffusionWithCellNodes() {
         testDiffusion(new CellNodeImpl<>(env));
     }
  
@@ -163,7 +163,7 @@ public final class TestEnvironmentNodes {
      * Test if env nodes with same concentration are selected randomly.
      */
     @Test
-    public void test5() {
+    void test5() {
         final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
         final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
         final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
@@ -197,7 +197,7 @@ public final class TestEnvironmentNodes {
      * test a simple reaction "[A] --> [A in env]".
      */
     @Test
-    public void test6() {
+    void test6() {
         final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
         final Molecule a = new Biomolecule("A");
         injectAInEnvReaction(cellNode, 1);
@@ -215,7 +215,7 @@ public final class TestEnvironmentNodes {
      * Test transport of a molecule from cell to env.
      */
     @Test
-    public void testEnv1() {
+    void testEnv1() {
         final var environment = testNoVar("testEnv1.yml");
         final double conA = (double) environment.getNodes().stream()
                 .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
@@ -229,7 +229,7 @@ public final class TestEnvironmentNodes {
      * Simple interaction between a CellNode and 4 EnviromentalNodes.
      */
     @Test
-    public void testEnv2() {
+    void testEnv2() {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv2.yml");
         final Node<Double> center = env.getNodes().stream()
                 .parallel()
@@ -252,7 +252,7 @@ public final class TestEnvironmentNodes {
      * Test transport of a molecule from env to cell.
      */
     @Test
-    public void testEnv3() {
+    void testEnv3() {
         final double conAInCell = (double) testNoVar("testEnv3.yml").getNodes().stream()
                 .parallel()
                 .filter(n -> n.getClass().equals(CellNodeImpl.class))
@@ -274,7 +274,7 @@ public final class TestEnvironmentNodes {
      * So there's no A in env and in cell both.
      */
     @Test
-    public void testEnv4() {
+    void testEnv4() {
         final double conAInCell = (double) testNoVar("testEnv4.yml").getNodes().stream()
                 .parallel()
                 .filter(n -> n.getClass().equals(CellNodeImpl.class))
@@ -294,7 +294,7 @@ public final class TestEnvironmentNodes {
      * test programming an environment node.
      */
     @Test
-    public void testEnv5() {
+    void testEnv5() {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv5.yml");
         final double conAInEnv1 = (double) env.getNodes().stream()
                 .parallel()
@@ -316,7 +316,7 @@ public final class TestEnvironmentNodes {
      * Now this will throw an UnsupportedOperationException
      */
     @Test
-    public void testEnv6() {
+    void testEnv6() {
         assertThrows(UnsupportedOperationException.class, () -> testNoVar("testEnv6.yml"));
     }
 
@@ -324,7 +324,7 @@ public final class TestEnvironmentNodes {
      * test if neighbors are selected correctly.
      */
     @Test
-    public void testEnv7() {
+    void testEnv7() {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv7.yml");
         final double conAInCell = (double) env.getNodes().stream()
                 .parallel()
@@ -346,7 +346,7 @@ public final class TestEnvironmentNodes {
      * test if neighbors are selected correctly.
      */
     @Test
-    public void testEnv8() {
+    void testEnv8() {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv8.yml");
         final double conAInCell = (double) env.getNodes().stream()
                 .parallel()

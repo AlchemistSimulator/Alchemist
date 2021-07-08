@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  *
  */
-public final class TestContinuous2DEnvironment {
+final class TestContinuous2DEnvironment {
 
     private static final double [] ZEROS = {0, 0};
     private static final double [] P2_3 = {2, 3};
@@ -51,7 +51,7 @@ public final class TestContinuous2DEnvironment {
      * Test size initialization and change.
      */
     @Test
-    public void testEnvironmentSize() {
+    void testEnvironmentSize() {
         assertEquals(0, environment.getNodeCount());
         assertArrayEquals(ZEROS, environment.getSize(), TOLERANCE);
         environment.addNode(new IntNode(environment), new Euclidean2DPosition(P2_3));
@@ -66,7 +66,7 @@ public final class TestContinuous2DEnvironment {
      * Test environment offset.
      */
     @Test
-    public void testEnvironmentOffset() {
+    void testEnvironmentOffset() {
         assertEquals(0, environment.getNodeCount());
         assertTrue(Double.isNaN(environment.getOffset()[0]));
         assertTrue(Double.isNaN(environment.getOffset()[1]));
@@ -82,7 +82,7 @@ public final class TestContinuous2DEnvironment {
      * Test failure on wrong queries.
      */
     @Test
-    public void testNegativeRangeQuery() {
+    void testNegativeRangeQuery() {
         assertEquals(0, environment.getNodeCount());
         final Node<Integer> dummy = new IntNode(environment);
         environment.addNode(dummy, new Euclidean2DPosition(ZEROS));
@@ -98,7 +98,7 @@ public final class TestContinuous2DEnvironment {
      * Test failure on wrong queries.
      */
     @Test
-    public void testZeroRangeQuery() {
+    void testZeroRangeQuery() {
         assertEquals(0, environment.getNodeCount());
         final Node<Integer> dummy = new IntNode(environment);
         final Node<Integer> dummy2 = new IntNode(environment);

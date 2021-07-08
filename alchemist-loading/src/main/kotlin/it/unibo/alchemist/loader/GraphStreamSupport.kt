@@ -40,8 +40,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
 ) {
     companion object {
 
-        private val generators = ClassPathScanner
-            .subTypesOf<BaseGenerator>("org.graphstream")
+        private val generators = ClassPathScanner.subTypesOf<BaseGenerator>("org.graphstream")
 
         private val factory: Factory = FactoryBuilder()
             .withAutoBoxing<Int>()
@@ -104,7 +103,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
          * and possibly a flag to decide whether or not to compute z-dimensions [is3D].
          */
         @JvmOverloads
-        fun <T, P : Position<out P>> generateGraphStream(
+        fun <T, P : Position<P>> generateGraphStream(
             environment: Environment<T, P>,
             nodeCount: Int,
             offsetX: Double = 0.0,
@@ -131,7 +130,6 @@ class GraphStreamSupport<T, P : Position<out P>>(
             with(generator) {
                 addNodeLabels(false)
                 setRandomSeed(randomGenerator.nextLong())
-//                addSink(graph)
                 addSink(layout)
                 begin()
                 // One node is inserted by GraphStream automatically

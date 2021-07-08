@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * A series of tests checking that our Yaml Loader is working as expected.
  */
-public class TestYAMLLoader {
+class TestYAMLLoader {
 
     /*
      * To run a single test, just change from "any two digits" to the exact test
@@ -52,7 +52,7 @@ public class TestYAMLLoader {
      * Tests building a custom implementation of time distribution.
      */
     @Test
-    public void testAnyRealDistribution() {
+    void testAnyRealDistribution() {
         final Environment<?, ?> env = testNoVar("synthetic/anyrealdistribution.yml");
         env.forEach(n -> n.forEach(r -> {
             assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
@@ -63,7 +63,7 @@ public class TestYAMLLoader {
      * Test loading a custom node class.
      */
     @Test
-    public void testCustomNodes() {
+    void testCustomNodes() {
         testNoVar("synthetic/customnode.yml")
         .forEach(n -> assertTrue(n instanceof TestNode,
                 "Node are not instances of " + TestNode.class.getName()
@@ -77,7 +77,7 @@ public class TestYAMLLoader {
      * Useful as regression test.
      */
     @Test
-    public void testISAC2016Lab() {
+    void testISAC2016Lab() {
         ClassPathScanner.resourcesMatchingAsStream(ISAC_REGEX, "isac")
             .forEach(TestYAMLLoader::testNoVar);
     }
@@ -88,7 +88,7 @@ public class TestYAMLLoader {
      * @param <P> Used for internal consistency
      */
     @Test
-    public <P extends Position<P>> void testLayers() {
+    <P extends Position<P>> void testLayers() {
         @SuppressWarnings("unchecked")
         final Environment<Object, P> env = (Environment<Object, P>) testNoVar("synthetic/testlayer.yml");
         final Set<Layer<Object, P>> layers = env.getLayers();
@@ -111,7 +111,7 @@ public class TestYAMLLoader {
      * Test loading layer classes.
      */
     @Test
-    public void testLoadVariablesInLists() {
+    void testLoadVariablesInLists() {
         assertNotNull(testNoVar("synthetic/testlist.yml"));
     }
 
@@ -119,7 +119,7 @@ public class TestYAMLLoader {
      * Tests injecting multiple molecules in the same shape.
      */
     @Test
-    public void testMultipleMolecules() {
+    void testMultipleMolecules() {
         final Environment<?, ?> env = testNoVar("synthetic/multiplemolecule.yml");
         env.forEach(n -> assertEquals(4, n.getMoleculeCount()));
     }
@@ -128,7 +128,7 @@ public class TestYAMLLoader {
      * Test loading layer classes.
      */
     @Test
-    public void testSingleValuedGeometricVar() {
+    void testSingleValuedGeometricVar() {
         assertNotNull(testNoVar("synthetic/singleValuedGeometricVar.yml"));
     }
 
@@ -136,7 +136,7 @@ public class TestYAMLLoader {
      * Test variables with same structure but different names.
      */
     @Test
-    public void testVariableContentClash() {
+    void testVariableContentClash() {
         assertNotNull(testNoVar("synthetic/varcontentclash.yml"));
     }
 
@@ -144,7 +144,7 @@ public class TestYAMLLoader {
      * Test variables with same structure but different names.
      */
     @Test
-    public void testScalaVar() {
+    void testScalaVar() {
         final Environment<Object, ?> env = testNoVar("synthetic/scalavar.yml");
         assertNotNull(env);
         assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
@@ -154,7 +154,7 @@ public class TestYAMLLoader {
      * Test dependencies section.
      */
     @Test
-    public void testDependencies() {
+    void testDependencies() {
         final var is = ResourceLoader.getResource("isac/16-dependencies.yaml");
         assertNotNull(is);
         final Loader loader = LoadAlchemist.from(is);

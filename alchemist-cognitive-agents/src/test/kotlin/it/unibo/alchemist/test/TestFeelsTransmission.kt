@@ -20,7 +20,7 @@ class TestFeelsTransmission<T, P> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
         fun Environment<T, P>.perceivedDanger() = nodes.filterIsInstance<CognitiveAgent>()
-            .sumByDouble { it.cognitive.dangerBelief() }
+            .sumOf { it.cognitive.dangerBelief() }
         fun EuclideanEnvironment<T, P>.dangerIsLoaded() = this.also {
             nodes.filterIsInstance<AbstractCognitivePedestrian<*, *, *, *>>().forEach {
                 it.danger shouldNotBe null

@@ -24,13 +24,13 @@ import java.util.stream.StreamSupport;
  * Tests that the TOMACS setup could be successfully loaded (in particular,
  * Protelis rounds with personalized message retaining time).
  */
-public class TestTOMACS {
+class TestTOMACS {
 
     /**
      * 
      */
     @Test
-    public void testCustomRetainTimeLoading() {
+    void testCustomRetainTimeLoading() {
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
         Assertions.assertTrue(StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
             .map(n -> (ProtelisNode<?>) n)

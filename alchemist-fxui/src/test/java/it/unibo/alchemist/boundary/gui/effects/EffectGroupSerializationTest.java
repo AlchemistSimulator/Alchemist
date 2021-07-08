@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * JUnit test for {@link EffectGroup} and {@link EffectStack} serialization.
  */
-public class EffectGroupSerializationTest {
+class EffectGroupSerializationTest {
     private static final double TEST_DOT_SIZE = 22.0;
     private static final double TEST_COLORED_DOT_SIZE = 25.0;
 
@@ -27,7 +27,7 @@ public class EffectGroupSerializationTest {
      *             if something goes wrong
      */
     @Test
-    public void testJavaSerialization() throws Exception {
+    void testJavaSerialization() throws Exception {
         final File file = File.createTempFile("testJavaSerialization", null);
         final var effects = this.setupEffectGroup();
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
@@ -46,7 +46,7 @@ public class EffectGroupSerializationTest {
      *             if something goes wrong
      */
     @Test
-    public void testGsonSerialization() throws Exception {
+    void testGsonSerialization() throws Exception {
         final File file = File.createTempFile("testGsonSerialization", null);
         final var effect = this.setupEffectGroup();
         EffectSerializer.effectsToFile(file, effect);

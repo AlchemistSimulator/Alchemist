@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.CellNode;
 /**
  */
 @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
-public class TestJunction {
+class TestJunction {
 
     private CellNode<Euclidean2DPosition> node1;
     private CellNode<Euclidean2DPosition> node2;
@@ -49,7 +49,7 @@ public class TestJunction {
      * Various test cases for junctions management.
      */
     @Test
-    public void test() {
+    void test() {
         final Map<Biomolecule, Double> map1 = new HashMap<>(1);
         final Map<Biomolecule, Double> map2 = new HashMap<>(1);
         map1.put(new Biomolecule("A"), 1d);

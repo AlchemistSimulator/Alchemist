@@ -2,7 +2,6 @@ package it.unibo.alchemist.boundary.gui.effects.json;
 
 import com.google.gson.Gson;
 import javafx.beans.property.Property;
-import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
 
@@ -14,24 +13,6 @@ public abstract class AbstractPropertySerializationTest {
 
     /** The {@link Gson} object used for serialization. */
     protected static final Gson GSON = EffectSerializer.getGSON();
-
-    /**
-     * Tests (de)serialization with default Java serialization engine.
-     * 
-     * @throws Exception
-     *             if something goes wrong
-     */
-    @Test
-    public abstract void testJavaSerialization() throws Exception;
-
-    /**
-     * Tests (de)serialization with Google Gson serialization engine.
-     * 
-     * @throws Exception
-     *             if something goes wrong
-     */
-    @Test
-    public abstract void testGsonSerialization() throws Exception;
 
     /**
      * Method that generate {@link org.junit.jupiter.api.Assertions#assertTrue(boolean)} messages.

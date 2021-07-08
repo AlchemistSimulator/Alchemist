@@ -11,14 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test class for {@link AbstractEffect} static comparison methods.
  */
-public class AbstractEffectTest {
+class AbstractEffectTest {
     private static final String TEST_NAME = "Test";
 
     /**
      * Test method to test {@link AbstractEffect#checkBasicProperties(AbstractEffect, Object)} method.
      */
     @Test
-    public void testCheckBasicProperties() {
+    void testCheckBasicProperties() {
         final var dot1 = new DrawDot<>();
         final var dot2 = new DrawDot<>(TEST_NAME);
         final var dot3 = new DrawDot<>();
@@ -50,7 +50,7 @@ public class AbstractEffectTest {
      * method.
      */
     @Test
-    public void testCheckEqualsProperties() {
+    void testCheckEqualsProperties() {
         final SerializableStringProperty string1 = new SerializableStringProperty(TEST_NAME, TEST_NAME);
         final SerializableStringProperty string2 = new SerializableStringProperty();
         final SerializableStringProperty string3 = new SerializableStringProperty();

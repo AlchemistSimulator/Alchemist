@@ -14,14 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * JUnit test for {@link DrawColoredDot} effect serialization.
  */
-public final class DrawColoredDotSerializationTest extends AbstractEffectSerializationTest<DrawColoredDot<?>> {
+final class DrawColoredDotSerializationTest extends AbstractEffectSerializationTest<DrawColoredDot<?>> {
     private static final String TEST_NAME = "TestDot";
     private static final double TEST_SIZE = 25.0;
     private static final Color TEST_COLOR = Color.CYAN;
 
     @Test
-    @Override
-    public void testJavaSerialization() throws IOException, ClassNotFoundException {
+    void testJavaSerialization() throws IOException, ClassNotFoundException {
         final var effect = new DrawColoredDot<>(TEST_NAME);
         effect.setSize(TEST_SIZE);
         effect.setColor(TEST_COLOR);
@@ -29,8 +28,7 @@ public final class DrawColoredDotSerializationTest extends AbstractEffectSeriali
     }
 
     @Test
-    @Override
-    public void testGsonSerialization() throws IOException {
+    void testGsonSerialization() throws IOException {
         final File file = TemporaryFile.create();
         final var effect = new DrawColoredDot<>(TEST_NAME);
         effect.setSize(TEST_SIZE);

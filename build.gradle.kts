@@ -10,8 +10,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
 import java.io.ByteArrayOutputStream
+import java.net.URL
+import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KOTLIN_VERSION
 
 plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
@@ -35,6 +36,11 @@ plugins {
 }
 
 apply(plugin = "com.eden.orchidPlugin")
+
+val additionalTools: Configuration by configurations.creating
+dependencies {
+    additionalTools("org.jacoco:org.jacoco.core:_")
+}
 
 allprojects {
 
@@ -65,7 +71,6 @@ allprojects {
         jcenter {
             content {
                 onlyForConfigurations(
-                    "detekt",
                     "orchidCompileClasspath",
                     "orchidRuntimeClasspath"
                 )
@@ -112,6 +117,16 @@ allprojects {
         pmd(pmdModule("kotlin"))
     }
 
+    // Enforce Kotlin version coherence
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin")) {
+                useVersion(KOTLIN_VERSION)
+                because("All Kotlin modules should use the same version, and compiler uses $KOTLIN_VERSION")
+            }
+        }
+    }
+
     // COMPILE
 
     tasks.withType<JavaCompile> {
@@ -121,12 +136,12 @@ allprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xjvm-default=enable") // Enable default methods in Kt interfaces
+            freeCompilerArgs = listOf("-Xjvm-default=all") // Enable default methods in Kt interfaces
             allWarningsAsErrors = true
         }
     }
 
-    // TEST
+    // TEST AND COVERAGE
 
     tasks.withType<Test> {
         testLogging {
@@ -134,6 +149,13 @@ allprojects {
             exceptionFormat = TestExceptionFormat.FULL
         }
         useJUnitPlatform()
+    }
+
+    jacoco {
+        toolVersion = additionalTools.resolvedConfiguration.resolvedArtifacts
+            .find { "jacoco" in it.moduleVersion.id.name }
+            ?.moduleVersion?.id?.version
+            ?: toolVersion
     }
 
     tasks.jacocoTestReport {
@@ -147,7 +169,7 @@ allprojects {
     spotbugs {
         setEffort("max")
         setReportLevel("low")
-        showProgress.set(true)
+        showProgress.set(false)
         val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
         if (excludeFile.exists()) {
             excludeFilter.set(excludeFile)
@@ -177,7 +199,7 @@ allprojects {
     }
 
     detekt {
-        failFast = true
+        allRules = true
         buildUponDefaultConfig = true
         config = files("${rootProject.projectDir}/config/detekt/detekt.yml")
         reports {

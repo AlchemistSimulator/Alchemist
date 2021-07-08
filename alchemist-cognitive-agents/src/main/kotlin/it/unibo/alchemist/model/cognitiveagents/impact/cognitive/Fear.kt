@@ -31,7 +31,5 @@ class Fear(
     )
 
     private fun List<CognitiveAgent>.aggregateFears() =
-        if (size > 0) {
-            this.sumByDouble { it.cognitive.fear() } / this.size
-        } else 0.0
+        if (isEmpty()) 0.0 else sumOf { it.cognitive.fear() } / this.size
 }

@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectFactory;
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
@@ -15,17 +16,29 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Files;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test for bugs in {@link it.unibo.alchemist.boundary.wormhole.implementation.Wormhole2D}.
+ * Test effect serialization.
  */
-public class TestEffectSerialization {
+class TestEffectSerialization {
 
-    private static final String FILEPATH = "test.aes";
-    private static final File FILE = new File(FILEPATH);
+    private static final String FILEPATH;
     private static final Effect E = EffectFactory.buildDefaultEffect();
+
+    static {
+        try {
+            FILEPATH = Files.createTempDirectory("alchemist").toAbsolutePath() + File.separator + "test.aes";
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static final File FILE = new File(FILEPATH);
 
     /**
      * Make sure that effects can be (de) serialized with Gson.
@@ -36,7 +49,7 @@ public class TestEffectSerialization {
      *             if some very serious bug happen
      */
     @Test
-    public void testGsonEffectSerialization() throws IOException, ClassNotFoundException {
+    void testGsonEffectSerialization() throws IOException, ClassNotFoundException {
         EffectSerializationFactory.effectToFile(FILE, E);
         EffectSerializationFactory.effectsFromFile(FILE);
     }
@@ -50,40 +63,18 @@ public class TestEffectSerialization {
      *             if some very serious bug happen
      */
     @Test
-    public void testDefaultEffectSerialization() throws IOException, ClassNotFoundException {
+    void testDefaultEffectSerialization() throws IOException, ClassNotFoundException {
         FileUtilities.objectToFile(E, FILEPATH, false);
         FileUtilities.fileToObject(FILEPATH);
     }
 
-    /**
-     * Make sure that effects can be (de) serialized even if they are binary
-     * file.
-     * 
-     * @throws IOException
-     *             in case of errors
-     * @throws ClassNotFoundException
-     *             if some very serious bug happen
-     */
     @Test
-    public void testBackwardCompatibilitySingleEffect() throws IOException, ClassNotFoundException {
-        FileUtilities.objectToFile(E, FILEPATH, false);
-        EffectSerializationFactory.effectsFromFile(FILE);
+    void loadExisting() throws IOException, ClassNotFoundException {
+        final var resources = ClassPathScanner.resourcesMatching(".*sample-effect.json");
+        assertEquals(1, resources.size());
+        final var file = new File(resources.get(0).getFile());
+        assertTrue(file.exists());
+        assertNotNull(EffectSerializationFactory.effectsFromFile(file));
     }
 
-    /**
-     * Make sure that effects can be (de) serialized even if they are binary
-     * file.
-     * 
-     * @throws IOException
-     *             in case of errors
-     * @throws ClassNotFoundException
-     *             if some very serious bug happen
-     */
-    @Test
-    public void testBackwardCompatibilityEffects() throws IOException, ClassNotFoundException {
-        final List<Effect> effects = new ArrayList<>();
-        effects.add(E);
-        FileUtilities.objectToFile(effects, FILE, false);
-        EffectSerializationFactory.effectsFromFile(FILE);
-    }
 }

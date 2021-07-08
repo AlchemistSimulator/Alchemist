@@ -20,14 +20,12 @@ interface Pedestrian2D<T> : Pedestrian<T, Euclidean2DPosition, Euclidean2DTransf
      * The shape of any pedestrian in the Euclidean world.
      * Implementors should override this property to prevent the continuous creation of new [Euclidean2DShape]s.
      */
-    @JvmDefault
     override val shape: Euclidean2DShape get() = environment.shapeFactory.circle(defaultRadius)
 
     /**
      * The field of view of a pedestrian in the Euclidean world.
      * Implementors should override this property to prevent the continuous creation of new [FieldOfView2D]s.
      */
-    @JvmDefault
     val fieldOfView: FieldOfView2D<T> get() =
         FieldOfView2D(environment, this, defaultFieldOfViewDepth, defaultFieldOfViewAperture)
 

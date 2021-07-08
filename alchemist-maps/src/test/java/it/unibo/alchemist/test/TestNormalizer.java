@@ -32,7 +32,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 /**
  * Test time normalizer.
  */
-public class TestNormalizer {
+class TestNormalizer {
 
     private static final GPSPoint TRACE_1_POINT_1 = new GPSPointImpl(1.0, 2.0, new DoubleTime(3.0));
     private static final GPSPoint TRACE_1_POINT_2 = new GPSPointImpl(1.0, 2.0, new DoubleTime(5.0));
@@ -61,7 +61,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testNoAlignment() {
+    void testNoAlignment() {
         final ImmutableList<GPSTrace> traces = new NoAlignment().alignTime(TRACES);
         /*
          * Test start time
@@ -84,7 +84,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testAlignToFirstTrace() {
+    void testAlignToFirstTrace() {
         final ImmutableList<GPSTrace> traces = new AlignToFirstTrace().alignTime(TRACES);
         /*
          * Test start time
@@ -113,7 +113,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testAlignToSimulationTime() {
+    void testAlignToSimulationTime() {
         final ImmutableList<GPSTrace> traces = new AlignToSimulationTime().alignTime(TRACES);
         /*
          * Test start time
@@ -139,7 +139,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testAlignToTimeRetainSinglePoint() {
+    void testAlignToTimeRetainSinglePoint() {
         final Time time = new DoubleTime(2.0);
         final ImmutableList<GPSTrace> traces = new AlignToTime(time, false, false).alignTime(TRACES);
         /*
@@ -175,7 +175,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testAlignToTimeDiscardSinglePoint() {
+    void testAlignToTimeDiscardSinglePoint() {
         final Time time = new DoubleTime(4.0);
         final ImmutableList<GPSTrace> traces = new AlignToTime(time, true, false).alignTime(TRACES);
         /*
@@ -210,7 +210,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testAlignToTimeThrowExceptionOnSinglePoint() {
+    void testAlignToTimeThrowExceptionOnSinglePoint() {
         final Time time = new DoubleTime(4.0);
         try {
             new AlignToTime(time, true, true).alignTime(TRACES);
@@ -224,7 +224,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testAlignToTimeNegativeTime() {
+    void testAlignToTimeNegativeTime() {
         final Time time = new DoubleTime(-4.0);
         try {
             new AlignToTime(time, true, true);
@@ -238,7 +238,7 @@ public class TestNormalizer {
      * 
      */
     @Test
-    public void testAlignToTimeWrongPolicy() {
+    void testAlignToTimeWrongPolicy() {
         final Time time = new DoubleTime(4.0);
         try {
             new AlignToTime(time, false, true).alignTime(TRACES);

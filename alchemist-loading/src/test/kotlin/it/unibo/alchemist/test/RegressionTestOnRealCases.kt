@@ -11,7 +11,7 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.longs.shouldBeExactly
+import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.maps.haveSize
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNotBe
@@ -25,7 +25,7 @@ class RegressionTestOnRealCases : FreeSpec(
             loader.getDefault<Nothing, Nothing>() shouldNotBe null
             loader.variables should haveSize(3)
             loader.variables.keys shouldContain "algorithm"
-            loader.variables["algorithm"]!!.stream().count() shouldBeExactly 4 * 7 + 1
+            loader.variables["algorithm"]!!.stream().count().toInt() shouldBeExactly 4 * 7 + 1
         }
     }
 )

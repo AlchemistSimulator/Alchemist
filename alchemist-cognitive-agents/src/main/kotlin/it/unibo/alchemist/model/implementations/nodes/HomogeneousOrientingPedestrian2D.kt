@@ -47,11 +47,11 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     private val maxSide: Double = 60.0,
     group: PedestrianGroup2D<T>? = null
 ) : AbstractOrientingPedestrian2D<T, Ellipse, N, E>(
-        knowledgeDegree,
-        randomGenerator,
-        environment,
-        group
-    ),
+    knowledgeDegree,
+    randomGenerator,
+    environment,
+    group
+),
     Pedestrian2D<T> {
 
     override val shape by lazy { super.shape }

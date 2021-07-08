@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  */
-public class TestTargetWalker {
+class TestTargetWalker {
 
     private static final Incarnation<Object, GeoPosition> INCARNATION =
             SupportedIncarnations.<Object, GeoPosition>get("protelis").orElseThrow();
@@ -101,7 +101,7 @@ public class TestTargetWalker {
      * 
      */
     @Test
-    public void testNoPosition() {
+    void testNoPosition() {
         final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
@@ -118,7 +118,7 @@ public class TestTargetWalker {
      * 
      */
     @Test
-    public void testPosition() {
+    void testPosition() {
         final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
@@ -136,7 +136,7 @@ public class TestTargetWalker {
      * 
      */
     @Test
-    public void testIterableDouble() {
+    void testIterableDouble() {
         final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
@@ -154,7 +154,7 @@ public class TestTargetWalker {
      * 
      */
     @Test
-    public void testIterableStrings() {
+    void testIterableStrings() {
         final GeoPosition start = env.getPosition(node);
         assertNotNull(start);
         /*
@@ -173,7 +173,7 @@ public class TestTargetWalker {
      * 
      */
     @Test
-    public void testStrings01() {
+    void testStrings01() {
         final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
@@ -191,7 +191,7 @@ public class TestTargetWalker {
      * 
      */
     @Test
-    public void testStrings02() {
+    void testStrings02() {
         final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
@@ -209,7 +209,7 @@ public class TestTargetWalker {
      * 
      */
     @Test
-    public void testStrings03() {
+    void testStrings03() {
         final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
@@ -227,7 +227,7 @@ public class TestTargetWalker {
      * 
      */
     @Test
-    public void testStrings04() {
+    void testStrings04() {
         final GeoPosition start = env.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start

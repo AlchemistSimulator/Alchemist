@@ -13,21 +13,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * JUint test for {@link DrawDot} effect serialization.
  */
-public final class DrawDotSerializationTest extends AbstractEffectSerializationTest<DrawDot<?>> {
+final class DrawDotSerializationTest extends AbstractEffectSerializationTest<DrawDot<?>> {
     private static final String TEST_NAME = "TestDot";
     private static final double TEST_SIZE = 22.0;
 
     @Test
-    @Override
-    public void testJavaSerialization() throws IOException, ClassNotFoundException {
+    void testJavaSerialization() throws IOException, ClassNotFoundException {
         final var effect = new DrawDot<>(TEST_NAME);
         effect.setSize(TEST_SIZE);
         testSerializationOf(effect);
     }
 
     @Test
-    @Override
-    public void testGsonSerialization() throws IOException {
+    void testGsonSerialization() throws IOException {
         final File file = TemporaryFile.create();
         final var effect = new DrawDot<>(TEST_NAME);
         effect.setSize(TEST_SIZE);

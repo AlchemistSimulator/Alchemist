@@ -201,7 +201,7 @@ _reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
-    type: CognitiveAgentBlendedSteering
+    type: BlendedSteering
     actions:
       - type: CognitiveAgentSeek
         parameters: [1000, 500]

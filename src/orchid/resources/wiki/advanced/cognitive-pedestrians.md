@@ -124,10 +124,10 @@ incarnation: protelis
 
 variables:
   group1: &group1
-    formula: it.unibo.alchemist.model.implementations.groups.Friends<Any>()
+    formula: it.unibo.alchemist.model.implementations.groups.GroupFactory.friends()
     language: kotlin
   group2: &group2
-    formula: it.unibo.alchemist.model.implementations.groups.Friends<Any>()
+    formula: it.unibo.alchemist.model.implementations.groups.GroupFactory.friends()
     language: kotlin
 
 deployments:
@@ -250,7 +250,7 @@ _reactions: &behavior
       parameters: [1.0]
     type: PrioritySteering
     actions:
-      - type: CognitiveAgentCognitiveAgentAvoidLayer
+      - type: CognitiveAgentAvoidLayer
         parameters: [*danger]
 
 deployments:

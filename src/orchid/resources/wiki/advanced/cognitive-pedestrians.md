@@ -301,7 +301,8 @@ In order to work properly, physical pedestrians should be equipped with physical
 incarnation: protelis
 
 environment:
-  type: Continuous2DEnvironment
+  type: ImageEnvironmentWithGraph
+  parameters: [...]
 
 _reactions: &behavior
   - time-distribution:

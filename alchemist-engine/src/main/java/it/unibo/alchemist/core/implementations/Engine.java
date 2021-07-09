@@ -124,6 +124,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * @param t
      *            the maximum time to reach
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "It is intentional")
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t) {
         L.trace("Engine created");
         environment = e;

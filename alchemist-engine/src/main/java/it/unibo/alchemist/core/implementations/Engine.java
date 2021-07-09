@@ -9,6 +9,7 @@ package it.unibo.alchemist.core.implementations;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.DependencyGraph;
 import it.unibo.alchemist.core.interfaces.Scheduler;
@@ -229,6 +230,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public Environment<T, P> getEnvironment() {
         return environment;
     }

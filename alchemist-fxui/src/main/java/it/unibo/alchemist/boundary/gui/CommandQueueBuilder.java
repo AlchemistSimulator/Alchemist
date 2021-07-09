@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.gui;
 
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import org.apache.commons.collections4.queue.UnmodifiableQueue;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -64,6 +65,6 @@ public final class CommandQueueBuilder<P extends Position2D<? extends P>> {
      * @return the queue of commands
      */
     public Queue<DrawCommand<P>> buildCommandQueue() {
-        return commandQueue;
+        return UnmodifiableQueue.unmodifiableQueue(commandQueue);
     }
 }

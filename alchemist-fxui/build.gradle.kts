@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":alchemist-ui-tooling"))
     implementation(project(":alchemist-loading"))
     implementation(project(":alchemist-maps"))
+    implementation(apacheCommons("collections4"))
     implementation(Libs.gson_extras)
     implementation(Libs.jfoenix)
     implementation(Libs.javafxsvg)

@@ -52,6 +52,6 @@ public final class ExecutionTime implements Extractor {
 
     @Override
     public List<String> getNames() {
-        return COLNAME;
+        return Collections.unmodifiableList(COLNAME);
     }
 }

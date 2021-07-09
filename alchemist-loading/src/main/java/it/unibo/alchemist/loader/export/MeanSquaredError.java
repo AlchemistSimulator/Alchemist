@@ -7,7 +7,9 @@
  */
 package it.unibo.alchemist.loader.export;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -35,7 +37,7 @@ public final class MeanSquaredError<T> implements Extractor {
     private final Molecule mReference;
     private final String pActual;
     private final Molecule mActual;
-    private final List<String> name;
+    private final ImmutableList<String> name;
     private final UnivariateStatistic statistic;
 
     /**
@@ -81,7 +83,7 @@ public final class MeanSquaredError<T> implements Extractor {
         }
         mse.append(localValueMolecule)
             .append(')');
-        name = List.of(mse.toString());
+        name = ImmutableList.of(mse.toString());
     }
 
     @Override

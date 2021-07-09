@@ -13,6 +13,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
@@ -359,6 +360,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
+        @SuppressFBWarnings("EI_EXPOSE_REP")
         public DeviceUID getDeviceUID() {
             if (node instanceof ProtelisNode) {
                 return (ProtelisNode<?>) node;

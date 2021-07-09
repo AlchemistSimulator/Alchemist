@@ -83,7 +83,7 @@ public abstract class AbstractAction<T> implements Action<T> {
     /**
      * @return the node this action belongs to
      */
-    public Node<T> getNode() {
+    protected Node<T> getNode() {
         return node;
     }
 

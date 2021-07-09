@@ -81,7 +81,7 @@ public final class MeanSquaredError<T> implements Extractor {
         }
         mse.append(localValueMolecule)
             .append(')');
-        name = Collections.unmodifiableList(Lists.newArrayList(mse.toString()));
+        name = List.of(mse.toString());
     }
 
     @Override

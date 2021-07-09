@@ -327,7 +327,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
      * An {@link org.protelis.vm.ExecutionContext} that operates over a node, but does not
      * modify it.
      */
-    public static final class DummyContext extends AbstractExecutionContext<DummyContext> {
+    private static final class DummyContext extends AbstractExecutionContext<DummyContext> {
         private static final Semaphore MUTEX = new Semaphore(1);
         private static final int SEED = -241_837_578;
         private static final RandomGenerator RNG = new MersenneTwister(SEED);

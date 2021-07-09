@@ -176,6 +176,8 @@ deployments:
     parameters: [50, 0, 0, 25]
     nodes:
       type: HomogeneousPedestrian2D
+    programs:
+      - *behavior
 ```
 
 ### Steering Strategies

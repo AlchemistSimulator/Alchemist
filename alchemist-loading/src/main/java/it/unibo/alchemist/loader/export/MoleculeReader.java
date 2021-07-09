@@ -8,6 +8,7 @@
 package it.unibo.alchemist.loader.export;
 
 import com.google.common.collect.Lists;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -107,6 +108,7 @@ public final class MoleculeReader implements Extractor {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is unmodifiable")
     public List<String> getNames() {
         return columns;
     }

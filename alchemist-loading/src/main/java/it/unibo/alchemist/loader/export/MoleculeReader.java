@@ -71,13 +71,11 @@ public final class MoleculeReader implements Extractor {
         final var shortProp = propertyText.isEmpty()
             ? ""
             : propertyText.substring(0, Math.min(SHORT_NAME_MAX_LENGTH, propertyText.length())) + "@";
-        this.columns = Collections.unmodifiableList(
-            this.aggregators.isEmpty()
-                ? Lists.newArrayList(shortProp + molecule + "@every_node")
+        this.columns = this.aggregators.isEmpty()
+                ? List.of(shortProp + molecule + "@every_node")
                 : this.aggregators.stream()
-                    .map(a -> shortProp + molecule + '[' + a.getClass().getSimpleName() + ']')
-                    .collect(Collectors.toList())
-        );
+                .map(a -> shortProp + molecule + '[' + a.getClass().getSimpleName() + ']')
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

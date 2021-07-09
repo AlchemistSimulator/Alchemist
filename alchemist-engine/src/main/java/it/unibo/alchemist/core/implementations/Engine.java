@@ -228,13 +228,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    /**
-     * @return the dependency graph
-     */
-    public DependencyGraph<T> getDependencyGraph() {
-        return dependencyGraph;
-    }
-
     @Override
     public Environment<T, P> getEnvironment() {
         return environment;

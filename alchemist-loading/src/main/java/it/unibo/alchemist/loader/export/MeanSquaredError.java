@@ -107,6 +107,7 @@ public final class MeanSquaredError<T> implements Extractor {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
     public List<String> getNames() {
         return name;
     }

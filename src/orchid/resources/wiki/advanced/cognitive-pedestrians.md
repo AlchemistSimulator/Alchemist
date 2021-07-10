@@ -250,7 +250,7 @@ _reactions: &behavior
   - time-distribution:
       type: DiracComb
       parameters: [1.0]
-    type: PrioritySteering
+    type: CognitiveBehavior
     actions:
       - type: CognitiveAgentAvoidLayer
         parameters: [*danger]

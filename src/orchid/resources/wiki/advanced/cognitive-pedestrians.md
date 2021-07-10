@@ -23,6 +23,8 @@ There are three basic types of pedestrian, each representing a more sophisticate
 Homogeneous pedestrians are _Nodes_ with no peculiar characteristic each other.
 
 ```yaml
+incarnation: protelis
+
 deployments:
   - type: Circle
     parameters: [100, 0, 0, 20]
@@ -35,6 +37,8 @@ Heterogeneous pedestrians have an age and a gender, based on which their speed, 
 The age groups available are: *child*, *adult*, *elderly*; alternatively you can specify the exact age. The genders available are: *male*, *female*.
 
 ```yaml
+incarnation: protelis
+
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
@@ -52,6 +56,8 @@ deployments:
 Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities. They have an emotional state and are able to influence and be influenced by others with the same capabilities. As an example, cognitive pedestrians can perceive fear via social contagion (e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).
 
 ```yaml
+incarnation: protelis
+
 _reactions: &behavior
   - time-distribution:
       type: DiracComb
@@ -82,6 +88,12 @@ As shown in the animation on the top of the page, pedestrians can be equipped wi
 These are homogeneous pedestrians that can be equipped with a given knowledge degree of the environment. Such quantity is a `Double` value in [0,1] describing the percentage of environment the pedestrian is familiar with prior to the start of the simulation (thus it does not take into account the knowledge the pedestrian will gain during it). Note that despite their name ("homogeneous"), knowledge degrees of different homogeneous orienting pedestrians may differ, and even pedestrians with the same knowledge degree can be different as each one can be familiar with different portions of the environment. Be also aware that orienting pedestrians can only be placed in an `EnvironmentWithGraph`, which is a type of environment providing a navigation graph (see [how to generate navigation graphs](navigation-graphs.md)). 
 
 ```yaml
+incarnation: protelis
+
+environment: 
+  type: ImageEnvironmentWithGraph
+  parameters: [...]
+
 deployments:
   - type: Point
     parameters: [15, 15]
@@ -94,6 +106,12 @@ deployments:
 As you may guess, these are cognitive pedestrians equipable with a given knowledge degree of the environment. Cognitive orienting pedestrians can be instanced providing their knowledge degree as first parameter.
 
 ```yaml
+incarnation: protelis
+
+environment:
+  type: ImageEnvironmentWithGraph
+  parameters: [...]
+
 _reactions: &behavior
   - time-distribution:
       type: DiracComb

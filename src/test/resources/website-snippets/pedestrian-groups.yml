@@ -1,0 +1,21 @@
+incarnation: protelis
+
+variables:
+  group1: &group1
+    formula: it.unibo.alchemist.model.implementations.groups.GroupFactory.friends()
+    language: kotlin
+  group2: &group2
+    formula: it.unibo.alchemist.model.implementations.groups.GroupFactory.friends()
+    language: kotlin
+
+deployments:
+  - type: Circle
+    parameters: [10, 0, 0, 20]
+    nodes:
+      type: HomogeneousPedestrian2D
+      parameters: [*group1]
+  - type: Circle
+    parameters: [15, 0, 0, 20]
+    nodes:
+      type: HomogeneousPedestrian2D
+      parameters: [*group2]

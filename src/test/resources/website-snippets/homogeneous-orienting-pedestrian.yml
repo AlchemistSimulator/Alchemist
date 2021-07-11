@@ -1,0 +1,12 @@
+incarnation: protelis
+
+environment:
+  type: ImageEnvironmentWithGraph
+  parameters: [...]
+
+deployments:
+  - type: Point
+    parameters: [15, 15]
+    nodes:
+      type: HomogeneousOrientingPedestrian2D
+      parameters: [0.5]

@@ -2,7 +2,7 @@ incarnation: protelis
 
 environment:
   type: ImageEnvironment
-  parameters: [...]
+  parameters: [planimetry.png]
 
 _reactions: &behavior
   - time-distribution:

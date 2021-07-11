@@ -2,7 +2,7 @@ incarnation: protelis
 
 environment:
   type: ImageEnvironmentWithGraph
-  parameters: [...]
+  parameters: [planimetry.png]
 
 deployments:
   - type: Point

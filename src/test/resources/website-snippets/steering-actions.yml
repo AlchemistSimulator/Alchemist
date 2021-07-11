@@ -1,0 +1,25 @@
+incarnation: protelis
+
+environment:
+  type: ImageEnvironment
+  parameters: [...]
+
+_reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [3.0]
+    type: PrioritySteering
+    actions:
+      - type: HeadTowardRandomDirection
+      - type: CognitiveAgentWander
+        parameters: [6, 4]
+      - type: CognitiveAgentObstacleAvoidance
+        parameters: [4]
+
+deployments:
+  - type: Circle
+    parameters: [50, 0, 0, 25]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior

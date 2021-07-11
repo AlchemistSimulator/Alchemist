@@ -1,0 +1,20 @@
+incarnation: protelis
+
+environment:
+  type: ImageEnvironmentWithGraph
+  parameters: [...]
+
+_reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: CognitiveBehavior
+
+deployments:
+  - type: Point
+    parameters: [0, 0]
+    nodes:
+      type: CognitiveOrientingPedestrian2D
+      parameters: [0.5, "adult", "male"]
+    programs:
+      - *behavior

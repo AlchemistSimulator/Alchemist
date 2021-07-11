@@ -1,0 +1,7 @@
+incarnation: protelis
+
+deployments:
+  - type: Circle
+    parameters: [100, 0, 0, 20]
+    nodes:
+      type: HomogeneousPedestrian2D

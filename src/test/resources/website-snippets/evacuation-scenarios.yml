@@ -1,0 +1,31 @@
+incarnation: protelis
+
+variables:
+  danger: &danger
+    formula: "\"danger\""
+
+environment:
+  type: Continuous2DEnvironment
+
+layers:
+  - type: BidimensionalGaussianLayer
+    molecule: *danger
+    parameters: [0.0, 0.0, 20.0, 15.0]
+
+_reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: CognitiveBehavior
+    actions:
+      - type: CognitiveAgentAvoidLayer
+        parameters: [*danger]
+
+deployments:
+  - type: Circle
+    parameters: [100, 0, 0, 50]
+    nodes:
+      type: CognitivePedestrian2D
+      parameters: ["adult", "female", *danger]
+    programs:
+      - *behavior

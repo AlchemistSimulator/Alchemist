@@ -1,0 +1,23 @@
+incarnation: protelis
+
+_reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: CognitiveBehavior
+
+deployments:
+  - type: Circle
+    parameters: [50, 0, 0, 20]
+    nodes:
+      type: CognitivePedestrian2D
+      parameters: ["adult", "male"]
+    programs:
+      - *behavior
+  - type: Circle
+    parameters: [50, 0, 0, 20]
+    nodes:
+      type: CognitivePedestrian2D
+      parameters: ["adult", "female"]
+    programs:
+      - *behavior

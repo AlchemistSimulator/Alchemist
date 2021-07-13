@@ -107,8 +107,6 @@ allprojects {
         testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
         testRuntimeOnly(junit("engine"))
-        // Test runtime: Alchemist cognitive agents
-        testRuntimeOnly("it.unibo.alchemist:alchemist-cognitive-agents:_")
         // executable jar packaging
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
@@ -337,6 +335,7 @@ dependencies {
     testRuntimeOnly(incarnation("protelis"))
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("biochemistry"))
+    testRuntimeOnly(alchemist("cognitive-agents"))
 
     // Populate the dependencies for Orchid
     orchidImplementation(orchidModule("Core"))

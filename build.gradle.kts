@@ -107,6 +107,7 @@ allprojects {
         testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
         testRuntimeOnly(junit("engine"))
+        // Test runtime: Alchemist cognitive agents
         testRuntimeOnly("it.unibo.alchemist:alchemist-cognitive-agents:_")
         // executable jar packaging
         if ("incarnation" in project.name) {

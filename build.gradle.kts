@@ -336,6 +336,7 @@ dependencies {
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("biochemistry"))
     testRuntimeOnly(alchemist("cognitive-agents"))
+    testRuntimeOnly(alchemist("physical-agents"))
 
     // Populate the dependencies for Orchid
     orchidImplementation(orchidModule("Core"))

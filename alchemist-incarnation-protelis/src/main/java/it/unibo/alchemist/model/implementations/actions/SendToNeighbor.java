@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public final class SendToNeighbor extends AbstractAction<Object> {
 
     private static final long serialVersionUID = -8826563176323247613L;
-    private final RunProtelisProgram<?> prog;
+    private final RunProtelisProgram<?> program;
     private final Reaction<Object> reaction;
 
     /**
@@ -33,10 +34,11 @@ public final class SendToNeighbor extends AbstractAction<Object> {
      * @param program
      *            the reference {@link RunProtelisProgram}
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public SendToNeighbor(final ProtelisNode<?> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program) {
         super(node);
         this.reaction = Objects.requireNonNull(reaction);
-        prog = Objects.requireNonNull(program);
+        this.program = Objects.requireNonNull(program);
         declareDependencyTo(program.asMolecule());
     }
 
@@ -67,10 +69,10 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public void execute() {
-        final AlchemistNetworkManager mgr = getNode().getNetworkManager(prog);
+        final AlchemistNetworkManager mgr = getNode().getNetworkManager(program);
         Objects.requireNonNull(mgr);
         mgr.simulateMessageArrival(reaction.getTau().toDouble());
-        prog.prepareForComputationalCycle();
+        program.prepareForComputationalCycle();
     }
 
     @Override
@@ -82,11 +84,11 @@ public final class SendToNeighbor extends AbstractAction<Object> {
      * @return the {@link RunProtelisProgram} whose data will be sent
      */
     public RunProtelisProgram<?> getProtelisProgram() {
-        return prog;
+        return program;
     }
 
     @Override
     public String toString() {
-        return "broadcast " + prog.asMolecule().getName() + " data";
+        return "broadcast " + program.asMolecule().getName() + " data";
     }
 }

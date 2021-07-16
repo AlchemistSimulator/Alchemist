@@ -35,7 +35,7 @@ import java.awt.geom.Path2D;
 /**
  * Draws the navigation graph of an {@link ImageEnvironmentWithGraph}.
  */
-@SuppressFBWarnings(value = "EI_EXPOSE_REP")
+@SuppressFBWarnings("EI_EXPOSE_REP")
 public class DrawNavigationGraph extends DrawOnce {
 
     /**

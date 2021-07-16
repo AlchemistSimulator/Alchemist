@@ -28,6 +28,7 @@ public class ComponentViewPort implements ViewPort {
      *
      * @param component the component to adapt
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public ComponentViewPort(final Component component) {
         this.component = component;
     }

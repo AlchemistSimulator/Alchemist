@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.boundary.gpsload.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
@@ -33,7 +34,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class GPXLoader implements GPSFileLoader {
 
-    private static final ImmutableSet<String> EXTENSION = ImmutableSet.of("gpx");
+    private static final ImmutableSet<String> EXTENSIONS = ImmutableSet.of("gpx");
 
     @Override
     public List<GPSTrace> readTrace(final URL url) throws IOException {
@@ -47,8 +48,8 @@ public final class GPXLoader implements GPSFileLoader {
     }
 
     @Override
-    public Collection<String> supportedExtensions() {
-        return EXTENSION;
+    public ImmutableSet<String> supportedExtensions() {
+        return EXTENSIONS;
     }
 
     private GPX getGPX(final InputStream stream) throws FileFormatException {

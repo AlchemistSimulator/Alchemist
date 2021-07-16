@@ -65,7 +65,7 @@ public final class Exporter<T, P extends Position<? extends P>> implements Outpu
         } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException("There is a bug in Alchemist, in " + getClass(), e);
         }
-        extractors = columns;
+        extractors = List.copyOf(columns);
         this.header = header;
     }
 

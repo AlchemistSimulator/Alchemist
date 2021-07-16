@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.routes;
 import com.google.common.collect.ImmutableList;
 import com.graphhopper.GHResponse;
 import com.graphhopper.util.PointList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.TimedRoute;
@@ -65,6 +66,7 @@ public final class GraphHopperRoute implements TimedRoute<GeoPosition> {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
     public ImmutableList<GeoPosition> getPoints() {
         return points;
     }

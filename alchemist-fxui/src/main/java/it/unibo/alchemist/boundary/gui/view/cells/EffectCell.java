@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.gui.view.cells;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXToggleButton;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.controller.EffectPropertiesController;
 import it.unibo.alchemist.boundary.gui.effects.EffectFX;
 import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
@@ -45,6 +46,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
      * @param effectName the name of the effect
      * @param stack      the stack where to open the effect properties
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EffectCell(final String effectName, final JFXDrawersStack stack) {
         super(new Label(effectName), new JFXToggleButton());
         this.stack = stack;

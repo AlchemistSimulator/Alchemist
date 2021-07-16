@@ -7,7 +7,6 @@
  */
 package it.unibo.alchemist.boundary.gpsload.impl;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenetics.jpx.GPX;
@@ -24,7 +23,6 @@ import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

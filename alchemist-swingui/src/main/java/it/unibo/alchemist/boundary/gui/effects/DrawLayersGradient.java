@@ -122,6 +122,7 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
     /**
      * @param samples to set
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public void setSamples(final RangedInteger samples) {
         this.samples = samples;
     }

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 
@@ -52,7 +53,8 @@ public final class SimulationSetImpl implements SimulationSet {
     }
 
     @Override
-    public List<SimulationConfig> getSimulationConfigs() {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
+    public ImmutableList<SimulationConfig> getSimulationConfigs() {
         return this.simulationConfigs;
     }
 

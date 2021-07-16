@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -52,6 +53,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
      *            factor dynamically computed, and the speed will be divided by
      *            the number obtained
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public InteractWithOthers(final Environment<T, P> environment, final Node<T> n, final Reaction<T> reaction,
             final Molecule inter, final double speed, final double radius, final double interaction) {
         this.environment = Objects.requireNonNull(environment);

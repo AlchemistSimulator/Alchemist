@@ -47,6 +47,7 @@ public class NodeViewPort implements ViewPort {
      *
      * @param node the node
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setNode(final Node node) {
         this.node = node;
     }

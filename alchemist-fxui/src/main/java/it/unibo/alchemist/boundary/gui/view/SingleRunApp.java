@@ -400,6 +400,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      * @param simulation the simulation this {@link Application} will display
      * @throws IllegalStateException if the application is already started
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setSimulation(final Simulation<T, P> simulation) {
         checkIfInitialized();
         this.simulation = simulation;

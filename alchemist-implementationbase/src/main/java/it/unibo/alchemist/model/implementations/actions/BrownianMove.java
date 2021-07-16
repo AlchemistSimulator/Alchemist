@@ -40,6 +40,7 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
      *            the maximum distance the node may walk in a single step for
      *            each dimension
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public BrownianMove(
         final Environment<T, P> environment,
         final Node<T> node,

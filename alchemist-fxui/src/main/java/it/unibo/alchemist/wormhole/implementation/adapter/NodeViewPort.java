@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.wormhole.implementation.adapter;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
 import javafx.scene.Node;
 
@@ -35,6 +36,7 @@ public class NodeViewPort implements ViewPort {
      *
      * @return the node
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public Node getNode() {
         return node;
     }

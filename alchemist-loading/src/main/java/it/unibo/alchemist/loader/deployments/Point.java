@@ -20,25 +20,25 @@ import java.util.stream.Stream;
 public final class Point<P extends Position<? extends P>> implements Deployment<P> {
 
     private final double x, y;
-    private final Environment<?, P> pm;
+    private final Environment<?, P> environment;
 
     /**
-     * @param pm
+     * @param environment
      *            The {@link Environment}
      * @param x
      *            x coordinate
      * @param y
      *            y coordinate
      */
-    public Point(final Environment<?, P> pm, final double x, final double y) {
+    public Point(final Environment<?, P> environment, final double x, final double y) {
         this.x = x;
         this.y = y;
-        this.pm = pm;
+        this.environment = environment;
     }
 
     @Override
     public Stream<P> stream() {
-        return Stream.of(pm.makePosition(x, y));
+        return Stream.of(environment.makePosition(x, y));
     }
 
 }

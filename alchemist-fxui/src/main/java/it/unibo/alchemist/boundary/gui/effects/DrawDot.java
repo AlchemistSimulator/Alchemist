@@ -41,7 +41,7 @@ import static it.unibo.alchemist.HashesKt.murmur3Hash32;
  * @param <P> the position type
  */
 @SuppressFBWarnings(
-        value = {"DMI_NONSERIALIZABLE_OBJECT_WRITTEN" , "EI_EXPOSE_REP"},
+        value = {"DMI_NONSERIALIZABLE_OBJECT_WRITTEN", "EI_EXPOSE_REP"},
         justification = "The object that is written is actually serializable"
 )
 public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P> {

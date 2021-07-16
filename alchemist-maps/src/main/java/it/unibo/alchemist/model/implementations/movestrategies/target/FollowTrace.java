@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.movestrategies.target;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
@@ -25,11 +26,12 @@ public final class FollowTrace extends AbstractStrategyWithGPS implements Target
     private final Reaction<?> reaction;
 
     /**
-     * @param r
+     * @param reaction
      *            the reaction
      */
-    public FollowTrace(final Reaction<?> r) {
-        reaction = r;
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is made by purpose")
+    public FollowTrace(final Reaction<?> reaction) {
+        this.reaction = reaction;
     }
 
     @Override

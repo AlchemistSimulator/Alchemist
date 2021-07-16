@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.boundary.gui.monitors;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.Serializable;
 
 /**
@@ -15,6 +17,7 @@ import java.io.Serializable;
  * @param <E> class type
  */
 @Deprecated
+@SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "Class is deprecated anyway")
 public final class ClassItem<E> implements Serializable {
 
     private static final long serialVersionUID = 3274105941480613159L;

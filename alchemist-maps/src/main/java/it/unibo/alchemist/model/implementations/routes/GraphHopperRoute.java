@@ -44,7 +44,6 @@ public final class GraphHopperRoute implements TimedRoute<GeoPosition> {
             final PointList pts = resp.getPoints();
             numPoints = pts.getSize();
             final var builder = ImmutableList.<GeoPosition>builder();
-            final List<GeoPosition> temp = new ArrayList<>(numPoints);
             for (int i = 0; i < pts.getSize(); i++) {
                 builder.add(new LatLongPosition(pts.getLatitude(i), pts.getLongitude(i)));
             }

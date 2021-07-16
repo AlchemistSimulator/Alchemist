@@ -39,6 +39,7 @@ import java.awt.Graphics2D;
  * In particular, it allows the user to specify a molecule, meaning that only the layer
  * containing such molecule will be drawn (otherwise the effect is applied to all layers)
  */
+@SuppressFBWarnings("EI_EXPOSE_REP")
 public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers {
 
     /**

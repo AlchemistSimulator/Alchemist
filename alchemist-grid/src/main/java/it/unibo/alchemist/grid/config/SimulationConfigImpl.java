@@ -7,6 +7,9 @@
  */
 package it.unibo.alchemist.grid.config;
 
+import com.google.common.collect.ImmutableMap;
+
+import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
@@ -21,14 +24,14 @@ public final class SimulationConfigImpl implements SimulationConfig {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final Map<String, ? extends Serializable> variables;
+    private final ImmutableMap<String, ? extends Serializable> variables;
 
     /**
      * 
      * @param variables Simulation's initialization variables
      */
     public SimulationConfigImpl(final Map<String, ? extends Serializable> variables) {
-        this.variables = Objects.requireNonNull(variables);
+        this.variables = ImmutableMap.copyOf(variables);
     }
 
     @Override

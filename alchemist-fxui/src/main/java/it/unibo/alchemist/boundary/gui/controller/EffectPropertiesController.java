@@ -71,7 +71,7 @@ import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
  * it builds up the other effect-specific controls.
  */
 @SuppressFBWarnings(
-        value = "NP_NULL_ON_SOME_PATH",
+        value = { "NP_NULL_ON_SOME_PATH", "EI_EXPOSE_REP2" },
         justification = "Using assert to null-check avoids the possibility of null references"
 )
 public class EffectPropertiesController implements Initializable {

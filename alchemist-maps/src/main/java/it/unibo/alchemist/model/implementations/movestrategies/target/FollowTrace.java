@@ -35,7 +35,7 @@ public final class FollowTrace extends AbstractStrategyWithGPS implements Target
     }
 
     @Override
-    public final GPSPoint getTarget() {
+    public GPSPoint getTarget() {
         final Time time = reaction.getTau();
         assert getTrace().getNextPosition(time) != null;
         return getTrace().getNextPosition(time);

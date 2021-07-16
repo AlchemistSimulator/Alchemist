@@ -12,6 +12,7 @@ package it.unibo.alchemist.boundary.gui.controller;
 import com.google.gson.JsonParseException;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawersStack;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.effects.EffectStack;
 import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
@@ -58,6 +59,7 @@ import static jiconfont.icons.google_material_design_icons.GoogleMaterialDesignI
  *
  * @param <P> the position type
  */
+@SuppressFBWarnings("EI_EXPOSE_REP")
 public class EffectsGroupBarController<P extends Position2D<? extends P>> implements Initializable {
     /**
      * Layout path.

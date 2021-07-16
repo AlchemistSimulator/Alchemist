@@ -189,8 +189,8 @@ allprojects {
 
     tasks.withType<de.aaschmid.gradle.plugins.cpd.Cpd> {
         reports {
-            xml.setEnabled(false)
-            text.setEnabled(true)
+            xml.required.set(false)
+            text.required.set(true)
         }
         language = "java"
         minimumTokenCount = 100

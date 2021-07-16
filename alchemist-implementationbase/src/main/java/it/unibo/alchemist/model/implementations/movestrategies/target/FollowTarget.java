@@ -34,16 +34,16 @@ public class FollowTarget<T, P extends Position<P>> implements TargetSelectionSt
     private final Molecule track;
 
     /**
-     * @param env
+     * @param environment
      *            the environment
-     * @param n
+     * @param node
      *            the node
      * @param targetMolecule
      *            the target molecule
      */
-    public FollowTarget(final Environment<T, P> env, final Node<T> n, final Molecule targetMolecule) {
-        environment = env;
-        node = n;
+    public FollowTarget(final Environment<T, P> environment, final Node<T> node, final Molecule targetMolecule) {
+        this.environment = environment;
+        this.node = node;
         track = targetMolecule;
     }
 

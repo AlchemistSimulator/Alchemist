@@ -145,7 +145,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
      * @return the size of the dots
      * @see #sizeProperty()
      */
-    public Double getSize() {
+    public double getSize() {
         return this.size.get();
     }
 
@@ -156,7 +156,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
      * @throws IllegalArgumentException if the provided value is not a valid percentage
      * @see #sizeProperty()
      */
-    public void setSize(final Double size) {
+    public void setSize(final double size) {
         this.size.set(size);
     }
 

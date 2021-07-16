@@ -10,10 +10,8 @@ package it.unibo.alchemist.grid.config;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

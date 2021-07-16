@@ -41,6 +41,9 @@ import static java.util.Objects.requireNonNull;
 public final class RunProtelisProgram<P extends Position<P>> implements Action<Object> {
 
     private static final long serialVersionUID = 1L;
+    private static final String
+        EI_EXPOSE_REP = "EI_EXPOSE_REP",
+        INTENTIONAL = "This is intentional";
     private boolean computationalCycleComplete;
     private final Environment<Object, P> environment;
     private final Molecule name;
@@ -375,7 +378,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the environment
      */
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
+    @SuppressFBWarnings(value = EI_EXPOSE_REP, justification = INTENTIONAL)
     public Environment<Object, P> getEnvironment() {
         return environment;
     }
@@ -388,7 +391,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the node
      */
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
+    @SuppressFBWarnings(value = EI_EXPOSE_REP, justification = INTENTIONAL)
     public ProtelisNode<P> getNode() {
         return node;
     }
@@ -396,7 +399,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the internal {@link RandomGenerator}
      */
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
+    @SuppressFBWarnings(value = EI_EXPOSE_REP, justification = INTENTIONAL)
     public RandomGenerator getRandomGenerator() {
         return random;
     }
@@ -442,7 +445,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
         return name + "@" + node.getId();
     }
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
+    @SuppressFBWarnings(value = EI_EXPOSE_REP, justification = INTENTIONAL)
     public AlchemistExecutionContext<P> getExecutionContext() {
         return executionContext;
     }

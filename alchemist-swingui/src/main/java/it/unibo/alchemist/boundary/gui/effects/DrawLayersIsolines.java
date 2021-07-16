@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.isolines.IsolinesFinder;
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  * method, which is capable of drawing a layer's isolines given a function.
  * The only responsibility left to subclasses is to provide a {@link LayerToFunctionMapper}.
  */
+@SuppressFBWarnings("EI_EXPOSE_REP")
 public abstract class DrawLayersIsolines extends DrawLayersValues {
 
     private static final long serialVersionUID = 1L;

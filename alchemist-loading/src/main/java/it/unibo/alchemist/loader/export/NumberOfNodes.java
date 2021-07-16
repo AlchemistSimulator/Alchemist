@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.loader.export;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -35,6 +36,7 @@ public final class NumberOfNodes implements Extractor {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "the field is immutable")
     public List<String> getNames() {
         return COLNAME;
     }

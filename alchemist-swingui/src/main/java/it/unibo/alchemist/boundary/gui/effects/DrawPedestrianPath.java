@@ -28,6 +28,7 @@ import java.util.List;
 /**
  * Draws the paths took by pedestrians.
  */
+@SuppressFBWarnings(value = "EI_EXPOSE_REP")
 public class DrawPedestrianPath extends DrawOnce {
 
     /**

@@ -14,8 +14,6 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 import org.apache.commons.collections4.queue.UnmodifiableQueue;
 
 import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
 

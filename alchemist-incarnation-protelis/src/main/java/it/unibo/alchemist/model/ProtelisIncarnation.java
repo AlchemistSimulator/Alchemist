@@ -396,6 +396,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         /**
          * @param node the {@link Node}
          */
+        @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
         public ProtectedExecutionEnvironment(final Node<?> node) {
             this.node = node;
         }

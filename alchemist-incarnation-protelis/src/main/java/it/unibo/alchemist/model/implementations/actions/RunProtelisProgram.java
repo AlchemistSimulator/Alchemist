@@ -375,6 +375,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the environment
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public Environment<Object, P> getEnvironment() {
         return environment;
     }
@@ -387,6 +388,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the node
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public ProtelisNode<P> getNode() {
         return node;
     }
@@ -394,6 +396,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     /**
      * @return the internal {@link RandomGenerator}
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public RandomGenerator getRandomGenerator() {
         return random;
     }
@@ -439,6 +442,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
         return name + "@" + node.getId();
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public AlchemistExecutionContext<P> getExecutionContext() {
         return executionContext;
     }

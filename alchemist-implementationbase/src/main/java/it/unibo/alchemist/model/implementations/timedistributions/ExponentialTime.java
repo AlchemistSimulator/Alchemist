@@ -47,6 +47,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
      * @param randomGenerator
      *            {@link RandomGenerator} used internally
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public ExponentialTime(final double markovianRate, final Time start, final RandomGenerator randomGenerator) {
         super(start);
         rate = markovianRate;

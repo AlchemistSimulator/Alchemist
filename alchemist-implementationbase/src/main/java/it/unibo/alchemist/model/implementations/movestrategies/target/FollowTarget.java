@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -41,6 +42,7 @@ public class FollowTarget<T, P extends Position<P>> implements TargetSelectionSt
      * @param targetMolecule
      *            the target molecule
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public FollowTarget(final Environment<T, P> environment, final Node<T> node, final Molecule targetMolecule) {
         this.environment = environment;
         this.node = node;

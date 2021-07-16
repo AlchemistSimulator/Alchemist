@@ -11,8 +11,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**

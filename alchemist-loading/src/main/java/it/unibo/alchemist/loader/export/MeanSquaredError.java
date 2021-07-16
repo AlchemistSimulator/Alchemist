@@ -8,7 +8,6 @@
 package it.unibo.alchemist.loader.export;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -17,8 +16,6 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 /**

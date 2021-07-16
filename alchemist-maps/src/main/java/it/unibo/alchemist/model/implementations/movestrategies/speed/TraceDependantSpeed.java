@@ -28,7 +28,7 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
 
     private static final long serialVersionUID = 8021140539083062866L;
     private final Reaction<T> reaction;
-    private final MapEnvironment<T> env;
+    private final MapEnvironment<T> environment;
     private final Node<T> node;
 
     /**
@@ -40,7 +40,7 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
      *            the reaction
      */
     public TraceDependantSpeed(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
-        env = Objects.requireNonNull(environment);
+        this.environment = Objects.requireNonNull(environment);
         this.node = Objects.requireNonNull(node);
         this.reaction = Objects.requireNonNull(reaction);
     }
@@ -56,7 +56,7 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
         }
         final double frequency = reaction.getRate();
         final double steps = (expArrival - curTime) * frequency;
-        return computeDistance(env, node, target) / steps;
+        return computeDistance(environment, node, target) / steps;
     }
 
     /**

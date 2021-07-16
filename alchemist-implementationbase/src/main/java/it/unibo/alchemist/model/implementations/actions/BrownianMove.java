@@ -40,7 +40,12 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
      *            the maximum distance the node may walk in a single step for
      *            each dimension
      */
-    public BrownianMove(final Environment<T, P> environment, final Node<T> node, final RandomGenerator randomGenerator, final double range) {
+    public BrownianMove(
+        final Environment<T, P> environment,
+        final Node<T> node,
+        final RandomGenerator randomGenerator,
+        final double range
+    ) {
         super(environment, node);
         this.range = range;
         this.randomGenerator = randomGenerator;

@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.boundary.gui.layouts;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -19,6 +21,7 @@ import java.util.List;
  *
  */
 @Deprecated
+@SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "Class is deprecated anyway")
 public abstract class AFlowLayout implements LayoutManager, Serializable {
     /**
      * 

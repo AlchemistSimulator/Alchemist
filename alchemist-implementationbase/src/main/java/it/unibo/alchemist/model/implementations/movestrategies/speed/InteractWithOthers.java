@@ -32,7 +32,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     private final Environment<T, P> environment;
     private final Node<T> node;
     private final Molecule interacting;
-    private final double rd, in, sp;
+    private final double radius, in, sp;
 
     /**
      * @param environment
@@ -60,7 +60,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
         if (radius < 0) {
             throw new IllegalArgumentException("The radius must be positive (provided: " + radius + ")");
         }
-        rd = radius;
+        this.radius = radius;
         sp = speed / reaction.getRate();
         in = interaction;
 
@@ -69,7 +69,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     @Override
     public double getNodeMovementLength(final P target) {
         double crowd = 0;
-        final Collection<? extends Node<T>> neighs = rd > 0 ? environment.getNodesWithinRange(node, rd) : Collections.emptyList();
+        final Collection<? extends Node<T>> neighs = radius > 0 ? environment.getNodesWithinRange(node, radius) : Collections.emptyList();
         if (neighs.size() > 1 / in) {
             for (final Node<T> neigh : neighs) {
                 if (neigh.contains(interacting)) {

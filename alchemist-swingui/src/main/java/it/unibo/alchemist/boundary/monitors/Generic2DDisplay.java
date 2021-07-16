@@ -588,6 +588,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public final void setEffectStack(final List<Effect> l) {
         effectStack = l;
     }

@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.protelis;
 
+import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
@@ -47,7 +48,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     @Nullable private final RealDistribution distanceLossDistribution;
     private final Map<DeviceUID, MessageInfo> messages = new LinkedHashMap<>();
     private Map<CodePath, Object> toBeSent;
-    private Map<DeviceUID, Map<CodePath, Object>> neighborState = Collections.emptyMap();
+    private ImmutableMap<DeviceUID, Map<CodePath, Object>> neighborState = ImmutableMap.of();
     private double timeAtLastValidityCheck = Double.NEGATIVE_INFINITY;
 
     /**
@@ -125,12 +126,12 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
          */
         if (timeAtLastValidityCheck != currentTime) {
             if (messages.isEmpty()) {
-                neighborState = Collections.emptyMap();
+                neighborState = ImmutableMap.of();
             } else {
                 /*
                  * If retentionTime is a number, use it. Otherwise clean messages of lost neighbors
                  */
-                neighborState = new LinkedHashMap<>(messages.size());
+                final var stateBuilder = ImmutableMap.<DeviceUID, Map<CodePath, Object>>builder();
                 final Iterator<MessageInfo> messagesIterator = this.messages.values().iterator();
                 final boolean retainsNeighbors = Double.isNaN(retentionTime);
                 final Set<?> neighbors = retainsNeighbors
@@ -139,13 +140,13 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                 while (messagesIterator.hasNext()) {
                     final MessageInfo message = messagesIterator.next();
                     if (retainsNeighbors && neighbors.contains(message.source) || currentTime - message.time < retentionTime) {
-                        neighborState.put(message.source, message.payload);
+                        stateBuilder.put(message.source, message.payload);
                     } else {
                         // Removes from this.messages as well
                         messagesIterator.remove();
                     }
                 }
-                neighborState = Collections.unmodifiableMap(neighborState);
+                neighborState = stateBuilder.build();
             }
             timeAtLastValidityCheck = currentTime;
         }

@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -30,6 +31,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
      * @param environment the current environment
      * @param node the node for this action
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public RemoveNode(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
         this.environment = environment;

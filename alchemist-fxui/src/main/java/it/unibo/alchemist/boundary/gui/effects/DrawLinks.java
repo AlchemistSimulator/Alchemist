@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.gui.effects.json.ColorSerializationAdapter;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
@@ -135,6 +136,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
      * @see #getSize()
      */
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public DoubleProperty sizeProperty() {
         return this.size;
     }

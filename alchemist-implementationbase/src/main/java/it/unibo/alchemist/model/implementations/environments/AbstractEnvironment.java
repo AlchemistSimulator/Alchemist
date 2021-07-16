@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.environments;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.collect.Sets;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
@@ -262,6 +263,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public final Simulation<T, P> getSimulation() {
         return simulation;
     }

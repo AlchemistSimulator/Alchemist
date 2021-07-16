@@ -24,7 +24,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
      * 
      */
     private static final long serialVersionUID = -7358217984854060148L;
-    private final Environment<T, ?> env;
+    private final Environment<T, ?> environment;
 
     /**
      * @param environment the current environment
@@ -32,7 +32,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
      */
     public RemoveNode(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
-        env = environment;
+        this.environment = environment;
         declareDependencyTo(Dependency.MOVEMENT);
     }
 
@@ -43,7 +43,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
 
     @Override
     public void execute() {
-        env.removeNode(getNode());
+        environment.removeNode(getNode());
     }
 
     /**
@@ -58,7 +58,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
      * @return the current environment
      */
     protected Environment<T, ?> getEnvironment() {
-        return env;
+        return environment;
     }
 
     /**

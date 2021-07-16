@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
@@ -39,6 +40,7 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
      * @param reaction
      *            the reaction
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is made by purpose")
     public TraceDependantSpeed(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
         this.environment = Objects.requireNonNull(environment);
         this.node = Objects.requireNonNull(node);

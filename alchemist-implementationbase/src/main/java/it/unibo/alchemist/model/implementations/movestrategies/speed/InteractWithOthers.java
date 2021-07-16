@@ -32,7 +32,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     private final Environment<T, P> environment;
     private final Node<T> node;
     private final Molecule interacting;
-    private final double radius, in, sp;
+    private final double radius, in, speed;
 
     /**
      * @param environment
@@ -61,7 +61,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
             throw new IllegalArgumentException("The radius must be positive (provided: " + radius + ")");
         }
         this.radius = radius;
-        sp = speed / reaction.getRate();
+        this.speed = speed / reaction.getRate();
         in = interaction;
 
     }
@@ -77,7 +77,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
                 }
             }
         }
-        return Math.max(sp / (crowd * in + 1), MINIMUM_DISTANCE_WALKED);
+        return Math.max(speed / (crowd * in + 1), MINIMUM_DISTANCE_WALKED);
     }
 
 }

@@ -94,6 +94,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * @param networkManager
      *            the {@link AlchemistNetworkManager} to be used
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public AlchemistExecutionContext(
             final Environment<Object, P> environment,
             final ProtelisNode<P> localNode,

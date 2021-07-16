@@ -68,6 +68,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param timeDistribution
      *            the time distribution this reaction should follow
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public AbstractReaction(final Node<T> node, final TimeDistribution<T> timeDistribution) {
         hash = Hashes.hash32(node.hashCode(), node.getMoleculeCount(), node.getReactions().size());
         this.timeDistribution = timeDistribution;

@@ -32,7 +32,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     private final Environment<T, P> environment;
     private final Node<T> node;
     private final Molecule interacting;
-    private final double radius, in, speed;
+    private final double radius, interaction, speed;
 
     /**
      * @param environment
@@ -62,7 +62,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
         }
         this.radius = radius;
         this.speed = speed / reaction.getRate();
-        in = interaction;
+        this.interaction = interaction;
 
     }
 
@@ -70,14 +70,14 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     public double getNodeMovementLength(final P target) {
         double crowd = 0;
         final Collection<? extends Node<T>> neighs = radius > 0 ? environment.getNodesWithinRange(node, radius) : Collections.emptyList();
-        if (neighs.size() > 1 / in) {
+        if (neighs.size() > 1 / interaction) {
             for (final Node<T> neigh : neighs) {
                 if (neigh.contains(interacting)) {
                     crowd += 1 / environment.getDistanceBetweenNodes(node, neigh);
                 }
             }
         }
-        return Math.max(speed / (crowd * in + 1), MINIMUM_DISTANCE_WALKED);
+        return Math.max(speed / (crowd * interaction + 1), MINIMUM_DISTANCE_WALKED);
     }
 
 }

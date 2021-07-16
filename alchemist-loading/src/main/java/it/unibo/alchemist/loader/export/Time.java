@@ -21,9 +21,7 @@ public final class Time implements Extractor {
 
     private static final List<String> COLNAME;
     static {
-        final List<String> cName = new LinkedList<>();
-        cName.add("time");
-        COLNAME = Collections.unmodifiableList(cName);
+        COLNAME = List.of("time");
     }
 
     @Override

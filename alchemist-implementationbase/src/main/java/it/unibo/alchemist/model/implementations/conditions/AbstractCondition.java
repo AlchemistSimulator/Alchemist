@@ -29,14 +29,14 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     private static final long serialVersionUID = -1610947908159507754L;
     private final ListSet<Dependency> influencing = new LinkedListSet<>();
-    private final Node<T> n;
+    private final Node<T> node;
 
     /**
      * @param node the node this Condition belongs to
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public AbstractCondition(@Nonnull final Node<T> node) {
-        this.n = Objects.requireNonNull(node);
+        this.node = Objects.requireNonNull(node);
     }
 
     /**
@@ -59,7 +59,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "It is intentional")
     public Node<T> getNode() {
-        return n;
+        return node;
     }
 
     /**

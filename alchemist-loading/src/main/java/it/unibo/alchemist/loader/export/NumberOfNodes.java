@@ -21,9 +21,7 @@ public final class NumberOfNodes implements Extractor {
 
     private static final List<String> COLNAME;
     static {
-        final List<String> cName = new LinkedList<>();
-        cName.add("nodes");
-        COLNAME = Collections.unmodifiableList(cName);
+        COLNAME = List.of("nodes");
     }
 
     @Override

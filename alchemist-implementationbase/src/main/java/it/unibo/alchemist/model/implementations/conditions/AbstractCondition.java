@@ -17,6 +17,7 @@ import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
@@ -33,7 +34,8 @@ public abstract class AbstractCondition<T> implements Condition<T> {
     /**
      * @param node the node this Condition belongs to
      */
-    public AbstractCondition(final Node<T> node) {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
+    public AbstractCondition(@Nonnull final Node<T> node) {
         this.n = Objects.requireNonNull(node);
     }
 

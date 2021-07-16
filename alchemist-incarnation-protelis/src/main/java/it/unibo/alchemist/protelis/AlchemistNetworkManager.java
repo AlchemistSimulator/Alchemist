@@ -119,7 +119,8 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     }
 
     @Override
-    public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
+    public ImmutableMap<DeviceUID, Map<CodePath, Object>> getNeighborState() {
         final double currentTime = event.getTau().toDouble();
         /*
          * If no time has passed, the last result is still valid, otherwise needs to be recomputed

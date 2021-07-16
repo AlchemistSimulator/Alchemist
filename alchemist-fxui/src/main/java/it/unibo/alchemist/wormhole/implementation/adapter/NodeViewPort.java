@@ -27,6 +27,7 @@ public class NodeViewPort implements ViewPort {
      *
      * @param node the node to adapt
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public NodeViewPort(final Node node) {
         this.node = node;
     }

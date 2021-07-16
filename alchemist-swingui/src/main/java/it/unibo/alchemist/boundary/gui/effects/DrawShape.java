@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  */
 @Deprecated
-@SuppressFBWarnings(value = "EI_EXPOSE_REP")
+@SuppressFBWarnings
 public final class DrawShape implements Effect {
 
     private static final int DEFAULT_SIZE = 5;

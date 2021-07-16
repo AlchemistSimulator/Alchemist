@@ -30,8 +30,10 @@ public final class SimulationSetImpl implements SimulationSet {
      * @param genSimConfig Config's shared by all simulations of set
      * @param simulationConfigs List of configs that differentiate set's simulations
      */
-    public SimulationSetImpl(final GeneralSimulationConfig genSimConfig,
-            final List<SimulationConfig> simulationConfigs) {
+    public SimulationSetImpl(
+        final GeneralSimulationConfig genSimConfig,
+        final List<SimulationConfig> simulationConfigs
+    ) {
         this.genSimConfig = Objects.requireNonNull(genSimConfig);
         this.simulationConfigs = Objects.requireNonNull(simulationConfigs);
     }

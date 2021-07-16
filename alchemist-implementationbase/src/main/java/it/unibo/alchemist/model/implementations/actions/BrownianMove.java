@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = -904100978119782403L;
-    private final double r;
+    private final double range;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
     private final RandomGenerator rng;
 
@@ -42,18 +42,18 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
      */
     public BrownianMove(final Environment<T, P> environment, final Node<T> node, final RandomGenerator rand, final double range) {
         super(environment, node);
-        r = range;
+        this.range = range;
         rng = rand;
     }
 
     @Override
     public Action<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
-        return new BrownianMove<>(getEnvironment(), node, rng, r);
+        return new BrownianMove<>(getEnvironment(), node, rng, range);
     }
 
     @Override
     public P getNextPosition() {
-        return getEnvironment().makePosition(genRandom() * r, genRandom() * r);
+        return getEnvironment().makePosition(genRandom() * range, genRandom() * range);
     }
 
     private double genRandom() {
@@ -64,7 +64,7 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
      * @return the movement radius
      */
     protected double getRadius() {
-        return r;
+        return range;
     }
 
     /**

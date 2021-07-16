@@ -27,28 +27,28 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
     private static final long serialVersionUID = -904100978119782403L;
     private final double range;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
-    private final RandomGenerator rng;
+    private final RandomGenerator randomGenerator;
 
     /**
      * @param environment
      *            the environment
      * @param node
      *            the node
-     * @param rand
+     * @param randomGenerator
      *            the simulation {@link RandomGenerator}.
      * @param range
      *            the maximum distance the node may walk in a single step for
      *            each dimension
      */
-    public BrownianMove(final Environment<T, P> environment, final Node<T> node, final RandomGenerator rand, final double range) {
+    public BrownianMove(final Environment<T, P> environment, final Node<T> node, final RandomGenerator randomGenerator, final double range) {
         super(environment, node);
         this.range = range;
-        rng = rand;
+        this.randomGenerator = randomGenerator;
     }
 
     @Override
     public Action<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
-        return new BrownianMove<>(getEnvironment(), node, rng, range);
+        return new BrownianMove<>(getEnvironment(), node, randomGenerator, range);
     }
 
     @Override
@@ -57,7 +57,7 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
     }
 
     private double genRandom() {
-        return rng.nextFloat() - 0.5;
+        return randomGenerator.nextFloat() - 0.5;
     }
 
     /**
@@ -71,7 +71,7 @@ public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNo
      * @return the {@link RandomGenerator}
      */
     protected RandomGenerator getRandomGenerator() {
-        return rng;
+        return randomGenerator;
     }
 
 }

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test for the SAPERE Incarnation.
  */
-public final class TestIncarnation {
+final class TestIncarnation {
 
     private final SAPEREIncarnation<Euclidean2DPosition> incarnation = new SAPEREIncarnation<>();
     private ILsaNode node;

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  */
-public class TestLsaMolecule {
+final class TestLsaMolecule {
 
     private static final String ABSURD_DESCRIPTION =
         "Q|\\!\"£$%&/()=?^[]@ł€¶ŧ←↓→øþæßðđŋħł@"

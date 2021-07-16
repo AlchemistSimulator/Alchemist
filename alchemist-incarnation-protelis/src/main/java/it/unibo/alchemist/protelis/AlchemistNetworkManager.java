@@ -97,6 +97,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      *            the generated probability will in turn be used to determine the probability of the package to be
      *            successfully delivered. Can be null, in which case packets always arrive to neighbors.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public AlchemistNetworkManager(
             final Reaction<Object> executionTime,
             final RunProtelisProgram<?> program,
@@ -168,7 +169,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 
     @Override
     public void shareState(final Map<CodePath, Object> toSend) {
-        toBeSent = Objects.requireNonNull(toSend);
+        toBeSent = Collections.unmodifiableMap(toSend);
     }
 
     /**

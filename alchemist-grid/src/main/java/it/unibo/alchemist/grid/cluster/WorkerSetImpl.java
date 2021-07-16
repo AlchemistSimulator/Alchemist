@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.grid.cluster;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.grid.config.RemoteGeneralSimulationConfig;
 import it.unibo.alchemist.grid.simulation.RemoteResult;
 import it.unibo.alchemist.grid.simulation.RemoteSimulation;
@@ -36,6 +37,7 @@ public final class WorkerSetImpl implements WorkerSet {
      * @param ignite Ignite instance
      * @param grp workers' group
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public WorkerSetImpl(final Ignite ignite, final ClusterGroup grp) {
         this.grp = Objects.requireNonNull(grp);
         this.ignite = Objects.requireNonNull(ignite);

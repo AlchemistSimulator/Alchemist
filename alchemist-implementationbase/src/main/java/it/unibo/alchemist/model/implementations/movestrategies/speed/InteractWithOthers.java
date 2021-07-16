@@ -29,7 +29,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
 
     private static final long serialVersionUID = -1900168887685703120L;
     private static final double MINIMUM_DISTANCE_WALKED = 1;
-    private final Environment<T, P> env;
+    private final Environment<T, P> environment;
     private final Node<T> node;
     private final Molecule interacting;
     private final double rd, in, sp;
@@ -54,7 +54,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
      */
     public InteractWithOthers(final Environment<T, P> environment, final Node<T> n, final Reaction<T> reaction,
             final Molecule inter, final double speed, final double radius, final double interaction) {
-        env = Objects.requireNonNull(environment);
+        this.environment = Objects.requireNonNull(environment);
         node = Objects.requireNonNull(n);
         interacting = Objects.requireNonNull(inter);
         if (radius < 0) {
@@ -69,11 +69,11 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
     @Override
     public double getNodeMovementLength(final P target) {
         double crowd = 0;
-        final Collection<? extends Node<T>> neighs = rd > 0 ? env.getNodesWithinRange(node, rd) : Collections.emptyList();
+        final Collection<? extends Node<T>> neighs = rd > 0 ? environment.getNodesWithinRange(node, rd) : Collections.emptyList();
         if (neighs.size() > 1 / in) {
             for (final Node<T> neigh : neighs) {
                 if (neigh.contains(interacting)) {
-                    crowd += 1 / env.getDistanceBetweenNodes(node, neigh);
+                    crowd += 1 / environment.getDistanceBetweenNodes(node, neigh);
                 }
             }
         }

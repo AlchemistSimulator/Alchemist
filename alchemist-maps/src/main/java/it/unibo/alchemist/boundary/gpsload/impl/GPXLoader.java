@@ -9,6 +9,7 @@ package it.unibo.alchemist.boundary.gpsload.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
@@ -48,6 +49,7 @@ public final class GPXLoader implements GPSFileLoader {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "the field is immutable")
     public ImmutableSet<String> supportedExtensions() {
         return EXTENSIONS;
     }

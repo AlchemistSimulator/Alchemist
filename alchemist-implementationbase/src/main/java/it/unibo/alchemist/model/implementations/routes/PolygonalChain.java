@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.implementations.routes;
 
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
@@ -89,6 +90,7 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
     public final ImmutableList<P> getPoints() {
         return positions;
     }

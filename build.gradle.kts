@@ -5,7 +5,6 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-import Version.Companion.toVersion
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -60,10 +59,6 @@ allprojects {
     apply(plugin = "org.danilopianini.publish-on-central")
     apply(plugin = "com.dorongold.task-tree")
     apply(plugin = "com.github.johnrengelman.shadow")
-
-    gitSemVer {
-        version = computeGitSemVer()
-    }
 
     repositories {
         google()
@@ -347,9 +342,13 @@ dependencies {
 
 // WEBSITE
 
-val projectVersion = rootProject.version.toString().toVersion()
+fun String.toVersion() = org.danilopianini.gradle.gitsemver.SemanticVersion.fromStringOrNull(this)
+    ?: throw IllegalStateException("Not a valid semantic version: $this")
+
+val projectVersion = gitSemVer.computeVersion().toVersion()
+
 @ExperimentalUnsignedTypes
-val isMarkedStable = !projectVersion.isPreRelease
+val isMarkedStable = projectVersion.preRelease.isEmpty()
 
 orchid {
     theme = "Editorial"

@@ -8,6 +8,7 @@
 package it.unibo.alchemist.boundary.gpsload.impl;
 
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
@@ -22,7 +23,6 @@ import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +33,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class GPXLoader implements GPSFileLoader {
 
-    private static final ImmutableSet<String> EXTENSION = ImmutableSet.of("gpx");
+    private static final ImmutableSet<String> EXTENSIONS = ImmutableSet.of("gpx");
 
     @Override
     public List<GPSTrace> readTrace(final URL url) throws IOException {
@@ -47,8 +47,9 @@ public final class GPXLoader implements GPSFileLoader {
     }
 
     @Override
-    public Collection<String> supportedExtensions() {
-        return EXTENSION;
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "the field is immutable")
+    public ImmutableSet<String> supportedExtensions() {
+        return EXTENSIONS;
     }
 
     private GPX getGPX(final InputStream stream) throws FileFormatException {

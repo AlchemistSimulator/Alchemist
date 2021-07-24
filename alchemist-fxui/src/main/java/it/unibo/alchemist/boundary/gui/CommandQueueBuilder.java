@@ -11,7 +11,9 @@ package it.unibo.alchemist.boundary.gui;
 
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.util.LinkedList;
+import org.apache.commons.collections4.queue.UnmodifiableQueue;
+
+import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.function.Supplier;
 
@@ -21,7 +23,7 @@ import java.util.function.Supplier;
  * @param <P> the position type
  */
 public final class CommandQueueBuilder<P extends Position2D<? extends P>> {
-    private final Queue<DrawCommand<P>> commandQueue = new LinkedList<>();
+    private final Queue<DrawCommand<P>> commandQueue = new ArrayDeque<>();
 
     /**
      * Wraps a {@code DrawCommand} around to the queue to be executed on the JavaFX thread.
@@ -61,6 +63,6 @@ public final class CommandQueueBuilder<P extends Position2D<? extends P>> {
      * @return the queue of commands
      */
     public Queue<DrawCommand<P>> buildCommandQueue() {
-        return commandQueue;
+        return UnmodifiableQueue.unmodifiableQueue(commandQueue);
     }
 }

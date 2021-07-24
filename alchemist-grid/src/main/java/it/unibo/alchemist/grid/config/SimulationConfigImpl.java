@@ -7,9 +7,11 @@
  */
 package it.unibo.alchemist.grid.config;
 
+import com.google.common.collect.ImmutableMap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -21,18 +23,19 @@ public final class SimulationConfigImpl implements SimulationConfig {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final Map<String, ? extends Serializable> variables;
+    private final ImmutableMap<String, ? extends Serializable> variables;
 
     /**
      * 
      * @param variables Simulation's initialization variables
      */
     public SimulationConfigImpl(final Map<String, ? extends Serializable> variables) {
-        this.variables = Objects.requireNonNull(variables);
+        this.variables = ImmutableMap.copyOf(variables);
     }
 
     @Override
-    public Map<String, ? extends Serializable> getVariables() {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
+    public ImmutableMap<String, ? extends Serializable> getVariables() {
         return this.variables;
     }
 

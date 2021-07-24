@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
@@ -33,6 +34,7 @@ public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectio
      * @param speed
      *            the speed, in meters/second
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public ConstantSpeed(final Reaction<?> reaction, final double speed) {
         if (speed < 0) {
             throw new IllegalArgumentException("Speed must be positive");

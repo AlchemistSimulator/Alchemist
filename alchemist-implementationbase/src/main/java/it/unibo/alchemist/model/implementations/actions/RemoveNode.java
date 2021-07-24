@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -24,15 +25,16 @@ public final class RemoveNode<T> extends AbstractAction<T> {
      * 
      */
     private static final long serialVersionUID = -7358217984854060148L;
-    private final Environment<T, ?> env;
+    private final Environment<T, ?> environment;
 
     /**
      * @param environment the current environment
      * @param node the node for this action
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public RemoveNode(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
-        env = environment;
+        this.environment = environment;
         declareDependencyTo(Dependency.MOVEMENT);
     }
 
@@ -43,7 +45,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
 
     @Override
     public void execute() {
-        env.removeNode(getNode());
+        environment.removeNode(getNode());
     }
 
     /**
@@ -58,7 +60,7 @@ public final class RemoveNode<T> extends AbstractAction<T> {
      * @return the current environment
      */
     protected Environment<T, ?> getEnvironment() {
-        return env;
+        return environment;
     }
 
     /**

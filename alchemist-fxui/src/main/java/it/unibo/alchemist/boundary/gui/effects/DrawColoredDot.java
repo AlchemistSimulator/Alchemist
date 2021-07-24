@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory;
 import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty;
@@ -31,6 +32,7 @@ import static it.unibo.alchemist.HashesKt.murmur3Hash32;
  *
  * @param <P> position type
  */
+@SuppressFBWarnings("EI_EXPOSE_REP")
 public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P> {
 
     /**

@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.reactions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -67,6 +68,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param timeDistribution
      *            the time distribution this reaction should follow
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public AbstractReaction(final Node<T> node, final TimeDistribution<T> timeDistribution) {
         hash = Hashes.hash32(node.hashCode(), node.getMoleculeCount(), node.getReactions().size());
         this.timeDistribution = timeDistribution;
@@ -350,6 +352,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     );
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public final Node<T> getNode() {
         return node;
     }

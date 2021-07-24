@@ -21,6 +21,7 @@ import org.danilopianini.util.ListSet;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import org.danilopianini.util.ListSets;
 
 
 /**
@@ -77,13 +78,13 @@ public abstract class AbstractAction<T> implements Action<T> {
      */
     @Override
     public final ListSet<? extends Dependency> getOutboundDependencies() {
-        return dependencies;
+        return ListSets.unmodifiableListSet(dependencies);
     }
 
     /**
      * @return the node this action belongs to
      */
-    public Node<T> getNode() {
+    protected Node<T> getNode() {
         return node;
     }
 

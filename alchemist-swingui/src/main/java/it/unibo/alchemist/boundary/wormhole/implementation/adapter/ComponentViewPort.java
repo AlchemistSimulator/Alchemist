@@ -11,6 +11,7 @@ package it.unibo.alchemist.boundary.wormhole.implementation.adapter;
 
 import java.awt.Component;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
 
 import static it.unibo.alchemist.HashesKt.murmur3Hash32;
@@ -27,6 +28,7 @@ public class ComponentViewPort implements ViewPort {
      *
      * @param component the component to adapt
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public ComponentViewPort(final Component component) {
         this.component = component;
     }
@@ -36,6 +38,7 @@ public class ComponentViewPort implements ViewPort {
      *
      * @return the component
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public Component getComponent() {
         return component;
     }
@@ -45,6 +48,7 @@ public class ComponentViewPort implements ViewPort {
      *
      * @param component the component
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public void setComponent(final Component component) {
         this.component = component;
     }

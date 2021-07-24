@@ -7,11 +7,10 @@
  */
 package it.unibo.alchemist.loader.export;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,9 +20,7 @@ public final class Time implements Extractor {
 
     private static final List<String> COLNAME;
     static {
-        final List<String> cName = new LinkedList<>();
-        cName.add("time");
-        COLNAME = Collections.unmodifiableList(cName);
+        COLNAME = List.of("time");
     }
 
     @Override
@@ -37,6 +34,7 @@ public final class Time implements Extractor {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "the field is immutable")
     public List<String> getNames() {
         return COLNAME;
     }

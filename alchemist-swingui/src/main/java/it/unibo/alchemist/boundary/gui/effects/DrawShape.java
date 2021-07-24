@@ -29,6 +29,7 @@ import java.util.Set;
 /**
  */
 @Deprecated
+@SuppressFBWarnings
 public final class DrawShape implements Effect {
 
     private static final int DEFAULT_SIZE = 5;

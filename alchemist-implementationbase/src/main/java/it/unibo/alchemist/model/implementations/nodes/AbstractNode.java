@@ -154,7 +154,7 @@ public abstract class AbstractNode<T> implements Node<T> {
 
     @Override
     public final List<Reaction<T>> getReactions() {
-        return reactions;
+        return Collections.unmodifiableList(reactions);
     }
 
     @Override

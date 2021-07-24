@@ -87,7 +87,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     /**
      * @return the current environment
      */
-    public Environment<T, P> getEnvironment() {
+    protected Environment<T, P> getEnvironment() {
         return environment;
     }
 

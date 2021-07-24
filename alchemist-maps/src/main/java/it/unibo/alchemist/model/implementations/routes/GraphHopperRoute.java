@@ -7,14 +7,14 @@
  */
 package it.unibo.alchemist.model.implementations.routes;
 
+import com.google.common.collect.ImmutableList;
 import com.graphhopper.GHResponse;
 import com.graphhopper.util.PointList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.TimedRoute;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ public final class GraphHopperRoute implements TimedRoute<GeoPosition> {
     private static final long serialVersionUID = -1455332156736222268L;
     private final int numPoints;
     private final double distance, time;
-    private final List<GeoPosition> points;
+    private final ImmutableList<GeoPosition> points;
 
     /**
      * @param response
@@ -41,11 +41,11 @@ public final class GraphHopperRoute implements TimedRoute<GeoPosition> {
             distance = resp.getDistance();
             final PointList pts = resp.getPoints();
             numPoints = pts.getSize();
-            final List<GeoPosition> temp = new ArrayList<>(numPoints);
+            final var builder = ImmutableList.<GeoPosition>builder();
             for (int i = 0; i < pts.getSize(); i++) {
-                temp.add(new LatLongPosition(pts.getLatitude(i), pts.getLongitude(i)));
+                builder.add(new LatLongPosition(pts.getLatitude(i), pts.getLongitude(i)));
             }
-            points = Collections.unmodifiableList(temp);
+            points = builder.build();
         } else {
             final String msg = errs.stream().map(Throwable::getMessage).collect(Collectors.joining("\n"));
             throw new IllegalArgumentException(msg, errs.get(0));
@@ -63,7 +63,8 @@ public final class GraphHopperRoute implements TimedRoute<GeoPosition> {
     }
 
     @Override
-    public List<GeoPosition> getPoints() {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
+    public ImmutableList<GeoPosition> getPoints() {
         return points;
     }
 

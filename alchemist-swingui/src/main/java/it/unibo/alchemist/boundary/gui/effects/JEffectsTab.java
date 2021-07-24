@@ -8,6 +8,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack.Type;
 import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
@@ -45,6 +46,7 @@ import java.util.List;
  *            is the type for the concentration
  */
 @Deprecated
+@SuppressFBWarnings(justification = "This class is deprecated anyway")
 public final class JEffectsTab<T> extends JTapeTab implements ItemListener {
 
     /**

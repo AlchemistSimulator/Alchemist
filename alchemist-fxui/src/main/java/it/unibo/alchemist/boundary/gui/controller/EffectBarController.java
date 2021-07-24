@@ -47,7 +47,7 @@ import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRe
  * @param <P> the position type
  */
 @SuppressFBWarnings(
-        value = "NP_NULL_ON_SOME_PATH",
+        value = { "NP_NULL_ON_SOME_PATH", "EI_EXPOSE_REP2" },
         justification = "Null checks are performed in the initialize function"
 )
 public class EffectBarController<P extends Position2D<? extends P>> implements Initializable {

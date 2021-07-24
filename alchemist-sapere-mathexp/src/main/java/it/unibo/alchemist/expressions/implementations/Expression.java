@@ -27,6 +27,7 @@ import it.unibo.alchemist.expressions.parser.Exp;
 
 /**
  */
+@SuppressFBWarnings
 public final class Expression implements IExpression {
 
     private static final long serialVersionUID = 3443642011985784643L;

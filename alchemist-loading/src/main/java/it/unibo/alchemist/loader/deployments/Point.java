@@ -10,6 +10,7 @@ package it.unibo.alchemist.loader.deployments;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 /**
@@ -20,25 +21,25 @@ import java.util.stream.Stream;
 public final class Point<P extends Position<? extends P>> implements Deployment<P> {
 
     private final double x, y;
-    private final Environment<?, P> pm;
+    private final BiFunction<Double, Double, P> positionMaker;
 
     /**
-     * @param pm
+     * @param environment
      *            The {@link Environment}
      * @param x
      *            x coordinate
      * @param y
      *            y coordinate
      */
-    public Point(final Environment<?, P> pm, final double x, final double y) {
+    public Point(final Environment<?, P> environment, final double x, final double y) {
         this.x = x;
         this.y = y;
-        this.pm = pm;
+        positionMaker = environment::makePosition;
     }
 
     @Override
     public Stream<P> stream() {
-        return Stream.of(pm.makePosition(x, y));
+        return Stream.of(positionMaker.apply(x, y));
     }
 
 }

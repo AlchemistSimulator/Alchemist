@@ -10,6 +10,7 @@
 package it.unibo.alchemist.boundary.gui.controller;
 
 import com.jfoenix.controls.JFXButton;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import java.net.URL;
 import java.util.Objects;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This class models a JavaFX controller for ControlTypePopoverLayout.fxml.
  */
+@SuppressFBWarnings("EI_EXPOSE_REP")
 public class ControlTypePopoverController implements Initializable {
     /**
      * Layout path.

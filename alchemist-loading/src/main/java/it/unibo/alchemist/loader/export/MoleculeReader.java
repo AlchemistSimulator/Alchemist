@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.loader.export;
 
-import com.google.common.collect.Lists;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.interfaces.Time;
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -71,13 +70,11 @@ public final class MoleculeReader implements Extractor {
         final var shortProp = propertyText.isEmpty()
             ? ""
             : propertyText.substring(0, Math.min(SHORT_NAME_MAX_LENGTH, propertyText.length())) + "@";
-        this.columns = Collections.unmodifiableList(
-            this.aggregators.isEmpty()
-                ? Lists.newArrayList(shortProp + molecule + "@every_node")
+        this.columns = this.aggregators.isEmpty()
+                ? List.of(shortProp + molecule + "@every_node")
                 : this.aggregators.stream()
-                    .map(a -> shortProp + molecule + '[' + a.getClass().getSimpleName() + ']')
-                    .collect(Collectors.toList())
-        );
+                .map(a -> shortProp + molecule + '[' + a.getClass().getSimpleName() + ']')
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -109,6 +106,7 @@ public final class MoleculeReader implements Extractor {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is unmodifiable")
     public List<String> getNames() {
         return columns;
     }

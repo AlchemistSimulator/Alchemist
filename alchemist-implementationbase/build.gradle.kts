@@ -1,3 +1,7 @@
+import Libs.alchemist
+import Libs.apacheCommons
+import Libs.jgrapht
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *

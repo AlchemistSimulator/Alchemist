@@ -20,7 +20,6 @@ dependencies {
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.classgraph)
-    implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
     testImplementation(alchemist("loading"))

@@ -17,24 +17,20 @@ import java.net.URL
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KOTLIN_VERSION
 
 plugins {
-    id("org.danilopianini.git-sensitive-semantic-versioning")
-    `java-library`
     kotlin("jvm")
     jacoco
-    id("com.github.spotbugs")
     pmd
     checkstyle
-    id("de.aaschmid.cpd")
-    id("io.gitlab.arturbosch.detekt")
-    id("org.jlleitschuh.gradle.ktlint")
     `build-dashboard`
-    id("org.jetbrains.dokka")
-    id("com.eden.orchidPlugin")
-    signing
-    `maven-publish`
-    id("org.danilopianini.publish-on-central")
+    id("kotlin-qa")
     id("com.dorongold.task-tree")
+    id("com.eden.orchidPlugin")
     id("com.github.johnrengelman.shadow")
+    id("com.github.spotbugs")
+    id("de.aaschmid.cpd")
+    id("org.danilopianini.git-sensitive-semantic-versioning")
+    id("org.danilopianini.publish-on-central")
+    id("org.jetbrains.dokka")
 }
 
 apply(plugin = "com.eden.orchidPlugin")
@@ -53,15 +49,12 @@ allprojects {
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "checkstyle")
     apply(plugin = "pmd")
-    apply(plugin = "io.gitlab.arturbosch.detekt")
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "signing")
-    apply(plugin = "maven-publish")
     apply(plugin = "org.danilopianini.publish-on-central")
     apply(plugin = "com.dorongold.task-tree")
     apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "kotlin-qa")
 
     repositories {
         google()
@@ -85,8 +78,6 @@ allprojects {
     }
 
     dependencies {
-        // Code quality control
-        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         // Compilation only
         compileOnly(Libs.annotations)
         compileOnly(Libs.spotBugsModule("annotations"))
@@ -135,7 +126,6 @@ allprojects {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs = listOf("-Xjvm-default=all") // Enable default methods in Kt interfaces
-            allWarningsAsErrors = true
         }
     }
 
@@ -158,7 +148,7 @@ allprojects {
 
     tasks.jacocoTestReport {
         reports {
-            xml.isEnabled = true
+            xml.required.set(true)
         }
     }
 
@@ -194,15 +184,6 @@ allprojects {
         minimumTokenCount = 100
         source = sourceSets["main"].allJava
         tasks.check.orNull?.dependsOn(this)
-    }
-
-    detekt {
-        allRules = true
-        buildUponDefaultConfig = true
-        config = files("${rootProject.projectDir}/config/detekt/detekt.yml")
-        reports {
-            html.enabled = true
-        }
     }
 
     tasks.withType<Javadoc> {

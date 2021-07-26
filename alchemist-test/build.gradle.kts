@@ -1,3 +1,5 @@
+import Libs.alchemist
+
 /*
  * Copyright (C) 2010-2020, Danilo Pianini and contributors
  * listed in the main project's alchemist/build.gradle.kts file.

@@ -1,3 +1,6 @@
+import Libs.alchemist
+import Libs.jgrapht
+
 /*
  * Copyright (C) 2010-2020, Danilo Pianini and contributors
  * listed in the main project's alchemist/build.gradle.kts file.
@@ -9,13 +12,13 @@
 
 dependencies {
     api(project(":alchemist-interfaces"))
-    implementation(project(":alchemist-euclidean-geometry"))
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-cognitive-agents"))
+    implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("cognitive-agents"))
     // implementation(Libs.konf)
     implementation(jgrapht("core"))
-    testImplementation(project(":alchemist-test"))
-    testImplementation(project(":alchemist-incarnation-protelis"))
+    testImplementation(alchemist("test"))
+    testImplementation(alchemist("incarnation-protelis"))
 }
 
 publishing.publications {

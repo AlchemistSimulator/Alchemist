@@ -5,6 +5,9 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
+import Libs.incarnation
+import Libs.alchemist
+import Libs.orchidModule
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -86,30 +89,30 @@ allprojects {
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         // Compilation only
         compileOnly(Libs.annotations)
-        compileOnly(spotBugsModule("annotations"))
+        compileOnly(Libs.spotBugsModule("annotations"))
         // Implementation
         implementation(Libs.slf4j_api)
         implementation(kotlin("stdlib-jdk8"))
         implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
         // Test compilation only
-        testCompileOnly(spotBugsModule("annotations"))
+        testCompileOnly(Libs.spotBugsModule("annotations"))
         // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
-        testImplementation(junit("api"))
+        testImplementation(Libs.junit("api"))
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
         testImplementation("org.mockito:mockito-core:_")
         testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
-        testRuntimeOnly(junit("engine"))
+        testRuntimeOnly(Libs.junit("engine"))
         // executable jar packaging
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
         }
-        pmd(pmdModule("core"))
-        pmd(pmdModule("java"))
-        pmd(pmdModule("scala"))
-        pmd(pmdModule("kotlin"))
+        pmd(Libs.pmdModule("core"))
+        pmd(Libs.pmdModule("java"))
+        pmd(Libs.pmdModule("scala"))
+        pmd(Libs.pmdModule("kotlin"))
     }
 
     // Enforce Kotlin version coherence
@@ -323,9 +326,9 @@ dependencies {
     listOf("interfaces", "engine", "loading") // Execution requirements
         .map { project(":alchemist-$it") }
         .forEach { api(it) }
-    implementation(apacheCommons("io"))
-    implementation(apacheCommons("lang3"))
-    implementation(apacheCommons("cli"))
+    implementation(Libs.apacheCommons("io"))
+    implementation(Libs.apacheCommons("lang3"))
+    implementation(Libs.apacheCommons("cli"))
     implementation(Libs.logback_classic)
     testRuntimeOnly(incarnation("protelis"))
     testRuntimeOnly(incarnation("sapere"))

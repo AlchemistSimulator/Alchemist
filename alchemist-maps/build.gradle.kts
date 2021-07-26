@@ -1,3 +1,8 @@
+import Libs.alchemist
+import Libs.apacheCommons
+import Libs.graphhopper
+import Libs.incarnation
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -7,7 +12,7 @@
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
+    api(alchemist("interfaces"))
 
     implementation(alchemist("implementationbase"))
     implementation(alchemist("loading"))

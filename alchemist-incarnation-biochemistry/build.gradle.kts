@@ -1,3 +1,6 @@
+import Libs.alchemist
+import Libs.apacheCommons
+
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -12,16 +15,15 @@ plugins {
 
 dependencies {
     antlr(Libs.antlr4)
-    api(project(":alchemist-implementationbase"))
-    api(project(":alchemist-euclidean-geometry"))
+    api(alchemist("implementationbase"))
+    api(alchemist("euclidean-geometry"))
     implementation(apacheCommons("lang3"))
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)
     runtimeOnly(Libs.antlr4_runtime)
-//    runtimeOnly(Libs.bcel)
-    testImplementation(project(":alchemist-engine"))
-    testImplementation(project(":alchemist-loading"))
+    testImplementation(alchemist("engine"))
+    testImplementation(alchemist("loading"))
 }
 
 /*

@@ -2,86 +2,6 @@ import org.gradle.api.Project
 import kotlin.String
 
 /**
- * Returns a reference to an alchemist sub-project [module].
- */
-fun Project.alchemist(module: String) = project(":alchemist-$module")
-
-/**
- * Returns a reference to an alchemist sub-project incarnation [module].
- */
-fun Project.incarnation(module: String) = alchemist("incarnation-$module")
-
-private fun modularizedLibrary(base: String, module: String = "", separator: String = "-") = when {
-    module.isEmpty() -> base
-    else -> base + separator + module
-} + ":_"
-
-private fun oldApache(module: String) = "commons-$module:commons-$module:_"
-
-/**
- * Returns the identifier of the desired ArrowKt [module].
- */
-fun arrowKt(module: String) = modularizedLibrary("io.arrow-kt:arrow", module)
-
-/**
- * Returns the identifier of the desired Apache-Commons [module].
- */
-fun apacheCommons(module: String) = when(module) {
-    in setOf("cli", "io", "codec") -> oldApache(module)
-    else -> modularizedLibrary("org.apache.commons:commons", module)
-}
-
-/**
- * Returns the identifier of the desired GraphHopper [module].
- */
-fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
-
-/**
- * Returns the identifier of the desired GraphStream [module].
- */
-fun graphStream(module: String = "") = modularizedLibrary("org.graphstream:gs", module)
-
-/**
- * Returns the identifier of the desired JGraphT [module].
- */
-fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
-
-/**
- * Returns the identifier of the desired JUnit [module].
- */
-fun junit(module: String) = modularizedLibrary("org.junit.jupiter:junit-jupiter", module)
-
-/**
- * Returns the identifier of the desired Konf [module].
- */
-fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
-
-/**
- * Returns the identifier of the desired Orchid [module].
- */
-fun orchidModule(module: String) = modularizedLibrary("io.github.javaeden.orchid:Orchid", module, separator = "")
-
-/**
- * Returns the identifier of the desired Protelis [module].
- */
-fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
-
-/**
- * Returns the identifier of the desired PMD [module].
- */
-fun pmdModule(module: String = "") = modularizedLibrary("net.sourceforge.pmd:pmd", module)
-
-/**
- * Returns the identifier of the desired Scala [module].
- */
-fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)
-
-/**
- * Returns the identifier of the desired SpotBugs [module].
- */
-fun spotBugsModule(module: String = "") = modularizedLibrary("com.github.spotbugs:spotbugs", module)
-
-/**
  * Statically defined libraries used by the project.
  */
 object Libs {
@@ -91,8 +11,10 @@ object Libs {
     const val bcel = "org.apache.bcel:bcel:_"
     const val boilerplate: String = "org.danilopianini:boilerplate:_"
     const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:_"
+    const val conrec: String = "org.danilopianini:conrec:_"
     const val classgraph: String = "io.github.classgraph:classgraph:_"
-    const val concurrentlinkedhashmap_lru: String = "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:_"
+    const val concurrentlinkedhashmap_lru: String =
+        "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:_"
     const val controlsfx: String = "org.controlsfx:controlsfx:_"
     const val dsiutil: String = "it.unimi.dsi:dsiutils:_"
     const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:_"
@@ -103,7 +25,7 @@ object Libs {
     const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:_"
     const val javalib_java7: String = "org.danilopianini:javalib-java7:_"
     const val jfoenix: String = "com.jfoenix:jfoenix:_"
-    const val jiconfont_google_material_design_icons: String = "com.github.jiconfont:jiconfont-google_material_design_icons:_"
+    const val jiconfont_google_material_design_icons = "com.github.jiconfont:jiconfont-google_material_design_icons:_"
     const val jiconfont_javafx: String = "com.github.jiconfont:jiconfont-javafx:_"
     const val jirf: String = "org.danilopianini:jirf:_"
     const val jool: String = "org.jooq:jool:_"
@@ -124,4 +46,84 @@ object Libs {
     const val thread_inheritable_resource_loader: String = "org.danilopianini:thread-inheritable-resource-loader:_"
     const val tornadofx: String = "no.tornado:tornadofx:_"
     const val trove4j: String = "net.sf.trove4j:trove4j:_"
+
+    /**
+     * Returns a reference to an alchemist sub-project [module].
+     */
+    fun Project.alchemist(module: String) = project(":alchemist-$module")
+
+    /**
+     * Returns a reference to an alchemist sub-project incarnation [module].
+     */
+    fun Project.incarnation(module: String) = alchemist("incarnation-$module")
+
+    private fun modularizedLibrary(base: String, module: String = "", separator: String = "-") = when {
+        module.isEmpty() -> base
+        else -> base + separator + module
+    } + ":_"
+
+    private fun oldApache(module: String) = "commons-$module:commons-$module:_"
+
+    /**
+     * Returns the identifier of the desired ArrowKt [module].
+     */
+    fun arrowKt(module: String) = modularizedLibrary("io.arrow-kt:arrow", module)
+
+    /**
+     * Returns the identifier of the desired Apache-Commons [module].
+     */
+    fun apacheCommons(module: String) = when (module) {
+        in setOf("cli", "io", "codec") -> oldApache(module)
+        else -> modularizedLibrary("org.apache.commons:commons", module)
+    }
+
+    /**
+     * Returns the identifier of the desired GraphHopper [module].
+     */
+    fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
+
+    /**
+     * Returns the identifier of the desired GraphStream [module].
+     */
+    fun graphStream(module: String = "") = modularizedLibrary("org.graphstream:gs", module)
+
+    /**
+     * Returns the identifier of the desired JGraphT [module].
+     */
+    fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
+
+    /**
+     * Returns the identifier of the desired JUnit [module].
+     */
+    fun junit(module: String) = modularizedLibrary("org.junit.jupiter:junit-jupiter", module)
+
+    /**
+     * Returns the identifier of the desired Konf [module].
+     */
+    fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
+
+    /**
+     * Returns the identifier of the desired Orchid [module].
+     */
+    fun orchidModule(module: String) = modularizedLibrary("io.github.javaeden.orchid:Orchid", module, separator = "")
+
+    /**
+     * Returns the identifier of the desired Protelis [module].
+     */
+    fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
+
+    /**
+     * Returns the identifier of the desired PMD [module].
+     */
+    fun pmdModule(module: String = "") = modularizedLibrary("net.sourceforge.pmd:pmd", module)
+
+    /**
+     * Returns the identifier of the desired Scala [module].
+     */
+    fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)
+
+    /**
+     * Returns the identifier of the desired SpotBugs [module].
+     */
+    fun spotBugsModule(module: String = "") = modularizedLibrary("com.github.spotbugs:spotbugs", module)
 }

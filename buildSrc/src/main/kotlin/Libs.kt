@@ -13,8 +13,6 @@ object Libs {
     const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:_"
     const val conrec: String = "org.danilopianini:conrec:_"
     const val classgraph: String = "io.github.classgraph:classgraph:_"
-    const val concurrentlinkedhashmap_lru: String =
-        "com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:_"
     const val controlsfx: String = "org.controlsfx:controlsfx:_"
     const val dsiutil: String = "it.unimi.dsi:dsiutils:_"
     const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:_"

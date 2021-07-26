@@ -1,3 +1,7 @@
+# Next release
+
+* Simplification to the build system
+
 # 11.3.0
 
 Maintenance release. This release only includes dependency updates and tweaks to allow the simulator to run and build under Java 16.

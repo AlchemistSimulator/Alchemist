@@ -8,7 +8,6 @@ object Libs {
     const val annotations: String = "org.jetbrains:annotations:_"
     const val antlr4: String = "org.antlr:antlr4:_"
     const val antlr4_runtime: String = "org.antlr:antlr4-runtime:_"
-    const val bcel = "org.apache.bcel:bcel:_"
     const val boilerplate: String = "org.danilopianini:boilerplate:_"
     const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:_"
     const val conrec: String = "org.danilopianini:conrec:_"

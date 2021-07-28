@@ -1,6 +1,7 @@
-# Next release
+# 11.3.1
 
 * Simplification to the build system
+* Upgraded Protelis to 15.1.0
 
 # 11.3.0
 

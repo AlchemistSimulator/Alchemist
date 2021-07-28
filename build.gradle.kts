@@ -14,7 +14,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
-import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KOTLIN_VERSION
 
 plugins {
     kotlin("jvm")
@@ -104,16 +103,6 @@ allprojects {
         pmd(Libs.pmdModule("java"))
         pmd(Libs.pmdModule("scala"))
         pmd(Libs.pmdModule("kotlin"))
-    }
-
-    // Enforce Kotlin version coherence
-    configurations.all {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "org.jetbrains.kotlin" && requested.name.startsWith("kotlin")) {
-                useVersion(KOTLIN_VERSION)
-                because("All Kotlin modules should use the same version, and compiler uses $KOTLIN_VERSION")
-            }
-        }
     }
 
     // COMPILE

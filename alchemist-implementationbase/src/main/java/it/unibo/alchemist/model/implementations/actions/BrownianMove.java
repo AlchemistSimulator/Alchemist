@@ -25,53 +25,59 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 public final class BrownianMove<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = -904100978119782403L;
-    private final double r;
+    private final double range;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
-    private final RandomGenerator rng;
+    private final RandomGenerator randomGenerator;
 
     /**
      * @param environment
      *            the environment
      * @param node
      *            the node
-     * @param rand
+     * @param randomGenerator
      *            the simulation {@link RandomGenerator}.
      * @param range
      *            the maximum distance the node may walk in a single step for
      *            each dimension
      */
-    public BrownianMove(final Environment<T, P> environment, final Node<T> node, final RandomGenerator rand, final double range) {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
+    public BrownianMove(
+        final Environment<T, P> environment,
+        final Node<T> node,
+        final RandomGenerator randomGenerator,
+        final double range
+    ) {
         super(environment, node);
-        r = range;
-        rng = rand;
+        this.range = range;
+        this.randomGenerator = randomGenerator;
     }
 
     @Override
     public Action<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
-        return new BrownianMove<>(getEnvironment(), node, rng, r);
+        return new BrownianMove<>(getEnvironment(), node, randomGenerator, range);
     }
 
     @Override
     public P getNextPosition() {
-        return getEnvironment().makePosition(genRandom() * r, genRandom() * r);
+        return getEnvironment().makePosition(genRandom() * range, genRandom() * range);
     }
 
     private double genRandom() {
-        return rng.nextFloat() - 0.5;
+        return randomGenerator.nextFloat() - 0.5;
     }
 
     /**
      * @return the movement radius
      */
     protected double getRadius() {
-        return r;
+        return range;
     }
 
     /**
      * @return the {@link RandomGenerator}
      */
     protected RandomGenerator getRandomGenerator() {
-        return rng;
+        return randomGenerator;
     }
 
 }

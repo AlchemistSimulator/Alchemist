@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -29,10 +30,10 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
 
     private static final long serialVersionUID = -1900168887685703120L;
     private static final double MINIMUM_DISTANCE_WALKED = 1;
-    private final Environment<T, P> env;
+    private final Environment<T, P> environment;
     private final Node<T> node;
     private final Molecule interacting;
-    private final double rd, in, sp;
+    private final double radius, interaction, speed;
 
     /**
      * @param environment
@@ -52,32 +53,34 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
      *            factor dynamically computed, and the speed will be divided by
      *            the number obtained
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public InteractWithOthers(final Environment<T, P> environment, final Node<T> n, final Reaction<T> reaction,
             final Molecule inter, final double speed, final double radius, final double interaction) {
-        env = Objects.requireNonNull(environment);
+        this.environment = Objects.requireNonNull(environment);
         node = Objects.requireNonNull(n);
         interacting = Objects.requireNonNull(inter);
         if (radius < 0) {
             throw new IllegalArgumentException("The radius must be positive (provided: " + radius + ")");
         }
-        rd = radius;
-        sp = speed / reaction.getRate();
-        in = interaction;
-
+        this.radius = radius;
+        this.speed = speed / reaction.getRate();
+        this.interaction = interaction;
     }
 
     @Override
     public double getNodeMovementLength(final P target) {
         double crowd = 0;
-        final Collection<? extends Node<T>> neighs = rd > 0 ? env.getNodesWithinRange(node, rd) : Collections.emptyList();
-        if (neighs.size() > 1 / in) {
+        final Collection<? extends Node<T>> neighs = radius > 0
+            ? environment.getNodesWithinRange(node, radius)
+            : Collections.emptyList();
+        if (neighs.size() > 1 / interaction) {
             for (final Node<T> neigh : neighs) {
                 if (neigh.contains(interacting)) {
-                    crowd += 1 / env.getDistanceBetweenNodes(node, neigh);
+                    crowd += 1 / environment.getDistanceBetweenNodes(node, neigh);
                 }
             }
         }
-        return Math.max(sp / (crowd * in + 1), MINIMUM_DISTANCE_WALKED);
+        return Math.max(speed / (crowd * interaction + 1), MINIMUM_DISTANCE_WALKED);
     }
 
 }

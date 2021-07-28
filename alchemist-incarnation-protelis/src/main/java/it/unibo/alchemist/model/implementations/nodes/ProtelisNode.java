@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.nodes;
 
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -45,6 +46,7 @@ public final class ProtelisNode<P extends Position<? extends P>>
      * @param environment
      *            the environment
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public ProtelisNode(final Environment<Object, P> environment) {
         super(environment);
         this.environment = environment;

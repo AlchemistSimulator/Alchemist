@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -60,9 +61,10 @@ public final class LocalGeneralSimulationConfig extends LightInfoGeneralSimulati
     public LocalGeneralSimulationConfig(final Loader loader, final Time endTime) {
         this(loader, Long.MAX_VALUE, endTime);
     }
-        @Override
+
+    @Override
     public Map<String, byte[]> getDependencies() {
-        return this.dependencies;
+        return Collections.unmodifiableMap(this.dependencies);
     }
 
 }

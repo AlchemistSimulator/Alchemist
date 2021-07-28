@@ -1,0 +1,23 @@
+incarnation: protelis
+
+environment:
+  type: Continuous2DEnvironment
+
+_reactions: &behavior
+  - time-distribution:
+      type: DiracComb
+      parameters: [1.0]
+    type: BlendedSteering
+    actions:
+      - type: CognitiveAgentSeek
+        parameters: [1000, 500]
+      - type: CognitiveAgentFlee
+        parameters: [500, -500]
+
+deployments:
+  - type: Point
+    parameters: [0, 0]
+    nodes:
+      type: HomogeneousPedestrian2D
+    programs:
+      - *behavior

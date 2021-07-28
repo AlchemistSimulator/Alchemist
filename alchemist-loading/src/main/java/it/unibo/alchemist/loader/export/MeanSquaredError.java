@@ -7,7 +7,8 @@
  */
 package it.unibo.alchemist.loader.export;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
@@ -15,8 +16,6 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -35,7 +34,7 @@ public final class MeanSquaredError<T> implements Extractor {
     private final Molecule mReference;
     private final String pActual;
     private final Molecule mActual;
-    private final List<String> name;
+    private final ImmutableList<String> name;
     private final UnivariateStatistic statistic;
 
     /**
@@ -81,7 +80,7 @@ public final class MeanSquaredError<T> implements Extractor {
         }
         mse.append(localValueMolecule)
             .append(')');
-        name = Collections.unmodifiableList(Lists.newArrayList(mse.toString()));
+        name = ImmutableList.of(mse.toString());
     }
 
     @Override
@@ -105,7 +104,8 @@ public final class MeanSquaredError<T> implements Extractor {
     }
 
     @Override
-    public List<String> getNames() {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
+    public ImmutableList<String> getNames() {
         return name;
     }
 

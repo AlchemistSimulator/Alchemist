@@ -10,8 +10,12 @@ package it.unibo.alchemist.grid.simulation;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
+
+import javax.annotation.Nonnull;
 
 /**
  * {@link SimulationSet} implementation.
@@ -23,17 +27,19 @@ public final class SimulationSetImpl implements SimulationSet {
     private static final float DEFAULT_CPU = 0;
 
     private final GeneralSimulationConfig genSimConfig;
-    private final List<SimulationConfig> simulationConfigs;
+    private final ImmutableList<SimulationConfig> simulationConfigs;
 
     /**
      * 
      * @param genSimConfig Config's shared by all simulations of set
      * @param simulationConfigs List of configs that differentiate set's simulations
      */
-    public SimulationSetImpl(final GeneralSimulationConfig genSimConfig,
-            final List<SimulationConfig> simulationConfigs) {
+    public SimulationSetImpl(
+        @Nonnull final GeneralSimulationConfig genSimConfig,
+        @Nonnull final List<SimulationConfig> simulationConfigs
+    ) {
         this.genSimConfig = Objects.requireNonNull(genSimConfig);
-        this.simulationConfigs = Objects.requireNonNull(simulationConfigs);
+        this.simulationConfigs = ImmutableList.copyOf(simulationConfigs);
     }
 
     @Override
@@ -47,7 +53,8 @@ public final class SimulationSetImpl implements SimulationSet {
     }
 
     @Override
-    public List<SimulationConfig> getSimulationConfigs() {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "The field is immutable")
+    public ImmutableList<SimulationConfig> getSimulationConfigs() {
         return this.simulationConfigs;
     }
 

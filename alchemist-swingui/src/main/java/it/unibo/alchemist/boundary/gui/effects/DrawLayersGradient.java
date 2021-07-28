@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.boundary.gui.effects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -113,6 +114,7 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
     /**
      * @return the number of samples
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public RangedInteger getSamples() {
         return samples;
     }
@@ -120,6 +122,7 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
     /**
      * @param samples to set
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public void setSamples(final RangedInteger samples) {
         this.samples = samples;
     }

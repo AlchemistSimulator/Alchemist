@@ -11,6 +11,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.hash.Hashing;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
@@ -46,6 +47,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
         extends AbstractExecutionContext<AlchemistExecutionContext<P>>
         implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice {
 
+    private static final String INTENTIONAL = "This is intentional";
     /**
      * Put this {@link Molecule} inside nodes that should compute distances using routes.
      * It only makes sense in case the environment is a {@link MapEnvironment}
@@ -93,6 +95,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * @param networkManager
      *            the {@link AlchemistNetworkManager} to be used
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = INTENTIONAL)
     public AlchemistExecutionContext(
             final Environment<Object, P> environment,
             final ProtelisNode<P> localNode,
@@ -169,6 +172,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public DeviceUID getDeviceUID() {
         return node;
     }
@@ -176,10 +180,12 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     /**
      * @return experimental access to the simulated environment, for building oracles
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public Environment<Object, P> getEnvironmentAccess() {
         return environment;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public RandomGenerator getRandomGenerator() {
         return randomGenerator;
     }

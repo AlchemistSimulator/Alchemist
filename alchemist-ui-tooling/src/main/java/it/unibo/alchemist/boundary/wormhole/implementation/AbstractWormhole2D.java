@@ -9,11 +9,13 @@
 
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 
+import javax.annotation.Nonnull;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
@@ -55,10 +57,11 @@ public abstract class AbstractWormhole2D<P extends Position2D<? extends P>> impl
      * @param view                   the {@link ViewPort} of the UI used for implementing the wormhole.
      * @param viewTypeToPointAdapter a {@link Function} used to create the initial position of the wormhole.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public <T extends ViewPort> AbstractWormhole2D(
-            final Environment<?, P> environment,
-            final T view,
-            final Function<T, PointAdapter<P>> viewTypeToPointAdapter
+        @Nonnull final Environment<?, P> environment,
+        @Nonnull final T view,
+        @Nonnull final Function<T, PointAdapter<P>> viewTypeToPointAdapter
     ) {
         this.environment = environment;
         this.view = view;

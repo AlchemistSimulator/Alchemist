@@ -1,3 +1,6 @@
+import Libs.alchemist
+import Libs.incarnation
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -8,9 +11,9 @@
 
 dependencies {
     implementation(rootProject)
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-euclidean-geometry"))
-    implementation(project(":alchemist-maps"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("maps"))
     testRuntimeOnly(incarnation("protelis"))
 }
 

@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
@@ -43,6 +44,7 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
      * @param m
      *            the {@link IMapViewPosition}
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public MapWormhole(final Environment<?, GeoPosition> env, final Component comp, final IMapViewPosition m) {
         super(env, comp);
         mapModel = m;

@@ -5,7 +5,9 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
-import Version.Companion.toVersion
+import Libs.incarnation
+import Libs.alchemist
+import Libs.orchidModule
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -15,24 +17,20 @@ import java.net.URL
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KOTLIN_VERSION
 
 plugins {
-    id("org.danilopianini.git-sensitive-semantic-versioning")
-    `java-library`
     kotlin("jvm")
     jacoco
-    id("com.github.spotbugs")
     pmd
     checkstyle
-    id("de.aaschmid.cpd")
-    id("io.gitlab.arturbosch.detekt")
-    id("org.jlleitschuh.gradle.ktlint")
     `build-dashboard`
-    id("org.jetbrains.dokka")
-    id("com.eden.orchidPlugin")
-    signing
-    `maven-publish`
-    id("org.danilopianini.publish-on-central")
+    id("kotlin-qa")
     id("com.dorongold.task-tree")
+    id("com.eden.orchidPlugin")
     id("com.github.johnrengelman.shadow")
+    id("com.github.spotbugs")
+    id("de.aaschmid.cpd")
+    id("org.danilopianini.git-sensitive-semantic-versioning")
+    id("org.danilopianini.publish-on-central")
+    id("org.jetbrains.dokka")
 }
 
 apply(plugin = "com.eden.orchidPlugin")
@@ -51,19 +49,12 @@ allprojects {
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "checkstyle")
     apply(plugin = "pmd")
-    apply(plugin = "io.gitlab.arturbosch.detekt")
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "signing")
-    apply(plugin = "maven-publish")
     apply(plugin = "org.danilopianini.publish-on-central")
     apply(plugin = "com.dorongold.task-tree")
     apply(plugin = "com.github.johnrengelman.shadow")
-
-    gitSemVer {
-        version = computeGitSemVer()
-    }
+    apply(plugin = "kotlin-qa")
 
     repositories {
         google()
@@ -87,34 +78,32 @@ allprojects {
     }
 
     dependencies {
-        // Code quality control
-        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:_")
         // Compilation only
         compileOnly(Libs.annotations)
-        compileOnly(spotBugsModule("annotations"))
+        compileOnly(Libs.spotBugsModule("annotations"))
         // Implementation
         implementation(Libs.slf4j_api)
         implementation(kotlin("stdlib-jdk8"))
         implementation(kotlin("reflect"))
         implementation(Libs.thread_inheritable_resource_loader)
         // Test compilation only
-        testCompileOnly(spotBugsModule("annotations"))
+        testCompileOnly(Libs.spotBugsModule("annotations"))
         // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
-        testImplementation(junit("api"))
+        testImplementation(Libs.junit("api"))
         testImplementation(Libs.kotest_runner_junit5)
         testImplementation(Libs.kotest_assertions)
         testImplementation("org.mockito:mockito-core:_")
         testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
         // Test runtime: Junit engine
-        testRuntimeOnly(junit("engine"))
+        testRuntimeOnly(Libs.junit("engine"))
         // executable jar packaging
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
         }
-        pmd(pmdModule("core"))
-        pmd(pmdModule("java"))
-        pmd(pmdModule("scala"))
-        pmd(pmdModule("kotlin"))
+        pmd(Libs.pmdModule("core"))
+        pmd(Libs.pmdModule("java"))
+        pmd(Libs.pmdModule("scala"))
+        pmd(Libs.pmdModule("kotlin"))
     }
 
     // Enforce Kotlin version coherence
@@ -137,7 +126,6 @@ allprojects {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs = listOf("-Xjvm-default=all") // Enable default methods in Kt interfaces
-            allWarningsAsErrors = true
         }
     }
 
@@ -160,7 +148,7 @@ allprojects {
 
     tasks.jacocoTestReport {
         reports {
-            xml.isEnabled = true
+            xml.required.set(true)
         }
     }
 
@@ -189,22 +177,13 @@ allprojects {
 
     tasks.withType<de.aaschmid.gradle.plugins.cpd.Cpd> {
         reports {
-            xml.setEnabled(false)
-            text.setEnabled(true)
+            xml.required.set(false)
+            text.required.set(true)
         }
         language = "java"
         minimumTokenCount = 100
         source = sourceSets["main"].allJava
         tasks.check.orNull?.dependsOn(this)
-    }
-
-    detekt {
-        allRules = true
-        buildUponDefaultConfig = true
-        config = files("${rootProject.projectDir}/config/detekt/detekt.yml")
-        reports {
-            html.enabled = true
-        }
     }
 
     tasks.withType<Javadoc> {
@@ -328,13 +307,15 @@ dependencies {
     listOf("interfaces", "engine", "loading") // Execution requirements
         .map { project(":alchemist-$it") }
         .forEach { api(it) }
-    implementation(apacheCommons("io"))
-    implementation(apacheCommons("lang3"))
-    implementation(apacheCommons("cli"))
+    implementation(Libs.apacheCommons("io"))
+    implementation(Libs.apacheCommons("lang3"))
+    implementation(Libs.apacheCommons("cli"))
     implementation(Libs.logback_classic)
     testRuntimeOnly(incarnation("protelis"))
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("biochemistry"))
+    testRuntimeOnly(alchemist("cognitive-agents"))
+    testRuntimeOnly(alchemist("physical-agents"))
 
     // Populate the dependencies for Orchid
     orchidImplementation(orchidModule("Core"))
@@ -345,9 +326,13 @@ dependencies {
 
 // WEBSITE
 
-val projectVersion = rootProject.version.toString().toVersion()
+fun String.toVersion() = org.danilopianini.gradle.gitsemver.SemanticVersion.fromStringOrNull(this)
+    ?: throw IllegalStateException("Not a valid semantic version: $this")
+
+val projectVersion = gitSemVer.computeVersion().toVersion()
+
 @ExperimentalUnsignedTypes
-val isMarkedStable = !projectVersion.isPreRelease
+val isMarkedStable = projectVersion.preRelease.isEmpty()
 
 orchid {
     theme = "Editorial"

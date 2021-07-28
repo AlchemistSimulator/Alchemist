@@ -13,6 +13,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
@@ -327,7 +328,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
      * An {@link org.protelis.vm.ExecutionContext} that operates over a node, but does not
      * modify it.
      */
-    public static final class DummyContext extends AbstractExecutionContext<DummyContext> {
+    private static final class DummyContext extends AbstractExecutionContext<DummyContext> {
         private static final Semaphore MUTEX = new Semaphore(1);
         private static final int SEED = -241_837_578;
         private static final RandomGenerator RNG = new MersenneTwister(SEED);
@@ -359,6 +360,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
+        @SuppressFBWarnings("EI_EXPOSE_REP")
         public DeviceUID getDeviceUID() {
             if (node instanceof ProtelisNode) {
                 return (ProtelisNode<?>) node;
@@ -394,6 +396,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         /**
          * @param node the {@link Node}
          */
+        @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
         public ProtectedExecutionEnvironment(final Node<?> node) {
             this.node = node;
         }

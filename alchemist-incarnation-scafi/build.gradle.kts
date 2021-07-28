@@ -1,3 +1,6 @@
+import Libs.alchemist
+import Libs.scalaModule
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -11,18 +14,18 @@ plugins {
 }
 
 dependencies {
-    api(project(":alchemist-interfaces"))
+    api(alchemist("interfaces"))
     api("it.unibo.scafi:scafi-core_2.13:_")
 
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-euclidean-geometry"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("euclidean-geometry"))
     implementation("com.github.cb372:scalacache-core_2.13:_")
     implementation("com.github.cb372:scalacache-guava_2.13:_")
     implementation(scalaModule("compiler"))
     implementation(scalaModule("library"))
 
-    testImplementation(project(":alchemist-engine"))
-    testImplementation(project(":alchemist-loading"))
+    testImplementation(alchemist("engine"))
+    testImplementation(alchemist("loading"))
     testImplementation("org.scalatest:scalatest_2.13:_")
     testImplementation("org.scalatestplus:scalatestplus-junit_2.13:_")
 }

@@ -26,17 +26,17 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
     private static final long serialVersionUID = 5216987069271114818L;
     private double oldPropensity = -1;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
-    private final RandomGenerator rand;
+    private final RandomGenerator randomGenerator;
     private final double rate;
 
     /**
      * @param markovianRate
      *            Markovian rate for this distribution
-     * @param random
+     * @param randomGenerator
      *            {@link RandomGenerator} used internally
      */
-    public ExponentialTime(final double markovianRate, final RandomGenerator random) {
-        this(markovianRate, Time.ZERO, random);
+    public ExponentialTime(final double markovianRate, final RandomGenerator randomGenerator) {
+        this(markovianRate, Time.ZERO, randomGenerator);
     }
 
     /**
@@ -44,13 +44,14 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
      *            Markovian rate for this distribution
      * @param start
      *            initial time
-     * @param random
+     * @param randomGenerator
      *            {@link RandomGenerator} used internally
      */
-    public ExponentialTime(final double markovianRate, final Time start, final RandomGenerator random) {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
+    public ExponentialTime(final double markovianRate, final Time start, final RandomGenerator randomGenerator) {
         super(start);
         rate = markovianRate;
-        rand = random;
+        this.randomGenerator = randomGenerator;
     }
 
     @Override
@@ -98,7 +99,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
     }
 
     private double uniformToExponential(final double lambda) {
-        return -FastMath.log1p(-rand.nextDouble()) / lambda;
+        return -FastMath.log1p(-randomGenerator.nextDouble()) / lambda;
     }
 
     /**
@@ -109,7 +110,7 @@ public class ExponentialTime<T> extends AbstractDistribution<T> {
      */
     @Override
     public ExponentialTime<T> cloneOnNewNode(final Node<T> destination, final Time currentTime) {
-        return new ExponentialTime<>(rate, Time.ZERO, rand);
+        return new ExponentialTime<>(rate, Time.ZERO, randomGenerator);
     }
 
     /**

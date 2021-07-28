@@ -6,6 +6,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 import org.danilopianini.VersionAliases.justAdditionalAliases
+plugins {
+    id("com.gradle.enterprise") version "3.6.3"
+    id("de.fayard.refreshVersions") version "0.10.1"
+}
+
 buildscript {
     repositories {
         mavenCentral()
@@ -42,13 +47,11 @@ include(
 )
 rootProject.name = "alchemist"
 
-plugins {
-    id("com.gradle.enterprise") version "3.6.1"
-    id("de.fayard.refreshVersions") version "0.10.0"
-}
-
 refreshVersions {
     extraArtifactVersionKeyRules = justAdditionalAliases
+    featureFlags {
+        enable(de.fayard.refreshVersions.core.FeatureFlag.LIBS)
+    }
 }
 
 gradleEnterprise {

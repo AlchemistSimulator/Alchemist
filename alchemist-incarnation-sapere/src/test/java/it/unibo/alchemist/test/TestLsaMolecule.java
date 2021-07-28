@@ -11,13 +11,14 @@ import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  */
-public class TestLsaMolecule {
+final class TestLsaMolecule {
 
     private static final String ABSURD_DESCRIPTION =
         "Q|\\!\"£$%&/()=?^[]@ł€¶ŧ←↓→øþæßðđŋħł@"
@@ -36,7 +37,7 @@ public class TestLsaMolecule {
         assertNotNull(parsedVars);
         final ILsaMolecule withDescription = new LsaMolecule("a,b,c,[a;b;c;]", ABSURD_DESCRIPTION);
         assertNotNull(withDescription);
-        assertTrue(withDescription.getArg(withDescription.argsNumber() - 1).toString().equals(ABSURD_DESCRIPTION));
+        assertEquals(ABSURD_DESCRIPTION, withDescription.getArg(withDescription.argsNumber() - 1).toString());
 
         /*
          * Matching tests

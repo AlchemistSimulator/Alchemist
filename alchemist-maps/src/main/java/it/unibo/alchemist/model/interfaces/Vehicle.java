@@ -17,6 +17,7 @@ import com.graphhopper.routing.util.MotorcycleFlagEncoder;
 import com.graphhopper.routing.util.MountainBikeFlagEncoder;
 import com.graphhopper.routing.util.RacingBikeFlagEncoder;
 import com.graphhopper.routing.util.WheelchairFlagEncoder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  */
@@ -72,6 +73,7 @@ public enum Vehicle {
      * @return the Graphopper {@link com.graphhopper.routing.util.FlagEncoder}
      * corresponding to the selected vehicle
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "We have little control on GraphHopper mutability")
     public EncodingManager getEncoder() {
         return encoder;
     }

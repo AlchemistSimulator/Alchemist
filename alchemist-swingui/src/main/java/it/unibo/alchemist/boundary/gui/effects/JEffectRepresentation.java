@@ -36,7 +36,7 @@ import java.util.List;
  *            is the type for the concentration
  */
 @Deprecated
-@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
+@SuppressFBWarnings(value = { "SE_BAD_FIELD", "EI_EXPOSE_REP2" }, justification = "This class is not meant to get serialized")
 public final class JEffectRepresentation<T> extends JTapeFeatureStack implements ItemSelectable {
 
     private static final long serialVersionUID = -6875167656425950159L;

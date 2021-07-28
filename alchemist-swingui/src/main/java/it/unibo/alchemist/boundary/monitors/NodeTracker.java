@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.boundary.monitors;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * @param <T> concentration type
  */
 @Deprecated
+@SuppressFBWarnings(justification = "This class is deprecated anyway")
 public final class NodeTracker<T, P extends Position<? extends P>> extends JPanel implements OutputMonitor<T, P>, ActionListener {
     private static final byte MARGIN = 100;
     private static final String PROGRAM = " = Program =", CONTENT = " = Content =", POSITION = " = POSITION = ";

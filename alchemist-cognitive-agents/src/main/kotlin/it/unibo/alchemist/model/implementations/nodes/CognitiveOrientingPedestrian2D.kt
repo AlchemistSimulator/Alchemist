@@ -10,13 +10,18 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
+import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.CognitivePedestrian
+import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -42,8 +47,16 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
     knowledgeDegree = knowledgeDegree,
     group = group
 ),
-    CognitiveAgent by consciousness {
+    CognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
 
+    override val cognitive: CognitiveModel get() = consciousness.cognitive
+    override fun influencialPeople(): List<CognitiveAgent> = consciousness.influencialPeople()
+    override val age: Age get() = consciousness.age
+    override val gender: Gender get() = consciousness.gender
+    override val compliance: Double get() = consciousness.compliance
+    override fun probabilityOfHelping(
+        toHelp: HeterogeneousPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>
+    ): Double = consciousness.probabilityOfHelping(toHelp)
     override fun speed() = consciousness.speed()
 
     /**

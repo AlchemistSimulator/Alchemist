@@ -8,13 +8,16 @@
 
 package it.unibo.alchemist.model.implementations.conditions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
+import org.danilopianini.util.ListSets;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
@@ -26,13 +29,14 @@ public abstract class AbstractCondition<T> implements Condition<T> {
 
     private static final long serialVersionUID = -1610947908159507754L;
     private final ListSet<Dependency> influencing = new LinkedListSet<>();
-    private final Node<T> n;
+    private final Node<T> node;
 
     /**
      * @param node the node this Condition belongs to
      */
-    public AbstractCondition(final Node<T> node) {
-        this.n = Objects.requireNonNull(node);
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
+    public AbstractCondition(@Nonnull final Node<T> node) {
+        this.node = Objects.requireNonNull(node);
     }
 
     /**
@@ -43,7 +47,7 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      */
     @Override
     public final ListSet<? extends Dependency> getInboundDependencies() {
-        return influencing;
+        return ListSets.unmodifiableListSet(influencing);
     }
 
     /**
@@ -53,8 +57,9 @@ public abstract class AbstractCondition<T> implements Condition<T> {
      * The typical way is to cast the call to super.getNode().
      */
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "It is intentional")
     public Node<T> getNode() {
-        return n;
+        return node;
     }
 
     /**

@@ -1,3 +1,7 @@
+import Libs.alchemist
+import Libs.incarnation
+import Libs.jgrapht
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -7,16 +11,16 @@
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
+    api(alchemist("interfaces"))
     implementation(rootProject)
-    implementation(project(":alchemist-engine"))
-    implementation(project(":alchemist-euclidean-geometry"))
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-ui-tooling"))
-    implementation(project(":alchemist-loading"))
-    implementation(project(":alchemist-maps"))
-    implementation(project(":alchemist-smartcam"))
-    implementation(project(":alchemist-cognitive-agents"))
+    implementation(alchemist("engine"))
+    implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("ui-tooling"))
+    implementation(alchemist("loading"))
+    implementation(alchemist("maps"))
+    implementation(alchemist("smartcam"))
+    implementation(alchemist("cognitive-agents"))
     implementation(Libs.miglayout_swing)
     implementation(Libs.mapsforge_map_awt) {
         exclude(group = "com.github.blackears", module = "svgSalamander")
@@ -28,10 +32,10 @@ dependencies {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
     }
-    implementation("org.danilopianini:conrec:_")
+    implementation(Libs.conrec)
     implementation(jgrapht("core")) // just to draw cognitive maps
     implementation(Libs.oxygen)
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 configurations.all {

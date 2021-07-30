@@ -323,6 +323,13 @@ val projectVersion = gitSemVer.computeVersion().toVersion()
 @ExperimentalUnsignedTypes
 val isMarkedStable = projectVersion.preRelease.isEmpty()
 
+tasks.withType<org.jetbrains.dokka.gradle.DokkaCollectorTask> {
+    val type = Regex("^dokka(\\w+)Collector\$").matchEntire(name)?.destructured?.component1()?.toLowerCase()
+        ?: throw IllegalStateException("task named $name does not match the expected name pattern for dokka collection tasks")
+    outputDirectory.set(file("$buildDir/docs/orchid/$type"))
+    listOf(tasks.orchidServe, tasks.orchidBuild).forEach { it.get().dependsOn(this) }
+}
+
 orchid {
     theme = "Editorial"
     // Determine whether it's a deployment or a dry run
@@ -367,17 +374,22 @@ gradle.taskGraph.whenReady {
 }
 
 val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
+    /*
+     * Detect files
+     */
+    val configFolder = listOf(projectDir.toString(), "src", "orchid", "resources")
+        .joinToString(separator = File.separator)
+    val baseConfigFile = file("$configFolder${File.separator}config-origin.yml")
+    @org.gradle.api.tasks.InputFile
+    fun baseConfig(): File = baseConfigFile
+    val finalConfig = file("$configFolder${File.separator}config.yml")
+    @org.gradle.api.tasks.OutputFile
+    fun finalConfig(): File = finalConfig
     doLast {
-        /*
-         * Detect files
-         */
-        val configFolder = listOf(projectDir.toString(), "src", "orchid", "resources")
-            .joinToString(separator = File.separator)
-        val baseConfig = file("$configFolder${File.separator}config-origin.yml").readText()
-        val finalConfig = file("$configFolder${File.separator}config.yml")
         /*
          * Compute Kdoc targets
          */
+        val baseConfig = baseConfigFile.readText()
         val ktdocConfiguration = if (!baseConfig.contains("kotlindoc:")) {
             val sourceFolders = allprojects.asSequence()
                 .flatMap { it.sourceSets["main"].allSource.srcDirs.asSequence() }

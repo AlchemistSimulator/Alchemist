@@ -17,10 +17,10 @@ Editorial:
       title: 'API Docs'
     - type: link
       title: Javadoc
-      url: 'javadoc//'
+      url: 'javadoc/index.html'
     - type: link
       title: Kdoc
-      url: 'html//'
+      url: 'html/index.html'
 #    - type: 'sourcedocPages'
 #      moduleType: 'kotlindoc'
 #      node: 'packages'

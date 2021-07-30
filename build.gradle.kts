@@ -390,23 +390,6 @@ val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
          * Compute Kdoc targets
          */
         val baseConfig = baseConfigFile.readText()
-        val ktdocConfiguration = if (!baseConfig.contains("kotlindoc:")) {
-            val sourceFolders = allprojects.asSequence()
-                .flatMap { it.sourceSets["main"].allSource.srcDirs.asSequence() }
-                .map { it.toString().replace("$projectDir/", "../../../") }
-                .map { "\n    - '$it'" }
-                .joinToString(separator = "")
-            """
-                kotlindoc:
-                  menu:
-                    - type: "kotlindocClassLinks"
-                      includeItems: true
-                  pages:
-                    extraCss:
-                      - 'assets/css/orchidKotlindoc.scss'
-                  sourceDirs:
-            """.trimIndent() + sourceFolders + "\n"
-        } else ""
         val deploymentConfiguration = if (!baseConfig.contains("services:")) {
             """
                 services:
@@ -421,7 +404,7 @@ val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
                         publishType: CleanBranchMaintainHistory
             """.trimIndent()
         } else ""
-        finalConfig.writeText(baseConfig + ktdocConfiguration + deploymentConfiguration)
+        finalConfig.writeText(baseConfig + deploymentConfiguration)
     }
 }
 tasks.orchidClasses.orNull!!.dependsOn(orchidSeedConfiguration)

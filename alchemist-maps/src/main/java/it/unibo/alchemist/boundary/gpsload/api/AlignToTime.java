@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.interfaces.Time;
 
 /**
- * Alings the traces with the given time in seconds from Epoch. All points
+ * Aligns the traces with the given time in seconds from Epoch. All points
  * before such time will be discarded. All points after the provided time will
  * be shifted back. Summarizing, the time that is provided represents in the
  * real world the time zero of the simulation.

@@ -22,9 +22,9 @@ import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import loadYamlSimulation
+import it.unibo.alchemist.testsupport.loadYamlSimulation
+import it.unibo.alchemist.testsupport.startSimulation
 import org.apache.commons.collections4.queue.CircularFifoQueue
-import startSimulation
 
 /**
  * Contains tests concerning [NavigationAction]s and [NavigationStrategy], such tests are

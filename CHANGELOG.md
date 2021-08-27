@@ -1,3 +1,8 @@
+# 11.3.1
+
+* Simplification to the build system
+* Upgraded Protelis to 15.1.0
+
 # 11.3.0
 
 Maintenance release. This release only includes dependency updates and tweaks to allow the simulator to run and build under Java 16.

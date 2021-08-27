@@ -7,7 +7,7 @@
  */
 
 dependencies {
-    api(apacheCommons("math3"))
+    api(Libs.apacheCommons("math3"))
     api(Libs.listset)
     api(Libs.jool)
 }

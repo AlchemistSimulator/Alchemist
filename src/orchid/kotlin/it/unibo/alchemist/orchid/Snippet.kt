@@ -37,7 +37,7 @@ class Snippet : TemplateFunction(tagname, true) {
     @StringDefault(autodetect)
     var language: String? = null
 
-    override fun parameters() = arrayOf("file", "language")
+    override fun parameters() = arrayOf("file", "language", "from")
     override fun apply(p0: OrchidContext?, p1: OrchidPage?): String {
         val actualFile = File("${System.getProperty("user.dir")}/$from/$file")
         require(actualFile.exists()) {

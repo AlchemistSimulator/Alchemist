@@ -1,3 +1,7 @@
+import Libs.alchemist
+import Libs.apacheCommons
+import Libs.protelis
+
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main(project"s alchemist/build.gradle file.
  *
@@ -8,17 +12,17 @@
 
 dependencies {
     // API
-    api(project(":alchemist-interfaces"))
-    api(project(":alchemist-implementationbase"))
+    api(alchemist("interfaces"))
+    api(alchemist("implementationbase"))
     api(protelis("interpreter"))
     api(protelis("lang"))
     // IMPLEMENTATION
-    implementation(project(":alchemist-euclidean-geometry"))
-    implementation(project(":alchemist-maps"))
+    implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("maps"))
     implementation(apacheCommons("lang3"))
     // TESTING
-    testImplementation(project(":alchemist-loading"))
-    testImplementation(project(":alchemist-engine"))
+    testImplementation(alchemist("loading"))
+    testImplementation(alchemist("engine"))
     testImplementation(apacheCommons("io"))
 }
 

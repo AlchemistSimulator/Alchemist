@@ -1,3 +1,7 @@
+import Libs.alchemist
+import Libs.apacheCommons
+import Libs.jgrapht
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -16,7 +20,6 @@ dependencies {
     implementation(Libs.boilerplate)
     implementation(Libs.caffeine)
     implementation(Libs.classgraph)
-    implementation(Libs.concurrentlinkedhashmap_lru)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)
     testImplementation(alchemist("loading"))

@@ -15,18 +15,24 @@ Editorial:
     - type: 'wiki'
     - type: 'separator'
       title: 'API Docs'
-    - type: 'sourcedocPages'
-      moduleType: 'kotlindoc'
-      node: 'packages'
-      asSubmenu: true
-      submenuTitle: 'Packages'
-      transform: '{{ title | shortenPackage(38) }}'
-    - type: 'sourcedocPages'
-      moduleType: 'kotlindoc'
-      node: 'classes'
-      asSubmenu: true
-      submenuTitle: 'Classes'
-      transform: '{{ title | abbreviate(38) }}'
+    - type: link
+      title: Javadoc
+      url: 'javadoc/index.html'
+    - type: link
+      title: Kdoc
+      url: 'html/index.html'
+#    - type: 'sourcedocPages'
+#      moduleType: 'kotlindoc'
+#      node: 'packages'
+#      asSubmenu: true
+#      submenuTitle: 'Packages'
+#      transform: '{{ title | shortenPackage(38) }}'
+#    - type: 'sourcedocPages'
+#      moduleType: 'kotlindoc'
+#      node: 'classes'
+#      asSubmenu: true
+#      submenuTitle: 'Classes'
+#      transform: '{{ title | abbreviate(38) }}'
   extraCss:
     - 'assets/css/pygments.scss'
 allPages:

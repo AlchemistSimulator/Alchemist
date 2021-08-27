@@ -97,7 +97,7 @@ otherwise it won't have the ability to recognize the presence of it.
 In the following example 100 adult females with cognitive capabilities get away from a zone in the environment where
 there is a potential danger.
 
-{{ snippet("evacuation-scanarios.yml") }}
+{{ snippet("evacuation-scenarios.yml") }}
 
 ### Navigation system
 

@@ -1,3 +1,10 @@
+import Libs.alchemist
+import Libs.apacheCommons
+import Libs.arrowKt
+import Libs.graphStream
+import Libs.incarnation
+import Libs.scalaModule
+
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
@@ -23,13 +30,13 @@ dependencies {
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
-    runtimeOnly("org.scala-lang:scala-compiler:_")
+    runtimeOnly(scalaModule("compiler"))
 
-    testImplementation(project(":alchemist-engine"))
-    testImplementation(project(":alchemist-maps"))
+    testImplementation(alchemist("engine"))
+    testImplementation(alchemist("maps"))
     testImplementation(Libs.caffeine)
     testImplementation(Libs.gson)
-    testRuntimeOnly("org.scala-lang:scala-compiler:_")
+    testRuntimeOnly(scalaModule("compiler"))
 
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("protelis"))

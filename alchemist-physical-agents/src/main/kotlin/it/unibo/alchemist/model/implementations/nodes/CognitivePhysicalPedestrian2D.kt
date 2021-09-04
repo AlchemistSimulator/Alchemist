@@ -29,7 +29,7 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
 ) : CognitivePedestrian2D<T>(environment, randomGenerator, age, gender, danger, group), PhysicalPedestrian2D<T> {
 
     /**
-     * TODO(maybe introduce some randomness? To model differences in people)
+     * TODO(maybe introduce some randomness? To model differences in people and bring out pushing behavior)
      */
     override val comfortRay: Double get() =
         if (wantsToEscape()) {

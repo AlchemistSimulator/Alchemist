@@ -13,7 +13,10 @@ import it.unibo.alchemist.model.interfaces.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import org.apache.commons.math3.random.RandomGenerator
+import it.unibo.alchemist.nextDouble
 
 /**
  * A cognitive pedestrian capable of physical interactions, modeled as a [PhysicalPedestrian2D]. [comfortRay] changes
@@ -28,13 +31,19 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
     group: PedestrianGroup2D<T>? = null
 ) : CognitivePedestrian2D<T>(environment, randomGenerator, age, gender, danger, group), PhysicalPedestrian2D<T> {
 
-    /**
-     * TODO(maybe introduce some randomness? To model differences in people)
+    /*
+        According to [the work of Pelechano et al](https://bit.ly/3e3C7Tb) in order to bring out
+        pushing behavior different nodes must have different personal space threshold.
      */
+    private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(0.1, 1.0)
+
     override val comfortRay: Double get() =
         if (wantsToEscape()) {
-            shape.radius / 3
+            desiredSpaceTreshold / 3
         } else {
-            shape.radius
+            desiredSpaceTreshold
         }
+
+    override val comfortArea = super.comfortArea
+        get() = environment.getPosition(this)?.let { field.transformed { origin(it) } } ?: field
 }

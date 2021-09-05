@@ -38,8 +38,9 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalNode<T, P, A, F>, Pedestrian<
      */
     fun repulsionForce(other: NodeWithShape<T, P, *>): P
 
-    override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>): List<P> =
-        environment.getNodesWithin(comfortArea)
+    override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>): List<P> {
+        val nodePosition = environment.getPosition(this)
+        return environment.getNodesWithin(comfortArea.transformed { origin(nodePosition) })
             .minusElement(this)
             .filterIsInstance<NodeWithShape<T, P, A>>()
             .map { repulsionForce(it) }
@@ -47,4 +48,6 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalNode<T, P, A, F>, Pedestrian<
              * Discard infinitesimal forces.
              */
             .filter { it.magnitude > Double.MIN_VALUE }
+    }
+
 }

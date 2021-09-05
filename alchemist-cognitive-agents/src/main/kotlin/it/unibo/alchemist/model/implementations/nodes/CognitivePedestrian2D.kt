@@ -7,7 +7,6 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
@@ -43,7 +42,7 @@ open class CognitivePedestrian2D<T> @JvmOverloads constructor(
     Pedestrian2D<T> {
 
     override val shape = super.shape
-        get() = environment.getPosition(this)?.let() { field.transformed { origin(it) } } ?: field
+        get() = environment.getPosition(this)?.let { field.transformed { origin(it) } } ?: field
 
 
     final override val fieldOfView by lazy { super.fieldOfView }

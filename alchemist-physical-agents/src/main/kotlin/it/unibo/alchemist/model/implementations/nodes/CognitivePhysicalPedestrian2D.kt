@@ -13,8 +13,6 @@ import it.unibo.alchemist.model.interfaces.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.nextDouble
 

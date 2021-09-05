@@ -31,8 +31,6 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
     group: PedestrianGroup2D<T>? = null
 ) : CognitivePedestrian2D<T>(environment, randomGenerator, age, gender, danger, group), PhysicalPedestrian2D<T> {
 
-    override var shape: Euclidean2DShape = super.shape
-
     /*
         According to [the work of Pelechano et al](https://bit.ly/3e3C7Tb) in order to bring out
         pushing behavior different nodes must have different personal space threshold.
@@ -45,4 +43,7 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
         } else {
             desiredSpaceTreshold
         }
+
+    override val comfortArea = super.comfortArea
+        get() = environment.getPosition(this)?.let { field.transformed { origin(it) } } ?: field
 }

@@ -26,13 +26,11 @@ class Sum<T>(
     override val nonPhysicalStrategy: SteeringStrategy<T, Euclidean2DPosition>
 ) : PhysicalSteeringStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
 
-    override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition {
-        node.shape = node.shape.transformed { origin(environment.getPosition(node)) }
-        return (node.physicalForces(environment) + overallIntentionalForce)
+    override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition =
+        (node.physicalForces(environment) + overallIntentionalForce)
             .reduce { acc, p -> acc + p }
             /*
              * Prevents the pedestrian from purposely colliding with others.
              */
             .let { environment.farthestPositionReachable(node, it, node.comfortArea.radius) }
-    }
 }

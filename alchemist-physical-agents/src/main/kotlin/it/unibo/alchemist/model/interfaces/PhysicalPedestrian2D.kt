@@ -24,6 +24,11 @@ interface PhysicalPedestrian2D<T> :
     PhysicalPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
     Pedestrian2D<T> {
 
+    /*
+    Overriding it as a var because in order to apply physical forces shapes must follow node positions.
+     */
+    override var shape: Euclidean2DShape
+
     /**
      * The comfort ray of this pedestrian, this is added to the radius of its [shape] to obtain the [comfortArea].
      */

@@ -44,7 +44,6 @@ open class CognitivePedestrian2D<T> @JvmOverloads constructor(
     override val shape = super.shape
         get() = environment.getPosition(this)?.let { field.transformed { origin(it) } } ?: field
 
-
     final override val fieldOfView by lazy { super.fieldOfView }
 
     init {

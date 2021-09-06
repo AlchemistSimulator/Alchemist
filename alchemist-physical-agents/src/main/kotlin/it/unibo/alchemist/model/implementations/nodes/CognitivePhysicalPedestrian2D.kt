@@ -30,8 +30,8 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
 ) : CognitivePedestrian2D<T>(environment, randomGenerator, age, gender, danger, group), PhysicalPedestrian2D<T> {
 
     /*
-        According to [the work of Pelechano et al](https://bit.ly/3e3C7Tb) in order to bring out
-        pushing behavior different nodes must have different personal space threshold.
+     *  According to [the work of Pelechano et al](https://bit.ly/3e3C7Tb) in order to bring out
+     *  pushing behavior different nodes must have different personal space threshold.
      */
     private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 

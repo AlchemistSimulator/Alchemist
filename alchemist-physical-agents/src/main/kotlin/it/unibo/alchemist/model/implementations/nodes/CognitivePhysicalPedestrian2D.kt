@@ -47,11 +47,11 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
 
     companion object {
         /**
-         * Mimimum value for normal state [comfortRay]
+         * Mimimum value for normal state [comfortRay].
          */
         const val minimumSpaceTreshold = 0.1
         /**
-         * Maximum value for normal state [comfortRay]
+         * Maximum value for normal state [comfortRay].
          */
         const val maximumSpaceThreshold = 1.0
     }

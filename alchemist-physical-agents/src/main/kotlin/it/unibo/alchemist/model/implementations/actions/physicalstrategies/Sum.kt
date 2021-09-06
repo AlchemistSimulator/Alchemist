@@ -29,8 +29,4 @@ class Sum<T>(
     override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition =
         (node.physicalForces(environment) + overallIntentionalForce)
             .reduce { acc, p -> acc + p }
-            /*
-             * Prevents the pedestrian from purposely colliding with others.
-             */
-            .let { environment.farthestPositionReachable(node, it, node.comfortArea.radius) }
 }

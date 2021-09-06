@@ -33,7 +33,7 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
         According to [the work of Pelechano et al](https://bit.ly/3e3C7Tb) in order to bring out
         pushing behavior different nodes must have different personal space threshold.
      */
-    private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(0.1, 1.0)
+    private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 
     override val comfortRay: Double get() =
         if (wantsToEscape()) {
@@ -44,4 +44,15 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
 
     override val comfortArea = super.comfortArea
         get() = environment.getPosition(this)?.let { field.transformed { origin(it) } } ?: field
+
+    companion object {
+        /**
+         * Mimimum value for normal state [comfortRay]
+         */
+        const val minimumSpaceTreshold = 0.1
+        /**
+         * Maximum value for normal state [comfortRay]
+         */
+        const val maximumSpaceThreshold = 1.0
+    }
 }

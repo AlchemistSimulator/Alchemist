@@ -108,7 +108,7 @@ develop: [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg
 
 [![Javadocs](https://www.javadoc.io/badge/it.unibo.alchemist/alchemist.svg)](https://www.javadoc.io/doc/it.unibo.alchemist/alchemist)
 ![GitHub](https://img.shields.io/github/license/AlchemistSimulator/Alchemist)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/TODO/badge)](https://bestpractices.coreinfrastructure.org/projects/TODO)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5222/badge)](https://bestpractices.coreinfrastructure.org/projects/5222)
 ![GitHub language count](https://img.shields.io/github/languages/count/AlchemistSimulator/Alchemist)
 ![GitHub top language](https://img.shields.io/github/languages/top/AlchemistSimulator/Alchemist)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=AlchemistSimulator_Alchemist&metric=ncloc)](https://sonarcloud.io/dashboard?id=AlchemistSimulator_Alchemist)

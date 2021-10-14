@@ -3,11 +3,10 @@ on:
   push:
     tags: '*'
     branches-ignore:
+      - 'renovate/**'
       - 'autodelivery**'
       - 'bump-**'
   pull_request:
-  schedule:
-    - cron: '0 3 * * SUN'
 
 jobs:
   Build:

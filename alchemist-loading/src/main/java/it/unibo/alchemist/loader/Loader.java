@@ -7,16 +7,13 @@
  */
 package it.unibo.alchemist.loader;
 
-import it.unibo.alchemist.loader.export.GenericExporter;
 import it.unibo.alchemist.loader.variables.DependentVariable;
 import it.unibo.alchemist.loader.variables.Variable;
 import it.unibo.alchemist.model.interfaces.Position;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An entity which is able to produce an Alchemist {@link InitializedEnvironment}, resolving user defined variable values.

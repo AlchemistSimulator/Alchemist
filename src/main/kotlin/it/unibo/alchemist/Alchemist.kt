@@ -29,7 +29,6 @@ object Alchemist {
     private const val HEADLESS = "hl"
     private const val VARIABLES = "var"
     private const val BATCH = 'b'
-    private const val EXPORT = 'e'
     private const val FXUI = "fxui"
     private const val DISTRIBUTED = 'd'
     private const val GRAPHICS = 'g'
@@ -217,7 +216,6 @@ object Alchemist {
             distributed = getOptionValue(DISTRIBUTED),
             endTime = hasNumeric(TIME, kotlin.String::toDoubleOrNull)
                 ?: AlchemistExecutionOptions.defaultEndTime,
-            export = getOptionValue(EXPORT),
             graphics = getOptionValue(GRAPHICS),
             fxui = hasOption(FXUI),
             headless = hasOption(HEADLESS),

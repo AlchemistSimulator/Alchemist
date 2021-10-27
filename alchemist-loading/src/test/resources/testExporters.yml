@@ -1,0 +1,14 @@
+incarnation: protelis
+export:
+  - exporter:
+      type: CSVExporter
+      parameters: ["/my/folder/name/"]
+      data:
+        - time
+        - molecule: "default_module:default_program"
+
+  - exporter:
+      type: MongoDBExporter
+      parameters: ["127.0.0.1:8080"]
+      data:
+        - time

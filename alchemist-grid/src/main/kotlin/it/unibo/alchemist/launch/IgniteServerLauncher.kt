@@ -25,7 +25,6 @@ object IgniteServerLauncher : AbstractLauncher() {
             configuration != null -> incompatibleWith("direct execution of a simulation file")
             variables.isNotEmpty() -> incompatibleWith("simulation variables set")
             batch -> incompatibleWith("batch mode")
-            export != null -> incompatibleWith("direct data export")
             distributed != null -> incompatibleWith("distributed execution")
             graphics != null -> incompatibleWith("graphic effects enabled")
             help -> Invalid("There is no specific help for server mode")

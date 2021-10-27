@@ -16,7 +16,7 @@ import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.export.Exporter
+import it.unibo.alchemist.loader.export.GlobalExporter
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Position
@@ -70,16 +70,8 @@ abstract class SimulationLauncher : AbstractLauncher() {
     ): Simulation<T, P> {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
         val simulation = Engine(initialized.environment, DoubleTime(parameters.endTime))
-        if (parameters.export != null) {
-            val variablesDescriptor = variables
-                .map { (name, value) -> "$name-$value" }
-                .joinToString(separator = "_")
-            val filename = "${parameters.export}${if (variables.isEmpty()) "" else "_"}$variablesDescriptor"
-            val header = loader.variables
-                .mapValues { (variableName, variable) -> variables[variableName] ?: variable.default }
-                .map { (variableName, variableValue) -> "$variableName = $variableValue" }
-                .joinToString()
-            simulation.addOutputMonitor(Exporter(filename, parameters.interval, header, initialized.dataExtractors))
+        if (initialized.exporters.isNotEmpty()) {
+            simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
         return simulation
     }

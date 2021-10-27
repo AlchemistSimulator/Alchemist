@@ -16,7 +16,6 @@ package it.unibo.alchemist
  * @property headless true if forced, false otherwise (default)
  * @property variables selected batch variables. Defaults to [emptyList]
  * @property batch whether batch mode is selected.
- * @property export the path to the file root of the data to export, or null if unspecified (export disabled).
  * @property distributed the path to the file with the load distribution configuration, or null if the run is local
  * @property graphics the path to the effects file, or null if unspecified
  * @property fxui whether the JavaFX UI takes priority over the default Swing UI
@@ -31,7 +30,6 @@ data class AlchemistExecutionOptions(
     val headless: Boolean = false,
     val variables: List<String> = emptyList(),
     val batch: Boolean = false,
-    val export: String? = null,
     val distributed: String? = null,
     val graphics: String? = null,
     val fxui: Boolean = false,

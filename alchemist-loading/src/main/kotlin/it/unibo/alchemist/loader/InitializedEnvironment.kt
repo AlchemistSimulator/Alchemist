@@ -10,6 +10,7 @@
 package it.unibo.alchemist.loader
 
 import it.unibo.alchemist.loader.export.Extractor
+import it.unibo.alchemist.loader.export.GenericExporter
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 
@@ -27,5 +28,7 @@ interface InitializedEnvironment<T, P : Position<P>> {
     /**
      * The data extractors for this environment.
      */
-    val dataExtractors: List<Extractor>
+    //val dataExtractors: List<Extractor>
+
+    val exporters: Set<GenericExporter>
 }

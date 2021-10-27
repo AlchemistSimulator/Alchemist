@@ -32,8 +32,10 @@ class PreventRegressions {
     @Test
     void testLoadCustomExport() {
         final List<Extractor> extractors = LoadAlchemist.from(ResourceLoader.getResource("testCustomExport.yml"))
-            .getDefault()
-            .getDataExtractors();
+                .getDefault()
+                .getExporters()
+                .get(0)
+                .getDataExtractor();
         assertEquals(1, extractors.size());
         assertEquals(MeanSquaredError.class, extractors.get(0).getClass());
     }

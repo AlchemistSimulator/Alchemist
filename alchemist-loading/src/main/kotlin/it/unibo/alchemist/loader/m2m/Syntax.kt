@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.loader.m2m
 
-import arrow.core.valid
 import com.google.gson.GsonBuilder
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.createType
@@ -169,44 +168,32 @@ internal object DocumentRoot : SyntaxElement {
             )
         }
     }
-    /*
+
     object Export : SyntaxElement {
-        val time by OwnName()
-        val molecule by OwnName()
-        val property by OwnName()
-        val aggregators by OwnName()
-        const val valueFilter = "value-filter"
-        override val validDescriptors = JavaType.validDescriptors + setOf(
-            validDescriptor { mandatory(time) },
-            validDescriptor {
-                mandatory(molecule)
-                optional(property, aggregators, valueFilter)
-            }
+        val exporter by OwnName()
+        override val validDescriptors = setOf(
+            validDescriptor { mandatory(JavaType.type, JavaType.parameters, exporter) },
         )
-    }*/
-
-    object Export : SyntaxElement{
-        val data by OwnName()
-
-        override val validDescriptors = JavaType.validDescriptors + setOf(
-            validDescriptor { mandatory(JavaType.type, JavaType.parameters, data) },
-        )
-
-        object Data : SyntaxElement {
-            val time by OwnName()
-            val molecule by OwnName()
-            val property by OwnName()
-            val aggregators by OwnName()
-            const val valueFilter = "value-filter"
-            override val validDescriptors = JavaType.validDescriptors + setOf(
-                validDescriptor { mandatory(time) },
-                validDescriptor {
-                    mandatory(molecule)
-                    optional(property, aggregators, valueFilter)
-                }
+        object Exporter : SyntaxElement {
+            val data by OwnName()
+            override val validDescriptors = setOf(
+                validDescriptor { mandatory(JavaType.type, JavaType.parameters, data) },
             )
+            object Data : SyntaxElement {
+                val time by OwnName()
+                val molecule by OwnName()
+                val property by OwnName()
+                val aggregators by OwnName()
+                const val valueFilter = "value-filter"
+                override val validDescriptors = JavaType.validDescriptors + setOf(
+                    validDescriptor { mandatory(time) },
+                    validDescriptor {
+                        mandatory(molecule)
+                        optional(property, aggregators, valueFilter)
+                    }
+                )
+            }
         }
-
     }
 
     object Layer : SyntaxElement {

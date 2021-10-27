@@ -7,19 +7,18 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader
+package it.unibo.alchemist.loader.export
 
-import it.unibo.alchemist.loader.export.GenericExporter
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 
 /**
- * Pair-like implementation of [InitializedEnvironment].
+ * Abstract implementation of a [GenericExporter].
  */
-data class EnvironmentAndExports<T, P : Position<P>>(
+abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
 
-    override val environment: Environment<T, P>,
+    override var dataExtractor: List<Extractor> = emptyList()
 
-    override val exporters: List<GenericExporter<T, P>>
-
-) : InitializedEnvironment<T, P>
+    override fun bindData(dataExtractor: List<Extractor>) {
+        this.dataExtractor = dataExtractor
+    }
+}

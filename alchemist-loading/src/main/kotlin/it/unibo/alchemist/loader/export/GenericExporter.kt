@@ -9,19 +9,38 @@
 
 package it.unibo.alchemist.loader.export
 
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Time
 
 /**
  * A generic exporter for the simulation.
  */
 interface GenericExporter<T, P : Position<P>> {
 
-    fun setupExportEnvironment()
+    /**
+     *  The List of [Extractor] used to export simulations data.
+     */
+    var dataExtractor: List<Extractor>
+
+    /**
+     * Assign the list of [Extractor] to the selected [GenericExporter].
+     */
+    fun bindData(dataExtractor: List<Extractor>)
+
+    /**
+     *  Prepare the export environment before the simulation starts.
+     */
+    fun setupExportEnvironment(environment: Environment<T, P>?)
 
     /**
      * Main method used by exporters to export data.
      */
-    fun exportData()
+    fun exportData(environment: Environment<T, P>?, reaction: Reaction<T>?, time: Time?, step: Long)
 
-    fun closeExportEnvironment()
+    /**
+     * Used by the [GenericExporter] to stop the export in a correct way.
+     */
+    fun closeExportEnvironment(environment: Environment<T, P>?, time: Time?, step: Long)
 }

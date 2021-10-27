@@ -10,16 +10,14 @@ package it.unibo.alchemist.grid.simulation;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import it.unibo.alchemist.loader.InitializedEnvironment;
+import it.unibo.alchemist.loader.export.GlobalExporter;
 import org.apache.ignite.Ignition;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
@@ -31,7 +29,6 @@ import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 
@@ -81,16 +78,8 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
                         generalConfig.getEndStep(),
                         generalConfig.getEndTime()
                 );
-                final Map<String, Object> defaultVars = loader.getVariables().entrySet().stream()
-                        .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getDefault()));
-                defaultVars.putAll(config.getVariables());
-                final String header = config.getVariables().entrySet().stream()
-                        .map(e -> e.getKey() + " = " + e.getValue())
-                        .collect(Collectors.joining(", "));
                 final String filename = masterNodeId.toString() + "_" + config.toString() + ".txt";
-                final Exporter<T, P> exp = new Exporter<>(wd.getFileAbsolutePath(filename),
-                        1, header, initialized.getDataExtractors());
-                simulation.addOutputMonitor(exp);
+                simulation.addOutputMonitor(new GlobalExporter<>(initialized.getExporters()));
                 simulation.play();
                 simulation.run();
                 return new RemoteResultImpl(wd.getFileContent(filename),

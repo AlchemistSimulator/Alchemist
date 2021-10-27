@@ -14,6 +14,7 @@ import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
+import it.unibo.alchemist.loader.export.GenericExporter
 import it.unibo.alchemist.loader.export.MoleculeReader
 import it.unibo.alchemist.loader.export.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
@@ -307,7 +308,7 @@ internal object SimulationModel {
                 ?: cantBuildWith<Environment<T, P>>(root, JavaType)
         }
 
-    fun visitExports(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
+    /*fun visitExports(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
         when {
             root is String && root.equals(DocumentRoot.Export.time, ignoreCase = true) -> Result.success(Time())
             root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
@@ -332,7 +333,9 @@ internal object SimulationModel {
                 }
             }
             else -> null
-        }
+        }*/
+    fun <T,P: Position<P>> visitSingleExporter( context: Context, root: Any?) =
+        visitBuilding<GenericExporter<T,P>>(context, root)
 
     private fun visitJVMConstructor(context: Context, root: Map<*, *>): JVMConstructor? =
         if (root.containsKey(JavaType.type)) {

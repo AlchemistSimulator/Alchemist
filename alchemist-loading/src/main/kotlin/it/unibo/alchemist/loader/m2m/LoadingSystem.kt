@@ -12,6 +12,7 @@ package it.unibo.alchemist.loader.m2m
 import it.unibo.alchemist.loader.EnvironmentAndExports
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.deployments.Deployment
+import it.unibo.alchemist.loader.export.GenericExporter
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.interfaces.Environment
@@ -129,10 +130,10 @@ internal abstract class LoadingSystem(
                 logger.debug("Deployment descriptors: {}", deploymentDescriptors)
             }
             // EXPORTS
-            val exports = SimulationModel.visitRecursively(context, root.getOrEmpty(DocumentRoot.export)) {
-                SimulationModel.visitExports(incarnation, context, it)
+            val exporters = SimulationModel.visitRecursively<GenericExporter<T,P>>(context, root.getOrEmpty(DocumentRoot.export)) {
+                SimulationModel.visitSingleExporter(context, it)
             }
-            return EnvironmentAndExports(environment, exports)
+            return EnvironmentAndExports(environment, exporters)
         }
 
         private fun <T, P : Position<P>> populateDisplacement(

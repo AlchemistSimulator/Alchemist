@@ -32,15 +32,15 @@ interface GenericExporter<T, P : Position<P>> {
     /**
      *  Prepare the export environment before the simulation starts.
      */
-    fun setupExportEnvironment(environment: Environment<T, P>?)
+    fun setupExportEnvironment(environment: Environment<T, P>)
 
     /**
      * Main method used by exporters to export data.
      */
-    fun exportData(environment: Environment<T, P>?, reaction: Reaction<T>?, time: Time?, step: Long)
+    fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long)
 
     /**
      * Used by the [GenericExporter] to stop the export in a correct way.
      */
-    fun closeExportEnvironment(environment: Environment<T, P>?, time: Time?, step: Long)
+    fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long)
 }

@@ -21,19 +21,19 @@ import it.unibo.alchemist.model.interfaces.Time
  */
 class GlobalExporter<T, P : Position<P>> (private val exporters: List<GenericExporter<T, P>>) : OutputMonitor<T, P> {
 
-    override fun initialized(environment: Environment<T, P>?) {
+    override fun initialized(environment: Environment<T, P>) {
         exporters.forEach() {
             it.setupExportEnvironment(environment)
         }
     }
 
-    override fun stepDone(environment: Environment<T, P>?, reaction: Reaction<T>?, time: Time?, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         exporters.forEach() {
             it.exportData(environment, reaction, time, step)
         }
     }
 
-    override fun finished(environment: Environment<T, P>?, time: Time?, step: Long) {
+    override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         exporters.forEach() {
             it.closeExportEnvironment(environment, time, step)
         }

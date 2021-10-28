@@ -27,6 +27,7 @@ import java.util.TimeZone
  * Writes on file data provided by a number of {@link Extractor}s. Produces a
  * CSV with '#' as comment character.e
  * @param filename the name of the file to export data to.
+<<<<<<< HEAD
  * @param interval the sampling time, defaults to [DEFAULT_INTERVAL].
  */
 
@@ -37,7 +38,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
 
     companion object {
         /**
-         * Character used to separate comments from data on export files.
+         * Character used tgso separate comments from data on export files.
          */
         const val SEPARATOR = "#####################################################################"
         /**
@@ -70,7 +71,6 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
                 out.print(it)
                 out.print(" ")
             }
-
         out.println()
         exportData(environment, null, DoubleTime(), 0)
     }

@@ -43,4 +43,5 @@ interface GenericExporter<T, P : Position<P>> {
      * Used by the [GenericExporter] to stop the export in a correct way.
      */
     fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long)
+
 }

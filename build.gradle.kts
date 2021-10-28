@@ -63,6 +63,7 @@ allprojects {
 
     multiJvm {
         jvmVersionForCompilation.set(11)
+        maximumSupportedJvmVersion.set(16)
     }
 
     repositories {

@@ -22,7 +22,6 @@ plugins {
     checkstyle
     `build-dashboard`
     id("kotlin-qa")
-    id("com.dorongold.task-tree")
     id("com.eden.orchidPlugin")
     id("com.github.johnrengelman.shadow")
     id("com.github.spotbugs")
@@ -30,6 +29,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("org.danilopianini.publish-on-central")
     id("org.jetbrains.dokka")
+    alias(libs.plugins.taskTree)
 }
 
 apply(plugin = "com.eden.orchidPlugin")

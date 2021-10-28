@@ -1,3 +1,7 @@
+# 11.3.4
+
+* Switch to Gradle Catalogs
+
 # 11.3.1
 
 * Simplification to the build system

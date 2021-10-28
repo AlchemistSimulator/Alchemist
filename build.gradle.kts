@@ -22,7 +22,6 @@ plugins {
     checkstyle
     `build-dashboard`
     id("kotlin-qa")
-    id("com.dorongold.task-tree")
     id("com.eden.orchidPlugin")
     id("com.github.johnrengelman.shadow")
     id("com.github.spotbugs")
@@ -30,6 +29,8 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("org.danilopianini.publish-on-central")
     id("org.jetbrains.dokka")
+    alias(libs.plugins.multiJvmTesting)
+    alias(libs.plugins.taskTree)
 }
 
 apply(plugin = "com.eden.orchidPlugin")
@@ -39,8 +40,14 @@ dependencies {
     additionalTools("org.jacoco:org.jacoco.core:_")
 }
 
+val Provider<PluginDependency>.id get() = get().pluginId
+
 allprojects {
 
+    with(rootProject.libs.plugins) {
+        apply(plugin = multiJvmTesting.id)
+        apply(plugin = taskTree.id)
+    }
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
@@ -51,9 +58,12 @@ allprojects {
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.danilopianini.publish-on-central")
-    apply(plugin = "com.dorongold.task-tree")
     apply(plugin = "com.github.johnrengelman.shadow")
     apply(plugin = "kotlin-qa")
+
+    multiJvm {
+        jvmVersionForCompilation.set(11)
+    }
 
     repositories {
         google()

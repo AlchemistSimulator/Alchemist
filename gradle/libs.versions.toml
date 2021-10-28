@@ -1,0 +1,9 @@
+[versions]
+
+[libraries]
+
+[bundles]
+
+[plugins]
+multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.1.0" }
+taskTree = { id = "com.dorongold.task-tree", version = "2.1.0" }

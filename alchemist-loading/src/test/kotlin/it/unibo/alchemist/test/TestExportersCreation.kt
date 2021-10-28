@@ -9,7 +9,6 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
@@ -27,7 +26,7 @@ class TestExportersCreation<T, P : Position<P>> : StringSpec({
         assertNotNull(loader)
         val initialized: InitializedEnvironment<T, P> = loader.getDefault()
         val exporters: List<GenericExporter<T, P>> = initialized.exporters
-        exporters.size shouldBeExactly 2
+        exporters.size shouldBeGreaterThan 0
         exporters.forEach {
             it shouldNotBe null
         }

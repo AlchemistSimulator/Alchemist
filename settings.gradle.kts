@@ -61,3 +61,5 @@ gradleEnterprise {
         publishAlways()
     }
 }
+
+enableFeaturePreview("VERSION_CATALOGS")

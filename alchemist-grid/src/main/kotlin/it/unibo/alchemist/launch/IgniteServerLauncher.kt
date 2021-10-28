@@ -29,7 +29,6 @@ object IgniteServerLauncher : AbstractLauncher() {
             graphics != null -> incompatibleWith("graphic effects enabled")
             help -> Invalid("There is no specific help for server mode")
             server == null -> Invalid("No Ignite configuration file specified")
-            interval != AlchemistExecutionOptions.defaultInterval -> incompatibleWith("custom sampling intervals")
             parallelism != AlchemistExecutionOptions.defaultParallelism -> incompatibleWith("custom parallelism")
             endTime != AlchemistExecutionOptions.defaultEndTime -> incompatibleWith("simulation end time")
             else -> OK()

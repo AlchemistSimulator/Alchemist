@@ -33,7 +33,6 @@ object Alchemist {
     private const val DISTRIBUTED = 'd'
     private const val GRAPHICS = 'g'
     private const val HELP = 'h'
-    private const val INTERVAL = 'i'
     private const val SERVER = 's'
     private const val PARALLELISM = 'p'
     private const val TIME = 't'
@@ -219,8 +218,6 @@ object Alchemist {
             graphics = getOptionValue(GRAPHICS),
             fxui = hasOption(FXUI),
             headless = hasOption(HEADLESS),
-            interval = hasNumeric(INTERVAL, kotlin.String::toDoubleOrNull)
-                ?: AlchemistExecutionOptions.defaultInterval,
             parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,
             variables = getOptionValues(VARIABLES)?.toList()

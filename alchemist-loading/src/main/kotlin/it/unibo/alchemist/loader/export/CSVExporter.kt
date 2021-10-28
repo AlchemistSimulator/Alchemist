@@ -27,69 +27,76 @@ import java.util.TimeZone
  * Writes on file data provided by a number of {@link Extractor}s. Produces a
  * CSV with '#' as comment character.e
  * @param filename the name of the file to export data to.
+ * @param interval the sampling time, defaults to [DEFAULT_INTERVAL].
  */
 
-class CSVExporter<T, P : Position<P>>(val filename: String) : AbstractExporter<T, P>() {
+class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
+    val filename: String,
+    val interval: Double = DEFAULT_INTERVAL
+) : AbstractExporter<T, P>() {
 
     companion object {
         /**
          * Character used to separate comments from data on export files.
          */
         const val SEPARATOR = "#####################################################################"
+        /**
+         * If no sampling interval is specified, this option value is used. Defaults to 1.0.
+         */
+        const val DEFAULT_INTERVAL = 1.0
     }
-    private val sampleSpace: Double = 1.0
-    private var out: PrintStream? = null
+    private lateinit var out: PrintStream
     private var count = -1L // The 0th should be sampled
 
-    override fun setupExportEnvironment(environment: Environment<T, P>?) {
+    override fun setupExportEnvironment(environment: Environment<T, P>) {
         val directory = File("build/exports/")
         if (!directory.exists()) {
             directory.mkdirs()
         }
         out = PrintStream(directory.toString() + filename, Charsets.UTF_8.name())
-        out!!.println(SEPARATOR)
-        out!!.print("# Alchemist log file - simulation started at: ")
+        out.println(SEPARATOR)
+        out.print("# Alchemist log file - simulation started at: ")
         val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
         isoTime.timeZone = TimeZone.getTimeZone("UTC")
-        out!!.print(isoTime.format(Date()))
-        out!!.println(" #")
-        out!!.println(SEPARATOR)
-        out!!.println("# The columns have the following meaning: ")
-        out!!.print("# ")
+        out.print(isoTime.format(Date()))
+        out.println(" #")
+        out.println(SEPARATOR)
+        out.println("# The columns have the following meaning: ")
+        out.print("# ")
         dataExtractor.stream()
             .flatMap {
                 it.names.stream()
             }.forEach {
-                out!!.print(it)
-                out!!.print(" ")
+                out.print(it)
+                out.print(" ")
             }
 
-        out!!.println()
+        out.println()
         exportData(environment, null, DoubleTime(), 0)
     }
 
-    override fun exportData(environment: Environment<T, P>?, reaction: Reaction<T>?, time: Time?, step: Long) {
-        val curSample: Long = (time!!.toDouble() / sampleSpace).toLong()
+    override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
+        val curSample: Long = (time.toDouble() / interval).toLong()
         if (curSample > count) {
             count = curSample
-            writeRow(environment!!, reaction, time, step)
+            writeRow(environment, reaction, time, step)
         }
     }
 
-    override fun closeExportEnvironment(environment: Environment<T, P>?, time: Time?, step: Long) {
-        out!!.println(SEPARATOR)
-        out!!.print("# End of data export. Simulation finished at: ")
+    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
+        out.println(SEPARATOR)
+        out.print("# End of data export. Simulation finished at: ")
         val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
         isoTime.timeZone = TimeZone.getTimeZone("UTC")
-        out!!.print(isoTime.format(Date()))
-        out!!.println(" #")
-        out!!.println(SEPARATOR)
-        out!!.close()
+        out.print(isoTime.format(Date()))
+        out.println(" #")
+        out.println(SEPARATOR)
+        out.close()
     }
 
     private fun printDatum(datum: Double) {
-        out!!.print(datum)
-        out!!.print(' ')
+        out.print(datum)
+        out.print(' ')
     }
 
     private fun writeRow(env: Environment<T, *>, r: Reaction<T>?, time: Time, step: Long) {
@@ -98,6 +105,6 @@ class CSVExporter<T, P : Position<P>>(val filename: String) : AbstractExporter<T
             .forEach {
                 printDatum(it)
             }
-        out!!.println()
+        out.println()
     }
 }

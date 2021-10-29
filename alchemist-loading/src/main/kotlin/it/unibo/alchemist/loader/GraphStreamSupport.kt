@@ -27,6 +27,7 @@ import org.danilopianini.jirf.FactoryBuilder
 import org.graphstream.algorithm.generator.BaseGenerator
 import org.graphstream.graph.implementations.SingleGraph
 import org.graphstream.ui.layout.springbox.implementations.SpringBox
+import java.util.stream.Collectors
 import kotlin.math.max
 import kotlin.math.nextUp
 import kotlin.streams.toList
@@ -148,7 +149,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
                     coordinates.map { (it as Number).toDouble() }
                 }
                 .map { coordinate -> coordinate.map { (it as Number).toDouble() }.toDoubleArray() }
-                .toList()
+                .collect(Collectors.toList())
             val sum = originalCoordinates.reduce(MathArrays::ebeAdd)
             val sizes = DoubleArray(sum.size) { graph.nodeCount.toDouble() }
             val barycenter = ebeDivide(sum, sizes)

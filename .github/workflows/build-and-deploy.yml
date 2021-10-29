@@ -45,7 +45,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           githubToken: ${{ secrets.AUTOMERGE_TOKEN }}
-        run: ./gradlew orchidDeploy --parallel
+        run: |
+          COMMAND='./gradlew orchidDeploy --parallel'
+          $COMMAND || sleep 10 && $COMMAND || sleep 10 && $COMMAND
       - name: Get branch name
         id: branch-name
         if: steps.should-deploy.outputs.deploy

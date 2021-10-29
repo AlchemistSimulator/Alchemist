@@ -50,7 +50,7 @@ jobs:
         id: branch-name
         if: steps.should-deploy.outputs.deploy
         uses: tj-actions/branch-names@v5
-      - name: Compute Surge Domain
+      - name: Prepare the surge.sh deployment
         id: prepare-surge
         if: steps.should-deploy.outputs.deploy
         run: |

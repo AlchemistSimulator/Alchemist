@@ -4,6 +4,7 @@ import kotlin.String
 /**
  * Statically defined libraries used by the project.
  */
+@Suppress("UndocumentedPublicProperty")
 object Libs {
     const val annotations: String = "org.jetbrains:annotations:_"
     const val antlr4: String = "org.antlr:antlr4:_"

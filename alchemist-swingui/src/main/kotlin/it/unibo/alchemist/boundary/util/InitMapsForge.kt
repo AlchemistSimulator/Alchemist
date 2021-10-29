@@ -8,6 +8,10 @@ import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik
  * on the OpenStreetMaps side.
  */
 object InitMapsForge {
+
+    /**
+     * Initializes the OpenStreetMap browser agent.
+     */
     @JvmStatic
     fun initAgent() {
         with(OpenStreetMapMapnik.INSTANCE) {

@@ -54,7 +54,7 @@ jobs:
         id: prepare-surge
         if: steps.should-deploy.outputs.deploy
         run: |
-          ./gradlew dokkaJavadoc --parallel
+          ./gradlew dokkaJavadocCollector --parallel
           if [[ ${{ !(steps.branch-name.is_tag || steps.branch-name.is_default) }} ]]; then
             echo 'detected unstable (non-tag) version on ${{ github.ref }}'
             STABILITY_MARKER='unstable-'

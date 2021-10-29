@@ -56,7 +56,7 @@ jobs:
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
         run: |
           ./gradlew dokkaJavadoc --parallel
-          if [[ ${{ !contains(github.ref, '/tags/') }} ]]; then
+          if [[ ${{ !(steps.branch-name.is_tag || steps.branch-name.is_default) }} ]]; then
             echo 'detected unstable (non-tag) version on ${{ github.ref }}'
             STABILITY_MARKER='unstable-'
           fi

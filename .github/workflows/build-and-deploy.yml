@@ -65,6 +65,6 @@ jobs:
         uses: dswistowski/surge-sh-action@v1
         with:
           domain: '${{ steps.prepare-surge.outputs.domain }}'
-          project: build/dokka/javadoc/
+          project: build/docs/orchid/javadoc
           login: ${{ secrets.SURGE_LOGIN }}
           token: ${{ secrets.SURGE_TOKEN }}

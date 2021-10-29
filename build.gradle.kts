@@ -337,8 +337,11 @@ val isMarkedStable = projectVersion.preRelease.isEmpty()
 tasks.withType<org.jetbrains.dokka.gradle.DokkaCollectorTask> {
     val type = Regex("^dokka(\\w+)Collector\$").matchEntire(name)?.destructured?.component1()?.toLowerCase()
         ?: throw IllegalStateException("task named $name does not match the expected name pattern for dokka collection tasks")
-    outputDirectory.set(file("$buildDir/docs/orchid/$type"))
-    listOf(tasks.orchidServe, tasks.orchidBuild).forEach { it.get().dependsOn(this) }
+    if (!type.equals("jekyll", ignoreCase = true)) {
+        // Bind Dokka to Orchid, excluding Jekyll (too heavy for GitHub Pages).
+        outputDirectory.set(file("$buildDir/docs/orchid/$type"))
+        listOf(tasks.orchidServe, tasks.orchidBuild).forEach { it.get().dependsOn(this) }
+    }
 }
 
 orchid {

@@ -59,6 +59,9 @@ object ClassPathScanner {
     fun <T> subTypesOf(superClass: Class<T>, inPackage: String? = null): List<Class<out T>> =
         loader[ScanData(superClass, inPackage)] as List<Class<out T>>
 
+    /**
+     * This function loads all subtypes of the provided Java class that can be discovered on the current classpath.
+     */
     inline fun <reified T> subTypesOf(inPackage: String? = null): List<Class<out T>> =
         subTypesOf(T::class.java, inPackage)
 
@@ -74,6 +77,9 @@ object ClassPathScanner {
         .scan().getResourcesMatchingPattern(Pattern.compile(regex))
         .urLs
 
+    /**
+     * This function returns a list of all the resources in a certain (optional) package matching a regular expression.
+     */
     @JvmStatic
     @JvmOverloads
     fun resourcesMatchingAsStream(regex: String, inPackage: String? = null): List<InputStream> =

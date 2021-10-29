@@ -20,26 +20,48 @@ import java.net.URL
  * Loads Alchemist simulations from a variety of resources.
  */
 object LoadAlchemist {
+
+    /**
+     * Load from an [input] [String].
+     */
     @JvmStatic
     fun from(input: String, model: AlchemistModelProvider) = SimulationModel.fromMap(model.from(input))
 
+    /**
+     * Load from a [reader].
+     */
     @JvmStatic
     fun from(reader: Reader, model: AlchemistModelProvider) = SimulationModel.fromMap(model.from(reader))
 
+    /**
+     * Load from an [InputStream].
+     */
     @JvmStatic
     fun from(stream: InputStream, model: AlchemistModelProvider) = SimulationModel.fromMap(model.from(stream))
 
+    /**
+     * Load from an [url].
+     */
     @JvmStatic
     fun from(url: URL, model: AlchemistModelProvider) = SimulationModel.fromMap(model.from(url))
 
+    /**
+     * Load from an [url].
+     */
     @JvmStatic
     fun from(url: URL) = from(url, modelForExtension(url.path.takeLastWhile { it != '.' }))
 
+    /**
+     * Load from a [file].
+     */
     @JvmStatic
     fun from(file: File) = from(file.inputStream(), modelForExtension(file.extension))
 
+    /**
+     * Load from a [string].
+     */
     @JvmStatic
-    fun from(file: String) = from(File(file))
+    fun from(string: String) = from(File(string))
 
     @JvmStatic
     private fun modelForExtension(extension: String) = ClassPathScanner

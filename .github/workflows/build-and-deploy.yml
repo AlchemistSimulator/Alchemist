@@ -35,7 +35,8 @@ jobs:
           java-version: '11'
       - name: Build website
         run: ./gradlew orchidBuild --parallel --scan
-      - id: should-deploy
+      - name: Decide whether should deploy
+        id: should-deploy
         run: |
           SHOULD_DEPLOY=${{ contains(github.repository, 'AlchemistSimulator/Alchemist') && (contains(github.event_name, 'push') || contains(github.event_name, 'workflow_dispatch')) }}
           echo "::set-output name=deploy::$SHOULD_DEPLOY"

@@ -1,6 +1,0 @@
-#!/bin/bash
-set -e
-./gradlew assemble shadowJar dokkaJavadoc --parallel --scan --stacktrace
-if $REFERENCE; then
-    ./gradlew orchidBuild --parallel --scan --stacktrace -Porg.gradle.jvmargs='-Xmx4g -XX:MaxMetaspaceSize=512m'
-fi

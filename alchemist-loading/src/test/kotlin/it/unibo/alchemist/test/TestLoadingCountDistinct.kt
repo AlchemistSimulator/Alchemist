@@ -13,7 +13,7 @@ import io.kotest.matchers.doubles.shouldBeExactly
 import it.unibo.alchemist.loader.export.StatUtil
 
 /**
- * Tests loading and executing CountDistinct
+ * Tests loading and executing CountDistinct.
  */
 class TestLoadingCountDistinct : StringSpec({
     "CountDistinct should load and execute" {

@@ -13,6 +13,14 @@ package it.unibo.alchemist.model.implementations.groups
  * Utility for shorter loading of groups within the Yaml files.
  */
 object GroupFactory {
+
+    /**
+     * Builds a new [Family].
+     */
     fun family(): Family<Any, Nothing, Nothing> = Family()
+
+    /**
+     * Builds a new group of [Friends].
+     */
     fun friends(): Friends<Any, Nothing, Nothing> = Friends()
 }

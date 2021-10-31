@@ -21,7 +21,6 @@ plugins {
     pmd
     checkstyle
     `build-dashboard`
-    id("kotlin-qa")
     id("com.eden.orchidPlugin")
     id("com.github.johnrengelman.shadow")
     id("com.github.spotbugs")
@@ -29,6 +28,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("org.danilopianini.publish-on-central")
     id("org.jetbrains.dokka")
+    alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
     alias(libs.plugins.taskTree)
 }
@@ -47,6 +47,7 @@ allprojects {
     with(rootProject.libs.plugins) {
         apply(plugin = multiJvmTesting.id)
         apply(plugin = taskTree.id)
+        apply(plugin = kotlin.qa.id)
     }
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
     apply(plugin = "java-library")
@@ -59,10 +60,10 @@ allprojects {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.danilopianini.publish-on-central")
     apply(plugin = "com.github.johnrengelman.shadow")
-    apply(plugin = "kotlin-qa")
 
     multiJvm {
         jvmVersionForCompilation.set(11)
+        maximumSupportedJvmVersion.set(latestJava)
     }
 
     repositories {
@@ -336,8 +337,11 @@ val isMarkedStable = projectVersion.preRelease.isEmpty()
 tasks.withType<org.jetbrains.dokka.gradle.DokkaCollectorTask> {
     val type = Regex("^dokka(\\w+)Collector\$").matchEntire(name)?.destructured?.component1()?.toLowerCase()
         ?: throw IllegalStateException("task named $name does not match the expected name pattern for dokka collection tasks")
-    outputDirectory.set(file("$buildDir/docs/orchid/$type"))
-    listOf(tasks.orchidServe, tasks.orchidBuild).forEach { it.get().dependsOn(this) }
+    if (type.equals("html", ignoreCase = true) || type.equals("javadoc", ignoreCase = true)) {
+        // Bind Dokka Javadoc and Dokka HTML to Orchid
+        outputDirectory.set(file("$buildDir/docs/orchid/$type"))
+        listOf(tasks.orchidServe, tasks.orchidBuild).forEach { it.get().dependsOn(this) }
+    }
 }
 
 orchid {

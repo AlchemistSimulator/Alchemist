@@ -19,7 +19,9 @@ jobs:
       - name: Compute version
         id: version
         run: |
-          echo "::version name=version::$(./gradlew printGit | grep -m 1 -oP '^Version computed by GitSemVer: \K.*$')"
+          VERSION="$(./gradlew printGit | grep -m 1 -oP '^Version computed by GitSemVer: \K.*$')"
+          echo Exporting version: $VERSION
+          echo "::set-output name=version::$VERSION"
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "build/shadow/*-all.jar"

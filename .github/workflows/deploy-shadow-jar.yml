@@ -19,7 +19,7 @@ jobs:
       - name: Compute version
         id: version
         run: |
-          echo "::version name=deploy::$(./gradlew printGit | grep -m 1 -oP '^Version computed by GitSemVer: \K.*$')"
+          echo "::version name=version::$(./gradlew printGit | grep -m 1 -oP '^Version computed by GitSemVer: \K.*$')"
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "build/shadow/*-all.jar"

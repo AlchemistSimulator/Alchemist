@@ -1,4 +1,4 @@
-# 11.3.4
+# 11.3.2
 
 * Switch to Gradle Catalogs
 

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.loader.export
 
+import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Position
 
 /**
@@ -17,8 +18,13 @@ import it.unibo.alchemist.model.interfaces.Position
 abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
 
     override var dataExtractor: List<Extractor> = emptyList()
+    override var variables: Map<String, Variable<*>> = emptyMap()
 
     override fun bindData(dataExtractor: List<Extractor>) {
         this.dataExtractor = dataExtractor
+    }
+
+    override fun bindVariables(variables: Map<String, Variable<*>>) {
+        this.variables = variables
     }
 }

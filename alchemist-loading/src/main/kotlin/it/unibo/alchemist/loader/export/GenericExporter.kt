@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.loader.export
 
+import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -25,9 +26,19 @@ interface GenericExporter<T, P : Position<P>> {
     var dataExtractor: List<Extractor>
 
     /**
-     * Assign the list of [Extractor] to the selected [GenericExporter].
+     *  The List of [Variable] of the simulation.
+     */
+    var variables: Map<String, Variable<*>>
+
+    /**
+     * Assign the list of [dataExtractor] to the selected [GenericExporter].
      */
     fun bindData(dataExtractor: List<Extractor>)
+
+    /**
+     * Assign the map of [variables] to the selected [GenericExporter].
+     */
+    fun bindVariables(variables: Map<String, Variable<*>>)
 
     /**
      *  Prepare the export environment before the simulation starts.

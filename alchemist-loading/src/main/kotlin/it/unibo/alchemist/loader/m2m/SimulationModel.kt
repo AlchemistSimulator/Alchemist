@@ -310,20 +310,20 @@ internal object SimulationModel {
 
     private fun visitExportData(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
         when {
-            root is String && root.equals(DocumentRoot.Export.Exporter.Data.time, ignoreCase = true) ->
+            root is String && root.equals(DocumentRoot.Export.Data.time, ignoreCase = true) ->
                 Result.success(Time())
-            root is Map<*, *> && DocumentRoot.Export.Exporter.Data.validateDescriptor(root) -> {
-                val molecule = root[DocumentRoot.Export.Exporter.Data.molecule]?.toString()
+            root is Map<*, *> && DocumentRoot.Export.Data.validateDescriptor(root) -> {
+                val molecule = root[DocumentRoot.Export.Data.molecule]?.toString()
                 if (molecule == null) {
                     visitBuilding<Extractor>(context, root)
                 } else {
-                    val property = root[DocumentRoot.Export.Exporter.Data.property]?.toString()
-                    val filter: FilteringPolicy = root[DocumentRoot.Export.Exporter.Data.valueFilter]
+                    val property = root[DocumentRoot.Export.Data.property]?.toString()
+                    val filter: FilteringPolicy = root[DocumentRoot.Export.Data.valueFilter]
                         ?.let { CommonFilters.fromString(it.toString()) }
                         ?: CommonFilters.NOFILTER.filteringPolicy
                     val aggregators: List<String> = visitRecursively(
                         context,
-                        root[DocumentRoot.Export.Exporter.Data.aggregators] ?: emptyList<Any>()
+                        root[DocumentRoot.Export.Data.aggregators] ?: emptyList<Any>()
                     ) {
                         require(it is CharSequence) {
                             "Invalid aggregator $it:${it?.let { it::class.simpleName }}. Must be a String."
@@ -336,19 +336,16 @@ internal object SimulationModel {
             else -> null
         }
 
-    fun <T, P : Position<P>> visitSingleExporter(context: Context, root: Any?) =
-        visitBuilding<GenericExporter<T, P>>(context, root)
-
     fun <T, P : Position<P>> visitSingleExporter(
         incarnation: Incarnation<*, *>,
         context: Context,
         root: Any?
     ): Result<GenericExporter<T, P>>? =
         when {
-            root is Map<*, *> && DocumentRoot.Export.Exporter.validateDescriptor(root) -> {
+            root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
                 val exporter = visitBuilding<GenericExporter<T, P>>(context, root)
                     ?.getOrThrow() ?: cantBuildWith<GenericExporter<T, P>>(root)
-                val dataExtractors = visitRecursively(context, root[DocumentRoot.Export.Exporter.data]) {
+                val dataExtractors = visitRecursively(context, root[DocumentRoot.Export.data]) {
                     visitExportData(incarnation, context, it)
                 }
                 exporter.bindData(dataExtractors)

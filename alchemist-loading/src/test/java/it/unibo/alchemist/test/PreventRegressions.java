@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests loading of a custom {@link it.unibo.alchemist.loader.export.Exporter}.
+ * Tests loading of a custom {@link it.unibo.alchemist.loader.export.GenericExporter}.
  */
 class PreventRegressions {
 
@@ -31,11 +31,12 @@ class PreventRegressions {
      */
     @Test
     void testLoadCustomExport() {
-        final List<Extractor> extractors = LoadAlchemist.from(ResourceLoader.getResource("testCustomExport.yml"))
-                .getDefault()
-                .getExporters()
-                .get(0)
-                .getDataExtractor();
+        final List<Extractor> extractors = LoadAlchemist
+            .from(ResourceLoader.getResource("testCustomExport.yml"))
+            .getDefault()
+            .getExporters()
+            .get(0)
+            .getDataExtractor();
         assertEquals(1, extractors.size());
         assertEquals(MeanSquaredError.class, extractors.get(0).getClass());
     }

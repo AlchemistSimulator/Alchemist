@@ -17,14 +17,13 @@ variables:
     parameters: [300, 50, 500, 9] # default 300, minimum 50, maximum 100, 9 samples
 seeds: { simulation: *seed, scenario: *scenario_seed}
 export:
-  - exporter:
-      type: CSVExporter
-      parameters: ["prova.txt"]
-      data:
-        - time
-        - molecule: "default_module:default_program"
-          aggregators: [ mean, max, min, variance, median ]
-          value-filter: onlyfinite
+    type: CSVExporter
+    parameters: ["prova.txt"]
+    data:
+      - time
+      - molecule: "default_module:default_program"
+        aggregators: [ mean, max, min, variance, median ]
+        value-filter: onlyfinite
 environment: { type: ImageEnvironment, parameters: [*image_path, *zoom] }
 network-model: { type: ObstaclesBreakConnection, parameters: [50] }
 deployments:

@@ -170,29 +170,23 @@ internal object DocumentRoot : SyntaxElement {
     }
 
     object Export : SyntaxElement {
-        val exporter by OwnName()
+        val data by OwnName()
         override val validDescriptors = setOf(
-            validDescriptor { mandatory(JavaType.type, JavaType.parameters, exporter) },
+            validDescriptor { mandatory(JavaType.type, JavaType.parameters, data) },
         )
-        object Exporter : SyntaxElement {
-            val data by OwnName()
-            override val validDescriptors = setOf(
-                validDescriptor { mandatory(JavaType.type, JavaType.parameters, data) },
+        object Data : SyntaxElement {
+            val time by OwnName()
+            val molecule by OwnName()
+            val property by OwnName()
+            val aggregators by OwnName()
+            const val valueFilter = "value-filter"
+            override val validDescriptors = JavaType.validDescriptors + setOf(
+                validDescriptor { mandatory(time) },
+                validDescriptor {
+                    mandatory(molecule)
+                    optional(property, aggregators, valueFilter)
+                }
             )
-            object Data : SyntaxElement {
-                val time by OwnName()
-                val molecule by OwnName()
-                val property by OwnName()
-                val aggregators by OwnName()
-                const val valueFilter = "value-filter"
-                override val validDescriptors = JavaType.validDescriptors + setOf(
-                    validDescriptor { mandatory(time) },
-                    validDescriptor {
-                        mandatory(molecule)
-                        optional(property, aggregators, valueFilter)
-                    }
-                )
-            }
         }
     }
 

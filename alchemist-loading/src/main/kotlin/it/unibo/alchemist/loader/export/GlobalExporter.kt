@@ -16,8 +16,9 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
- *  The intermediate between exporters and OutputMonitor interface.
- *  @param exporters TODO
+ *  Contains all exporters selected in the configuration file.
+ *  Implements the [OutputMonitor] interface and delegate the export phase to each one of his internal exporters.
+ *  @param exporters The list of [GenericExporter].
  */
 class GlobalExporter<T, P : Position<P>> (private val exporters: List<GenericExporter<T, P>>) : OutputMonitor<T, P> {
 

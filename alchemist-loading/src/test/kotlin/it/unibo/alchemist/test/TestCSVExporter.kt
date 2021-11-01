@@ -12,10 +12,12 @@ import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.core.implementations.Engine
+import it.unibo.alchemist.loader.export.CSVExporter
 import it.unibo.alchemist.loader.export.GlobalExporter
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
+import java.io.File
 
 class TestCSVExporter<T, P : Position<P>> : StringSpec({
     "test exporting data on CSV file" {
@@ -28,5 +30,8 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         simulation.play()
         simulation.run()
+        val exporter: CSVExporter<T, P> = initialized.exporters[0] as CSVExporter<T, P>
+        val outputFile = File(exporter.outputFile)
+        outputFile.delete()
     }
 })

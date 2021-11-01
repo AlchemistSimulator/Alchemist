@@ -22,39 +22,59 @@ import java.util.Arrays
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.io.path.Path
 
 /**
  * Writes on file data provided by a number of {@link Extractor}s. Produces a
  * CSV with '#' as comment character.e
- * @param filename the name of the file to export data to.
-<<<<<<< HEAD
+ * @param description the name the file to export data to.
  * @param interval the sampling time, defaults to [DEFAULT_INTERVAL].
  */
 
 class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
-    val filename: String,
+    private val description: String,
     val interval: Double = DEFAULT_INTERVAL
 ) : AbstractExporter<T, P>() {
 
     companion object {
         /**
-         * Character used tgso separate comments from data on export files.
+         * Character used to separate comments from data on export files.
          */
         const val SEPARATOR = "#####################################################################"
         /**
          * If no sampling interval is specified, this option value is used. Defaults to 1.0.
          */
         const val DEFAULT_INTERVAL = 1.0
+        /**
+         * If no path is specified or the input path is wrong, the output file will be placed inside this folder.
+         */
+        const val DEFAULT_PATH = "/build/exports/"
     }
     private lateinit var out: PrintStream
     private var count = -1L // The 0th should be sampled
+    /**
+     * The path of the export output file.
+     */
+    lateinit var outputFile: String
 
     override fun setupExportEnvironment(environment: Environment<T, P>) {
-        val directory = File("build/exports/")
-        if (!directory.exists()) {
-            directory.mkdirs()
+        val header = variables
+            .mapValues { (variableName, variable) -> variables[variableName] ?: variable.default }
+            .map { (variableName, variableValue) -> "$variableName = $variableValue" }
+            .joinToString()
+        val variablesDescriptor = variables
+            .map { (name, value) -> "$name-$value" }
+            .joinToString(separator = "_")
+        val exportDir = File(
+            (Path(File("").absolutePath).parent).toString() +
+                DEFAULT_PATH + description
+        )
+        if (!exportDir.exists()) {
+            exportDir.mkdirs()
         }
-        out = PrintStream(directory.toString() + filename, Charsets.UTF_8.name())
+        outputFile = exportDir.path + '/' + description +
+            "${if (variables.isEmpty()) "" else "_"}$variablesDescriptor" + "_" + System.currentTimeMillis()
+        out = PrintStream(outputFile, Charsets.UTF_8.name())
         out.println(SEPARATOR)
         out.print("# Alchemist log file - simulation started at: ")
         val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
@@ -62,6 +82,9 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         out.print(isoTime.format(Date()))
         out.println(" #")
         out.println(SEPARATOR)
+        out.println(" #")
+        out.println(header)
+        out.println(" #")
         out.println("# The columns have the following meaning: ")
         out.print("# ")
         dataExtractor.stream()

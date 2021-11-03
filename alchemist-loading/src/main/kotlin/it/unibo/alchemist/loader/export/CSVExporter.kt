@@ -73,7 +73,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         out.println(" #")
         out.println(SEPARATOR)
         out.println(" #")
-        out.println(header)
+        out.println(variablesDescriptor)
         out.println(" #")
         out.println("# The columns have the following meaning: ")
         out.print("# ")

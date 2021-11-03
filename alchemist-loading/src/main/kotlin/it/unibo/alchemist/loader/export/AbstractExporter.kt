@@ -19,10 +19,13 @@ abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
 
     override var dataExtractor: List<Extractor> = emptyList()
     override var variables: Map<String, Variable<*>> = emptyMap()
-    lateinit var header: String
+
+    /**
+     * A description of the [Variable]s of the current simulation and their values.
+     */
     lateinit var variablesDescriptor: String
 
-    companion object{
+    companion object {
         /**
          * If no sampling interval is specified, this option value is used. Defaults to 1.0.
          */
@@ -35,12 +38,8 @@ abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
 
     override fun bindVariables(variables: Map<String, Variable<*>>) {
         this.variables = variables
-        header = variables
-          .mapValues { (variableName, variable) -> variables[variableName] ?: variable.default }
-          .map { (variableName, variableValue) -> "$variableName = $variableValue" }
-          .joinToString()
         variablesDescriptor = variables
-          .map { (name, value) -> "$name-$value" }
-          .joinToString(separator = "_")
+            .map { (name, value) -> "$name-$value" }
+            .joinToString(separator = "_")
     }
 }

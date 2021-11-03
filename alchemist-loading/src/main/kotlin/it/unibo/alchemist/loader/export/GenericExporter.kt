@@ -26,11 +26,6 @@ interface GenericExporter<T, P : Position<P>> {
     var dataExtractor: List<Extractor>
 
     /**
-     *  The List of [Variable] of the simulation.
-     */
-    var variables: Map<String, Variable<*>>
-
-    /**
      * Assign the list of [dataExtractor] to the selected [GenericExporter].
      */
     fun bindData(dataExtractor: List<Extractor>)

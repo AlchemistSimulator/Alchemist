@@ -26,6 +26,7 @@ dependencies {
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
     implementation(Libs.dsiutil)
+    implementation(Libs.mongodb)
     implementation("io.arrow-kt:arrow-core:_")
 
     runtimeOnly(Libs.groovy_jsr223)

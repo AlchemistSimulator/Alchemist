@@ -44,6 +44,7 @@ object Libs {
     const val thread_inheritable_resource_loader: String = "org.danilopianini:thread-inheritable-resource-loader:_"
     const val tornadofx: String = "no.tornado:tornadofx:_"
     const val trove4j: String = "net.sf.trove4j:trove4j:_"
+    const val mongodb: String = "org.mongodb:mongodb-driver-sync:_"
 
     /**
      * Returns a reference to an alchemist sub-project [module].

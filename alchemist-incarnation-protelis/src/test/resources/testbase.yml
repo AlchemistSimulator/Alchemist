@@ -1,10 +1,9 @@
 ---
 export:
-  - exporter:
-      type: CSVExporter
-      parameters: ["test_base.csv"]
-      data:
-        - time
+  - type: CSVExporter
+    parameters: ["test_base"]
+    data:
+      - time
 
 incarnation: protelis
 

@@ -32,6 +32,7 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         simulation.run()
         val exporter: CSVExporter<T, P> = initialized.exporters[0] as CSVExporter<T, P>
         val outputFile = File(exporter.outputFile)
+        assertNotNull(outputFile)
         outputFile.delete()
     }
 })

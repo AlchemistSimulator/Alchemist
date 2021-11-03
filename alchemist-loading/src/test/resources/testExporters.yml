@@ -1,7 +1,7 @@
 incarnation: protelis
 export:
   - type: CSVExporter
-    parameters: ["test_csv.csv"]
+    parameters: ["test_exporters_loading"]
     data:
       - time
       - molecule: "default_module:default_program"

@@ -1,7 +1,7 @@
 incarnation: protelis
 export:
   - type: CSVExporter
-    parameters: ["test_csv.csv"]
+    parameters: ["tesing_custom_export"]
     data:
       - type: MeanSquaredError
         parameters: [ "A", "A", product, "A", "A" ]

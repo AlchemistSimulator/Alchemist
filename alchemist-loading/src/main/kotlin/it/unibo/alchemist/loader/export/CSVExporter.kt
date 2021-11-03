@@ -28,7 +28,7 @@ import kotlin.io.path.Path
  * Writes on file data provided by a number of {@link Extractor}s. Produces a
  * CSV with '#' as comment character.e
  * @param description the name the file to export data to.
- * @param interval the sampling time, defaults to [DEFAULT_INTERVAL].
+ * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
  */
 
 class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
@@ -41,10 +41,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
          * Character used to separate comments from data on export files.
          */
         const val SEPARATOR = "#####################################################################"
-        /**
-         * If no sampling interval is specified, this option value is used. Defaults to 1.0.
-         */
-        const val DEFAULT_INTERVAL = 1.0
+
         /**
          * If no path is specified or the input path is wrong, the output file will be placed inside this folder.
          */

@@ -20,6 +20,13 @@ abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
     override var dataExtractor: List<Extractor> = emptyList()
     override var variables: Map<String, Variable<*>> = emptyMap()
 
+    companion object{
+        /**
+         * If no sampling interval is specified, this option value is used. Defaults to 1.0.
+         */
+        const val DEFAULT_INTERVAL: Double = 1.0
+    }
+
     override fun bindData(dataExtractor: List<Extractor>) {
         this.dataExtractor = dataExtractor
     }

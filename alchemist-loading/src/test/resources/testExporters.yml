@@ -5,3 +5,10 @@ export:
     data:
       - time
       - molecule: "default_module:default_program"
+
+  - type: MongoDBExporter
+    parameters:
+      uri: "mongodb+srv://alchemist-user:alchemist-pwd@alchemist.ewxds.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+      dbname: "provaMongo"
+    data:
+      - time

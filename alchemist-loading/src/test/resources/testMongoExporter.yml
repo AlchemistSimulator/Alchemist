@@ -1,0 +1,46 @@
+incarnation: protelis
+variables:
+  zoom: &zoom
+    formula: 0.1
+  image_name: { formula: "'chiaravalle.png'" }
+  image_path: &image_path
+    language: kotlin
+    formula: >
+      import java.io.File
+      File("../..").walkTopDown().find { image_name in it.name }?.absolutePath ?: image_name
+  walking_speed: &walk-speed { default: 1.4, min: 1, max: 2, step: 0.1 }
+  seed: &seed { default: 0, min: 0, max: 99, step: 1 }
+  scenario_seed: &scenario_seed { formula: (seed + 31) * seed }
+  people_count: &people_count
+    type: GeometricVariable
+    parameters: [300, 50, 500, 9]
+seeds: { simulation: *seed, scenario: *scenario_seed}
+export:
+  - type: MongoDBExporter
+    parameters:
+      uri: "mongodb+srv://alchemist-user:alchemist-pwd@alchemist.ewxds.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+      dbname: "provaMongo"
+      interval: 2.0
+    data:
+      - time
+      - molecule: "default_module:default_program"
+        value-filter: onlyfinite
+environment: { type: ImageEnvironment, parameters: [*image_path, *zoom] }
+network-model: { type: ObstaclesBreakConnection, parameters: [50] }
+deployments:
+  type: Rectangle
+  parameters: [*people_count, 62, 15, 95, 200]
+  programs:
+    - time-distribution: 1
+      program: >
+        import protelis:coord:spreading
+        let source = [110, 325]
+        let vector = self.getCoordinates() - source
+        let distance = hypot(vector.get(0), vector.get(1))
+        distanceTo(distance < 50)
+    - program: send
+    - { type: Event, time-distribution: 1, actions: { type: LevyWalk, parameters: [*walk-speed] } }
+
+terminate:
+  - type: AfterTime
+    parameters: 150

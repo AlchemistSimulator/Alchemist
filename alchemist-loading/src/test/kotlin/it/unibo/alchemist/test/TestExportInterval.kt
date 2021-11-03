@@ -9,12 +9,10 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.ints.shouldBeGreaterThan
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.loader.export.CSVExporter
-import it.unibo.alchemist.loader.export.GenericExporter
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader

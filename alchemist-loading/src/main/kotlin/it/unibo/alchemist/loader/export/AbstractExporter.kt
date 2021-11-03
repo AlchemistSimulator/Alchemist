@@ -19,6 +19,8 @@ abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
 
     override var dataExtractor: List<Extractor> = emptyList()
     override var variables: Map<String, Variable<*>> = emptyMap()
+    lateinit var header: String
+    lateinit var variablesDescriptor: String
 
     companion object{
         /**
@@ -33,5 +35,12 @@ abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
 
     override fun bindVariables(variables: Map<String, Variable<*>>) {
         this.variables = variables
+        header = variables
+          .mapValues { (variableName, variable) -> variables[variableName] ?: variable.default }
+          .map { (variableName, variableValue) -> "$variableName = $variableValue" }
+          .joinToString()
+        variablesDescriptor = variables
+          .map { (name, value) -> "$name-$value" }
+          .joinToString(separator = "_")
     }
 }

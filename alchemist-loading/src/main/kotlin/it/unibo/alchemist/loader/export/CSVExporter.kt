@@ -55,13 +55,6 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     lateinit var outputFile: String
 
     override fun setupExportEnvironment(environment: Environment<T, P>) {
-        val header = variables
-            .mapValues { (variableName, variable) -> variables[variableName] ?: variable.default }
-            .map { (variableName, variableValue) -> "$variableName = $variableValue" }
-            .joinToString()
-        val variablesDescriptor = variables
-            .map { (name, value) -> "$name-$value" }
-            .joinToString(separator = "_")
         val exportDir = File(
             (Path(File("").absolutePath).parent).toString() +
                 DEFAULT_PATH + description

@@ -11,6 +11,7 @@ package it.unibo.alchemist.loader.export
 
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Position
+import java.util.stream.Collectors
 
 /**
  * Abstract implementation of a [GenericExporter].
@@ -18,8 +19,11 @@ import it.unibo.alchemist.model.interfaces.Position
 abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
 
     override var dataExtractor: List<Extractor> = emptyList()
-    override var variables: Map<String, Variable<*>> = emptyMap()
 
+    /**
+     * The 0th should be sampled.
+     */
+    var count = -1L
     /**
      * A description of the [Variable]s of the current simulation and their values.
      */
@@ -37,9 +41,6 @@ abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
     }
 
     override fun bindVariables(variables: Map<String, Variable<*>>) {
-        this.variables = variables
-        variablesDescriptor = variables
-            .map { (name, value) -> "$name-$value" }
-            .joinToString(separator = "_")
+        variablesDescriptor = variables.keys.stream().collect(Collectors.joining("-"))
     }
 }

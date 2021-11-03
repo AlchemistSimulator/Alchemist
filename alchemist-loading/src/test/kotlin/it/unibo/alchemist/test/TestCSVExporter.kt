@@ -27,6 +27,9 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         assertNotNull(loader)
         val initialized: InitializedEnvironment<T, P> = loader.getDefault()
         val simulation = Engine(initialized.environment)
+        initialized.exporters.forEach {
+            it.bindVariables(loader.variables)
+        }
         simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         simulation.play()
         simulation.run()

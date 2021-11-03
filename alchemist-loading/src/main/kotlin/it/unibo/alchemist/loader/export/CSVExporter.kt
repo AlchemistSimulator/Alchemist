@@ -48,7 +48,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         const val DEFAULT_PATH = "/build/exports/"
     }
     private lateinit var out: PrintStream
-    private var count = -1L // The 0th should be sampled
+
     /**
      * The path of the export output file.
      */
@@ -63,7 +63,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
             exportDir.mkdirs()
         }
         outputFile = exportDir.path + '/' + description +
-            "${if (variables.isEmpty()) "" else "_"}$variablesDescriptor" + "_" + System.currentTimeMillis()
+            "_" + variablesDescriptor + "_" + System.currentTimeMillis()
         out = PrintStream(outputFile, Charsets.UTF_8.name())
         out.println(SEPARATOR)
         out.print("# Alchemist log file - simulation started at: ")

@@ -34,6 +34,7 @@ object Libs {
     const val logback_classic: String = "ch.qos.logback:logback-classic:_"
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"
     const val miglayout_swing: String = "com.miglayout:miglayout-swing:_"
+    const val mongodb: String = "org.mongodb:mongodb-driver-sync:_"
     const val oxygen: String = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:_"
     const val rtree: String = "com.github.davidmoten:rtree:_"
     const val simplelatlng: String = "com.javadocmd:simplelatlng:_"
@@ -44,7 +45,6 @@ object Libs {
     const val thread_inheritable_resource_loader: String = "org.danilopianini:thread-inheritable-resource-loader:_"
     const val tornadofx: String = "no.tornado:tornadofx:_"
     const val trove4j: String = "net.sf.trove4j:trove4j:_"
-    const val mongodb: String = "org.mongodb:mongodb-driver-sync:_"
 
     /**
      * Returns a reference to an alchemist sub-project [module].

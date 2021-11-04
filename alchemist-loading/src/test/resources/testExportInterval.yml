@@ -2,7 +2,7 @@ incarnation: protelis
 export:
   - type: CSVExporter
     parameters:
-      description: "test_export_interval"
+      filename: "test_export_interval"
       interval: 3
     data:
       - time

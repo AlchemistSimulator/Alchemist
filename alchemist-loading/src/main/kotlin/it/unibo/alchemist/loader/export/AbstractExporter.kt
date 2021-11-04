@@ -10,15 +10,21 @@
 package it.unibo.alchemist.loader.export
 
 import it.unibo.alchemist.loader.variables.Variable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Time
 import java.util.stream.Collectors
 
 /**
  * Abstract implementation of a [GenericExporter].
+ * @param samplingInterval the sampling time, defaults to [DEFAULT_INTERVAL].
  */
-abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
+abstract class AbstractExporter<T, P : Position<P>> (
+    private val samplingInterval: Double
+) : GenericExporter<T, P> {
 
-    override var dataExtractor: List<Extractor> = emptyList()
+    override var dataExtractor: List<Extractor> = ArrayList()
 
     /**
      * The 0th should be sampled.
@@ -43,4 +49,17 @@ abstract class AbstractExporter<T, P : Position<P>> : GenericExporter<T, P> {
     override fun bindVariables(variables: Map<String, Variable<*>>) {
         variablesDescriptor = variables.keys.stream().collect(Collectors.joining("-"))
     }
+
+    override fun processData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
+        val curSample: Long = (time.toDouble() / samplingInterval).toLong()
+        if (curSample > count) {
+            count = curSample
+            exportData(environment, reaction, time, step)
+        }
+    }
+
+    /**
+     * Delegates the concrete implementation of this method to his subclasses.
+     */
+    abstract fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long)
 }

@@ -32,7 +32,7 @@ class GlobalExporter<T, P : Position<P>> (private val exporters: List<GenericExp
     @Override
     override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         exporters.forEach() {
-            it.exportData(environment, reaction, time, step)
+            it.processData(environment, reaction, time, step)
         }
     }
 

@@ -33,8 +33,8 @@ import kotlin.io.path.Path
 
 class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val filename: String = "",
-    private val appendTime: Boolean = false,
-    val interval: Double = DEFAULT_INTERVAL
+    var interval: Double = DEFAULT_INTERVAL,
+    private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 
     companion object {

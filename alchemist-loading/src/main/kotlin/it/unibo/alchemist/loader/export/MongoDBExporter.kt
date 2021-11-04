@@ -31,6 +31,7 @@ import org.bson.Document
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     val uri: String,
     val dbname: String = DEFAULT_DATABASE,
+    val appendTime: Boolean = false,
     val interval: Double = DEFAULT_INTERVAL
 ) : AbstractExporter<T, P>(interval) {
 
@@ -41,19 +42,13 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         const val DEFAULT_DATABASE = "test"
     }
 
-    private lateinit var database: MongoDatabase
-    private lateinit var collection: MongoCollection<Document>
+    private val mongoService: MongoService = MongoService()
 
     override fun setupExportEnvironment(environment: Environment<T, P>) {
-        val mongoClient: MongoClient = MongoClients.create(
-            MongoClientSettings.builder()
-                .applyConnectionString(ConnectionString(uri))
-                .build()
-        )
-        database = mongoClient.getDatabase(dbname)
-        val collectionName: String = variablesDescriptor + System.currentTimeMillis()
-        database.createCollection(collectionName)
-        collection = database.getCollection(collectionName)
+        mongoService.startService(uri)
+        mongoService.connectToDB(dbname)
+        val collectionName: String = variablesDescriptor + "${if (appendTime) System.currentTimeMillis() else ""}"
+        mongoService.createCollection(collectionName)
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
@@ -64,10 +59,8 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
                         value -> document.append(it.names.toString(), value)
                 }
             }
-        collection.insertOne(document)
+        mongoService.pushToDatabase(document)
     }
 
-    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
-        // TODO
-    }
+    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {}
 }

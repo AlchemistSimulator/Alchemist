@@ -9,12 +9,6 @@
 
 package it.unibo.alchemist.loader.export
 
-import com.mongodb.ConnectionString
-import com.mongodb.MongoClientSettings
-import com.mongodb.client.MongoClient
-import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.MongoDatabase
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -30,8 +24,8 @@ import org.bson.Document
 
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     val uri: String,
-    val dbname: String = DEFAULT_DATABASE,
-    val appendTime: Boolean = false,
+    private val dbname: String = DEFAULT_DATABASE,
+    private val appendTime: Boolean = false,
     val interval: Double = DEFAULT_INTERVAL
 ) : AbstractExporter<T, P>(interval) {
 
@@ -52,15 +46,23 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        val document = Document()
-        dataExtractor.stream()
-            .forEach {
-                it.extractData(environment, reaction, time, step).forEach {
-                        value -> document.append(it.names.toString(), value)
-                }
-            }
+        val document: Document = convertToDocument(environment, reaction, time, step)
         mongoService.pushToDatabase(document)
     }
 
-    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {}
+    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
+        mongoService.stopService()
+    }
+
+    private fun convertToDocument(env: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long): Document {
+        val document = Document()
+        dataExtractor.stream()
+            .forEach {
+                it.extractData(env, reaction, time, step).forEach {
+                    value ->
+                    document.append(it.names.toString(), value)
+                }
+            }
+        return document
+    }
 }

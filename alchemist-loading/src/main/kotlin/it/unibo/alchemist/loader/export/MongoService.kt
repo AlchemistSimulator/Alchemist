@@ -17,6 +17,9 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import org.bson.Document
 
+/**
+ * Contains all the functions in order to use MongoDB Database.
+ */
 class MongoService {
 
     private lateinit var client: MongoClient
@@ -24,7 +27,9 @@ class MongoService {
     private lateinit var database: MongoDatabase
     private lateinit var collection: MongoCollection<Document>
 
-
+    /**
+     *  Requires an active instance of MongoDB at the given uri.
+     */
     fun startService(uri: String) {
         settings = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(uri))
@@ -32,16 +37,33 @@ class MongoService {
         client = MongoClients.create(settings)
     }
 
+    /**
+     * Connects to a specific database.
+     * If there is no database with the input name in the mongo instance, an empty one will be created.
+     */
     fun connectToDB(dbName: String) {
         database = client.getDatabase(dbName)
     }
 
+    /**
+     * Creates a collection inside the Mongo database.
+     * If there is already a collection with the parameter name,
+     */
     fun createCollection(collectionName: String) {
-        database.createCollection(collectionName)
         collection = database.getCollection(collectionName)
     }
 
+    /**
+     * Send the created document to the Mongo collection.
+     */
     fun pushToDatabase(document: Document) {
         collection.insertOne(document)
+    }
+
+    /**
+     * Close the connection with the Mongo instance.
+     */
+    fun stopService() {
+        client.close()
     }
 }

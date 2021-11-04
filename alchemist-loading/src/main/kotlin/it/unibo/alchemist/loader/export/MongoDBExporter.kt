@@ -32,7 +32,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     val uri: String,
     val dbname: String = DEFAULT_DATABASE,
     val interval: Double = DEFAULT_INTERVAL
-) : AbstractExporter<T, P>() {
+) : AbstractExporter<T, P>(interval) {
 
     companion object {
         /**
@@ -57,25 +57,17 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        val curSample: Long = (time.toDouble() / interval).toLong()
-        if (curSample > count) {
-            count = curSample
-            pushToDB(environment, reaction, time, step)
-        }
-    }
-
-    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
-        // TODO
-    }
-
-    private fun pushToDB(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val document = Document()
         dataExtractor.stream()
             .forEach {
                 it.extractData(environment, reaction, time, step).forEach {
-                    value -> document.append(it.names.toString(), value)
+                        value -> document.append(it.names.toString(), value)
                 }
             }
         collection.insertOne(document)
+    }
+
+    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
+        // TODO
     }
 }

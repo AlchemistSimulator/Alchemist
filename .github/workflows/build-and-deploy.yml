@@ -14,7 +14,7 @@ on:
 
 jobs:
   build-and-check:
-    uses: DanySK/workflows/.github/workflows/build-and-deploy-gradle-project.yml@0.1.0-dev42
+    uses: DanySK/workflows/.github/workflows/build-and-deploy-gradle-project.yml@0.1.0-dev72
     with:
       build-command: |
         ./gradlew assemble shadowJar --parallel

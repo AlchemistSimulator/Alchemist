@@ -27,14 +27,15 @@ import kotlin.io.path.Path
 /**
  * Writes on file data provided by a number of {@link Extractor}s. Produces a
  * CSV with '#' as comment character.e
- * @param description the name the file to export data to.
+ * @param filename the name the file to export data to.
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
  */
 
 class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
-    private val description: String,
+    private val filename: String = "",
+    private val appendTime: Boolean = false,
     val interval: Double = DEFAULT_INTERVAL
-) : AbstractExporter<T, P>() {
+) : AbstractExporter<T, P>(interval) {
 
     companion object {
         /**
@@ -56,14 +57,14 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
 
     override fun setupExportEnvironment(environment: Environment<T, P>) {
         val exportDir = File(
-            (Path(File("").absolutePath).parent).toString() +
-                DEFAULT_PATH + description
+            Path(File("").absolutePath).parent.toString() +
+                DEFAULT_PATH + filename
         )
         if (!exportDir.exists()) {
             exportDir.mkdirs()
         }
-        outputFile = exportDir.path + '/' + description +
-            "_" + variablesDescriptor + "_" + System.currentTimeMillis()
+        outputFile = exportDir.path + '/' + filename +
+            "_" + variablesDescriptor + "_" + "${if (appendTime) System.currentTimeMillis() else ""}"
         out = PrintStream(outputFile, Charsets.UTF_8.name())
         out.println(SEPARATOR)
         out.print("# Alchemist log file - simulation started at: ")
@@ -89,11 +90,13 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        val curSample: Long = (time.toDouble() / interval).toLong()
-        if (curSample > count) {
-            count = curSample
-            writeRow(environment, reaction, time, step)
-        }
+        dataExtractor.stream()
+            .flatMapToDouble { Arrays.stream(it.extractData(environment, reaction, time, step)) }
+            .forEach {
+                out.print(it)
+                out.print(' ')
+            }
+        out.println()
     }
 
     override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
@@ -105,19 +108,5 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         out.println(" #")
         out.println(SEPARATOR)
         out.close()
-    }
-
-    private fun printDatum(datum: Double) {
-        out.print(datum)
-        out.print(' ')
-    }
-
-    private fun writeRow(env: Environment<T, *>, r: Reaction<T>?, time: Time, step: Long) {
-        dataExtractor.stream()
-            .flatMapToDouble { Arrays.stream(it.extractData(env, r, time, step)) }
-            .forEach {
-                printDatum(it)
-            }
-        out.println()
     }
 }

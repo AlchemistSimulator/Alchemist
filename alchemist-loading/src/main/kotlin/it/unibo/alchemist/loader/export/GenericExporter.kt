@@ -43,7 +43,7 @@ interface GenericExporter<T, P : Position<P>> {
     /**
      * Main method used by exporters to export data.
      */
-    fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long)
+    fun processData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long)
 
     /**
      * Used by the [GenericExporter] to stop the export in a correct way.

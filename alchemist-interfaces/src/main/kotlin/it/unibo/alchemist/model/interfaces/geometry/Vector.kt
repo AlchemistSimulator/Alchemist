@@ -66,10 +66,7 @@ interface Vector<S : Vector<S>> {
     /**
      * Computes the dot product between two vectors.
      */
-    fun dot(other: S): Double = coordinates
-        .zip(other.coordinates)
-        .map { (a, b) -> a * b }
-        .sum()
+    fun dot(other: S): Double = coordinates.zip(other.coordinates).sumOf { (a, b) -> a * b }
 
     /**
      * Computes the angle in radians between two vectors.

@@ -121,11 +121,11 @@ public final class InfiniteHalls<T> extends LimitedContinuos2D<T> {
     public boolean allowed(final double xp, final double yp) {
         final double x = (xp % s + s) % s;
         final double y = (yp % s + s) % s;
-        return x >= ex || // Right corridor
-                y >= ex || // Upper corridor
-                x >= ci && x <= cf || // Vertical lane
-                doorsOpen && y >= ci && y <= cf || // Horizontal lane
-                x >= si && x <= sf && y >= si && y <= sf; // Room
+        return x >= ex // Right corridor
+            || y >= ex // Upper corridor
+            || x >= ci && x <= cf // Vertical lane
+            || doorsOpen && y >= ci && y <= cf // Horizontal lane
+            || x >= si && x <= sf && y >= si && y <= sf; // Room
     }
 
     @Override

@@ -12,6 +12,8 @@ package it.unibo.alchemist.boundary.gui.controller;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,28 +206,31 @@ public class EffectPropertiesController implements Initializable {
      */
     private void parseProperties(final List<Field> fields) {
         for (final Field f : fields) {
-            final boolean isAccessible = f.isAccessible();
-            try {
-                f.setAccessible(true);
-                if (RangedDoubleProperty.class.isAssignableFrom(f.getType())) {
-                    buildSpinner((RangedDoubleProperty) f.get(this.effect));
-                } else if (RangedIntegerProperty.class.isAssignableFrom(f.getType())) {
-                    buildSlider((RangedIntegerProperty) f.get(this.effect));
-                } else if (SerializableStringProperty.class.isAssignableFrom(f.getType())) {
-                    buildTextField((StringProperty) f.get(this.effect));
-                } else if (SerializableBooleanProperty.class.isAssignableFrom(f.getType())) {
-                    buildCheckBox((BooleanProperty) f.get(this.effect));
-                } else if (SerializableEnumProperty.class.isAssignableFrom(f.getType())) {
-                    final SerializableEnumProperty<?> enumProperty = (SerializableEnumProperty<?>) f.get(this.effect);
-                    if (enumProperty.get().getClass().isEnum()) {
-                        this.buildComboBox(enumProperty);
+            AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                final boolean isAccessible = f.isAccessible();
+                try {
+                    f.setAccessible(true); // NOPMD TODO: This should get fixed in the future.
+                    if (RangedDoubleProperty.class.isAssignableFrom(f.getType())) {
+                        buildSpinner((RangedDoubleProperty) f.get(this.effect));
+                    } else if (RangedIntegerProperty.class.isAssignableFrom(f.getType())) {
+                        buildSlider((RangedIntegerProperty) f.get(this.effect));
+                    } else if (SerializableStringProperty.class.isAssignableFrom(f.getType())) {
+                        buildTextField((StringProperty) f.get(this.effect));
+                    } else if (SerializableBooleanProperty.class.isAssignableFrom(f.getType())) {
+                        buildCheckBox((BooleanProperty) f.get(this.effect));
+                    } else if (SerializableEnumProperty.class.isAssignableFrom(f.getType())) {
+                        final SerializableEnumProperty<?> enumProperty = (SerializableEnumProperty<?>) f.get(this.effect);
+                        if (enumProperty.get().getClass().isEnum()) {
+                            this.buildComboBox(enumProperty);
+                        }
                     }
+                } catch (final IllegalArgumentException | IllegalAccessException e) {
+                    L.error(e.getMessage());
+                } finally {
+                    f.setAccessible(isAccessible); // NOPMD TODO: This should get fixed in the future.
                 }
-            } catch (final IllegalArgumentException | IllegalAccessException e) {
-                L.error(e.getMessage());
-            } finally {
-                f.setAccessible(isAccessible);
-            }
+                return null;
+            });
         }
     }
 

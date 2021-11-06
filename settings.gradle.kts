@@ -63,3 +63,14 @@ gradleEnterprise {
 }
 
 enableFeaturePreview("VERSION_CATALOGS")
+
+val commitCheckHook = File(rootProject.projectDir, ".git/hooks/commit-msg")
+if (!commitCheckHook.exists()) {
+    runCatching {
+        commitCheckHook.writeText(
+            java.net.URL("https://raw.githubusercontent.com/DanySK/conventional-pre-commit/main/conventional-pre-commit.sh")
+                .readText()
+        )
+        commitCheckHook.setExecutable(true)
+    }.onFailure { println("Warning: the commit hook could not be downloaded!") }
+}

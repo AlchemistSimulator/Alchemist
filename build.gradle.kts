@@ -17,17 +17,12 @@ import java.net.URL
 
 plugins {
     kotlin("jvm")
-    jacoco
-    pmd
-    checkstyle
-    `build-dashboard`
     id("com.eden.orchidPlugin")
     id("com.github.johnrengelman.shadow")
-    id("com.github.spotbugs")
-    id("de.aaschmid.cpd")
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("org.danilopianini.publish-on-central")
     id("org.jetbrains.dokka")
+    alias(libs.plugins.java.qa)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
     alias(libs.plugins.taskTree)
@@ -45,17 +40,15 @@ val Provider<PluginDependency>.id get() = get().pluginId
 allprojects {
 
     with(rootProject.libs.plugins) {
+        apply(plugin = java.qa.id)
         apply(plugin = multiJvmTesting.id)
-        apply(plugin = taskTree.id)
         apply(plugin = kotlin.qa.id)
+        apply(plugin = taskTree.id)
     }
+
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
-    apply(plugin = "jacoco")
-    apply(plugin = "com.github.spotbugs")
-    apply(plugin = "checkstyle")
-    apply(plugin = "pmd")
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.danilopianini.publish-on-central")
@@ -110,10 +103,6 @@ allprojects {
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
         }
-        pmd(Libs.pmdModule("core"))
-        pmd(Libs.pmdModule("java"))
-        pmd(Libs.pmdModule("scala"))
-        pmd(Libs.pmdModule("kotlin"))
     }
 
     // COMPILE
@@ -139,28 +128,55 @@ allprojects {
         useJUnitPlatform()
     }
 
-    jacoco {
-        toolVersion = additionalTools.resolvedConfiguration.resolvedArtifacts
-            .find { "jacoco" in it.moduleVersion.id.name }
-            ?.moduleVersion?.id?.version
-            ?: toolVersion
-    }
-
-    tasks.jacocoTestReport {
-        reports {
-            xml.required.set(true)
-        }
-    }
-
     // CODE QUALITY
 
-    spotbugs {
-        setEffort("max")
-        setReportLevel("low")
-        showProgress.set(false)
-        val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
-        if (excludeFile.exists()) {
-            excludeFilter.set(excludeFile)
+    javaQA {
+        checkstyle {
+            additionalConfiguration.set(
+                """
+                <module name="RegexpSingleline">
+                    <property name="severity" value="error" />
+                    <property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+                </module>
+                <module name="RegexpSingleline">
+                    <property name="severity" value="error" />
+                    <property name="format" value="class\s*\.\s*forName\s*\(" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Use the library to load classes and resources. Breaks grid otherwise." />
+                </module>
+                <module name="RegexpSingleline">
+                    <property name="severity" value="error" />
+                    <property name="format" value="class\s*\.\s*getResource" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Use the library to load classes and resources. Breaks grid otherwise." />
+                </module>
+                <module name="RegexpSingleline">
+                    <property name="severity" value="error" />
+                    <property name="format" value="class\s*\.\s*getClassLoader" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Use the library to load classes and resources. Breaks grid otherwise." />
+                </module>
+                <module name="RegexpSingleline">
+                    <property name="severity" value="warning" />
+                    <property name="format" value="@author" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Do not use @author. Changes and authors are tracked by the content manager." />
+                </module>
+                """.trimIndent()
+            )
+            additionalSuppressions.set(
+                """
+                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
+                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
+                """.trimIndent()
+            )
         }
     }
 
@@ -170,21 +186,7 @@ allprojects {
         }
     }
 
-    pmd {
-        ruleSets = listOf()
-        ruleSetConfig = resources.text.fromFile("${project.rootProject.projectDir}/config/pmd/pmd.xml")
-    }
-
-    tasks.withType<de.aaschmid.gradle.plugins.cpd.Cpd> {
-        reports {
-            xml.required.set(false)
-            text.required.set(true)
-        }
-        language = "java"
-        minimumTokenCount = 100
-        source = sourceSets["main"].allJava
-        tasks.check.orNull?.dependsOn(this)
-    }
+    // PUBLISHING
 
     tasks.withType<Javadoc> {
         // Disable Javadoc, use Dokka.

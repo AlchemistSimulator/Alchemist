@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
@@ -184,8 +185,14 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
         return regions;
     }
 
+    @Nullable
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
-    private static int[] searchNext(final int color, final BufferedImage img, final int[] s, final boolean[][] bmat) {
+    private static int[] searchNext(// NOPMD: we do want to return null
+        final int color,
+        final BufferedImage img,
+        final int[] s,
+        final boolean[][] bmat
+    ) {
         int initx = s[0];
         for (int y = s[1]; y < img.getHeight(); y++) {
             for (int x = initx; x < img.getWidth(); x++) {

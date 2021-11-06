@@ -536,7 +536,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         @Override
         public List<Reaction<Object>> getReactions() {
-            return null;
+            return Collections.emptyList();
         }
 
         @Override

@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public final class LsaNode extends AbstractNode<List<ILsaMolecule>> implements I
     }
 
     @Override
+    @Nullable
     protected List<ILsaMolecule> createT() {
         return null;
     }

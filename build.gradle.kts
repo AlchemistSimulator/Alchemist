@@ -7,7 +7,6 @@
  */
 import Libs.incarnation
 import Libs.alchemist
-import Libs.orchidModule
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -17,7 +16,6 @@ import java.net.URL
 
 plugins {
     kotlin("jvm")
-    id("com.eden.orchidPlugin")
     id("com.github.johnrengelman.shadow")
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("org.danilopianini.publish-on-central")
@@ -25,10 +23,11 @@ plugins {
     alias(libs.plugins.java.qa)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
+    alias(libs.plugins.orchid)
     alias(libs.plugins.taskTree)
 }
 
-apply(plugin = "com.eden.orchidPlugin")
+apply(plugin = rootProject.libs.plugins.orchid.id)
 
 val additionalTools: Configuration by configurations.creating
 dependencies {
@@ -320,10 +319,8 @@ dependencies {
     testRuntimeOnly(alchemist("physical-agents"))
 
     // Populate the dependencies for Orchid
-    orchidImplementation(orchidModule("Core"))
-    listOf("Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki").forEach {
-        orchidRuntimeOnly(orchidModule(it))
-    }
+    orchidImplementation(libs.orchid.core)
+    orchidRuntimeOnly(libs.bundles.orchid)
 }
 
 // WEBSITE

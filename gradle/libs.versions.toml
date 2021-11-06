@@ -1,11 +1,21 @@
 [versions]
+orchid = "0.21.1"
 
 [libraries]
+orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
+orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
+orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }
+orchid-plugindocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
+orchid-search = { module = "io.github.javaeden.orchid:OrchidSearch", version.ref = "orchid" }
+orchid-syntaxhighlighter = { module = "io.github.javaeden.orchid:OrchidSyntaxHighlighter", version.ref = "orchid" }
+orchid-wiki = { module = "io.github.javaeden.orchid:OrchidWiki", version.ref = "orchid" }
 
 [bundles]
+orchid = ["orchid-editorial", "orchid-github", "orchid-plugindocs", "orchid-search", "orchid-syntaxhighlighter", "orchid-wiki"]
 
 [plugins]
 java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.3.0-dev0k-0ec1f87" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
 multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.1.0" }
+orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 taskTree = { id = "com.dorongold.task-tree", version = "2.1.0" }

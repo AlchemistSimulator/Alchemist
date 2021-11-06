@@ -101,11 +101,6 @@ object Libs {
     fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
 
     /**
-     * Returns the identifier of the desired Orchid [module].
-     */
-    fun orchidModule(module: String) = modularizedLibrary("io.github.javaeden.orchid:Orchid", module, separator = "")
-
-    /**
      * Returns the identifier of the desired Protelis [module].
      */
     fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)

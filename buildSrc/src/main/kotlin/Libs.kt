@@ -106,11 +106,6 @@ object Libs {
     fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
 
     /**
-     * Returns the identifier of the desired PMD [module].
-     */
-    fun pmdModule(module: String = "") = modularizedLibrary("net.sourceforge.pmd:pmd", module)
-
-    /**
      * Returns the identifier of the desired Scala [module].
      */
     fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)

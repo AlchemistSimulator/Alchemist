@@ -46,20 +46,10 @@ object Libs {
         else -> base + separator + module
     } + ":_"
 
-    private fun oldApache(module: String) = "commons-$module:commons-$module:_"
-
     /**
      * Returns the identifier of the desired ArrowKt [module].
      */
     fun arrowKt(module: String) = modularizedLibrary("io.arrow-kt:arrow", module)
-
-    /**
-     * Returns the identifier of the desired Apache-Commons [module].
-     */
-    fun apacheCommons(module: String) = when (module) {
-        in setOf("cli", "io", "codec") -> oldApache(module)
-        else -> modularizedLibrary("org.apache.commons:commons", module)
-    }
 
     /**
      * Returns the identifier of the desired GraphHopper [module].

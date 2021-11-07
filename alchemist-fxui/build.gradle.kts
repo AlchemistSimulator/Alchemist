@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.apacheCommons
 
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -22,7 +21,7 @@ dependencies {
     implementation(libs.jfoenix)
     implementation(libs.gson.extras)
     implementation(libs.guava)
-    implementation(apacheCommons("collections4"))
+    implementation(libs.apache.commons.collections4)
     implementation(Libs.javafxsvg)
     implementation(Libs.controlsfx)
     implementation(Libs.tornadofx)

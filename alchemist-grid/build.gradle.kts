@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.apacheCommons
 import Libs.incarnation
 
 /*
@@ -17,10 +16,10 @@ dependencies {
     implementation(alchemist("loading"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("engine"))
+    implementation(libs.apache.commons.io)
     implementation(libs.guava)
     implementation(libs.ignite.spring)
     implementation(libs.ignite.indexing)
-    implementation(apacheCommons("io"))
     testImplementation(incarnation("sapere"))
 }
 

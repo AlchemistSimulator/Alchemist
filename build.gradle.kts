@@ -303,11 +303,14 @@ evaluationDependsOnChildren()
 dependencies {
     // Depend on subprojects whose presence is necessary to run
     listOf("interfaces", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
+    with(libs.apache.commons) {
+        implementation(cli)
+        implementation(io)
+        implementation(lang3)
+    }
+    implementation(libs.apache.commons.cli)
     implementation(libs.guava)
     implementation(libs.logback)
-    implementation(Libs.apacheCommons("io"))
-    implementation(Libs.apacheCommons("lang3"))
-    implementation(Libs.apacheCommons("cli"))
     testRuntimeOnly(incarnation("protelis"))
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("biochemistry"))

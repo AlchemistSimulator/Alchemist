@@ -25,7 +25,7 @@ dependencies {
     implementation(graphhopper("reader-osm")) {
         exclude(module = "slf4j-log4j12")
     }
-    implementation(Libs.gson)
+    implementation(libs.gson)
     implementation(Libs.guava)
     implementation(Libs.jirf)
     implementation(Libs.jpx)

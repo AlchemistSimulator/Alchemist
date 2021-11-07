@@ -22,7 +22,7 @@ dependencies {
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
     implementation(Libs.guava)
-    implementation(Libs.gson)
+    implementation(libs.gson)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
     implementation(Libs.dsiutil)
@@ -35,7 +35,6 @@ dependencies {
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
     testImplementation(libs.caffeine)
-    testImplementation(Libs.gson)
     testRuntimeOnly(scalaModule("compiler"))
 
     testRuntimeOnly(incarnation("sapere"))

@@ -20,7 +20,7 @@ dependencies {
     implementation(alchemist("maps"))
     implementation(apacheCommons("collections4"))
     implementation(libs.bundles.jiconfont)
-    implementation(Libs.gson_extras)
+    implementation(libs.gson.extras)
     implementation(Libs.jfoenix)
     implementation(Libs.javafxsvg)
     implementation(Libs.controlsfx)

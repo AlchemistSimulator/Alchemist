@@ -11,20 +11,16 @@ import Libs.incarnation
  */
 
 dependencies {
-    fun ignite(module: String) = "org.apache.ignite:ignite-$module:_"
-
-    api(ignite("core"))
-
+    api(libs.ignite.core)
     implementation(rootProject)
     implementation(alchemist("interfaces"))
     implementation(alchemist("loading"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("engine"))
     implementation(Libs.guava)
-    implementation(ignite("spring"))
-    implementation(ignite("indexing"))
+    implementation(libs.ignite.spring)
+    implementation(libs.ignite.indexing)
     implementation(apacheCommons("io"))
-
     testImplementation(incarnation("sapere"))
 }
 

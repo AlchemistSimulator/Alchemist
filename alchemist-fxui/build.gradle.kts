@@ -19,12 +19,11 @@ dependencies {
     implementation(alchemist("loading"))
     implementation(alchemist("maps"))
     implementation(apacheCommons("collections4"))
+    implementation(libs.bundles.jiconfont)
     implementation(Libs.gson_extras)
     implementation(Libs.jfoenix)
     implementation(Libs.javafxsvg)
     implementation(Libs.controlsfx)
-    implementation(Libs.jiconfont_javafx)
-    implementation(libs.materialDesign.icons)
     implementation(Libs.tornadofx)
     implementation(Libs.ssaring_sportstracker_leafletmap)
     val javaFXVersion = "11"

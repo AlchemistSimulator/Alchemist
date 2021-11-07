@@ -16,7 +16,6 @@ import java.net.URL
 
 plugins {
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
     id("org.danilopianini.git-sensitive-semantic-versioning")
     id("org.danilopianini.publish-on-central")
     id("org.jetbrains.dokka")
@@ -24,6 +23,7 @@ plugins {
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
     alias(libs.plugins.orchid)
+    alias(libs.plugins.shadowJar)
     alias(libs.plugins.taskTree)
 }
 
@@ -43,6 +43,7 @@ allprojects {
         apply(plugin = multiJvmTesting.id)
         apply(plugin = kotlin.qa.id)
         apply(plugin = taskTree.id)
+        apply(plugin = shadowJar.id)
     }
 
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
@@ -51,7 +52,6 @@ allprojects {
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.danilopianini.publish-on-central")
-    apply(plugin = "com.github.johnrengelman.shadow")
 
     multiJvm {
         jvmVersionForCompilation.set(11)

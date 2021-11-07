@@ -42,7 +42,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -253,7 +253,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      */
     @SafeVarargs
     private void initMonitors(
-            final @NotNull Simulation<T, P> simulation,
+            final @Nonnull Simulation<T, P> simulation,
             final @Nullable OutputMonitor<T, P>... monitors
     ) {
         if (monitors != null) {

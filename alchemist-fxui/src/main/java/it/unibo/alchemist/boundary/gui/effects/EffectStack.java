@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
@@ -191,13 +191,13 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
         return this.effects.contains(o);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Object[] toArray() {
         return this.effects.toArray();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public <T> T[] toArray(final T[] a) {
         return this.effects.toArray(a);
@@ -365,7 +365,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
      *
      * @return the {@code TypeAdapter} for this class
      */
-    @NotNull
+    @Nonnull
     public static EffectGroupAdapter getTypeAdapter() {
         return new EffectGroupAdapter();
     }

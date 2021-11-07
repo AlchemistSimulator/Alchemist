@@ -11,7 +11,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  *
@@ -51,7 +51,7 @@ public class Rectangle<P extends Position<? extends P>> extends AbstractRandomDe
     /**
      * {@inheritDoc}
      */
-    @NotNull
+    @Nonnull
     @Override
     protected P indexToPosition(final int i) {
         return makePosition(randomDouble(x, x + width), randomDouble(y, y + height));

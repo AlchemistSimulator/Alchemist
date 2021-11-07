@@ -14,7 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Type;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -58,7 +58,7 @@ public class ColorSerializationAdapter implements JsonSerializer<Color>, JsonDes
      * @throws ClassNotFoundException if cannot find the class
      * @throws IOException            if other I/O error has occurred
      */
-    @NotNull
+    @Nonnull
     public static Color readColor(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         return new Color(stream.readDouble(), stream.readDouble(), stream.readDouble(), stream.readDouble());
     }

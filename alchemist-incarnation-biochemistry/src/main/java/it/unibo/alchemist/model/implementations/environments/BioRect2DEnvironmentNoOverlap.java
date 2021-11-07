@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -243,9 +243,9 @@ public final class BioRect2DEnvironmentNoOverlap
     @Override
     @SuppressWarnings(UNCHECKED)
     protected void nodeAdded(
-            final @NotNull Node<Double> node,
-            final @NotNull Euclidean2DPosition position,
-            final @NotNull Neighborhood<Double> neighborhood
+            final @Nonnull Node<Double> node,
+            final @Nonnull Euclidean2DPosition position,
+            final @Nonnull Neighborhood<Double> neighborhood
     ) {
         super.nodeAdded(node, position, neighborhood);
         if (node instanceof CellWithCircularArea) {
@@ -264,7 +264,7 @@ public final class BioRect2DEnvironmentNoOverlap
 
     @SuppressWarnings(UNCHECKED)
     @Override
-    protected void nodeRemoved(final @NotNull Node<Double> node, final @NotNull Neighborhood<Double> neighborhood) {
+    protected void nodeRemoved(final @Nonnull Node<Double> node, final @Nonnull Neighborhood<Double> neighborhood) {
         if (node instanceof CellWithCircularArea) {
             if (biggestCircularDeformableCell.isPresent() && biggestCircularDeformableCell.get().equals(node)) {
                 biggestCircularDeformableCell = getBiggest(CircularDeformableCell.class)

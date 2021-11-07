@@ -55,7 +55,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.annotation.Nonnull;
@@ -174,11 +174,11 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         private boolean envConditionPresent;
         private boolean envActionPresent;
 
-        private BiochemistryDSLVisitor(@NotNull final RandomGenerator rand,
-                                       @NotNull final BiochemistryIncarnation<?> incarnation,
-                                       @NotNull final TimeDistribution<Double> timeDistribution,
-                                       @NotNull final Node<Double> currentNode,
-                                       @NotNull final Environment<Double, P> environment) {
+        private BiochemistryDSLVisitor(@Nonnull final RandomGenerator rand,
+                                       @Nonnull final BiochemistryIncarnation<?> incarnation,
+                                       @Nonnull final TimeDistribution<Double> timeDistribution,
+                                       @Nonnull final Node<Double> currentNode,
+                                       @Nonnull final Environment<Double, P> environment) {
             this.rand = rand;
             this.node = currentNode;
             env = environment;

@@ -40,7 +40,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -117,7 +117,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
             final @Nullable String dialogTitle,
             final @Nullable String dialogMessage,
             final @Nullable String dialogContent,
-            final @NotNull StringProperty toRename
+            final @Nonnull StringProperty toRename
     ) {
         final TextInputDialog dialog = new TextInputDialog(toRename.get());
         dialog.setTitle(dialogTitle);
@@ -138,7 +138,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param label    the label to setup
      * @param listener the optional listener to add to the label
      */
-    protected static void setupLabel(final @NotNull Label label, final @Nullable ChangeListener<String> listener) {
+    protected static void setupLabel(final @Nonnull Label label, final @Nullable ChangeListener<String> listener) {
         label.setTextAlignment(TextAlignment.CENTER);
         label.setFont(Font.font(label.getFont().getFamily(), FontWeight.BOLD, label.getFont().getSize()));
         Optional.ofNullable(listener).ifPresent(label.textProperty()::addListener);
@@ -151,7 +151,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param listener the optional listener to add to the toggle
      */
     protected static void setupToggle(
-            final @NotNull JFXToggleButton toggle,
+            final @Nonnull JFXToggleButton toggle,
             final @Nullable ChangeListener<Boolean> listener
     ) {
         Optional.ofNullable(listener).ifPresent(toggle.selectedProperty()::addListener);

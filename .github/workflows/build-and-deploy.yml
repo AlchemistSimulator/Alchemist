@@ -64,7 +64,7 @@ jobs:
             STABILITY_MARKER='unstable-'
           fi
           echo "::set-output name=domain::alchemist-${STABILITY_MARKER}doc.surge.sh"
-      - name: Deploy to foo-bar.surge.sh
+      - name: Deploy to surge.sh
         if: contains(steps.should-deploy.outputs.deploy, 'true')
         uses: dswistowski/surge-sh-action@v1
         with:

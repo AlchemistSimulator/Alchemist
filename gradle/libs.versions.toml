@@ -1,4 +1,5 @@
 [versions]
+dokka = "1.5.0"
 orchid = "0.21.1"
 
 [libraries]
@@ -14,6 +15,7 @@ orchid-wiki = { module = "io.github.javaeden.orchid:OrchidWiki", version.ref = "
 orchid = ["orchid-editorial", "orchid-github", "orchid-plugindocs", "orchid-search", "orchid-syntaxhighlighter", "orchid-wiki"]
 
 [plugins]
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "0.3.0" }
 java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.3.0-dev0k-0ec1f87" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }

@@ -311,7 +311,7 @@ dependencies {
     implementation(Libs.apacheCommons("io"))
     implementation(Libs.apacheCommons("lang3"))
     implementation(Libs.apacheCommons("cli"))
-    implementation(Libs.logback_classic)
+    implementation(libs.logback)
     testRuntimeOnly(incarnation("protelis"))
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("biochemistry"))

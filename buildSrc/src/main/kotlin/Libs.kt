@@ -29,7 +29,6 @@ object Libs {
     const val kotest_assertions: String = "io.kotest:kotest-assertions-core-jvm:_"
     const val kotest_runner_junit5: String = "io.kotest:kotest-runner-junit5-jvm:_"
     const val listset: String = "org.danilopianini:listset:_"
-    const val logback_classic: String = "ch.qos.logback:logback-classic:_"
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"
     const val miglayout_swing: String = "com.miglayout:miglayout-swing:_"
     const val oxygen: String = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:_"

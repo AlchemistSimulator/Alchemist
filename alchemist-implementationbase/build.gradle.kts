@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.apacheCommons
 import Libs.jgrapht
 
 /*
@@ -12,9 +11,9 @@ import Libs.jgrapht
 
 dependencies {
     api(alchemist("interfaces"))
-    api(apacheCommons("math3"))
+    api(libs.apache.commons.math3)
+    api(libs.apache.commons.lang3)
     api(Libs.java_quadtree)
-    api(apacheCommons("lang3"))
     implementation(libs.caffeine)
     implementation(libs.guava)
     implementation(jgrapht("core"))

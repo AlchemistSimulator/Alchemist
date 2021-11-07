@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.apacheCommons
 import Libs.arrowKt
 import Libs.graphStream
 import Libs.incarnation
@@ -17,10 +16,10 @@ dependencies {
     api(alchemist("interfaces"))
 
     implementation(alchemist("euclidean-geometry"))
+    implementation(libs.apache.commons.lang3)
     implementation(libs.gson)
     implementation(libs.guava)
     implementation(arrowKt("core"))
-    implementation(apacheCommons("lang3"))
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
     implementation(Libs.jirf)

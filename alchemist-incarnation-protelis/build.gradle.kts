@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.apacheCommons
 import Libs.protelis
 
 /*
@@ -19,11 +18,11 @@ dependencies {
     // IMPLEMENTATION
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("maps"))
-    implementation(apacheCommons("lang3"))
+    implementation(libs.apache.commons.lang3)
     // TESTING
     testImplementation(alchemist("loading"))
     testImplementation(alchemist("engine"))
-    testImplementation(apacheCommons("io"))
+    testImplementation(libs.apache.commons.io)
 }
 
 publishing.publications {

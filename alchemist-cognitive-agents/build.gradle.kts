@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.apacheCommons
 import Libs.incarnation
 import Libs.jgrapht
 
@@ -21,7 +20,7 @@ dependencies {
 
     testImplementation(alchemist("test"))
     testImplementation(incarnation("protelis"))
-    testImplementation(apacheCommons("collections4"))
+    testImplementation(libs.apache.commons.collections4)
 }
 
 publishing.publications {

@@ -80,25 +80,24 @@ allprojects {
     }
 
     dependencies {
-        // Compilation only
-        compileOnly(Libs.annotations)
-        compileOnly(Libs.spotBugsModule("annotations"))
-        // Implementation
-        implementation(Libs.slf4j_api)
-        implementation(kotlin("stdlib-jdk8"))
-        implementation(kotlin("reflect"))
-        implementation(Libs.thread_inheritable_resource_loader)
-        // Test compilation only
-        testCompileOnly(Libs.spotBugsModule("annotations"))
-        // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
-        testImplementation(Libs.junit("api"))
-        testImplementation(Libs.kotest_runner_junit5)
-        testImplementation(Libs.kotest_assertions)
-        testImplementation("org.mockito:mockito-core:_")
-        testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
-        // Test runtime: Junit engine
-        testRuntimeOnly(Libs.junit("engine"))
-        // executable jar packaging
+        with(rootProject.libs) {
+            compileOnly(Libs.annotations)
+            compileOnly(spotbugs.annotations)
+            implementation(Libs.slf4j_api)
+            implementation(kotlin("stdlib-jdk8"))
+            implementation(kotlin("reflect"))
+            implementation(Libs.thread_inheritable_resource_loader)
+            testCompileOnly(spotbugs.annotations)
+            // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
+            testImplementation(Libs.junit("api"))
+            testImplementation(Libs.kotest_runner_junit5)
+            testImplementation(Libs.kotest_assertions)
+            testImplementation("org.mockito:mockito-core:_")
+            testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
+            // Test runtime: Junit engine
+            testRuntimeOnly(Libs.junit("engine"))
+            // executable jar packaging
+        }
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
         }

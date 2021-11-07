@@ -20,7 +20,6 @@ object Libs {
     const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:_"
     const val javalib_java7: String = "org.danilopianini:javalib-java7:_"
     const val jfoenix: String = "com.jfoenix:jfoenix:_"
-    const val jiconfont_google_material_design_icons = "com.github.jiconfont:jiconfont-google_material_design_icons:_"
     const val jiconfont_javafx: String = "com.github.jiconfont:jiconfont-javafx:_"
     const val jirf: String = "org.danilopianini:jirf:_"
     const val jool: String = "org.jooq:jool:_"

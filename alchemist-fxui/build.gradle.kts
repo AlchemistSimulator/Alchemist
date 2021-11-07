@@ -24,7 +24,7 @@ dependencies {
     implementation(Libs.javafxsvg)
     implementation(Libs.controlsfx)
     implementation(Libs.jiconfont_javafx)
-    implementation(Libs.jiconfont_google_material_design_icons)
+    implementation(libs.materialDesign.icons)
     implementation(Libs.tornadofx)
     implementation(Libs.ssaring_sportstracker_leafletmap)
     val javaFXVersion = "11"

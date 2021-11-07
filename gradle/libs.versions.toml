@@ -18,4 +18,5 @@ java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.3.0-dev0k-0ec1
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
 multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.1.0" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
+shadowJar = { id = "com.github.johnrengelman.shadow", version = "7.0.0" }
 taskTree = { id = "com.dorongold.task-tree", version = "2.1.0" }

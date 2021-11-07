@@ -12,7 +12,6 @@ object Libs {
     const val controlsfx: String = "org.controlsfx:controlsfx:_"
     const val dsiutil: String = "it.unimi.dsi:dsiutils:_"
     const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:_"
-    const val guava: String = "com.google.guava:guava:_"
     const val java_quadtree: String = "org.danilopianini:java-quadtree:_"
     const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:_"
     const val javalib_java7: String = "org.danilopianini:javalib-java7:_"

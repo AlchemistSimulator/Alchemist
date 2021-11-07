@@ -14,7 +14,7 @@ dependencies {
     api(project(":alchemist-interfaces"))
 
     implementation(jgrapht("core"))
-    implementation(Libs.guava)
+    implementation(libs.guava)
     implementation(Libs.trove4j)
 
     testImplementation(alchemist("implementationbase"))

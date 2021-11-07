@@ -16,8 +16,10 @@ dependencies {
 
     implementation(alchemist("implementationbase"))
     implementation(alchemist("loading"))
-    implementation(Libs.boilerplate)
     implementation(libs.caffeine)
+    implementation(libs.gson)
+    implementation(libs.guava)
+    implementation(Libs.boilerplate)
     implementation(apacheCommons("codec"))
     implementation(apacheCommons("io"))
     implementation(apacheCommons("lang3"))
@@ -25,8 +27,6 @@ dependencies {
     implementation(graphhopper("reader-osm")) {
         exclude(module = "slf4j-log4j12")
     }
-    implementation(libs.gson)
-    implementation(Libs.guava)
     implementation(Libs.jirf)
     implementation(Libs.jpx)
     implementation(Libs.simplelatlng)

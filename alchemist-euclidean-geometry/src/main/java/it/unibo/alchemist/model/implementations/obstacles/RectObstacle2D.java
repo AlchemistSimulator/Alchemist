@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.Obstacle2D;
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathArrays;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nullable;
 import java.awt.geom.Rectangle2D;
@@ -90,9 +90,9 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
         return !fuzzyGreaterEquals(intersection, min) || !fuzzyGreaterEquals(max, intersection);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public V next(@NotNull final V start, @NotNull final V end) {
+    public V next(@Nonnull final V start, @Nonnull final V end) {
         final double startx = start.getX();
         final double starty = start.getY();
         final double endx = end.getX();

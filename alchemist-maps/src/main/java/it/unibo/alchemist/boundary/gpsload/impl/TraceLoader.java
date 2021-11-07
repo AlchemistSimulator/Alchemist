@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.tuple.Tuple2;
@@ -125,7 +125,7 @@ public final class TraceLoader implements Iterable<GPSTrace> {
         this(path, false, timeNormalizerClass, normalizerArgs);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Iterator<GPSTrace> iterator() {
         return cyclic ? Iterators.cycle(traces) : traces.iterator();

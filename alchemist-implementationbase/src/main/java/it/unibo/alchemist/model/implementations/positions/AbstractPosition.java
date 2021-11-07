@@ -10,8 +10,8 @@ package it.unibo.alchemist.model.implementations.positions;
 
 import it.unibo.alchemist.model.interfaces.Position;
 import org.apache.commons.math3.util.MathArrays;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.function.DoubleUnaryOperator;
 public abstract class AbstractPosition<P extends Position<P>> implements Position<P> {
 
     private static final long serialVersionUID = 1L;
-    private final @NotNull double[] c;
+    private final @Nonnull double[] c;
     private int hash;
     private String stringCache;
 
@@ -37,7 +37,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
      * @param coordinates
      *            the array of coordinates
      */
-    protected AbstractPosition(final boolean copy, @NotNull final double... coordinates) { // NOPMD
+    protected AbstractPosition(final boolean copy, @Nonnull final double... coordinates) { // NOPMD
         // array stored directly by purpose here
         if (copy) {
             c = Arrays.copyOf(coordinates, coordinates.length);
@@ -79,8 +79,8 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     }
 
     @Override
-    @NotNull
-    public final double @NotNull [] getCoordinates() {
+    @Nonnull
+    public final double[] getCoordinates() {
         return Arrays.copyOf(c, c.length);
     }
 
@@ -99,7 +99,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     }
 
     @Override
-    public final double distanceTo(@NotNull final P other) {
+    public final double distanceTo(@Nonnull final P other) {
         return MathArrays.distance(c, ((AbstractPosition<P>) other).c);
     }
 
@@ -122,7 +122,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
         return stringCache;
     }
 
-    private @NotNull double[] extractInternalRepresentation(final @NotNull P position) {
+    private @Nonnull double[] extractInternalRepresentation(final @Nonnull P position) {
         return ((AbstractPosition<P>) Objects.requireNonNull(position)).c;
     }
 
@@ -132,14 +132,14 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
      * @param other the other position
      * @return a new position with the coordinates summed with the other
      */
-    @NotNull
-    public final P plus(@NotNull final P other) {
+    @Nonnull
+    public final P plus(@Nonnull final P other) {
         return plus(extractInternalRepresentation(other));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public final P plus(@NotNull final double @NotNull [] other) {
+    public final P plus(@Nonnull final double[] other) {
         return unsafeConstructor(MathArrays.ebeAdd(c, other));
     }
 
@@ -149,14 +149,14 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
      * @param other the other position
      * @return a new position with the coordinates summed with the other
      */
-    @NotNull
-    public final P minus(@NotNull final P other) {
+    @Nonnull
+    public final P minus(@Nonnull final P other) {
         return minus(extractInternalRepresentation(other));
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public final P minus(@NotNull final double @NotNull [] other) {
+    public final P minus(@Nonnull final double[] other) {
         return unsafeConstructor(MathArrays.ebeSubtract(c, other));
     }
 
@@ -166,7 +166,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
      * @param other the number
      * @return every element times the number
      */
-    @NotNull
+    @Nonnull
     public final P times(final double other) {
         return unsafelyRun(it -> it * other);
     }
@@ -177,7 +177,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
      * @param other the number
      * @return every element divided by the number
      */
-    @NotNull
+    @Nonnull
     public final P div(final double other) {
         return unsafelyRun(it -> it / other);
     }

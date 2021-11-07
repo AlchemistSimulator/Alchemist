@@ -81,7 +81,6 @@ allprojects {
 
     dependencies {
         with(rootProject.libs) {
-            compileOnly(Libs.annotations)
             compileOnly(spotbugs.annotations)
             implementation(Libs.slf4j_api)
             implementation(kotlin("stdlib-jdk8"))

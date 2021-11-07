@@ -6,7 +6,6 @@ import kotlin.String
  */
 @Suppress("UndocumentedPublicProperty")
 object Libs {
-    const val annotations: String = "org.jetbrains:annotations:_"
     const val boilerplate: String = "org.danilopianini:boilerplate:_"
     const val conrec: String = "org.danilopianini:conrec:_"
     const val classgraph: String = "io.github.classgraph:classgraph:_"

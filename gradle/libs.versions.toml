@@ -20,6 +20,7 @@ jiconfont-javafx = { module = "com.github.jiconfont:jiconfont-javafx", version =
 jiconfont-materialDesignIcons = { module = "com.github.jiconfont:jiconfont-google_material_design_icons", version = "2.2.0.2" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 logback = { module = "ch.qos.logback:logback-classic", version = "1.2.4" }
+miglayout-swing = { module = "com.miglayout:miglayout-swing", version = "11.0" }
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
 orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
 orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }

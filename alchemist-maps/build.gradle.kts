@@ -17,7 +17,7 @@ dependencies {
     implementation(alchemist("implementationbase"))
     implementation(alchemist("loading"))
     implementation(Libs.boilerplate)
-    implementation(Libs.caffeine)
+    implementation(libs.caffeine)
     implementation(apacheCommons("codec"))
     implementation(apacheCommons("io"))
     implementation(apacheCommons("lang3"))

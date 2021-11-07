@@ -34,7 +34,7 @@ dependencies {
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
-    testImplementation(Libs.caffeine)
+    testImplementation(libs.caffeine)
     testImplementation(Libs.gson)
     testRuntimeOnly(scalaModule("compiler"))
 

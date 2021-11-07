@@ -8,7 +8,6 @@ import kotlin.String
 object Libs {
     const val annotations: String = "org.jetbrains:annotations:_"
     const val boilerplate: String = "org.danilopianini:boilerplate:_"
-    const val caffeine: String = "com.github.ben-manes.caffeine:caffeine:_"
     const val conrec: String = "org.danilopianini:conrec:_"
     const val classgraph: String = "io.github.classgraph:classgraph:_"
     const val controlsfx: String = "org.controlsfx:controlsfx:_"

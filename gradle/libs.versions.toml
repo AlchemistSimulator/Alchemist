@@ -8,6 +8,7 @@ orchid = "0.21.1"
 [libraries]
 antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
 antlr4-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr4" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.0.3" }
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }

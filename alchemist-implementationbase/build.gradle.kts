@@ -18,7 +18,7 @@ dependencies {
     api(apacheCommons("lang3"))
     implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
-    implementation(Libs.caffeine)
+    implementation(libs.caffeine)
     implementation(Libs.classgraph)
     implementation(Libs.rtree)
     implementation(Libs.trove4j)

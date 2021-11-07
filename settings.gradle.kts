@@ -7,7 +7,7 @@
  */
 import org.danilopianini.VersionAliases.justAdditionalAliases
 plugins {
-    id("com.gradle.enterprise") version "3.6.3"
+    id("com.gradle.enterprise") version "3.6.4"
     id("de.fayard.refreshVersions") version "0.10.1"
 }
 

@@ -97,9 +97,4 @@ object Libs {
      * Returns the identifier of the desired Scala [module].
      */
     fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)
-
-    /**
-     * Returns the identifier of the desired SpotBugs [module].
-     */
-    fun spotBugsModule(module: String = "") = modularizedLibrary("com.github.spotbugs:spotbugs", module)
 }

@@ -45,7 +45,7 @@ jiconfont = ["jiconfont-javafx", "jiconfont-materialDesignIcons"]
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "0.3.0" }
-java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.3.0-dev0k-0ec1f87" }
+java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.3.0" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
 multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.1.0" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }

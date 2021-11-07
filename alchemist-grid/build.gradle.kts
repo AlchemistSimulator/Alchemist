@@ -17,7 +17,7 @@ dependencies {
     implementation(alchemist("loading"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("engine"))
-    implementation(Libs.guava)
+    implementation(libs.guava)
     implementation(libs.ignite.spring)
     implementation(libs.ignite.indexing)
     implementation(apacheCommons("io"))

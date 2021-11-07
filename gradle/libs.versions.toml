@@ -51,5 +51,5 @@ multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 publishOnCentral = { id = "org.danilopianini.publish-on-central", version = "0.5.0" }
 scalatest = { id = "com.github.maiflai.scalatest", version = "0.31" }
-shadowJar = { id = "com.github.johnrengelman.shadow", version = "7.0.0" }
+shadowJar = { id = "com.github.johnrengelman.shadow", version = "7.1.0" }
 taskTree = { id = "com.dorongold.task-tree", version = "2.1.0" }

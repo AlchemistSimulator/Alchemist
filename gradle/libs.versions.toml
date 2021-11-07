@@ -21,6 +21,7 @@ orchid-plugindocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", ver
 orchid-search = { module = "io.github.javaeden.orchid:OrchidSearch", version.ref = "orchid" }
 orchid-syntaxhighlighter = { module = "io.github.javaeden.orchid:OrchidSyntaxHighlighter", version.ref = "orchid" }
 orchid-wiki = { module = "io.github.javaeden.orchid:OrchidWiki", version.ref = "orchid" }
+rtree = { module = "com.github.davidmoten:rtree", version = "0.8.7" }
 
 [bundles]
 orchid = ["orchid-editorial", "orchid-github", "orchid-plugindocs", "orchid-search", "orchid-syntaxhighlighter", "orchid-wiki"]

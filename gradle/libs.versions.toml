@@ -1,9 +1,12 @@
 [versions]
+antlr4 = "4.9.2"
 dokka = "1.5.0"
 konf = "1.1.2"
 orchid = "0.21.1"
 
 [libraries]
+antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
+antlr4-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr4" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
 orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }

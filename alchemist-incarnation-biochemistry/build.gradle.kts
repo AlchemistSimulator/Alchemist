@@ -14,14 +14,14 @@ plugins {
 }
 
 dependencies {
-    antlr(Libs.antlr4)
+    antlr(libs.antlr4)
     api(alchemist("implementationbase"))
     api(alchemist("euclidean-geometry"))
     implementation(apacheCommons("lang3"))
     implementation(Libs.trove4j)
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)
-    runtimeOnly(Libs.antlr4_runtime)
+    runtimeOnly(libs.antlr4.runtime)
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("loading"))
 }

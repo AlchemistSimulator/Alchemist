@@ -15,7 +15,6 @@ object Libs {
     const val java_quadtree: String = "org.danilopianini:java-quadtree:_"
     const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:_"
     const val javalib_java7: String = "org.danilopianini:javalib-java7:_"
-    const val jfoenix: String = "com.jfoenix:jfoenix:_"
     const val jirf: String = "org.danilopianini:jirf:_"
     const val jool: String = "org.jooq:jool:_"
     const val jpx: String = "io.jenetics:jpx:_"

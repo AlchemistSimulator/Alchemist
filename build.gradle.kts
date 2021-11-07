@@ -16,9 +16,9 @@ import java.net.URL
 
 plugins {
     kotlin("jvm")
-    id("org.danilopianini.git-sensitive-semantic-versioning")
     id("org.danilopianini.publish-on-central")
     id("org.jetbrains.dokka")
+    alias(libs.plugins.gitSemVer)
     alias(libs.plugins.java.qa)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)

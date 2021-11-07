@@ -25,7 +25,6 @@ object Libs {
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"
     const val miglayout_swing: String = "com.miglayout:miglayout-swing:_"
     const val oxygen: String = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:_"
-    const val simplelatlng: String = "com.javadocmd:simplelatlng:_"
     const val slf4j_api: String = "org.slf4j:slf4j-api:_"
     const val snakeyaml: String = "org.yaml:snakeyaml:_"
     const val ssaring_sportstracker_leafletmap: String = "org.danilopianini:de.saring.leafletmap:_"

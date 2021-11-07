@@ -12,6 +12,7 @@ ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite"
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
+logback = { module = "ch.qos.logback:logback-classic", version = "1.2.4" }
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
 orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
 orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }

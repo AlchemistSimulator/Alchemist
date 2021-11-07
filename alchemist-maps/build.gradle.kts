@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.caffeine)
     implementation(libs.gson)
     implementation(libs.guava)
+    implementation(libs.simplelatlng)
     implementation(Libs.boilerplate)
     implementation(apacheCommons("codec"))
     implementation(apacheCommons("io"))
@@ -29,7 +30,6 @@ dependencies {
     }
     implementation(Libs.jirf)
     implementation(Libs.jpx)
-    implementation(Libs.simplelatlng)
     implementation(Libs.trove4j)
 
     testRuntimeOnly(incarnation("protelis"))

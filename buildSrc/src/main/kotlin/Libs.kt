@@ -96,11 +96,6 @@ object Libs {
     fun junit(module: String) = modularizedLibrary("org.junit.jupiter:junit-jupiter", module)
 
     /**
-     * Returns the identifier of the desired Konf [module].
-     */
-    fun konf(module: String = "") = modularizedLibrary("com.uchuhimo:konf", module)
-
-    /**
      * Returns the identifier of the desired Protelis [module].
      */
     fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)

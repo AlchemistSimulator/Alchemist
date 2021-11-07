@@ -1,8 +1,10 @@
 [versions]
 dokka = "1.5.0"
+konf = "1.1.2"
 orchid = "0.21.1"
 
 [libraries]
+konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
 orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
 orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }

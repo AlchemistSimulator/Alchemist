@@ -12,9 +12,10 @@ caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.0.3
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }
+jiconfont-javafx = { module = "com.github.jiconfont:jiconfont-javafx", version = "1.0.0" }
+jiconfont-materialDesignIcons = { module = "com.github.jiconfont:jiconfont-google_material_design_icons", version = "2.2.0.2" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 logback = { module = "ch.qos.logback:logback-classic", version = "1.2.4" }
-materialDesign-icons = { module = "com.github.jiconfont:jiconfont-google_material_design_icons", version = "2.2.0.2" }
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
 orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
 orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }
@@ -26,6 +27,7 @@ rtree = { module = "com.github.davidmoten:rtree", version = "0.8.7" }
 
 [bundles]
 orchid = ["orchid-editorial", "orchid-github", "orchid-plugindocs", "orchid-search", "orchid-syntaxhighlighter", "orchid-wiki"]
+jiconfont = ["jiconfont-javafx", "jiconfont-materialDesignIcons"]
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

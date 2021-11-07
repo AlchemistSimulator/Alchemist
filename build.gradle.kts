@@ -92,7 +92,6 @@ allprojects {
             testImplementation(Libs.kotest_runner_junit5)
             testImplementation(Libs.kotest_assertions)
             testImplementation("org.mockito:mockito-core:_")
-            testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
             // Test runtime: Junit engine
             testRuntimeOnly(Libs.junit("engine"))
             // executable jar packaging

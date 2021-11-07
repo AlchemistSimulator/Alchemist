@@ -20,7 +20,6 @@ dependencies {
     implementation(Libs.boilerplate)
     implementation(libs.caffeine)
     implementation(Libs.classgraph)
-    implementation(Libs.rtree)
     implementation(Libs.trove4j)
     testImplementation(alchemist("loading"))
     testImplementation(alchemist("engine"))

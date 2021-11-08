@@ -1,5 +1,5 @@
 [versions]
-antlr4 = "4.9.2"
+antlr4 = "4.9.3"
 dokka = "1.5.31"
 ignite = "2.11.0"
 konf = "1.1.2"

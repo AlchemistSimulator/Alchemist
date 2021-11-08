@@ -24,7 +24,7 @@ abstract class AbstractExporter<T, P : Position<P>> (
     private val samplingInterval: Double
 ) : GenericExporter<T, P> {
 
-    override var dataExtractor: List<Extractor> = ArrayList()
+    override var dataExtractor: List<Extractor> = emptyList()
 
     /**
      * The 0th should be sampled.

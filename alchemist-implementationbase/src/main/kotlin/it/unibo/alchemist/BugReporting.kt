@@ -8,6 +8,9 @@
  */
 package it.unibo.alchemist
 
+/**
+ * Entrypoint for printing meaningful debug information in case of failed internal consistency checks.
+ */
 object BugReporting {
 
     /**

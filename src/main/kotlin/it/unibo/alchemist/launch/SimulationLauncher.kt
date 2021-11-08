@@ -56,8 +56,11 @@ abstract class SimulationLauncher : AbstractLauncher() {
         variables: Collection<String>
     ): List<Map<String, Serializable?>> {
         val variableValues = variables.map { variableName ->
-            this[variableName]?.map { variableName to it }
-                ?: throw IllegalArgumentException("$variableName does not exist in $this")
+            this[variableName]
+                ?.map { variableName to it }
+                ?: throw IllegalArgumentException(
+                    "$variableName does not exist among the variables. Valid values are: $this"
+                )
         }.toList()
         return Lists.cartesianProduct(variableValues).map { it.toMap() }.takeUnless { it.isEmpty() }
             ?: listOf(emptyMap())

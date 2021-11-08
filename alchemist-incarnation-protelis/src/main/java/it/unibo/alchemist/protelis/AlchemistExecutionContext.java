@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.protelis.lang.datatype.DatatypeFactory;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Field;
@@ -64,7 +64,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
             .build(new CacheLoader<P, Double>() {
                 @Override
                 @SuppressWarnings("unchecked")
-                public Double load(@NotNull final P dest) {
+                public Double load(@Nonnull final P dest) {
                     if (environment instanceof MapEnvironment) {
                         if (dest instanceof GeoPosition) {
                             return ((MapEnvironment<Object>) environment).computeRoute(node, (GeoPosition) dest).length();

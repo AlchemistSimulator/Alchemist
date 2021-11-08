@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,7 +81,7 @@ public abstract class AbstractNode<T> implements Node<T> {
     }
 
     @Override
-    public final int compareTo(@NotNull final Node<T> other) {
+    public final int compareTo(@Nonnull final Node<T> other) {
         if (other instanceof AbstractNode<?>) {
             if (id > ((AbstractNode<?>) other).id) {
                 return 1;

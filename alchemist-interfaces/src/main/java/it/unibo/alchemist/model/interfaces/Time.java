@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.io.Serializable;
 
@@ -50,7 +50,7 @@ public interface Time extends Comparable<Time>, Serializable {
         }
 
         @Override
-        public int compareTo(@NotNull final Time o) {
+        public int compareTo(@NonNull final Time o) {
             return Double.compare(0, o.toDouble());
         }
 
@@ -103,7 +103,7 @@ public interface Time extends Comparable<Time>, Serializable {
         }
 
         @Override
-        public int compareTo(@NotNull final Time o) {
+        public int compareTo(@NonNull final Time o) {
             return Double.compare(Double.POSITIVE_INFINITY, o.toDouble());
         }
 

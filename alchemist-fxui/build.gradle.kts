@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.apacheCommons
 
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -18,13 +17,13 @@ dependencies {
     implementation(alchemist("ui-tooling"))
     implementation(alchemist("loading"))
     implementation(alchemist("maps"))
-    implementation(apacheCommons("collections4"))
-    implementation(Libs.gson_extras)
-    implementation(Libs.jfoenix)
+    implementation(libs.bundles.jiconfont)
+    implementation(libs.jfoenix)
+    implementation(libs.gson.extras)
+    implementation(libs.guava)
+    implementation(libs.apache.commons.collections4)
     implementation(Libs.javafxsvg)
     implementation(Libs.controlsfx)
-    implementation(Libs.jiconfont_javafx)
-    implementation(Libs.jiconfont_google_material_design_icons)
     implementation(Libs.tornadofx)
     implementation(Libs.ssaring_sportstracker_leafletmap)
     val javaFXVersion = "11"

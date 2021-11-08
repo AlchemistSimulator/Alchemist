@@ -10,7 +10,7 @@ import Libs.scalaModule
  */
 plugins {
     scala
-    id("com.github.maiflai.scalatest")
+    alias(libs.plugins.scalatest)
 }
 
 dependencies {

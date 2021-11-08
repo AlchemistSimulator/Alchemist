@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.positions;
 
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * 
@@ -60,13 +60,13 @@ public final class Euclidean2DPosition
         return new Euclidean2DPosition(false, coordinates[0], coordinates[1]);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Euclidean2DPosition normal() {
         return new Euclidean2DPosition(-getY(), getX());
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Euclidean2DPosition newFrom(final double x, final double y) {
         return new Euclidean2DPosition(x, y);

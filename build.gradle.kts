@@ -7,7 +7,6 @@
  */
 import Libs.incarnation
 import Libs.alchemist
-import Libs.orchidModule
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.mavenCentral
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -17,23 +16,18 @@ import java.net.URL
 
 plugins {
     kotlin("jvm")
-    jacoco
-    pmd
-    checkstyle
-    `build-dashboard`
-    id("com.eden.orchidPlugin")
-    id("com.github.johnrengelman.shadow")
-    id("com.github.spotbugs")
-    id("de.aaschmid.cpd")
-    id("org.danilopianini.git-sensitive-semantic-versioning")
-    id("org.danilopianini.publish-on-central")
-    id("org.jetbrains.dokka")
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.gitSemVer)
+    alias(libs.plugins.java.qa)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
+    alias(libs.plugins.orchid)
+    alias(libs.plugins.publishOnCentral)
+    alias(libs.plugins.shadowJar)
     alias(libs.plugins.taskTree)
 }
 
-apply(plugin = "com.eden.orchidPlugin")
+apply(plugin = rootProject.libs.plugins.orchid.id)
 
 val additionalTools: Configuration by configurations.creating
 dependencies {
@@ -45,21 +39,19 @@ val Provider<PluginDependency>.id get() = get().pluginId
 allprojects {
 
     with(rootProject.libs.plugins) {
+        apply(plugin = java.qa.id)
         apply(plugin = multiJvmTesting.id)
-        apply(plugin = taskTree.id)
         apply(plugin = kotlin.qa.id)
+        apply(plugin = taskTree.id)
+        apply(plugin = shadowJar.id)
     }
+
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
-    apply(plugin = "jacoco")
-    apply(plugin = "com.github.spotbugs")
-    apply(plugin = "checkstyle")
-    apply(plugin = "pmd")
     apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.danilopianini.publish-on-central")
-    apply(plugin = "com.github.johnrengelman.shadow")
 
     multiJvm {
         jvmVersionForCompilation.set(11)
@@ -88,32 +80,25 @@ allprojects {
     }
 
     dependencies {
-        // Compilation only
-        compileOnly(Libs.annotations)
-        compileOnly(Libs.spotBugsModule("annotations"))
-        // Implementation
-        implementation(Libs.slf4j_api)
-        implementation(kotlin("stdlib-jdk8"))
-        implementation(kotlin("reflect"))
-        implementation(Libs.thread_inheritable_resource_loader)
-        // Test compilation only
-        testCompileOnly(Libs.spotBugsModule("annotations"))
-        // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
-        testImplementation(Libs.junit("api"))
-        testImplementation(Libs.kotest_runner_junit5)
-        testImplementation(Libs.kotest_assertions)
-        testImplementation("org.mockito:mockito-core:_")
-        testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:_")
-        // Test runtime: Junit engine
-        testRuntimeOnly(Libs.junit("engine"))
-        // executable jar packaging
+        with(rootProject.libs) {
+            compileOnly(spotbugs.annotations)
+            implementation(Libs.slf4j_api)
+            implementation(kotlin("stdlib-jdk8"))
+            implementation(kotlin("reflect"))
+            implementation(Libs.thread_inheritable_resource_loader)
+            testCompileOnly(spotbugs.annotations)
+            // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
+            testImplementation(Libs.junit("api"))
+            testImplementation(Libs.kotest_runner_junit5)
+            testImplementation(Libs.kotest_assertions)
+            testImplementation("org.mockito:mockito-core:_")
+            // Test runtime: Junit engine
+            testRuntimeOnly(Libs.junit("engine"))
+            // executable jar packaging
+        }
         if ("incarnation" in project.name) {
             runtimeOnly(rootProject)
         }
-        pmd(Libs.pmdModule("core"))
-        pmd(Libs.pmdModule("java"))
-        pmd(Libs.pmdModule("scala"))
-        pmd(Libs.pmdModule("kotlin"))
     }
 
     // COMPILE
@@ -139,28 +124,55 @@ allprojects {
         useJUnitPlatform()
     }
 
-    jacoco {
-        toolVersion = additionalTools.resolvedConfiguration.resolvedArtifacts
-            .find { "jacoco" in it.moduleVersion.id.name }
-            ?.moduleVersion?.id?.version
-            ?: toolVersion
-    }
-
-    tasks.jacocoTestReport {
-        reports {
-            xml.required.set(true)
-        }
-    }
-
     // CODE QUALITY
 
-    spotbugs {
-        setEffort("max")
-        setReportLevel("low")
-        showProgress.set(false)
-        val excludeFile = File("${project.rootProject.projectDir}/config/spotbugs/excludes.xml")
-        if (excludeFile.exists()) {
-            excludeFilter.set(excludeFile)
+    javaQA {
+        checkstyle {
+            additionalConfiguration.set(
+                """
+                <module name="RegexpSingleline">
+                    <property name="severity" value="error" />
+                    <property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Don't use Math.random() inside Alchemist. Breaks stuff." />
+                </module>
+                <module name="RegexpSingleline">
+                    <property name="severity" value="error" />
+                    <property name="format" value="class\s*\.\s*forName\s*\(" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Use the library to load classes and resources. Breaks grid otherwise." />
+                </module>
+                <module name="RegexpSingleline">
+                    <property name="severity" value="error" />
+                    <property name="format" value="class\s*\.\s*getResource" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Use the library to load classes and resources. Breaks grid otherwise." />
+                </module>
+                <module name="RegexpSingleline">
+                    <property name="severity" value="error" />
+                    <property name="format" value="class\s*\.\s*getClassLoader" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Use the library to load classes and resources. Breaks grid otherwise." />
+                </module>
+                <module name="RegexpSingleline">
+                    <property name="severity" value="warning" />
+                    <property name="format" value="@author" />
+                    <property name="fileExtensions" value="java,xtend,scala,kt" />
+                    <property name="message"
+                              value="Do not use @author. Changes and authors are tracked by the content manager." />
+                </module>
+                """.trimIndent()
+            )
+            additionalSuppressions.set(
+                """
+                <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
+                <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
+                """.trimIndent()
+            )
         }
     }
 
@@ -170,21 +182,7 @@ allprojects {
         }
     }
 
-    pmd {
-        ruleSets = listOf()
-        ruleSetConfig = resources.text.fromFile("${project.rootProject.projectDir}/config/pmd/pmd.xml")
-    }
-
-    tasks.withType<de.aaschmid.gradle.plugins.cpd.Cpd> {
-        reports {
-            xml.required.set(false)
-            text.required.set(true)
-        }
-        language = "java"
-        minimumTokenCount = 100
-        source = sourceSets["main"].allJava
-        tasks.check.orNull?.dependsOn(this)
-    }
+    // PUBLISHING
 
     tasks.withType<Javadoc> {
         // Disable Javadoc, use Dokka.
@@ -304,13 +302,15 @@ evaluationDependsOnChildren()
 
 dependencies {
     // Depend on subprojects whose presence is necessary to run
-    listOf("interfaces", "engine", "loading") // Execution requirements
-        .map { project(":alchemist-$it") }
-        .forEach { api(it) }
-    implementation(Libs.apacheCommons("io"))
-    implementation(Libs.apacheCommons("lang3"))
-    implementation(Libs.apacheCommons("cli"))
-    implementation(Libs.logback_classic)
+    listOf("interfaces", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
+    with(libs.apache.commons) {
+        implementation(cli)
+        implementation(io)
+        implementation(lang3)
+    }
+    implementation(libs.apache.commons.cli)
+    implementation(libs.guava)
+    implementation(libs.logback)
     testRuntimeOnly(incarnation("protelis"))
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("biochemistry"))
@@ -318,10 +318,8 @@ dependencies {
     testRuntimeOnly(alchemist("physical-agents"))
 
     // Populate the dependencies for Orchid
-    orchidImplementation(orchidModule("Core"))
-    listOf("Editorial", "Github", "Kotlindoc", "PluginDocs", "Search", "SyntaxHighlighter", "Wiki").forEach {
-        orchidRuntimeOnly(orchidModule(it))
-    }
+    orchidImplementation(libs.orchid.core)
+    orchidRuntimeOnly(libs.bundles.orchid)
 }
 
 // WEBSITE

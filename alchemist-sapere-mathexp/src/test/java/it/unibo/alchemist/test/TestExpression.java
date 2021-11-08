@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  */
-public class TestExpression {
+class TestExpression {
 
     private static final String[] VAR = {
             "A", "ASD", "Asd"

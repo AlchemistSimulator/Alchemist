@@ -48,7 +48,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
          */
         const val DEFAULT_PATH = "/build/exports/"
     }
-    private lateinit var out: PrintStream
+    private lateinit var outputPrintStream: PrintStream
 
     /**
      * The path of the export output file.
@@ -65,27 +65,27 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         }
         outputFile = exportDir.path + '/' + filename +
             "_" + variablesDescriptor + "_" + "${if (appendTime) System.currentTimeMillis() else ""}"
-        out = PrintStream(outputFile, Charsets.UTF_8.name())
-        out.println(SEPARATOR)
-        out.print("# Alchemist log file - simulation started at: ")
+        outputPrintStream = PrintStream(outputFile, Charsets.UTF_8.name())
+        outputPrintStream.println(SEPARATOR)
+        outputPrintStream.print("# Alchemist log file - simulation started at: ")
         val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
         isoTime.timeZone = TimeZone.getTimeZone("UTC")
-        out.print(isoTime.format(Date()))
-        out.println(" #")
-        out.println(SEPARATOR)
-        out.println(" #")
-        out.println(variablesDescriptor)
-        out.println(" #")
-        out.println("# The columns have the following meaning: ")
-        out.print("# ")
+        outputPrintStream.print(isoTime.format(Date()))
+        outputPrintStream.println(" #")
+        outputPrintStream.println(SEPARATOR)
+        outputPrintStream.println(" #")
+        outputPrintStream.println(variablesDescriptor)
+        outputPrintStream.println(" #")
+        outputPrintStream.println("# The columns have the following meaning: ")
+        outputPrintStream.print("# ")
         dataExtractor.stream()
             .flatMap {
                 it.names.stream()
             }.forEach {
-                out.print(it)
-                out.print(" ")
+                outputPrintStream.print(it)
+                outputPrintStream.print(" ")
             }
-        out.println()
+        outputPrintStream.println()
         exportData(environment, null, DoubleTime(), 0)
     }
 
@@ -93,20 +93,20 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         dataExtractor.stream()
             .flatMapToDouble { Arrays.stream(it.extractData(environment, reaction, time, step)) }
             .forEach {
-                out.print(it)
-                out.print(' ')
+                outputPrintStream.print(it)
+                outputPrintStream.print(' ')
             }
-        out.println()
+        outputPrintStream.println()
     }
 
     override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
-        out.println(SEPARATOR)
-        out.print("# End of data export. Simulation finished at: ")
+        outputPrintStream.println(SEPARATOR)
+        outputPrintStream.print("# End of data export. Simulation finished at: ")
         val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
         isoTime.timeZone = TimeZone.getTimeZone("UTC")
-        out.print(isoTime.format(Date()))
-        out.println(" #")
-        out.println(SEPARATOR)
-        out.close()
+        outputPrintStream.print(isoTime.format(Date()))
+        outputPrintStream.println(" #")
+        outputPrintStream.println(SEPARATOR)
+        outputPrintStream.close()
     }
 }

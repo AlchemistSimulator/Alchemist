@@ -78,7 +78,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         outputPrintStream.println(" #")
         outputPrintStream.println("# The columns have the following meaning: ")
         outputPrintStream.print("# ")
-        dataExtractor.stream()
+        dataExtractors.stream()
             .flatMap {
                 it.names.stream()
             }.forEach {
@@ -90,7 +90,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        dataExtractor.stream()
+        dataExtractors.stream()
             .flatMapToDouble { Arrays.stream(it.extractData(environment, reaction, time, step)) }
             .forEach {
                 outputPrintStream.print(it)

@@ -24,7 +24,7 @@ abstract class AbstractExporter<T, P : Position<P>> (
     private val samplingInterval: Double
 ) : GenericExporter<T, P> {
 
-    override var dataExtractor: List<Extractor> = emptyList()
+    override var dataExtractors: List<Extractor> = emptyList()
 
     /**
      * The 0th should be sampled.
@@ -42,8 +42,8 @@ abstract class AbstractExporter<T, P : Position<P>> (
         const val DEFAULT_INTERVAL: Double = 1.0
     }
 
-    override fun bindData(dataExtractor: List<Extractor>) {
-        this.dataExtractor = dataExtractor
+    override fun bindData(dataExtractors: List<Extractor>) {
+        this.dataExtractors = dataExtractors
     }
 
     override fun bindVariables(variables: Map<String, Variable<*>>) {

@@ -22,8 +22,8 @@ export:
     data:
       - time
       - molecule: "default_module:default_program"
-        aggregators: [ mean, max, min, variance, median ]
-        value-filter: onlyfinite
+        aggregators: [ mean, max, min, variance, median ] # From Apache's UnivariateStatistic
+        value-filter: onlyfinite # discards NaN and Infinity
 environment: { type: ImageEnvironment, parameters: [*image_path, *zoom] }
 network-model: { type: ObstaclesBreakConnection, parameters: [50] }
 deployments:

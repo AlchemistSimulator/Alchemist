@@ -57,7 +57,7 @@ class NamedParametersConstructor(
                     No constructor available for ${target.simpleName} with named parameters $parameterNames.
                     Available constructors have the following *named* parameters:
                 """.trimIndent() +
-                    availableParameters.joinToString(prefix = "- ", separator = "\n- ") {
+                    availableParameters.joinToString(prefix = "\n- ", separator = "\n- ") {
                         it.namedParametersDescriptor()
                     }
             )

@@ -7,28 +7,28 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.math3.util.FastMath;
-import org.danilopianini.util.stream.SmallestN;
-import org.jooq.lambda.tuple.Tuple2;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.primitives.Doubles;
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.BugReporting;
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import org.apache.commons.math3.util.FastMath;
+import org.danilopianini.util.stream.SmallestN;
+import org.jooq.lambda.tuple.Tuple2;
+
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Non local-consistent rule that connect the closest N nodes together.
@@ -137,7 +137,18 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
         final MinMaxPriorityQueue<Tuple2<Double, Node<T>>> closestN = inRange.stream()
                 .map(node -> new Tuple2<>(env.getDistanceBetweenNodes(center, node), node))
                 .collect(new SmallestN<>(n));
-        setRange(center, Math.max(Double.MIN_VALUE, closestN.peekLast().v1()) * CONNECTION_RANGE_TOLERANCE);
+        final var farthestNode = closestN.peekLast();
+        if (farthestNode == null) {
+            final var debugDetails = new HashMap<String, Object>();
+            debugDetails.put("farthestNode", null);
+            debugDetails.put("inRange", inRange);
+            debugDetails.put("closestN", closestN);
+            BugReporting.reportBug(
+                "neighbors were found, but no neighbor was included in the list",
+                debugDetails
+            );
+        }
+        setRange(center, Math.max(Double.MIN_VALUE, farthestNode.v1()) * CONNECTION_RANGE_TOLERANCE);
         return closestN.stream().map(Tuple2::v2);
     }
 

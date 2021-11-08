@@ -22,6 +22,7 @@ jobs:
       deploy-command: |
         ./gradlew publishKotlinMavenPublicationToCentralS01Repository
         ./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
+        ./gradlew clean
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}

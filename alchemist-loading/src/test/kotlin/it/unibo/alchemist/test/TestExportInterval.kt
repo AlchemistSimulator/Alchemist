@@ -24,7 +24,11 @@ class TestExportInterval<T, P : Position<P>> : StringSpec({
         val loader = LoadAlchemist.from(file)
         assertNotNull(loader)
         val initialized: InitializedEnvironment<T, P> = loader.getDefault()
-        val exporter: CSVExporter<T, P> = initialized.exporters[0] as CSVExporter<T, P>
-        exporter.interval shouldNotBe 1
+        val exporter = initialized.exporters.firstOrNull {
+            it is CSVExporter
+        }
+        if (exporter is CSVExporter) {
+            exporter.interval shouldNotBe 1.0
+        }
     }
 })

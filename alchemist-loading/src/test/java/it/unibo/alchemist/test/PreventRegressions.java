@@ -8,14 +8,11 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.loader.LoadAlchemist;
-import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.export.MeanSquaredError;
 import it.unibo.alchemist.model.interfaces.Environment;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,14 +28,16 @@ class PreventRegressions {
      */
     @Test
     void testLoadCustomExport() {
-        final List<Extractor> extractors = LoadAlchemist
+        LoadAlchemist
             .from(ResourceLoader.getResource("testCustomExport.yml"))
             .getDefault()
             .getExporters()
-            .get(0)
-            .getDataExtractors();
-        assertEquals(1, extractors.size());
-        assertEquals(MeanSquaredError.class, extractors.get(0).getClass());
+            .stream()
+            .findFirst()
+            .ifPresent(exporter -> {
+                assertEquals(1, exporter.getDataExtractors().size());
+                assertEquals(MeanSquaredError.class, exporter.getDataExtractors().get(0).getClass());
+            });
     }
 
     /**

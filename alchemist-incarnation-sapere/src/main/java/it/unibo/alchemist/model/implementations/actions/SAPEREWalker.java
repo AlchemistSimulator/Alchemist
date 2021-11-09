@@ -12,13 +12,14 @@ import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTrace;
+import it.unibo.alchemist.model.implementations.routingservices.GraphHopperOptions;
+import it.unibo.alchemist.model.implementations.routingservices.GraphHopperRoutingService;
 import it.unibo.alchemist.model.interfaces.ILsaAction;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Vehicle;
 import org.danilopianini.lang.HashString;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 /**
  */
-public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements ILsaAction {
+public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> implements ILsaAction {
 
     /**
      * The default molecule that identifies an interacting object.
@@ -49,7 +50,7 @@ public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements
      *            the interaction range
      */
     public SAPEREWalker(
-            final MapEnvironment<List<ILsaMolecule>> environment,
+            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
             final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction,
             final double speed,
             final double interaction,
@@ -75,7 +76,7 @@ public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements
      *            the interaction range
      */
     public SAPEREWalker(
-            final MapEnvironment<List<ILsaMolecule>> environment,
+            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
             final ILsaNode node,
             final Reaction<List<ILsaMolecule>> reaction,
             final ILsaMolecule tag,
@@ -83,10 +84,13 @@ public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>> implements
             final double interaction,
             final double range
     ) {
-        super(environment, node,
-                new OnStreets<>(environment, Vehicle.FOOT),
-                new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
-                new FollowTrace(reaction));
+        super(
+            environment,
+            node,
+            new OnStreets<>(environment, GraphHopperOptions.Companion.getDefaultOptions()),
+            new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
+            new FollowTrace(reaction)
+        );
     }
 
     @Override

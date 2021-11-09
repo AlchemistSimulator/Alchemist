@@ -15,11 +15,12 @@ import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTargetOnMap;
+import it.unibo.alchemist.model.implementations.routingservices.GraphHopperOptions;
+import it.unibo.alchemist.model.implementations.routingservices.GraphHopperRoutingService;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Vehicle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -79,7 +80,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            slow down the {@link MoveOnMap}
      */
     public TargetWalker(
-            @Nonnull final MapEnvironment<T> environment,
+            @Nonnull final MapEnvironment<T, GraphHopperOptions, ?> environment,
             @Nonnull final Node<T> node,
             @Nonnull final Reaction<T> reaction,
             @Nonnull final Molecule trackMolecule,
@@ -88,7 +89,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
             final double interaction,
             final double range) {
         super(environment, node,
-                new OnStreets<>(environment, Vehicle.FOOT),
+                new OnStreets<>(environment, GraphHopperRoutingService.Companion.getDefaultOptions()),
                 interaction <= 0 || interactingMolecule == null
                     ? new ConstantSpeed<>(reaction, speed)
                     : new InteractWithOthers<>(environment, node, reaction, interactingMolecule, speed, range, interaction),
@@ -124,7 +125,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            when obstacles are found
      */
     public TargetWalker(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, GraphHopperOptions, ?> environment,
             final Node<T> node,
             final Reaction<T> reaction,
             final Molecule trackMolecule,
@@ -159,7 +160,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            value.
      */
     public TargetWalker(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, GraphHopperOptions, ?> environment,
             final Node<T> node,
             final Reaction<T> reaction,
             final Molecule trackMolecule,
@@ -201,7 +202,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            slow down the {@link MoveOnMap}
      */
     public TargetWalker(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, GraphHopperOptions, ?> environment,
             final Node<T> node,
             final Reaction<T> reaction,
             final String trackMolecule,
@@ -210,14 +211,14 @@ public class TargetWalker<T> extends MoveOnMap<T> {
             final double interaction,
             final double range) {
         this(
-                environment,
-                node,
-                reaction,
-                new SimpleMolecule(trackMolecule),
-                interactingMolecule == null ? null : new SimpleMolecule(interactingMolecule),
-                speed,
-                interaction,
-                range
+            environment,
+            node,
+            reaction,
+            new SimpleMolecule(trackMolecule),
+            interactingMolecule == null ? null : new SimpleMolecule(interactingMolecule),
+            speed,
+            interaction,
+            range
         );
     }
 
@@ -243,7 +244,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            the speed at which this {@link MoveOnMap} will move
      */
     public TargetWalker(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, GraphHopperOptions, ?> environment,
             final Node<T> node,
             final Reaction<T> reaction,
             final String trackMolecule,
@@ -271,7 +272,7 @@ public class TargetWalker<T> extends MoveOnMap<T> {
      *            matcher in Javalib.
      */
     public TargetWalker(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, GraphHopperOptions, ?> environment,
             final Node<T> node,
             final Reaction<T> reaction,
             final String trackMolecule) { 

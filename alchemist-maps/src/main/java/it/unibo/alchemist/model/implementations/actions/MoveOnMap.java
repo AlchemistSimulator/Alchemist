@@ -12,6 +12,8 @@ import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.RoutingService;
+import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
@@ -20,7 +22,8 @@ import it.unibo.alchemist.utils.MapUtils;
 /**
  * @param <T> concentration type
  */
-public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
+public class MoveOnMap<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
+    extends AbstractConfigurableMoveNode<T, GeoPosition> {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,7 +39,7 @@ public class MoveOnMap<T> extends AbstractConfigurableMoveNode<T, GeoPosition> {
      *            {@link TargetSelectionStrategy}
      */
     public MoveOnMap(
-        final MapEnvironment<T> environment,
+        final MapEnvironment<T, O, S> environment,
         final Node<T> node,
         final RoutingStrategy<GeoPosition> routingStrategy,
         final SpeedSelectionStrategy<GeoPosition> speedSelectionStrategy,

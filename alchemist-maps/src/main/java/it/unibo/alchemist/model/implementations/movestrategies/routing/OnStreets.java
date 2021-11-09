@@ -10,35 +10,36 @@ package it.unibo.alchemist.model.implementations.movestrategies.routing;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Route;
-import it.unibo.alchemist.model.interfaces.Vehicle;
+import it.unibo.alchemist.model.interfaces.RoutingService;
+import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 
 /**
  * This strategy computes a route along streets allowed for a selected
- * {@link Vehicle} connecting the starting and ending point.
+ * {@link RoutingServiceOptions} connecting the starting and ending point.
  * 
  * @param <T> concentration type
  */
-public final class OnStreets<T> implements RoutingStrategy<GeoPosition> {
+public final class OnStreets<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>> implements RoutingStrategy<GeoPosition> {
 
     private static final long serialVersionUID = 9041363003794088201L;
-    private final MapEnvironment<T> env;
-    private final Vehicle vehicle;
+    private final MapEnvironment<T, O, S> env;
+    private final O options;
 
     /**
      * @param environment
      *            the environment
-     * @param v
-     *            the {@link Vehicle}
+     * @param options
+     *            the {@link RoutingServiceOptions}
      */
-    public OnStreets(final MapEnvironment<T> environment, final Vehicle v) {
+    public OnStreets(final MapEnvironment<T, O, S> environment, final O options) {
         env = environment;
-        vehicle = v;
+        this.options = options;
     }
 
     @Override
     public Route<GeoPosition> computeRoute(final GeoPosition currentPos, final GeoPosition finalPos) {
-        return env.computeRoute(currentPos, finalPos, vehicle);
+        return env.computeRoute(currentPos, finalPos, options);
     }
 
 }

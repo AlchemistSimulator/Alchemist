@@ -20,6 +20,7 @@ dependencies {
         implementation(io)
         implementation(lang3)
     }
+    implementation(libs.appdirs)
     implementation(libs.caffeine)
     implementation(libs.gson)
     implementation(libs.guava)

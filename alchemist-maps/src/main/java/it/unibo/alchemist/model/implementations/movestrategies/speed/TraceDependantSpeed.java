@@ -14,6 +14,8 @@ import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.RoutingService;
+import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
@@ -25,11 +27,11 @@ import java.util.Objects;
  *
  * @param <T> concentration type
  */
-public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS implements SpeedSelectionStrategy<GeoPosition> {
+public abstract class TraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>> extends AbstractStrategyWithGPS implements SpeedSelectionStrategy<GeoPosition> {
 
     private static final long serialVersionUID = 8021140539083062866L;
     private final Reaction<T> reaction;
-    private final MapEnvironment<T> environment;
+    private final MapEnvironment<T, O, S> environment;
     private final Node<T> node;
 
     /**
@@ -41,7 +43,7 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
      *            the reaction
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is made by purpose")
-    public TraceDependantSpeed(final MapEnvironment<T> environment, final Node<T> node, final Reaction<T> reaction) {
+    public TraceDependantSpeed(final MapEnvironment<T, O, S> environment, final Node<T> node, final Reaction<T> reaction) {
         this.environment = Objects.requireNonNull(environment);
         this.node = Objects.requireNonNull(node);
         this.reaction = Objects.requireNonNull(reaction);
@@ -72,7 +74,7 @@ public abstract class TraceDependantSpeed<T> extends AbstractStrategyWithGPS imp
      *         position
      */
     protected abstract double computeDistance(
-            MapEnvironment<T> environment,
+            MapEnvironment<T, O, S> environment,
             Node<T> currentNode,
             GeoPosition targetPosition
     );

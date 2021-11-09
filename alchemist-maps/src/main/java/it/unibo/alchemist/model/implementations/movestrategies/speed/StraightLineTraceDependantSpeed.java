@@ -14,13 +14,15 @@ import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.RoutingService;
+import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 
 /**
  * This {@link TraceDependantSpeed} uses the distance between coordinates for estimating the distance.
  * 
  * @param <T> concentration type
  */
-public final class StraightLineTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
+public final class StraightLineTraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>> extends TraceDependantSpeed<T, O, S> {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +35,7 @@ public final class StraightLineTraceDependantSpeed<T> extends TraceDependantSpee
      *            the reaction
      */
     public StraightLineTraceDependantSpeed(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, O, S> environment,
             final Node<T> node,
             final Reaction<T> reaction
     ) {
@@ -42,7 +44,7 @@ public final class StraightLineTraceDependantSpeed<T> extends TraceDependantSpee
 
     @Override
     protected double computeDistance(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, O, S> environment,
             final Node<T> currentNode,
             final GeoPosition targetPosition
     ) {

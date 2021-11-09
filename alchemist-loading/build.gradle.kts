@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.apacheCommons
 import Libs.arrowKt
 import Libs.graphStream
 import Libs.incarnation
@@ -17,12 +16,12 @@ dependencies {
     api(alchemist("interfaces"))
 
     implementation(alchemist("euclidean-geometry"))
+    implementation(libs.apache.commons.lang3)
+    implementation(libs.gson)
+    implementation(libs.guava)
     implementation(arrowKt("core"))
-    implementation(apacheCommons("lang3"))
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
-    implementation(Libs.guava)
-    implementation(Libs.gson)
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
     implementation(Libs.dsiutil)
@@ -35,8 +34,7 @@ dependencies {
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
-    testImplementation(Libs.caffeine)
-    testImplementation(Libs.gson)
+    testImplementation(libs.caffeine)
     testRuntimeOnly(scalaModule("compiler"))
 
     testRuntimeOnly(incarnation("sapere"))

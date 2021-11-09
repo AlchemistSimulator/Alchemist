@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Reaction
 class NoOtherReactionCanExecute<T>(
     node: Node<T>,
     private val myReaction: Reaction<T>
-) : AbstractCondition<T>(node) {
+) : AbstractNonPropensityContributingCondition<T>(node) {
 
     init {
         require(
@@ -38,8 +38,6 @@ class NoOtherReactionCanExecute<T>(
     override fun cloneCondition(node: Node<T>, reaction: Reaction<T>) = NoOtherReactionCanExecute(node, myReaction)
 
     override fun getContext() = Context.LOCAL
-
-    override fun getPropensityContribution() = if (isValid) 1.0 else 0.0
 
     override fun isValid() =
         node.reactions

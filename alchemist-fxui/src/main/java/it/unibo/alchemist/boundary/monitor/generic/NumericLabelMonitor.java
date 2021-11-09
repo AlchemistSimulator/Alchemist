@@ -17,7 +17,7 @@ import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -44,7 +44,7 @@ public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
      *
      * @param init the initial {@link N} class value
      */
-    public NumericLabelMonitor(final @NotNull N init) {
+    public NumericLabelMonitor(final @Nonnull N init) {
         this(init, null);
     }
 
@@ -54,7 +54,7 @@ public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
      * @param init the initial {@link N} class value
      * @param name the name tag
      */
-    public NumericLabelMonitor(final @NotNull N init, final @Nullable String name) {
+    public NumericLabelMonitor(final @Nonnull N init, final @Nullable String name) {
         this.init = Objects.requireNonNull(init);
         setName(name);
         setTextFill(Color.WHITE);

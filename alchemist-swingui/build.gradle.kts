@@ -21,11 +21,11 @@ dependencies {
     implementation(alchemist("maps"))
     implementation(alchemist("smartcam"))
     implementation(alchemist("cognitive-agents"))
-    implementation(Libs.miglayout_swing)
+    implementation(libs.gson.extras)
+    implementation(libs.miglayout.swing)
     implementation(Libs.mapsforge_map_awt) {
         exclude(group = "com.github.blackears", module = "svgSalamander")
     }
-    implementation(Libs.gson_extras)
     implementation(Libs.svgsalamander)
     // TODO: deprecated, must be removed
     implementation(Libs.javalib_java7) {

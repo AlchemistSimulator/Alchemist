@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.danilopianini.util.Hashes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -90,9 +90,9 @@ public final class GPSPointImpl implements GPSPoint {
         return repr.plus(other);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public GeoPosition plus(@NotNull final double[] other) {
+    public GeoPosition plus(@Nonnull final double[] other) {
         return repr.plus(other);
     }
 
@@ -101,9 +101,9 @@ public final class GPSPointImpl implements GPSPoint {
         return repr.minus(other);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public GeoPosition minus(@NotNull final double[] other) {
+    public GeoPosition minus(@Nonnull final double[] other) {
         return repr.minus(other);
     }
 

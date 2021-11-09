@@ -31,7 +31,7 @@ class TestExportersCreation<T, P : Position<P>> : StringSpec({
             it shouldNotBe null
         }
         exporters.forEach {
-            it.dataExtractor.size shouldBeGreaterThan 0
+            it.dataExtractors.size shouldBeGreaterThan 0
         }
     }
 })

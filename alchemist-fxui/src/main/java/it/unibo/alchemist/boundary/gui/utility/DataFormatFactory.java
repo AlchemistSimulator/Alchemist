@@ -14,7 +14,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import javafx.scene.input.DataFormat;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Simple factory that returns the {@link DataFormat} for the specified class.
@@ -35,7 +36,7 @@ public final class DataFormatFactory {
     private static final LoadingCache<Class<?>, DataFormat> DATA_FORMATS = CacheBuilder.newBuilder()
             .build(new CacheLoader<Class<?>, DataFormat>() {
                 @Override
-                public DataFormat load(final @NotNull Class<?> key) {
+                public DataFormat load(final @Nonnull Class<?> key) {
                     return new DataFormat(key.getName());
                 }
             });

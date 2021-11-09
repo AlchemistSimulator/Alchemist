@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.implementations.positions;
 
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * N-dimensional Euclidean position.
@@ -31,7 +31,7 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
      * @param coordinates
      *            the array of coordinates
      */
-    protected AbstractEuclideanPosition(final boolean copy, @NotNull final double... coordinates) { // NOPMD
+    protected AbstractEuclideanPosition(final boolean copy, @Nonnull final double... coordinates) { // NOPMD
         // array stored directly by purpose
         super(copy, coordinates);
     }

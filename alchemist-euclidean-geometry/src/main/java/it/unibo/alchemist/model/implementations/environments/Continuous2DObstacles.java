@@ -18,7 +18,8 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -42,12 +43,12 @@ public class Continuous2DObstacles<T>
     }
 
     @Override
-    public final void addObstacle(@NotNull final RectObstacle2D<Euclidean2DPosition> o) {
+    public final void addObstacle(@Nonnull final RectObstacle2D<Euclidean2DPosition> o) {
         rtree = rtree.add(o, toGeometry(o));
         includeObject(o.getMinX(), o.getMaxX(), o.getMinY(), o.getMaxY());
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public final List<RectObstacle2D<Euclidean2DPosition>> getObstacles() {
         return rtree.entries().map(Entry::value).toList().toBlocking().single();
@@ -55,13 +56,13 @@ public class Continuous2DObstacles<T>
 
     @Override
     public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(
-            @NotNull final Euclidean2DPosition center,
+            @Nonnull final Euclidean2DPosition center,
             final double range
     ) {
         return getObstaclesInRange(center.getX(), center.getY(), range);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(
             final double centerx,
@@ -102,11 +103,11 @@ public class Continuous2DObstacles<T>
         return rtree.search(Geometries.point(p.getX(), p.getY())).isEmpty().toBlocking().single();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public final Euclidean2DPosition next(
-            @NotNull final Euclidean2DPosition current,
-            @NotNull final Euclidean2DPosition desired
+            @Nonnull final Euclidean2DPosition current,
+            @Nonnull final Euclidean2DPosition desired
     ) {
         return next(current.getX(), current.getY(), desired.getX(), desired.getY());
     }
@@ -173,7 +174,7 @@ public class Continuous2DObstacles<T>
     }
 
     @Override
-    public final boolean removeObstacle(@NotNull final RectObstacle2D<Euclidean2DPosition> o) {
+    public final boolean removeObstacle(@Nonnull final RectObstacle2D<Euclidean2DPosition> o) {
         final int initialSize = rtree.size();
         rtree = rtree.delete(o, toGeometry(o));
         return rtree.size() == initialSize - 1;

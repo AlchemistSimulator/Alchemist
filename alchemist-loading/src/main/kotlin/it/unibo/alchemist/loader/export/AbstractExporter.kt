@@ -24,16 +24,18 @@ abstract class AbstractExporter<T, P : Position<P>> (
     private val samplingInterval: Double
 ) : GenericExporter<T, P> {
 
-    override var dataExtractor: List<Extractor> = ArrayList()
+    override var dataExtractors: List<Extractor> = emptyList()
 
     /**
-     * The 0th should be sampled.
+     * A value used to check if it's time to export data.
+     * Starts with -1 because the 0th should be sampled.
      */
-    var count = -1L
+    private var count = -1L
+
     /**
      * A description of the [Variable]s of the current simulation and their values.
      */
-    lateinit var variablesDescriptor: String
+    var variablesDescriptor: String = ""
 
     companion object {
         /**
@@ -42,14 +44,19 @@ abstract class AbstractExporter<T, P : Position<P>> (
         const val DEFAULT_INTERVAL: Double = 1.0
     }
 
-    override fun bindData(dataExtractor: List<Extractor>) {
-        this.dataExtractor = dataExtractor
+    override fun bindData(dataExtractors: List<Extractor>) {
+        this.dataExtractors = dataExtractors
     }
 
     override fun bindVariables(variables: Map<String, Variable<*>>) {
         variablesDescriptor = variables.keys.stream().collect(Collectors.joining("-"))
     }
 
+    /**
+     *  Every step of the simulation check if is time to export data depending on the sampling interval.
+     *  Converts the division of the current time and the interval to Long in order to export data only
+     *  when the difference between steps is as big as the sampling interval.
+     */
     override fun processData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val curSample: Long = (time.toDouble() / samplingInterval).toLong()
         if (curSample > count) {

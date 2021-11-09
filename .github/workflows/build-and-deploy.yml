@@ -14,7 +14,7 @@ on:
 
 jobs:
   build-and-check:
-    uses: DanySK/workflows/.github/workflows/build-and-deploy-gradle-project.yml@0.1.0-dev42
+    uses: DanySK/workflows/.github/workflows/build-and-deploy-gradle-project.yml@0.1.0-dev72
     with:
       build-command: |
         ./gradlew assemble shadowJar --parallel
@@ -22,6 +22,7 @@ jobs:
       deploy-command: |
         ./gradlew publishKotlinMavenPublicationToCentralS01Repository
         ./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
+        ./gradlew clean
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
@@ -43,7 +44,7 @@ jobs:
           SHOULD_DEPLOY=${{ contains(github.repository, 'AlchemistSimulator/Alchemist') && (contains(github.event_name, 'push') || contains(github.event_name, 'workflow_dispatch')) }}
           echo "::set-output name=deploy::$SHOULD_DEPLOY"
       - name: Deploy website
-        if: steps.should-deploy.outputs.deploy
+        if: contains(steps.should-deploy.outputs.deploy, 'true')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           githubToken: ${{ secrets.AUTOMERGE_TOKEN }}
@@ -52,11 +53,11 @@ jobs:
           $COMMAND || sleep 10 && $COMMAND || sleep 10 && $COMMAND
       - name: Get branch name
         id: branch-name
-        if: steps.should-deploy.outputs.deploy
+        if: contains(steps.should-deploy.outputs.deploy, 'true')
         uses: tj-actions/branch-names@v5
       - name: Prepare the surge.sh deployment
         id: prepare-surge
-        if: steps.should-deploy.outputs.deploy
+        if: contains(steps.should-deploy.outputs.deploy, 'true')
         run: |
           ./gradlew dokkaJavadocCollector --parallel
           if [[ ${{ !(steps.branch-name.is_tag || steps.branch-name.is_default) }} ]]; then
@@ -64,8 +65,8 @@ jobs:
             STABILITY_MARKER='unstable-'
           fi
           echo "::set-output name=domain::alchemist-${STABILITY_MARKER}doc.surge.sh"
-      - name: Deploy to foo-bar.surge.sh
-        if: steps.should-deploy.outputs.deploy
+      - name: Deploy to surge.sh
+        if: contains(steps.should-deploy.outputs.deploy, 'true')
         uses: dswistowski/surge-sh-action@v1
         with:
           domain: '${{ steps.prepare-surge.outputs.domain }}'

@@ -37,7 +37,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
@@ -77,7 +77,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(new CacheLoader<>() {
                 @Override
-                public SynchronizedVM load(@NotNull final CacheKey key) {
+                public SynchronizedVM load(@Nonnull final CacheKey key) {
                     return new SynchronizedVM(key);
                 }
             });
@@ -494,13 +494,13 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
-        @NotNull
+        @Nonnull
         public Iterator<Reaction<Object>> iterator() {
             return notImplemented();
         }
 
         @Override
-        public int compareTo(@NotNull final Node<Object> o) {
+        public int compareTo(@Nonnull final Node<Object> o) {
             return notImplemented();
         }
 
@@ -536,7 +536,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         @Override
         public List<Reaction<Object>> getReactions() {
-            return null;
+            return Collections.emptyList();
         }
 
         @Override

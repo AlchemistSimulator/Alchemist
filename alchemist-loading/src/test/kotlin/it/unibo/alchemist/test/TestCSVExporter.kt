@@ -9,6 +9,7 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.file.shouldExist
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.core.implementations.Engine
@@ -33,9 +34,14 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         simulation.play()
         simulation.run()
-        val exporter: CSVExporter<T, P> = initialized.exporters[0] as CSVExporter<T, P>
-        val outputFile = File(exporter.outputFile)
-        assertNotNull(outputFile)
-        outputFile.delete()
+        val exporter = initialized.exporters.firstOrNull {
+            it is CSVExporter
+        }
+        require(exporter is CSVExporter) {
+            exporter as CSVExporter
+            val outputFile = File(exporter.exportDestination)
+            outputFile.shouldExist()
+            outputFile.delete()
+        }
     }
 })

@@ -9,19 +9,13 @@
 
 package it.unibo.alchemist.model.implementations.conditions
 
-import it.unibo.alchemist.model.interfaces.Context
-import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 
 /**
- * The condition is valid if the node contains the molecule.
+ * This condition does not influence the reaction propensity,
+ * it contributes respectively with 1.0 in case it can execute,
+ * or with 0.0 in case it cannot.
  */
-class ContainsMolecule<T>(
-    node: Node<T>,
-    private val molecule: Molecule
-) : AbstractNonPropensityContributingCondition<T>(node) {
-
-    override fun getContext() = Context.LOCAL
-
-    override fun isValid() = node.contains(molecule)
+abstract class AbstractNonPropensityContributingCondition<T>(node: Node<T>) : AbstractCondition<T>(node) {
+    final override fun getPropensityContribution(): Double = if (isValid) 1.0 else 0.0
 }

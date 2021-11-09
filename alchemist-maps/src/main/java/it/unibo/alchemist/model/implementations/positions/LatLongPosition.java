@@ -13,7 +13,7 @@ import com.javadocmd.simplelatlng.util.LengthUnit;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import org.danilopianini.util.Hashes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.function.BinaryOperator;
@@ -100,7 +100,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public GeoPosition plus(@NotNull final GeoPosition other) {
+    public GeoPosition plus(@Nonnull final GeoPosition other) {
         return ebeOperation(Double::sum, other);
     }
 
@@ -181,7 +181,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double distanceTo(@NotNull final GeoPosition otherPosition) {
+    public double distanceTo(@Nonnull final GeoPosition otherPosition) {
         if (otherPosition instanceof LatLongPosition) {
             return distance(latlng, ((LatLongPosition) otherPosition).latlng, df);
         }
@@ -223,7 +223,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public GeoPosition minus(@NotNull final GeoPosition other) {
+    public GeoPosition minus(@Nonnull final GeoPosition other) {
         return ebeOperation((self, o) -> self - o, other);
     }
 
@@ -232,15 +232,15 @@ public final class LatLongPosition implements GeoPosition {
         return latlng.toString();
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public GeoPosition plus(@NotNull final double[] other) {
+    public GeoPosition plus(@Nonnull final double[] other) {
         return new LatLongPosition(getLatitude() + other[0], getLongitude() + other[1]);
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    public GeoPosition minus(@NotNull final double[] other) {
+    public GeoPosition minus(@Nonnull final double[] other) {
         return new LatLongPosition(getLatitude() - other[0], getLongitude() - other[1]);
     }
 

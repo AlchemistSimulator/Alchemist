@@ -9,9 +9,9 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
-import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.loader.export.CSVExporter
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -24,7 +24,13 @@ class TestExportInterval<T, P : Position<P>> : StringSpec({
         val loader = LoadAlchemist.from(file)
         assertNotNull(loader)
         val initialized: InitializedEnvironment<T, P> = loader.getDefault()
-        val exporter: CSVExporter<T, P> = initialized.exporters[0] as CSVExporter<T, P>
-        exporter.interval shouldNotBe 1
+        val exporter = initialized.exporters.firstOrNull {
+            it is CSVExporter
+        }
+        require(exporter is CSVExporter) {
+            exporter as CSVExporter
+            exporter.interval shouldBe 3.0
+            exporter.interval::class shouldBe Double::class
+        }
     }
 })

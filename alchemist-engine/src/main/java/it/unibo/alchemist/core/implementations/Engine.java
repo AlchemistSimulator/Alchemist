@@ -305,7 +305,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         schedule(() -> doOnStatus(() -> {
             if (next.isReachableFrom(status)) {
                 status = next;
-                statusLocks.get(next).releaseAll();
+                lockForStatus(next).releaseAll();
             }
         }));
     }
@@ -485,9 +485,20 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
+    private SynchBox lockForStatus(final Status status) {
+        final var statusLock = statusLocks.get(status);
+        if (statusLock == null) {
+            throw new IllegalStateException(
+                    "Inconsistent state, the Alchemist engine tried to synchronize on a non-existing lock"
+                            + "searching for status: " + status + ", available locks: " + statusLocks
+            );
+        }
+        return statusLock;
+    }
+
     @Override
     public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
-        return statusLocks.get(next).waitFor(next, timeout, tu);
+        return lockForStatus(next).waitFor(next, timeout, tu);
     }
 
     // CHECKSTYLE: FinalClassCheck OFF
@@ -665,9 +676,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private final class SynchBox {
+
         private final AtomicInteger queueLength = new AtomicInteger();
         private final Condition statusReached = statusLock.newCondition();
         private final Condition allReleased = statusLock.newCondition();
+
         public Status waitFor(final Status next, final long timeout, final TimeUnit tu) {
             return doOnStatus(() -> {
                 boolean notTimedOut = true;
@@ -686,6 +699,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 return status;
             });
         }
+
         public void releaseAll() {
             doOnStatus(() -> {
                 while (queueLength.get() != 0) {

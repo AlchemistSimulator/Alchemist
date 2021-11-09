@@ -54,8 +54,8 @@ public interface IsolinesFactory {
      * Enum containing all the available isolines finding algorithms.
      */
     enum IsolineFinders {
-        /*
-         * For each class extending IsolinesFinder there should be an element in this enum
+        /**
+         * For each class extending IsolinesFinder there should be an element in this enum.
          */
         CONREC
     }

@@ -20,21 +20,25 @@ import org.bson.Document
  * @param uri the connection URI of the database instance.
  * @param dbname the name the database to export data to.
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
+ * @param appendTime if true it will always generate a new Mongo document, false to overwrite.
+
  */
 
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
-    val uri: String,
+    private val uri: String,
+    val interval: Double = DEFAULT_INTERVAL,
     private val dbname: String = DEFAULT_DATABASE,
-    private val appendTime: Boolean = false,
-    val interval: Double = DEFAULT_INTERVAL
+    private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 
     companion object {
         /**
-         *  The default name used if no database name parameter is specified.
+         *  The default name used if no database name is specified.
          */
-        const val DEFAULT_DATABASE = "test"
+        private const val DEFAULT_DATABASE = "test"
     }
+
+    override val exportDestination: String = uri
 
     private val mongoService: MongoService = MongoService()
 
@@ -56,7 +60,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
 
     private fun convertToDocument(env: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long): Document {
         val document = Document()
-        dataExtractor.stream()
+        dataExtractors.stream()
             .forEach {
                 it.extractData(env, reaction, time, step).forEach {
                     value ->

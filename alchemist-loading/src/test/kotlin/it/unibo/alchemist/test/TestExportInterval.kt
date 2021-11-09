@@ -9,6 +9,7 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import io.kotest.matchers.shouldNotBe
@@ -27,8 +28,10 @@ class TestExportInterval<T, P : Position<P>> : StringSpec({
         val exporter = initialized.exporters.firstOrNull {
             it is CSVExporter
         }
-        if (exporter is CSVExporter) {
+        require (exporter is CSVExporter) {
+            exporter as CSVExporter
             exporter.interval shouldNotBe 1.0
+            exporter.interval::class shouldBe Double::class
         }
     }
 })

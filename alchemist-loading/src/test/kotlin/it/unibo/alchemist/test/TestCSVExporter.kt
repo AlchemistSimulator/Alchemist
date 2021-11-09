@@ -9,6 +9,7 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.file.shouldExist
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.core.implementations.Engine
@@ -16,11 +17,8 @@ import it.unibo.alchemist.loader.export.CSVExporter
 import it.unibo.alchemist.loader.export.GlobalExporter
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
-import java.nio.file.Files
-import kotlin.io.path.Path
 
 class TestCSVExporter<T, P : Position<P>> : StringSpec({
     "test exporting data on CSV file" {
@@ -36,9 +34,14 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         simulation.play()
         simulation.run()
-        val exporter: CSVExporter<T, P> = initialized.exporters[0] as CSVExporter<T, P>
-        val outputFile = File(exporter.outputFile)
-        assertTrue(Files.exists(Path(outputFile.absolutePath)))
-        outputFile.delete()
+        val exporter = initialized.exporters.firstOrNull {
+            it is CSVExporter
+        }
+        require(exporter is CSVExporter){
+            exporter as CSVExporter
+            val outputFile = File(exporter.outputFile)
+            outputFile.shouldExist()
+            outputFile.delete()
+        }
     }
 })

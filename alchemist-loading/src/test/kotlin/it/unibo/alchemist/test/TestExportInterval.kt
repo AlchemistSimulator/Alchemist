@@ -28,7 +28,7 @@ class TestExportInterval<T, P : Position<P>> : StringSpec({
         val exporter = initialized.exporters.firstOrNull {
             it is CSVExporter
         }
-        require (exporter is CSVExporter) {
+        require(exporter is CSVExporter) {
             exporter as CSVExporter
             exporter.interval shouldNotBe 1.0
             exporter.interval::class shouldBe Double::class

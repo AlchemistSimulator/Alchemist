@@ -37,7 +37,7 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         val exporter = initialized.exporters.firstOrNull {
             it is CSVExporter
         }
-        require(exporter is CSVExporter){
+        require(exporter is CSVExporter) {
             exporter as CSVExporter
             val outputFile = File(exporter.outputFile)
             outputFile.shouldExist()

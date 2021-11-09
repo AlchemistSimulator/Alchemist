@@ -26,8 +26,8 @@ import org.bson.Document
 
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val uri: String,
-    val interval: Double = DEFAULT_INTERVAL,
     private val dbname: String = DEFAULT_DATABASE,
+    val interval: Double = DEFAULT_INTERVAL,
     private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 

@@ -24,9 +24,9 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 abstract class AbstractEuclideanConfigurableMoveNode<T, P>(
     environment: Environment<T, P>,
     node: Node<T>,
-    routing: RoutingStrategy<P>,
-    target: TargetSelectionStrategy<P>,
-    speed: SpeedSelectionStrategy<P>
+    routing: RoutingStrategy<T, P>,
+    target: TargetSelectionStrategy<T, P>,
+    speed: SpeedSelectionStrategy<T, P>
 ) : AbstractConfigurableMoveNode<T, P>(environment, node, routing, target, speed)
     where P : Position<P>, P : Vector<P> {
 

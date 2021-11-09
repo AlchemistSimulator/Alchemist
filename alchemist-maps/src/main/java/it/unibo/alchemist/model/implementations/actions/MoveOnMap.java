@@ -20,7 +20,9 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 import it.unibo.alchemist.utils.MapUtils;
 
 /**
- * @param <T> concentration type
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
 public class MoveOnMap<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends AbstractConfigurableMoveNode<T, GeoPosition> {
@@ -41,27 +43,33 @@ public class MoveOnMap<T, O extends RoutingServiceOptions<O>, S extends RoutingS
     public MoveOnMap(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
-        final RoutingStrategy<GeoPosition> routingStrategy,
-        final SpeedSelectionStrategy<GeoPosition> speedSelectionStrategy,
-        final TargetSelectionStrategy<GeoPosition> targetSelectionStrategy
+        final RoutingStrategy<T, GeoPosition> routingStrategy,
+        final SpeedSelectionStrategy<T, GeoPosition> speedSelectionStrategy,
+        final TargetSelectionStrategy<T, GeoPosition> targetSelectionStrategy
     ) {
         super(environment, node, routingStrategy, targetSelectionStrategy, speedSelectionStrategy, true);
     }
 
     @Override
-    public final MapEnvironment<T> getEnvironment() {
-        return (MapEnvironment<T>) super.getEnvironment();
+    public final MapEnvironment<T, O, S> getEnvironment() {
+        return (MapEnvironment<T, O, S>) super.getEnvironment();
     }
 
     /**
      * Fails, can't be cloned.
      */
     @Override
-    public MoveOnMap<T> cloneAction(final Node<T> node, final Reaction<T> reaction) {
+    public MoveOnMap<T, O, S> cloneAction(final Node<T> node, final Reaction<T> reaction) {
         /*
          * Routing strategies can not be cloned at the moment.
          */
-        throw new UnsupportedOperationException("Routing strategies can not be cloned.");
+        return new MoveOnMap<>(
+            getEnvironment(),
+            node,
+            getRoutingStrategy().cloneIfNeeded(node, reaction),
+            getSpeedSelectionStrategy().cloneIfNeeded(node, reaction),
+            getTargetSelectionStrategy().cloneIfNeeded(node, reaction)
+        );
     }
 
     @Override

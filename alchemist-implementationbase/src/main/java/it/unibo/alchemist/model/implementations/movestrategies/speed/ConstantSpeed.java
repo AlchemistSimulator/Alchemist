@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
@@ -19,10 +20,11 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
  * rate, but if the {@link it.unibo.alchemist.model.interfaces.TimeDistribution} has a high variance, the movements
  * on the map will inherit this tract.
  *
+ * @param <T> Concentration type
  * @param <P> Position type
  * 
  */
-public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectionStrategy<P> {
+public final class ConstantSpeed<T, P extends Position<P>> implements SpeedSelectionStrategy<T, P> {
 
     private static final long serialVersionUID = 1746429998480123049L;
     private final double speed;
@@ -48,4 +50,8 @@ public final class ConstantSpeed<P extends Position<P>> implements SpeedSelectio
         return speed / reaction.getRate();
     }
 
+    @Override
+    public ConstantSpeed<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return new ConstantSpeed<>(reaction, speed);
+    }
 }

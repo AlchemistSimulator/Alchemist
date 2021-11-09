@@ -8,8 +8,9 @@
 package it.unibo.alchemist.model.interfaces;
 
 /**
- * @param <T>
- *            concentration type
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
 public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
         extends BenchmarkableEnvironment<T, GeoPosition> {
@@ -98,5 +99,7 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
      *         follow
      */
     Route<GeoPosition> computeRoute(GeoPosition from, GeoPosition to, O options);
+
+    S getRoutingService();
 
 }

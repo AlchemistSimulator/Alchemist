@@ -55,11 +55,23 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                         Files.copy(map.openStream(), mapFile.toPath())
                     }
                 }
+                graphHopper = runCatching { initNavigationSystem(mapFile, workingDirectory) }
+                    .recoverCatching { ex ->
+                        logger.warn("Could not initialize with $mapFile (version conflict?): erasing cache and retrying", ex)
+                        val corruptedContent = workingDirectory.listFiles()?.filterNot { it == mapFile } ?: emptyList()
+                        corruptedContent.forEach {
+                            require(it.deleteRecursively()) {
+                                "Could not delete $$it. Something nasty is going on with your file system"
+                            }
+                        }
+                        workingDirectory.mkdirs()
+                        initNavigationSystem(mapFile, workingDirectory)
+                    }
+                    .getOrThrow()
             }
         } finally {
             lockfileLock.release()
         }
-        graphHopper = initNavigationSystem(mapFile, workingDirectory)
     }
 
     override fun allowedPointClosestTo(position: GeoPosition, options: GraphHopperOptions): GeoPosition? {
@@ -102,7 +114,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         private fun defaultWorkingDirectory(map: InputStream): File {
             val code = map.nameFromHash()
             val appDirs = AppDirsFactory.getInstance()
-            val possibleLocations: List<(String, String, String) -> String> = listOf(
+            val possibleLocations: Sequence<(String, String, String) -> String> = sequenceOf(
                 appDirs::getUserCacheDir,
                 appDirs::getUserDataDir,
                 appDirs::getUserConfigDir,
@@ -110,10 +122,15 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                 { app, version, _ -> File(Paths.get("").toFile(), "$app-$version").apply { mkdirs() }.absolutePath },
             )
             return possibleLocations.map { File(it("alchemist", "map-$code$", "it.unibo")) }.firstOrNull { folder ->
-                (folder.exists() && folder.isDirectory && folder.canWrite()).also { writeable ->
-                    if (!writeable) logger.warn("$folder is not writeable.")
+                if (folder.exists()) {
+                    (folder.isDirectory && folder.canWrite())
+                        .also { if (!it) logger.warn("{} is not writeable", folder) }
+                } else {
+                    runCatching { folder.mkdirs() }
+                        .onFailure { logger.warn("Directory structure $folder could not be created", it) }
+                        .isSuccess
                 }
-            }?.apply { mkdirs() } ?: throw IllegalStateException("No writeable path was found.")
+            } ?: throw IllegalStateException("No writeable path was found.")
         }
 
         @Synchronized
@@ -127,9 +144,10 @@ class GraphHopperRoutingService @JvmOverloads constructor(
             .setInMemory()
             .setGraphHopperLocation(internalWorkdir.absolutePath)
             .setProfiles(GraphHopperOptions.allProfiles)
+            .setEncodingManager(GraphHopperOptions.encodingManager)
             .importOrLoad()
 
         private fun InputStream.nameFromHash(): String =
-            Base32().encodeAsString(Hashing.sha256().hashBytes(readAllBytes()).asBytes())
+            Base32().encodeAsString(Hashing.sha256().hashBytes(readAllBytes()).asBytes()).filter { it != '=' }
     }
 }

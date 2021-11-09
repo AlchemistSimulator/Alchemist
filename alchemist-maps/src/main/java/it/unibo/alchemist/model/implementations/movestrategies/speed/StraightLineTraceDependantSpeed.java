@@ -19,10 +19,17 @@ import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 
 /**
  * This {@link TraceDependantSpeed} uses the distance between coordinates for estimating the distance.
- * 
- * @param <T> concentration type
+ *
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
-public final class StraightLineTraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>> extends TraceDependantSpeed<T, O, S> {
+public final class StraightLineTraceDependantSpeed<
+        T,
+        O extends RoutingServiceOptions<O>,
+        S extends RoutingService<GeoPosition, O>
+    >
+    extends TraceDependantSpeed<T, O, S> {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,20 +42,24 @@ public final class StraightLineTraceDependantSpeed<T, O extends RoutingServiceOp
      *            the reaction
      */
     public StraightLineTraceDependantSpeed(
-            final MapEnvironment<T, O, S> environment,
-            final Node<T> node,
-            final Reaction<T> reaction
+        final MapEnvironment<T, O, S> environment,
+        final Node<T> node,
+        final Reaction<T> reaction
     ) {
         super(environment, node, reaction);
     }
 
     @Override
     protected double computeDistance(
-            final MapEnvironment<T, O, S> environment,
-            final Node<T> currentNode,
-            final GeoPosition targetPosition
+        final MapEnvironment<T, O, S> environment,
+        final Node<T> currentNode,
+        final GeoPosition targetPosition
     ) {
         return environment.getPosition(currentNode).distanceTo(targetPosition);
     }
 
+    @Override
+    public StraightLineTraceDependantSpeed<T, O, S> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return new StraightLineTraceDependantSpeed<>(getEnvironment(), destination, reaction);
+    }
 }

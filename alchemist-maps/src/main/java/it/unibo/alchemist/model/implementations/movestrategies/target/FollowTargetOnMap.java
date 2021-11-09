@@ -12,6 +12,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * This strategy reads the value of a "target" molecule and tries to interpret it as a coordinate.
@@ -23,19 +24,28 @@ public class FollowTargetOnMap<T> extends FollowTarget<T, GeoPosition> {
     private static final long serialVersionUID = 0L;
 
     /**
-     * @param env
+     * @param environment
      *            the environment
-     * @param n
+     * @param node
      *            the node
      * @param targetMolecule
      *            the target molecule
      */
-    public FollowTargetOnMap(final Environment<T, GeoPosition> env, final Node<T> n, final Molecule targetMolecule) {
-        super(env, n, targetMolecule);
+    public FollowTargetOnMap(
+        final Environment<T, GeoPosition> environment,
+        final Node<T> node,
+        final Molecule targetMolecule
+    ) {
+        super(environment, node, targetMolecule);
     }
 
     @Override
     protected GeoPosition createPosition(final double latitude, final double longitude) {
         return new LatLongPosition(latitude, longitude);
+    }
+
+    @Override
+    public FollowTargetOnMap<T> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return new FollowTargetOnMap<>(getEnvironment(), destination, getTargetMolecule());
     }
 }

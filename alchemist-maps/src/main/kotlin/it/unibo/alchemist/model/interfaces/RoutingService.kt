@@ -9,11 +9,13 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import java.io.Serializable
+
 /**
  * A service capable to generate routes into an environment.
  * Parametric on the [Position] type [P] and the supported [RoutingServiceOptions] [O].
  */
-interface RoutingService<P : Position<P>, O : RoutingServiceOptions<O>> {
+interface RoutingService<P : Position<P>, O : RoutingServiceOptions<O>> : Serializable {
 
     /**
      * The default set of options.

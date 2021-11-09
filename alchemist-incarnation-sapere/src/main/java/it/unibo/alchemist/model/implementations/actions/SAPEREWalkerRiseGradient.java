@@ -103,7 +103,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
         );
     }
 
-    private static final class NextTargetStrategy implements TargetSelectionStrategy<GeoPosition> {
+    private static final class NextTargetStrategy<T> implements TargetSelectionStrategy<T, GeoPosition> {
         /**
          * 
          */

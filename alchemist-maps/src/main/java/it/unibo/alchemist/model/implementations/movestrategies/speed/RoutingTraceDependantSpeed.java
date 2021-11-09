@@ -20,8 +20,10 @@ import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 /**
  * This {@link TraceDependantSpeed} strategy computes the remaining distance by
  * relying on maps data for the selected {@link RoutingServiceOptions}.
- * 
- * @param <T> concentration type
+ *
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
 public final class RoutingTraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends TraceDependantSpeed<T, O, S> {
@@ -58,4 +60,8 @@ public final class RoutingTraceDependantSpeed<T, O extends RoutingServiceOptions
         return environment.computeRoute(currentNode, targetPosition, options).length();
     }
 
+    @Override
+    public RoutingTraceDependantSpeed<T, O, S> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return new RoutingTraceDependantSpeed<>(getEnvironment(), destination, reaction, options);
+    }
 }

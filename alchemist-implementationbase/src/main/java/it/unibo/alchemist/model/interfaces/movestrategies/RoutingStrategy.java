@@ -9,16 +9,19 @@ package it.unibo.alchemist.model.interfaces.movestrategies;
 
 import java.io.Serializable;
 
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Route;
 
 /**
  * Strategy interface describing how the routing between two points happens.
  *
+ * @param <T> Concentration type
  * @param <P> position type
  */
 @FunctionalInterface
-public interface RoutingStrategy<P extends Position<P>> extends Serializable {
+public interface RoutingStrategy<T, P extends Position<P>> extends Serializable {
 
     /**
      * Computes a route between two positions.
@@ -28,5 +31,13 @@ public interface RoutingStrategy<P extends Position<P>> extends Serializable {
      * @return a {@link Route} connecting the two points
      */
     Route<P> computeRoute(P currentPos, P finalPos);
+
+    /**
+     * @return A copy of the strategy if the strategy is stateful, and this object otherwise.
+     * The default implementation assumes a stateless strategy.
+     */
+    default RoutingStrategy<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return this;
+    }
 
 }

@@ -51,7 +51,7 @@ public final class LsaNode extends AbstractNode<List<ILsaMolecule>> implements I
 
     @Override
     @Nullable
-    protected List<ILsaMolecule> createT() {
+    protected List<ILsaMolecule> createT() { // NOPMD: this must return null, not an empty collection.
         return null;
     }
 

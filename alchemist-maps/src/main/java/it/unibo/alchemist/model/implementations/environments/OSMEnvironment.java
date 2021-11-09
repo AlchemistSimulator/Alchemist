@@ -29,7 +29,6 @@ import java.io.File;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -294,6 +293,11 @@ public final class OSMEnvironment<T>
     }
 
     @Override
+    public GraphHopperRoutingService getRoutingService() {
+        return getNavigator();
+    }
+
+    @Override
     public double[] getSizeInDistanceUnits() {
         final double minlat = getMinLatitude();
         final double maxlat = getMaxLatitude();
@@ -343,8 +347,9 @@ public final class OSMEnvironment<T>
         if (navigator == null) {
             if (mapFile == null) {
                 throw new IllegalStateException(
-                    "Navigation system required, but no map file has been provided." +
-                        " Consider using BBBike at https://extract.bbbike.org/ to get a protocolbuffer extract of OpenStreetMap"
+                    "Navigation system required, but no map file has been provided."
+                        + " Consider using BBBike at https://extract.bbbike.org/"
+                        + "to get a protocolbuffer extract of OpenStreetMap"
                 );
             }
             final var map = Optional.of(new File(mapFile))
@@ -354,8 +359,8 @@ public final class OSMEnvironment<T>
                 .orElse(ResourceLoader.getResource(mapFile));
             if (map == null) {
                 throw new IllegalArgumentException(
-                    mapFile + " is not a valid file on the file system," +
-                        "nor it can be loaded from the classpath as a Resource"
+                    mapFile + " is not a valid file on the file system,"
+                        + "nor it can be loaded from the classpath as a Resource"
                 );
             }
             navigator = new GraphHopperRoutingService(map);

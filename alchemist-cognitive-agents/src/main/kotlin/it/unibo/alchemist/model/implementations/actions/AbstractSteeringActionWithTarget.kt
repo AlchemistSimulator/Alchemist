@@ -23,7 +23,7 @@ abstract class AbstractSteeringActionWithTarget<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Pedestrian<T, P, A>,
-    private val targetSelectionStrategy: TargetSelectionStrategy<P>
+    private val targetSelectionStrategy: TargetSelectionStrategy<T, P>
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     SteeringActionWithTarget<T, P>
     where P : Position<P>, P : Vector<P>,

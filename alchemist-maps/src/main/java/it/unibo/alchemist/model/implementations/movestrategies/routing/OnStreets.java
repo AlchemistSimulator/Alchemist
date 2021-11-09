@@ -17,13 +17,16 @@ import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
 /**
  * This strategy computes a route along streets allowed for a selected
  * {@link RoutingServiceOptions} connecting the starting and ending point.
- * 
- * @param <T> concentration type
+ *
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
-public final class OnStreets<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>> implements RoutingStrategy<GeoPosition> {
+public final class OnStreets<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
+    implements RoutingStrategy<T, GeoPosition> {
 
     private static final long serialVersionUID = 9041363003794088201L;
-    private final MapEnvironment<T, O, S> env;
+    private final MapEnvironment<T, O, S> environment;
     private final O options;
 
     /**
@@ -33,13 +36,13 @@ public final class OnStreets<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            the {@link RoutingServiceOptions}
      */
     public OnStreets(final MapEnvironment<T, O, S> environment, final O options) {
-        env = environment;
+        this.environment = environment;
         this.options = options;
     }
 
     @Override
     public Route<GeoPosition> computeRoute(final GeoPosition currentPos, final GeoPosition finalPos) {
-        return env.computeRoute(currentPos, finalPos, options);
+        return environment.computeRoute(currentPos, finalPos, options);
     }
 
 }

@@ -9,7 +9,9 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import java.io.Serializable
+
 /**
  * Tag interface, used to track the set of options available for a [RoutingService].
  */
-interface RoutingServiceOptions<out O : RoutingServiceOptions<O>>
+interface RoutingServiceOptions<out O : RoutingServiceOptions<O>> : Serializable

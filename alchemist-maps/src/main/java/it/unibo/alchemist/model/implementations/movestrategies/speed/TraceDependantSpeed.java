@@ -25,9 +25,13 @@ import java.util.Objects;
  * This strategy dynamically tries to move the node adjusting its speed to
  * synchronize the reaction rate and the traces data.
  *
- * @param <T> concentration type
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
-public abstract class TraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>> extends AbstractStrategyWithGPS implements SpeedSelectionStrategy<GeoPosition> {
+public abstract class TraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
+    extends AbstractStrategyWithGPS
+    implements SpeedSelectionStrategy<T, GeoPosition> {
 
     private static final long serialVersionUID = 8021140539083062866L;
     private final Reaction<T> reaction;
@@ -74,8 +78,16 @@ public abstract class TraceDependantSpeed<T, O extends RoutingServiceOptions<O>,
      *         position
      */
     protected abstract double computeDistance(
-            MapEnvironment<T, O, S> environment,
-            Node<T> currentNode,
-            GeoPosition targetPosition
+        MapEnvironment<T, O, S> environment,
+        Node<T> currentNode,
+        GeoPosition targetPosition
     );
+
+    /**
+     *
+     * @return the environment
+     */
+    protected MapEnvironment<T, O, S> getEnvironment() {
+        return environment;
+    }
 }

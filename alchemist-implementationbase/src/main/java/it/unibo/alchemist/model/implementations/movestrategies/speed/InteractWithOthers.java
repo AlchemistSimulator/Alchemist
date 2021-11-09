@@ -26,13 +26,13 @@ import java.util.Objects;
  * @param <P> position type
  * @param <T> concentration type
  */
-public final class InteractWithOthers<T, P extends Position<? extends P>> implements SpeedSelectionStrategy<P> {
+public final class InteractWithOthers<T, P extends Position<? extends P>> implements SpeedSelectionStrategy<T, P> {
 
     private static final long serialVersionUID = -1900168887685703120L;
     private static final double MINIMUM_DISTANCE_WALKED = 1;
     private final Environment<T, P> environment;
     private final Node<T> node;
-    private final Molecule interacting;
+    private final Molecule interactingMolecule;
     private final double radius, interaction, speed;
 
     /**
@@ -42,7 +42,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
      *            the node
      * @param reaction
      *            the reaction
-     * @param inter
+     * @param interactingMolecule
      *            the molecule that identifies an interacting node
      * @param speed
      *            the normal speed of the node
@@ -54,11 +54,18 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
      *            the number obtained
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
-    public InteractWithOthers(final Environment<T, P> environment, final Node<T> n, final Reaction<T> reaction,
-            final Molecule inter, final double speed, final double radius, final double interaction) {
+    public InteractWithOthers(
+        final Environment<T, P> environment,
+        final Node<T> n,
+        final Reaction<T> reaction,
+        final Molecule interactingMolecule,
+        final double speed,
+        final double radius,
+        final double interaction
+    ) {
         this.environment = Objects.requireNonNull(environment);
         node = Objects.requireNonNull(n);
-        interacting = Objects.requireNonNull(inter);
+        this.interactingMolecule = Objects.requireNonNull(interactingMolecule);
         if (radius < 0) {
             throw new IllegalArgumentException("The radius must be positive (provided: " + radius + ")");
         }
@@ -75,7 +82,7 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
             : Collections.emptyList();
         if (neighs.size() > 1 / interaction) {
             for (final Node<T> neigh : neighs) {
-                if (neigh.contains(interacting)) {
+                if (neigh.contains(interactingMolecule)) {
                     crowd += 1 / environment.getDistanceBetweenNodes(node, neigh);
                 }
             }
@@ -83,4 +90,8 @@ public final class InteractWithOthers<T, P extends Position<? extends P>> implem
         return Math.max(speed / (crowd * interaction + 1), MINIMUM_DISTANCE_WALKED);
     }
 
+    @Override
+    public SpeedSelectionStrategy<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return new InteractWithOthers<>(environment, destination, reaction, interactingMolecule, speed, radius, interaction);
+    }
 }

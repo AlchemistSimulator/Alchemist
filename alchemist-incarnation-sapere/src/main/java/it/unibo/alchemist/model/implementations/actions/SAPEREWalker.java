@@ -27,7 +27,9 @@ import java.util.Map;
 
 /**
  */
-public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> implements ILsaAction {
+public final class SAPEREWalker
+    extends MoveOnMap<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService>
+    implements ILsaAction {
 
     /**
      * The default molecule that identifies an interacting object.
@@ -50,11 +52,12 @@ public final class SAPEREWalker extends MoveOnMap<List<ILsaMolecule>, GraphHoppe
      *            the interaction range
      */
     public SAPEREWalker(
-            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
-            final ILsaNode node, final Reaction<List<ILsaMolecule>> reaction,
-            final double speed,
-            final double interaction,
-            final double range
+        final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
+        final ILsaNode node,
+        final Reaction<List<ILsaMolecule>> reaction,
+        final double speed,
+        final double interaction,
+        final double range
     ) {
         this(environment, node, reaction, DEFAULT_INTERACTING_TAG, speed, interaction, range);
     }

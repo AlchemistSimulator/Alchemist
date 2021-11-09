@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.nextDouble
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
 import kotlin.math.cos
 import kotlin.math.sin
@@ -32,7 +33,7 @@ class RandomTarget<T>(
     private val makePosition: (Double, Double) -> Euclidean2DPosition,
     private val directionRng: RandomGenerator,
     private val distanceDistribution: RealDistribution
-) : ChangeTargetOnCollision<Euclidean2DPosition>(getCurrentPosition) {
+) : ChangeTargetOnCollision<T, Euclidean2DPosition>(getCurrentPosition) {
 
     /**
      * Handy constructor for Alchemist where the object to move is a [node] in the [env].
@@ -54,4 +55,7 @@ class RandomTarget<T>(
             else -> desired
         }
     }
+
+    override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?): RandomTarget<T> =
+        RandomTarget(environment, getCurrentPosition, makePosition, directionRng, distanceDistribution)
 }

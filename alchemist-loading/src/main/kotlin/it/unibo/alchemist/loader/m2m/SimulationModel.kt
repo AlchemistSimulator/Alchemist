@@ -339,7 +339,7 @@ internal object SimulationModel {
     fun <T, P : Position<P>> visitSingleExporter(
         incarnation: Incarnation<*, *>,
         context: Context,
-        root: Any?
+        root: Any?,
     ): Result<GenericExporter<T, P>>? =
         when {
             root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {

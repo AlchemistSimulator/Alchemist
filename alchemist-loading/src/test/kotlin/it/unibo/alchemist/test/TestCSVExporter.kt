@@ -39,7 +39,7 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         }
         require(exporter is CSVExporter) {
             exporter as CSVExporter
-            val outputFile = File(exporter.outputFile)
+            val outputFile = File(exporter.exportDestination)
             outputFile.shouldExist()
             outputFile.delete()
         }

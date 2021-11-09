@@ -1,7 +1,8 @@
 ---
 export:
   - type: CSVExporter
-    parameters: ["test_base"]
+    parameters:
+      fileNameRoot: "test_base"
     data:
       - time
 

@@ -24,11 +24,7 @@ import com.graphhopper.util.Parameters.Algorithms.DIJKSTRA
 import com.graphhopper.util.Parameters.Algorithms.DIJKSTRA_BI
 import com.graphhopper.util.Parameters.Algorithms.DIJKSTRA_ONE_TO_MANY
 import com.graphhopper.util.Parameters.Algorithms.ROUND_TRIP
-import it.unibo.alchemist.ClassPathScanner
-import it.unibo.alchemist.loader.variables.Flag
 import it.unibo.alchemist.model.interfaces.RoutingServiceOptions
-import kotlin.reflect.KClass
-import kotlin.reflect.jvm.internal.impl.resolve.constants.KClassValue
 
 /**
  * Available configuration options for routing through GraphHopper.
@@ -104,6 +100,9 @@ data class GraphHopperOptions private constructor(
          */
         val defaultOptions: GraphHopperOptions
 
+        /**
+         * Collection of the available [EncodingManager]s in GraphHopper.
+         */
         val encodingManager: EncodingManager = EncodingManager.create(graphHopperVehicles.joinToString(","))
 
         init {
@@ -112,7 +111,7 @@ data class GraphHopperOptions private constructor(
             require(graphHopperAlgorithms.isNotEmpty()) { error("algorithm") }
             require(graphHopperVehicles.isNotEmpty()) { error("vehicle") }
             require(graphHopperWeightings.isNotEmpty()) { error("weighting") }
-            defaultOptions =  optionsFor()
+            defaultOptions = optionsFor()
         }
 
         /**

@@ -14,9 +14,10 @@ import com.graphhopper.GHRequest
 import com.graphhopper.GraphHopper
 import com.graphhopper.GraphHopperAPI
 import com.graphhopper.reader.osm.GraphHopperOSM
-import com.graphhopper.routing.util.EdgeFilter
+import com.graphhopper.routing.util.DefaultEdgeFilter
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute
+import it.unibo.alchemist.model.implementations.routes.PolygonalChain
 import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Route
 import it.unibo.alchemist.model.interfaces.RoutingService
@@ -42,8 +43,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
     override val defaultOptions: GraphHopperOptions = Companion.defaultOptions,
 ) : RoutingService<GeoPosition, GraphHopperOptions> {
 
-    private val graphHopper: GraphHopperAPI
-
+    private val graphHopper: GraphHopper
     init {
         val mapName = map.toExternalForm().split('/').last().takeWhile { it != '?' }
         val mapFile = File(workingDirectory, mapName)
@@ -57,7 +57,10 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                 }
                 graphHopper = runCatching { initNavigationSystem(mapFile, workingDirectory) }
                     .recoverCatching { ex ->
-                        logger.warn("Could not initialize with $mapFile (version conflict?): erasing cache and retrying", ex)
+                        logger.warn(
+                            "Could not initialize with $mapFile (version conflict?): erasing cache and retrying",
+                            ex
+                        )
                         val corruptedContent = workingDirectory.listFiles()?.filterNot { it == mapFile } ?: emptyList()
                         corruptedContent.forEach {
                             require(it.deleteRecursively()) {
@@ -67,6 +70,14 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                         workingDirectory.mkdirs()
                         initNavigationSystem(mapFile, workingDirectory)
                     }
+                    .map {
+                        require(it is GraphHopper) {
+                            "Alchemist accesses the internal API of GraphHopper, as the interface GraphHopperAPI" +
+                                " does not capture all the required features." +
+                                " Thus, the simulator cannot work with the current API provider ${it::class.simpleName}"
+                        }
+                        it
+                    }
                     .getOrThrow()
             }
         } finally {
@@ -75,26 +86,32 @@ class GraphHopperRoutingService @JvmOverloads constructor(
     }
 
     override fun allowedPointClosestTo(position: GeoPosition, options: GraphHopperOptions): GeoPosition? {
-        require(graphHopper is GraphHopper) {
-            "Unsupported function for GraphHopperAPI provider ${graphHopper::class.simpleName}." +
-                " GraphHopper was expected."
-        }
+        val encoder = graphHopper.encodingManager.getEncoder(options.profile.vehicle)
         return graphHopper.locationIndex
-            .findClosest(position.latitude, position.longitude, EdgeFilter.ALL_EDGES)
+            .findClosest(position.latitude, position.longitude, DefaultEdgeFilter.allEdges(encoder))
             .takeIf { it.isValid }
             ?.snappedPoint
             ?.let { LatLongPosition(it.lat, it.lon) }
     }
+
+    private fun GeoPosition.coerceToMap(options: GraphHopperOptions): GeoPosition = takeIf {
+        graphHopper.graphHopperStorage.bounds.contains(latitude, longitude)
+    } ?: allowedPointClosestTo(this, options) ?: this
 
     override fun route(
         from: GeoPosition,
         to: GeoPosition,
         options: GraphHopperOptions
     ): Route<GeoPosition> {
-        val request: GHRequest = GHRequest(from.getLatitude(), from.getLongitude(), to.getLatitude(), to.getLongitude())
+        if (from == to) {
+            return PolygonalChain(from)
+        }
+        val naviStart = from.coerceToMap(options)
+        val naviEnd = to.coerceToMap(options)
+        val request: GHRequest = GHRequest(naviStart.latitude, naviStart.longitude, naviEnd.latitude, naviEnd.longitude)
             .setAlgorithm(options.algorithm)
             .setProfile(options.profile.name)
-        return GraphHopperRoute(graphHopper.route(request))
+        return GraphHopperRoute(from, to, graphHopper.route(request))
     }
 
     override fun parseOptions(options: String): GraphHopperOptions {

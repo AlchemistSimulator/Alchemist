@@ -34,7 +34,7 @@ public interface TargetSelectionStrategy<T, P extends Position<? extends P>> ext
      * @return A copy of the strategy if the strategy is stateful, and this object otherwise.
      * The default implementation assumes a stateless strategy.
      */
-    default TargetSelectionStrategy<T, P> cloneIfNeeded(Node<T> destination, Reaction<T> reaction) {
+    default TargetSelectionStrategy<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
         return this;
     }
 }

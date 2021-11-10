@@ -63,7 +63,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
     private final List<Action<List<ILsaMolecule>>> fakeacts = new ArrayList<>(1);
     private final List<Condition<List<ILsaMolecule>>> fakeconds = new ArrayList<>(2);
     private TIntObjectMap<List<? extends ILsaMolecule>> gradCache = new TIntObjectHashMap<>();
-    private final MapEnvironment<List<ILsaMolecule>> mapenvironment;
+    private final MapEnvironment<List<ILsaMolecule>, ?, ?> mapenvironment;
     private P mypos;
 
     private TIntObjectMap<P> positionCache = new TIntObjectHashMap<>();
@@ -156,7 +156,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         final boolean usesRoutes = this.environment instanceof MapEnvironment
                 && (gradientTemplate.toString().contains(LsaMolecule.SYN_ROUTE)
                 || expression.contains(LsaMolecule.SYN_ROUTE));
-        mapenvironment = usesRoutes ? (MapEnvironment<List<ILsaMolecule>>) this.environment : null;
+        mapenvironment = usesRoutes ? (MapEnvironment<List<ILsaMolecule>, ?, ?>) this.environment : null;
     }
 
     /**

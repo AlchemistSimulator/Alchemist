@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
 
 /**
@@ -27,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * @param <T>
  *            Concentration type
  */
-public class FollowTarget<T, P extends Position<P>> implements TargetSelectionStrategy<P> {
+public class FollowTarget<T, P extends Position<P>> implements TargetSelectionStrategy<T, P> {
 
     private static final long serialVersionUID = -446053307821810437L;
     private final Environment<T, P> environment;
@@ -120,5 +121,24 @@ public class FollowTarget<T, P extends Position<P>> implements TargetSelectionSt
             }
         }
         return getCurrentPosition();
+    }
+
+    @Override
+    public FollowTarget<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return new FollowTarget<>(environment, destination, track);
+    }
+
+    /**
+     * @return the environment
+     */
+    protected Environment<T, P> getEnvironment() {
+        return environment;
+    }
+
+    /**
+     * @return the molecule holding the destination information
+     */
+    public Molecule getTargetMolecule() {
+        return track;
     }
 }

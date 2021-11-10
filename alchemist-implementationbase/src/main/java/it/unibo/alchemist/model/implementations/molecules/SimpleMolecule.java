@@ -61,7 +61,7 @@ public class SimpleMolecule implements Molecule {
     @Override
     public int hashCode() {
         if (hash32 == 0) {
-            final HashCode hashCode = Hashing.murmur3_32().hashString(n, StandardCharsets.UTF_16);
+            final HashCode hashCode = Hashing.murmur3_32_fixed().hashString(n, StandardCharsets.UTF_16);
             hash32 = hashCode.asInt();
         }
         return hash32;

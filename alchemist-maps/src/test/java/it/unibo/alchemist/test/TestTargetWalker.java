@@ -58,7 +58,7 @@ class TestTargetWalker {
      * Near Montefiore
      */
     private static final GeoPosition ENDPOSITION = new LatLongPosition(ENDLAT, ENDLON);
-    private MapEnvironment<Object> env;
+    private MapEnvironment<Object, ?, ?> env;
     private Node<Object> node;
     private Reaction<Object> reaction;
 

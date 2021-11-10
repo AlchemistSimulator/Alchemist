@@ -12,19 +12,29 @@ package it.unibo.alchemist.model.interfaces.movestrategies;
 
 import java.io.Serializable;
 
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * This interface models a strategy for selecting positions where to move.
  *
+ * @param <T> Concentration type
  * @param <P> Position type
  */
 @FunctionalInterface
-public interface TargetSelectionStrategy<P extends Position<? extends P>> extends Serializable {
+public interface TargetSelectionStrategy<T, P extends Position<? extends P>> extends Serializable {
 
     /**
      * @return the next target where the {@link it.unibo.alchemist.model.interfaces.Node} is directed
      */
     P getTarget();
 
+    /**
+     * @return A copy of the strategy if the strategy is stateful, and this object otherwise.
+     * The default implementation assumes a stateless strategy.
+     */
+    default TargetSelectionStrategy<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return this;
+    }
 }

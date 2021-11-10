@@ -28,7 +28,7 @@ import java.util.List;
 public class LsaRandomNeighborAction extends LsaStandardAction {
     private static final long serialVersionUID = -7128058274012426458L;
     private final Environment<List<ILsaMolecule>, ?> env;
-    private final MapEnvironment<List<ILsaMolecule>> menv;
+    private final MapEnvironment<List<ILsaMolecule>, ?, ?> menv;
     private final boolean initO, initD, initNeigh, initRoute, mapEnv;
     @SuppressFBWarnings(
             value = "SE_BAD_FIELD",
@@ -67,7 +67,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         initRoute = molString.contains(LsaMolecule.SYN_ROUTE);
         env = environment;
         mapEnv = environment instanceof MapEnvironment;
-        menv = mapEnv ? (MapEnvironment<List<ILsaMolecule>>) env : null;
+        menv = mapEnv ? (MapEnvironment<List<ILsaMolecule>, ?, ?>) env : null;
         randomEngine = randomGenerator;
     }
 

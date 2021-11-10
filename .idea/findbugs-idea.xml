@@ -4,7 +4,7 @@
     <analysisEffort>max</analysisEffort>
     <minPriority>Low</minPriority>
     <excludeFilterFiles>
-      <filter file="$PROJECT_DIR$/config/spotbugs/excludes.xml" enabled="true" />
+      <filter file="$PROJECT_DIR$/build/javaqa/spotbugs-excludes.xml" enabled="true" />
     </excludeFilterFiles>
   </component>
 </project>

@@ -28,9 +28,9 @@ import java.util.Objects;
 public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> extends AbstractMoveNode<T, P> {
 
     private static final long serialVersionUID = 1L;
-    private final TargetSelectionStrategy<P> target;
-    private final SpeedSelectionStrategy<P> speed;
-    private final RoutingStrategy<P> routing;
+    private final TargetSelectionStrategy<T, P> targetSelectionStrategy;
+    private final SpeedSelectionStrategy<T, P> speedSelectionStrategy;
+    private final RoutingStrategy<T, P> routingStrategy;
     private Route<P> route;
     private P end;
     private int curStep;
@@ -42,19 +42,20 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
      *            The environment where to move
      * @param node
      *            The node to which this action belongs
-     * @param routing
+     * @param routingStrategy
      *            the routing strategy
      * @param target
      *            the strategy used to compute the next target
-     * @param speed
+     * @param speedSelectionStrategy
      *            the speed selection strategy
      */
     protected AbstractConfigurableMoveNode(final Environment<T, P> environment,
-            final Node<T> node,
-            final RoutingStrategy<P> routing,
-            final TargetSelectionStrategy<P> target,
-            final SpeedSelectionStrategy<P> speed) {
-        this(environment, node, routing, target, speed, false);
+        final Node<T> node,
+        final RoutingStrategy<T, P> routingStrategy,
+        final TargetSelectionStrategy<T, P> target,
+        final SpeedSelectionStrategy<T, P> speedSelectionStrategy
+    ) {
+        this(environment, node, routingStrategy, target, speedSelectionStrategy, false);
     }
 
     /**
@@ -62,11 +63,11 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
      *            The environment where to move
      * @param node
      *            The node to which this action belongs
-     * @param routing
+     * @param routingStrategy
      *            the routing strategy
      * @param target
      *            the strategy used to compute the next target
-     * @param speed
+     * @param speedSelectionStrategy
      *            the speed selection strategy
      * @param isAbsolute
      *            if set to true, the environment expects the movement to be
@@ -76,36 +77,37 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
      *            the method for the same effect must return (1,2).
      */
     protected AbstractConfigurableMoveNode(final Environment<T, P> environment,
-            final Node<T> node,
-            final RoutingStrategy<P> routing,
-            final TargetSelectionStrategy<P> target,
-            final SpeedSelectionStrategy<P> speed,
-            final boolean isAbsolute) {
+        final Node<T> node,
+        final RoutingStrategy<T, P> routingStrategy,
+        final TargetSelectionStrategy<T, P> target,
+        final SpeedSelectionStrategy<T, P> speedSelectionStrategy,
+        final boolean isAbsolute
+    ) {
         super(environment, node, isAbsolute);
-        this.speed = Objects.requireNonNull(speed);
-        this.target = Objects.requireNonNull(target);
-        this.routing = Objects.requireNonNull(routing);
+        this.speedSelectionStrategy = Objects.requireNonNull(speedSelectionStrategy);
+        this.targetSelectionStrategy = Objects.requireNonNull(target);
+        this.routingStrategy = Objects.requireNonNull(routingStrategy);
     }
 
     @Override
     public final P getNextPosition() {
         final P previousEnd = end;
-        end = target.getTarget();
+        end = targetSelectionStrategy.getTarget();
         if (!end.equals(previousEnd)) {
             resetRoute();
         }
-        double maxWalk = speed.getNodeMovementLength(end);
+        double maxWalk = speedSelectionStrategy.getNodeMovementLength(end);
         final Environment<T, P> env = getEnvironment();
         final Node<T> node = getNode();
         P curPos = env.getPosition(node);
         if (curPos.distanceTo(end) <= maxWalk) {
             final P destination = end;
-            end = target.getTarget();
+            end = targetSelectionStrategy.getTarget();
             resetRoute();
             return isAbsolute() ? destination : destination.minus(curPos.getCoordinates());
         }
         if (route == null) {
-            route = routing.computeRoute(curPos, end);
+            route = routingStrategy.computeRoute(curPos, end);
         }
         if (route.size() < 1) {
             resetRoute();
@@ -171,5 +173,17 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
      */
     protected final Route<?> getCurrentRoute() {
         return route;
+    }
+
+    protected final RoutingStrategy<T, P> getRoutingStrategy() {
+        return routingStrategy;
+    }
+
+    protected final SpeedSelectionStrategy<T, P> getSpeedSelectionStrategy() {
+        return speedSelectionStrategy;
+    }
+
+    protected final TargetSelectionStrategy<T, P> getTargetSelectionStrategy() {
+        return targetSelectionStrategy;
     }
 }

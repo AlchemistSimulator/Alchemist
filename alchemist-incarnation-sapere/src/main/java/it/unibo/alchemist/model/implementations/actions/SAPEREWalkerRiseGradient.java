@@ -8,10 +8,10 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.List;
-
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
+import it.unibo.alchemist.model.implementations.routingservices.GraphHopperOptions;
+import it.unibo.alchemist.model.implementations.routingservices.GraphHopperRoutingService;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
@@ -20,14 +20,16 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Vehicle;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
+
+import java.util.List;
+
 import static java.util.Objects.requireNonNull;
 
 
 /**
  */
-public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
+public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> {
 
     private static final long serialVersionUID = 2429200360671138611L;
 
@@ -50,7 +52,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
      *            the position in the template LSA that contains the next hop
      */
     public SAPEREWalkerRiseGradient(
-            final MapEnvironment<List<ILsaMolecule>> environment,
+            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
             final ILsaNode node,
             final Reaction<List<ILsaMolecule>> reaction,
             final double speed,
@@ -81,27 +83,32 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
      * @param neighPos
      *            the position in the template LSA that contains the next hop
      */
-    public SAPEREWalkerRiseGradient(final MapEnvironment<List<ILsaMolecule>> environment,
-            final ILsaNode node,
-            final Reaction<List<ILsaMolecule>> reaction,
-            final Molecule tag,
-            final double speed,
-            final double interaction,
-            final double range,
-            final Molecule templateLSA,
-            final int neighPos) {
-        super(environment, node,
-                new OnStreets<>(environment, Vehicle.FOOT),
-                new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
-                new NextTargetStrategy(environment, node, templateLSA, neighPos));
+    public SAPEREWalkerRiseGradient(
+        final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
+        final ILsaNode node,
+        final Reaction<List<ILsaMolecule>> reaction,
+        final Molecule tag,
+        final double speed,
+        final double interaction,
+        final double range,
+        final Molecule templateLSA,
+        final int neighPos
+    ) {
+        super(
+            environment,
+            node,
+            new OnStreets<>(environment, GraphHopperRoutingService.Companion.getDefaultOptions()),
+            new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
+            new NextTargetStrategy(environment, node, templateLSA, neighPos)
+        );
     }
 
-    private static final class NextTargetStrategy implements TargetSelectionStrategy<GeoPosition> {
+    private static final class NextTargetStrategy<T> implements TargetSelectionStrategy<T, GeoPosition> {
         /**
          * 
          */
         private static final long serialVersionUID = -618772546563562484L;
-        private final MapEnvironment<List<ILsaMolecule>> environment;
+        private final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment;
         private final Node<List<ILsaMolecule>> node;
         private final ILsaMolecule template;
         private final int argPos;
@@ -109,10 +116,11 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
         private GeoPosition curPos;
 
         NextTargetStrategy(
-                final MapEnvironment<List<ILsaMolecule>> env,
+                final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> env,
                 final Node<List<ILsaMolecule>> n,
                 final Molecule patt,
-                final int pos) {
+                final int pos
+        ) {
             environment = requireNonNull(env);
             node = requireNonNull(n);
             curNode = n;
@@ -122,7 +130,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
 
         @Override
         public GeoPosition getTarget() {
-            final MapEnvironment<List<ILsaMolecule>> env = environment;
+            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> env = environment;
             final List<ILsaMolecule> matches = node.getConcentration(template);
             /*
              * If there is no gradient and: - there is no goal, or - the goal
@@ -142,7 +150,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>> {
              * If current target node has moved, destination should be
              * re-computed.
              */
-            final Position curNodeActualPos = env.getPosition(curNode);
+            final Position<?> curNodeActualPos = env.getPosition(curNode);
             if (curNode.equals(node)
                     || !curPos.equals(curNodeActualPos)
                     || env.getNeighborhood(node).contains(curNode)) {

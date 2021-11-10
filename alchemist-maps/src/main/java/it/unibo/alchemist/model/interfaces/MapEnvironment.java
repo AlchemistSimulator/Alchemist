@@ -8,15 +8,12 @@
 package it.unibo.alchemist.model.interfaces;
 
 /**
- * @param <T>
- *            concentration type
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
-public interface MapEnvironment<T> extends BenchmarkableEnvironment<T, GeoPosition> {
-
-    /**
-     * The default vehicle.
-     */
-    Vehicle DEFAULT_VEHICLE = Vehicle.FOOT;
+public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
+        extends BenchmarkableEnvironment<T, GeoPosition> {
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -58,12 +55,12 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T, GeoPositi
      *            The {@link Node} to move
      * @param coord
      *            The absolute coordinate where this node wants to move to
-     * @param vehicle
-     *            The vehicle tipe for this route
+     * @param options
+     *            The options tipe for this route
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(Node<T> node, GeoPosition coord, Vehicle vehicle);
+    Route<GeoPosition> computeRoute(Node<T> node, GeoPosition coord, O options);
 
     /**
      * This method relies on the map data, and computes a route towards some
@@ -88,19 +85,21 @@ public interface MapEnvironment<T> extends BenchmarkableEnvironment<T, GeoPositi
      * {@link Action} calling this method to effectively move nodes along the
      * path.
      * 
-     * @param p1
+     * @param from
      *            start position
      * 
-     * @param p2
+     * @param to
      *            end position The absolute coordinate where this node wants to
      *            move to
-     * @param vehicle
-     *            vehicle to use. Different vehicles may use different paths,
+     * @param options
+     *            options to use. Different vehicles may use different paths,
      *            e.g. pedestrians can't go along a highway, but can walk the
      *            parks
      * @return A {@link Route} object describing the path the node should
      *         follow
      */
-    Route<GeoPosition> computeRoute(GeoPosition p1, GeoPosition p2, Vehicle vehicle);
+    Route<GeoPosition> computeRoute(GeoPosition from, GeoPosition to, O options);
+
+    S getRoutingService();
 
 }

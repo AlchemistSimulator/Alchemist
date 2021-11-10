@@ -1,6 +1,8 @@
 package it.unibo.alchemist.model.implementations.movestrategies
 
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 
 /**
@@ -9,12 +11,12 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
  * [getCurrentPosition] should return the current position of the object to move.
  * [P] is the position type to use.
  */
-abstract class ChangeTargetOnCollision<P : Position<P>>(
+abstract class ChangeTargetOnCollision<T, P : Position<P>>(
     /**
      * Returns the current position of the object to move.
      */
     protected val getCurrentPosition: () -> P
-) : TargetSelectionStrategy<P> {
+) : TargetSelectionStrategy<T, P> {
     private var initialized = false
     private lateinit var lastNodePosition: P
     private lateinit var targetPosition: P
@@ -54,4 +56,6 @@ abstract class ChangeTargetOnCollision<P : Position<P>>(
      * Returns the new target to reach.
      */
     protected abstract fun chooseTarget(): P
+
+    abstract override fun cloneIfNeeded(destination: Node<T>?, reaction: Reaction<T>?): ChangeTargetOnCollision<T, P>
 }

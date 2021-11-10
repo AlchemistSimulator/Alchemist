@@ -43,7 +43,7 @@ public final class FollowTrace<T> extends AbstractStrategyWithGPS implements Tar
     }
 
     @Override
-    public FollowTrace<T> cloneIfNeeded(Node<T> destination, Reaction<T> reaction) {
+    public FollowTrace<T> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
         return new FollowTrace<>(reaction);
     }
 }

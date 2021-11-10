@@ -48,7 +48,7 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "0.3.0" }
 java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.4.0" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
-multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.1.0" }
+multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.2.0" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 publishOnCentral = { id = "org.danilopianini.publish-on-central", version = "0.6.1" }
 scalatest = { id = "com.github.maiflai.scalatest", version = "0.31" }

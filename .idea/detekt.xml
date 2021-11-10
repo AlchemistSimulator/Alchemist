@@ -4,8 +4,7 @@
     <enableDetekt>true</enableDetekt>
     <enableFormatting>true</enableFormatting>
     <buildUponDefaultConfig>true</buildUponDefaultConfig>
-    <failFast>true</failFast>
     <treatAsError>true</treatAsError>
-    <rulesPath>$PROJECT_DIR$/config/detekt.yml</rulesPath>
+    <rulesPath>$PROJECT_DIR$/build/kotlinqa/detekt.yml</rulesPath>
   </component>
 </project>

@@ -45,11 +45,6 @@ public final class OSMEnvironment<T>
     implements MapEnvironment<T, GraphHopperOptions, GraphHopperRoutingService> {
 
     /**
-     * The default routing algorithm.
-     */
-    public static final String DEFAULT_ALGORITHM = "dijkstrabi";
-
-    /**
      * The default value for approximating the positions comparison.
      */
     public static final int DEFAULT_APPROXIMATION = 0;
@@ -65,10 +60,6 @@ public final class OSMEnvironment<T>
     public static final boolean DEFAULT_FORCE_STREETS = false;
     private static final Logger L = LoggerFactory.getLogger(OSMEnvironment.class);
     private static final long serialVersionUID = 1L;
-    /**
-     * System file separator.
-     */
-    private static final String SLASH = System.getProperty("file.separator");
     /**
      * Alchemist's temp dir.
      */

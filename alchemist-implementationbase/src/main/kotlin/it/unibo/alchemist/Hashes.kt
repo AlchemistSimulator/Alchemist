@@ -12,7 +12,7 @@ package it.unibo.alchemist
 import com.google.common.hash.Hasher
 import com.google.common.hash.Hashing
 
-private val MURMUR3_32 = Hashing.murmur3_32()
+private val MURMUR3_32 = Hashing.murmur3_32_fixed()
 
 /**
  * Hashes a number of [Any]s with [Hashing.murmur3_32].

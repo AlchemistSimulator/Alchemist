@@ -11,6 +11,7 @@ object Libs {
     const val classgraph: String = "io.github.classgraph:classgraph:_"
     const val controlsfx: String = "org.controlsfx:controlsfx:_"
     const val dsiutil: String = "it.unimi.dsi:dsiutils:_"
+    const val embedded_mongodb: String = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.1.4"
     const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:_"
     const val java_quadtree: String = "org.danilopianini:java-quadtree:_"
     const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:_"

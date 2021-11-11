@@ -35,6 +35,8 @@ dependencies {
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
     testImplementation(libs.caffeine)
+    testImplementation(Libs.embedded_mongodb)
+
     testRuntimeOnly(scalaModule("compiler"))
 
     testRuntimeOnly(incarnation("sapere"))

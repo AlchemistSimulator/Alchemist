@@ -67,7 +67,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
                 public Double load(@Nonnull final P dest) {
                     if (environment instanceof MapEnvironment) {
                         if (dest instanceof GeoPosition) {
-                            return ((MapEnvironment<Object>) environment).computeRoute(node, (GeoPosition) dest).length();
+                            return ((MapEnvironment<Object, ?, ?>) environment).computeRoute(node, (GeoPosition) dest).length();
                         } else {
                             throw new IllegalStateException("Illegal position type: " + dest.getClass() + " " + dest);
                         }
@@ -228,7 +228,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
 
     @Override
     public Field<Double> nbrRange() {
-        final boolean useRoutesAsDistances = environment instanceof MapEnvironment<?> && node.contains(USE_ROUTES_AS_DISTANCES);
+        final boolean useRoutesAsDistances = environment instanceof MapEnvironment && node.contains(USE_ROUTES_AS_DISTANCES);
         return buildFieldWithPosition(p -> {
             if (useRoutesAsDistances) {
                 if (p instanceof GeoPosition) {

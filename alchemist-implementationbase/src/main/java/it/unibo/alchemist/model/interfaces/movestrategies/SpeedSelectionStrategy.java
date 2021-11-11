@@ -10,7 +10,9 @@
  */
 package it.unibo.alchemist.model.interfaces.movestrategies;
 
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 import java.io.Serializable;
 
@@ -18,10 +20,11 @@ import java.io.Serializable;
  * Given the current target {@link Position}, this strategy interface computes
  * the current {@link it.unibo.alchemist.model.interfaces.Node}'s speed.
  *
+ * @param <T> Concentration type
  * @param <P> position type
  */
 @FunctionalInterface
-public interface SpeedSelectionStrategy<P extends Position<? extends P>> extends Serializable {
+public interface SpeedSelectionStrategy<T, P extends Position<? extends P>> extends Serializable {
 
     /**
      * @param target
@@ -31,4 +34,11 @@ public interface SpeedSelectionStrategy<P extends Position<? extends P>> extends
      */
     double getNodeMovementLength(P target);
 
+    /**
+     * @return A copy of the strategy if the strategy is stateful, and this object otherwise.
+     * The default implementation assumes a stateless strategy.
+     */
+    default SpeedSelectionStrategy<T, P> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return this;
+    }
 }

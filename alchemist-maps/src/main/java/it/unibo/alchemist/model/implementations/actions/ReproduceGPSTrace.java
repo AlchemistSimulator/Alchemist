@@ -11,14 +11,20 @@ import it.unibo.alchemist.model.implementations.movestrategies.routing.IgnoreStr
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.StraightLineTraceDependantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTrace;
+import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.RoutingService;
+import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 
 /**
- * @param <T> concentration type
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
-public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
+public class ReproduceGPSTrace<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
+    extends MoveOnMapWithGPS<T, O, S> {
 
     private static final long serialVersionUID = -2291955689914046763L;
 
@@ -41,7 +47,7 @@ public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
      *            Args to build normalize
      */
     public ReproduceGPSTrace(
-        final MapEnvironment<T> environment,
+        final MapEnvironment<T, O, S> environment,
         final Node<T> node,
         final Reaction<T> reaction,
         final String path,
@@ -77,7 +83,7 @@ public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
      *            Args to build normalize
      */
     public ReproduceGPSTrace(
-        final MapEnvironment<T> environment,
+        final MapEnvironment<T, O, S> environment,
         final Node<T> node,
         final Reaction<T> reaction,
         final double speed,
@@ -86,11 +92,17 @@ public class ReproduceGPSTrace<T> extends MoveOnMapWithGPS<T> {
         final String normalizer,
         final Object... normalizerArgs
     ) {
-        super(environment, node,
-                new IgnoreStreets<>(),
-                new ConstantSpeed<>(reaction, speed),
-                new FollowTrace(reaction),
-                path, cycle, normalizer, normalizerArgs);
+        super(
+            environment,
+            node,
+            new IgnoreStreets<>(),
+            new ConstantSpeed<>(reaction, speed),
+            new FollowTrace(reaction),
+            path,
+            cycle,
+            normalizer,
+            normalizerArgs
+        );
     }
 
 }

@@ -42,7 +42,7 @@ class FollowAtDistance<T>(
     private val speed: Double
 ) : AbstractAction<T>(node) {
 
-    private val speedStrategy = GloballyConstantSpeed<Euclidean2DPosition>(reaction, speed)
+    private val speedStrategy = GloballyConstantSpeed<T, Euclidean2DPosition>(reaction, speed)
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
         FollowAtDistance(node, reaction, env, target, distance, speed)

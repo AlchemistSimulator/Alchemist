@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.Route;
@@ -20,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Time;
  * This strategy follows a {@link Route}.
  * 
  */
-public final class FollowTrace extends AbstractStrategyWithGPS implements TargetSelectionStrategy<GeoPosition> {
+public final class FollowTrace<T> extends AbstractStrategyWithGPS implements TargetSelectionStrategy<T, GeoPosition> {
 
     private static final long serialVersionUID = -446053307821810437L;
     private final Reaction<?> reaction;
@@ -39,5 +40,10 @@ public final class FollowTrace extends AbstractStrategyWithGPS implements Target
         final Time time = reaction.getTau();
         assert getTrace().getNextPosition(time) != null;
         return getTrace().getNextPosition(time);
+    }
+
+    @Override
+    public FollowTrace<T> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return new FollowTrace<>(reaction);
     }
 }

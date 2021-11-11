@@ -21,7 +21,6 @@ import org.bson.Document
  * @param dbname the name the database to export data to.
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
  * @param appendTime if true it will always generate a new Mongo document, false to overwrite.
-
  */
 
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
@@ -39,6 +38,9 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override val exportDestination: String = uri
+    /**
+     * The name of the collection related to the current simulation in execution.
+     */
     val collectionName: String
         get() = variablesDescriptor + "${if (appendTime) System.currentTimeMillis() else ""}"
     private val mongoService: MongoService = MongoService()

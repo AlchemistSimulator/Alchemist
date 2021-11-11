@@ -26,7 +26,7 @@ import org.bson.Document
 
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val uri: String,
-    private val dbname: String = DEFAULT_DATABASE,
+    val dbname: String = DEFAULT_DATABASE,
     val interval: Double = DEFAULT_INTERVAL,
     private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
@@ -39,13 +39,13 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override val exportDestination: String = uri
-
+    val collectionName: String
+        get() = variablesDescriptor + "${if (appendTime) System.currentTimeMillis() else ""}"
     private val mongoService: MongoService = MongoService()
 
     override fun setupExportEnvironment(environment: Environment<T, P>) {
         mongoService.startService(uri)
         mongoService.connectToDB(dbname)
-        val collectionName: String = variablesDescriptor + "${if (appendTime) System.currentTimeMillis() else ""}"
         mongoService.createCollection(collectionName)
     }
 

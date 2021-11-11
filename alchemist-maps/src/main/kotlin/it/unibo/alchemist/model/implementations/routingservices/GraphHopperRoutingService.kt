@@ -15,6 +15,7 @@ import com.graphhopper.GraphHopper
 import com.graphhopper.GraphHopperAPI
 import com.graphhopper.reader.osm.GraphHopperOSM
 import com.graphhopper.routing.util.DefaultEdgeFilter
+import com.graphhopper.util.shapes.BBox
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
@@ -94,9 +95,10 @@ class GraphHopperRoutingService @JvmOverloads constructor(
             ?.let { LatLongPosition(it.lat, it.lon) }
     }
 
-    private fun GeoPosition.coerceToMap(options: GraphHopperOptions): GeoPosition = takeIf {
-        graphHopper.graphHopperStorage.bounds.contains(latitude, longitude)
-    } ?: allowedPointClosestTo(this, options) ?: this
+    private fun GeoPosition.coerceToMap(): Pair<Double, Double> {
+        val bounds = graphHopper.graphHopperStorage.bounds
+        return latitude.coerceIn(bounds.minLat..bounds.maxLat) to longitude.coerceIn(bounds.minLon..bounds.maxLon)
+    }
 
     override fun route(
         from: GeoPosition,
@@ -108,7 +110,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         }
         val naviStart = from.coerceToMap(options)
         val naviEnd = to.coerceToMap(options)
-        val request: GHRequest = GHRequest(naviStart.latitude, naviStart.longitude, naviEnd.latitude, naviEnd.longitude)
+        val request: GHRequest = GHRequest(naviStart.first, naviStart.second, naviEnd.first, naviEnd.second)
             .setAlgorithm(options.algorithm)
             .setProfile(options.profile.name)
         return GraphHopperRoute(from, to, graphHopper.route(request))

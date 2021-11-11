@@ -52,8 +52,14 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
             pointSequence.forEach(builder::add)
             this.points = builder.build()
         } else {
-            val msg = errors.stream().map { obj: Throwable -> obj.message }.collect(Collectors.joining("\n"))
-            throw IllegalArgumentException(msg, errors[0])
+            val firstError = errors.first()
+            val exception = IllegalArgumentException(
+                "Failure in the GraphHopper routing system when navigating from $from to $to, " +
+                    "received response:\n$response",
+                firstError
+            )
+            errors.asSequence().drop(1).forEach { exception.addSuppressed(it) }
+            throw exception
         }
     }
 

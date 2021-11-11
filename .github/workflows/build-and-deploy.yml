@@ -20,6 +20,7 @@ jobs:
         ./gradlew assemble shadowJar --parallel
       deploy-repo: 'AlchemistSimulator/Alchemist'
       deploy-command: |
+        ./gradlew signKotlinMavenPublication --parallel
         ./gradlew publishKotlinMavenPublicationToMavenCentralRepository
         ./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
         ./gradlew clean

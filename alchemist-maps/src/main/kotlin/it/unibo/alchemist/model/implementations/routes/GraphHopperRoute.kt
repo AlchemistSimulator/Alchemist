@@ -9,14 +9,12 @@
 package it.unibo.alchemist.model.implementations.routes
 
 import com.google.common.collect.ImmutableList
-import it.unibo.alchemist.model.interfaces.GeoPosition
 import com.graphhopper.GHResponse
 import com.graphhopper.util.shapes.GHPoint3D
-import it.unibo.alchemist.model.interfaces.TimedRoute
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
-import java.lang.IllegalArgumentException
+import it.unibo.alchemist.model.interfaces.GeoPosition
+import it.unibo.alchemist.model.interfaces.TimedRoute
 import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
 import java.util.stream.Stream
 
 /**

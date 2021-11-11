@@ -44,6 +44,7 @@ tasks.withType<Test> {
 
 tasks.generateGrammarSource {
     arguments = arguments + listOf("-visitor", "-package", "it.unibo.alchemist.biochemistrydsl", "-long-messages")
+    tasks.sourcesJar.orNull?.dependsOn(this)
 }
 
 tasks.compileJava { dependsOn(tasks.generateGrammarSource) }

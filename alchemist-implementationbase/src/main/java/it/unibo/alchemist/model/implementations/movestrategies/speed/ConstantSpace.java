@@ -13,10 +13,11 @@ import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 /**
  * This strategy makes the node move every time of a fixed amount of space.
  *
+ * @param <T> Concentration type
  * @param <P> Position type
- * 
+ *
  */
-public final class ConstantSpace<P extends Position<P>> implements SpeedSelectionStrategy<P> {
+public final class ConstantSpace<T, P extends Position<P>> implements SpeedSelectionStrategy<T, P> {
 
     private static final long serialVersionUID = 1L;
     private final double space;

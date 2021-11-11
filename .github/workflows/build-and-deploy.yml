@@ -14,13 +14,13 @@ on:
 
 jobs:
   build-and-check:
-    uses: DanySK/workflows/.github/workflows/build-and-deploy-gradle-project.yml@0.1.0-dev72
+    uses: DanySK/workflows/.github/workflows/build-and-deploy-gradle-project.yml@0.1.4-dev1
     with:
       build-command: |
         ./gradlew assemble shadowJar --parallel
       deploy-repo: 'AlchemistSimulator/Alchemist'
       deploy-command: |
-        ./gradlew publishKotlinMavenPublicationToCentralS01Repository
+        ./gradlew publishKotlinMavenPublicationToMavenCentralRepository
         ./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
         ./gradlew clean
     secrets:

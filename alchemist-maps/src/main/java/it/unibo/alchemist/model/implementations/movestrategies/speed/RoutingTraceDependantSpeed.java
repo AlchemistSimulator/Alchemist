@@ -14,18 +14,22 @@ import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Vehicle;
+import it.unibo.alchemist.model.interfaces.RoutingService;
+import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 
 /**
  * This {@link TraceDependantSpeed} strategy computes the remaining distance by
- * relying on maps data for a selected {@link Vehicle}.
- * 
- * @param <T> concentration type
+ * relying on maps data for the selected {@link RoutingServiceOptions}.
+ *
+ * @param <T> Concentration type
+ * @param <O> {@link RoutingServiceOptions} type
+ * @param <S> {@link RoutingService} type
  */
-public final class RoutingTraceDependantSpeed<T> extends TraceDependantSpeed<T> {
+public final class RoutingTraceDependantSpeed<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
+    extends TraceDependantSpeed<T, O, S> {
 
     private static final long serialVersionUID = -2195494825891818353L;
-    private final Vehicle vehicle;
+    private final O options;
 
     /**
      * @param environment
@@ -34,26 +38,30 @@ public final class RoutingTraceDependantSpeed<T> extends TraceDependantSpeed<T> 
      *            the node
      * @param reaction
      *            the reaction
-     * @param vehicle
-     *            the vehicle
+     * @param options
+     *            the options
      */
     public RoutingTraceDependantSpeed(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, O, S> environment,
             final Node<T> node,
             final Reaction<T> reaction,
-            final Vehicle vehicle
+            final O options
     ) {
         super(environment, node, reaction);
-        this.vehicle = vehicle;
+        this.options = options;
     }
 
     @Override
     protected double computeDistance(
-            final MapEnvironment<T> environment,
+            final MapEnvironment<T, O, S> environment,
             final Node<T> currentNode,
             final GeoPosition targetPosition
     ) {
-        return environment.computeRoute(currentNode, targetPosition, vehicle).length();
+        return environment.computeRoute(currentNode, targetPosition, options).length();
     }
 
+    @Override
+    public RoutingTraceDependantSpeed<T, O, S> cloneIfNeeded(final Node<T> destination, final Reaction<T> reaction) {
+        return new RoutingTraceDependantSpeed<>(getEnvironment(), destination, reaction, options);
+    }
 }

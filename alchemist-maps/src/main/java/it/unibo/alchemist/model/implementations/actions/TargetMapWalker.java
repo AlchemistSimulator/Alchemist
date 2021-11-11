@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  * @param <O> {@link RoutingServiceOptions} type
  * @param <S> {@link RoutingService} type
  */
-public class TargetWalker<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
+public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends RoutingService<GeoPosition, O>>
     extends MoveOnMap<T, O, S> {
 
     /**
@@ -83,7 +83,7 @@ public class TargetWalker<T, O extends RoutingServiceOptions<O>, S extends Routi
      *            the range in which searching for possible obstacles. Obstacles
      *            slow down the {@link MoveOnMap}
      */
-    public TargetWalker(
+    public TargetMapWalker(
             @Nonnull final MapEnvironment<T, O, S> environment,
             @Nonnull final Node<T> node,
             @Nonnull final Reaction<T> reaction,
@@ -131,7 +131,7 @@ public class TargetWalker<T, O extends RoutingServiceOptions<O>, S extends Routi
      *            the speed at which this {@link MoveOnMap} will move
      *            when obstacles are found
      */
-    public TargetWalker(
+    public TargetMapWalker(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
         final Reaction<T> reaction,
@@ -167,7 +167,7 @@ public class TargetWalker<T, O extends RoutingServiceOptions<O>, S extends Routi
      *            "interacting" if such molecule is present, regardless its
      *            value.
      */
-    public TargetWalker(
+    public TargetMapWalker(
         final MapEnvironment<T, O, S> environment,
         final Node<T> node,
         final Reaction<T> reaction,
@@ -210,7 +210,7 @@ public class TargetWalker<T, O extends RoutingServiceOptions<O>, S extends Routi
      *            the range in which searching for possible obstacles. Obstacles
      *            slow down the {@link MoveOnMap}
      */
-    public TargetWalker(
+    public TargetMapWalker(
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
             final Reaction<T> reaction,
@@ -252,7 +252,7 @@ public class TargetWalker<T, O extends RoutingServiceOptions<O>, S extends Routi
      * @param speed
      *            the speed at which this {@link MoveOnMap} will move
      */
-    public TargetWalker(
+    public TargetMapWalker(
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
             final Reaction<T> reaction,
@@ -280,7 +280,7 @@ public class TargetWalker<T, O extends RoutingServiceOptions<O>, S extends Routi
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
      */
-    public TargetWalker(
+    public TargetMapWalker(
             final MapEnvironment<T, O, S> environment,
             final Node<T> node,
             final Reaction<T> reaction,

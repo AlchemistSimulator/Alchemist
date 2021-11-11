@@ -15,7 +15,6 @@ import com.graphhopper.GraphHopper
 import com.graphhopper.GraphHopperAPI
 import com.graphhopper.reader.osm.GraphHopperOSM
 import com.graphhopper.routing.util.DefaultEdgeFilter
-import com.graphhopper.util.shapes.BBox
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
@@ -108,8 +107,8 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         if (from == to) {
             return PolygonalChain(from)
         }
-        val naviStart = from.coerceToMap(options)
-        val naviEnd = to.coerceToMap(options)
+        val naviStart = from.coerceToMap()
+        val naviEnd = to.coerceToMap()
         val request: GHRequest = GHRequest(naviStart.first, naviStart.second, naviEnd.first, naviEnd.second)
             .setAlgorithm(options.algorithm)
             .setProfile(options.profile.name)

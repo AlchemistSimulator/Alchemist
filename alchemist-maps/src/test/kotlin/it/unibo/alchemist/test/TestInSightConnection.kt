@@ -13,13 +13,10 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.doubles.shouldBeLessThan
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotHave
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import it.unibo.alchemist.model.interfaces.GeoPosition
-import it.unibo.alchemist.model.interfaces.MapEnvironment
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestInSightConnection : StringSpec(

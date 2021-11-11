@@ -1,0 +1,45 @@
+incarnation: protelis
+
+variables:
+  initial_latitude: &initial_latitude
+    formula: 12.613
+  initial_longitude: &initial_longitude
+    formula: 43.715
+  final_latitude:
+    formula: 12.663
+  final_longitude:
+    formula: 43.738
+  latitude_space: &latitude_space
+    formula: final_latitude - initial_latitude
+  longitude_space: &longitude_space
+    formula: final_longitude - initial_longitude
+
+environment:
+  type: OSMEnvironment
+  parameters:
+    - maps/urbino.pbf
+    - true
+    - true
+
+network-model:
+  type: ConnectIfInLineOfSigthOnMap
+  parameters: [1000]
+
+deployments:
+  - type: Point
+    parameters: [43.719368, 12.623865]
+  - type: Point
+    parameters: [43.718901, 12.623047]
+  - type: Rectangle
+    parameters:
+      - 100
+      - *initial_longitude
+      - *initial_latitude
+      - *longitude_space
+      - *latitude_space
+    contents:
+      - in:
+          type: Rectangle
+          parameters: [-6, -6, 2, 2]
+        molecule: source
+        concentration: true

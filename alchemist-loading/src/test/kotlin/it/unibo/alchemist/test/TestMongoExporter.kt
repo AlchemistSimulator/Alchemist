@@ -38,32 +38,39 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             .version(Version.Main.PRODUCTION)
             .net(Net("localhost", 27017, Network.localhostIsIPv6()))
             .build()
-
-        val file = ResourceLoader.getResource("testMongoExporter.yml")
-        assertNotNull(file)
-        val loader = LoadAlchemist.from(file)
-        assertNotNull(loader)
-        val initialized: InitializedEnvironment<T, P> = loader.getDefault()
-        val simulation = Engine(initialized.environment)
-        initialized.exporters.forEach {
-            it.bindVariables(loader.variables)
-        }
-        simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         val mongodExecutable: MongodExecutable = starter.prepare(mongodConfig)
         val mongodProcess: MongodProcess = mongodExecutable.start()
-        simulation.play()
-        simulation.run()
-        val exporter = initialized.exporters.firstOrNull {
-            it is MongoDBExporter
+
+        try {
+            val file = ResourceLoader.getResource("testMongoExporter.yml")
+            assertNotNull(file)
+            val loader = LoadAlchemist.from(file)
+            assertNotNull(loader)
+            val initialized: InitializedEnvironment<T, P> = loader.getDefault()
+            val simulation = Engine(initialized.environment)
+            initialized.exporters.forEach {
+                it.bindVariables(loader.variables)
+            }
+            simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
+            simulation.play()
+            simulation.run()
+            val exporter = initialized.exporters.firstOrNull {
+                it is MongoDBExporter
+            }
+            require(exporter is MongoDBExporter) {
+                exporter as MongoDBExporter
+            }
+            val testClient: MongoClient = MongoClients.create(exporter.exportDestination)
+            val exportCollection = testClient.getDatabase(exporter.dbname).getCollection(exporter.collectionName)
+            exportCollection.countDocuments() shouldBeGreaterThan 0
+            exportCollection.find().firstOrNull()?.shouldContainKey(exporter.dataExtractors.firstOrNull()?.names.toString())
+
+        } catch (e: Exception) {
+            throw e
+
+        } finally {
+            mongodProcess.stop()
+            mongodExecutable.stop()
         }
-        require(exporter is MongoDBExporter) {
-            exporter as MongoDBExporter
-        }
-        val testClient: MongoClient = MongoClients.create(exporter.exportDestination)
-        val exportCollection = testClient.getDatabase(exporter.dbname).getCollection(exporter.collectionName)
-        exportCollection.countDocuments() shouldBeGreaterThan 0
-        exportCollection.find().firstOrNull()?.shouldContainKey(exporter.dataExtractors.firstOrNull()?.names.toString())
-        mongodProcess.stop()
-        mongodExecutable.stop()
     }
 })

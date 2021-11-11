@@ -42,15 +42,21 @@ class TestMongoInstance : StringSpec({
         mongodExecutable shouldNotBe null
         val mongodProcess: MongodProcess = mongodExecutable.start()
         mongodProcess shouldNotBe null
-        val mongoClient: MongoClient = MongoClients.create()
-        mongoClient shouldNotBe null
-        val defaultDatabase: MongoDatabase = mongoClient.getDatabase("test")
-        defaultDatabase shouldNotBe null
-        val mongoCollection: MongoCollection<Document> = mongoClient.getDatabase("test").getCollection("mongo-test-collection")
-        mongoCollection.insertOne(Document("name","mongo-test-document"))
-        mongoCollection.countDocuments() shouldBeGreaterThan 0
-        mongoCollection.find(eq("name","mongo-test-document")).count() shouldBe 1
-        mongodProcess.stop()
-        mongodExecutable.stop()
+
+        try {
+            val mongoClient: MongoClient = MongoClients.create()
+            mongoClient shouldNotBe null
+            val defaultDatabase: MongoDatabase = mongoClient.getDatabase("test")
+            defaultDatabase shouldNotBe null
+            val mongoCollection: MongoCollection<Document> = mongoClient.getDatabase("test").getCollection("mongo-test-collection")
+            mongoCollection.insertOne(Document("name","mongo-test-document"))
+            mongoCollection.countDocuments() shouldBeGreaterThan 0
+            mongoCollection.find(eq("name","mongo-test-document")).count() shouldBe 1
+        } catch (e: Exception) {
+            throw e
+        } finally {
+            mongodProcess.stop()
+            mongodExecutable.stop()
+        }
     }
 })

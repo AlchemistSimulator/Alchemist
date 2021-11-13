@@ -28,11 +28,11 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
     init {
         val errors = response.errors
         if (errors.isEmpty()) {
-            val response = response.best
-            val points = response.points.map { it.asPosition() }
+            val bestResponse = response.best
+            val points = bestResponse.points.map { it.asPosition() }
             val initDistance = from.distanceTo(points.first())
             var pointSequence: Sequence<GeoPosition> = points.asSequence()
-            var actualDistance = response.distance
+            var actualDistance = bestResponse.distance
             if (initDistance > 0) {
                 actualDistance += initDistance
                 pointSequence = sequenceOf(from) + pointSequence
@@ -43,7 +43,7 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
                 pointSequence += sequenceOf(to)
             }
             // m / s, times are returned in ms
-            val averageSpeed = response.distance * TimeUnit.SECONDS.toMillis(1) / response.time
+            val averageSpeed = bestResponse.distance * TimeUnit.SECONDS.toMillis(1) / bestResponse.time
             time = actualDistance / averageSpeed
             distance = actualDistance
             val builder = ImmutableList.builder<GeoPosition>()

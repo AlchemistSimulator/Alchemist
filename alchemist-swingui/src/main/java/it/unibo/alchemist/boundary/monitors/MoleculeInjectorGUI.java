@@ -46,14 +46,14 @@ import java.util.stream.Collectors;
  */
 @Deprecated
 @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "This class is not meant to get serialized")
-public class MoleculeInjectorGUI<T> extends JPanel {
+public final class MoleculeInjectorGUI<T> extends JPanel {
 
     private static final long serialVersionUID = -375286112397911525L;
     private static final Logger L = LoggerFactory.getLogger(MoleculeInjectorGUI.class);
     private static final List<Incarnation<?, ?>> INCARNATIONS = new LinkedList<>();
 
     static {
-        for (final Class<? extends Incarnation> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
+        for (final Class<? extends Incarnation<?, ?>> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
             try {
                 INCARNATIONS.add(clazz.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

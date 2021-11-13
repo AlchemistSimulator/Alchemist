@@ -1,6 +1,6 @@
 [versions]
 antlr4 = "4.9.3"
-arrow = "0.13.2"
+arrow = "0.13.3"
 dokka = "1.5.31"
 graphhopper = "2.4"
 ignite = "2.11.0"

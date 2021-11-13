@@ -4,7 +4,10 @@ arrow = "0.13.2"
 dokka = "1.5.31"
 graphhopper = "2.4"
 ignite = "2.11.0"
+junit = "5.7.2"
 konf = "1.1.2"
+kotest = "4.6.1"
+mockito = "3.11.2"
 orchid = "0.21.1"
 scafi = "0.3.3"
 
@@ -35,9 +38,14 @@ jfoenix = { module = "com.jfoenix:jfoenix", version = "9.0.10" }
 jiconfont-javafx = { module = "com.github.jiconfont:jiconfont-javafx", version = "1.0.0" }
 jiconfont-materialDesignIcons = { module = "com.github.jiconfont:jiconfont-google_material_design_icons", version = "2.2.0.2" }
 jpx = { module = "io.jenetics:jpx", version = "2.2.0" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
+kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 logback = { module = "ch.qos.logback:logback-classic", version = "1.2.7" }
 miglayout-swing = { module = "com.miglayout:miglayout-swing", version = "11.0" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
 orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
 orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }
@@ -54,6 +62,8 @@ spotbugs-annotations = { module = "com.github.spotbugs:spotbugs-annotations", ve
 graphhopper = [ "graphhopper-core", "graphhopper-reader-osm" ]
 orchid = ["orchid-editorial", "orchid-github", "orchid-plugindocs", "orchid-search", "orchid-syntaxhighlighter", "orchid-wiki"]
 jiconfont = ["jiconfont-javafx", "jiconfont-materialDesignIcons"]
+testing-compile = [ "junit-api", "kotest-assertions", "kotest-runner", "mockito-core" ]
+testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

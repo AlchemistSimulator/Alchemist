@@ -26,10 +26,10 @@ dependencies {
     implementation(libs.caffeine)
     implementation(libs.gson)
     implementation(libs.guava)
+    implementation(libs.jpx)
     implementation(libs.simplelatlng)
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)
-    implementation(Libs.jpx)
     implementation(Libs.trove4j)
 
     testRuntimeOnly(incarnation("protelis"))

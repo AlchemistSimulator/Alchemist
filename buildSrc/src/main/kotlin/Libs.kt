@@ -8,7 +8,6 @@ import kotlin.String
 object Libs {
     const val boilerplate: String = "org.danilopianini:boilerplate:_"
     const val conrec: String = "org.danilopianini:conrec:_"
-    const val classgraph: String = "io.github.classgraph:classgraph:_"
     const val controlsfx: String = "org.controlsfx:controlsfx:_"
     const val dsiutil: String = "it.unimi.dsi:dsiutils:_"
     const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:_"
@@ -16,7 +15,6 @@ object Libs {
     const val javalib_java7: String = "org.danilopianini:javalib-java7:_"
     const val jirf: String = "org.danilopianini:jirf:_"
     const val jool: String = "org.jooq:jool:_"
-    const val jpx: String = "io.jenetics:jpx:_"
     const val kotest_assertions: String = "io.kotest:kotest-assertions-core-jvm:_"
     const val kotest_runner_junit5: String = "io.kotest:kotest-runner-junit5-jvm:_"
     const val listset: String = "org.danilopianini:listset:_"

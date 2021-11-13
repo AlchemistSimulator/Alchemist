@@ -155,7 +155,7 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
                 molecule.selectAll();
             }
         });
-        apply.addActionListener((event) -> {
+        apply.addActionListener(event -> {
             final String mol = molecule.getText();
             final String conc = concentration.getText();
             final Incarnation<T, ?> currentInc = incarnation.getCurrent();
@@ -168,7 +168,7 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
             }
         });
         selectedIncr.addActionListener(
-                (event) -> incarnation.setCurrent((Incarnation<T, ?>) (selectedIncr.getSelectedItem()))
+                event -> incarnation.setCurrent((Incarnation<T, ?>) selectedIncr.getSelectedItem())
         );
     }
 }

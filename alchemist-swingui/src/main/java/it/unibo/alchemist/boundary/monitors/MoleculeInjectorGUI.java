@@ -46,7 +46,12 @@ import java.util.stream.Collectors;
  */
 @Deprecated
 @SuppressWarnings("unchecked")
-@SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "This class is not meant to get serialized")
+@SuppressFBWarnings(
+    value = { "SE_TRANSIENT_FIELD_NOT_RESTORED",  "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
+    justification =
+        "This class is not meant to get serialized."
+        + " This class is final."
+)
 public final class MoleculeInjectorGUI<T> extends JPanel {
 
     private static final long serialVersionUID = -375286112397911525L;

@@ -22,7 +22,7 @@ dependencies {
     implementation(libs.gson.extras)
     implementation(libs.guava)
     implementation(libs.apache.commons.collections4)
-    implementation(Libs.javafxsvg)
+    implementation(libs.javafxSvg)
     implementation(Libs.controlsfx)
     implementation(Libs.tornadofx)
     implementation(Libs.ssaring_sportstracker_leafletmap)

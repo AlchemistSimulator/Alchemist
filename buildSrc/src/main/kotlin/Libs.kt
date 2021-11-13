@@ -46,11 +46,6 @@ object Libs {
     } + ":_"
 
     /**
-     * Returns the identifier of the desired ArrowKt [module].
-     */
-    fun arrowKt(module: String) = modularizedLibrary("io.arrow-kt:arrow", module)
-
-    /**
      * Returns the identifier of the desired GraphStream [module].
      */
     fun graphStream(module: String = "") = modularizedLibrary("org.graphstream:gs", module)

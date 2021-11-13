@@ -25,7 +25,7 @@ class TestHashes {
      * Tests the [murmur3Hash32] function.
      */
     @Test
-    fun testMurmur3_32(): Unit = testAlgorithm({ e -> murmur3Hash32(e) }, Hashing.murmur3_32())
+    fun testMurmur3_32(): Unit = testAlgorithm({ e -> murmur3Hash32(e) }, Hashing.murmur3_32_fixed())
 
     private fun testAlgorithm(hash: (Any) -> Int, hashFunction: HashFunction) {
         testSingleElements(hash, hashFunction)

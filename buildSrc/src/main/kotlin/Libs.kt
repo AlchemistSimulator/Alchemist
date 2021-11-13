@@ -51,11 +51,6 @@ object Libs {
     fun arrowKt(module: String) = modularizedLibrary("io.arrow-kt:arrow", module)
 
     /**
-     * Returns the identifier of the desired GraphHopper [module].
-     */
-    fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
-
-    /**
      * Returns the identifier of the desired GraphStream [module].
      */
     fun graphStream(module: String = "") = modularizedLibrary("org.graphstream:gs", module)

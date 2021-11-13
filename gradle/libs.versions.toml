@@ -7,6 +7,7 @@ ignite = "2.11.0"
 junit = "5.7.2"
 konf = "1.1.2"
 kotest = "4.6.1"
+kotlin = "1.5.21"
 mockito = "3.11.2"
 orchid = "0.21.1"
 scafi = "0.3.3"
@@ -69,6 +70,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "0.3.0" }
 java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.4.1" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
 multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.2.0" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }

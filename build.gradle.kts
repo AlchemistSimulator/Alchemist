@@ -14,10 +14,10 @@ import java.io.ByteArrayOutputStream
 import java.net.URL
 
 plugins {
-    kotlin("jvm")
     alias(libs.plugins.dokka)
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.java.qa)
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
     alias(libs.plugins.orchid)

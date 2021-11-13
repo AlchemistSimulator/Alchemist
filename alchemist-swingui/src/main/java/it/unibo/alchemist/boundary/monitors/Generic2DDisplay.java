@@ -734,7 +734,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     /**
      * Custom listener for {@link MouseEvent}s.
      */
-    protected class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
+    protected final class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
         /**
          * @param e the {@link MouseEvent}
          */

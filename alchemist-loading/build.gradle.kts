@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.arrowKt
 import Libs.graphStream
 import Libs.incarnation
 import Libs.scalaModule
@@ -17,15 +16,14 @@ dependencies {
 
     implementation(alchemist("euclidean-geometry"))
     implementation(libs.apache.commons.lang3)
+    implementation(libs.arrow.core)
     implementation(libs.gson)
     implementation(libs.guava)
-    implementation(arrowKt("core"))
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
     implementation(Libs.dsiutil)
-    implementation("io.arrow-kt:arrow-core:_")
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))

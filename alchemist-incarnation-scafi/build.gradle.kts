@@ -15,7 +15,7 @@ plugins {
 
 dependencies {
     api(alchemist("interfaces"))
-    api("it.unibo.scafi:scafi-core_2.13:_")
+    api(libs.scafi.core)
 
     implementation(alchemist("implementationbase"))
     implementation(alchemist("euclidean-geometry"))

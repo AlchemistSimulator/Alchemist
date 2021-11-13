@@ -6,6 +6,7 @@ graphhopper = "2.4"
 ignite = "2.11.0"
 konf = "1.1.2"
 orchid = "0.21.1"
+scafi = "0.3.3"
 
 [libraries]
 antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
@@ -44,6 +45,7 @@ orchid-search = { module = "io.github.javaeden.orchid:OrchidSearch", version.ref
 orchid-syntaxhighlighter = { module = "io.github.javaeden.orchid:OrchidSyntaxHighlighter", version.ref = "orchid" }
 orchid-wiki = { module = "io.github.javaeden.orchid:OrchidWiki", version.ref = "orchid" }
 rtree = { module = "com.github.davidmoten:rtree", version = "0.8.7" }
+scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }
 simplelatlng = { module = "com.javadocmd:simplelatlng", version = "1.3.1" }
 spotbugs-annotations = { module = "com.github.spotbugs:spotbugs-annotations", version = "4.5.0" }
 

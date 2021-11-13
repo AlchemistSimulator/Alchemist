@@ -35,7 +35,10 @@ import java.util.concurrent.CountDownLatch;
 /**
  */
 @Deprecated
-@SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
+@SuppressFBWarnings(
+    value = { "SE_BAD_FIELD", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
+    justification = "This class is not meant to get serialized, and it is final"
+)
 public final class EffectBuilder extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = -5030318714404946998L;

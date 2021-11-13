@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.implementations.routingservices
 
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
 import com.google.common.hash.Hashing
 import com.graphhopper.GHRequest
 import com.graphhopper.GraphHopper
-import com.graphhopper.GraphHopperAPI
-import com.graphhopper.reader.osm.GraphHopperOSM
-import com.graphhopper.routing.util.DefaultEdgeFilter
+import com.graphhopper.routing.util.AccessFilter
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
@@ -44,6 +44,8 @@ class GraphHopperRoutingService @JvmOverloads constructor(
 ) : RoutingService<GeoPosition, GraphHopperOptions> {
 
     private val graphHopper: GraphHopper
+    private val accessFilters: LoadingCache<GraphHopperOptions, AccessFilter>
+
     init {
         val mapName = map.toExternalForm().split('/').last().takeWhile { it != '?' }
         val mapFile = File(workingDirectory, mapName)
@@ -70,25 +72,19 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                         workingDirectory.mkdirs()
                         initNavigationSystem(mapFile, workingDirectory)
                     }
-                    .map {
-                        require(it is GraphHopper) {
-                            "Alchemist accesses the internal API of GraphHopper, as the interface GraphHopperAPI" +
-                                " does not capture all the required features." +
-                                " Thus, the simulator cannot work with the current API provider ${it::class.simpleName}"
-                        }
-                        it
-                    }
                     .getOrThrow()
             }
         } finally {
             lockfileLock.release()
         }
+        accessFilters = Caffeine.newBuilder().build {
+            AccessFilter.allEdges(graphHopper.encodingManager.getEncoder(it.profile.vehicle).accessEnc)
+        }
     }
 
     override fun allowedPointClosestTo(position: GeoPosition, options: GraphHopperOptions): GeoPosition? {
-        val encoder = graphHopper.encodingManager.getEncoder(options.profile.vehicle)
         return graphHopper.locationIndex
-            .findClosest(position.latitude, position.longitude, DefaultEdgeFilter.allEdges(encoder))
+            .findClosest(position.latitude, position.longitude, accessFilters[options])
             .takeIf { it.isValid }
             ?.snappedPoint
             ?.let { LatLongPosition(it.lat, it.lon) }
@@ -155,14 +151,11 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         private fun initNavigationSystem(
             mapFile: File,
             internalWorkdir: File,
-        ): GraphHopperAPI = GraphHopperOSM()
+        ): GraphHopper = GraphHopper()
             .setOSMFile(mapFile.absolutePath)
-            .forDesktop()
             .setElevation(false)
-            .setInMemory()
             .setGraphHopperLocation(internalWorkdir.absolutePath)
             .setProfiles(GraphHopperOptions.allProfiles)
-            .setEncodingManager(GraphHopperOptions.encodingManager)
             .importOrLoad()
 
         private fun InputStream.nameFromHash(): String =

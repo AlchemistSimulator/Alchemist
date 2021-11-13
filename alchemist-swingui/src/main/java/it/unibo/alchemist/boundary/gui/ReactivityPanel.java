@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.tape.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.gui.tape.JTapeGroup;
 import it.unibo.alchemist.boundary.gui.tape.JTapeMainFeature;
@@ -26,6 +27,10 @@ import static it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle.getString
 
 /**
  */
+@SuppressFBWarnings(
+        value = { "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
+        justification = "This class is final"
+)
 @Deprecated
 public final class ReactivityPanel extends JTapeGroup implements ItemListener {
 

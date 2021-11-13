@@ -14,9 +14,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.gui.utility.SVGImageUtils;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -40,8 +37,12 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
-import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Abstract class that models a ListView Cell to represent {@link it.unibo.alchemist.boundary.gui.effects.EffectFX}s or
@@ -52,8 +53,8 @@ import org.jetbrains.annotations.Nullable;
  *            {@link it.unibo.alchemist.boundary.gui.effects.EffectGroup}
  */
 @SuppressFBWarnings(
-        value = "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE",
-        justification = "A ChoiceDialog is always in its own stage"
+        value = { "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE" },
+        justification = "A ChoiceDialog is always in its own stage."
 )
 public abstract class AbstractEffectCell<T> extends ListCell<T> {
     /**
@@ -63,6 +64,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
     private static final double DRAG_N_DROP_TARGET_OPACITY = 0.3;
     private static final String WRONG_POS = "Wrong position specified";
     private final GridPane pane;
+    private final DataFormat dataFormat;
     private final int injectedNodes;
     private Optional<FXOutputMonitor<?, ?>> displayMonitor = Optional.empty();
 
@@ -73,8 +75,13 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      *
      * @param nodes the nodes to inject
      */
-    public AbstractEffectCell(final Node... nodes) {
+    @SuppressFBWarnings(
+            value = { "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
+            justification = "startDragNDrop is final"
+    )
+    public AbstractEffectCell(final DataFormat dataFormat, final Node... nodes) {
         super();
+        this.dataFormat = dataFormat;
         pane = new GridPane();
         // Initializing drag'n'drop handle
         final Label handle = new Label();
@@ -197,7 +204,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      *
      * @param event the MouseEvent related to long-press on a Node
      */
-    protected void startDragNDrop(final MouseEvent event) {
+    protected final void startDragNDrop(final MouseEvent event) {
         if (getItem() == null) {
             throw new IllegalStateException("Empty cell: no item found");
         }
@@ -255,7 +262,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * @param event the drag'n'drop drop event
      */
     @SuppressWarnings("unchecked") // The item from the dragboard should be of specified class
-    protected void dropDragNDrop(final DragEvent event) {
+    protected final void dropDragNDrop(final DragEvent event) {
         if (getItem() == null) {
             throw new IllegalStateException("Empty cell: no item found");
         }
@@ -334,7 +341,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      *
      * @return the root pane
      */
-    protected Pane getPane() {
+    protected final Pane getPane() {
         return this.pane;
     }
 
@@ -343,7 +350,9 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      *
      * @return the DataFormat
      */
-    protected abstract DataFormat getDataFormat();
+    protected final DataFormat getDataFormat() {
+        return dataFormat;
+    }
 
     /**
      * {@inheritDoc}

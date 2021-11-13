@@ -19,13 +19,13 @@ import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.io.IOException;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
 
@@ -71,7 +71,7 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EffectGroupCell(final String groupName, final JFXDrawersStack stack) {
-        super(new Label(groupName), new JFXToggleButton());
+        super(DataFormatFactory.getDataFormat(EffectGroup.class), new Label(groupName), new JFXToggleButton());
         this.stack = stack;
         setupLabel(getLabel(), (observable, oldValue, newValue) -> this.getItem().setName(newValue));
         setupToggle(getToggle(), (observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
@@ -133,13 +133,13 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
      */
     private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);
-        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> {
+        getToggle().selectedProperty().addListener((observable, oldValue, newValue) ->
             this.getDisplayMonitor().ifPresent(d -> {
                 if (!oldValue.equals(newValue)) {
                     d.repaint();
                 }
-            });
-        });
+            })
+        );
     }
 
     /**
@@ -191,19 +191,6 @@ public class EffectGroupCell<P extends Position2D<? extends P>> extends Abstract
      */
     protected final JFXToggleButton getToggle() {
         return (JFXToggleButton) super.getInjectedNodeAt(1);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataFormat getDataFormat() {
-        final EffectGroup<P> item = this.getItem();
-        if (item == null) {
-            return DataFormatFactory.getDataFormat(EffectGroup.class);
-        } else {
-            return DataFormatFactory.getDataFormat(item);
-        }
     }
 
     /**

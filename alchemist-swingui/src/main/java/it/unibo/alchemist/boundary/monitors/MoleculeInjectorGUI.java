@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
  * @param <T> concentration type
  */
 @Deprecated
+@SuppressWarnings("unchecked")
 @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "This class is not meant to get serialized")
 public final class MoleculeInjectorGUI<T> extends JPanel {
 
@@ -53,7 +54,10 @@ public final class MoleculeInjectorGUI<T> extends JPanel {
     private static final List<Incarnation<?, ?>> INCARNATIONS = new LinkedList<>();
 
     static {
-        for (final Class<? extends Incarnation<?, ?>> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
+        final var incarnations = ClassPathScanner.subTypesOf(Incarnation.class).stream()
+            .map(it -> (Class<? extends Incarnation<?, ?>>) it)
+            .collect(Collectors.toList());
+        for (final Class<? extends Incarnation<?, ?>> clazz: incarnations) {
             try {
                 INCARNATIONS.add(clazz.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

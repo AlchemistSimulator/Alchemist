@@ -14,12 +14,14 @@ dependencies {
     api(libs.apache.commons.math3)
     api(libs.apache.commons.lang3)
     api(Libs.java_quadtree)
+
     implementation(libs.caffeine)
+    implementation(libs.classgraph)
     implementation(libs.guava)
     implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
-    implementation(Libs.classgraph)
     implementation(Libs.trove4j)
+
     testImplementation(alchemist("loading"))
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("incarnation-protelis"))

@@ -286,7 +286,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         mapConsistencyMutex.acquireUninterruptibly();
     }
 
-    private Shape convertObstacle(final Obstacle2D o) {
+    private Shape convertObstacle(final Obstacle2D<?> o) {
         final Rectangle2D r = o.getBounds2D();
         final List<P> points = ImmutableList.of(
                 currentEnv.makePosition(r.getX(), r.getY()),
@@ -556,6 +556,11 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         mapConsistencyMutex.release();
     }
 
+    @Override
+    public final void repaint() {
+        super.repaint();
+    }
+
     /**
      * Updates {@link #setToolTipText(String) tooltip} of this component with nearest node from the mouse position.
      *
@@ -729,10 +734,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     /**
      * Custom listener for {@link MouseEvent}s.
      */
-    protected class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
+    protected final class MouseManager implements MouseInputListener, MouseWheelListener, MouseMotionListener {
         /**
-         *
-         * @param e
+         * @param e the {@link MouseEvent}
          */
         @Override
         public void mouseClicked(final MouseEvent e) {
@@ -781,8 +785,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
 
         /**
-         *
-         * @param e
+         * @param e the {@link MouseEvent}
          */
         @Override
         public void mouseDragged(final MouseEvent e) {
@@ -808,28 +811,16 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             repaint();
         }
 
-        /**
-         *
-         * @param e
-         */
         @Override
         public void mouseEntered(final MouseEvent e) {
             updateMouse(e);
         }
 
-        /**
-         *
-         * @param e
-         */
         @Override
         public void mouseExited(final MouseEvent e) {
             updateMouse(e);
         }
 
-        /**
-         *
-         * @param e
-         */
         @Override
         public void mouseMoved(final MouseEvent e) {
             if (mouseMovement != null) {
@@ -838,10 +829,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             updateMouse(e);
         }
 
-        /**
-         *
-         * @param e
-         */
         @Override
         public void mousePressed(final MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e)
@@ -854,10 +841,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             }
         }
 
-        /**
-         *
-         * @param e
-         */
         @Override
         public void mouseReleased(final MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e) && isDraggingMouse) {
@@ -893,10 +876,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             }
         }
 
-        /**
-         *
-         * @param e
-         */
         @Override
         public void mouseWheelMoved(final MouseWheelEvent e) {
             if (wormhole != null && zoomManager != null) {

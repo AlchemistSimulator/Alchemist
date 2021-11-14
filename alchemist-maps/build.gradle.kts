@@ -1,5 +1,4 @@
 import Libs.alchemist
-import Libs.graphhopper
 import Libs.incarnation
 
 /*
@@ -15,6 +14,9 @@ dependencies {
 
     implementation(alchemist("implementationbase"))
     implementation(alchemist("loading"))
+    implementation(libs.bundles.graphhopper) {
+        exclude(module = "slf4j-log4j12")
+    }
     with(libs.apache.commons) {
         implementation(codec)
         implementation(io)
@@ -24,14 +26,10 @@ dependencies {
     implementation(libs.caffeine)
     implementation(libs.gson)
     implementation(libs.guava)
+    implementation(libs.jpx)
     implementation(libs.simplelatlng)
     implementation(Libs.boilerplate)
-    implementation(graphhopper("core"))
-    implementation(graphhopper("reader-osm")) {
-        exclude(module = "slf4j-log4j12")
-    }
     implementation(Libs.jirf)
-    implementation(Libs.jpx)
     implementation(Libs.trove4j)
 
     testRuntimeOnly(incarnation("protelis"))

@@ -13,12 +13,14 @@ import Libs.jgrapht
 dependencies {
     api(alchemist("interfaces"))
     api(alchemist("implementationbase"))
+
+    implementation(libs.caffeine)
+    implementation(libs.classgraph)
+    implementation(libs.rtree)
     implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
-    implementation(libs.caffeine)
-    implementation(Libs.classgraph)
-    implementation(libs.rtree)
     implementation(Libs.trove4j)
+
     testImplementation(alchemist("loading"))
     testRuntimeOnly(incarnation("protelis"))
 }

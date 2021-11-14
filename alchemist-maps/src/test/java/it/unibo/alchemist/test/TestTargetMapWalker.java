@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.SupportedIncarnations;
-import it.unibo.alchemist.model.implementations.actions.TargetWalker;
+import it.unibo.alchemist.model.implementations.actions.TargetMapWalker;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  */
-class TestTargetWalker {
+class TestTargetMapWalker {
 
     private static final Incarnation<Object, GeoPosition> INCARNATION =
             SupportedIncarnations.<Object, GeoPosition>get("protelis").orElseThrow();
@@ -81,7 +81,7 @@ class TestTargetWalker {
                 }
             };
             reaction = new Event<>(node, new DiracComb<>(1));
-            reaction.setActions(Lists.newArrayList(new TargetWalker<>(env, node, reaction, TRACK, INTERACTING)));
+            reaction.setActions(Lists.newArrayList(new TargetMapWalker<>(env, node, reaction, TRACK, INTERACTING)));
             node.addReaction(reaction);
             env.addNode(node, STARTPOSITION);
         } catch (IllegalStateException e) {

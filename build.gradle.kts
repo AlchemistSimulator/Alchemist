@@ -14,10 +14,10 @@ import java.io.ByteArrayOutputStream
 import java.net.URL
 
 plugins {
-    kotlin("jvm")
     alias(libs.plugins.dokka)
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.java.qa)
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
     alias(libs.plugins.orchid)
@@ -27,11 +27,6 @@ plugins {
 }
 
 apply(plugin = rootProject.libs.plugins.orchid.id)
-
-val additionalTools: Configuration by configurations.creating
-dependencies {
-    additionalTools("org.jacoco:org.jacoco.core:_")
-}
 
 val Provider<PluginDependency>.id get() = get().pluginId
 
@@ -87,12 +82,9 @@ allprojects {
             implementation(Libs.thread_inheritable_resource_loader)
             testCompileOnly(spotbugs.annotations)
             // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
-            testImplementation(Libs.junit("api"))
-            testImplementation(Libs.kotest_runner_junit5)
-            testImplementation(Libs.kotest_assertions)
-            testImplementation("org.mockito:mockito-core:_")
+            testImplementation(bundles.testing.compile)
             // Test runtime: Junit engine
-            testRuntimeOnly(Libs.junit("engine"))
+            testRuntimeOnly(bundles.testing.runtimeOnly)
             // executable jar packaging
         }
         if ("incarnation" in project.name) {

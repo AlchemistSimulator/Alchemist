@@ -8,18 +8,12 @@ import kotlin.String
 object Libs {
     const val boilerplate: String = "org.danilopianini:boilerplate:_"
     const val conrec: String = "org.danilopianini:conrec:_"
-    const val classgraph: String = "io.github.classgraph:classgraph:_"
     const val controlsfx: String = "org.controlsfx:controlsfx:_"
-    const val dsiutil: String = "it.unimi.dsi:dsiutils:_"
     const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:_"
     const val java_quadtree: String = "org.danilopianini:java-quadtree:_"
-    const val javafxsvg: String = "de.codecentric.centerdevice:javafxsvg:_"
     const val javalib_java7: String = "org.danilopianini:javalib-java7:_"
     const val jirf: String = "org.danilopianini:jirf:_"
     const val jool: String = "org.jooq:jool:_"
-    const val jpx: String = "io.jenetics:jpx:_"
-    const val kotest_assertions: String = "io.kotest:kotest-assertions-core-jvm:_"
-    const val kotest_runner_junit5: String = "io.kotest:kotest-runner-junit5-jvm:_"
     const val listset: String = "org.danilopianini:listset:_"
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"
     const val oxygen: String = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:_"
@@ -47,16 +41,6 @@ object Libs {
     } + ":_"
 
     /**
-     * Returns the identifier of the desired ArrowKt [module].
-     */
-    fun arrowKt(module: String) = modularizedLibrary("io.arrow-kt:arrow", module)
-
-    /**
-     * Returns the identifier of the desired GraphHopper [module].
-     */
-    fun graphhopper(module: String) = modularizedLibrary("com.graphhopper:graphhopper", module)
-
-    /**
      * Returns the identifier of the desired GraphStream [module].
      */
     fun graphStream(module: String = "") = modularizedLibrary("org.graphstream:gs", module)
@@ -65,11 +49,6 @@ object Libs {
      * Returns the identifier of the desired JGraphT [module].
      */
     fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
-
-    /**
-     * Returns the identifier of the desired JUnit [module].
-     */
-    fun junit(module: String) = modularizedLibrary("org.junit.jupiter:junit-jupiter", module)
 
     /**
      * Returns the identifier of the desired Protelis [module].

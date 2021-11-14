@@ -486,12 +486,12 @@ internal object SimulationModel {
             is Map<*, *> -> {
                 val stringKeys = root.keys.filterIsInstance<String>()
                 require(stringKeys.size == root.keys.size) {
-                    "Illegal seeds sub-keys: ${root.keys - stringKeys}"
+                    "Illegal seeds sub-keys: ${root.keys - stringKeys}. Valid keys are: $stringKeys"
                 }
                 val validKeys = DocumentRoot.Seeds.validKeys
                 val nonPrivateKeys = stringKeys.filterNot { it.startsWith("_") }
                 require(nonPrivateKeys.all { it in validKeys }) {
-                    "Illegal seeds sub-keys: ${nonPrivateKeys - validKeys}"
+                    "Illegal seeds sub-keys: ${nonPrivateKeys - validKeys.toSet()}. Valid keys are: $validKeys"
                 }
                 fun valueOf(element: String): Any =
                     if (root.containsKey(element)) {

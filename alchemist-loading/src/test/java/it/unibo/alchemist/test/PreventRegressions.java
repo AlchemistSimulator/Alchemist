@@ -8,11 +8,16 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.export.MeanSquaredError;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
+
 import org.kaikikm.threadresloader.ResourceLoader;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,17 +32,24 @@ class PreventRegressions {
      * Test the ability to inject variables.
      */
     @Test
-    void testLoadCustomExport() {
-        LoadAlchemist
-            .from(ResourceLoader.getResource("testCustomExport.yml"))
-            .getDefault()
-            .getExporters()
-            .stream()
-            .findFirst()
-            .ifPresent(exporter -> {
-                assertEquals(1, exporter.getDataExtractors().size());
-                assertEquals(MeanSquaredError.class, exporter.getDataExtractors().get(0).getClass());
-            });
+    <P extends Position<P>> void testLoadCustomExport() {
+        assertTrue(LoadAlchemist
+                .from(ResourceLoader.getResource("testCustomExport.yml"))
+                .getDefault()
+                .getExporters()
+                .stream()
+                .findFirst()
+                .isPresent());
+        final List<Extractor> dataExtractors = LoadAlchemist
+                .from(ResourceLoader.getResource("testCustomExport.yml"))
+                .getDefault()
+                .getExporters()
+                .stream()
+                .findFirst()
+                .get()
+                .getDataExtractors();
+        assertEquals(1, dataExtractors.size());
+        assertEquals(MeanSquaredError.class, dataExtractors.get(0).getClass());
     }
 
     /**

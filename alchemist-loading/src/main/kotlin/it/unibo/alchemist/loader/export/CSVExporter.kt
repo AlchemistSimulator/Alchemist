@@ -34,7 +34,6 @@ import kotlin.io.path.createTempDirectory
  * @param path if no path is specified it will generate the file inside a temporary folder.
  * @param appendTime if true it will always generate a new file, false to overwrite.
  */
-
 class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val fileNameRoot: String = "",
     val interval: Double = DEFAULT_INTERVAL,
@@ -58,7 +57,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
 
     private lateinit var outputPrintStream: PrintStream
 
-    override fun setupExportEnvironment(environment: Environment<T, P>) {
+    override fun setup(environment: Environment<T, P>) {
         if (!File(path).exists()) {
             File(path).mkdirs()
         }
@@ -96,7 +95,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         outputPrintStream.println()
     }
 
-    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
+    override fun close(environment: Environment<T, P>, time: Time, step: Long) {
         outputPrintStream.println(SEPARATOR)
         outputPrintStream.print("# End of data export. Simulation finished at: ")
         val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)

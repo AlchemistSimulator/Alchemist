@@ -38,10 +38,10 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
             it is CSVExporter
         }
         require(exporter is CSVExporter) {
-            exporter as CSVExporter
-            val outputFile = File(exporter.exportDestination)
-            outputFile.shouldExist()
-            outputFile.delete()
+            "Invalid exporter type '${exporter::class.simpleName}'"
         }
+        val outputFile = File(exporter.exportDestination)
+        outputFile.shouldExist()
+        outputFile.delete()
     }
 })

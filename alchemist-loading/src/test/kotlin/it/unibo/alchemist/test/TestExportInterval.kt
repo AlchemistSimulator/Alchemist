@@ -28,9 +28,9 @@ class TestExportInterval<T, P : Position<P>> : StringSpec({
             it is CSVExporter
         }
         require(exporter is CSVExporter) {
-            exporter as CSVExporter
-            exporter.interval shouldBe 3.0
-            exporter.interval::class shouldBe Double::class
+            "Invalid exporter of type '${exporter::class.simpleName}'"
         }
+        exporter.interval shouldBe 3.0
+        exporter.interval::class shouldBe Double::class
     }
 })

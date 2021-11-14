@@ -25,21 +25,21 @@ class GlobalExporter<T, P : Position<P>> (private val exporters: List<GenericExp
     @Override
     override fun initialized(environment: Environment<T, P>) {
         exporters.forEach() {
-            it.setupExportEnvironment(environment)
+            it.setup(environment)
         }
     }
 
     @Override
     override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         exporters.forEach() {
-            it.processData(environment, reaction, time, step)
+            it.update(environment, reaction, time, step)
         }
     }
 
     @Override
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         exporters.forEach() {
-            it.closeExportEnvironment(environment, time, step)
+            it.close(environment, time, step)
         }
     }
 }

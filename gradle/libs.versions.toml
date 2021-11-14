@@ -1,6 +1,6 @@
 [versions]
 antlr4 = "4.9.3"
-arrow = "0.13.3"
+arrow = "1.0.1"
 graphhopper = "4.0"
 ignite = "2.11.0"
 junit = "5.7.2"

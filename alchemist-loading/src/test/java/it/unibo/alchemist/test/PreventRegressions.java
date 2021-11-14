@@ -11,7 +11,6 @@ import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.export.MeanSquaredError;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,7 @@ class PreventRegressions {
      * Test the ability to inject variables.
      */
     @Test
-    <P extends Position<P>> void testLoadCustomExport() {
+    void testLoadCustomExport() {
         assertTrue(LoadAlchemist
                 .from(ResourceLoader.getResource("testCustomExport.yml"))
                 .getDefault()

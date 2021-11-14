@@ -24,7 +24,7 @@ apache-commons-math3 = { module = "org.apache.commons:commons-math3", version = 
 appdirs = { module = "net.harawata:appdirs", version = "1.2.1" }
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.0.4" }
-classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.110" }
+classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.132" }
 dsiutils = { module = "it.unimi.dsi:dsiutils", version = "2.6.17" }
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphhopper-reader-osm = { module = "com.graphhopper:graphhopper-reader-osm", version.ref = "graphhopper" }

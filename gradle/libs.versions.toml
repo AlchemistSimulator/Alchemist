@@ -1,7 +1,6 @@
 [versions]
 antlr4 = "4.9.3"
 arrow = "0.13.3"
-dokka = "1.5.31"
 graphhopper = "4.0"
 ignite = "2.11.0"
 junit = "5.7.2"
@@ -66,7 +65,7 @@ testing-compile = [ "junit-api", "kotest-assertions", "kotest-runner", "mockito-
 testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
 gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "0.3.0" }
 java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.4.1" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

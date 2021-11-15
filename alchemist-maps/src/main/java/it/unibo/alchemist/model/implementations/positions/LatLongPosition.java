@@ -100,11 +100,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public GeoPosition plus(@Nonnull final GeoPosition other) {
-        return ebeOperation(Double::sum, other);
-    }
-
-    @Override
+    @Nonnull
     public List<GeoPosition> boundingBox(final double range) {
         if (range < 0d) {
             throw new IllegalArgumentException("Negative ranges make no sense.");
@@ -143,6 +139,46 @@ public final class LatLongPosition implements GeoPosition {
                 new LatLongPosition(toDegrees(maxLat), toDegrees(maxLon)));
     }
 
+    /**
+     * Distance between two points.
+     *
+     * @param point1
+     *            the first point.
+     * @param point2
+     *            the second point.
+     * @param df
+     *            the formula to use to compute distances
+     * @return the distance in the chosen unit of measure.
+     */
+    public static double distance(final LatLng point1, final LatLng point2, final DistanceFormula df) {
+        return distanceInRadians(point1, point2, df) * EARTH_MEAN_RADIUS_METERS;
+    }
+
+    /**
+     * Distance between two points with arbitrary {@link LengthUnit}.
+     *
+     * @param point1
+     *            the first point.
+     * @param point2
+     *            the second point.
+     * @param unit
+     *            the unit of measure in which to receive the result.
+     * @param df
+     *            the formula to use to compute distances
+     * @return the distance in the chosen unit of measure.
+     */
+    public static double distance(final LatLng point1, final LatLng point2, final LengthUnit unit, final DistanceFormula df) {
+        return LengthUnit.METER.convertTo(unit, distance(point1, point2, df));
+    }
+
+    @Override
+    public double distanceTo(@Nonnull final GeoPosition otherPosition) {
+        if (otherPosition instanceof LatLongPosition) {
+            return distance(latlng, ((LatLongPosition) otherPosition).latlng, df);
+        }
+        return distance(latlng, new LatLng(otherPosition.getLatitude(), otherPosition.getLongitude()), df);
+    }
+
     private GeoPosition ebeOperation(final BinaryOperator<Double> op, final GeoPosition other) {
         return new LatLongPosition(
                 op.apply(getLatitude(), other.getLatitude()),
@@ -160,6 +196,7 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
+    @Nonnull
     public double[] getCoordinates() {
         return new double[] { getLatitude(), getLongitude() };
     }
@@ -178,14 +215,6 @@ public final class LatLongPosition implements GeoPosition {
     @Override
     public int getDimensions() {
         return 2;
-    }
-
-    @Override
-    public double distanceTo(@Nonnull final GeoPosition otherPosition) {
-        if (otherPosition instanceof LatLongPosition) {
-            return distance(latlng, ((LatLongPosition) otherPosition).latlng, df);
-        }
-        return distance(latlng, new LatLng(otherPosition.getLatitude(), otherPosition.getLongitude()), df);
     }
 
     /**
@@ -227,9 +256,10 @@ public final class LatLongPosition implements GeoPosition {
         return ebeOperation((self, o) -> self - o, other);
     }
 
+    @Nonnull
     @Override
-    public String toString() {
-        return latlng.toString();
+    public GeoPosition minus(@Nonnull final double[] other) {
+        return new LatLongPosition(getLatitude() - other[0], getLongitude() - other[1]);
     }
 
     @Nonnull
@@ -238,42 +268,14 @@ public final class LatLongPosition implements GeoPosition {
         return new LatLongPosition(getLatitude() + other[0], getLongitude() + other[1]);
     }
 
-    @Nonnull
     @Override
-    public GeoPosition minus(@Nonnull final double[] other) {
-        return new LatLongPosition(getLatitude() - other[0], getLongitude() - other[1]);
+    public GeoPosition plus(@Nonnull final GeoPosition other) {
+        return ebeOperation(Double::sum, other);
     }
 
-    /**
-     * Distance between two points.
-     * 
-     * @param point1
-     *            the first point.
-     * @param point2
-     *            the second point.
-     * @param df
-     *            the formula to use to compute distances
-     * @return the distance in the chosen unit of measure.
-     */
-    public static double distance(final LatLng point1, final LatLng point2, final DistanceFormula df) {
-        return distanceInRadians(point1, point2, df) * EARTH_MEAN_RADIUS_METERS;
-    }
-
-    /**
-     * Distance between two points with arbitrary {@link LengthUnit}.
-     * 
-     * @param point1
-     *            the first point.
-     * @param point2
-     *            the second point.
-     * @param unit
-     *            the unit of measure in which to receive the result.
-     * @param df
-     *            the formula to use to compute distances
-     * @return the distance in the chosen unit of measure.
-     */
-    public static double distance(final LatLng point1, final LatLng point2, final LengthUnit unit, final DistanceFormula df) {
-        return LengthUnit.METER.convertTo(unit, distance(point1, point2, df));
+    @Override
+    public String toString() {
+        return latlng.toString();
     }
 
     /**

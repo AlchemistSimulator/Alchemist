@@ -7,7 +7,7 @@ junit = "5.8.1"
 konf = "1.1.2"
 kotest = "4.6.3"
 kotlin = "1.5.31"
-mockito = "3.12.4"
+mockito = "4.0.0"
 orchid = "0.21.1"
 scafi = "0.3.3"
 

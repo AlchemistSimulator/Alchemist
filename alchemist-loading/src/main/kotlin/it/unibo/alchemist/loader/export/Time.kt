@@ -13,33 +13,18 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 
-class ExecutionTime : Extractor<Double>{
+class Time : Extractor<Double> {
 
-    companion object {
-        private const val NANOS_TO_SEC: Double = 1e9
-    }
-    private val colName: List<String> = listOf("runningTime")
-    private var firstRun: Boolean = true
-    private var initial: Long = 0L
-    private var lastStep: Long = 0L
+    private val colName: String = "time"
 
     override fun <T> extractData(
         environment: Environment<T, *>,
         reaction: Reaction<T>,
         time: Time,
-        step: Long): Map<String, Double> {
-        if (lastStep > step) {
-            firstRun = true
-        }
-        if (firstRun) {
-            firstRun = false
-            initial = System.nanoTime()
-        }
-        lastStep = step
-        return mapOf(colName[0] to ((System.nanoTime() - initial) / NANOS_TO_SEC))
-    }
+        step: Long
+    ): Map<String, Double> = mapOf(colName to time.toDouble())
 
-    override fun getColumnNames(): List<String> = colName
+    override fun getColumnNames(): List<String> = listOf("time")
 
     override val fixedColumnCount: Boolean = true
 }

@@ -36,9 +36,7 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         simulation.play()
         simulation.run()
         initialized.exporters.size shouldBe 1
-        val exporter = initialized.exporters.first {
-            it is CSVExporter
-        }
+        val exporter = initialized.exporters.first()
         require(exporter is CSVExporter) {
             "Invalid exporter type '${exporter::class.simpleName}'"
         }

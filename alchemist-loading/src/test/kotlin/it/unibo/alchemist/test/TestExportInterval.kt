@@ -25,9 +25,7 @@ class TestExportInterval<T, P : Position<P>> : StringSpec({
         assertNotNull(loader)
         val initialized: InitializedEnvironment<T, P> = loader.getDefault()
         initialized.exporters.size shouldBe 1
-        val exporter = initialized.exporters.first {
-            it is CSVExporter
-        }
+        val exporter = initialized.exporters.first()
         require(exporter is CSVExporter) {
             "Invalid exporter of type '${exporter::class.simpleName}'"
         }

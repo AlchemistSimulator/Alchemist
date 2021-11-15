@@ -24,13 +24,14 @@ class TestExportInterval<T, P : Position<P>> : StringSpec({
         val loader = LoadAlchemist.from(file)
         assertNotNull(loader)
         val initialized: InitializedEnvironment<T, P> = loader.getDefault()
-        val exporter = initialized.exporters.firstOrNull {
+        initialized.exporters.size shouldBe 1
+        val exporter = initialized.exporters.first {
             it is CSVExporter
         }
         require(exporter is CSVExporter) {
-            exporter as CSVExporter
-            exporter.interval shouldBe 3.0
-            exporter.interval::class shouldBe Double::class
+            "Invalid exporter of type '${exporter::class.simpleName}'"
         }
+        exporter.interval shouldBe 3.0
+        exporter.interval::class shouldBe Double::class
     }
 })

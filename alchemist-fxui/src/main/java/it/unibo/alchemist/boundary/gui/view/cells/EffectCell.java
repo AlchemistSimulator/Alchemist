@@ -19,13 +19,13 @@ import it.unibo.alchemist.boundary.gui.utility.DataFormatFactory;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.io.IOException;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.MouseButton;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 import static it.unibo.alchemist.boundary.gui.utility.ResourceLoader.getStringRes;
 
@@ -48,7 +48,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
      */
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EffectCell(final String effectName, final JFXDrawersStack stack) {
-        super(new Label(effectName), new JFXToggleButton());
+        super(DataFormatFactory.getDataFormat(EffectFX.class), new Label(effectName), new JFXToggleButton());
         this.stack = stack;
         setupLabel(getLabel(), (observable, oldValue, newValue) -> this.getItem().setName(newValue));
         setupToggle(getToggle(), (observable, oldValue, newValue) -> this.getItem().setVisibility(newValue));
@@ -147,13 +147,13 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
      */
     private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);
-        getToggle().selectedProperty().addListener((observable, oldValue, newValue) -> {
+        getToggle().selectedProperty().addListener((observable, oldValue, newValue) ->
             this.getDisplayMonitor().ifPresent(d -> {
                 if (!oldValue.equals(newValue)) {
                     d.repaint();
                 }
-            });
-        });
+            })
+        );
     }
 
     /**
@@ -172,19 +172,6 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
      */
     protected final JFXToggleButton getToggle() {
         return (JFXToggleButton) super.getInjectedNodeAt(1);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataFormat getDataFormat() {
-        final EffectFX<P> item = this.getItem();
-        if (item == null || !EffectFX.class.isAssignableFrom(item.getClass())) {
-            return DataFormatFactory.getDataFormat(this.getClass());
-        } else {
-            return DataFormatFactory.getDataFormat(EffectFX.class);
-        }
     }
 
     /**

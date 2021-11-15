@@ -41,17 +41,20 @@ interface GenericExporter<T, P : Position<P>> {
     fun bindVariables(variables: Map<String, Variable<*>>)
 
     /**
-     *  Prepare the export environment before the simulation starts.
+     *  Prepare the export environment.
+     *  This method is called only once upon simulation initialization.
      */
-    fun setupExportEnvironment(environment: Environment<T, P>)
+    fun setup(environment: Environment<T, P>)
 
     /**
      * Main method used by exporters to export data.
+     * This method is called at each step of the simulation.
      */
-    fun processData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long)
+    fun update(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long)
 
     /**
-     * Used by the [GenericExporter] to stop the export in a correct way.
+     * Close the export environment.
+     * This method is called when the simulation finishes.
      */
-    fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long)
+    fun close(environment: Environment<T, P>, time: Time, step: Long)
 }

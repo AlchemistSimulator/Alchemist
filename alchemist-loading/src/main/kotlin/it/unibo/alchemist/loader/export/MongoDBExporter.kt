@@ -45,7 +45,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         get() = variablesDescriptor + "${if (appendTime) System.currentTimeMillis() else ""}"
     private val mongoService: MongoService = MongoService()
 
-    override fun setupExportEnvironment(environment: Environment<T, P>) {
+    override fun setup(environment: Environment<T, P>) {
         mongoService.startService(uri)
         mongoService.connectToDB(dbname)
         mongoService.createCollection(collectionName)
@@ -56,7 +56,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         mongoService.pushToDatabase(document)
     }
 
-    override fun closeExportEnvironment(environment: Environment<T, P>, time: Time, step: Long) {
+    override fun close(environment: Environment<T, P>, time: Time, step: Long) {
         mongoService.stopService()
     }
 

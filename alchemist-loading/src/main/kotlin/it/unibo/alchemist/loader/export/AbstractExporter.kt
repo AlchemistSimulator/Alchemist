@@ -57,7 +57,7 @@ abstract class AbstractExporter<T, P : Position<P>> (
      *  Converts the division of the current time and the interval to Long in order to export data only
      *  when the difference between steps is as big as the sampling interval.
      */
-    override fun processData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
+    override fun update(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val curSample: Long = (time.toDouble() / samplingInterval).toLong()
         if (curSample > count) {
             count = curSample

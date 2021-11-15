@@ -45,15 +45,24 @@ import java.util.stream.Collectors;
  * @param <T> concentration type
  */
 @Deprecated
-@SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "This class is not meant to get serialized")
-public class MoleculeInjectorGUI<T> extends JPanel {
+@SuppressWarnings("unchecked")
+@SuppressFBWarnings(
+    value = { "SE_TRANSIENT_FIELD_NOT_RESTORED",  "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
+    justification =
+        "This class is not meant to get serialized."
+        + " This class is final."
+)
+public final class MoleculeInjectorGUI<T> extends JPanel {
 
     private static final long serialVersionUID = -375286112397911525L;
     private static final Logger L = LoggerFactory.getLogger(MoleculeInjectorGUI.class);
     private static final List<Incarnation<?, ?>> INCARNATIONS = new LinkedList<>();
 
     static {
-        for (final Class<? extends Incarnation> clazz : ClassPathScanner.subTypesOf(Incarnation.class)) {
+        final var incarnations = ClassPathScanner.subTypesOf(Incarnation.class).stream()
+            .map(it -> (Class<? extends Incarnation<?, ?>>) it)
+            .collect(Collectors.toList());
+        for (final Class<? extends Incarnation<?, ?>> clazz: incarnations) {
             try {
                 INCARNATIONS.add(clazz.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -151,7 +160,7 @@ public class MoleculeInjectorGUI<T> extends JPanel {
                 molecule.selectAll();
             }
         });
-        apply.addActionListener((event) -> {
+        apply.addActionListener(event -> {
             final String mol = molecule.getText();
             final String conc = concentration.getText();
             final Incarnation<T, ?> currentInc = incarnation.getCurrent();
@@ -164,7 +173,7 @@ public class MoleculeInjectorGUI<T> extends JPanel {
             }
         });
         selectedIncr.addActionListener(
-                (event) -> incarnation.setCurrent((Incarnation<T, ?>) (selectedIncr.getSelectedItem()))
+                event -> incarnation.setCurrent((Incarnation<T, ?>) selectedIncr.getSelectedItem())
         );
     }
 }

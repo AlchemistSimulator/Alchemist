@@ -68,9 +68,8 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             exportCollection.find().firstOrNull()?.shouldContainKey(
                 exporter.dataExtractors.firstOrNull()?.names.toString()
             )
-
         } catch (exception: MongoException) {
-            LoggerFactory.getLogger(MongoDBExporter::class.java).error( exception) {
+            LoggerFactory.getLogger(MongoDBExporter::class.java).error(exception) {
                 "Can't start a local mongo instance for tests."
             }
         } finally {

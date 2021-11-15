@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.boundary.gui;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.awt.event.ActionListener;
 
 import javax.swing.JMenu;
@@ -25,6 +27,10 @@ public abstract class AbstractMenu extends JMenu implements ActionListener {
      * @param items
      *            the items for this menu
      */
+    @SuppressFBWarnings(
+        value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
+        justification = "False positive: addActionListener can't be overridden"
+    )
     public AbstractMenu(final String title, final JMenuItem[] items) {
         super(title);
         for (final JMenuItem i : items) {
@@ -34,4 +40,8 @@ public abstract class AbstractMenu extends JMenu implements ActionListener {
         }
     }
 
+    @Override
+    public final void addActionListener(final ActionListener l) {
+        super.addActionListener(l);
+    }
 }

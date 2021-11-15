@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,7 +31,7 @@ class PreventRegressions {
 
     private static GenericExporter<?, ?> exporterOf(final String simulation) {
         final var exporters = LoadAlchemist
-            .from(ResourceLoader.getResource("testCustomExport.yml"))
+            .from(ResourceLoader.getResource(simulation))
             .getDefault()
             .getExporters();
         assertEquals(1, exporters.size());

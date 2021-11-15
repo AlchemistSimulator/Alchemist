@@ -16,12 +16,10 @@ package it.unibo.alchemist
  * @property headless true if forced, false otherwise (default)
  * @property variables selected batch variables. Defaults to [emptyList]
  * @property batch whether batch mode is selected.
- * @property export the path to the file root of the data to export, or null if unspecified (export disabled).
  * @property distributed the path to the file with the load distribution configuration, or null if the run is local
  * @property graphics the path to the effects file, or null if unspecified
  * @property fxui whether the JavaFX UI takes priority over the default Swing UI
  * @property help true if print help function is selected
- * @property interval sampling time, defaults to [defaultInterval]
  * @property server if launched as Alchemist grid node server, the path to the configuration file. Null otherwise.
  * @property parallelism parallel threads used for running locally. Defaults to [defaultParallelism]
  * @property endTime final simulation time. Defaults to [defaultEndTime]
@@ -31,12 +29,10 @@ data class AlchemistExecutionOptions(
     val headless: Boolean = false,
     val variables: List<String> = emptyList(),
     val batch: Boolean = false,
-    val export: String? = null,
     val distributed: String? = null,
     val graphics: String? = null,
     val fxui: Boolean = false,
     val help: Boolean = false,
-    val interval: Double = defaultInterval,
     val server: String? = null,
     val parallelism: Int = defaultParallelism,
     val endTime: Double = defaultEndTime
@@ -46,10 +42,6 @@ data class AlchemistExecutionOptions(
      */
     val isEmpty: Boolean get() = this == NO_OPTION
     companion object {
-        /**
-         * If no sampling interval is specified, this option value is used. Defaults to 1.0.
-         */
-        const val defaultInterval = 1.0
         /**
          * If no specific number of parallel threads to use is specified, this value is used.
          * Defaults to the number of logical cores detected by the JVM.

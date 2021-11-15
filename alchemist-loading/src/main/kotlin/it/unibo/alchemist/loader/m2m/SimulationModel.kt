@@ -14,6 +14,7 @@ import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
+import it.unibo.alchemist.loader.export.GenericExporter
 import it.unibo.alchemist.loader.export.MoleculeReader
 import it.unibo.alchemist.loader.export.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
@@ -307,21 +308,22 @@ internal object SimulationModel {
                 ?: cantBuildWith<Environment<T, P>>(root, JavaType)
         }
 
-    fun visitExports(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
+    private fun visitExportData(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
         when {
-            root is String && root.equals(DocumentRoot.Export.time, ignoreCase = true) -> Result.success(Time())
-            root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
-                val molecule = root[DocumentRoot.Export.molecule]?.toString()
+            root is String && root.equals(DocumentRoot.Export.Data.time, ignoreCase = true) ->
+                Result.success(Time())
+            root is Map<*, *> && DocumentRoot.Export.Data.validateDescriptor(root) -> {
+                val molecule = root[DocumentRoot.Export.Data.molecule]?.toString()
                 if (molecule == null) {
                     visitBuilding<Extractor>(context, root)
                 } else {
-                    val property = root[DocumentRoot.Export.property]?.toString()
-                    val filter: FilteringPolicy = root[DocumentRoot.Export.valueFilter]
+                    val property = root[DocumentRoot.Export.Data.property]?.toString()
+                    val filter: FilteringPolicy = root[DocumentRoot.Export.Data.valueFilter]
                         ?.let { CommonFilters.fromString(it.toString()) }
                         ?: CommonFilters.NOFILTER.filteringPolicy
                     val aggregators: List<String> = visitRecursively(
                         context,
-                        root[DocumentRoot.Export.aggregators] ?: emptyList<Any>()
+                        root[DocumentRoot.Export.Data.aggregators] ?: emptyList<Any>()
                     ) {
                         require(it is CharSequence) {
                             "Invalid aggregator $it:${it?.let { it::class.simpleName }}. Must be a String."
@@ -330,6 +332,24 @@ internal object SimulationModel {
                     }
                     Result.success(MoleculeReader(molecule, property, incarnation, filter, aggregators))
                 }
+            }
+            else -> null
+        }
+
+    fun <T, P : Position<P>> visitSingleExporter(
+        incarnation: Incarnation<*, *>,
+        context: Context,
+        root: Any?,
+    ): Result<GenericExporter<T, P>>? =
+        when {
+            root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
+                val exporter = visitBuilding<GenericExporter<T, P>>(context, root)
+                    ?.getOrThrow() ?: cantBuildWith<GenericExporter<T, P>>(root)
+                val dataExtractors = visitRecursively(context, root[DocumentRoot.Export.data]) {
+                    visitExportData(incarnation, context, it)
+                }
+                exporter.bindData(dataExtractors)
+                Result.success(exporter)
             }
             else -> null
         }

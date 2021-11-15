@@ -41,11 +41,6 @@ object DistributedExecution : SimulationLauncher() {
         val cluster = ClusterImpl(
             Paths.get(parameters.distributed ?: throw IllegalStateException("No remote configuration file "))
         )
-        val resultset = cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)
-        parameters.export?.let { exportPath ->
-            resultset.forEach {
-                it.saveLocally(exportPath)
-            }
-        }
+        cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)
     }
 }

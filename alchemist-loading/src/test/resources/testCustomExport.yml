@@ -1,5 +1,7 @@
-incarnation: sapere
-
+incarnation: protelis
 export:
-   - type: MeanSquaredError
-     parameters: ["A", "A", product, "A", "A"]
+  - type: CSVExporter
+    parameters: ["test-custom-export"]
+    data:
+      - type: MeanSquaredError
+        parameters: [ "A", "A", product, "A", "A" ]

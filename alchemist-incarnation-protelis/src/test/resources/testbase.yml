@@ -1,5 +1,10 @@
 ---
-export: [time]
+export:
+  - type: CSVExporter
+    parameters:
+      fileNameRoot: "test_base"
+    data:
+      - time
 
 incarnation: protelis
 

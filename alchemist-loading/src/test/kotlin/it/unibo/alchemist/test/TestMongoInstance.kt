@@ -8,9 +8,9 @@
 
 package it.unibo.alchemist.test
 
+import com.mongodb.MongoException
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters.eq
 
@@ -27,8 +27,10 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import it.unibo.alchemist.loader.export.MongoDBExporter
 
 import org.bson.Document
+import org.junit.platform.commons.logging.LoggerFactory
 
 class TestMongoInstance : StringSpec({
     "test the local instance of mongo" {
@@ -48,12 +50,14 @@ class TestMongoInstance : StringSpec({
             mongoClient shouldNotBe null
             val defaultDatabase: MongoDatabase = mongoClient.getDatabase("test")
             defaultDatabase shouldNotBe null
-            val mongoCollection: MongoCollection<Document> = mongoClient.getDatabase("test").getCollection("mongo-test-collection")
-            mongoCollection.insertOne(Document("name","mongo-test-document"))
+            val mongoCollection = mongoClient.getDatabase("test").getCollection("mongo-test-collection")
+            mongoCollection.insertOne(Document("name", "mongo-test-document"))
             mongoCollection.countDocuments() shouldBeGreaterThan 0
-            mongoCollection.find(eq("name","mongo-test-document")).count() shouldBe 1
-        } catch (e: Exception) {
-            throw e
+            mongoCollection.find(eq("name", "mongo-test-document")).count() shouldBe 1
+        } catch (exception: MongoException) {
+            LoggerFactory.getLogger(MongoDBExporter::class.java).error(exception) {
+                "Can't start a local mongo instance for tests."
+            }
         } finally {
             mongodProcess.stop()
             mongodExecutable.stop()

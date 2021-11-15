@@ -8,6 +8,7 @@
 
 package it.unibo.alchemist.test
 
+import com.mongodb.MongoException
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import de.flapdoodle.embed.mongo.MongodExecutable
@@ -28,6 +29,7 @@ import it.unibo.alchemist.loader.export.GlobalExporter
 import it.unibo.alchemist.loader.export.MongoDBExporter
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.platform.commons.logging.LoggerFactory
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestMongoExporter<T, P : Position<P>> : StringSpec({
@@ -63,11 +65,14 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             val testClient: MongoClient = MongoClients.create(exporter.exportDestination)
             val exportCollection = testClient.getDatabase(exporter.dbname).getCollection(exporter.collectionName)
             exportCollection.countDocuments() shouldBeGreaterThan 0
-            exportCollection.find().firstOrNull()?.shouldContainKey(exporter.dataExtractors.firstOrNull()?.names.toString())
+            exportCollection.find().firstOrNull()?.shouldContainKey(
+                exporter.dataExtractors.firstOrNull()?.names.toString()
+            )
 
-        } catch (e: Exception) {
-            throw e
-
+        } catch (exception: MongoException) {
+            LoggerFactory.getLogger(MongoDBExporter::class.java).error( exception) {
+                "Can't start a local mongo instance for tests."
+            }
         } finally {
             mongodProcess.stop()
             mongodExecutable.stop()

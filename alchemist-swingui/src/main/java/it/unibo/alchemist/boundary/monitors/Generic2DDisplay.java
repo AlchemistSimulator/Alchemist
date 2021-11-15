@@ -117,10 +117,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     protected static final byte SELECTED_NODE_DRAWING_SIZE = 16, SELECTED_NODE_INTERNAL_SIZE = 10;
     private static final long serialVersionUID = 511631766719686842L;
 
-    static {
-        System.setProperty("sun.java2d.opengl", "true");
-    }
-
     private final Semaphore mapConsistencyMutex = new Semaphore(1);
     private final transient PointerSpeed mouseMovement = new PointerSpeedImpl();
     private transient AngleManagerImpl angleManager;

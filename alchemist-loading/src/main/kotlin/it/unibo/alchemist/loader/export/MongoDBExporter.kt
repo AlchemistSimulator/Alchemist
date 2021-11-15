@@ -64,9 +64,10 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         val document = Document()
         dataExtractors.stream()
             .forEach {
-                it.extractData(env, reaction, time, step).forEach {
-                    value ->
-                    document.append(it.names.toString(), value)
+                val data: DoubleArray = it.extractData(env, reaction, time, step)
+                data.indices.forEach {
+                    index ->
+                    document.append(it.names[index], data[index])
                 }
             }
         return document

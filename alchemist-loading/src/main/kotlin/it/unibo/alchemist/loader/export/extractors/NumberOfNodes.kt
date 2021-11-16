@@ -29,5 +29,4 @@ class NumberOfNodes : Extractor<Int> {
     ): Map<String, Int> = mapOf(colName to environment.nodeCount)
 
     override fun getColumnNames(): List<String> = listOf(colName)
-
 }

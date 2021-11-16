@@ -36,13 +36,11 @@ interface Extractor<out E> {
      * @param <T> concentration type
      * @return the extracted properties
      */
-    fun <T> extractData(environment: Environment<T, *>, reaction: Reaction<T>, time: Time, step: Long): Map<String, E>
+    fun <T> extractData(environment: Environment<T, *>, reaction: Reaction<T>?, time: Time, step: Long): Map<String, E>
 
     /**
      * @return the name of the properties that this [Extractor] can
      * provide
      */
     fun getColumnNames(): List<String>
-
-    val fixedColumnCount: Boolean
 }

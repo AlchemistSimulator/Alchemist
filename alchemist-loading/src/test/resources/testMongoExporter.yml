@@ -24,6 +24,7 @@ export:
     data:
       - time
       - molecule: "default_module:default_program"
+        aggregators: [ mean, max, min, variance, median ]
         value-filter: onlyfinite
 environment: { type: ImageEnvironment, parameters: [*image_path, *zoom] }
 network-model: { type: ObstaclesBreakConnection, parameters: [50] }

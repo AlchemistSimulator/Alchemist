@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export
+package it.unibo.alchemist.loader.export.exporters
 
 import com.google.common.base.Charsets
 import it.unibo.alchemist.model.implementations.times.DoubleTime
@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.PrintStream
 import java.text.SimpleDateFormat
-import java.util.Arrays
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -74,24 +73,24 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         outputPrintStream.println(" #")
         outputPrintStream.println("# The columns have the following meaning: ")
         outputPrintStream.print("# ")
-        dataExtractors.stream()
-            .flatMap {
-                it.names.stream()
-            }.forEach {
-                outputPrintStream.print(it)
-                outputPrintStream.print(" ")
-            }
+        dataExtractors.flatMap {
+            it.getColumnNames()
+        }.forEach {
+            outputPrintStream.print(it)
+            outputPrintStream.print(" ")
+        }
         outputPrintStream.println()
         exportData(environment, null, DoubleTime(), 0)
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        dataExtractors.stream()
-            .flatMapToDouble { Arrays.stream(it.extractData(environment, reaction, time, step)) }
-            .forEach {
-                outputPrintStream.print(it)
+        dataExtractors.forEach {
+            it.extractData(environment, reaction, time, step).values.forEach {
+                value ->
+                outputPrintStream.print(value)
                 outputPrintStream.print(' ')
             }
+        }
         outputPrintStream.println()
     }
 

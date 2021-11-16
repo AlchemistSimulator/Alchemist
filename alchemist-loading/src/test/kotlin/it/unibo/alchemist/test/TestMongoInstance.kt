@@ -27,7 +27,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.loader.export.MongoDBExporter
+import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
 
 import org.bson.Document
 import org.junit.platform.commons.logging.LoggerFactory

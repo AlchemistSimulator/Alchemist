@@ -7,9 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export
+package it.unibo.alchemist.loader.export.exporters
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.loader.export.GenericExporter
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction

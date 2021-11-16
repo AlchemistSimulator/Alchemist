@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export
+package it.unibo.alchemist.loader.export.exporters
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -64,10 +64,9 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         val document = Document()
         dataExtractors.stream()
             .forEach {
-                val data: DoubleArray = it.extractData(env, reaction, time, step)
-                data.indices.forEach {
-                    index ->
-                    document.append(it.names[index], data[index])
+                it.extractData(env, reaction, time, step).entries.forEach {
+                    entry ->
+                    document.append(entry.key, entry.value)
                 }
             }
         return document

@@ -25,8 +25,8 @@ import io.kotest.matchers.maps.shouldContainKey
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.core.implementations.Engine
-import it.unibo.alchemist.loader.export.GlobalExporter
-import it.unibo.alchemist.loader.export.MongoDBExporter
+import it.unibo.alchemist.loader.export.exporters.GlobalExporter
+import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.platform.commons.logging.LoggerFactory
@@ -66,7 +66,7 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             val exportCollection = testClient.getDatabase(exporter.dbname).getCollection(exporter.collectionName)
             exportCollection.countDocuments() shouldBeGreaterThan 0
             exportCollection.find().firstOrNull()?.shouldContainKey(
-                exporter.dataExtractors.firstOrNull()?.names.toString()
+                exporter.dataExtractors.firstOrNull()?.getColumnNames()?.get(0)
             )
         } catch (exception: MongoException) {
             LoggerFactory.getLogger(MongoDBExporter::class.java).error(exception) {

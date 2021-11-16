@@ -23,7 +23,7 @@ interface GenericExporter<T, P : Position<P>> {
     /**
      *  The List of [Extractor] used to export simulations data.
      */
-    val dataExtractors: List<Extractor>
+    val dataExtractors: List<Extractor<*>>
 
     /**
      * The location of the exported data.
@@ -33,7 +33,7 @@ interface GenericExporter<T, P : Position<P>> {
     /**
      * Assign the list of [dataExtractors] to the selected [GenericExporter].
      */
-    fun bindData(dataExtractors: List<Extractor>)
+    fun bindData(dataExtractors: List<Extractor<*>>)
 
     /**
      * Assign the map of [variables] to the selected [GenericExporter].

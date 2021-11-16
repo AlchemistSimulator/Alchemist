@@ -74,7 +74,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         outputPrintStream.println("# The columns have the following meaning: ")
         outputPrintStream.print("# ")
         dataExtractors.flatMap {
-            it.getColumnNames()
+            it.columnNames
         }.forEach {
             outputPrintStream.print(it)
             outputPrintStream.print(" ")

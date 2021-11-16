@@ -28,5 +28,5 @@ class Time : Extractor<Double> {
         step: Long
     ): Map<String, Double> = mapOf(colName to time.toDouble())
 
-    override fun getColumnNames(): List<String> = listOf("time")
+    override val columnNames = listOf("time")
 }

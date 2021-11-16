@@ -28,5 +28,5 @@ class NumberOfNodes : Extractor<Int> {
         step: Long
     ): Map<String, Int> = mapOf(colName to environment.nodeCount)
 
-    override fun getColumnNames(): List<String> = listOf(colName)
+    override val columnNames = listOf(colName)
 }

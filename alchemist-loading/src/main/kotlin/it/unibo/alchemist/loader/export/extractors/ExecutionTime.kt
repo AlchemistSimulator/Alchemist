@@ -45,5 +45,5 @@ class ExecutionTime : Extractor<Double> {
         return mapOf(colName to ((System.nanoTime() - initial) / NANOS_TO_SEC))
     }
 
-    override fun getColumnNames(): List<String> = listOf(colName)
+    override val columnNames = listOf(colName)
 }

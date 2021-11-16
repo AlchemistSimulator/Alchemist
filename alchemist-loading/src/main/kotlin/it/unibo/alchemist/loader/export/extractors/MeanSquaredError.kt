@@ -81,5 +81,5 @@ class MeanSquaredError<T> (
         return mapOf(name to mse)
     }
 
-    override fun getColumnNames(): List<String> = listOf(name)
+    override val columnNames = listOf(name)
 }

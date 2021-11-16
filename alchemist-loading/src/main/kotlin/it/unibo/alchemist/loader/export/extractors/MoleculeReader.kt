@@ -61,7 +61,7 @@ class MoleculeReader(
     else propertyText.substring(0, propertyText.length.coerceAtMost(SHORT_NAME_MAX_LENGTH)) + "@"
 
     private val singleColumnName: String = "$shortProp$moleculeName@every_node"
-    private val columnNames: List<String> = if (aggregators.isEmpty()) {
+    private val columns: List<String> = if (aggregators.isEmpty()) {
         listOf(singleColumnName)
     } else {
         aggregators.map {
@@ -91,5 +91,5 @@ class MoleculeReader(
         }
     }
 
-    override fun getColumnNames(): List<String> = columnNames
+    override val columnNames = columns
 }

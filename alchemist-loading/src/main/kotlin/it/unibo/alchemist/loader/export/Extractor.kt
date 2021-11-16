@@ -42,5 +42,5 @@ interface Extractor<out E> {
      * @return the name of the properties that this [Extractor] can
      * provide
      */
-    fun getColumnNames(): List<String>
+    val columnNames: List<String>
 }

@@ -20,6 +20,7 @@ import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.maps.shouldContainKey
 import it.unibo.alchemist.loader.InitializedEnvironment
@@ -62,11 +63,12 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             require(exporter is MongoDBExporter) {
                 exporter as MongoDBExporter
             }
+            exporter.dataExtractors.size shouldBeGreaterThan 0
             val testClient: MongoClient = MongoClients.create(exporter.exportDestination)
             val exportCollection = testClient.getDatabase(exporter.dbname).getCollection(exporter.collectionName)
             exportCollection.countDocuments() shouldBeGreaterThan 0
             exportCollection.find().firstOrNull()?.shouldContainKey(
-                exporter.dataExtractors.firstOrNull()?.getColumnNames()?.get(0)
+                exporter.dataExtractors.first().columnNames[0]
             )
         } catch (exception: MongoException) {
             LoggerFactory.getLogger(MongoDBExporter::class.java).error(exception) {

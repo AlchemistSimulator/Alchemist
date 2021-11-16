@@ -7,27 +7,33 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export
+package it.unibo.alchemist.loader.export.extractors
 
+import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 
-class ExecutionTime : Extractor<Double>{
+/**
+ * An extractor which provides informations about the running time of the simulation.
+ *
+ */
+class ExecutionTime : Extractor<Double> {
 
     companion object {
         private const val NANOS_TO_SEC: Double = 1e9
     }
-    private val colName: List<String> = listOf("runningTime")
+    private val colName: String = "runningTime"
     private var firstRun: Boolean = true
     private var initial: Long = 0L
     private var lastStep: Long = 0L
 
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Reaction<T>,
+        reaction: Reaction<T>?,
         time: Time,
-        step: Long): Map<String, Double> {
+        step: Long
+    ): Map<String, Double> {
         if (lastStep > step) {
             firstRun = true
         }
@@ -36,10 +42,8 @@ class ExecutionTime : Extractor<Double>{
             initial = System.nanoTime()
         }
         lastStep = step
-        return mapOf(colName[0] to ((System.nanoTime() - initial) / NANOS_TO_SEC))
+        return mapOf(colName to ((System.nanoTime() - initial) / NANOS_TO_SEC))
     }
 
-    override fun getColumnNames(): List<String> = colName
-
-    override val fixedColumnCount: Boolean = true
+    override fun getColumnNames(): List<String> = listOf(colName)
 }

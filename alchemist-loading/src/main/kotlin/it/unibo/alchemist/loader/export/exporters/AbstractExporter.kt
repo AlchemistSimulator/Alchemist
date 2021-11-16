@@ -7,8 +7,10 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export
+package it.unibo.alchemist.loader.export.exporters
 
+import it.unibo.alchemist.loader.export.Extractor
+import it.unibo.alchemist.loader.export.GenericExporter
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -24,7 +26,7 @@ abstract class AbstractExporter<T, P : Position<P>> (
     private val samplingInterval: Double
 ) : GenericExporter<T, P> {
 
-    override var dataExtractors: List<Extractor> = emptyList()
+    override var dataExtractors: List<Extractor<*>> = emptyList()
 
     /**
      * A value used to check if it's time to export data.
@@ -44,7 +46,7 @@ abstract class AbstractExporter<T, P : Position<P>> (
         const val DEFAULT_INTERVAL: Double = 1.0
     }
 
-    override fun bindData(dataExtractors: List<Extractor>) {
+    override fun bindData(dataExtractors: List<Extractor<*>>) {
         this.dataExtractors = dataExtractors
     }
 

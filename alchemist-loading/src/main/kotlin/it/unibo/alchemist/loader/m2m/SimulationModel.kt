@@ -15,8 +15,8 @@ import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.GenericExporter
-import it.unibo.alchemist.loader.export.MoleculeReader
-import it.unibo.alchemist.loader.export.Time
+import it.unibo.alchemist.loader.export.extractors.MoleculeReader
+import it.unibo.alchemist.loader.export.extractors.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
 import it.unibo.alchemist.loader.m2m.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
@@ -308,14 +308,14 @@ internal object SimulationModel {
                 ?: cantBuildWith<Environment<T, P>>(root, JavaType)
         }
 
-    private fun visitExportData(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
+    private fun visitExportData(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor<*>>? =
         when {
             root is String && root.equals(DocumentRoot.Export.Data.time, ignoreCase = true) ->
                 Result.success(Time())
             root is Map<*, *> && DocumentRoot.Export.Data.validateDescriptor(root) -> {
                 val molecule = root[DocumentRoot.Export.Data.molecule]?.toString()
                 if (molecule == null) {
-                    visitBuilding<Extractor>(context, root)
+                    visitBuilding(context, root)
                 } else {
                     val property = root[DocumentRoot.Export.Data.property]?.toString()
                     val filter: FilteringPolicy = root[DocumentRoot.Export.Data.valueFilter]

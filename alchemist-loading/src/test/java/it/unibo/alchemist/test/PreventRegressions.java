@@ -8,10 +8,10 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.loader.LoadAlchemist;
-import it.unibo.alchemist.loader.export.CSVExporter;
+import it.unibo.alchemist.loader.export.exporters.CSVExporter;
 import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.export.GenericExporter;
-import it.unibo.alchemist.loader.export.MeanSquaredError;
+import it.unibo.alchemist.loader.export.extractors.MeanSquaredError;
 import it.unibo.alchemist.model.interfaces.Environment;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class PreventRegressions {
     void testLoadCustomExport() {
         final var exporter = exporterOf("testCustomExport.yml");
         assertTrue(CSVExporter.class.isAssignableFrom(exporter.getClass()));
-        final List<Extractor> dataExtractors = exporter.getDataExtractors();
+        final List<Extractor<?>> dataExtractors = exporter.getDataExtractors();
         assertEquals(1, dataExtractors.size());
         assertEquals(MeanSquaredError.class, dataExtractors.get(0).getClass());
     }

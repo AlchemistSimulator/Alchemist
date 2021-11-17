@@ -24,8 +24,8 @@ import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
 
@@ -53,7 +53,8 @@ class TestMongoInstance : StringSpec({
             val mongoCollection = mongoClient.getDatabase("test").getCollection("mongo-test-collection")
             mongoCollection.insertOne(Document("name", "mongo-test-document"))
             mongoCollection.countDocuments() shouldBeGreaterThan 0
-            mongoCollection.find(eq("name", "mongo-test-document")).count() shouldBe 1
+            mongoCollection.find(eq("name", "mongo-test-document")).count() shouldBeGreaterThan 0
+            mongoCollection.drop()
         } catch (exception: MongoException) {
             LoggerFactory.getLogger(MongoDBExporter::class.java).error(exception) {
                 "Can't start a local mongo instance for tests."

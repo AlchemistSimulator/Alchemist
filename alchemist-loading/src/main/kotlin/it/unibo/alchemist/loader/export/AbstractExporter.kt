@@ -17,12 +17,12 @@ import it.unibo.alchemist.model.interfaces.Time
 import java.util.stream.Collectors
 
 /**
- * Abstract implementation of a [GenericExporter].
+ * Abstract implementation of a [Exporter].
  * @param samplingInterval the sampling time, defaults to [DEFAULT_INTERVAL].
  */
 abstract class AbstractExporter<T, P : Position<P>> (
     private val samplingInterval: Double
-) : GenericExporter<T, P> {
+) : Exporter<T, P> {
 
     override var dataExtractors: List<Extractor> = emptyList()
 

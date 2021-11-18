@@ -14,7 +14,7 @@ import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
-import it.unibo.alchemist.loader.export.GenericExporter
+import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.export.MoleculeReader
 import it.unibo.alchemist.loader.export.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
@@ -340,11 +340,11 @@ internal object SimulationModel {
         incarnation: Incarnation<*, *>,
         context: Context,
         root: Any?,
-    ): Result<GenericExporter<T, P>>? =
+    ): Result<Exporter<T, P>>? =
         when {
             root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
-                val exporter = visitBuilding<GenericExporter<T, P>>(context, root)
-                    ?.getOrThrow() ?: cantBuildWith<GenericExporter<T, P>>(root)
+                val exporter = visitBuilding<Exporter<T, P>>(context, root)
+                    ?.getOrThrow() ?: cantBuildWith<Exporter<T, P>>(root)
                 val dataExtractors = visitRecursively(context, root[DocumentRoot.Export.data]) {
                     visitExportData(incarnation, context, it)
                 }

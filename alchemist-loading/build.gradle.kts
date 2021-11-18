@@ -20,11 +20,11 @@ dependencies {
     implementation(libs.dsiutils)
     implementation(libs.gson)
     implementation(libs.guava)
+    implementation(libs.mongodb)
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
-    implementation(Libs.mongodb)
 
     runtimeOnly(Libs.groovy_jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
@@ -33,7 +33,7 @@ dependencies {
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
     testImplementation(libs.caffeine)
-    testImplementation(Libs.embedded_mongodb)
+    testImplementation(libs.embedmongo)
 
     testRuntimeOnly(scalaModule("compiler"))
 

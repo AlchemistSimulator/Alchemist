@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Time
 /**
  * A generic exporter for the simulation.
  */
-interface GenericExporter<T, P : Position<P>> {
+interface Exporter<T, P : Position<P>> {
 
     /**
      *  The List of [Extractor] used to export simulations data.
@@ -31,12 +31,12 @@ interface GenericExporter<T, P : Position<P>> {
     val exportDestination: String
 
     /**
-     * Assign the list of [dataExtractors] to the selected [GenericExporter].
+     * Assign the list of [dataExtractors] to the selected [Exporter].
      */
     fun bindData(dataExtractors: List<Extractor<*>>)
 
     /**
-     * Assign the map of [variables] to the selected [GenericExporter].
+     * Assign the map of [variables] to the selected [Exporter].
      */
     fun bindVariables(variables: Map<String, Variable<*>>)
 

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.loader.export.exporters
 
 import it.unibo.alchemist.loader.export.Extractor
-import it.unibo.alchemist.loader.export.GenericExporter
+import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
@@ -19,12 +19,12 @@ import it.unibo.alchemist.model.interfaces.Time
 import java.util.stream.Collectors
 
 /**
- * Abstract implementation of a [GenericExporter].
+ * Abstract implementation of a [Exporter].
  * @param samplingInterval the sampling time, defaults to [DEFAULT_INTERVAL].
  */
 abstract class AbstractExporter<T, P : Position<P>> (
     private val samplingInterval: Double
-) : GenericExporter<T, P> {
+) : Exporter<T, P> {
 
     override var dataExtractors: List<Extractor<*>> = emptyList()
 

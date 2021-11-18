@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.export.exporters.CSVExporter;
 import it.unibo.alchemist.loader.export.Extractor;
-import it.unibo.alchemist.loader.export.GenericExporter;
+import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.loader.export.extractors.MeanSquaredError;
 import it.unibo.alchemist.model.interfaces.Environment;
 import org.apache.commons.lang3.SerializationUtils;
@@ -25,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests loading of a custom {@link it.unibo.alchemist.loader.export.GenericExporter}.
+ * Tests loading of a custom {@link it.unibo.alchemist.loader.export.Exporter}.
  */
 class PreventRegressions {
 
-    private static GenericExporter<?, ?> exporterOf(final String simulation) {
+    private static Exporter<?, ?> exporterOf(final String simulation) {
         final var exporters = LoadAlchemist
             .from(ResourceLoader.getResource(simulation))
             .getDefault()

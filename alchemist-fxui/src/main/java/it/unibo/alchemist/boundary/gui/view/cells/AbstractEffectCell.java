@@ -73,6 +73,7 @@ public abstract class AbstractEffectCell<T> extends ListCell<T> {
      * between the {@link Label} that acts as an handle for Drag'n'Drop and the
      * visibility toggle.
      *
+     * @param dataFormat the {@link DataFormat} for this cell
      * @param nodes the nodes to inject
      */
     @SuppressFBWarnings(

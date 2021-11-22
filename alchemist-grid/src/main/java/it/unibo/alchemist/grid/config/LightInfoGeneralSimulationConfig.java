@@ -28,7 +28,6 @@ public abstract class LightInfoGeneralSimulationConfig implements GeneralSimulat
     private final Loader loader;
 
     /**
-     * 
      * @param endStep Simulation's end step
      * @param endTime Simulation's end time
      * @param loader Simulation's loader
@@ -39,10 +38,17 @@ public abstract class LightInfoGeneralSimulationConfig implements GeneralSimulat
         this.loader = Objects.requireNonNull(loader);
     }
 
+    /**
+     * @param endTime Simulation's end time
+     * @param loader Simulation's loader
+     */
     public LightInfoGeneralSimulationConfig(final Loader loader, final Time endTime) {
         this(loader, Long.MAX_VALUE, endTime);
     }
 
+    /**
+     * @param loader Simulation's loader
+     */
     public LightInfoGeneralSimulationConfig(final Loader loader) {
         this(loader, Time.INFINITY);
     }

@@ -23,6 +23,9 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
     private static final long serialVersionUID = -7838255122589911058L;
 
 
+    /**
+     * @param incarnation the current incarnation.
+     */
     public LimitedContinuos2D(final Incarnation<T, Euclidean2DPosition> incarnation) {
         super(incarnation);
     }

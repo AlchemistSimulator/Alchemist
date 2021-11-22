@@ -220,7 +220,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         return canRun;
     }
 
-    /**
+    /*
      * Clean up existing gradients. The new values will be computed upon
      * neighbors'
      */

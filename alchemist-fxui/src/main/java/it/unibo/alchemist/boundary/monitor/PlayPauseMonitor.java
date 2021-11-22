@@ -171,6 +171,8 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
      * <p>
      * If no {@link Simulation} is set, it will simply set {@link #PLAY_ICON}.
      *
+     * @param nextStatus the next simulation status
+     *
      * @see #PLAY_ICON
      * @see #PAUSE_ICON
      */

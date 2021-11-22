@@ -140,6 +140,9 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
         return new AnyRealDistribution<>(currentTime, distribution);
     }
 
+    /**
+     * @return the interanl {@link RealDistribution}
+     */
     protected final RealDistribution getDistribution() {
         return distribution;
     }

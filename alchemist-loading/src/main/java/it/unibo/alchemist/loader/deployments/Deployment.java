@@ -30,6 +30,13 @@ public interface Deployment<P extends Position<? extends P>> extends Iterable<P>
         return stream().iterator();
     }
 
+    /**
+     * Optional {@link LinkingRule} associated to the deployment.
+     *
+     * @param <T> concentration type of the {@link LinkingRule}
+     * @return null if the deployment has no associated {@link LinkingRule},
+     * and an instance of the {@link LinkingRule} otherwise
+     */
     @Nullable
     default <T> LinkingRule<T, P> getAssociatedLinkingRule() {
         return null;

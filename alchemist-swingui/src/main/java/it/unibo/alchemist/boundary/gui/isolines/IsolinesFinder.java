@@ -10,21 +10,12 @@
 package it.unibo.alchemist.boundary.gui.isolines;
 
 import java.util.Collection;
+import java.util.function.BinaryOperator;
 
 /**
  * Defines an object capable of finding isolines (i.e. an isolines finding algorithm).
  */
 public interface IsolinesFinder {
-
-    /**
-     * Defines a basic bidimensional function.
-     */
-    @FunctionalInterface
-    interface BidimensionalFunction {
-
-        Number apply(Number x, Number y);
-
-    }
 
     /**
      * Find the isolines of the given function. You can specify which isolines will be extracted with the
@@ -46,7 +37,7 @@ public interface IsolinesFinder {
      * @return the isolines
      */
     Collection<Isoline> findIsolines(
-            BidimensionalFunction function,
+            BinaryOperator<Number> function,
             Number x1,
             Number y1,
             Number x2,
@@ -56,7 +47,7 @@ public interface IsolinesFinder {
 
     /**
      * Find the isolines of the given function. This method is equivalent to
-     * {@link IsolinesFinder#findIsolines(BidimensionalFunction, Number, Number, Number, Number, Collection)},
+     * {@link IsolinesFinder#findIsolines(BinaryOperator, Number, Number, Number, Number, Collection)},
      * with the difference that it allows you to specify the diagonal of the rectangular region, instead of the four
      * vertexes separately.
      * @param function        - the function for which to calculate the isolines
@@ -66,7 +57,7 @@ public interface IsolinesFinder {
      * @return the isolines
      */
     Collection<Isoline> findIsolines(
-            BidimensionalFunction function,
+            BinaryOperator<Number> function,
             Segment2D diagonal,
             Collection<Number> levels
     );

@@ -185,6 +185,9 @@ public final class AlchemistExecutionContext<P extends Position<P>>
         return environment;
     }
 
+    /**
+     * @return the internal {@link RandomGenerator}
+     */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public RandomGenerator getRandomGenerator() {
         return randomGenerator;

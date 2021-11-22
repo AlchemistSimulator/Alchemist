@@ -38,6 +38,9 @@ public class Continuous2DObstacles<T>
     private static final long serialVersionUID = 69931743897405107L;
     private transient RTree<RectObstacle2D<Euclidean2DPosition>, Rectangle> rtree = RTree.create();
 
+    /**
+     * @param incarnation the current incarnation.
+     */
     public Continuous2DObstacles(final Incarnation<T, Euclidean2DPosition> incarnation) {
         super(incarnation);
     }

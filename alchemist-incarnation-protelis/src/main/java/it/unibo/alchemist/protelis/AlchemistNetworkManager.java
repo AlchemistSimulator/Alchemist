@@ -115,6 +115,9 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         this.distanceLossDistribution = distanceLossDistribution;
     }
 
+    /**
+     * @return the distribution connecting the distance to the packet loss
+     */
     public RealDistribution getDistancePacketLossDistribution() {
         return distanceLossDistribution;
     }

@@ -32,6 +32,8 @@ jobs:
             ./gradlew assemble shadowJar --parallel
           check-command: |
             ./gradlew check --parallel || ./gradlew check --parallel
+          clean-command: |
+            ./gradlew clean --parallel
           deploy-command: |
             ./gradlew signKotlinMavenPublication --parallel
             ./gradlew publishKotlinMavenPublicationToMavenCentralRepository

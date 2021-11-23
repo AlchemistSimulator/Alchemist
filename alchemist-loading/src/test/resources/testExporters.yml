@@ -10,8 +10,8 @@ export:
 
   - type: MongoDBExporter
     parameters:
-      uri: "mongodb+srv://alchemist-user:alchemist-pwd@alchemist.ewxds.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-      dbname: "provaMongo"
+      uri: "mongodb://localhost:27017/"
+      dbname: "test"
       interval: 2.5
     data:
       - time

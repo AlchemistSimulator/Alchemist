@@ -68,14 +68,23 @@ public final class MoveForwardAndTeleport<T, P extends Position2D<P>> extends Ab
         return getEnvironment().makePosition(x + dx, y);
     }
 
+    /**
+     * @return the maximum x coordinate before teleporting to {@link #getMinX()}
+     */
     public double getMaxX() {
         return maxx;
     }
 
+    /**
+     * @return the minimum x coordinate, namely the teleport destination
+     */
     public double getMinX() {
         return minx;
     }
 
+    /**
+     * @return the step size
+     */
     public double getDeltaX() {
         return dx;
     }

@@ -480,9 +480,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         return zoomManager;
     }
 
-    /**
-     * Initializes all the internal data.
-     */
     private void initAll(final Environment<T, P> env) {
         wormhole = new WormholeSwing<>(env, this);
         wormhole.center();

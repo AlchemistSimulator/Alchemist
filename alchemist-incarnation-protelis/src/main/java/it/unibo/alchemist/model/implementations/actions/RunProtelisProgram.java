@@ -445,6 +445,11 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
         return name + "@" + node.getId();
     }
 
+    /**
+     * Provides an access to the underlying {@link org.protelis.vm.ExecutionContext}.
+     *
+     * @return the current {@link AlchemistExecutionContext}
+     */
     @SuppressFBWarnings(value = EI_EXPOSE_REP, justification = INTENTIONAL)
     public AlchemistExecutionContext<P> getExecutionContext() {
         return executionContext;

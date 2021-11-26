@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +44,7 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
      */
     @Override
     public Collection<Isoline> findIsolines(
-            final BidimensionalFunction function,
+            final BinaryOperator<Number> function,
             final Number x1,
             final Number y1,
             final Number x2,
@@ -130,7 +131,7 @@ public class ConrecIsolinesFinder implements IsolinesFinder {
      */
     @Override
     public Collection<Isoline> findIsolines(
-            final BidimensionalFunction function,
+            final BinaryOperator<Number> function,
             final Segment2D diagonal,
             final Collection<Number> levels
     ) {

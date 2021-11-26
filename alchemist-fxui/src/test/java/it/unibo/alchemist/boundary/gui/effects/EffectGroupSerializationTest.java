@@ -76,7 +76,8 @@ class EffectGroupSerializationTest {
 
     /**
      * Initializes and returns a simple {@link EffectStack}.
-     * 
+     *
+     * @param <P> position type
      * @return the effect group
      */
     private <P extends Position2D<? extends P>> EffectGroup<P> setupEffectGroup() {

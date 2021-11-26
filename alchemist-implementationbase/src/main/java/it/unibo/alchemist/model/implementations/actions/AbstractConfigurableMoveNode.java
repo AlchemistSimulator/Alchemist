@@ -175,14 +175,23 @@ public abstract class AbstractConfigurableMoveNode<T, P extends Position<P>> ext
         return route;
     }
 
+    /**
+     * @return the {@link RoutingStrategy}
+     */
     protected final RoutingStrategy<T, P> getRoutingStrategy() {
         return routingStrategy;
     }
 
+    /**
+     * @return the {@link SpeedSelectionStrategy}
+     */
     protected final SpeedSelectionStrategy<T, P> getSpeedSelectionStrategy() {
         return speedSelectionStrategy;
     }
 
+    /**
+     * @return the {@link TargetSelectionStrategy}
+     */
     protected final TargetSelectionStrategy<T, P> getTargetSelectionStrategy() {
         return targetSelectionStrategy;
     }

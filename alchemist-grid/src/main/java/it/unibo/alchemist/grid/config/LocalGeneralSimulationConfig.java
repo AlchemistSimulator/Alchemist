@@ -34,7 +34,6 @@ public final class LocalGeneralSimulationConfig extends LightInfoGeneralSimulati
     private final Map<String, byte[]> dependencies;
 
     /**
-     * 
      * @param loader Simulation's loader
      * @param endStep Simulation's end step
      * @param endTime Simulation's end time
@@ -58,6 +57,10 @@ public final class LocalGeneralSimulationConfig extends LightInfoGeneralSimulati
         }
     }
 
+    /**
+     * @param loader Simulation's loader
+     * @param endTime Simulation's end time
+     */
     public LocalGeneralSimulationConfig(final Loader loader, final Time endTime) {
         this(loader, Long.MAX_VALUE, endTime);
     }

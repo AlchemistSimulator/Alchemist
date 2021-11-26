@@ -100,6 +100,9 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
      */
     Route<GeoPosition> computeRoute(GeoPosition from, GeoPosition to, O options);
 
+    /**
+     * @return the {@link RoutingService} for this environment
+     */
     S getRoutingService();
 
 }

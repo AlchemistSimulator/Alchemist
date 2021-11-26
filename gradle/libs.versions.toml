@@ -5,7 +5,7 @@ graphhopper = "4.0"
 ignite = "2.11.0"
 junit = "5.8.1"
 konf = "1.1.2"
-kotest = "4.6.3"
+kotest = "5.0.0"
 kotlin = "1.5.31"
 mockito = "4.1.0"
 orchid = "0.21.1"
@@ -23,7 +23,7 @@ apache-commons-math3 = { module = "org.apache.commons:commons-math3", version = 
 appdirs = { module = "net.harawata:appdirs", version = "1.2.1" }
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.0.4" }
-classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.134" }
+classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.136" }
 dsiutils = { module = "it.unimi.dsi:dsiutils", version = "2.6.17" }
 embedmongo = { module = "de.flapdoodle.embed:de.flapdoodle.embed.mongo", version = "3.1.4" }
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
@@ -69,7 +69,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
 gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "0.3.0" }
-java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.4.2" }
+java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.4.3" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
 multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.2.0" }

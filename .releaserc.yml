@@ -8,8 +8,12 @@ plugins:
     - publishCmd: |
         git tag -a -f ${nextRelease.version} ${nextRelease.version} -F CHANGELOG.md
         git push --force origin ${nextRelease.version}
-        ./gradlew signKotlinMavenPublication --parallel
+        ./gradlew signKotlinMavenPublication shadowJar --parallel
         ./gradlew releaseKotlinMavenOnMavenCentralNexus
         ./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
-  - "@semantic-release/github"
+  -
+    - "@semantic-release/github"
+    - "assets":
+      - "path": "build/shadow/*-all.jar"
+        "label": "Executable Jars"
   - "@semantic-release/git"

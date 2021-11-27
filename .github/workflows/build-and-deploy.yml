@@ -26,7 +26,7 @@ jobs:
       - name: Get branch name
         id: branch
         uses: tj-actions/branch-names@v5
-      - uses: DanySK/build-check-deploy-gradle-action@master
+      - uses: DanySK/build-check-deploy-gradle-action@1.0.4
         with:
           build-command: |
             ./gradlew assemble shadowJar --parallel

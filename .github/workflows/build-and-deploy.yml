@@ -36,9 +36,7 @@ jobs:
             ./gradlew clean --parallel
           deploy-command: |
             ./gradlew signKotlinMavenPublication --parallel
-            ./gradlew publishKotlinMavenPublicationToMavenCentralRepository
-            ./gradlew publishKotlinMavenPublicationToGithubRepository --continue || true
-            ./gradlew clean
+            ./gradlew closeKotlinMavenOnMavenCentralNexus
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: >-
             ${{ 
@@ -50,7 +48,29 @@ jobs:
                 || steps.branch.outputs.is_tag
               )
             }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          signing-key: ${{ secrets.SIGNING_KEY }}
+          signing-password: ${{ secrets.SIGNING_PASSWORD }}
+  Release:
+    needs:
+      - Build
+    runs-on: ubuntu-latest
+    if: >-
+      contains('push workflow_dispatch', github.event_name)
+      && contains(github.repository, 'AlchemistSimulator/Alchemist')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.0
+      - uses: DanySK/build-check-deploy-gradle-action@1.0.4
+        with:
+          build-command: true
+          check-command: true
+          deploy-command: |
+            npm install
+            npx semantic-release
+          should-run-codecov: false
+          should-deploy: true
+          github-token: ${{ github.token }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}

@@ -37,7 +37,7 @@ jobs:
             ./gradlew closeKotlinMavenOnMavenCentralNexus
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: >-
-            ${{ 
+            ${{
               contains('Linux', runner.os)
               && contains(github.repository, 'AlchemistSimulator/Alchemist')
               && contains('push workflow_dispatch', github.event_name)

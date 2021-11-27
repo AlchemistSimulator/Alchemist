@@ -60,7 +60,13 @@ jobs:
           build-command: ./gradlew orchidBuild --parallel
           check-command: true
           should-run-codecov: false
-          should-deploy: false
+          should-deploy: >-
+            ${{
+              contains(github.repository, 'AlchemistSimulator/Alchemist')
+              && contains('push workflow_dispatch', github.event_name)
+            }}
+          deploy-command: ./gradlew orchidDeploy --parallel
+          github-token: ${{ github.token }}
   Release:
     needs:
       - Build

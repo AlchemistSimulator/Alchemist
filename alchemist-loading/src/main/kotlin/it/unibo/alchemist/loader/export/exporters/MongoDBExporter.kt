@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Time
 import org.bson.Document
 
 /**
- * Exports data provided by a list of [Extractor]s on a MongoDB instance.
+ * Exports data provided by a list of [it.unibo.alchemist.loader.export.Extractor]s on a MongoDB instance.
  * @param uri the connection URI of the database instance.
  * @param dbname the name the database to export data to.
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
@@ -32,7 +32,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
 
     companion object {
         /**
-         *  The default name used if no database name is specified.
+         *  The default database if no name is specified.
          */
         private const val DEFAULT_DATABASE = "test"
     }
@@ -52,8 +52,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        val document: Document = convertToDocument(environment, reaction, time, step)
-        mongoService.pushToDatabase(document)
+        mongoService.pushToDatabase(convertToDocument(environment, reaction, time, step))
     }
 
     override fun close(environment: Environment<T, P>, time: Time, step: Long) {

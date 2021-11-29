@@ -22,7 +22,6 @@ import org.bson.Document
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
  * @param appendTime if true it will always generate a new Mongo document, false to overwrite.
  */
-
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val uri: String,
     val dbName: String = DEFAULT_DATABASE,

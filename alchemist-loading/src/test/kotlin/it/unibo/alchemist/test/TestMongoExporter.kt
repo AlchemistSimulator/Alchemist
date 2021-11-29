@@ -11,14 +11,6 @@ package it.unibo.alchemist.test
 
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
-import de.flapdoodle.embed.mongo.MongodExecutable
-import de.flapdoodle.embed.mongo.MongodProcess
-import de.flapdoodle.embed.mongo.MongodStarter
-import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig
-import de.flapdoodle.embed.mongo.config.MongodConfig
-import de.flapdoodle.embed.mongo.config.Net
-import de.flapdoodle.embed.mongo.distribution.Version
-import de.flapdoodle.embed.process.runtime.Network
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
@@ -59,22 +51,4 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             )
         }
     }
-}) {
-    companion object {
-        private fun withMongo(operation: () -> Unit) {
-            val starter: MongodStarter = MongodStarter.getDefaultInstance()
-            val mongodConfig: ImmutableMongodConfig = MongodConfig.builder()
-                .version(Version.Main.PRODUCTION)
-                .net(Net("localhost", 27017, Network.localhostIsIPv6()))
-                .build()
-            val mongodExecutable: MongodExecutable = starter.prepare(mongodConfig)
-            val mongodProcess: MongodProcess = mongodExecutable.start()
-            try {
-                operation()
-            } finally {
-                mongodProcess.stop()
-                mongodExecutable.stop()
-            }
-        }
-    }
-}
+})

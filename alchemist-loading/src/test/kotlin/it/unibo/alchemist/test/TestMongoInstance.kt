@@ -34,18 +34,7 @@ import org.junit.platform.commons.logging.LoggerFactory
 
 class TestMongoInstance : StringSpec({
     "test the local instance of mongo" {
-
-        val starter: MongodStarter = MongodStarter.getDefaultInstance()
-        val mongodConfig: ImmutableMongodConfig = MongodConfig.builder()
-            .version(Version.Main.PRODUCTION)
-            .net(Net("localhost", 27017, Network.localhostIsIPv6()))
-            .build()
-        val mongodExecutable: MongodExecutable = starter.prepare(mongodConfig)
-        mongodExecutable shouldNotBe null
-        val mongodProcess: MongodProcess = mongodExecutable.start()
-        mongodProcess shouldNotBe null
-
-        try {
+        withMongo {
             val mongoClient: MongoClient = MongoClients.create()
             mongoClient shouldNotBe null
             val defaultDatabase: MongoDatabase = mongoClient.getDatabase("test")
@@ -55,13 +44,6 @@ class TestMongoInstance : StringSpec({
             mongoCollection.countDocuments() shouldBeGreaterThan 0
             mongoCollection.find(eq("name", "mongo-test-document")).count() shouldBeGreaterThan 0
             mongoCollection.drop()
-        } catch (exception: MongoException) {
-            LoggerFactory.getLogger(MongoDBExporter::class.java).error(exception) {
-                "Can't start a local mongo instance for tests."
-            }
-        } finally {
-            mongodProcess.stop()
-            mongodExecutable.stop()
         }
     }
 })

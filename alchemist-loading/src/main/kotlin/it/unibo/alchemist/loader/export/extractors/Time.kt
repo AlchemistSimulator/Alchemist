@@ -19,14 +19,16 @@ import it.unibo.alchemist.model.interfaces.Time
  */
 class Time : Extractor<Double> {
 
-    private val colName: String = "time"
+    override val columnNames = listOf(name)
 
     override fun <T> extractData(
         environment: Environment<T, *>,
         reaction: Reaction<T>?,
         time: Time,
         step: Long
-    ): Map<String, Double> = mapOf(colName to time.toDouble())
+    ): Map<String, Double> = mapOf(name to time.toDouble())
 
-    override val columnNames = listOf("time")
+    companion object {
+        private const val name: String = "time"
+    }
 }

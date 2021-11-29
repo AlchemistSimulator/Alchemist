@@ -30,7 +30,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 
-    override val exportDestination: String = uri
+    override val exportDestination: String get() = uri
 
     /**
      * The name of the collection related to the current simulation in execution.

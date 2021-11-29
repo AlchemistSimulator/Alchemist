@@ -14,9 +14,10 @@ import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
-import it.unibo.alchemist.loader.export.GenericExporter
-import it.unibo.alchemist.loader.export.MoleculeReader
-import it.unibo.alchemist.loader.export.Time
+import it.unibo.alchemist.loader.export.Exporter
+import it.unibo.alchemist.loader.export.extractors.MoleculeReader
+import it.unibo.alchemist.loader.export.extractors.Time
+
 import it.unibo.alchemist.loader.export.filters.CommonFilters
 import it.unibo.alchemist.loader.m2m.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
@@ -308,14 +309,19 @@ internal object SimulationModel {
                 ?: cantBuildWith<Environment<T, P>>(root, JavaType)
         }
 
-    private fun visitExportData(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor>? =
+    @Suppress("UNCHECKED_CAST")
+    private fun <E : Any> visitExportData(
+        incarnation: Incarnation<*, *>,
+        context: Context,
+        root: Any?
+    ): Result<Extractor<E>>? =
         when {
             root is String && root.equals(DocumentRoot.Export.Data.time, ignoreCase = true) ->
                 Result.success(Time())
             root is Map<*, *> && DocumentRoot.Export.Data.validateDescriptor(root) -> {
                 val molecule = root[DocumentRoot.Export.Data.molecule]?.toString()
                 if (molecule == null) {
-                    visitBuilding<Extractor>(context, root)
+                    visitBuilding(context, root)
                 } else {
                     val property = root[DocumentRoot.Export.Data.property]?.toString()
                     val filter: FilteringPolicy = root[DocumentRoot.Export.Data.valueFilter]
@@ -334,21 +340,21 @@ internal object SimulationModel {
                 }
             }
             else -> null
-        }
+        } as Result<Extractor<E>>?
 
     fun <T, P : Position<P>> visitSingleExporter(
         incarnation: Incarnation<*, *>,
         context: Context,
         root: Any?,
-    ): Result<GenericExporter<T, P>>? =
+    ): Result<Exporter<T, P>>? =
         when {
             root is Map<*, *> && DocumentRoot.Export.validateDescriptor(root) -> {
-                val exporter = visitBuilding<GenericExporter<T, P>>(context, root)
-                    ?.getOrThrow() ?: cantBuildWith<GenericExporter<T, P>>(root)
+                val exporter = visitBuilding<Exporter<T, P>>(context, root)
+                    ?.getOrThrow() ?: cantBuildWith<Exporter<T, P>>(root)
                 val dataExtractors = visitRecursively(context, root[DocumentRoot.Export.data]) {
-                    visitExportData(incarnation, context, it)
+                    visitExportData<Any>(incarnation, context, it)
                 }
-                exporter.bindData(dataExtractors)
+                exporter.bindDataExtractors(dataExtractors)
                 Result.success(exporter)
             }
             else -> null

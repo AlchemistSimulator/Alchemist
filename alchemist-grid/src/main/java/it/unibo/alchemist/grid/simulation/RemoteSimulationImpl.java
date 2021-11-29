@@ -17,7 +17,7 @@ import java.util.concurrent.FutureTask;
 import java.util.UUID;
 
 import it.unibo.alchemist.loader.InitializedEnvironment;
-import it.unibo.alchemist.loader.export.GlobalExporter;
+import it.unibo.alchemist.loader.export.exporters.GlobalExporter;
 import org.apache.ignite.Ignition;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;

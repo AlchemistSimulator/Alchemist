@@ -7,3 +7,11 @@ export:
     data:
       - time
       - molecule: "default_module:default_program"
+
+  - type: MongoDBExporter
+    parameters:
+      uri: "mongodb://localhost:27017/"
+      dbName: "test"
+      interval: 2.5
+    data:
+      - time

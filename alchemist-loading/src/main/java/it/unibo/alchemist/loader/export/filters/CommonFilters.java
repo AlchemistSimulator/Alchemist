@@ -9,9 +9,11 @@ package it.unibo.alchemist.loader.export.filters;
 
 import it.unibo.alchemist.loader.export.FilteringPolicy;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.stream.DoubleStream;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Utilities with the most common filtering operations on values.
@@ -19,23 +21,24 @@ import java.util.stream.DoubleStream;
 public enum CommonFilters {
 
     /**
+    /**
      * Remove all {@link Double#NaN} values.
      */
-    FILTERNAN((FilteringPolicy & java.io.Serializable) d -> Double.isNaN(d) ? DoubleStream.empty() : DoubleStream.of(d)),
+    FILTERNAN((FilteringPolicy & java.io.Serializable) d -> Double.isNaN(d) ? emptyList() : List.of(d)),
     /**
      * Remove all values that match {@link Double#isInfinite(double)}  ({@link Double#NaN} don't get filtered).
      */
     FILTERINFINITY((FilteringPolicy & java.io.Serializable) d -> Double.isInfinite(d)
-            ? DoubleStream.empty()
-            : DoubleStream.of(d)),
+            ? emptyList()
+            : List.of(d)),
     /**
      * Keeps only finite values ({@link Double#isFinite(double)} returns true).
      */
-    ONLYFINITE((FilteringPolicy & java.io.Serializable) d -> Double.isFinite(d) ? DoubleStream.of(d) : DoubleStream.empty()),
+    ONLYFINITE((FilteringPolicy & java.io.Serializable) d -> Double.isFinite(d) ? List.of(d) : emptyList()),
     /**
      * Keeps all values.
      */
-    NOFILTER((FilteringPolicy & java.io.Serializable) DoubleStream::of);
+    NOFILTER((FilteringPolicy & java.io.Serializable) List::of);
 
     private final FilteringPolicy filter;
 

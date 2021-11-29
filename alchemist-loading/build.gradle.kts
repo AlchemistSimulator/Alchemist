@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.dsiutils)
     implementation(libs.gson)
     implementation(libs.guava)
+    implementation(libs.mongodb)
     implementation(graphStream("core"))
     implementation(graphStream("algo"))
     implementation(Libs.jirf)
@@ -32,6 +33,8 @@ dependencies {
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
     testImplementation(libs.caffeine)
+    testImplementation(libs.embedmongo)
+
     testRuntimeOnly(scalaModule("compiler"))
 
     testRuntimeOnly(incarnation("sapere"))

@@ -30,9 +30,9 @@ class TestFeelsTransmission<T, P> : StringSpec({
             .also { it.layers shouldNot beEmpty() }
             .dangerIsLoaded()
             .startSimulation()
-        val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>("feels-transmission-without-layer.yml")
-            .also { it.layers should beEmpty() }
-            .startSimulation()
+        val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>(
+            "feels-transmission-without-layer.yml"
+        ).also { it.layers should beEmpty() }.startSimulation()
         println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
         println("With layer aggregate danger: $aggregateDangerWithLayer")
         aggregateDangerWithLayer.perceivedDanger() shouldBeGreaterThan aggregateDangerWithoutLayer.perceivedDanger()

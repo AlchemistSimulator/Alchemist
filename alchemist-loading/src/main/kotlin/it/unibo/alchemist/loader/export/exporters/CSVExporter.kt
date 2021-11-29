@@ -59,7 +59,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         }
         val path = if (exportPath.endsWith(File.separator)) exportPath else "${exportPath}${File.separator}"
         val nameRoot = if (fileNameRoot.isEmpty()) "" else "${fileNameRoot}_"
-        val variablesHeader = if(variablesDescriptor.isBlank()) "" else "_$variablesDescriptor"
+        val variablesHeader = if (variablesDescriptor.isBlank()) "" else "_$variablesDescriptor"
         val time = if (appendTime) "${System.currentTimeMillis()}" else ""
         val filePrefix = "$nameRoot$variablesHeader$time"
         require(filePrefix.isNotEmpty()) {

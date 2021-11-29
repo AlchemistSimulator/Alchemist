@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Time
  * {@link Reaction} executed and the current simulation step.
  *
  */
-interface Extractor<out E> {
+interface Extractor<out E : Any> {
 
     /**
      * Extracts numeric properties from an environment.

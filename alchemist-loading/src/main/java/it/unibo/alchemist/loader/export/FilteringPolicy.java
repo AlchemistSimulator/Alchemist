@@ -8,7 +8,6 @@
 package it.unibo.alchemist.loader.export;
 
 import java.io.Serializable;
-import java.util.stream.DoubleStream;
 
 /**
  * Expresses a flat map operation over a double.
@@ -21,12 +20,12 @@ public interface FilteringPolicy extends Serializable {
      * 
      * @param value
      *            the input value
-     * @return a stream of double values. In most cases, it will be a
-     *         {@link DoubleStream} of a single value, but may easily be an
-     *         empty {@link DoubleStream} (in case the value must be filtered).
+     * @return a sequence of double values. In most cases, it will be a
+     *         single value, but may easily be an
+     *         iterator with no elements (in case the value must be filtered).
      *         Also, the case in which a single value gets mapped onto multiple
      *         values is supported by this interface.
      */
-    DoubleStream apply(double value);
+    Iterable<Double> apply(double value);
 
 }

@@ -99,8 +99,8 @@ private fun <T> Int.sizeMatcher(collectionName: String, collection: (Reaction<Do
             val actualSize = collection.invoke(value).size
             return MatcherResult(
                 actualSize == this@sizeMatcher,
-                "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize",
-                "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has"
+                { "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize" },
+                { "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has" }
             )
         }
     }

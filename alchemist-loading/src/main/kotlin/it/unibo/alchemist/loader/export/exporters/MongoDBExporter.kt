@@ -18,36 +18,30 @@ import org.bson.Document
 /**
  * Exports data provided by a list of [it.unibo.alchemist.loader.export.Extractor]s on a MongoDB instance.
  * @param uri the connection URI of the database instance.
- * @param dbname the name the database to export data to.
+ * @param dbName the name the database to export data to.
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
  * @param appendTime if true it will always generate a new Mongo document, false to overwrite.
  */
 
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val uri: String,
-    val dbname: String = DEFAULT_DATABASE,
+    val dbName: String = DEFAULT_DATABASE,
     val interval: Double = DEFAULT_INTERVAL,
     private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 
-    companion object {
-        /**
-         *  The default database if no name is specified.
-         */
-        private const val DEFAULT_DATABASE = "test"
-    }
-
     override val exportDestination: String = uri
+
     /**
      * The name of the collection related to the current simulation in execution.
      */
-    val collectionName: String
-        get() = variablesDescriptor + "${if (appendTime) System.currentTimeMillis() else ""}"
+    val collectionName: String = "$variablesDescriptor${"".takeUnless { appendTime } ?: System.currentTimeMillis()}"
+
     private val mongoService: MongoService = MongoService()
 
     override fun setup(environment: Environment<T, P>) {
         mongoService.startService(uri)
-        mongoService.connectToDB(dbname)
+        mongoService.connectToDB(dbName)
         mongoService.createCollection(collectionName)
     }
 
@@ -61,12 +55,18 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
 
     private fun convertToDocument(env: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long): Document {
         val document = Document()
-        dataExtractors.stream()
-            .forEach {
-                for ((key, value) in it.extractData(env, reaction, time, step)) {
-                    document.append(key, value)
-                }
+        dataExtractors.forEach { extractor ->
+            extractor.extractData(env, reaction, time, step).forEach { (dataLabel, dataValue) ->
+                document.append(dataLabel, dataValue)
             }
+        }
         return document
+    }
+
+    companion object {
+        /**
+         *  The default database if no name is specified.
+         */
+        private const val DEFAULT_DATABASE = "test"
     }
 }

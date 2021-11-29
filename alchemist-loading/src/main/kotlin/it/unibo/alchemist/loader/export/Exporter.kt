@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.loader.export
 
-import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -17,6 +16,8 @@ import it.unibo.alchemist.model.interfaces.Time
 
 /**
  * A generic exporter for the simulation.
+ * [T] is the concentration type,
+ * [P] is the position type, and
  */
 interface Exporter<T, P : Position<P>> {
 
@@ -33,12 +34,12 @@ interface Exporter<T, P : Position<P>> {
     /**
      * Assign the list of [dataExtractors] to the selected [Exporter].
      */
-    fun bindData(dataExtractors: List<Extractor<*>>)
+    fun bindDataExtractors(dataExtractors: List<Extractor<*>>)
 
     /**
      * Assign the map of [variables] to the selected [Exporter].
      */
-    fun bindVariables(variables: Map<String, Variable<*>>)
+    fun bindVariables(variables: Map<String, *>)
 
     /**
      *  Prepare the export environment.

@@ -9,14 +9,14 @@
 
 package it.unibo.alchemist.loader.export.exporters
 
-import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.Exporter
+import it.unibo.alchemist.loader.export.Extractor
+import it.unibo.alchemist.loader.export.exporters.AbstractExporter.Companion.DEFAULT_INTERVAL
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
-import java.util.stream.Collectors
 
 /**
  * Abstract implementation of a [Exporter].
@@ -26,18 +26,19 @@ abstract class AbstractExporter<T, P : Position<P>> (
     private val samplingInterval: Double
 ) : Exporter<T, P> {
 
-    override var dataExtractors: List<Extractor<*>> = emptyList()
+    final override lateinit var dataExtractors: List<Extractor<*>>
+        private set
+
+    /**
+     * A description of the [Variable]s of the current simulation and their values.
+     */
+    protected lateinit var variablesDescriptor: String
 
     /**
      * A value used to check if it's time to export data.
      * Starts with -1 because the 0th should be sampled.
      */
     private var count = -1L
-
-    /**
-     * A description of the [Variable]s of the current simulation and their values.
-     */
-    var variablesDescriptor: String = ""
 
     companion object {
         /**
@@ -46,20 +47,29 @@ abstract class AbstractExporter<T, P : Position<P>> (
         const val DEFAULT_INTERVAL: Double = 1.0
     }
 
-    override fun bindData(dataExtractors: List<Extractor<*>>) {
+    final override fun bindDataExtractors(dataExtractors: List<Extractor<*>>) {
+        require(!this::dataExtractors.isInitialized) {
+            "Re-binding data extractors is forbidden. Currently bound: ${this.dataExtractors}"
+        }
         this.dataExtractors = dataExtractors
     }
 
-    override fun bindVariables(variables: Map<String, Variable<*>>) {
-        variablesDescriptor = variables.keys.stream().collect(Collectors.joining("-"))
+    final override fun bindVariables(variables: Map<String, *>) {
+        require(!this::variablesDescriptor.isInitialized) {
+            "Re-binding variables is forbidden. Currently bound: $variablesDescriptor"
+        }
+        variablesDescriptor = computeDescriptor(variables)
     }
+
+    protected fun computeDescriptor(variables: Map<String, *>): String =
+        variables.entries.joinToString("_") { (name, value) -> "$name-$value" }
 
     /**
      *  Every step of the simulation check if is time to export data depending on the sampling interval.
      *  Converts the division of the current time and the interval to Long in order to export data only
      *  when the difference between steps is as big as the sampling interval.
      */
-    override fun update(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
+    final override fun update(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         val curSample: Long = (time.toDouble() / samplingInterval).toLong()
         if (curSample > count) {
             count = curSample

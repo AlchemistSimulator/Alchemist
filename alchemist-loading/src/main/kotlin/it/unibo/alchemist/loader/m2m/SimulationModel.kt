@@ -309,7 +309,12 @@ internal object SimulationModel {
                 ?: cantBuildWith<Environment<T, P>>(root, JavaType)
         }
 
-    private fun visitExportData(incarnation: Incarnation<*, *>, context: Context, root: Any?): Result<Extractor<*>>? =
+    @Suppress("UNCHECKED_CAST")
+    private fun <E : Any> visitExportData(
+        incarnation: Incarnation<*, *>,
+        context: Context,
+        root: Any?
+    ): Result<Extractor<E>>? =
         when {
             root is String && root.equals(DocumentRoot.Export.Data.time, ignoreCase = true) ->
                 Result.success(Time())
@@ -335,7 +340,7 @@ internal object SimulationModel {
                 }
             }
             else -> null
-        }
+        } as Result<Extractor<E>>?
 
     fun <T, P : Position<P>> visitSingleExporter(
         incarnation: Incarnation<*, *>,
@@ -347,9 +352,9 @@ internal object SimulationModel {
                 val exporter = visitBuilding<Exporter<T, P>>(context, root)
                     ?.getOrThrow() ?: cantBuildWith<Exporter<T, P>>(root)
                 val dataExtractors = visitRecursively(context, root[DocumentRoot.Export.data]) {
-                    visitExportData(incarnation, context, it)
+                    visitExportData<Any>(incarnation, context, it)
                 }
-                exporter.bindData(dataExtractors)
+                exporter.bindDataExtractors(dataExtractors)
                 Result.success(exporter)
             }
             else -> null

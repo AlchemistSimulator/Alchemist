@@ -111,8 +111,8 @@ private val Container.expectedPropensity: Matcher<Container>
             }
             return MatcherResult(
                 expectedPropensity == propensity,
-                "node $node should have propensity $expectedPropensity for condition $condition but it has $propensity",
-                "node $node should not have propensity $expectedPropensity for condition $condition but it has"
+                { "node $node expected propensity $expectedPropensity for condition $condition but has $propensity" },
+                { "node $node should not have propensity $expectedPropensity for condition $condition but it has" }
             )
         }
     }

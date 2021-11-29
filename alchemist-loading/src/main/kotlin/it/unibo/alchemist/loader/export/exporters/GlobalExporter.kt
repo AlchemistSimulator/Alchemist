@@ -21,7 +21,9 @@ import it.unibo.alchemist.model.interfaces.Time
  *  Implements the [OutputMonitor] interface and delegate the export phase to each one of his internal exporters.
  *  @param exporters The list of [Exporter].
  */
-class GlobalExporter<T, P : Position<P>> (private val exporters: List<Exporter<T, P>>) : OutputMonitor<T, P> {
+class GlobalExporter<T, P : Position<P>>(
+    private val exporters: List<Exporter<T, P>>
+) : OutputMonitor<T, P> {
 
     @Override
     override fun initialized(environment: Environment<T, P>) {

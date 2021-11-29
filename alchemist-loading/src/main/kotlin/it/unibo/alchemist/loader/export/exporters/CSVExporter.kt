@@ -50,9 +50,8 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         private val logger = LoggerFactory.getLogger(CSVExporter::class.java)
     }
 
-    override val exportDestination: String
-        get() = path + fileNameRoot + "_" +
-            variablesDescriptor + "_" + "${if (appendTime) System.currentTimeMillis() else ""}"
+    override val exportDestination: String =
+        path + fileNameRoot + "_" + variablesDescriptor + "_" + "${if (appendTime) System.currentTimeMillis() else ""}"
 
     private lateinit var outputPrintStream: PrintStream
 
@@ -85,8 +84,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         dataExtractors.forEach {
-            it.extractData(environment, reaction, time, step).values.forEach {
-                value ->
+            it.extractData(environment, reaction, time, step).values.forEach { value ->
                 outputPrintStream.print(value)
                 outputPrintStream.print(' ')
             }

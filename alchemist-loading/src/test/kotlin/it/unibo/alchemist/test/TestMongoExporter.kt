@@ -8,7 +8,6 @@
 
 package it.unibo.alchemist.test
 
-import com.mongodb.MongoException
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import de.flapdoodle.embed.mongo.MongodExecutable
@@ -23,28 +22,18 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.maps.shouldContainKey
+import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.platform.commons.logging.LoggerFactory
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestMongoExporter<T, P : Position<P>> : StringSpec({
     "test exporting data on MongoDB" {
-
-        val starter: MongodStarter = MongodStarter.getDefaultInstance()
-        val mongodConfig: ImmutableMongodConfig = MongodConfig.builder()
-            .version(Version.Main.PRODUCTION)
-            .net(Net("localhost", 27017, Network.localhostIsIPv6()))
-            .build()
-        val mongodExecutable: MongodExecutable = starter.prepare(mongodConfig)
-        val mongodProcess: MongodProcess = mongodExecutable.start()
-
-        try {
+        withMongo {
             val file = ResourceLoader.getResource("testMongoExporter.yml")
             assertNotNull(file)
             val loader = LoadAlchemist.from(file)
@@ -65,18 +54,29 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             }
             exporter.dataExtractors.size shouldBeGreaterThan 0
             val testClient: MongoClient = MongoClients.create(exporter.exportDestination)
-            val exportCollection = testClient.getDatabase(exporter.dbname).getCollection(exporter.collectionName)
+            val exportCollection = testClient.getDatabase(exporter.dbName).getCollection(exporter.collectionName)
             exportCollection.countDocuments() shouldBeGreaterThan 0
             exportCollection.find().firstOrNull()?.shouldContainKey(
                 exporter.dataExtractors.first().columnNames[0]
             )
-        } catch (exception: MongoException) {
-            LoggerFactory.getLogger(MongoDBExporter::class.java).error(exception) {
-                "Can't start a local mongo instance for tests."
-            }
-        } finally {
-            mongodProcess.stop()
-            mongodExecutable.stop()
         }
     }
-})
+}) {
+    companion object {
+        private fun withMongo(operation: () -> Unit) {
+            val starter: MongodStarter = MongodStarter.getDefaultInstance()
+            val mongodConfig: ImmutableMongodConfig = MongodConfig.builder()
+                .version(Version.Main.PRODUCTION)
+                .net(Net("localhost", 27017, Network.localhostIsIPv6()))
+                .build()
+            val mongodExecutable: MongodExecutable = starter.prepare(mongodConfig)
+            val mongodProcess: MongodProcess = mongodExecutable.start()
+            try {
+                operation()
+            } finally {
+                mongodProcess.stop()
+                mongodExecutable.stop()
+            }
+        }
+    }
+}

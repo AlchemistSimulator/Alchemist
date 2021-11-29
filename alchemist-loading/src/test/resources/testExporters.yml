@@ -11,7 +11,7 @@ export:
   - type: MongoDBExporter
     parameters:
       uri: "mongodb://localhost:27017/"
-      dbname: "test"
+      dbName: "test"
       interval: 2.5
     data:
       - time

@@ -19,7 +19,7 @@ export:
   - type: MongoDBExporter
     parameters:
       uri: "mongodb://localhost:27017/"
-      dbname: "test"
+      dbName: "test"
       interval: 2.0
     data:
       - time
@@ -44,4 +44,4 @@ deployments:
 
 terminate:
   - type: AfterTime
-    parameters: 150
+    parameters: 10

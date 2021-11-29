@@ -19,14 +19,17 @@ import it.unibo.alchemist.model.interfaces.Time
  */
 class NumberOfNodes : Extractor<Int> {
 
-    private val colName: String = "nodes"
-
     override fun <T> extractData(
         environment: Environment<T, *>,
         reaction: Reaction<T>?,
         time: Time,
         step: Long
-    ): Map<String, Int> = mapOf(colName to environment.nodeCount)
+    ): Map<String, Int> = mapOf(name to environment.nodeCount)
 
-    override val columnNames = listOf(colName)
+    override val columnNames = names
+
+    companion object {
+        private const val name: String = "nodes"
+        private val names = listOf(name)
+    }
 }

@@ -23,7 +23,6 @@ import org.bson.Document
 class MongoService {
 
     private lateinit var client: MongoClient
-    private lateinit var settings: MongoClientSettings
     private lateinit var database: MongoDatabase
     private lateinit var collection: MongoCollection<Document>
 
@@ -31,7 +30,7 @@ class MongoService {
      *  Requires an active instance of MongoDB at the given uri.
      */
     fun startService(uri: String) {
-        settings = MongoClientSettings.builder()
+        val settings = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(uri))
             .build()
         client = MongoClients.create(settings)

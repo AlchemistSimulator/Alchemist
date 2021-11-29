@@ -12,7 +12,7 @@ package it.unibo.alchemist.loader.m2m
 import it.unibo.alchemist.loader.EnvironmentAndExports
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.deployments.Deployment
-import it.unibo.alchemist.loader.export.GenericExporter
+import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.interfaces.Environment
@@ -44,7 +44,9 @@ internal abstract class LoadingSystem(
         private val mutex = Semaphore(1)
         private var consumed = false
 
-        fun <T : Any?, P : Position<P>> environmentWith(values: Map<String, *>): EnvironmentAndExports<T, P> {
+        fun <T : Any?, P : Position<P>> environmentWith(
+            values: Map<String, *>
+        ): EnvironmentAndExports<T, P> {
             try {
                 mutex.acquireUninterruptibly()
                 if (consumed) {
@@ -130,11 +132,12 @@ internal abstract class LoadingSystem(
                 logger.debug("Deployment descriptors: {}", deploymentDescriptors)
             }
             // EXPORTS
-            val exporters = SimulationModel.visitRecursively<GenericExporter<T, P>>(
+            val exporters = SimulationModel.visitRecursively<Exporter<T, P>>(
                 context, root.getOrEmpty(DocumentRoot.export)
             ) {
                 SimulationModel.visitSingleExporter(incarnation, context, it)
             }
+            exporters.forEach { it.bindVariables(variableValues) }
             return EnvironmentAndExports(environment, exporters)
         }
 

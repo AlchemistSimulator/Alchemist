@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.ClassPathScanner
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.model.implementations.times.DoubleTime
 import java.net.URL
 
 /*
@@ -23,7 +22,7 @@ class TestWebsiteCodeSnippets : FreeSpec(
             .also { it shouldNot beEmpty() }
             .onEach { it shouldNot beNull() }
         "all snippets should load correctly and run for a bit" {
-            allSpecs.load().forEach { env -> Engine(env, DoubleTime(10.0)).also { it.play() }.run() }
+            allSpecs.load().forEach { env -> Engine(env, 1000L).also { it.play() }.run() }
         }
         "snippets with displacements should have nodes" {
             allSpecs.asSequence()

@@ -16,7 +16,7 @@ import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.loader.export.GlobalExporter
+import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Position
@@ -74,9 +74,6 @@ abstract class SimulationLauncher : AbstractLauncher() {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
         val simulation = Engine(initialized.environment, DoubleTime(parameters.endTime))
         if (initialized.exporters.isNotEmpty()) {
-            initialized.exporters.forEach {
-                it.bindVariables(loader.variables)
-            }
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
         return simulation

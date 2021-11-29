@@ -13,7 +13,7 @@ import io.kotest.matchers.ints.shouldBeGreaterThan
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.loader.export.GenericExporter
+import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.model.interfaces.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
@@ -25,7 +25,7 @@ class TestExportersCreation<T, P : Position<P>> : StringSpec({
         val loader = LoadAlchemist.from(file)
         assertNotNull(loader)
         val initialized: InitializedEnvironment<T, P> = loader.getDefault()
-        val exporters: List<GenericExporter<T, P>> = initialized.exporters
+        val exporters: List<Exporter<T, P>> = initialized.exporters
         exporters.size shouldBeGreaterThan 0
         exporters.forEach {
             it shouldNotBe null

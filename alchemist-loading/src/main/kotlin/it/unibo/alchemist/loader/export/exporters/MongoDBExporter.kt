@@ -23,22 +23,22 @@ import org.bson.Document
  * @param appendTime if true it will always generate a new Mongo document, false to overwrite.
  */
 class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
-    private val uri: String,
+    val uri: String,
     val dbName: String = DEFAULT_DATABASE,
     val interval: Double = DEFAULT_INTERVAL,
     private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 
-    override val exportDestination: String get() = uri
-
     /**
      * The name of the collection related to the current simulation in execution.
      */
-    val collectionName: String = "$variablesDescriptor${"".takeUnless { appendTime } ?: System.currentTimeMillis()}"
+    lateinit var collectionName: String
+        private set
 
     private val mongoService: MongoService = MongoService()
 
     override fun setup(environment: Environment<T, P>) {
+        collectionName = "$variablesDescriptor${"".takeUnless { appendTime } ?: System.currentTimeMillis()}"
         mongoService.startService(uri)
         mongoService.connectToDB(dbName)
         mongoService.createCollection(collectionName)

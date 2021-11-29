@@ -30,15 +30,16 @@ import kotlin.io.path.createTempDirectory
  * CSV with '#' as comment character.e
  * @param fileNameRoot the starting name of the file to export data to.
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
- * @param path if no path is specified it will generate the file inside a temporary folder.
+ * @param exportPath if no path is specified it will generate the file inside a temporary folder.
  * @param appendTime if true it will always generate a new file, false to overwrite.
+ * @param fileExtension the extension for the exported files, by default 'csv'
  */
 class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val fileNameRoot: String = "",
     val interval: Double = DEFAULT_INTERVAL,
-    private val path: String = createTempDirectory("alchemist-export").absolutePathString() + '/'.also {
-        logger.warn("No output folder specified but export required. Alchemist will export data in $it")
-    },
+    val exportPath: String = createTempDirectory("alchemist-export").absolutePathString()
+        .also { logger.warn("No output folder specified but export required. Alchemist will export data in $it") },
+    val fileExtension: String = "csv",
     private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 
@@ -50,16 +51,22 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         private val logger = LoggerFactory.getLogger(CSVExporter::class.java)
     }
 
-    override val exportDestination: String =
-        path + fileNameRoot + "_" + variablesDescriptor + "_" + "${if (appendTime) System.currentTimeMillis() else ""}"
-
     private lateinit var outputPrintStream: PrintStream
 
     override fun setup(environment: Environment<T, P>) {
-        if (!File(path).exists()) {
-            File(path).mkdirs()
+        if (!File(exportPath).exists()) {
+            File(exportPath).mkdirs()
         }
-        outputPrintStream = PrintStream(exportDestination, Charsets.UTF_8.name())
+        val path = if (exportPath.endsWith(File.separator)) exportPath else "${exportPath}${File.separator}"
+        val nameRoot = if (fileNameRoot.isEmpty()) "" else "${fileNameRoot}_"
+        val variablesHeader = if(variablesDescriptor.isBlank()) "" else "_$variablesDescriptor"
+        val time = if (appendTime) "${System.currentTimeMillis()}" else ""
+        val filePrefix = "$nameRoot$variablesHeader$time"
+        require(filePrefix.isNotEmpty()) {
+            "No fileNameRoot provided for exporting data, no variables in the environment, and timestamp unset:" +
+                "the file name would be empty. Please provide a file name."
+        }
+        outputPrintStream = PrintStream("$path$filePrefix.$fileExtension", Charsets.UTF_8.name())
         outputPrintStream.println(SEPARATOR)
         outputPrintStream.print("# Alchemist log file - simulation started at: ")
         val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)

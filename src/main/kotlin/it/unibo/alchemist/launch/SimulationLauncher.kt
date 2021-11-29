@@ -74,9 +74,6 @@ abstract class SimulationLauncher : AbstractLauncher() {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
         val simulation = Engine(initialized.environment, DoubleTime(parameters.endTime))
         if (initialized.exporters.isNotEmpty()) {
-            initialized.exporters.forEach {
-                it.bindVariables(variables)
-            }
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }
         return simulation

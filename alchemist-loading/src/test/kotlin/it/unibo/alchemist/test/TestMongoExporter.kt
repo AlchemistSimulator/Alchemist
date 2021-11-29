@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed in the main project's alchemist/build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -40,9 +41,6 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             assertNotNull(loader)
             val initialized: InitializedEnvironment<T, P> = loader.getDefault()
             val simulation = Engine(initialized.environment)
-            initialized.exporters.forEach {
-                it.bindVariables(loader.variables)
-            }
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
             simulation.play()
             simulation.run()
@@ -53,7 +51,7 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
                 exporter as MongoDBExporter
             }
             exporter.dataExtractors.size shouldBeGreaterThan 0
-            val testClient: MongoClient = MongoClients.create(exporter.exportDestination)
+            val testClient: MongoClient = MongoClients.create(exporter.uri)
             val exportCollection = testClient.getDatabase(exporter.dbName).getCollection(exporter.collectionName)
             exportCollection.countDocuments() shouldBeGreaterThan 0
             exportCollection.find().firstOrNull()?.shouldContainKey(

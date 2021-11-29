@@ -137,6 +137,7 @@ internal abstract class LoadingSystem(
             ) {
                 SimulationModel.visitSingleExporter(incarnation, context, it)
             }
+            exporters.forEach { it.bindVariables(variableValues) }
             return EnvironmentAndExports(environment, exporters)
         }
 

@@ -27,11 +27,6 @@ interface Exporter<T, P : Position<P>> {
     val dataExtractors: List<Extractor<*>>
 
     /**
-     * The location of the exported data.
-     */
-    val exportDestination: String
-
-    /**
      * Assign the list of [dataExtractors] to the selected [Exporter].
      */
     fun bindDataExtractors(dataExtractors: List<Extractor<*>>)

@@ -28,36 +28,35 @@ import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
  *
  * @param <T> concentration type
  */
-class MeanSquaredError<T> (
+class MeanSquaredError<T> @JvmOverloads constructor(
     incarnation: Incarnation<T, *>,
     localCorrectValueMolecule: String,
-    localCorrectValueProperty: String?,
+    localCorrectValueProperty: String = "",
     statistics: String,
     localValueMolecule: String,
-    localValueProperty: String?
+    localValueProperty: String = "",
 ) : Extractor<Double> {
 
-    private val statistic: UnivariateStatistic = if (StatUtil.makeUnivariateStatistic(statistics).isEmpty)
-        throw IllegalArgumentException("Could not create univariate statistic $statistics")
-    else StatUtil.makeUnivariateStatistic(statistics).get()
-
+    private val statistic: UnivariateStatistic = StatUtil.makeUnivariateStatistic(statistics)
+        .orElseThrow { IllegalArgumentException("Could not create univariate statistic $statistics") }
     private val mReference: Molecule = incarnation.createMolecule(localCorrectValueMolecule)
-    private val pReference: String = localCorrectValueProperty ?: ""
-    private val pActual: String = localValueProperty ?: ""
+    private val pReference: String = localCorrectValueProperty
+    private val pActual: String = localValueProperty
     private val mActual: Molecule = incarnation.createMolecule(localValueMolecule)
-
-    private var name: String = ""
-
-    init {
-        val mse: StringBuilder = java.lang.StringBuilder("MSE(")
-            .append(statistics)
-            .append('(')
-        if (pReference.isNotEmpty()) mse.append(pReference).append('@')
-        mse.append(localCorrectValueMolecule).append("),")
-        if (pActual.isNotEmpty()) mse.append(pActual).append('@')
-        mse.append(localValueMolecule).append(')')
-        name = mse.toString()
+    private val name: String = with(StringBuilder("MSE(")) {
+        append(statistics)
+        append('(')
+        if (pReference.isNotEmpty()) {
+            append(pReference).append('@')
+        }
+        append(localCorrectValueMolecule).append("),")
+        if (pActual.isNotEmpty()) {
+            append(pActual).append('@')
+        }
+        append(localValueMolecule).append(')')
+        toString()
     }
+    override val columnNames = listOf(name)
 
     override fun <T> extractData(
         environment: Environment<T, *>,
@@ -68,10 +67,7 @@ class MeanSquaredError<T> (
         val incarnation: Incarnation<T, *> = environment.incarnation
             .orElseThrow { IllegalStateException("No incarnation available in the environment!") }
         val value: Double = statistic.evaluate(
-            environment.nodes.parallelStream()
-                .mapToDouble {
-                    incarnation.getProperty(it, mReference, pReference)
-                }.toArray()
+            environment.nodes.map { incarnation.getProperty(it, mReference, pReference) }.toDoubleArray()
         )
         val mse: Double = environment.nodes.parallelStream()
             .mapToDouble { incarnation.getProperty(it, mActual, pActual) - value }
@@ -80,6 +76,4 @@ class MeanSquaredError<T> (
             .orElse(Double.NaN)
         return mapOf(name to mse)
     }
-
-    override val columnNames = listOf(name)
 }

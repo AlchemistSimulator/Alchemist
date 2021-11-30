@@ -122,10 +122,12 @@ internal object DocumentRoot : SyntaxElement {
     object DependentVariable : SyntaxElement {
         val language by OwnName()
         val formula by OwnName()
+        val timeout by OwnName()
         override val validDescriptors = JavaType.validDescriptors + setOf(
             validDescriptor {
                 mandatory(formula)
                 optional(language)
+                optional(timeout)
             }
         )
     }

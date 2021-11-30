@@ -280,7 +280,20 @@ internal object SimulationModel {
                 val formula = root[DocumentRoot.DependentVariable.formula]
                 if (formula is String) {
                     val language = root[DocumentRoot.DependentVariable.language]?.toString()?.lowercase() ?: "groovy"
-                    Result.success(JSR223Variable<Any>(language, formula))
+                    when(val timeout = root[DocumentRoot.DependentVariable.timeout]) {
+                        null -> Result.success(JSR223Variable(language, formula))
+                        is Number -> Result.success(JSR223Variable(language, formula, timeout.toLong()))
+                        is String -> Result.success(JSR223Variable(
+                            language,
+                            formula,
+                            runCatching { timeout.toLong() }.getOrElse {
+                                throw IllegalArgumentException("Invalid timeout for $name: '$timeout'", it)
+                            }
+                        ))
+                        else -> throw IllegalArgumentException(
+                            "Invalid timeout for $name: $timeout: ${timeout::class.simpleName}"
+                        )
+                    }
                 } else {
                     Result.success(Constant(formula))
                 }

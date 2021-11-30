@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.dsiutils)
     implementation(libs.gson)
     implementation(libs.guava)
+    implementation(libs.kotlin.coroutines.core)
     implementation(libs.mongodb)
     implementation(graphStream("core"))
     implementation(graphStream("algo"))

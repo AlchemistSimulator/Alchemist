@@ -1,19 +1,26 @@
 package it.unibo.alchemist.loader.variables
 
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 /**
  * This variable loads any [JSR-233](http://archive.fo/PGdk8) language available in the classpath.
  *
- * @param R return type of the variable
  * @constructor builds a new JSR223Variable given a language name and a script.
  *
  * @param language can be the name of the language, the file extension, or its mime type
  * @param formula the script that will get interpreted
  */
-data class JSR223Variable<R>(val language: String, val formula: String) : DependentVariable<R> {
+data class JSR223Variable(
+    val language: String,
+    val formula: String,
+    val timeout: Long = 1000,
+) : DependentVariable<Any?> {
 
     private val engine by lazy {
         with(ScriptEngineManager()) {
@@ -45,10 +52,28 @@ data class JSR223Variable<R>(val language: String, val formula: String) : Depend
      * if the value can not be computed, e.g. because there are
      * unassigned required variables
      */
-    @Suppress("UNCHECKED_CAST")
-    override fun getWith(variables: Map<String, Any?>): R = try {
+    @ExperimentalTime
+    override fun getWith(variables: Map<String, Any?>): Any? = try {
         synchronized(engine) {
-            engine.eval(formula, variables.asBindings()) as R
+            runCatching {
+                runBlocking {
+                    withTimeout(timeout) {
+                        engine.eval(formula, variables.asBindings())
+                    }
+                }
+            }.getOrElse {
+                throw java.lang.IllegalStateException(
+                    "The evaluation of the $language script took more than ${timeout}ms, this is usually a sign that " +
+                        "something is looping. Either fix the script, " +
+                        "or allow for a longer time with the 'timeout:' key\n" +
+                        """
+                        |script:
+                        |
+                        |${formula.lines().joinToString("\n|")}
+                        |context: $variables
+                        """.trimMargin()
+                )
+            }
         }
     } catch (e: ScriptException) {
         throw IllegalStateException("Unable to evaluate $formula with bindings: $variables", e)

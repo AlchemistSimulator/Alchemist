@@ -43,8 +43,9 @@ junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref 
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
-logback = { module = "ch.qos.logback:logback-classic", version = "1.2.7" }
-miglayout-swing = { module = "com.miglayout:miglayout-swing", version = "11.0" }
+kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
+logback = "ch.qos.logback:logback-classic:1.2.7"
+miglayout-swing = "com.miglayout:miglayout-swing:11.0"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mongodb = { module = "org.mongodb:mongodb-driver-sync", version = "4.4.0" }
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }

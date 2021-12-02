@@ -29,13 +29,14 @@ data class JSR223Variable(
                 ?: getEngineByMimeType(language)
                 ?: throw IllegalArgumentException(
                     "$language is not an available language. Your environment supports the following languages: ${
-                    engineFactories
-                        .map {
-                            " - ${it.languageName}, " +
-                                "aka ${it.extensions + it.mimeTypes} " +
-                                "(${it.languageVersion} on ${it.engineName} ${it.engineVersion})"
-                        }
-                        .joinToString(separator = System.lineSeparator(), prefix = System.lineSeparator())
+                    engineFactories.joinToString(
+                        separator = System.lineSeparator(),
+                        prefix = System.lineSeparator()
+                    ) {
+                        " - ${it.languageName}, " +
+                            "aka ${it.extensions + it.mimeTypes} " +
+                            "(${it.languageVersion} on ${it.engineName} ${it.engineVersion})"
+                    }
                     }"
                 )
         }

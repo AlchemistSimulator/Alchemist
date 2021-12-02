@@ -19,8 +19,9 @@ import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
 import io.kotest.matchers.shouldNotBe
 
+private val starter: MongodStarter = MongodStarter.getDefaultInstance()
+
 internal fun withMongo(operation: () -> Unit) {
-    val starter: MongodStarter = MongodStarter.getDefaultInstance()
     val mongodConfig: ImmutableMongodConfig = MongodConfig.builder()
         .version(Version.Main.PRODUCTION)
         .net(Net("localhost", 27017, Network.localhostIsIPv6()))

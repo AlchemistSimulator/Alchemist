@@ -39,7 +39,7 @@ object Alchemist {
     private const val YAML = 'y'
     private val logger = LoggerFactory.getLogger(Alchemist::class.java)
     private val launchers: List<Launcher> = ClassPathScanner
-        .subTypesOf(Launcher::class.java, inPackage = "it.unibo.alchemist")
+        .subTypesOf(Launcher::class.java, "it.unibo.alchemist")
         .map { clazz ->
             val zeroAryConstructors = clazz.constructors
                 .filter { it.parameterCount == 0 && it.canAccess(null) }

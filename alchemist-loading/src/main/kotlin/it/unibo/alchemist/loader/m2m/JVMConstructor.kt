@@ -29,7 +29,7 @@ class OrderedParametersConstructor(
     private val parameters: List<*> = emptyList<Any?>()
 ) : JVMConstructor(type) {
 
-    override fun <T : Any> parametersFor(target: KClass<T>): List<*> = parameters
+    override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> = parameters
 
     override fun toString(): String = "$typeName${parameters.joinToString(prefix = "(", postfix = ")")}"
 }
@@ -44,13 +44,19 @@ class NamedParametersConstructor(
     private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()
 ) : JVMConstructor(type) {
 
-    override fun <T : Any> parametersFor(target: KClass<T>): List<*> {
+    data class Error(val parameter: KParameter) {
+        override fun toString() = "${parameter.name}: ${parameter.type.jvmErasure.simpleName}"
+    }
+
+    override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> {
         val parameterNames = parametersMap.map { it.key.toString() }
-        val availableParameters = target.constructors.map { it.valueParameters }
-        val usableParameters = availableParameters
-            .filter { constructorParameters ->
-                constructorParameters.mapNotNull { it.name }.containsAll(parameterNames)
-            }
+        val singletons = factory.singletonObjects.keys
+        val availableParameters = target.constructors.map { constructor ->
+            constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }
+        }
+        val usableParameters: List<List<KParameter>> = availableParameters.filter { constructorParameters ->
+            constructorParameters.mapNotNull { it.name }.containsAll(parameterNames)
+        }
         if (usableParameters.isEmpty()) {
             throw IllegalArgumentException(
                 """
@@ -62,22 +68,40 @@ class NamedParametersConstructor(
                     }
             )
         }
-        val orderedParameters = usableParameters.map { parameterList ->
-            parameterList.sortedBy { it.index }.map { parametersMap[it.name] }.filterNotNull()
+        val orderedParameters: List<List<*>> = usableParameters.map { parameterList ->
+            parameterList.sortedBy { it.index }
+                .map { parametersMap[it.name] ?: Error(it) }
+                .dropLastWhile { it is Error && it.parameter.isOptional }
         }.distinct()
-        if (orderedParameters.size > 1) {
+        val (valid, errors) = orderedParameters.partition { parameters -> parameters.none { it is Error } }
+        require(valid.isNotEmpty()) {
+            val problems = errors.map { problematicParameters -> problematicParameters.filterIsInstance<Error>() }
+                .distinct()
+                .mapIndexed { index, list ->
+                    "option ${index + 1}) add the following ${list.size} parameters: " + list.joinToString(", ")
+                }
+                .joinToString("\n|")
+            """
+                |Invalid named parameters provided for ${target.simpleName}: $parameterNames.
+                |You may try to fix by providing the following missing information:
+                |$problems
+            """.trimMargin()
+        }
+        if (valid.size > 1) {
             throw IllegalArgumentException(
                 """
                     Multiple constructors available for ${target.simpleName} with named parameters $parameterNames.
                     Conflicting name parameters lists: $orderedParameters
-                """
+                """.trimIndent()
             )
         }
-        return orderedParameters.first()
+        return valid.first()
     }
 
     private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +
-        filter { it.name != null }.joinToString { "${it.name}:${it.type}${if (it.isOptional) "<optional>" else "" }" }
+        filter { it.name != null }.joinToString {
+            "${it.name}:${it.type.jvmErasure.simpleName}${if (it.isOptional) "<optional>" else "" }"
+        }
 
     override fun toString(): String = "$typeName($parametersMap)"
 }
@@ -90,7 +114,7 @@ sealed class JVMConstructor(val typeName: String) {
     /**
      * provided a [target] class, extracts the parameters as an ordered list.
      */
-    abstract fun <T : Any> parametersFor(target: KClass<T>): List<*>
+    abstract fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*>
 
     /**
      * Provided a JIRF [factory], builds an instance of the requested type [T] or fails gracefully,
@@ -104,8 +128,14 @@ sealed class JVMConstructor(val typeName: String) {
      */
     fun <T : Any> buildAny(type: Class<out T>, factory: Factory): Result<T> {
         val hasPackage = typeName.contains('.')
-        val subtypes = ClassPathScanner.subTypesOf(type) +
-            if (Modifier.isAbstract(type.modifiers)) emptyList() else listOf(type)
+        val compatibleTypes = when {
+            type.packageName.startsWith("it.unibo.alchemist") ->
+                ClassPathScanner.subTypesOf(type, "it.unibo.alchemist")
+                    .takeUnless { it.isEmpty() }
+                    ?: ClassPathScanner.subTypesOf(type)
+            else -> ClassPathScanner.subTypesOf(type)
+        }
+        val subtypes = compatibleTypes + if (Modifier.isAbstract(type.modifiers)) emptyList() else listOf(type)
         val perfectMatches = subtypes.filter { typeName == if (hasPackage) it.name else it.simpleName }
         return when (perfectMatches.size) {
             0 -> {
@@ -174,12 +204,12 @@ sealed class JVMConstructor(val typeName: String) {
          * 4. find the subclassess of that class, and see if any matches the provided type
          * 5. if so, build the parameter
          */
-        val originalParameters = parametersFor(target)
+        val originalParameters = parametersFor(target, jirf)
         logger.debug("Building a {} with {}", target.simpleName, originalParameters)
         val compatibleConstructors by lazy {
             target.constructors.filter { it.valueParameters.size >= originalParameters.size }
         }
-        val parameters = parametersFor(target).mapIndexed { index, parameter ->
+        val parameters = originalParameters.mapIndexed { index, parameter ->
             if (parameter is JVMConstructor) {
                 val possibleMappings = compatibleConstructors.flatMap { constructor ->
                     val mappedIndex = constructor.valueParameters.lastIndex - originalParameters.lastIndex + index

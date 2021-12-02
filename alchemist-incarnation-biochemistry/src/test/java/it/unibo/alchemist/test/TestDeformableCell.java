@@ -141,21 +141,21 @@ class TestDeformableCell {
         assertFalse(cellNode1.getReactions().isEmpty());
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).isValid());
         assertEquals(1d, cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
         env.moveNodeToPosition(cellNode2, new Euclidean2DPosition(0, 4));
         assertFalse(cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).isValid());
         assertEquals(0d, cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
     }
@@ -171,31 +171,31 @@ class TestDeformableCell {
         assertFalse(cellNode1.getReactions().isEmpty());
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).isValid());
         assertEquals(1d, cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS2_1);
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).isValid());
         assertEquals(0.5, cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS2_2);
         assertFalse(cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).isValid());
         assertEquals(0d, cellNode1.getReactions().stream()
                 .findFirst()
-                .get()
+                .orElseThrow()
                 .getConditions().get(0).getPropensityContribution(),
                 PRECISION);
     }
@@ -211,19 +211,19 @@ class TestDeformableCell {
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, -1), cellNode1.getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL1_1);
         cellNode1.setPolarization(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, -1), cellNode1.getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL1_2);
         cellNode1.setPolarization(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 0), cellNode1.getPolarizationVersor());
     }
 
@@ -239,17 +239,17 @@ class TestDeformableCell {
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 0), cellNode1.getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL2_1);
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 1), cellNode1.getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL2_2);
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 1), cellNode1.getPolarizationVersor());
     }
 
@@ -265,13 +265,13 @@ class TestDeformableCell {
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(1, 0), cellNode1.getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL3_1);
         cellNode1.setPolarization(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(
                 cellNode1.getPolarizationVersor().getCoordinate(0),
                 cellNode1.getPolarizationVersor().getCoordinate(0),
@@ -282,7 +282,7 @@ class TestDeformableCell {
         cellNode1.setPolarization(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(
                 cellNode1.getPolarizationVersor().getCoordinate(0),
                 -cellNode1.getPolarizationVersor().getCoordinate(1),
@@ -302,7 +302,7 @@ class TestDeformableCell {
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(1, 0), cellNode3.getPolarizationVersor());
     }
 
@@ -318,7 +318,7 @@ class TestDeformableCell {
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(1, 0), cellNode3.getPolarizationVersor());
     }
 
@@ -334,7 +334,7 @@ class TestDeformableCell {
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()
-        .get().execute();
+        .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 0), cellNode3.getPolarizationVersor());
     }
 

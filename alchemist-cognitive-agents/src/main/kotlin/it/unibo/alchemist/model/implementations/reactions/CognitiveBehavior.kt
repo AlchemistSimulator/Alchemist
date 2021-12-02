@@ -29,5 +29,5 @@ class CognitiveBehavior<T, V, A>(
     override fun getRate() = timeDistribution.rate
 
     override fun updateInternalStatus(curTime: Time?, executed: Boolean, env: Environment<T, *>?) =
-        pedestrian.cognitive.update(rate)
+        pedestrian.cognitiveModel.update(rate)
 }

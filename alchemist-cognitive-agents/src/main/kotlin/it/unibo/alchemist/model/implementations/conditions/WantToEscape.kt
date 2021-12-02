@@ -16,5 +16,5 @@ open class WantToEscape<T, S : Vector<S>, A : GeometricTransformation<S>>(
 
     override fun getPropensityContribution(): Double = 0.0
 
-    override fun isValid(): Boolean = pedestrian.wantsToEscape()
+    override fun isValid(): Boolean = pedestrian.cognitiveModel.wantsToEscape()
 }

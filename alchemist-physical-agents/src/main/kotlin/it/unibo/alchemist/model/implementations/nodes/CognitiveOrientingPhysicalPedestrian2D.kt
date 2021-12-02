@@ -10,15 +10,20 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
+import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.graph.DefaultEdge
 
@@ -27,22 +32,93 @@ import org.jgrapht.graph.DefaultEdge
  * TODO(rename it into something like "SmartPedestrian2D"?)
  */
 class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
-    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+    incarnation: Incarnation<T, Euclidean2DPosition>,
     randomGenerator: RandomGenerator,
+    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+    nodeCreationParameter: String? = null,
     override val knowledgeDegree: Double,
     group: PedestrianGroup2D<T>? = null,
     age: String,
     gender: String,
     danger: Molecule? = null
-) : CognitivePhysicalPedestrian2D<T>(environment, randomGenerator, age, gender, danger, group),
-    OrientingPedestrian2D<T, Ellipse, DefaultEdge> {
+) : CognitivePhysicalPedestrian2D<T>(
+    incarnation,
+    randomGenerator,
+    environment,
+    nodeCreationParameter,
+    age,
+    gender,
+    danger,
+    group,
+),
+    OrientingPedestrian2D<T, Ellipse, DefaultEdge> by HomogeneousOrientingPedestrian2D(
+        incarnation,
+        randomGenerator,
+        environment,
+        nodeCreationParameter,
+        knowledgeDegree,
+    ) {
 
-    private val orientation: OrientingPedestrian2D<T, Ellipse, DefaultEdge> =
-        HomogeneousOrientingPedestrian2D(environment, randomGenerator, knowledgeDegree)
+    override val fieldOfView: FieldOfView2D<T>
+        get() = super.fieldOfView
 
-    override val cognitiveMap: NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, Ellipse, DefaultEdge> =
-        orientation.cognitiveMap
+    override val membershipGroup: PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>
+        get() = super.membershipGroup
 
-    override val volatileMemory: MutableMap<ConvexGeometricShape<Euclidean2DPosition, Euclidean2DTransformation>, Int> =
-        orientation.volatileMemory
+    override val shape: Euclidean2DShape
+        get() = super.shape
+
+    override fun addReaction(r: Reaction<T>?) {
+        super.addReaction(r)
+    }
+
+    override fun cloneNode(currentTime: Time?): Node<T> = TODO()
+
+    override fun compareTo(other: Node<T>?): Int {
+        return super.compareTo(other)
+    }
+
+    override fun contains(mol: Molecule?): Boolean {
+        return super.contains(mol)
+    }
+
+    override fun getConcentration(mol: Molecule?): T {
+        return super.getConcentration(mol)
+    }
+
+    override fun getContents(): MutableMap<Molecule, T> {
+        return super.getContents()
+    }
+
+    override fun getId(): Int {
+        return super.getId()
+    }
+
+    override fun getMoleculeCount(): Int {
+        return super.getMoleculeCount()
+    }
+
+    override fun getReactions(): MutableList<Reaction<T>> {
+        return super.getReactions()
+    }
+
+    override fun iterator(): MutableIterator<Reaction<T>> {
+        return super.iterator()
+    }
+
+    override fun removeConcentration(mol: Molecule?) {
+        super.removeConcentration(mol)
+    }
+
+    override fun removeReaction(r: Reaction<T>?) {
+        super.removeReaction(r)
+    }
+
+    override fun setConcentration(mol: Molecule?, c: T) {
+        super.setConcentration(mol, c)
+    }
+
+    override fun speed(): Double {
+        return super.speed()
+    }
 }

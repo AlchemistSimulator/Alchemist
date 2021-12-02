@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
-import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
+import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 
 /**
- * The perception of the situation dangerousness.
+ * The perception of the situation danger.
  * The name belief derives from the [IMPACT model](https://doi.org/10.1007/978-3-319-70647-4_11).
  *
  * @param zoneDangerousness
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 class BeliefDanger(
     private val zoneDangerousness: () -> Double,
     private val fear: () -> Double,
-    private val influencialPeople: () -> List<CognitiveAgent>
+    private val influencialPeople: () -> List<CognitiveModel>
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction(): Double = maxOf(
@@ -26,6 +26,6 @@ class BeliefDanger(
         (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) / (affectiveBiasingOmega + 1)
     )
 
-    private fun List<CognitiveAgent>.aggregateDangerBeliefs() =
-        if (isEmpty()) 0.0 else sumOf { it.cognitive.dangerBelief() } / size
+    private fun List<CognitiveModel>.aggregateDangerBeliefs() =
+        if (isEmpty()) 0.0 else sumOf { it.dangerBelief() } / size
 }

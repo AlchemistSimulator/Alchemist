@@ -38,4 +38,9 @@ interface CognitiveModel {
      * Update the current intensity of the aforementioned feelings considering a [frequency].
      */
     fun update(frequency: Double)
+
+    /**
+     * Whether or not this pedestrian intends to escape.
+     */
+    fun wantsToEscape(): Boolean = escapeIntention() > remainIntention()
 }

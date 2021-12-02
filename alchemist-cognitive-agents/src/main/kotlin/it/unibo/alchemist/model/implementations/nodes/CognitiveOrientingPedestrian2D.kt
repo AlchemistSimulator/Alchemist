@@ -9,18 +9,21 @@
 
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
+import it.unibo.alchemist.model.HeterogeneousPedestrianModel
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
+import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
-import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
+import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
 
@@ -32,72 +35,63 @@ import org.apache.commons.math3.random.RandomGenerator
  * @param E the type of edges of the navigation graph provided by the environment.
  */
 class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
-    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
+    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+    backingNode: Node<T>,
     knowledgeDegree: Double,
     group: PedestrianGroup2D<T>? = null,
     age: Age,
     gender: Gender,
     danger: Molecule? = null,
-    private val consciousness: CognitivePedestrian2D<T> =
-        CognitivePedestrian2D(environment, randomGenerator, age, gender, danger, group)
 ) : HomogeneousOrientingPedestrian2D<T, N, E>(
-    environment,
     randomGenerator,
+    environment,
+    backingNode,
     knowledgeDegree = knowledgeDegree,
     group = group
 ),
     CognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation> {
 
-    override val cognitive: CognitiveModel get() = consciousness.cognitive
-    override fun influencialPeople(): List<CognitiveAgent> = consciousness.influencialPeople()
-    override val age: Age get() = consciousness.age
-    override val gender: Gender get() = consciousness.gender
-    override val compliance: Double get() = consciousness.compliance
-    override fun probabilityOfHelping(
-        toHelp: HeterogeneousPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>
-    ): Double = consciousness.probabilityOfHelping(toHelp)
-    override fun speed() = consciousness.speed()
-
     /**
      * Allows to specify age and gender with a string.
      */
     @JvmOverloads constructor(
-        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+        incarnation: Incarnation<T, Euclidean2DPosition>,
         randomGenerator: RandomGenerator,
+        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+        nodeCreationParameter: String? = null,
         knowledgeDegree: Double,
         group: PedestrianGroup2D<T>? = null,
-        age: String,
+        age: Any,
         gender: String,
         danger: Molecule? = null
     ) : this(
-        environment,
         randomGenerator,
+        environment,
+        incarnation.createNode(randomGenerator, environment, nodeCreationParameter),
         knowledgeDegree,
         group,
-        Age.fromString(age),
+        Age.fromAny(age),
         Gender.fromString(gender),
         danger
     )
 
     /**
-     * Allows to specify age with an int and gender with a string.
+     * The pedestrian model, containing its age, gender, and speed.
      */
-    @JvmOverloads constructor(
-        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
-        randomGenerator: RandomGenerator,
-        knowledgeDegree: Double,
-        group: PedestrianGroup2D<T>? = null,
-        age: Int,
-        gender: String,
-        danger: Molecule? = null
-    ) : this(
-        environment,
-        randomGenerator,
-        knowledgeDegree,
-        group,
-        Age.fromYears(age),
-        Gender.fromString(gender),
-        danger
-    )
+    val pedestrianModel: HeterogeneousPedestrianModel<T, Euclidean2DPosition, Euclidean2DTransformation> =
+        HeterogeneousPedestrianModel(age = age, gender = gender, speed = Speed(age, gender, randomGenerator))
+
+    /**
+     * The [CognitiveModel] of the pedestrian, storing their mental state.
+     */
+    override val cognitiveModel: CognitiveModel by lazy {
+        ImpactModel(pedestrianModel.compliance, ::influencialPeople) {
+            environment.getLayer(danger)
+                .map { it.getValue(environment.getPosition(this)) as Double }
+                .orElse(0.0)
+        }
+    }
+
+
 }

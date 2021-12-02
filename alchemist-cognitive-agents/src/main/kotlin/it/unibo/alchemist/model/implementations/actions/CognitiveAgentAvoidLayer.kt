@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.CognitivePedestrian2D
+import it.unibo.alchemist.model.implementations.nodes.AbstractCognitivePedestrian
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Molecule
@@ -71,5 +71,6 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
     } ?: true
 
     private fun Pedestrian<*, *, *>.wantsToEscape(): Boolean =
-        this is CognitivePedestrian2D<*> && this.danger == targetMolecule && this.wantsToEscape()
+        this is AbstractCognitivePedestrian<*, *, *, *> &&
+            this.danger == targetMolecule && cognitiveModel.wantsToEscape()
 }

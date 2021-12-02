@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
-import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
+import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.advancedLogistic
 
 /**
@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.advancedL
 class Fear(
     private val desireWalkRandomly: () -> Double,
     private val desireEvacuate: () -> Double,
-    private val influencialPeople: () -> List<CognitiveAgent>
+    private val influencialPeople: () -> List<CognitiveModel>
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() = maxOf(
@@ -30,6 +30,6 @@ class Fear(
         )
     )
 
-    private fun List<CognitiveAgent>.aggregateFears() =
-        if (isEmpty()) 0.0 else sumOf { it.cognitive.fear() } / this.size
+    private fun List<CognitiveModel>.aggregateFears() =
+        if (isEmpty()) 0.0 else sumOf { it.fear() } / this.size
 }

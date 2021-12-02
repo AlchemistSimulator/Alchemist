@@ -26,7 +26,7 @@ interface Pedestrian2D<T> : Pedestrian<T, Euclidean2DPosition, Euclidean2DTransf
      * The field of view of a pedestrian in the Euclidean world.
      * Implementors should override this property to prevent the continuous creation of new [FieldOfView2D]s.
      */
-    val fieldOfView: FieldOfView2D<T> get() =
+    override val fieldOfView: FieldOfView2D<T> get() =
         FieldOfView2D(environment, this, defaultFieldOfViewDepth, defaultFieldOfViewAperture)
 
     companion object {

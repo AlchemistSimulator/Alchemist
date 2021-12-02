@@ -7,8 +7,8 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 import it.unibo.alchemist.model.implementations.nodes.AbstractCognitivePedestrian
+import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Position
@@ -19,8 +19,8 @@ import it.unibo.alchemist.testsupport.startSimulation
 class TestFeelsTransmission<T, P> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
-        fun Environment<T, P>.perceivedDanger() = nodes.filterIsInstance<CognitiveAgent>()
-            .sumOf { it.cognitive.dangerBelief() }
+        fun Environment<T, P>.perceivedDanger() = nodes.filterIsInstance<CognitivePedestrian<*, *, *>>()
+            .sumOf { it.cognitiveModel.dangerBelief() }
         fun EuclideanEnvironment<T, P>.dangerIsLoaded() = this.also {
             nodes.filterIsInstance<AbstractCognitivePedestrian<*, *, *, *>>().forEach {
                 it.danger shouldNotBe null

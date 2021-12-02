@@ -2,11 +2,13 @@ incarnation: protelis
 
 environment:
   type: ImageEnvironmentWithGraph
-  parameters: [planimetry.png]
+  parameters:
+    path: planimetry.png
+    zoom: 0.05
 
 deployments:
   - type: Point
-    parameters: [15, 15]
+    parameters: [2, 2]
     nodes:
       type: HomogeneousOrientingPedestrian2D
       parameters: [0.5]

@@ -2,7 +2,9 @@ incarnation: protelis
 
 environment:
   type: ImageEnvironmentWithGraph
-  parameters: [planimetry.png]
+  parameters:
+    path: planimetry.png
+    zoom: 0.05
 
 _reactions: &behavior
   - time-distribution:
@@ -17,7 +19,7 @@ _reactions: &behavior
 
 deployments:
   - type: Point
-    parameters: [0, 0]
+    parameters: [2, 2]
     nodes:
       type: HomogeneousPhysicalPedestrian2D
     programs:

@@ -16,7 +16,7 @@ import kotlin.time.ExperimentalTime
  * @param formula the script that will get interpreted
  * @param timeout how long should the interpreter be allowed to compute before giving up, in ms. Defaults to 1000ms.
  */
-data class JSR223Variable(
+data class JSR223Variable @JvmOverloads constructor(
     val language: String,
     val formula: String,
     val timeout: Long = 1000,

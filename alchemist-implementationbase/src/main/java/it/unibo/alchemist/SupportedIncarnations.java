@@ -30,9 +30,12 @@ public final class SupportedIncarnations {
     private static final Map<String, Class<? extends Incarnation<?, ?>>> INCARNATIONS;
 
     static {
-        INCARNATIONS = ClassPathScanner.subTypesOf(Incarnation.class).stream()
-                .map(it -> (Class<Incarnation<?, ?>>) it)
-                .collect(Collectors.toMap(c -> preprocess(c.getSimpleName()), Function.identity()));
+        INCARNATIONS = ClassPathScanner.subTypesOf(
+            Incarnation.class,
+            "it.unibo.alchemist"
+        ).stream()
+            .map(it -> (Class<Incarnation<?, ?>>) it)
+            .collect(Collectors.toMap(c -> preprocess(c.getSimpleName()), Function.identity()));
     }
 
     private SupportedIncarnations() {

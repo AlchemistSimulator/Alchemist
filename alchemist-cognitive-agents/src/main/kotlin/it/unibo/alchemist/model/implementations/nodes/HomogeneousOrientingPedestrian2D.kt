@@ -25,6 +25,10 @@ import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
+private typealias Position2D = Euclidean2DPosition
+private typealias Transformation2D = Euclidean2DTransformation
+private typealias ShapeFactory = Euclidean2DShapeFactory
+
 /**
  * A homogeneous [OrientingPedestrian] in the Euclidean world. Landmarks are represented as [Ellipse]s, which can
  * model the human error concerning both the exact position of a landmark and the angles formed by the connections
@@ -46,23 +50,15 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     private val minSide: Double = 30.0,
     private val maxSide: Double = 60.0,
     group: PedestrianGroup2D<T>? = null
-) : AbstractOrientingPedestrian<
-    T,
-    Euclidean2DPosition,
-    Euclidean2DTransformation,
-    Ellipse,
-    N,
-    E,
-    Euclidean2DShapeFactory
->(
-    randomGenerator,
-    environment,
-    backingNode,
-    knowledgeDegree,
-    group,
-),
-    Pedestrian2D<T>
-{
+) :
+    Pedestrian2D<T>,
+    AbstractOrientingPedestrian<T, Position2D, Transformation2D, Ellipse, N, E, ShapeFactory>(
+        randomGenerator,
+        environment,
+        backingNode,
+        knowledgeDegree,
+        group,
+    ) {
 
     @JvmOverloads constructor(
         incarnation: Incarnation<T, Euclidean2DPosition>,
@@ -96,7 +92,3 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
 
     private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
 }
-
-
-
-

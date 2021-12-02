@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 
 import static io.kotest.assertions.FailKt.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -189,7 +190,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     }
 
     private void verifyNotAdded(final Node<Double> node) {
-        verifyAdded(node, null);
+        assertFalse(env.getNodes().contains(node));
     }
 
     private void verifyAdded(final Node<Double> node, final Position<?> expected) {
@@ -380,12 +381,9 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(np1, p1);
         env.addNode(np2, p2);
         env.addNode(np3, p3);
-        assertNullJUnit4("np1 not in pos null; it's in pos " + env.getPosition(np1),
-                env.getPosition(np1));
-        assertNullJUnit4("np2 not in pos null; it's in pos " + env.getPosition(np2),
-                env.getPosition(np2));
-        assertNullJUnit4("np3 not in pos null; it's in pos " + env.getPosition(np3),
-                env.getPosition(np3));
+        nodeNotInEnvironment(env, np1);
+        nodeNotInEnvironment(env, np2);
+        nodeNotInEnvironment(env, np3);
     }
 
     /**
@@ -400,16 +398,18 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(ng1, p1);
         env.addNode(ng2, p2);
         env.addNode(ng3, p3);
-        assertNullJUnit4("ng1 not in pos null; it's in pos " + env.getPosition(ng1),
-                env.getPosition(ng1));
-        assertTrueJUnit4(getFailureTestString("ng2", ng2, p2),
-                env.getPosition(ng2).equals(p2));
-        assertNullJUnit4(getFailureTestString("ng3", ng3, null),
-                env.getPosition(ng3));
+        nodeNotInEnvironment(env, ng1);
+        assertTrueJUnit4(
+            getFailureTestString("ng2", ng2, p2),
+            env.getPosition(ng2).equals(p2)
+        );
+        nodeNotInEnvironment(env, ng3);
         env.removeNode(ng2);
         env.addNode(ng3, p3);
-        assertTrueJUnit4(getFailureTestString("ng3", ng3, p3),
-                env.getPosition(ng3).equals(p3));
+        assertTrueJUnit4(
+            getFailureTestString("ng3", ng3, p3),
+            env.getPosition(ng3).equals(p3)
+        );
     }
 
     /**
@@ -425,14 +425,16 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(nm1, p2);
         env.addNode(nm2, p3);
         env.addNode(np2, p3);
-        assertTrueJUnit4(getFailureTestString("ng1", ng1, p1),
-                env.getPosition(ng1).equals(p1));
-        assertTrueJUnit4(getFailureTestString("nm1", nm1, p2),
-                env.getPosition(nm1).equals(p2));
-        assertNullJUnit4(getFailureTestString("nm2", nm2, null),
-                env.getPosition(nm2));
-        assertNullJUnit4(getFailureTestString("np2", np2, null),
-                env.getPosition(np2));
+        assertTrueJUnit4(
+            getFailureTestString("ng1", ng1, p1),
+            env.getPosition(ng1).equals(p1)
+        );
+        assertTrueJUnit4(
+            getFailureTestString("nm1", nm1, p2),
+            env.getPosition(nm1).equals(p2)
+        );
+        nodeNotInEnvironment(env, nm2);
+        nodeNotInEnvironment(env, np2);
     }
 
     /**
@@ -744,7 +746,7 @@ class TestBioRect2DEnvironmentNoOverlap {
                 .<Double, Euclidean2DPosition>getWith(vars)
                 .getEnvironment();
         final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 10000);
-        sim.addOutputMonitor(new OutputMonitor<Double, Euclidean2DPosition>() {
+        sim.addOutputMonitor(new OutputMonitor<>() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -767,7 +769,6 @@ class TestBioRect2DEnvironmentNoOverlap {
                 assertTrue(thereIsOverlap(environment));
             }
 
-            @SuppressWarnings("unchecked")
             private Stream<CellWithCircularArea<Euclidean2DPosition>> getNodes() {
                 return env.getNodes().stream()
                         .filter(n -> n instanceof CellWithCircularArea)
@@ -776,14 +777,14 @@ class TestBioRect2DEnvironmentNoOverlap {
 
             private boolean thereIsOverlap(final Environment<Double, Euclidean2DPosition> env) {
                 getNodes().flatMap(n -> getNodes()
-                        .filter(c -> !c.equals(n))
-                        .filter(c -> env.getDistanceBetweenNodes(n, c) < n.getRadius() + c.getRadius() - DELTA)
-                        .map(c -> new Pair<>(n, c)))
+                                .filter(c -> !c.equals(n))
+                                .filter(c -> env.getDistanceBetweenNodes(n, c) < n.getRadius() + c.getRadius() - DELTA)
+                                .map(c -> new Pair<>(n, c)))
                         .findAny()
                         .ifPresent(e -> fail("Nodes " + e.getFirst().getId() + env.getPosition(e.getFirst()) + " and "
-                            + e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. "
-                            + "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond())
-                            + " but should be greater than " + (e.getFirst().getRadius() + e.getSecond().getRadius())));
+                                + e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. "
+                                + "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond())
+                                + " but should be greater than " + (e.getFirst().getRadius() + e.getSecond().getRadius())));
                 return true;
             }
         });
@@ -798,12 +799,30 @@ class TestBioRect2DEnvironmentNoOverlap {
         return nodeName + " not in pos " + expected + "; it's in pos " + env.getPosition(n);
     }
 
+    private static <T> void nodeNotInEnvironment(final Environment<T, ?> environment, final Node<T> node) {
+        checkNodeInEnvironment(environment, node, false);
+    }
+
+    private static <T> void checkNodeInEnvironment(
+        final Environment<T, ?> environment,
+        final Node<T> node,
+        final boolean shouldBePresent
+    ) {
+        final var isInEnvironment = environment.getNodes().contains(node);
+        if (shouldBePresent) {
+            assertTrue(isInEnvironment, () -> "node " + node + " is not in the environment");
+            final var position = environment.getPosition(node);
+            assertNotNull(position, () -> "node " + node + " has no valid position");
+        } else {
+            assertFalse(
+                isInEnvironment,
+                () -> "node " + node + " is in the environment at position " + environment.getPosition(node)
+            );
+        }
+    }
+
+
     private static void assertTrueJUnit4(final String msg, final boolean res) {
         assertTrue(res, msg);
     }
-
-    private static void assertNullJUnit4(final String msg, final Object res) {
-        assertNull(res, msg);
-    }
-
 }

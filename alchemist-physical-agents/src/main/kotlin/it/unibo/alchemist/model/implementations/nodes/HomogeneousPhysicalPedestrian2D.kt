@@ -26,13 +26,15 @@ open class HomogeneousPhysicalPedestrian2D<T> @JvmOverloads constructor(
     environment: Physics2DEnvironment<T>,
     nodeCreationParameter: String? = null,
     group: PedestrianGroup2D<T>? = null
-) : HomogeneousPedestrian2D<T>(
-    incarnation,
-    randomGenerator,
-    environment,
-    nodeCreationParameter,
-    group
-), PhysicalPedestrian2D<T> {
+) :
+    PhysicalPedestrian2D<T>,
+    HomogeneousPedestrian2D<T>(
+        incarnation,
+        randomGenerator,
+        environment,
+        nodeCreationParameter,
+        group
+    ) {
 
     override val comfortRay: Double = super<HomogeneousPedestrian2D>.shape.radius
 }

@@ -92,6 +92,4 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
                 .orElse(0.0)
         }
     }
-
-
 }

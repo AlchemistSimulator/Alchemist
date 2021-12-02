@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.interfaces;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import org.danilopianini.util.ListSet;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -177,6 +178,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      *            the node you want to know the position
      * @return The position
      */
+    @Nonnull
     P getPosition(Node<T> node);
 
     /**

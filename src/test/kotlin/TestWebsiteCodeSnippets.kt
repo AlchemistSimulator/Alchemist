@@ -1,5 +1,6 @@
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.collections.beEmpty
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -23,14 +24,17 @@ class TestWebsiteCodeSnippets : FreeSpec(
             .also { it shouldNot beEmpty() }
             .onEach { it shouldNot beNull() }
         allSpecs.forEach { url ->
-            "snippet $url should load correctly" - {
-                println(url)
+            "snippet ${url.path.split("/").last()} should load correctly" - {
                 val environment = LoadAlchemist.from(url).getDefault<Any, Nothing>().environment
                 environment.shouldNotBeNull()
-                if (url.readText().contains("^displacements:")) {
+                if (url.readText().contains("deployments:")) {
                     "and have deployed nodes" {
                         environment.shouldNotBeEmpty()
                         environment.nodes shouldNot beEmpty()
+                    }
+                } else {
+                    "and be empty" {
+                        environment.shouldBeEmpty()
                     }
                 }
                 "and execute a few steps without errors" {

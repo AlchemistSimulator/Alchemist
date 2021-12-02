@@ -5,7 +5,6 @@ import kotlinx.coroutines.withTimeout
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
-import kotlin.time.ExperimentalTime
 
 /**
  * This variable loads any [JSR-233](http://archive.fo/PGdk8) language available in the classpath.
@@ -53,7 +52,6 @@ data class JSR223Variable @JvmOverloads constructor(
      * if the value can not be computed, e.g. because there are
      * unassigned required variables
      */
-    @ExperimentalTime
     override fun getWith(variables: Map<String, Any?>): Any? = try {
         synchronized(engine) {
             runCatching {

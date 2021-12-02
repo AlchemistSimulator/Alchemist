@@ -18,6 +18,7 @@ jobs:
       matrix:
         os: [ windows, macos, ubuntu ]
     runs-on: ${{ matrix.os }}-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.1.0

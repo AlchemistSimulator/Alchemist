@@ -35,24 +35,31 @@ import java.lang.IllegalStateException
  */
 fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
     initialized: (EuclideanEnvironment<T, P>) -> Unit = { },
-    stepDone: (EuclideanEnvironment<T, P>, Reaction<T>, Time, Long) -> Unit = { _, _, _, _ -> Unit },
-    finished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> Unit },
+    stepDone: (EuclideanEnvironment<T, P>, Reaction<T>, Time, Long) -> Unit = { _, _, _, _ -> },
+    finished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
     steps: Long = 10000
-): EuclideanEnvironment<T, P> where P : Position<P>, P : Vector<P> =
+) where P : Position<P>, P : Vector<P> =
     Engine(this, steps).apply {
+        fun checkForErrors() = error.ifPresent { throw it }
         addOutputMonitor(
             object : OutputMonitor<T, P> {
-                override fun initialized(environment: Environment<T, P>) =
+                override fun initialized(environment: Environment<T, P>) {
+                    checkForErrors()
                     initialized(this@startSimulation)
-                override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>, t: Time, s: Long) =
+                }
+                override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>, t: Time, s: Long) {
+                    checkForErrors()
                     stepDone(this@startSimulation, reaction, t, s)
-                override fun finished(environment: Environment<T, P>, t: Time, s: Long) =
+                }
+                override fun finished(environment: Environment<T, P>, t: Time, s: Long) {
+                    checkForErrors()
                     finished(this@startSimulation, t, s)
+                }
             }
         )
         play()
         run()
-        error.ifPresent { throw it }
+        checkForErrors()
     }.environment as EuclideanEnvironment<T, P>
 
 /**

@@ -51,6 +51,7 @@ tasks.compileJava { dependsOn(tasks.generateGrammarSource) }
 tasks.compileKotlin { dependsOn(tasks.generateGrammarSource) }
 tasks.compileTestJava { dependsOn(tasks.generateTestGrammarSource) }
 tasks.compileTestKotlin { dependsOn(tasks.generateTestGrammarSource) }
+tasks.runKtlintCheckOverTestSourceSet { dependsOn(tasks.generateTestGrammarSource) }
 
 val sourceSetsToCheck = listOf(project.sourceSets.main.get(), project.sourceSets.test.get())
 checkstyle {

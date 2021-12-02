@@ -25,6 +25,9 @@ public abstract class AbstractLocallyConsistentLinkingRule<T, P extends Position
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return getClass().getSimpleName();

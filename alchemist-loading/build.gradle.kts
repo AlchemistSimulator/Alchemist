@@ -49,7 +49,10 @@ tasks.withType<Test> {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs += listOf("-Xallow-result-return-type")
+        freeCompilerArgs += listOf(
+            "-Xallow-result-return-type",
+            "-Xopt-in=kotlin.time.ExperimentalTime",
+        )
     }
 }
 

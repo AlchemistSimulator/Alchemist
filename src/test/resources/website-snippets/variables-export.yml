@@ -5,9 +5,12 @@ variables:
   image_name: { formula: "'chiaravalle.png'" }
   image_path: &image_path
     language: kotlin # Pick whatever JSR223 language you like and add it to the classpath
-    formula: > # The following is pure Kotlin code. other variables can be referenced!
+    formula: | # The following is pure Kotlin code. Other variables can be referenced!
       import java.io.File
-      File("../..").walkTopDown().find { image_name in it.name }?.absolutePath ?: image_name
+      fun File.findImage(): String? = walkTopDown().find { image_name in it.name }?.absolutePath
+      fun File.findImageRecursively(): String = findImage() ?: File(this, "..").findImageRecursively()
+      File(".").findImageRecursively()
+    timeout: 5000
   # Linear free variable
   walking_speed: &walk-speed { default: 1.4, min: 1, max: 2, step: 0.1 }
   seed: &seed { default: 0, min: 0, max: 99, step: 1 } # 100 samples

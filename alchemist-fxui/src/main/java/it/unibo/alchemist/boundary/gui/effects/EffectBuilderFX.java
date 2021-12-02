@@ -30,8 +30,11 @@ public class EffectBuilderFX {
     /**
      * Set of available {@link EffectFX effect}s found by reflection.
      */
+    @SuppressWarnings("unchecked")
     private static final List<Class<? extends EffectFX<?>>> EFFECTS = ClassPathScanner.subTypesOf(
-            (Class<EffectFX<?>>) (Class<?>) EffectFX.class, "it.unibo.alchemist");
+            (Class<EffectFX<?>>) (Class<?>) EffectFX.class,
+            "it.unibo.alchemist"
+    );
     private final ChoiceDialog<Class<? extends EffectFX<?>>> dialog;
 
     /**
@@ -81,7 +84,7 @@ public class EffectBuilderFX {
      * desired class.
      * <p>
      * Call this method is the same as calling
-     * {@link EffectBuilderFX#getResult()} and {@link #chooseAndLoad()}.
+     * {@link EffectBuilderFX#getResult()} and {@link #instantiateEffect(Class)}}.
      *
      * @param <P> the position type
      * @return the effect chosen, or null if no effect was chosen

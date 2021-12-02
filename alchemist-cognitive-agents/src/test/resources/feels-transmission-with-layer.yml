@@ -31,7 +31,10 @@ _deployment_males: &males
   parameters: [ 50, 0, 0, 20 ]
   nodes:
     type: CognitivePedestrian2D
-    parameters: [ "adult", "male", *danger ]
+    parameters:
+      age: "adult"
+      gender: "male"
+      danger: *danger
   programs: *behavior
 
 deployments:
@@ -39,4 +42,7 @@ deployments:
   - <<: *males
     nodes:
       type: CognitivePedestrian2D
-      parameters: ["adult", "female", *danger]
+      parameters:
+        age: "adult"
+        gender: "female"
+        danger: *danger

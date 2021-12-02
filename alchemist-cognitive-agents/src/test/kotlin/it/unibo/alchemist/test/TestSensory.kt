@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.HomogeneousPedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
+import it.unibo.alchemist.model.interfaces.Incarnation
 import org.apache.commons.math3.random.MersenneTwister
 
 /**
@@ -32,12 +33,15 @@ class TestSensory<T> : StringSpec({
         )
         val rand = MersenneTwister(1)
         env.linkingRule = NoLinks()
-        val observed = HomogeneousPedestrian2D(env, rand)
+        val incarnation: Incarnation<T, Euclidean2DPosition> = SupportedIncarnations
+            .get<T, Euclidean2DPosition>(SupportedIncarnations.getAvailableIncarnations().first())
+            .get()
+        val observed = HomogeneousPedestrian2D(incarnation, rand, env)
         val origin = Euclidean2DPosition(5.0, 5.0)
         env.addNode(observed, origin)
         val radius = 10.0
         origin.surrounding(radius).forEach {
-            with(HomogeneousPedestrian2D(env, rand)) {
+            with(HomogeneousPedestrian2D(incarnation, rand, env)) {
                 env.addNode(this, it)
                 env.setHeading(this, origin - it)
             }

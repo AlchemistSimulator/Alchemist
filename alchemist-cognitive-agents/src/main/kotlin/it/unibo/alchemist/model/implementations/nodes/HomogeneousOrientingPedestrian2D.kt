@@ -11,6 +11,8 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Incarnation
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
@@ -23,9 +25,6 @@ import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
-private typealias AbstractOrientingPedestrian2D<T, L, N, E> =
-    AbstractOrientingPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, L, N, E, Euclidean2DShapeFactory>
-
 /**
  * A homogeneous [OrientingPedestrian] in the Euclidean world. Landmarks are represented as [Ellipse]s, which can
  * model the human error concerning both the exact position of a landmark and the angles formed by the connections
@@ -36,8 +35,9 @@ private typealias AbstractOrientingPedestrian2D<T, L, N, E> =
  * @param E the type of edges of the navigation graph provided by the environment.
  */
 open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads constructor(
-    override val environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     randomGenerator: RandomGenerator,
+    override val environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+    backingNode: Node<T>,
     knowledgeDegree: Double,
     /**
      * The starting width and height of the generated Ellipses will be a random quantity in
@@ -46,20 +46,42 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     private val minSide: Double = 30.0,
     private val maxSide: Double = 60.0,
     group: PedestrianGroup2D<T>? = null
-) : AbstractOrientingPedestrian2D<T, Ellipse, N, E>(
-    knowledgeDegree,
+) : AbstractOrientingPedestrian<
+    T,
+    Euclidean2DPosition,
+    Euclidean2DTransformation,
+    Ellipse,
+    N,
+    E,
+    Euclidean2DShapeFactory
+>(
     randomGenerator,
     environment,
-    group
+    backingNode,
+    knowledgeDegree,
+    group,
 ),
-    Pedestrian2D<T> {
+    Pedestrian2D<T>
+{
 
-    override val shape by lazy { super.shape }
-    final override val fieldOfView by lazy { super.fieldOfView }
-
-    init {
-        senses += fieldOfView
-    }
+    @JvmOverloads constructor(
+        incarnation: Incarnation<T, Euclidean2DPosition>,
+        randomGenerator: RandomGenerator,
+        environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
+        nodeCreationParameter: String? = null,
+        knowledgeDegree: Double,
+        minSide: Double = 30.0,
+        maxSide: Double = 60.0,
+        group: PedestrianGroup2D<T>? = null
+    ) : this(
+        randomGenerator,
+        environment,
+        incarnation.createNode(randomGenerator, environment, nodeCreationParameter),
+        knowledgeDegree,
+        minSide,
+        maxSide,
+        group,
+    )
 
     override fun createLandmarkIn(area: N): Ellipse = with(area) {
         val width = randomEllipseSide()

@@ -1,12 +1,12 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
@@ -32,19 +32,20 @@ import org.apache.commons.math3.random.RandomGenerator
 abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor(
     environment: PhysicsEnvironment<T, P, A, F>,
     randomGenerator: RandomGenerator,
+    backingNode: Node<T>,
     age: Age,
     gender: Gender,
     val danger: Molecule? = null,
     group: PedestrianGroup<T, P, A>? = null,
     cognitive: CognitiveModel? = null
-) : AbstractHeterogeneousPedestrian<T, P, A, F>(environment, randomGenerator, age, gender, group),
+) : AbstractHeterogeneousPedestrian<T, P, A, F>(randomGenerator, backingNode, age, gender, group),
     CognitivePedestrian<T, P, A>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {
 
-    override val cognitive by lazy {
-        cognitive ?: ImpactModel(this, compliance) {
+    override val cognitiveModel: CognitiveModel by lazy {
+        cognitive ?: ImpactModel(pedestrianModel.compliance, ::influencialPeople) {
             environment.getLayer(danger)
                 .map { it.getValue(environment.getPosition(this)) as Double }
                 .orElse(0.0)
@@ -52,14 +53,9 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
     }
 
     override fun speed() =
-        if (wantsToEscape()) {
-            runningSpeed * minOf(cognitive.escapeIntention(), 1.0)
+        if (cognitiveModel.wantsToEscape()) {
+            runningSpeed * minOf(cognitiveModel.escapeIntention(), 1.0)
         } else {
-            walkingSpeed * minOf(cognitive.remainIntention(), 1.0)
-        }
-
-    override fun influencialPeople(): List<CognitiveAgent> =
-        senses.fold(listOf()) { accumulator, sphere ->
-            accumulator.union(sphere.influentialNodes().filterIsInstance<CognitiveAgent>()).toList()
+            walkingSpeed * minOf(cognitiveModel.remainIntention(), 1.0)
         }
 }

@@ -43,7 +43,10 @@ _reactions: &behavior
 _nodes: &nodes
   nodes:
     type: CognitivePedestrian2D
-    parameters: ["adult", "male", *danger]
+    parameters:
+      age: "adult"
+      gender: "male"
+      danger: *danger
   programs: *behavior
 
 deployments:

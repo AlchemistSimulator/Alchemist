@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.cognitiveagents.impact
 
-import it.unibo.alchemist.model.cognitiveagents.CognitiveAgent
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.BeliefDanger
 import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.CognitiveCharacteristic
@@ -29,15 +28,19 @@ const val PARAMETERS_FILE = "it/unibo/alchemist/model/cognitiveagents/impact/con
  * Agent-based evacuation model with social contagion mechanisms.
  * More information can be found [here](https://doi.org/10.1007/978-3-319-70647-4_11).
  */
-class ImpactModel(owner: CognitiveAgent, compliance: Double, environmentalFactors: () -> Double) : CognitiveModel {
+class ImpactModel(
+    compliance: Double,
+    influencedBy: () -> List<CognitiveModel>,
+    environmentalFactors: () -> Double
+) : CognitiveModel {
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
         BeliefDanger::class to
-            BeliefDanger(environmentalFactors, { characteristicLevel<Fear>() }, { owner.influencialPeople() }),
+            BeliefDanger(environmentalFactors, { characteristicLevel<Fear>() }, influencedBy),
         Fear::class to Fear(
             { characteristicLevel<DesireWalkRandomly>() },
             { characteristicLevel<DesireEvacuate>() },
-            { owner.influencialPeople() }
+            influencedBy
         ),
         DesireEvacuate::class to DesireEvacuate(
             compliance,

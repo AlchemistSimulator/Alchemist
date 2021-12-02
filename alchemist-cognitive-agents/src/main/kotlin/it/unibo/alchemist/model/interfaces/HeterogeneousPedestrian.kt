@@ -1,34 +1,25 @@
+/*
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
-import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.HeterogeneousPedestrianModel
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
- * A pedestrian with individual characteristics.
+ * Pedestrians that can differ by age, geneder, etc, depending on their [HeterogeneousPedestrianModel].
  */
 interface HeterogeneousPedestrian<T, S : Vector<S>, A : GeometricTransformation<S>> : Pedestrian<T, S, A> {
 
     /**
-     * The age of this pedestrian.
+     * The pedestrian model, capturing its characteristics.
      */
-    val age: Age
-
-    /**
-     * The gender of this pedestrian.
-     */
-    val gender: Gender
-
-    /**
-     * Value between 0 and 1 representing the attitude towards conforming to social rules of this pedestrian.
-     */
-    val compliance: Double
-
-    /**
-     * Value between 0 and 1 representing the probability this pedestrian will help another pedestrian in difficulty.
-     *
-     * @param toHelp The pedestrian who needs help.
-     */
-    fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T, S, A>): Double
+    val pedestrianModel: HeterogeneousPedestrianModel<T, S, A>
 }

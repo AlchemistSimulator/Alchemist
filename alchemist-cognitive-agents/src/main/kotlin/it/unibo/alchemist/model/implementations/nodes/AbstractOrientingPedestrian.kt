@@ -12,10 +12,11 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.implementations.actions.takePercentage
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.pathExists
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.PedestrianGroup
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironmentWithGraph
+import it.unibo.alchemist.model.interfaces.PedestrianGroup
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -32,6 +33,8 @@ import org.jgrapht.graph.DefaultEdge
  * An abstract [OrientingPedestrian], contains an algorithm for the generation of a pseudo-random [cognitiveMap]. The
  * creation of landmarks is left to subclasses via factory method (see [createLandmarkIn]).
  *
+ * The [environment] must feature a navigation graph.
+ *
  * @param T the concentration type.
  * @param P the [Position] type and [Vector] type for the space this pedestrian is inside.
  * @param A the transformations supported by the shapes in this space.
@@ -41,29 +44,32 @@ import org.jgrapht.graph.DefaultEdge
  * @param F the type of the shape factory provided by the environment.
  */
 abstract class AbstractOrientingPedestrian<T, P, A, L, N, E, F>(
-    final override val knowledgeDegree: Double,
     /**
      * The random generator to use in order to preserve reproducibility.
      */
-    protected val randomGenerator: RandomGenerator,
+    randomGenerator: RandomGenerator,
+    open val environment: EnvironmentWithGraph<*, T, P, A, N, E>,
+    backingNode: Node<T>,
+    final override val knowledgeDegree: Double,
     /**
      * The environment this pedestrian is into.
      */
-    environment: PhysicsEnvironmentWithGraph<*, T, P, A, N, E, F>,
     group: PedestrianGroup<T, P, A>? = null,
     /**
      * Environment's areas whose diameter is smaller than ([minArea] * the diameter of this pedestrian) will be
      * regarded as too small and discarded when generating the cognitive map (i.e. no landmark will be placed inside
      * them).
      */
-    private val minArea: Double = 10.0
+    private val minArea: Double = 10.0,
 ) : OrientingPedestrian<T, P, A, L, DefaultEdge>,
-    AbstractHomogeneousPedestrian<T, P, A, F>(environment, randomGenerator, group)
-    where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
-          L : ConvexGeometricShape<P, A>,
-          N : ConvexGeometricShape<P, A>,
-          F : GeometricShapeFactory<P, A> {
+    AbstractHomogeneousPedestrian<T, P, A, F>(randomGenerator, backingNode, group)
+    where
+P : Position<P>,
+P : Vector<P>,
+A : GeometricTransformation<P>,
+L : ConvexGeometricShape<P, A>,
+N : ConvexGeometricShape<P, A>,
+F : GeometricShapeFactory<P, A> {
 
     init {
         require(knowledgeDegree in 0.0..1.0) { "knowledge degree must be in [0,1]" }

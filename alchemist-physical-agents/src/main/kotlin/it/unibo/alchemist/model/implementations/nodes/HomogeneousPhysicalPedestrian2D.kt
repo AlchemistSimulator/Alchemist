@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.nodes
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
@@ -19,10 +21,18 @@ import org.apache.commons.math3.random.RandomGenerator
  * statically defined to be equal to its [shape] radius.
  */
 open class HomogeneousPhysicalPedestrian2D<T> @JvmOverloads constructor(
-    environment: Physics2DEnvironment<T>,
+    incarnation: Incarnation<T, Euclidean2DPosition>,
     randomGenerator: RandomGenerator,
+    environment: Physics2DEnvironment<T>,
+    nodeCreationParameter: String? = null,
     group: PedestrianGroup2D<T>? = null
-) : HomogeneousPedestrian2D<T>(environment, randomGenerator, group), PhysicalPedestrian2D<T> {
+) : HomogeneousPedestrian2D<T>(
+    incarnation,
+    randomGenerator,
+    environment,
+    nodeCreationParameter,
+    group
+), PhysicalPedestrian2D<T> {
 
     override val comfortRay: Double = super<HomogeneousPedestrian2D>.shape.radius
 }

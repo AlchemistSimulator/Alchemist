@@ -21,7 +21,12 @@ import java.util.Set;
 public final class StatUtil {
 
     private static final Set<Class<? extends UnivariateStatistic>> STATISTICS = ImmutableSet.copyOf(
-            ClassPathScanner.subTypesOf(UnivariateStatistic.class));
+        ClassPathScanner.subTypesOf(
+            UnivariateStatistic.class,
+            "org.apache.commons.math3",
+            "it.unibo.alchemist"
+        )
+    );
 
     private StatUtil() {
     }

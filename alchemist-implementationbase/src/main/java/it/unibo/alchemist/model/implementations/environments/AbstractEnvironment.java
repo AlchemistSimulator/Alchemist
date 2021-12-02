@@ -233,9 +233,6 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     @Override
     public final ListSet<Node<T>> getNodesWithinRange(final Node<T> center, final double range) {
         final P centerPosition = getPosition(center);
-        if (centerPosition == null) {
-            throw new IllegalArgumentException("Node " + center + " was not part of this environment");
-        }
         final ListSet<Node<T>> res = new LinkedListSet<>(getAllNodesInRange(centerPosition, range));
         if (!res.remove(center)) {
             throw new IllegalStateException("Either the provided range (" + range + ") is too small"
@@ -257,9 +254,23 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     /**
      * This method should not get overridden in general. However, if your
      */
+    @Nonnull
     @Override
-    public P getPosition(final Node<T> node) {
-        return nodeToPos.get(Objects.requireNonNull(node).getId());
+    public final P getPosition(final Node<T> node) {
+        final var position = nodeToPos.get(Objects.requireNonNull(node).getId());
+        if (position == null) {
+            final var nodeExists = nodes.contains(node);
+            if (nodeExists) {
+                throw new IllegalStateException(
+                    "Node " + node + " is registered in the environment, but it has no position."
+                    + " This could be a bug in Alchemist, please open an issue report."
+                );
+            } else {
+                final var nodeTyoe = node.getClass().getSimpleName();
+                throw new IllegalArgumentException("Node " + node + ": " + nodeTyoe + " does not exist in the environment.");
+            }
+        }
+        return position;
     }
 
     @Override
@@ -312,6 +323,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return terminator.test(this);
     }
 
+    @Nonnull
     @Override
     public final Iterator<Node<T>> iterator() {
         return getNodes().iterator();

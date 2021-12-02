@@ -44,7 +44,7 @@ class NamedParametersConstructor(
     private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()
 ) : JVMConstructor(type) {
 
-    data class Error(val parameter: KParameter) {
+    private data class Error(val parameter: KParameter) {
         override fun toString() = "${parameter.name}: ${parameter.type.jvmErasure.simpleName}"
     }
 

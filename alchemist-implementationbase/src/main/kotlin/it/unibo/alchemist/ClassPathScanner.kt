@@ -9,14 +9,22 @@
 package it.unibo.alchemist
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.google.common.base.Objects
 import io.github.classgraph.ClassGraph
 import java.io.InputStream
+import java.lang.reflect.Modifier
 import java.net.URL
 import java.util.regex.Pattern
 
-private typealias ScanData = Pair<Class<*>, String?>
-private val ScanData.inPackage get() = second
-private val ScanData.superClass get() = first
+private data class ScanData(val superClass: Class<*>, val inPackages: Array<out String>) {
+
+    val hashCode = Objects.hashCode(superClass, *inPackages)
+
+    override fun equals(other: Any?) = other === this ||
+        other is ScanData && superClass == other.superClass && inPackages.contentEquals(other.inPackages)
+
+    override fun hashCode(): Int = hashCode
+}
 
 /**
  * An utility class providing support for loading arbitrary subclasses available in the classpath.
@@ -24,7 +32,7 @@ private val ScanData.superClass get() = first
 object ClassPathScanner {
 
     private val loader = Caffeine.newBuilder().build<ScanData, List<Class<*>>> { scanData ->
-        classGraphForPackage(scanData.inPackage)
+        classGraphForPackages(*scanData.inPackages)
             .enableClassInfo()
             .scan()
             .let { scanResult ->
@@ -37,14 +45,12 @@ object ClassPathScanner {
             .filter { !it.isAbstract }.loadClasses()
     }
 
-    private fun classGraphForPackage(inPackage: String?): ClassGraph = ClassGraph()
+    private fun classGraphForPackages(vararg inPackage: String): ClassGraph = ClassGraph()
         .apply {
-            if (inPackage != null) {
-                // WHITELIST package
-                acceptPackages(inPackage)
-                // BLACKLIST package
-                rejectPackages("org.gradle")
-            }
+            // WHITELIST package
+            acceptPackages(*inPackage)
+            // BLACKLIST package
+            rejectPackages("org.gradle")
         }
 
     /**
@@ -54,16 +60,17 @@ object ClassPathScanner {
      * transformation to use them.
      */
     @JvmStatic
-    @JvmOverloads
     @Suppress("UNCHECKED_CAST")
-    fun <T> subTypesOf(superClass: Class<T>, inPackage: String? = null): List<Class<out T>> =
-        loader[ScanData(superClass, inPackage)] as List<Class<out T>>
+    fun <T> subTypesOf(superClass: Class<T>, vararg inPackage: String): List<Class<out T>> = when {
+        Modifier.isFinal(superClass.modifiers) -> listOf(superClass)
+        else -> loader[ScanData(superClass, inPackage)] as List<Class<out T>>
+    }
 
     /**
      * This function loads all subtypes of the provided Java class that can be discovered on the current classpath.
      */
-    inline fun <reified T> subTypesOf(inPackage: String? = null): List<Class<out T>> =
-        subTypesOf(T::class.java, inPackage)
+    inline fun <reified T> subTypesOf(vararg inPackage: String): List<Class<out T>> =
+        subTypesOf(T::class.java, *inPackage)
 
     /**
      * This function returns a list of all the resources in a certain (optional) package matching a regular expression.
@@ -72,8 +79,7 @@ object ClassPathScanner {
      * transformation to use them.
      */
     @JvmStatic
-    @JvmOverloads
-    fun resourcesMatching(regex: String, inPackage: String? = null): List<URL> = classGraphForPackage(inPackage)
+    fun resourcesMatching(regex: String, vararg inPackage: String): List<URL> = classGraphForPackages(*inPackage)
         .scan().getResourcesMatchingPattern(Pattern.compile(regex))
         .urLs
 
@@ -81,7 +87,6 @@ object ClassPathScanner {
      * This function returns a list of all the resources in a certain (optional) package matching a regular expression.
      */
     @JvmStatic
-    @JvmOverloads
-    fun resourcesMatchingAsStream(regex: String, inPackage: String? = null): List<InputStream> =
-        resourcesMatching(regex, inPackage).map { it.openStream() }
+    fun resourcesMatchingAsStream(regex: String, vararg inPackage: String): List<InputStream> =
+        resourcesMatching(regex, *inPackage).map { it.openStream() }
 }

@@ -110,6 +110,4 @@ class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOver
 
     override val shape: GeometricShape<Euclidean2DPosition, Euclidean2DTransformation>
         get() = super.shape
-
-
 }

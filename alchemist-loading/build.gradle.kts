@@ -33,6 +33,7 @@ dependencies {
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
+    testImplementation(libs.appdirs)
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
 

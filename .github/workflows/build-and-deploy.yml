@@ -13,7 +13,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  Build:
+  wrapper-validation:
+    name: "Gradle wrapper validation"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: gradle/wrapper-validation-action@v1.0.4
+  build:
     strategy:
       matrix:
         os: [ windows, macos, ubuntu ]
@@ -50,7 +56,7 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-  Build-Website:
+  build-website:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -67,11 +73,12 @@ jobs:
               && contains('push workflow_dispatch', github.event_name)
             }}
           deploy-command: ./gradlew orchidDeploy --parallel
-          github-token: ${{ github.AUTOMERGE_TOKEN }}
+          github-token: ${{ secrets.AUTOMERGE_TOKEN }}
   Release:
     needs:
-      - Build
-      - Build-Website
+      - build
+      - build-website
+      - wrapper-validation
     runs-on: ubuntu-latest
     if: >-
       contains('push workflow_dispatch', github.event_name)
@@ -89,7 +96,7 @@ jobs:
             npx semantic-release
           should-run-codecov: false
           should-deploy: true
-          github-token: ${{ github.AUTOMERGE_TOKEN }}
+          github-token: ${{ secrets.AUTOMERGE_TOKEN }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}

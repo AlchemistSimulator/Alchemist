@@ -13,7 +13,7 @@ variables:
   scenario_seed: &scenario_seed { formula: (seed + 31) * seed }
   people_count: &people_count
     type: GeometricVariable
-    parameters: [300, 50, 500, 9]
+    parameters: [10, 50, 500, 9]
 seeds: { simulation: *seed, scenario: *scenario_seed}
 export:
   - type: MongoDBExporter
@@ -44,4 +44,4 @@ deployments:
 
 terminate:
   - type: AfterTime
-    parameters: 10
+    parameters: 3

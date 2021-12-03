@@ -15,12 +15,16 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.maps.shouldContainKey
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Time
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
 
@@ -34,8 +38,20 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             val initialized: InitializedEnvironment<T, P> = loader.getDefault()
             val simulation = Engine(initialized.environment)
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
+            fun checkForErrors() = simulation.error.ifPresent { throw it }
+            simulation.addOutputMonitor(object : OutputMonitor<T, P> {
+                override fun finished(environment: Environment<T, P>, time: Time, step: Long) = checkForErrors()
+                override fun initialized(environment: Environment<T, P>) = checkForErrors()
+                override fun stepDone(
+                    environment: Environment<T, P>,
+                    reaction: Reaction<T>?,
+                    time: Time,
+                    step: Long
+                ) = checkForErrors()
+            })
             simulation.play()
             simulation.run()
+            checkForErrors()
             val exporter = initialized.exporters.firstOrNull {
                 it is MongoDBExporter
             }

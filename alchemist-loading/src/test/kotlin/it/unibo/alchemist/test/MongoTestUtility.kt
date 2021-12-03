@@ -17,11 +17,13 @@ import de.flapdoodle.embed.mongo.config.MongodConfig
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.process.runtime.Network
+import io.kotest.common.runBlocking
 import io.kotest.matchers.shouldNotBe
+import kotlinx.coroutines.withTimeout
 
 private val starter: MongodStarter = MongodStarter.getDefaultInstance()
 
-internal fun withMongo(operation: () -> Unit) {
+internal fun withMongo(timeout: Long = 10000, operation: () -> Unit) {
     val mongodConfig: ImmutableMongodConfig = MongodConfig.builder()
         .version(Version.Main.PRODUCTION)
         .net(Net("localhost", 27017, Network.localhostIsIPv6()))
@@ -31,7 +33,11 @@ internal fun withMongo(operation: () -> Unit) {
     val mongodProcess: MongodProcess = mongodExecutable.start()
     mongodProcess shouldNotBe null
     try {
-        operation()
+        runBlocking {
+            withTimeout(timeout) {
+                operation()
+            }
+        }
     } finally {
         mongodProcess.stop()
         mongodExecutable.stop()

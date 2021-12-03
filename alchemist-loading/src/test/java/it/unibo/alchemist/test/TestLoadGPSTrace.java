@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -86,26 +87,26 @@ class TestLoadGPSTrace {
             });
         });
         final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
-        sim.addOutputMonitor(new OutputMonitor<T, GeoPosition>() {
+        sim.addOutputMonitor(new OutputMonitor<>() {
 
             @Override
-            public void finished(final Environment<T, GeoPosition> env, final Time time, final long step) {
+            public void finished(@NotNull final Environment<T, GeoPosition> env, @NotNull final Time time, final long step) {
                 for (final Node<T> node : env.getNodes()) {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
                     final GeoPosition realArrive = Objects.requireNonNull(env.getPosition(node));
                     assertEquals(
-                        0.0,
-                        idealArrive.distanceTo(realArrive),
-                        DELTA,
-                        "simulation completed at time " + time + " after " + step + " steps.\n"
-                            + "Start at " + start + ", ideal arrive " + idealArrive + ", actual arrive " + realArrive
+                            0.0,
+                            idealArrive.distanceTo(realArrive),
+                            DELTA,
+                            "simulation completed at time " + time + " after " + step + " steps.\n"
+                                    + "Start at " + start + ", ideal arrive " + idealArrive + ", actual arrive " + realArrive
                     );
                 }
             }
 
             @Override
-            public void initialized(final Environment<T, GeoPosition> env) {
+            public void initialized(@NotNull final Environment<T, GeoPosition> env) {
                 for (final Node<T> node : env.getNodes()) {
                     final GeoPosition position = env.getPosition(node);
                     /*
@@ -117,8 +118,11 @@ class TestLoadGPSTrace {
             }
 
             @Override
-            public void stepDone(final Environment<T, GeoPosition> env, final Reaction<T> r, final Time time, final long step) {
-            }
+            public void stepDone(
+                @NotNull final Environment<T, GeoPosition> env, final Reaction<T> r,
+                @NotNull final Time time,
+                final long step
+            ) { }
         });
         sim.play();
         sim.run();

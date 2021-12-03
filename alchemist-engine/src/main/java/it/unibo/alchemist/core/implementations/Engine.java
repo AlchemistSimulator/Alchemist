@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -434,11 +435,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private void pauseWhen(final BooleanSupplier condition) {
         addOutputMonitor(new OutputMonitor<>() {
             @Override
-            public void finished(final Environment<T, P> environment, final Time time, final long step) {
+            public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time time, final long step) {
             }
 
             @Override
-            public void initialized(final Environment<T, P> environment) {
+            public void initialized(@NotNull final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
                     pause();
                 }
@@ -446,9 +447,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
             @Override
             public void stepDone(
-                    final Environment<T, P> environment,
+                    @NotNull final Environment<T, P> environment,
                     final Reaction<T> reaction,
-                    final Time time,
+                    @NotNull final Time time,
                     final long step
             ) {
                 initialized(environment);

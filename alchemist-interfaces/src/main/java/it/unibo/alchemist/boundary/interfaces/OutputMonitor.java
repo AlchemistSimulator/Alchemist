@@ -12,6 +12,8 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
@@ -38,7 +40,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * @param step
      *            The last step number
      */
-    void finished(Environment<T, P> environment, Time time, long step);
+    void finished(@Nonnull Environment<T, P> environment, @Nonnull Time time, long step);
 
     /**
      * This method will be called by the simulation as soon as the initialization
@@ -50,7 +52,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * @param environment
      *            the environment
      */
-    void initialized(Environment<T, P> environment);
+    void initialized(@Nonnull Environment<T, P> environment);
 
     /**
      * This method will be called by the simulation every time a simulation step is
@@ -68,6 +70,6 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * @param step
      *            The current simulation step
      */
-    void stepDone(Environment<T, P> environment, Reaction<T> reaction, Time time, long step);
+    void stepDone(@Nonnull Environment<T, P> environment, @Nullable Reaction<T> reaction, @Nonnull Time time, long step);
 
 }

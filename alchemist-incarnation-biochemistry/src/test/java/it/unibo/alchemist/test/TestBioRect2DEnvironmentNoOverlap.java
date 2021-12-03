@@ -24,11 +24,13 @@ import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -40,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -193,14 +194,10 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertFalse(env.getNodes().contains(node));
     }
 
-    private void verifyAdded(final Node<Double> node, final Position<?> expected) {
+    private void verifyAdded(final Node<Double> node, @Nonnull final Position<?> expected) {
         final Position<?> position = env.getPosition(node);
         final Supplier<String> message = () -> getFailureTestString("node" + node.getId(), node, position);
-        if (expected == null) {
-            assertNull(position, message);
-        } else {
-            assertEquals(expected, position, message);
-        }
+        assertEquals(expected, position, message);
     }
 
     /**
@@ -240,7 +237,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertEquals(
                 env.getPosition(cellToMove2),
                 EXPECTED_POS2,
-                "cellToMove2 is in position: " + env.getPosition(cellToMove2).toString()
+                "cellToMove2 is in position: " + env.getPosition(cellToMove2)
         );
         env.removeNode(cellToMove2);
         env.removeNode(c2);
@@ -261,7 +258,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertEquals(
                 env.getPosition(cellToMove3),
                 originalPos,
-                "cellToMove3 is in position: " + env.getPosition(cellToMove3).toString()
+                "cellToMove3 is in position: " + env.getPosition(cellToMove3)
         );
         env.removeNode(cellToMove3);
         env.removeNode(c4);
@@ -284,7 +281,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertNotEquals(
                 env.getPosition(cellToMove4),
                 POSITION_TO_MOVE4,
-                "cellToMove4 is in position: " + env.getPosition(cellToMove4).toString()
+                "cellToMove4 is in position: " + env.getPosition(cellToMove4)
         );
         env.removeNode(cellToMove4);
         env.removeNode(c5);
@@ -304,7 +301,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertEquals(
                 env.getPosition(cellToMove5),
                 POSITION_TO_MOVE5,
-                "cellToMove5 is in position: " + env.getPosition(cellToMove5).toString()
+                "cellToMove5 is in position: " + env.getPosition(cellToMove5)
         );
         env.removeNode(cellToMove5);
         env.removeNode(c6);
@@ -324,7 +321,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertEquals(
                 env.getPosition(cellToMove6),
                 EXPECTED_POS6,
-                "cellToMove6 is in position: " + env.getPosition(cellToMove6).toString()
+                "cellToMove6 is in position: " + env.getPosition(cellToMove6)
         );
         env.removeNode(cellToMove6);
         env.removeNode(c7);
@@ -341,7 +338,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         final CellWithCircularArea<Euclidean2DPosition> c8 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(c8, p8);
         env.moveNode(cellToMove7, POSITION_TO_MOVE7);
-        assertTrueJUnit4("cellToMove7 is in position: " + env.getPosition(cellToMove7).toString(),
+        assertTrueJUnit4("cellToMove7 is in position: " + env.getPosition(cellToMove7),
                 EXPECTED_POS7.equals(env.getPosition(cellToMove7)));
         env.removeNode(cellToMove7);
         env.removeNode(c8);
@@ -358,7 +355,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         final CellWithCircularArea<Euclidean2DPosition> c9 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
         env.addNode(c9, p9);
         env.moveNode(cellToMove8, POSITION_TO_MOVE8);
-        assertTrueJUnit4("cellToMove8 is in position: " + env.getPosition(cellToMove8).toString(),
+        assertTrueJUnit4("cellToMove8 is in position: " + env.getPosition(cellToMove8),
                 EXPECTED_POS8.equals(env.getPosition(cellToMove8)));
         env.removeNode(cellToMove8);
         env.removeNode(c9);
@@ -751,21 +748,25 @@ class TestBioRect2DEnvironmentNoOverlap {
 
             @Override
             public void stepDone(
-                    final Environment<Double, Euclidean2DPosition> environment,
+                    @NotNull final Environment<Double, Euclidean2DPosition> environment,
                     final Reaction<Double> reaction,
-                    final Time time,
+                    @NotNull final Time time,
                     final long step
             ) {
                 assertTrue(thereIsOverlap(environment), "Fail at time: " + time);
             }
 
             @Override
-            public void initialized(final Environment<Double, Euclidean2DPosition> environment) {
+            public void initialized(@NotNull final Environment<Double, Euclidean2DPosition> environment) {
                 assertTrue(thereIsOverlap(environment));
             }
 
             @Override
-            public void finished(final Environment<Double, Euclidean2DPosition> environment, final Time time, final long step) {
+            public void finished(
+                @NotNull final Environment<Double, Euclidean2DPosition> environment,
+                @NotNull final Time time,
+                final long step
+            ) {
                 assertTrue(thereIsOverlap(environment));
             }
 

@@ -49,11 +49,11 @@ class TestGetPosition {
         sim.addOutputMonitor(
             object : OutputMonitor<Any, Euclidean2DPosition> {
                 override fun finished(environment: Environment<Any, Euclidean2DPosition>, time: Time, step: Long) = Unit
-                override fun initialized(environment: Environment<Any, Euclidean2DPosition>?) = Unit
+                override fun initialized(environment: Environment<Any, Euclidean2DPosition>) = Unit
                 override fun stepDone(
-                    environment: Environment<Any, Euclidean2DPosition>?,
+                    environment: Environment<Any, Euclidean2DPosition>,
                     reaction: Reaction<Any>?,
-                    time: Time?,
+                    time: Time,
                     step: Long
                 ) {
                     if (step > 0) {

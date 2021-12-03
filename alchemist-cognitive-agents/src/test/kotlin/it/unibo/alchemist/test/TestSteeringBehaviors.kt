@@ -20,12 +20,12 @@ class TestSteeringBehaviors<T, P> : StringSpec({
         val startDistances = mutableMapOf<Node<T>, Double>()
         val endDistances = mutableMapOf<Node<T>, Double>()
         loadYamlSimulation<T, P>("seek.yml").startSimulation(
-            initialized = { environment ->
+            onceInitialized = { environment ->
                 environment.nodes.forEach {
                     startDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
                 }
             },
-            finished = { environment, _, _ ->
+            whenFinished = { environment, _, _ ->
                 environment.nodes.forEach {
                     endDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
                 }
@@ -37,12 +37,12 @@ class TestSteeringBehaviors<T, P> : StringSpec({
         val startDistances = mutableMapOf<Node<T>, Double>()
         val endDistances = mutableMapOf<Node<T>, Double>()
         loadYamlSimulation<T, P>("flee.yml").startSimulation(
-            initialized = { e ->
+            onceInitialized = { e ->
                 e.nodes.forEach {
                     startDistances[it] = e.getPosition(it).distanceTo(e.origin)
                 }
             },
-            finished = { e, _, _ ->
+            whenFinished = { e, _, _ ->
                 e.nodes.forEach {
                     endDistances[it] = e.getPosition(it).distanceTo(e.origin)
                 }
@@ -54,7 +54,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
         with(loadYamlSimulation<T, P>("arrive.yml")) {
             val nodesPositions: Map<Node<T>, MutableList<P>> = nodes.map { it to mutableListOf<P>() }.toMap()
             startSimulation(
-                stepDone = { e, _, _, _ ->
+                atEachStep = { e, _, _, _ ->
                     e.nodes.forEach {
                         nodesPositions[it]?.add(e.getPosition(it))
                     }
@@ -80,7 +80,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
 
     "cohesion gives importance to the other members of the group during an evacuation" {
         loadYamlSimulation<T, P>("cohesion.yml").startSimulation(
-            finished = { e, _, _ ->
+            whenFinished = { e, _, _ ->
                 e.nodes.asSequence()
                     .filterIsInstance<Pedestrian<T, *, *>>()
                     .groupBy { it.membershipGroup }
@@ -99,7 +99,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
 
     "nodes using separation behavior keep a distance to each other" {
         loadYamlSimulation<T, P>("separation.yml").startSimulation(
-            finished = { e, _, _ ->
+            whenFinished = { e, _, _ ->
                 with(e.nodes.map { e.getPosition(it) }) {
                     for (nodePos in this) {
                         for (otherPos in (this.minusElement(nodePos))) {
@@ -114,7 +114,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
 
     "obstacle avoidance let nodes reach destinations behind obstacles" {
         loadYamlSimulation<T, P>("obstacle-avoidance.yml").startSimulation(
-            finished = { e, _, _ ->
+            whenFinished = { e, _, _ ->
                 e.nodes.forEach {
                     e.getPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
                 }

@@ -13,6 +13,7 @@ import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.map.awt.graphics.AwtGraphicFactory;
 import org.mapsforge.map.awt.view.MapView;
@@ -99,7 +100,7 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     }
 
     @Override
-    public void initialized(final Environment<T, GeoPosition> environment) {
+    public void initialized(@NotNull final Environment<T, GeoPosition> environment) {
         super.initialized(environment);
         Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
         Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
@@ -117,7 +118,7 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     }
 
     @Override
-    public void finished(final Environment<T, GeoPosition> environment, final Time time, final long step) {
+    public void finished(@NotNull final Environment<T, GeoPosition> environment, @NotNull final Time time, final long step) {
         /*
          * Shut down the download threads, preventing memory leaks
          */

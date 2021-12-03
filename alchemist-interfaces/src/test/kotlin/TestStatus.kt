@@ -46,8 +46,10 @@ class TestStatus : StringSpec({
         fun beReachableFrom(initial: Status) = object : Matcher<Status> {
             override fun test(value: Status) = MatcherResult(
                 value.isReachableFrom(initial),
-                "$value should be reachable from $initial",
-                "$value should not be reachable from $initial"
+                { "$value should be reachable from $initial" },
+                {
+                    "$value should not be reachable from $initial"
+                }
             )
         }
     }

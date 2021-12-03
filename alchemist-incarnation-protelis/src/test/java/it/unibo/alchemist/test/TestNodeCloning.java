@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -94,9 +95,9 @@ class TestNodeCloning<P extends Position<P>> {
             private static final long serialVersionUID = 1L;
             @Override
             public void stepDone(
-                    final Environment<Object, P> environment,
+                    @NotNull final Environment<Object, P> environment,
                     final Reaction<Object> reaction,
-                    final Time time,
+                    @NotNull final Time time,
                     final long step
             ) {
                 final ImmutableMap<Node<Object>, Double> expectations = ImmutableMap.of(
@@ -117,9 +118,9 @@ class TestNodeCloning<P extends Position<P>> {
                 }
             }
             @Override
-            public void initialized(final Environment<Object, P> environment) { }
+            public void initialized(@NotNull final Environment<Object, P> environment) { }
             @Override
-            public void finished(final Environment<Object, P> environment, final Time time, final long step) { }
+            public void finished(@NotNull final Environment<Object, P> environment, @NotNull final Time time, final long step) { }
         });
         simulation.play();
         simulation.run();

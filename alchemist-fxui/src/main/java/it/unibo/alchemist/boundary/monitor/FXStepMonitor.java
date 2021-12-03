@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * {@code OutputMonitor} that monitors the current
@@ -39,7 +40,7 @@ public class FXStepMonitor<T, P extends Position<? extends P>> extends NumericLa
      * {@inheritDoc}
      */
     @Override
-    public void finished(final Environment<T, P> environment, final Time time, final long step) {
+    public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time time, final long step) {
         update(step);
     }
 
@@ -48,9 +49,9 @@ public class FXStepMonitor<T, P extends Position<? extends P>> extends NumericLa
      */
     @Override
     public void stepDone(
-            final Environment<T, P> environment,
+            @NotNull final Environment<T, P> environment,
             final Reaction<T> reaction,
-            final Time time,
+            @NotNull final Time time,
             final long step
     ) {
         update(step);

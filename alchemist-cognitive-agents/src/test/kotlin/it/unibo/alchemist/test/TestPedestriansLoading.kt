@@ -33,7 +33,7 @@ class TestPedestriansLoading<T, P, A> : StringSpec({
 
     "groups of pedestrians loading" {
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
-            initialized = { e ->
+            onceInitialized = { e ->
                 e.nodes.filterIsInstance<Pedestrian<T, P, A>>().forEach {
                     println("${it.id} -> ${it.membershipGroup}")
                 }

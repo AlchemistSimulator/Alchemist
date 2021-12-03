@@ -27,11 +27,11 @@ class TestTermination : FreeSpec(
                 .environment
             val simulation = Engine(loaded)
             simulation.addOutputMonitor(object : OutputMonitor<Nothing, Nothing> {
-                override fun finished(environment: Environment<Nothing, Nothing>?, time: Time?, step: Long) = Unit
-                override fun initialized(environment: Environment<Nothing, Nothing>?) = Unit
+                override fun finished(environment: Environment<Nothing, Nothing>, time: Time, step: Long) = Unit
+                override fun initialized(environment: Environment<Nothing, Nothing>) = Unit
                 override fun stepDone(
                     environment: Environment<Nothing, Nothing>,
-                    reaction: Reaction<Nothing>,
+                    reaction: Reaction<Nothing>?,
                     time: Time,
                     step: Long
                 ) {

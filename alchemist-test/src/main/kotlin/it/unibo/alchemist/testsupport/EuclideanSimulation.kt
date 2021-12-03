@@ -24,19 +24,19 @@ import java.lang.IllegalStateException
 /**
  * Run the simulation this environment owns.
  *
- * @param initialized
+ * @param onceInitialized
  *          the lambda to execute when the simulation begins.
- * @param stepDone
+ * @param atEachStep
  *          the lambda to execute on each step of the simulation.
- * @param finished
+ * @param whenFinished
  *          the lambda to execute at the end of the simulation.
  * @param steps
  *          the number of steps the simulation must execute.
  */
 fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
-    initialized: (EuclideanEnvironment<T, P>) -> Unit = { },
-    stepDone: (EuclideanEnvironment<T, P>, Reaction<T>, Time, Long) -> Unit = { _, _, _, _ -> },
-    finished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
+    onceInitialized: (EuclideanEnvironment<T, P>) -> Unit = { },
+    atEachStep: (EuclideanEnvironment<T, P>, Reaction<T>?, Time, Long) -> Unit = { _, _, _, _ -> },
+    whenFinished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
     steps: Long = 10000
 ) where P : Position<P>, P : Vector<P> =
     Engine(this, steps).apply {
@@ -45,15 +45,15 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
             object : OutputMonitor<T, P> {
                 override fun initialized(environment: Environment<T, P>) {
                     checkForErrors()
-                    initialized(this@startSimulation)
+                    onceInitialized(this@startSimulation)
                 }
-                override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>, t: Time, s: Long) {
+                override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, t: Time, s: Long) {
                     checkForErrors()
-                    stepDone(this@startSimulation, reaction, t, s)
+                    atEachStep(this@startSimulation, reaction, t, s)
                 }
                 override fun finished(environment: Environment<T, P>, t: Time, s: Long) {
                     checkForErrors()
-                    finished(this@startSimulation, t, s)
+                    whenFinished(this@startSimulation, t, s)
                 }
             }
         )

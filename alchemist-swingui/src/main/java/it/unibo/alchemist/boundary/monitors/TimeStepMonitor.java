@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -91,7 +92,7 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     }
 
     @Override
-    public void finished(final Environment<T, P> environment, final Time tt, final long cs) {
+    public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time tt, final long cs) {
         isFinished = true;
         stepDone(environment, null, tt, cs);
         updater.stop();
@@ -100,16 +101,16 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     }
 
     @Override
-    public void initialized(final Environment<T, P> environment) {
+    public void initialized(@NotNull final Environment<T, P> environment) {
         isFinished = false;
         stepDone(environment, null, new DoubleTime(), 0);
     }
 
     @Override
     public void stepDone(
-            final Environment<T, P> environment,
+            @NotNull final Environment<T, P> environment,
             final Reaction<T> reaction,
-            final Time curTime,
+            @NotNull final Time curTime,
             final long curStep
     ) {
         if (updater == null) {

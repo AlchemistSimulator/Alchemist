@@ -18,6 +18,8 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -65,7 +67,7 @@ public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
      * {@inheritDoc}
      */
     @Override
-    public void initialized(final Environment<T, P> environment) {
+    public void initialized(@NotNull final Environment<T, P> environment) {
         update(init);
     }
 

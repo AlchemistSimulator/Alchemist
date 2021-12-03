@@ -31,6 +31,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -110,7 +111,7 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
      * {@inheritDoc}
      */
     @Override
-    public void finished(final Environment<T, P> environment, final Time time, final long step) {
+    public void finished(final Environment<T, P> environment, @NotNull final Time time, final long step) {
         update(environment.getSimulation());
     }
 
@@ -126,7 +127,12 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
      * {@inheritDoc}
      */
     @Override
-    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
+    public void stepDone(
+        final Environment<T, P> environment,
+        final Reaction<T> reaction,
+        @NotNull final Time time,
+        final long step
+    ) {
         update(environment.getSimulation());
     }
 

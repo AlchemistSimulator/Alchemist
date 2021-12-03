@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -25,6 +26,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.apache.commons.math3.random.MersenneTwister;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.jupiter.api.Test;
 
@@ -64,24 +66,31 @@ class TestBiomolLayer {
         env.addLayer(b, bLayer);
         final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 3000);
         sim.play();
-        sim.addOutputMonitor(new OutputMonitor<Double, Euclidean2DPosition>() {
-            private static final long serialVersionUID = -8801751097767369325L;
+        sim.addOutputMonitor(new OutputMonitor<>() {
+            private static final long serialVersionUID = 0L;
+
             @Override
             public void stepDone(
                     final Environment<Double, Euclidean2DPosition> environment,
                     final Reaction<Double> reaction,
-                    final Time time,
+                    @NotNull final Time time,
                     final long step
             ) {
                 final Euclidean2DPosition curPos = environment.getPosition(environment.getNodeByID(0));
                 assertEquals(curPos.getX() > 0 && curPos.getY() > 0, underTest.canExecute());
             }
+
             @Override
-            public void initialized(final Environment<Double, Euclidean2DPosition> environment) {
-                stepDone(environment, null, null, 0);
+            public void initialized(@NotNull final Environment<Double, Euclidean2DPosition> environment) {
+                stepDone(environment, null, DoubleTime.ZERO, 0);
             }
+
             @Override
-            public void finished(final Environment<Double, Euclidean2DPosition> environment, final Time time, final long step) { }
+            public void finished(
+                @NotNull final Environment<Double, Euclidean2DPosition> environment,
+                @NotNull final Time time,
+                final long step
+            ) { }
         });
         sim.run();
         sim.getError().ifPresent(CheckedConsumer.unchecked(it -> {

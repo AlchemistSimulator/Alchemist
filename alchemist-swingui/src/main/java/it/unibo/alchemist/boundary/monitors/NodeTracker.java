@@ -9,11 +9,13 @@ package it.unibo.alchemist.boundary.monitors;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -62,17 +64,22 @@ public final class NodeTracker<T, P extends Position<? extends P>> extends JPane
     }
 
     @Override
-    public void finished(final Environment<T, P> environment, final Time time, final long step) {
+    public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time time, final long step) {
         stepDone(environment, null, time, step);
     }
 
     @Override
-    public void initialized(final Environment<T, P> environment) {
-        stepDone(environment, null, null, 0L);
+    public void initialized(@NotNull final Environment<T, P> environment) {
+        stepDone(environment, null, DoubleTime.ZERO, 0L);
     }
 
     @Override
-    public void stepDone(final Environment<T, P> environment, final Reaction<T> reaction, final Time time, final long step) {
+    public void stepDone(
+        @NotNull final Environment<T, P> environment,
+        final Reaction<T> reaction,
+        @NotNull final Time time,
+        final long step
+    ) {
         if (reaction == null || reaction.getNode().equals(n)) {
             final StringBuilder sb = new StringBuilder(stringLength)
                 .append(POSITION)

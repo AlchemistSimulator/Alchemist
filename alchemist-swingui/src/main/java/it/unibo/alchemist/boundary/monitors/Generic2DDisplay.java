@@ -33,6 +33,7 @@ import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -443,7 +444,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * @param step the step at which the simulation ended
      */
     @Override
-    public void finished(final Environment<T, P> environment, final Time time, final long step) {
+    public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time time, final long step) {
         update(environment, time);
         firstTime = true;
     }
@@ -499,7 +500,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * @param environment the {@link Environment}
      */
     @Override
-    public void initialized(final Environment<T, P> environment) {
+    public void initialized(@NotNull final Environment<T, P> environment) {
         stepDone(environment, null, new DoubleTime(), 0);
     }
 
@@ -641,9 +642,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     @Override
     public final void stepDone(
-            final Environment<T, P> environment,
+            @NotNull final Environment<T, P> environment,
             final Reaction<T> reaction,
-            final Time time,
+            @NotNull final Time time,
             final long step
     ) {
         if (firstTime) {

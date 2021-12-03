@@ -12,9 +12,9 @@ package it.unibo.alchemist.test
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
-import io.kotest.matchers.maps.shouldContainKey
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.InitializedEnvironment
@@ -55,16 +55,15 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
             val exporter = initialized.exporters.firstOrNull {
                 it is MongoDBExporter
             }
-            require(exporter is MongoDBExporter) {
-                exporter as MongoDBExporter
-            }
+            require(exporter is MongoDBExporter)
             exporter.dataExtractors.size shouldBeGreaterThan 0
             val testClient: MongoClient = MongoClients.create(exporter.uri)
             val exportCollection = testClient.getDatabase(exporter.dbName).getCollection(exporter.collectionName)
             exportCollection.countDocuments() shouldBeGreaterThan 0
-            exportCollection.find().firstOrNull()?.shouldContainKey(
-                exporter.dataExtractors.first().columnNames[0]
-            )
+            val columns = exporter.dataExtractors.first().columnNames[0]
+            exportCollection.find().forEach { document ->
+                document.keys.shouldContainAll(columns)
+            }
         }
     }
 })

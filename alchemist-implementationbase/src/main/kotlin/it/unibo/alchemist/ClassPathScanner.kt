@@ -24,6 +24,8 @@ private data class ScanData(val superClass: Class<*>, val inPackages: Array<out 
         other is ScanData && superClass == other.superClass && inPackages.contentEquals(other.inPackages)
 
     override fun hashCode(): Int = hashCode
+
+    override fun toString(): String = "ScanData(${superClass.simpleName}, ${inPackages.asList()})"
 }
 
 /**

@@ -31,7 +31,7 @@ jobs:
       - name: Get branch name
         id: branch
         uses: tj-actions/branch-names@v5
-      - uses: DanySK/build-check-deploy-gradle-action@1.0.4
+      - uses: DanySK/build-check-deploy-gradle-action@1.1.1
         with:
           build-command: |
             ./gradlew assemble shadowJar --parallel
@@ -61,7 +61,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.1.0
-      - uses: DanySK/build-check-deploy-gradle-action@1.0.4
+      - uses: DanySK/build-check-deploy-gradle-action@1.1.1
         with:
           java-version: 11
           build-command: ./gradlew orchidBuild --parallel
@@ -86,7 +86,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.4.0
-      - uses: DanySK/build-check-deploy-gradle-action@1.0.4
+      - uses: DanySK/build-check-deploy-gradle-action@1.1.1
         with:
           java-version: 11
           build-command: true

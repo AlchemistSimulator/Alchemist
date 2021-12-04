@@ -11,6 +11,14 @@
         "org.danilopianini:listset"
       ],
       "semanticCommitType": "feat"
+    },
+    {
+      "description": "Trigger a patch update on some dependencies",
+      "matchPackageNames": [
+        "org.jetbrains.dokka",
+        "org.jetbrains.kotlin.jvm"
+      ],
+      "semanticCommitType": "fix"
     }
   ]
 }

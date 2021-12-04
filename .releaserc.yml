@@ -16,5 +16,4 @@ plugins:
     - "@semantic-release/github"
     - "assets":
       - "path": "build/shadow/*-all.jar"
-        "label": "Executable Jars"
   - "@semantic-release/git"

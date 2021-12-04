@@ -28,6 +28,10 @@ buildProfile/
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/jarRepositories.xml
 .idea/dataSources.local.xml
+.idea/libraries-with-intellij-classes.xml
+.idea/runConfigurations.xml
+.idea/shelf
+.idea/checkstyle-idea.xml
 
 # MacOS
 .DS_Store
@@ -43,6 +47,4 @@ vcs.xml
 compiler.xml
 misc.xml
 .name
-.idea/libraries-with-intellij-classes.xml
-.idea/runConfigurations.xml
-.idea/shelf
+node_modules/

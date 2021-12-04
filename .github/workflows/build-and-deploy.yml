@@ -9,6 +9,7 @@ on:
     paths-ignore:
       - 'CHANGELOG.md'
       - 'renovate.json'
+      - '.gitignore'
   pull_request:
   workflow_dispatch:
 

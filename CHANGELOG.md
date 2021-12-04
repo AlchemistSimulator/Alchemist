@@ -1,3 +1,10 @@
+## [12.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.0.1...12.0.2) (2021-12-04)
+
+
+### Bug Fixes
+
+* **release:** do not attempt at releasing twice on Central (it will fail) ([07a0ff8](https://github.com/AlchemistSimulator/Alchemist/commit/07a0ff88f5d30b552acd2d694d57cf191ceb698e))
+
 # [11.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/11.3.1...11.4.0) (2021-12-04)
 
 

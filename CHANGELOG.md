@@ -1,3 +1,40 @@
+# [11.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/11.3.1...11.4.0) (2021-12-04)
+
+
+### Bug Fixes
+
+* add missing documentation ([afd837c](https://github.com/AlchemistSimulator/Alchemist/commit/afd837c7ba0b21468f61c7322fdbca3c6120a09f))
+* **base:** print the class names clearly for locally consisting linking rules ([f3d37fb](https://github.com/AlchemistSimulator/Alchemist/commit/f3d37fb4a66ee1fcc9cc4ba008d40b9778ab18b4))
+* **ci:** switch to a new CI ([#924](https://github.com/AlchemistSimulator/Alchemist/issues/924)) ([984fb09](https://github.com/AlchemistSimulator/Alchemist/commit/984fb09156242b5929f763ecfe5cdba956b0c2c0))
+* fail clearly in case named parameters are insufficient ([64805ca](https://github.com/AlchemistSimulator/Alchemist/commit/64805ca40cd236e1cd108be982411594bdaa80b9))
+* fix all the warnings of the new Java QA ([ed28cef](https://github.com/AlchemistSimulator/Alchemist/commit/ed28cef447f60ba80ea26ae80e45be8141b4545f))
+* **idea:** do not use * imports ever ([c300a85](https://github.com/AlchemistSimulator/Alchemist/commit/c300a856a816e539bbb44de01dd774e2b4065942))
+* **implementationbase:** intercept the case of potential bugs ([7fb7f59](https://github.com/AlchemistSimulator/Alchemist/commit/7fb7f592d09e9a44d6ae73f09b3d403c01aa8eb7))
+* **implementationbase:** use a non-deprecated API ([7e976f5](https://github.com/AlchemistSimulator/Alchemist/commit/7e976f58c5e081c7dad10217101fc249d330249f))
+* **loader:** write constructor proposals on a new line ([8683f9b](https://github.com/AlchemistSimulator/Alchemist/commit/8683f9bf7368a79f657663732a43ed81139ed16d))
+* **loading:** override toString to consider array content in the method ([15ed0c6](https://github.com/AlchemistSimulator/Alchemist/commit/15ed0c6b5c3ff06ff0bc748361c609e8068d2b1b))
+* **loading:** print valid keys upon error ([08a2242](https://github.com/AlchemistSimulator/Alchemist/commit/08a22421a94547eb3040277a10c6837835c8d2b5))
+* **logging:** make logback use Groovy as config language ([6cac4aa](https://github.com/AlchemistSimulator/Alchemist/commit/6cac4aa04192baf6208a62300f953e3cb79f2825))
+* **logging:** send output on console by default ([079117d](https://github.com/AlchemistSimulator/Alchemist/commit/079117d24906381a09bfa97366a1ed106054939f))
+* **maps:** adapt to GraphHopper 4 ([8b450ac](https://github.com/AlchemistSimulator/Alchemist/commit/8b450ac67008c4769d2498c3a4a2f92b0da80874))
+* **maps:** fix compilation error ([0f26305](https://github.com/AlchemistSimulator/Alchemist/commit/0f263059f4be1fb89f3e562807865e46d6d193d8))
+* **swingui:** allow OpenGL deactivation via system properties ([e7a4afd](https://github.com/AlchemistSimulator/Alchemist/commit/e7a4afd6c721165c4db3bf7a11cc7506f18e6ade))
+* **swingui:** use the generics of Incarnation correctly ([07e2057](https://github.com/AlchemistSimulator/Alchemist/commit/07e2057ac900680a0a549d8dcde1dd518cc75c7e))
+
+
+### Features
+
+* **implementationbase:** create infrastructure for bug reporting ([143200c](https://github.com/AlchemistSimulator/Alchemist/commit/143200c7db357430dec4dca6ed83cc9219d82bf4))
+* **loading:** allow timeouts when computing variables ([0afecb8](https://github.com/AlchemistSimulator/Alchemist/commit/0afecb8f7b8330e38240170e603d209db82e2301))
+* **maps:** Add ConnectIfInLineOfSigthOnMap ([772405b](https://github.com/AlchemistSimulator/Alchemist/commit/772405bc13b343e6d01fabf0155a1f214a10b1ed))
+
+
+### Performance Improvements
+
+* **base:** provide better support to loading from specific packages ([bfcbf4a](https://github.com/AlchemistSimulator/Alchemist/commit/bfcbf4a6c71df9c11c2776a39e117d6a3dd990b5))
+* **loading:** make MongoStarter singleton in tests ([cecf7c0](https://github.com/AlchemistSimulator/Alchemist/commit/cecf7c03529463f8637157490b7ff5a840a29307))
+* **loading:** reduce the scope search for subclasses of UnivariateStatistic ([bbf1296](https://github.com/AlchemistSimulator/Alchemist/commit/bbf12965a9be16f5f691c6f68987b2ec182977b6))
+
 ## Changelog
 
 ### [12.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/11.3.1...12.0.0)

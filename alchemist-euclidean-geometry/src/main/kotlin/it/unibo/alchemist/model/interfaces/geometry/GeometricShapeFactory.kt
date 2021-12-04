@@ -42,7 +42,7 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> :
          * @param <F> The interface of the factory requested
          * @return the factory
          */
-        inline fun <reified S, reified A, reified F> getInstance(): F
+        inline fun <S, A, reified F> getInstance(): F
             where S : Vector<S>,
                   A : GeometricTransformation<S>,
                   F : GeometricShapeFactory<S, A> =

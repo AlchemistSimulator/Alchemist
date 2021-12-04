@@ -11,7 +11,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
-private val factory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
+private val factory: Euclidean2DShapeFactory =
+    GeometricShapeFactory.getInstance<Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>()
+
 private val fakeShape = object : Euclidean2DShape {
     override val diameter = 0.0
     override val centroid = Euclidean2DPosition(0.0, 0.0)

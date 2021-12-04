@@ -75,7 +75,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
 multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.2.0" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
-publishOnCentral = { id = "org.danilopianini.publish-on-central", version = "0.7.3" }
+publishOnCentral = { id = "org.danilopianini.publish-on-central", version = "0.7.6" }
 scalatest = { id = "com.github.maiflai.scalatest", version = "0.31" }
 shadowJar = { id = "com.github.johnrengelman.shadow", version = "7.1.0" }
 taskTree = { id = "com.dorongold.task-tree", version = "2.1.0" }

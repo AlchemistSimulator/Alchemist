@@ -40,9 +40,8 @@ open class Weighted<T>(
      * the closest target is picked.
      */
     override fun computeTarget(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
-        (environment.getPosition(pedestrian) ?: environment.origin).let { currPos ->
-            actions
-                .filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
+        environment.getPosition(pedestrian).let { currPos ->
+            actions.filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
                 .map { it.target() }
                 .minByOrNull { it.distanceTo(currPos) }
                 ?: currPos

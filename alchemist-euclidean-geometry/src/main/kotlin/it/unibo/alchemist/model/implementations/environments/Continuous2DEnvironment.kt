@@ -39,7 +39,8 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
             AdimensionalShape<Euclidean2DPosition, Euclidean2DTransformation>(Euclidean2DEnvironment.origin)
     }
 
-    override val shapeFactory: Euclidean2DShapeFactory = GeometricShapeFactory.getInstance()
+    override val shapeFactory =
+        GeometricShapeFactory.getInstance<Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>()
     private val defaultHeading = Euclidean2DPosition(0.0, 0.0)
     private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0
@@ -51,7 +52,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
                 .filter { shape.intersects(getShape(it)) }
     }
 
-    override fun getHeading(node: Node<T>) = nodeToHeading.getOrPut(node, { defaultHeading })
+    override fun getHeading(node: Node<T>) = nodeToHeading.getOrPut(node) { defaultHeading }
 
     override fun setHeading(node: Node<T>, direction: Euclidean2DPosition) {
         nodeToHeading[node] = direction
@@ -95,14 +96,14 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
         }
 
     /**
-     * Moves the [node] to the [farthestPositionReachable] towards the desired [newpos]. If the node is shapeless,
-     * it is simply moved to [newpos].
+     * Moves the [node] to the [farthestPositionReachable] towards the desired [newPosition]. If the node is shapeless,
+     * it is simply moved to [newPosition].
      */
-    override fun moveNodeToPosition(node: Node<T>, newpos: Euclidean2DPosition) =
+    override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
         if (node is NodeWithShape<T, *, *>) {
-            super.moveNodeToPosition(node, farthestPositionReachable(node, newpos))
+            super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
         } else {
-            super.moveNodeToPosition(node, newpos)
+            super.moveNodeToPosition(node, newPosition)
         }
 
     /**

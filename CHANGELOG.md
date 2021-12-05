@@ -1,3 +1,10 @@
+## [12.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/12.0.2...12.0.3) (2021-12-05)
+
+
+### Bug Fixes
+
+* **loading:** remove reification for erasable parameters of GeometricShapeFactory ([87bb5db](https://github.com/AlchemistSimulator/Alchemist/commit/87bb5db9b6688737e844d53f13f531f549135143))
+
 ## [12.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.0.1...12.0.2) (2021-12-04)
 
 

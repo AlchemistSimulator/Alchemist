@@ -6,7 +6,7 @@ ignite = "2.11.0"
 junit = "5.8.2"
 konf = "1.1.2"
 kotest = "5.0.1"
-kotlin = "1.5.31"
+kotlin = "1.6.0"
 mockito = "4.1.0"
 orchid = "0.21.1"
 scafi = "0.3.3"
@@ -25,7 +25,7 @@ arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.0.5" }
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.137" }
 dsiutils = { module = "it.unimi.dsi:dsiutils", version = "2.6.17" }
-embedmongo = { module = "de.flapdoodle.embed:de.flapdoodle.embed.mongo", version = "3.1.4" }
+embedmongo = { module = "de.flapdoodle.embed:de.flapdoodle.embed.mongo", version = "3.2.2" }
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 gson = { module = "com.google.code.gson:gson", version = "2.8.9" }
 gson-extras = { module = "org.danilopianini:gson-extras", version = "0.2.2" }
@@ -73,7 +73,7 @@ gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", versio
 java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.6.0" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
-multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.2.0" }
+multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.2.2" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 publishOnCentral = { id = "org.danilopianini.publish-on-central", version = "0.7.6" }
 scalatest = { id = "com.github.maiflai.scalatest", version = "0.31" }

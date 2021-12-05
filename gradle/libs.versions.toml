@@ -73,7 +73,7 @@ gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", versio
 java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.6.0" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.3.2" }
-multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.2.1" }
+multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.2.2" }
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 publishOnCentral = { id = "org.danilopianini.publish-on-central", version = "0.7.6" }
 scalatest = { id = "com.github.maiflai.scalatest", version = "0.31" }

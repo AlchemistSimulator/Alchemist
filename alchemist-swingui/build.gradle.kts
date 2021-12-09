@@ -34,7 +34,7 @@ dependencies {
     }
     implementation(Libs.conrec)
     implementation(jgrapht("core")) // just to draw cognitive maps
-    implementation(Libs.oxygen)
+    implementation(libs.oxygen.icons)
     testRuntimeOnly(incarnation("protelis"))
 }
 

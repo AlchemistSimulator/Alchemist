@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import Libs.alchemist
 import Libs.scalaModule
 
@@ -26,8 +35,7 @@ dependencies {
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("loading"))
-    testImplementation("org.scalatest:scalatest_2.13:_")
-    testImplementation("org.scalatestplus:scalatestplus-junit_2.13:_")
+    testImplementation(libs.bundles.scalatest)
 }
 
 tasks.withType<ScalaCompile> {

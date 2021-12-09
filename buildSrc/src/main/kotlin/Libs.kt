@@ -15,7 +15,6 @@ import kotlin.String
  */
 @Suppress("UndocumentedPublicProperty")
 object Libs {
-    const val snakeyaml: String = "org.yaml:snakeyaml:_"
     const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:1.1.2"
 
     /**

@@ -33,7 +33,7 @@ dependencies {
     implementation(libs.jirf)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.mongodb)
-    implementation(Libs.snakeyaml)
+    implementation(libs.snakeyaml)
 
     runtimeOnly(libs.groovy.jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))

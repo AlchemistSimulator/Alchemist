@@ -15,7 +15,6 @@ import kotlin.String
  */
 @Suppress("UndocumentedPublicProperty")
 object Libs {
-    const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:1.1.2"
 
     /**
      * Returns a reference to an alchemist sub-project [module].

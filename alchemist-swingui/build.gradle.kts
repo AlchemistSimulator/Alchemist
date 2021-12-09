@@ -39,7 +39,7 @@ dependencies {
         exclude(group = "com.github.blackears", module = "svgSalamander")
     }
     implementation(libs.miglayout.swing)
-    implementation(Libs.svgsalamander)
+    implementation(libs.svgsalamander)
     implementation(libs.conrec)
     implementation(libs.jgrapht.core)
     implementation(libs.oxygen.icons)
@@ -50,7 +50,7 @@ configurations.all {
     resolutionStrategy {
         eachDependency {
             if (requested.name == "svgSalamander") {
-                useTarget(Libs.svgsalamander)
+                useTarget(libs.svgsalamander)
                 because("mapsforge version is not on central")
             }
         }

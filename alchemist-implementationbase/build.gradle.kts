@@ -22,7 +22,7 @@ dependencies {
     api(alchemist("interfaces"))
     api(libs.apache.commons.math3)
     api(libs.apache.commons.lang3)
-    api(Libs.java_quadtree)
+    api(libs.quadtree)
 
     implementation(libs.boilerplate)
     implementation(libs.caffeine)

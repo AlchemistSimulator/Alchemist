@@ -16,7 +16,9 @@
       "description": "Trigger a patch update on some dependencies",
       "matchPackageNames": [
         "org.jetbrains.dokka",
-        "org.jetbrains.kotlin.jvm"
+        "org.jetbrains.kotlin.jvm",
+        "org.protelis:protelis-interpreter",
+        "org.protelis:protelis-lang"
       ],
       "semanticCommitType": "fix"
     }

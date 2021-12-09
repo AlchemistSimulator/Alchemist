@@ -15,7 +15,6 @@ import kotlin.String
  */
 @Suppress("UndocumentedPublicProperty")
 object Libs {
-    const val javalib_java7: String = "org.danilopianini:javalib-java7:_"
     const val jirf: String = "org.danilopianini:jirf:_"
     const val jool: String = "org.jooq:jool:_"
     const val listset: String = "org.danilopianini:listset:_"

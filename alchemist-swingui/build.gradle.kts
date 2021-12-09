@@ -31,16 +31,16 @@ dependencies {
     implementation(alchemist("smartcam"))
     implementation(alchemist("cognitive-agents"))
     implementation(libs.gson.extras)
+    // TODO: deprecated, must be removed
+    implementation(libs.javalib.java7) {
+        exclude(group = "org.ow2.asm")
+        exclude(module = "findbugs")
+    }
     implementation(libs.miglayout.swing)
     implementation(Libs.mapsforge_map_awt) {
         exclude(group = "com.github.blackears", module = "svgSalamander")
     }
     implementation(Libs.svgsalamander)
-    // TODO: deprecated, must be removed
-    implementation(Libs.javalib_java7) {
-        exclude(group = "org.ow2.asm")
-        exclude(module = "findbugs")
-    }
     implementation(libs.conrec)
     implementation(jgrapht("core")) // just to draw cognitive maps
     implementation(libs.oxygen.icons)

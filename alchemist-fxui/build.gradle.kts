@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import Libs.alchemist
 
 /*
@@ -24,8 +33,8 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.apache.commons.collections4)
     implementation(libs.javafxSvg)
+    implementation(libs.leafletmap)
     implementation(libs.tornadofx)
-    implementation(Libs.ssaring_sportstracker_leafletmap)
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {
         api("org.openjfx:javafx-base:$javaFXVersion:$platform")

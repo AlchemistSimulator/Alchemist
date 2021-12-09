@@ -19,7 +19,7 @@ import Libs.alchemist
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
+    api(alchemist("interfaces"))
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("cognitive-agents"))

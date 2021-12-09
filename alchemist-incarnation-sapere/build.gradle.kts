@@ -13,8 +13,8 @@ dependencies {
     implementation(alchemist("implementationbase"))
     implementation(alchemist("maps"))
     implementation(alchemist("sapere-mathexp"))
+    implementation(libs.boilerplate)
     implementation(libs.trove4j)
-    implementation(Libs.boilerplate)
 }
 
 spotbugs {

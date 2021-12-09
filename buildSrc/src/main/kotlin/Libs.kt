@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import org.gradle.api.Project
 import kotlin.String
 
@@ -6,7 +15,6 @@ import kotlin.String
  */
 @Suppress("UndocumentedPublicProperty")
 object Libs {
-    const val boilerplate: String = "org.danilopianini:boilerplate:_"
     const val conrec: String = "org.danilopianini:conrec:_"
     const val java_quadtree: String = "org.danilopianini:java-quadtree:_"
     const val javalib_java7: String = "org.danilopianini:javalib-java7:_"

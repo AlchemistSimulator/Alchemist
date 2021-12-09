@@ -9,7 +9,6 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import Libs.jgrapht
 
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -42,7 +41,7 @@ dependencies {
     }
     implementation(Libs.svgsalamander)
     implementation(libs.conrec)
-    implementation(jgrapht("core")) // just to draw cognitive maps
+    implementation(libs.jgrapht.core)
     implementation(libs.oxygen.icons)
     testRuntimeOnly(incarnation("protelis"))
 }

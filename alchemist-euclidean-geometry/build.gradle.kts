@@ -9,7 +9,6 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import Libs.jgrapht
 
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -26,9 +25,9 @@ dependencies {
     implementation(libs.boilerplate)
     implementation(libs.caffeine)
     implementation(libs.classgraph)
+    implementation(libs.jgrapht.core)
     implementation(libs.rtree)
     implementation(libs.trove4j)
-    implementation(jgrapht("core"))
 
     testImplementation(alchemist("loading"))
     testRuntimeOnly(incarnation("protelis"))

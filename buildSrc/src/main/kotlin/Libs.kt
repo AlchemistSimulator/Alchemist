@@ -42,11 +42,6 @@ object Libs {
     fun graphStream(module: String = "") = modularizedLibrary("org.graphstream:gs", module)
 
     /**
-     * Returns the identifier of the desired JGraphT [module].
-     */
-    fun jgrapht(module: String = "") = modularizedLibrary("org.jgrapht:jgrapht", module)
-
-    /**
      * Returns the identifier of the desired Protelis [module].
      */
     fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)

@@ -43,6 +43,7 @@ ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ign
 javafxSvg = "de.codecentric.centerdevice:javafxsvg:1.3.0"
 javalib-java7 = "org.danilopianini:javalib-java7:0.6.1"
 jfoenix = "com.jfoenix:jfoenix:9.0.10"
+jgrapht-core = "org.jgrapht:jgrapht-core:1.5.1"
 jiconfont-javafx = "com.github.jiconfont:jiconfont-javafx:1.0.0"
 jiconfont-materialDesignIcons = "com.github.jiconfont:jiconfont-google_material_design_icons:2.2.0.2"
 jirf = "org.danilopianini:jirf:0.4.2"

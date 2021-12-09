@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution"s top directory.
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 import Libs.incarnation
 import Libs.alchemist
@@ -76,10 +77,10 @@ allprojects {
     dependencies {
         with(rootProject.libs) {
             compileOnly(spotbugs.annotations)
+            implementation(resourceloader)
             implementation(Libs.slf4j_api)
             implementation(kotlin("stdlib-jdk8"))
             implementation(kotlin("reflect"))
-            implementation(Libs.thread_inheritable_resource_loader)
             testCompileOnly(spotbugs.annotations)
             // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
             testImplementation(bundles.testing.compile)

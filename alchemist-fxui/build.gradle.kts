@@ -8,14 +8,7 @@
  */
 
 import Libs.alchemist
-
-/*
- * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
- *
- * This file is part of Alchemist) and is distributed under the terms of the
- * GNU General Public License) with a linking exception)
- * as described in the file LICENSE in the Alchemist distribution"s top directory.
- */
+import Libs.incarnation
 
 dependencies {
     api(project(":alchemist-interfaces"))
@@ -45,7 +38,7 @@ dependencies {
         api("org.openjfx:javafx-swing:$javaFXVersion:$platform")
         api("org.openjfx:javafx-web:$javaFXVersion:$platform")
     }
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 publishing.publications {

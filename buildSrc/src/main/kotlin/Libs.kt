@@ -15,7 +15,6 @@ import kotlin.String
  */
 @Suppress("UndocumentedPublicProperty")
 object Libs {
-    const val jirf: String = "org.danilopianini:jirf:_"
     const val jool: String = "org.jooq:jool:_"
     const val listset: String = "org.danilopianini:listset:_"
     const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"

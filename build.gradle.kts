@@ -78,7 +78,7 @@ allprojects {
         with(rootProject.libs) {
             compileOnly(spotbugs.annotations)
             implementation(resourceloader)
-            implementation(Libs.slf4j_api)
+            implementation(slf4j)
             implementation(kotlin("stdlib-jdk8"))
             implementation(kotlin("reflect"))
             testCompileOnly(spotbugs.annotations)

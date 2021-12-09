@@ -17,7 +17,7 @@ dependencies {
     api(alchemist("implementationbase"))
     api(alchemist("euclidean-geometry"))
     implementation(libs.apache.commons.lang3)
-    implementation(Libs.trove4j)
+    implementation(libs.trove4j)
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)
     runtimeOnly(libs.antlr4.runtime)

@@ -28,9 +28,9 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.jpx)
     implementation(libs.simplelatlng)
+    implementation(libs.trove4j)
     implementation(Libs.boilerplate)
     implementation(Libs.jirf)
-    implementation(Libs.trove4j)
 
     testRuntimeOnly(incarnation("protelis"))
 }

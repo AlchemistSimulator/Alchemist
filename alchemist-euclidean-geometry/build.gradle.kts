@@ -17,9 +17,9 @@ dependencies {
     implementation(libs.caffeine)
     implementation(libs.classgraph)
     implementation(libs.rtree)
+    implementation(libs.trove4j)
     implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
-    implementation(Libs.trove4j)
 
     testImplementation(alchemist("loading"))
     testRuntimeOnly(incarnation("protelis"))

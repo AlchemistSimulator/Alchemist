@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":alchemist-implementationbase"))
     implementation(project(":alchemist-maps"))
     implementation(project(":alchemist-sapere-mathexp"))
-    implementation(Libs.trove4j)
+    implementation(libs.trove4j)
     implementation(Libs.boilerplate)
 }
 

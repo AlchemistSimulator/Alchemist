@@ -18,9 +18,9 @@ dependencies {
     implementation(libs.caffeine)
     implementation(libs.classgraph)
     implementation(libs.guava)
+    implementation(libs.trove4j)
     implementation(jgrapht("core"))
     implementation(Libs.boilerplate)
-    implementation(Libs.trove4j)
 
     testImplementation(alchemist("loading"))
     testImplementation(alchemist("engine"))

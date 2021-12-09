@@ -9,10 +9,10 @@
 dependencies {
     api(project(":alchemist-interfaces"))
 
-    implementation(project(":alchemist-euclidean-geometry"))
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-maps"))
-    implementation(project(":alchemist-sapere-mathexp"))
+    implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("maps"))
+    implementation(alchemist("sapere-mathexp"))
     implementation(libs.trove4j)
     implementation(Libs.boilerplate)
 }

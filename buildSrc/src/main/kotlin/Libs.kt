@@ -26,14 +26,4 @@ object Libs {
      * Returns a reference to an alchemist sub-project incarnation [module].
      */
     fun Project.incarnation(module: String) = alchemist("incarnation-$module")
-
-    private fun modularizedLibrary(base: String, module: String = "", separator: String = "-") = when {
-        module.isEmpty() -> base
-        else -> base + separator + module
-    } + ":_"
-
-    /**
-     * Returns the identifier of the desired Scala [module].
-     */
-    fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)
 }

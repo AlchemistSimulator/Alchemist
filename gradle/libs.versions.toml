@@ -12,6 +12,7 @@ mockito = "4.1.0"
 protelis = "15.1.0"
 orchid = "0.21.1"
 scafi = "0.3.3"
+scala = "2.13.6"
 
 [libraries]
 antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
@@ -77,6 +78,8 @@ quadtree = "org.danilopianini:java-quadtree:0.1.5"
 resourceloader = "org.danilopianini:thread-inheritable-resource-loader:0.3.5"
 rtree = "com.github.davidmoten:rtree:0.8.7"
 scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }
+scala-compiler = { module = "org.scala-lang:scala-compiler", version.ref = "scala" }
+scala-library = { module = "org.scala-lang:scala-library", version.ref = "scala" }
 scalatest = "org.scalatest:scalatest_2.13:3.3.0-SNAP2"
 scalatest-plusjunit = "org.scalatestplus:scalatestplus-junit_2.13:1.0.0-M2"
 simplelatlng = "com.javadocmd:simplelatlng:1.3.1"
@@ -91,6 +94,7 @@ graphhopper = [ "graphhopper-core" ]
 orchid = [ "orchid-editorial", "orchid-github", "orchid-plugindocs", "orchid-search", "orchid-syntaxhighlighter", "orchid-wiki" ]
 jiconfont = [ "jiconfont-javafx", "jiconfont-materialDesignIcons" ]
 protelis = [ "protelis-interpreter", "protelis-lang" ]
+scala = [ "scala-compiler", "scala-library" ]
 scalatest = [ "scalatest", "scalatest-plusjunit" ]
 testing-compile = [ "junit-api", "kotest-assertions", "kotest-runner", "mockito-core" ]
 testing-runtimeOnly = [ "junit-engine" ]

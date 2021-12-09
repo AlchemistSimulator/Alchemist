@@ -9,7 +9,6 @@
 
 import Libs.alchemist
 import Libs.incarnation
-import Libs.scalaModule
 
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -37,15 +36,13 @@ dependencies {
 
     runtimeOnly(libs.groovy.jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
-    runtimeOnly(scalaModule("compiler"))
+    runtimeOnly(libs.scala.compiler)
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("maps"))
     testImplementation(libs.appdirs)
     testImplementation(libs.caffeine)
     testImplementation(libs.embedmongo)
-
-    testRuntimeOnly(scalaModule("compiler"))
 
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("protelis"))

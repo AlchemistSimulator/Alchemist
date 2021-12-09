@@ -24,6 +24,7 @@ appdirs = { module = "net.harawata:appdirs", version = "1.2.1" }
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.0.5" }
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.137" }
+controlsfx = "org.controlsfx:controlsfx:11.1.0"
 dsiutils = { module = "it.unimi.dsi:dsiutils", version = "2.6.17" }
 embedmongo = { module = "de.flapdoodle.embed:de.flapdoodle.embed.mongo", version = "3.2.2" }
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }

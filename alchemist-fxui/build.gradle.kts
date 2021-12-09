@@ -18,13 +18,13 @@ dependencies {
     implementation(alchemist("loading"))
     implementation(alchemist("maps"))
     implementation(libs.bundles.jiconfont)
+    implementation(libs.controlsfx)
     implementation(libs.jfoenix)
     implementation(libs.gson.extras)
     implementation(libs.guava)
     implementation(libs.apache.commons.collections4)
     implementation(libs.javafxSvg)
     implementation(libs.tornadofx)
-    implementation(Libs.controlsfx)
     implementation(Libs.ssaring_sportstracker_leafletmap)
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {

@@ -25,6 +25,7 @@ arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
 caffeine = "com.github.ben-manes.caffeine:caffeine:3.0.5"
 classgraph = "io.github.classgraph:classgraph:4.8.137"
+conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.0"
 dsiutils = "it.unimi.dsi:dsiutils:2.6.17"
 embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.2"

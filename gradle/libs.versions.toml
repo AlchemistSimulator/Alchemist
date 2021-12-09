@@ -14,32 +14,32 @@ scafi = "0.3.3"
 [libraries]
 antlr4 = { module = "org.antlr:antlr4", version.ref = "antlr4" }
 antlr4-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr4" }
-apache-commons-cli = { module = "commons-cli:commons-cli", version = "1.5.0" }
-apache-commons-codec = { module = "commons-codec:commons-codec", version = "1.15" }
-apache-commons-collections4 = { module = "org.apache.commons:commons-collections4", version = "4.4" }
-apache-commons-io = { module = "commons-io:commons-io", version = "2.11.0" }
-apache-commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.12.0" }
-apache-commons-math3 = { module = "org.apache.commons:commons-math3", version = "3.6.1" }
-appdirs = { module = "net.harawata:appdirs", version = "1.2.1" }
+apache-commons-cli = "commons-cli:commons-cli:1.5.0"
+apache-commons-codec = "commons-codec:commons-codec:1.15"
+apache-commons-collections4 = "org.apache.commons:commons-collections4:4.4"
+apache-commons-io = "commons-io:commons-io:2.11.0"
+apache-commons-lang3 = "org.apache.commons:commons-lang3:3.12.0"
+apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
+appdirs = "net.harawata:appdirs:1.2.1"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.0.5" }
-classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.137" }
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.0.5"
+classgraph = "io.github.classgraph:classgraph:4.8.137"
 controlsfx = "org.controlsfx:controlsfx:11.1.0"
-dsiutils = { module = "it.unimi.dsi:dsiutils", version = "2.6.17" }
-embedmongo = { module = "de.flapdoodle.embed:de.flapdoodle.embed.mongo", version = "3.2.2" }
+dsiutils = "it.unimi.dsi:dsiutils:2.6.17"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.2"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.8"
-gson = { module = "com.google.code.gson:gson", version = "2.8.9" }
-gson-extras = { module = "org.danilopianini:gson-extras", version = "0.2.2" }
-guava = { module = "com.google.guava:guava", version = "31.0.1-jre" }
+gson = "com.google.code.gson:gson:2.8.9"
+gson-extras = "org.danilopianini:gson-extras:0.2.2"
+guava = "com.google.guava:guava:31.0.1-jre"
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "ignite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "ignite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "ignite" }
-javafxSvg = { module = "de.codecentric.centerdevice:javafxsvg", version = "1.3.0" }
-jfoenix = { module = "com.jfoenix:jfoenix", version = "9.0.10" }
-jiconfont-javafx = { module = "com.github.jiconfont:jiconfont-javafx", version = "1.0.0" }
-jiconfont-materialDesignIcons = { module = "com.github.jiconfont:jiconfont-google_material_design_icons", version = "2.2.0.2" }
-jpx = { module = "io.jenetics:jpx", version = "2.3.0" }
+javafxSvg = "de.codecentric.centerdevice:javafxsvg:1.3.0"
+jfoenix = "com.jfoenix:jfoenix:9.0.10"
+jiconfont-javafx = "com.github.jiconfont:jiconfont-javafx:1.0.0"
+jiconfont-materialDesignIcons = "com.github.jiconfont:jiconfont-google_material_design_icons:2.2.0.2"
+jpx = "io.jenetics:jpx:2.3.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
@@ -49,7 +49,7 @@ kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
 logback = "ch.qos.logback:logback-classic:1.2.7"
 miglayout-swing = "com.miglayout:miglayout-swing:11.0"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mongodb = { module = "org.mongodb:mongodb-driver-sync", version = "4.4.0" }
+mongodb = "org.mongodb:mongodb-driver-sync:4.4.0"
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
 orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
 orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }
@@ -58,10 +58,10 @@ orchid-search = { module = "io.github.javaeden.orchid:OrchidSearch", version.ref
 orchid-syntaxhighlighter = { module = "io.github.javaeden.orchid:OrchidSyntaxHighlighter", version.ref = "orchid" }
 orchid-wiki = { module = "io.github.javaeden.orchid:OrchidWiki", version.ref = "orchid" }
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.0.185"
-rtree = { module = "com.github.davidmoten:rtree", version = "0.8.7" }
+rtree = "com.github.davidmoten:rtree:0.8.7"
 scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }
-simplelatlng = { module = "com.javadocmd:simplelatlng", version = "1.3.1" }
-spotbugs-annotations = { module = "com.github.spotbugs:spotbugs-annotations", version = "4.5.1" }
+simplelatlng = "com.javadocmd:simplelatlng:1.3.1"
+spotbugs-annotations = "com.github.spotbugs:spotbugs-annotations:4.5.1"
 tornadofx = "no.tornado:tornadofx:2.0.0-SNAPSHOT"
 trove4j = "net.sf.trove4j:trove4j:3.0.3"
 
@@ -74,13 +74,13 @@ testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
-gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "0.3.0" }
-java-qa = { id = "org.danilopianini.gradle-java-qa", version = "0.9.0" }
+gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
+java-qa = "org.danilopianini.gradle-java-qa:0.9.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-qa = { id = "org.danilopianini.gradle-kotlin-qa", version = "0.8.0" }
-multiJvmTesting = { id = "org.danilopianini.multi-jvm-test-plugin", version = "0.3.0" }
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.8.0"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.0"
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
-publishOnCentral = { id = "org.danilopianini.publish-on-central", version = "0.7.6" }
-scalatest = { id = "com.github.maiflai.scalatest", version = "0.31" }
-shadowJar = { id = "com.github.johnrengelman.shadow", version = "7.1.0" }
-taskTree = { id = "com.dorongold.task-tree", version = "2.1.0" }
+publishOnCentral = "org.danilopianini.publish-on-central:0.7.6"
+scalatest = "com.github.maiflai.scalatest:0.31"
+shadowJar = "com.github.johnrengelman.shadow:7.1.0"
+taskTree = "com.dorongold.task-tree:2.1.0"

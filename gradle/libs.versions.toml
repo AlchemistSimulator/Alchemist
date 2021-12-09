@@ -60,6 +60,7 @@ rtree = { module = "com.github.davidmoten:rtree", version = "0.8.7" }
 scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }
 simplelatlng = { module = "com.javadocmd:simplelatlng", version = "1.3.1" }
 spotbugs-annotations = { module = "com.github.spotbugs:spotbugs-annotations", version = "4.5.1" }
+tornadofx = "no.tornado:tornadofx:2.0.0-SNAPSHOT"
 trove4j = "net.sf.trove4j:trove4j:3.0.3"
 
 [bundles]

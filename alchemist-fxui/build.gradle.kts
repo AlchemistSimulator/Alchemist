@@ -23,8 +23,8 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.apache.commons.collections4)
     implementation(libs.javafxSvg)
+    implementation(libs.tornadofx)
     implementation(Libs.controlsfx)
-    implementation(Libs.tornadofx)
     implementation(Libs.ssaring_sportstracker_leafletmap)
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {

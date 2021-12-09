@@ -21,7 +21,6 @@ object Libs {
     const val ssaring_sportstracker_leafletmap: String = "org.danilopianini:de.saring.leafletmap:_"
     const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:1.1.2"
     const val thread_inheritable_resource_loader: String = "org.danilopianini:thread-inheritable-resource-loader:_"
-    const val tornadofx: String = "no.tornado:tornadofx:_"
 
     /**
      * Returns a reference to an alchemist sub-project [module].

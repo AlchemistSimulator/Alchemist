@@ -9,8 +9,8 @@
 
 dependencies {
     api(libs.apache.commons.math3)
+    api(libs.jool)
     api(libs.listset)
-    api(Libs.jool)
 }
 
 publishing.publications {

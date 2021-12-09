@@ -27,9 +27,8 @@ dependencies {
 
     implementation(alchemist("implementationbase"))
     implementation(alchemist("euclidean-geometry"))
-    implementation("com.github.cb372:scalacache-core_2.13:_")
-    implementation("com.github.cb372:scalacache-guava_2.13:_")
     implementation(libs.bundles.scala)
+    implementation(libs.bundles.scalacache)
 
     testImplementation(alchemist("engine"))
     testImplementation(alchemist("loading"))

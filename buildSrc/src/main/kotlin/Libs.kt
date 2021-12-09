@@ -9,7 +9,6 @@ object Libs {
     const val boilerplate: String = "org.danilopianini:boilerplate:_"
     const val conrec: String = "org.danilopianini:conrec:_"
     const val controlsfx: String = "org.controlsfx:controlsfx:_"
-    const val groovy_jsr223: String = "org.codehaus.groovy:groovy-jsr223:_"
     const val java_quadtree: String = "org.danilopianini:java-quadtree:_"
     const val javalib_java7: String = "org.danilopianini:javalib-java7:_"
     const val jirf: String = "org.danilopianini:jirf:_"

@@ -27,7 +27,7 @@ dependencies {
     implementation(Libs.jirf)
     implementation(Libs.snakeyaml)
 
-    runtimeOnly(Libs.groovy_jsr223)
+    runtimeOnly(libs.groovy.jsr223)
     runtimeOnly(kotlin("scripting-jsr223"))
     runtimeOnly(scalaModule("compiler"))
 

@@ -15,7 +15,6 @@ import kotlin.String
  */
 @Suppress("UndocumentedPublicProperty")
 object Libs {
-    const val mapsforge_map_awt: String = "org.mapsforge:mapsforge-map-awt:_"
     const val slf4j_api: String = "org.slf4j:slf4j-api:_"
     const val snakeyaml: String = "org.yaml:snakeyaml:_"
     const val svgsalamander: String = "guru.nidi.com.kitfox:svgSalamander:1.1.2"

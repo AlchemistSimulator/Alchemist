@@ -35,10 +35,10 @@ dependencies {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
     }
-    implementation(libs.miglayout.swing)
-    implementation(Libs.mapsforge_map_awt) {
+    implementation(libs.mapsforge) {
         exclude(group = "com.github.blackears", module = "svgSalamander")
     }
+    implementation(libs.miglayout.swing)
     implementation(Libs.svgsalamander)
     implementation(libs.conrec)
     implementation(libs.jgrapht.core)

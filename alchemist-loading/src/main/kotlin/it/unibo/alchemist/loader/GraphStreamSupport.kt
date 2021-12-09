@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -30,7 +30,6 @@ import org.graphstream.ui.layout.springbox.implementations.SpringBox
 import java.util.stream.Collectors
 import kotlin.math.max
 import kotlin.math.nextUp
-import kotlin.streams.toList
 
 /**
  * Support class for GraphStream, composed of a [linkingRule] and a [deployment].

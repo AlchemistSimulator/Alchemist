@@ -2,6 +2,7 @@
 antlr4 = "4.9.3"
 arrow = "1.0.1"
 graphhopper = "4.0"
+graphstream = "2.0"
 ignite = "2.11.0"
 junit = "5.8.2"
 konf = "1.1.2"
@@ -30,6 +31,8 @@ controlsfx = "org.controlsfx:controlsfx:11.1.0"
 dsiutils = "it.unimi.dsi:dsiutils:2.6.17"
 embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.2"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
+graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
+graphstream-core = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.8"
 gson = "com.google.code.gson:gson:2.8.9"
 gson-extras = "org.danilopianini:gson-extras:0.2.2"

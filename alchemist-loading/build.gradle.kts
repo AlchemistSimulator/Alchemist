@@ -8,7 +8,6 @@
  */
 
 import Libs.alchemist
-import Libs.graphStream
 import Libs.incarnation
 import Libs.scalaModule
 
@@ -27,13 +26,13 @@ dependencies {
     implementation(libs.apache.commons.lang3)
     implementation(libs.arrow.core)
     implementation(libs.dsiutils)
+    implementation(libs.graphstream.core)
+    implementation(libs.graphstream.algo)
     implementation(libs.gson)
     implementation(libs.guava)
     implementation(libs.jirf)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.mongodb)
-    implementation(graphStream("core"))
-    implementation(graphStream("algo"))
     implementation(Libs.snakeyaml)
 
     runtimeOnly(libs.groovy.jsr223)

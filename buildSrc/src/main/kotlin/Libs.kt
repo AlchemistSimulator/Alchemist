@@ -33,16 +33,6 @@ object Libs {
     } + ":_"
 
     /**
-     * Returns the identifier of the desired GraphStream [module].
-     */
-    fun graphStream(module: String = "") = modularizedLibrary("org.graphstream:gs", module)
-
-    /**
-     * Returns the identifier of the desired Protelis [module].
-     */
-    fun protelis(module: String = "") = modularizedLibrary("org.protelis:protelis", module)
-
-    /**
      * Returns the identifier of the desired Scala [module].
      */
     fun scalaModule(module: String = "") = modularizedLibrary("org.scala-lang:scala", module)

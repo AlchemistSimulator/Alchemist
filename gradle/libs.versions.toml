@@ -9,6 +9,7 @@ konf = "1.1.2"
 kotest = "5.0.1"
 kotlin = "1.6.0"
 mockito = "4.1.0"
+protelis = "15.1.0"
 orchid = "0.21.1"
 scafi = "0.3.3"
 
@@ -70,6 +71,8 @@ orchid-search = { module = "io.github.javaeden.orchid:OrchidSearch", version.ref
 orchid-syntaxhighlighter = { module = "io.github.javaeden.orchid:OrchidSyntaxHighlighter", version.ref = "orchid" }
 orchid-wiki = { module = "io.github.javaeden.orchid:OrchidWiki", version.ref = "orchid" }
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.0.185"
+protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
+protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
 quadtree = "org.danilopianini:java-quadtree:0.1.5"
 resourceloader = "org.danilopianini:thread-inheritable-resource-loader:0.3.5"
 rtree = "com.github.davidmoten:rtree:0.8.7"
@@ -87,6 +90,7 @@ trove4j = "net.sf.trove4j:trove4j:3.0.3"
 graphhopper = [ "graphhopper-core" ]
 orchid = [ "orchid-editorial", "orchid-github", "orchid-plugindocs", "orchid-search", "orchid-syntaxhighlighter", "orchid-wiki" ]
 jiconfont = [ "jiconfont-javafx", "jiconfont-materialDesignIcons" ]
+protelis = [ "protelis-interpreter", "protelis-lang" ]
 scalatest = [ "scalatest", "scalatest-plusjunit" ]
 testing-compile = [ "junit-api", "kotest-assertions", "kotest-runner", "mockito-core" ]
 testing-runtimeOnly = [ "junit-engine" ]

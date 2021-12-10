@@ -1,3 +1,10 @@
+## [12.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/12.0.3...12.0.4) (2021-12-10)
+
+
+### Bug Fixes
+
+* **doc:** update the readme ([d46ca8d](https://github.com/AlchemistSimulator/Alchemist/commit/d46ca8db35ad290f829a9c020b666e7caf70f935))
+
 ## [12.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/12.0.2...12.0.3) (2021-12-05)
 
 

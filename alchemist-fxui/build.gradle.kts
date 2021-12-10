@@ -1,12 +1,14 @@
-import Libs.alchemist
-
 /*
- * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
- * This file is part of Alchemist) and is distributed under the terms of the
- * GNU General Public License) with a linking exception)
- * as described in the file LICENSE in the Alchemist distribution"s top directory.
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
+import Libs.alchemist
+import Libs.incarnation
 
 dependencies {
     api(project(":alchemist-interfaces"))
@@ -18,14 +20,14 @@ dependencies {
     implementation(alchemist("loading"))
     implementation(alchemist("maps"))
     implementation(libs.bundles.jiconfont)
+    implementation(libs.controlsfx)
     implementation(libs.jfoenix)
     implementation(libs.gson.extras)
     implementation(libs.guava)
     implementation(libs.apache.commons.collections4)
     implementation(libs.javafxSvg)
-    implementation(Libs.controlsfx)
-    implementation(Libs.tornadofx)
-    implementation(Libs.ssaring_sportstracker_leafletmap)
+    implementation(libs.leafletmap)
+    implementation(libs.tornadofx)
     val javaFXVersion = "11"
     for (platform in listOf("linux", "mac", "win")) {
         api("org.openjfx:javafx-base:$javaFXVersion:$platform")
@@ -36,7 +38,7 @@ dependencies {
         api("org.openjfx:javafx-swing:$javaFXVersion:$platform")
         api("org.openjfx:javafx-web:$javaFXVersion:$platform")
     }
-    testRuntimeOnly(project(":alchemist-incarnation-protelis"))
+    testRuntimeOnly(incarnation("protelis"))
 }
 
 publishing.publications {

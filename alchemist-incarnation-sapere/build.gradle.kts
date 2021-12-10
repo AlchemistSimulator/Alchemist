@@ -1,4 +1,15 @@
 /*
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+import Libs.alchemist
+
+/*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,12 +20,12 @@
 dependencies {
     api(project(":alchemist-interfaces"))
 
-    implementation(project(":alchemist-euclidean-geometry"))
-    implementation(project(":alchemist-implementationbase"))
-    implementation(project(":alchemist-maps"))
-    implementation(project(":alchemist-sapere-mathexp"))
-    implementation(Libs.trove4j)
-    implementation(Libs.boilerplate)
+    implementation(alchemist("euclidean-geometry"))
+    implementation(alchemist("implementationbase"))
+    implementation(alchemist("maps"))
+    implementation(alchemist("sapere-mathexp"))
+    implementation(libs.boilerplate)
+    implementation(libs.trove4j)
 }
 
 spotbugs {

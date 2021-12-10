@@ -72,7 +72,7 @@ orchid-plugindocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", ver
 orchid-search = { module = "io.github.javaeden.orchid:OrchidSearch", version.ref = "orchid" }
 orchid-syntaxhighlighter = { module = "io.github.javaeden.orchid:OrchidSyntaxHighlighter", version.ref = "orchid" }
 orchid-wiki = { module = "io.github.javaeden.orchid:OrchidWiki", version.ref = "orchid" }
-oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.0.185"
+oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.1.158"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
 quadtree = "org.danilopianini:java-quadtree:0.1.5"

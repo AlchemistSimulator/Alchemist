@@ -271,15 +271,11 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
             pop.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
             Optional.ofNullable(controlTypePopoverController.getSelectButton()).ifPresent(b -> b.setOnAction(e -> {
                 Platform.runLater(() -> this.controlType.setGraphic(select));
-                this.displayMonitor.ifPresent(d -> {
-                    d.setViewStatus(FXOutputMonitor.ViewStatus.SELECTING);
-                });
+                this.displayMonitor.ifPresent(d -> d.setViewStatus(FXOutputMonitor.ViewStatus.SELECTING));
             }));
             Optional.ofNullable(controlTypePopoverController.getPanButton()).ifPresent(b -> b.setOnAction(e -> {
                 Platform.runLater(() -> this.controlType.setGraphic(pan));
-                this.displayMonitor.ifPresent(d -> {
-                    d.setViewStatus(FXOutputMonitor.ViewStatus.PANNING);
-                });
+                this.displayMonitor.ifPresent(d -> d.setViewStatus(FXOutputMonitor.ViewStatus.PANNING));
             }));
             controlTypePopOver = Optional.of(pop);
             controlTypePopOver.get().show(controlType);

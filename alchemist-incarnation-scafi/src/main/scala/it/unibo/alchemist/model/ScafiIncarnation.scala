@@ -91,8 +91,9 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
       + s", but it is an ${node.getClass} instead.")
     }
     val alreadyDone = ScafiIncarnationUtils
-      .inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
-      .collect { case x: RunScafiProgram[_,_] => x.asInstanceOf[RunScafiProgram[T, P]] }
+      .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])
+      .map(_.asInstanceOf[ScafiComputationalRoundComplete[T]])
+      .map(_.program.asInstanceOf[RunScafiProgram[T, P]])
     val spList: mutable.Buffer[RunScafiProgram[T,P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
     spList --= alreadyDone
     if (spList.isEmpty) {

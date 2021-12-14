@@ -25,6 +25,7 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
+  private[this] def isScafiNode(node: Node[T]): Boolean = node.isInstanceOf[ScafiNode[_,_]]
 
   private[this] def notNull[T](t: T, name: String = "Object"): T = Objects.requireNonNull(t, s"$name must not be null")
 
@@ -48,7 +49,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
       reaction: Reaction[T],
       param: String
   ) = {
-    if (!node.isInstanceOf[ScafiNode[T,P]]) {
+    if (!isScafiNode(node)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
     val scafiNode = node.asInstanceOf[ScafiNode[T,P]]
@@ -85,13 +86,13 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createCondition(rand: RandomGenerator, env: Environment[T, P] , node: Node[T], time: TimeDistribution[T], reaction: Reaction[T], param: String): Condition[T] = {
-    if(!node.isInstanceOf[ScafiNode[T,P]]) {
+    if(!isScafiNode(node)) {
       throw new IllegalArgumentException(s"The node must be an instance of ${classOf[ScafiNode[_,_]]}"
       + s", but it is an ${node.getClass} instead.")
     }
     val alreadyDone = ScafiIncarnationUtils
       .inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
-      .collect { case x: RunScafiProgram[T,P] => x }
+      .collect { case x: RunScafiProgram[_,_] => x.asInstanceOf[RunScafiProgram[T, P]] }
     val spList: mutable.Buffer[RunScafiProgram[T,P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
     spList --= alreadyDone
     if (spList.isEmpty) {

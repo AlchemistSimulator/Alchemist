@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -19,11 +19,6 @@ import it.unibo.alchemist.boundary.gui.effects.EffectGroup;
 import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.FXOutputMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,8 +32,14 @@ import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
-import org.jetbrains.annotations.Nullable;
 import tornadofx.FX;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
  * This class models a JavaFX controller for ButtonsBarLayout.fxml.
@@ -270,15 +271,11 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
             pop.setArrowLocation(ArrowLocation.BOTTOM_CENTER);
             Optional.ofNullable(controlTypePopoverController.getSelectButton()).ifPresent(b -> b.setOnAction(e -> {
                 Platform.runLater(() -> this.controlType.setGraphic(select));
-                this.displayMonitor.ifPresent(d -> {
-                    d.setViewStatus(FXOutputMonitor.ViewStatus.SELECTING);
-                });
+                this.displayMonitor.ifPresent(d -> d.setViewStatus(FXOutputMonitor.ViewStatus.SELECTING));
             }));
             Optional.ofNullable(controlTypePopoverController.getPanButton()).ifPresent(b -> b.setOnAction(e -> {
                 Platform.runLater(() -> this.controlType.setGraphic(pan));
-                this.displayMonitor.ifPresent(d -> {
-                    d.setViewStatus(FXOutputMonitor.ViewStatus.PANNING);
-                });
+                this.displayMonitor.ifPresent(d -> d.setViewStatus(FXOutputMonitor.ViewStatus.PANNING));
             }));
             controlTypePopOver = Optional.of(pop);
             controlTypePopOver.get().show(controlType);

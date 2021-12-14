@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -42,12 +42,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.Contract;
-import javax.annotation.Nonnull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tornadofx.FX;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -194,7 +194,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             this.stepMonitor = new FXStepMonitor<>();
             this.playPauseMonitor = new PlayPauseMonitor<>(simulation);
             optSim.ifPresent(s -> {
-                optDisplayMonitor.ifPresent(it -> s.addOutputMonitor((OutputMonitor<T, P>) it));
+                optDisplayMonitor.ifPresent(s::addOutputMonitor);
                 s.addOutputMonitor(this.playPauseMonitor);
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);

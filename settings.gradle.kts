@@ -5,19 +5,8 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-import org.danilopianini.VersionAliases.justAdditionalAliases
 plugins {
     id("com.gradle.enterprise") version "3.7.2"
-    id("de.fayard.refreshVersions") version "0.23.0"
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.danilopianini:refreshversions-aliases:+")
-    }
 }
 
 include(
@@ -46,13 +35,6 @@ include(
     "alchemist-fxui"
 )
 rootProject.name = "alchemist"
-
-refreshVersions {
-    extraArtifactVersionKeyRules = justAdditionalAliases
-    featureFlags {
-        enable(de.fayard.refreshVersions.core.FeatureFlag.LIBS)
-    }
-}
 
 gradleEnterprise {
     buildScan {

@@ -13,7 +13,7 @@ Journal of Simulation, 7(3), 202–215. [https://doi.org/10.1057/jos.2012.27](ht
 A BibTeX entry for LaTeX users is:
 
 ```bibtex
-@article{Pianini2013,
+@article{alchemist,
   doi = {10.1057/jos.2012.27},
   url = {https://doi.org/10.1057/jos.2012.27},
   year = {2013},
@@ -102,12 +102,9 @@ Add this dependency to your build, substitute `ALCHEMIST_VERSION` with the versi
 #### Stable branch
 
 ##### Info
-master: [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg?branch=master)](https://travis-ci.org/AlchemistSimulator/Alchemist)
-
-develop: [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg?branch=develop)](https://travis-ci.org/AlchemistSimulator/Alchemist)
+[![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg?branch=master)](https://travis-ci.org/AlchemistSimulator/Alchemist)
 
 [![Javadocs](https://www.javadoc.io/badge/it.unibo.alchemist/alchemist.svg)](https://www.javadoc.io/doc/it.unibo.alchemist/alchemist)
-![GitHub](https://img.shields.io/github/license/AlchemistSimulator/Alchemist)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5222/badge)](https://bestpractices.coreinfrastructure.org/projects/5222)
 ![GitHub language count](https://img.shields.io/github/languages/count/AlchemistSimulator/Alchemist)
 ![GitHub top language](https://img.shields.io/github/languages/top/AlchemistSimulator/Alchemist)
@@ -120,7 +117,7 @@ develop: [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg
 ##### Quality
 
 [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c7304e8bd4044aa5955c6d5c844f39a4)](https://www.codacy.com/app/Alchemist/Alchemist?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlchemistSimulator/Alchemist&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/97749eb279834c30bb4365cd861f451b)](https://www.codacy.com/gh/AlchemistSimulator/Alchemist/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AlchemistSimulator/Alchemist&amp;utm_campaign=Badge_Grade)
 ![Codecov](https://img.shields.io/codecov/c/github/AlchemistSimulator/Alchemist)
 ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability-percentage/AlchemistSimulator/Alchemist)
 ![Code Climate maintainability](https://img.shields.io/codeclimate/issues/AlchemistSimulator/Alchemist)
@@ -142,8 +139,8 @@ develop: [![Build Status](https://travis-ci.org/AlchemistSimulator/Alchemist.svg
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/AlchemistSimulator/Alchemist)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/AlchemistSimulator/Alchemist)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/AlchemistSimulator/Alchemist)
-![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/AlchemistSimulator/Alchemist/latest/develop)
-![GitHub last commit](https://img.shields.io/github/last-commit/AlchemistSimulator/Alchemist/develop)
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/AlchemistSimulator/Alchemist/latest/master)
+![GitHub last commit](https://img.shields.io/github/last-commit/AlchemistSimulator/Alchemist/master)
 
 ### Javadocs
 
@@ -160,63 +157,45 @@ To contribute to this project we recommend to fork it and work on your own copy 
 * exploit the included continuous integration jobs to check the project status;
 * contribute back to the main project via pull requests directly from GitHub.
 
-This project defines several CI jobs.
-Some rely on an automatic merge system ([YAAGHA](https://github.com/marketplace/actions/yet-another-automerge-github-action)) which requires a repository secret with:
-
-* name = AUTOMERGE_TOKEN
-* value = a github token with `public_repo` scope (or `repo`, if your fork is private). If you already have a token with the required scope, then you can reuse it, otherwise you have to [create a new token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
-
-If you don't provide it, then the CI workflow is likely to fail even though the project status is correct.
-
 #### Recommended IDE configuration
 
 The project is easiest to import in IntelliJ Idea.
-
-Install the following plugins (use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, then search for "Plugins"):
-* From the main list:
-    * Scala
-    * Kotlin
-* From "Browse Repositories":
-    * [ANTLR v4 grammar plugin](https://plugins.jetbrains.com/plugin/7358-antlr-v4-grammar-plugin)
-    * [Checkstyle-IDEA](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
-    * [FindBugs-IDEA](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
-    * [PMDPlugin](https://plugins.jetbrains.com/plugin/1137-pmdplugin)
+The project can be imported directly as a Gradle project.
+If you intend to develop new parts in Scala, we suggest to install the Scala plugin for IntelliJ Idea.
 
 #### Importing the project
 
 1. Clone this repository in a folder of your preference using `git clone --recurse-submodules <ALCHEMIST_REPO_URI>`.
 1. Right click on `settings.gradle.kts`, select "Open With" and use IntelliJ Idea.
+
 The procedure may be slightly different depending on your operating system and desktop environment.
+
 If you have a terminal, and if you can launch idea from there, just:
 
-    1. `cd <LOCATION_WHERE_YOU_CLONED_THE REPOSITORY>`
-    1. `idea .` (we are assuming that you can launch IntelliJ Idea with the `idea` command, replace it with the correct one for your syustem
-1. In 'Settings -> Build, Execution, Deployment -> Build Tools > Gradle', for the option 'Use Gradle from' select 'gradle-wrapper.properties file'. Enabling auto-import is also recommended.
-1. **Important:** Alchemist requires java 11+, so make sure the 'Gradle JVM' option points to such a version (if you don't have a JDK 11+ installed make sure to get one).
-1. Once imported, the project may still be unable to compile, due to missing sources in incarnation-biochemistry. This problem can be solved by opening the IntelliJ terminal (e.g. with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>, typing "terminal" and pressing <kbd>Enter</kbd>), and issue:
-  - On Unix: `./gradlew alchemist-incarnation-biochemistry:generateGrammarSource`
-  - On Windows: `gradlew.bat alchemist-incarnation-biochemistry:generateGrammarSource`
+1. `cd <LOCATION_WHERE_YOU_CLONED_THE REPOSITORY>`
+1. `idea .` (we are assuming that you can launch IntelliJ Idea with the `idea` command, replace it with the correct one for your system)
 
 ### Developing the project
+
 Contributions to this project are welcome. Just some rules:
 
-* We use [git flow](https://github.com/nvie/gitflow), so if you write new features, please do so in a separate `feature-` branch.
-* We recommend forking the project, developing your stuff, then contributing back via pull request directly from GitHub
-* Commit often. Do not throw at me pull requests with a single giant commit adding or changing the whole world. Split it in multiple commits and request a merge to the mainline often.
-* Stay in sync with the `develop` branch: pull often from `develop` (if the build passes), so that you don't diverge too much from the main development line.
+* Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). The build auto-generates aggressive git hooks that enforce the rules.
+* We recommend forking the project, developing your stuff, then contributing back via pull request directly from GitHub.
+* Keep in sync with the mainline (our `master` branch), preferably via rebasing.
+* Commit often. Small pull requests targeting a small part of a larger work are very welcome if they can be merged individually.
 * Do not introduce low quality code. All the new code must comply with the checker rules (that are quite strict) and must not introduce any other warning. Resolutions of existing warnings (if any is present) are very welcome instead.
+* Fixes should include a regression test.
+* New features must include appropriate test cases.
 
 #### Building the project
 While developing, you can rely on IntelliJ to build the project, it will generally do a very good job.
 If you want to generate the artifacts, you can rely on Gradle. Just point a terminal on the project's root and issue
 
 ```bash
-./gradlew build
+./gradlew assemble check --parallel
 ```
 
 This will trigger the creation of the artifacts the executions of the tests, the generation of the documentation and of the project reports.
-
-***NOTE THAT:*** Alchemist requires java 11+ to work, make sure to have a JDK version 11+ installed.
 
 #### Build reports
 Every Alchemist build triggers the creation of a set of reports, that provide hints regarding the current status of quality of the code base. Such reports are available for both [the latest stable][reports] and [the latest development][reports-unstable] versions.

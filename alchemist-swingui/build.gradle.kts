@@ -1,6 +1,14 @@
+/*
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import Libs.alchemist
 import Libs.incarnation
-import Libs.jgrapht
 
 /*
  * Copyright (C) 2010-2019) Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -22,19 +30,19 @@ dependencies {
     implementation(alchemist("smartcam"))
     implementation(alchemist("cognitive-agents"))
     implementation(libs.gson.extras)
-    implementation(libs.miglayout.swing)
-    implementation(Libs.mapsforge_map_awt) {
-        exclude(group = "com.github.blackears", module = "svgSalamander")
-    }
-    implementation(Libs.svgsalamander)
     // TODO: deprecated, must be removed
-    implementation(Libs.javalib_java7) {
+    implementation(libs.javalib.java7) {
         exclude(group = "org.ow2.asm")
         exclude(module = "findbugs")
     }
-    implementation(Libs.conrec)
-    implementation(jgrapht("core")) // just to draw cognitive maps
-    implementation(Libs.oxygen)
+    implementation(libs.mapsforge) {
+        exclude(group = "com.github.blackears", module = "svgSalamander")
+    }
+    implementation(libs.miglayout.swing)
+    implementation(libs.svgsalamander)
+    implementation(libs.conrec)
+    implementation(libs.jgrapht.core)
+    implementation(libs.oxygen.icons)
     testRuntimeOnly(incarnation("protelis"))
 }
 
@@ -42,7 +50,7 @@ configurations.all {
     resolutionStrategy {
         eachDependency {
             if (requested.name == "svgSalamander") {
-                useTarget(Libs.svgsalamander)
+                useTarget(libs.svgsalamander)
                 because("mapsforge version is not on central")
             }
         }

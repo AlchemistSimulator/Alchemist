@@ -1,5 +1,13 @@
+/*
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import Libs.alchemist
-import Libs.jgrapht
 
 /*
  * Copyright (C) 2010-2020, Danilo Pianini and contributors
@@ -11,12 +19,11 @@ import Libs.jgrapht
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
+    api(alchemist("interfaces"))
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("cognitive-agents"))
-    // implementation(Libs.konf)
-    implementation(jgrapht("core"))
+    implementation(libs.jgrapht.core)
     testImplementation(alchemist("test"))
     testImplementation(alchemist("incarnation-protelis"))
 }

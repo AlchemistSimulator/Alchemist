@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -14,8 +15,8 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -92,7 +93,7 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     }
 
     @Override
-    public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time tt, final long cs) {
+    public void finished(@Nonnull final Environment<T, P> environment, @Nonnull final Time tt, final long cs) {
         isFinished = true;
         stepDone(environment, null, tt, cs);
         updater.stop();
@@ -101,16 +102,16 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     }
 
     @Override
-    public void initialized(@NotNull final Environment<T, P> environment) {
+    public void initialized(@Nonnull final Environment<T, P> environment) {
         isFinished = false;
         stepDone(environment, null, new DoubleTime(), 0);
     }
 
     @Override
     public void stepDone(
-            @NotNull final Environment<T, P> environment,
+            @Nonnull final Environment<T, P> environment,
             final Reaction<T> reaction,
-            @NotNull final Time curTime,
+            @Nonnull final Time curTime,
             final long curStep
     ) {
         if (updater == null) {

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -12,15 +12,14 @@ package it.unibo.alchemist.boundary.monitor.generic;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
-import java.util.Objects;
-import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import javax.annotation.Nonnull;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * {@code OutputMonitor} that monitors the current
@@ -67,7 +66,7 @@ public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
      * {@inheritDoc}
      */
     @Override
-    public void initialized(@NotNull final Environment<T, P> environment) {
+    public void initialized(@Nonnull final Environment<T, P> environment) {
         update(init);
     }
 

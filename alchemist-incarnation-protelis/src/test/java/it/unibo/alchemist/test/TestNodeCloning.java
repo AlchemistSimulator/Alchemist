@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -21,11 +22,11 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -95,9 +96,9 @@ class TestNodeCloning<P extends Position<P>> {
             private static final long serialVersionUID = 1L;
             @Override
             public void stepDone(
-                    @NotNull final Environment<Object, P> environment,
+                    @Nonnull final Environment<Object, P> environment,
                     final Reaction<Object> reaction,
-                    @NotNull final Time time,
+                    @Nonnull final Time time,
                     final long step
             ) {
                 final ImmutableMap<Node<Object>, Double> expectations = ImmutableMap.of(
@@ -118,9 +119,13 @@ class TestNodeCloning<P extends Position<P>> {
                 }
             }
             @Override
-            public void initialized(@NotNull final Environment<Object, P> environment) { }
+            public void initialized(@Nonnull final Environment<Object, P> environment) { }
             @Override
-            public void finished(@NotNull final Environment<Object, P> environment, @NotNull final Time time, final long step) { }
+            public void finished(
+                @Nonnull final Environment<Object, P> environment,
+                @Nonnull final Time time,
+                final long step
+            ) { }
         });
         simulation.play();
         simulation.run();

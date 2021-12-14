@@ -81,11 +81,7 @@ public abstract class NumericLabelMonitor<N, T, P extends Position<? extends P>>
             mayRender = false;
             Platform.runLater(() -> {
                 mayRender = true;
-                setText(
-                        getName().isPresent()
-                                ? getName().get() + current.toString()
-                                : String.valueOf(current.toString())
-                );
+                setText(getName().isPresent() ? getName().get() + current.toString() : String.valueOf(current.toString()));
             });
         }
     }

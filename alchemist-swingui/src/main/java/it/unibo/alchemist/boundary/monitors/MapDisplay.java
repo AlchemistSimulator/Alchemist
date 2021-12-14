@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -13,7 +14,6 @@ import it.unibo.alchemist.boundary.wormhole.implementation.MapWormhole;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.map.awt.graphics.AwtGraphicFactory;
 import org.mapsforge.map.awt.view.MapView;
@@ -26,6 +26,7 @@ import org.mapsforge.map.layer.download.tilesource.OpenStreetMapMapnik;
 import org.mapsforge.map.layer.download.tilesource.TileSource;
 import org.mapsforge.map.model.Model;
 
+import javax.annotation.Nonnull;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -100,7 +101,7 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     }
 
     @Override
-    public void initialized(@NotNull final Environment<T, GeoPosition> environment) {
+    public void initialized(@Nonnull final Environment<T, GeoPosition> environment) {
         super.initialized(environment);
         Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
         Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
@@ -118,7 +119,7 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     }
 
     @Override
-    public void finished(@NotNull final Environment<T, GeoPosition> environment, @NotNull final Time time, final long step) {
+    public void finished(@Nonnull final Environment<T, GeoPosition> environment, @Nonnull final Time time, final long step) {
         /*
          * Shut down the download threads, preventing memory leaks
          */

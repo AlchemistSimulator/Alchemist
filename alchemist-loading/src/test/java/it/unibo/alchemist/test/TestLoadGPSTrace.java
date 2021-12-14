@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -18,11 +19,11 @@ import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -90,7 +91,11 @@ class TestLoadGPSTrace {
         sim.addOutputMonitor(new OutputMonitor<>() {
 
             @Override
-            public void finished(@NotNull final Environment<T, GeoPosition> env, @NotNull final Time time, final long step) {
+            public void finished(
+                @Nonnull final Environment<T, GeoPosition> env,
+                @Nonnull final Time time,
+                final long step
+            ) {
                 for (final Node<T> node : env.getNodes()) {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
@@ -106,11 +111,11 @@ class TestLoadGPSTrace {
             }
 
             @Override
-            public void initialized(@NotNull final Environment<T, GeoPosition> env) {
+            public void initialized(@Nonnull final Environment<T, GeoPosition> env) {
                 for (final Node<T> node : env.getNodes()) {
                     final GeoPosition position = env.getPosition(node);
                     /*
-                     * We don't know the actual type of position, we use LatLongPosition here so we need to make sure
+                     * We don't know the actual type of position, we use LatLongPosition here, so we need to make sure
                      * that types match, or the map won't return what we expect
                      */
                     NODE_START_POSITION.put(node, new LatLongPosition(position.getLatitude(), position.getLongitude()));
@@ -119,8 +124,8 @@ class TestLoadGPSTrace {
 
             @Override
             public void stepDone(
-                @NotNull final Environment<T, GeoPosition> env, final Reaction<T> r,
-                @NotNull final Time time,
+                @Nonnull final Environment<T, GeoPosition> env, final Reaction<T> r,
+                @Nonnull final Time time,
                 final long step
             ) { }
         });

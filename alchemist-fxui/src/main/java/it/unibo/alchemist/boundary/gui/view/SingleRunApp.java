@@ -194,7 +194,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             this.stepMonitor = new FXStepMonitor<>();
             this.playPauseMonitor = new PlayPauseMonitor<>(simulation);
             optSim.ifPresent(s -> {
-                optDisplayMonitor.ifPresent(it -> s.addOutputMonitor((OutputMonitor<T, P>) it));
+                optDisplayMonitor.ifPresent(s::addOutputMonitor);
                 s.addOutputMonitor(this.playPauseMonitor);
                 s.addOutputMonitor(this.timeMonitor);
                 s.addOutputMonitor(this.stepMonitor);

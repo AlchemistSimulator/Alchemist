@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -37,7 +38,6 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import javax.annotation.Nonnull;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
@@ -49,6 +49,7 @@ import org.protelis.vm.impl.SimpleExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Iterator;
@@ -86,11 +87,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final ProtelisNode<?> protelisNode,
             final List<RunProtelisProgram<?>> alreadyDone
     ) {
-        return protelisNode.getReactions().parallelStream()
+        return protelisNode.getReactions().stream()
                 /*
                  * Get the actions
                  */
-                .flatMap(r -> r.getActions().parallelStream())
+                .flatMap(r -> r.getActions().stream())
                 /*
                  * Get only the ProtelisPrograms
                  */
@@ -106,7 +107,6 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Action<Object> createAction(
             final RandomGenerator randomGenerator,
             final Environment<Object, P> environment,
@@ -177,25 +177,30 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
-            @SuppressWarnings("unchecked") final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
-                    .parallelStream()
+            final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
+                    .stream()
                     .flatMap(r -> r.getConditions().stream())
                     .filter(c -> c instanceof ComputationalRoundComplete)
                     .map(c -> ((ComputationalRoundComplete) c).getProgram())
                     .collect(Collectors.toList());
             final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
             if (pList.isEmpty()) {
-                throw new IllegalStateException("There is no program requiring a "
-                        + ComputationalRoundComplete.class.getSimpleName() + " condition");
+                throw new IllegalStateException(
+                    "There is no program requiring a " + ComputationalRoundComplete.class.getSimpleName() + " condition"
+                );
             }
             if (pList.size() > 1) {
-                throw new IllegalStateException("There are too many programs requiring a "
-                        + ComputationalRoundComplete.class.getName() + " condition: " + pList);
+                throw new IllegalStateException(
+                    "There are too many programs requiring a " + ComputationalRoundComplete.class.getSimpleName()
+                        + " condition: " + pList
+                );
             }
             return new ComputationalRoundComplete(pNode, pList.get(0));
         }
-        throw new IllegalArgumentException("The node must be an instance of " + ProtelisNode.class.getSimpleName()
-                + ", it is a " + node.getClass().getName() + " instead");
+        throw new IllegalArgumentException(
+            "The node must be an instance of " + ProtelisNode.class.getSimpleName() + ", it is a "
+                + node.getClass().getName() + " instead"
+        );
     }
 
     @Override

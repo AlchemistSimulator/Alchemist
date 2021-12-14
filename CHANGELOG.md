@@ -1,3 +1,15 @@
+# [12.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/12.0.4...12.1.0) (2021-12-14)
+
+
+### Bug Fixes
+
+* **engine:** capture errors in output monitors as simulation errors ([b60358b](https://github.com/AlchemistSimulator/Alchemist/commit/b60358b7818c60bad5ac432a926eb0bd95d1a8e3))
+
+
+### Features
+
+* **api:** provide a default empty implementation for the methods in OutputMonitor ([8901da1](https://github.com/AlchemistSimulator/Alchemist/commit/8901da15c5a57741ac288daac4b2b75ce9fe3490))
+
 ## [12.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/12.0.3...12.0.4) (2021-12-10)
 
 

@@ -83,7 +83,7 @@ public class EffectPropertiesController implements Initializable {
      * Default {@code Logger}.
      */
     private static final Logger L = LoggerFactory.getLogger(EffectPropertiesController.class);
-    private final EffectFX effect;
+    private final EffectFX<?> effect;
     private final Map<Label, Node> dynamicNodes = new HashMap<>();
     private final JFXDrawersStack stack;
     private final JFXDrawer thisDrawer;
@@ -111,7 +111,7 @@ public class EffectPropertiesController implements Initializable {
      *                   class controls
      * @param thisDrawer the drawer that own the layout this class controls
      */
-    public EffectPropertiesController(final EffectFX effect, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
+    public EffectPropertiesController(final EffectFX<?> effect, final JFXDrawersStack stack, final JFXDrawer thisDrawer) {
         if (effect == null) {
             throw new IllegalArgumentException("Effect cannot be null!");
         }

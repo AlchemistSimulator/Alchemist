@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -10,7 +10,6 @@
 package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
 import org.slf4j.LoggerFactory
 import java.awt.GraphicsEnvironment
@@ -64,30 +63,24 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
             Thread(it).apply { name = "alchemist-executor-${count++}" }
         }
         val errorQueue = ConcurrentLinkedQueue<Throwable>()
-        loader.variables
-            .cartesianProductOf(parameters.variables)
-            .forEach { variables ->
-                executor.submit {
-                    val simulationCreation = runCatching<Simulation<Any, Nothing>> {
-                        prepareSimulation(loader, parameters, variables)
+        val cartesianProduct = loader.variables.cartesianProductOf(parameters.variables)
+        cartesianProduct.forEach { variables ->
+            executor.submit {
+                runCatching { prepareSimulation<Any, Nothing>(loader, parameters, variables) }
+                    .onFailure { logger.error("Error during the preparation of the simulation: $variables", it) }
+                    .mapCatching { simulation ->
+                        simulation.play()
+                        simulation.run()
+                        simulation.error.ifPresent { throw it }
+                        logger.info("Simulation with {} completed successfully", variables)
                     }
-                    simulationCreation.onFailure {
-                        logger.error("Something went wrong during the preparation of the simulation: $variables", it)
-                    }
-                    val error: Throwable? = simulationCreation.exceptionOrNull()
-                        ?: simulationCreation.map { simulation ->
-                            simulation.play()
-                            simulation.run()
-                            simulation.error.takeIf { it.isPresent }?.get()?.also {
-                                logger.error("Something went wrong during the execution of: $variables", it)
-                            }
-                        }.getOrNull()
-                    if (error != null) {
-                        errorQueue.add(error)
+                    .onFailure {
+                        logger.error("Failure in Simulation with $variables", it)
+                        errorQueue.add(it)
                         executor.shutdownNow()
                     }
-                }
             }
+        }
         executor.shutdown()
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS)
         if (errorQueue.isNotEmpty()) {

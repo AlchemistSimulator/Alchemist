@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -23,11 +24,12 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -392,17 +394,17 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     @Override
     public void run() {
         synchronized (environment) {
-            myThread = Thread.currentThread();
-            finalizeConstructor();
-            status = Status.READY;
-            final long currentThread = Thread.currentThread().getId();
-            L.trace("Thread {} started running.", currentThread);
-            monitorLock.acquireUninterruptibly();
-            for (final OutputMonitor<T, P> m : monitors) {
-                m.initialized(environment);
-            }
-            monitorLock.release();
             try {
+                myThread = Thread.currentThread();
+                finalizeConstructor();
+                status = Status.READY;
+                final long currentThread = Thread.currentThread().getId();
+                L.trace("Thread {} started running.", currentThread);
+                monitorLock.acquireUninterruptibly();
+                for (final OutputMonitor<T, P> m : monitors) {
+                    m.initialized(environment);
+                }
+                monitorLock.release();
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }
@@ -424,10 +426,18 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 status = TERMINATED;
                 commands.clear();
                 monitorLock.acquireUninterruptibly();
-                for (final OutputMonitor<T, P> m : monitors) {
-                    m.finished(environment, currentTime, currentStep);
+                try {
+                    for (final OutputMonitor<T, P> m : monitors) {
+                        m.finished(environment, currentTime, currentStep);
+                    }
+                } catch (Throwable e) { //NOPMD: we need to catch everything
+                    error.ifPresentOrElse(
+                        error -> error.addSuppressed(e),
+                        () -> error = Optional.of(e)
+                    );
+                } finally {
+                    monitorLock.release();
                 }
-                monitorLock.release();
             }
         }
     }
@@ -435,11 +445,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private void pauseWhen(final BooleanSupplier condition) {
         addOutputMonitor(new OutputMonitor<>() {
             @Override
-            public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time time, final long step) {
+            public void finished(@Nonnull final Environment<T, P> environment, @Nonnull final Time time, final long step) {
             }
 
             @Override
-            public void initialized(@NotNull final Environment<T, P> environment) {
+            public void initialized(@Nonnull final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
                     pause();
                 }
@@ -447,9 +457,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
             @Override
             public void stepDone(
-                    @NotNull final Environment<T, P> environment,
-                    final Reaction<T> reaction,
-                    @NotNull final Time time,
+                    @Nonnull final Environment<T, P> environment,
+                    @Nullable final Reaction<T> reaction,
+                    @Nonnull final Time time,
                     final long step
             ) {
                 initialized(environment);

@@ -82,8 +82,9 @@ allprojects {
             implementation(kotlin("stdlib-jdk8"))
             implementation(kotlin("reflect"))
             testCompileOnly(spotbugs.annotations)
-            // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt
+            // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt + Alchemist testing tooling
             testImplementation(bundles.testing.compile)
+            testImplementation(alchemist("test"))
             // Test runtime: Junit engine
             testRuntimeOnly(bundles.testing.runtimeOnly)
             // executable jar packaging

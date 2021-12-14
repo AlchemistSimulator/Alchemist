@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -15,7 +15,8 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * {@code OutputMonitor} that monitors the current
@@ -40,7 +41,7 @@ public class FXTimeMonitor<T, P extends Position<? extends P>> extends NumericLa
      * {@inheritDoc}
      */
     @Override
-    public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time time, final long step) {
+    public void finished(@Nonnull final Environment<T, P> environment, @Nonnull final Time time, final long step) {
         update(time);
     }
 
@@ -49,9 +50,9 @@ public class FXTimeMonitor<T, P extends Position<? extends P>> extends NumericLa
      */
     @Override
     public void stepDone(
-            @NotNull final Environment<T, P> environment,
+            @Nonnull final Environment<T, P> environment,
             final Reaction<T> reaction,
-            @NotNull final Time time,
+            @Nonnull final Time time,
             final long step
     ) {
         update(time);

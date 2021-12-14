@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -40,7 +41,11 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * @param step
      *            The last step number
      */
-    void finished(@Nonnull Environment<T, P> environment, @Nonnull Time time, long step);
+    default void finished(
+        @Nonnull final Environment<T, P> environment,
+        @Nonnull final Time time,
+        final long step
+    ) { }
 
     /**
      * This method will be called by the simulation as soon as the initialization
@@ -52,7 +57,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * @param environment
      *            the environment
      */
-    void initialized(@Nonnull Environment<T, P> environment);
+    default void initialized(@Nonnull final Environment<T, P> environment) { }
 
     /**
      * This method will be called by the simulation every time a simulation step is
@@ -70,6 +75,11 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * @param step
      *            The current simulation step
      */
-    void stepDone(@Nonnull Environment<T, P> environment, @Nullable Reaction<T> reaction, @Nonnull Time time, long step);
+    default void stepDone(
+        @Nonnull final Environment<T, P> environment,
+        @Nullable final Reaction<T> reaction,
+        @Nonnull final Time time,
+        final long step
+    ) { }
 
 }

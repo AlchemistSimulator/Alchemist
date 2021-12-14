@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -16,9 +17,9 @@ import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
 import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.WormholeSwing;
+import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D.Mode;
-import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
@@ -33,10 +34,10 @@ import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 import org.apache.commons.math3.util.Pair;
 import org.danilopianini.lang.LangUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -444,7 +445,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * @param step the step at which the simulation ended
      */
     @Override
-    public void finished(@NotNull final Environment<T, P> environment, @NotNull final Time time, final long step) {
+    public void finished(@Nonnull final Environment<T, P> environment, @Nonnull final Time time, final long step) {
         update(environment, time);
         firstTime = true;
     }
@@ -500,7 +501,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      * @param environment the {@link Environment}
      */
     @Override
-    public void initialized(@NotNull final Environment<T, P> environment) {
+    public void initialized(@Nonnull final Environment<T, P> environment) {
         stepDone(environment, null, new DoubleTime(), 0);
     }
 
@@ -642,9 +643,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
 
     @Override
     public final void stepDone(
-            @NotNull final Environment<T, P> environment,
+            @Nonnull final Environment<T, P> environment,
             final Reaction<T> reaction,
-            @NotNull final Time time,
+            @Nonnull final Time time,
             final long step
     ) {
         if (firstTime) {

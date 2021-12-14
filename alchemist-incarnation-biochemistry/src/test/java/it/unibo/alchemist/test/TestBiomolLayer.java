@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -26,15 +27,15 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.apache.commons.math3.random.MersenneTwister;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.jupiter.api.Test;
+
+import javax.annotation.Nonnull;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 
- *
  */
 class TestBiomolLayer {
 
@@ -73,7 +74,7 @@ class TestBiomolLayer {
             public void stepDone(
                     final Environment<Double, Euclidean2DPosition> environment,
                     final Reaction<Double> reaction,
-                    @NotNull final Time time,
+                    @Nonnull final Time time,
                     final long step
             ) {
                 final Euclidean2DPosition curPos = environment.getPosition(environment.getNodeByID(0));
@@ -81,15 +82,15 @@ class TestBiomolLayer {
             }
 
             @Override
-            public void initialized(@NotNull final Environment<Double, Euclidean2DPosition> environment) {
+            public void initialized(@Nonnull final Environment<Double, Euclidean2DPosition> environment) {
                 stepDone(environment, null, DoubleTime.ZERO, 0);
             }
 
             @Override
             public void finished(
-                @NotNull final Environment<Double, Euclidean2DPosition> environment,
-                @NotNull final Time time,
-                final long step
+                    @Nonnull final Environment<Double, Euclidean2DPosition> environment,
+                    @Nonnull final Time time,
+                    final long step
             ) { }
         });
         sim.run();

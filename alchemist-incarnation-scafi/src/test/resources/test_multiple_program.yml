@@ -1,7 +1,7 @@
 network-model:
   type: ConnectWithinDistance
   parameters: [5]
-  
+
 incarnation: scafi
 
 _pool: &program
@@ -15,7 +15,7 @@ _pool: &program
 deployments:
   - type: Point
     parameters: [4,4]
-    programs: 
+    programs:
       - *program
       - *program
     contents:

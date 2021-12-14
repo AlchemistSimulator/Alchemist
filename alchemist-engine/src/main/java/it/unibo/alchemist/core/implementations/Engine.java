@@ -392,17 +392,17 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     @Override
     public void run() {
         synchronized (environment) {
-            myThread = Thread.currentThread();
-            finalizeConstructor();
-            status = Status.READY;
-            final long currentThread = Thread.currentThread().getId();
-            L.trace("Thread {} started running.", currentThread);
-            monitorLock.acquireUninterruptibly();
-            for (final OutputMonitor<T, P> m : monitors) {
-                m.initialized(environment);
-            }
-            monitorLock.release();
             try {
+                myThread = Thread.currentThread();
+                finalizeConstructor();
+                status = Status.READY;
+                final long currentThread = Thread.currentThread().getId();
+                L.trace("Thread {} started running.", currentThread);
+                monitorLock.acquireUninterruptibly();
+                for (final OutputMonitor<T, P> m : monitors) {
+                    m.initialized(environment);
+                }
+                monitorLock.release();
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }
@@ -424,10 +424,18 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 status = TERMINATED;
                 commands.clear();
                 monitorLock.acquireUninterruptibly();
-                for (final OutputMonitor<T, P> m : monitors) {
-                    m.finished(environment, currentTime, currentStep);
+                try {
+                    for (final OutputMonitor<T, P> m : monitors) {
+                        m.finished(environment, currentTime, currentStep);
+                    }
+                } catch (Throwable e) { //NOPMD: we need to catch everything
+                    error.ifPresentOrElse(
+                        error -> error.addSuppressed(e),
+                        () -> error = Optional.of(e)
+                    );
+                } finally {
+                    monitorLock.release();
                 }
-                monitorLock.release();
             }
         }
     }

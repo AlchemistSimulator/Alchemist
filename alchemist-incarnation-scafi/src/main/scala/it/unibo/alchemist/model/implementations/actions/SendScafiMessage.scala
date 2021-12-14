@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.ScafiIncarnationUtils
+import it.unibo.alchemist.model.ScafiIncarnationUtils._
 import it.unibo.alchemist.model.implementations.nodes.ScafiNode
 import it.unibo.alchemist.model.interfaces._
-
-import java.util.ArrayList
 import java.util.stream.Collectors
+import scala.jdk.CollectionConverters._
 
 class SendScafiMessage[T, P<:Position[P]](
   env: Environment[T, P],
@@ -37,31 +37,30 @@ class SendScafiMessage[T, P<:Position[P]](
    * @return the cloned action
    */
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = {
-    n match {
-      case destinationNode: ScafiNode[T, P] =>
-        val possibleRef = destinationNode.getReactions.stream()
-          .flatMap { reaction => reaction.getActions.stream() }
-          .filter { action => action.isInstanceOf[RunScafiProgram[T, P]] }
-          .map { action => action.asInstanceOf[RunScafiProgram[T, P]] }
-          .collect(Collectors.toList[RunScafiProgram[T, P]])
-        if (possibleRef.size() == 1) {
-          return new SendScafiMessage(env, destinationNode, reaction, possibleRef.get(0))
-        }
-        throw new IllegalStateException("There must be one and one only unconfigured " + RunScafiProgram.getClass.getSimpleName)
-      case _ => throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
+    if(!isScafiNode(n)) {
+      throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
+    val destinationNode = n.asInstanceOf[ScafiNode[T, P]]
+    val possibleRef = destinationNode.getReactions.stream()
+      .flatMap { reaction => reaction.getActions.stream() }
+      .filter { action => action.isInstanceOf[RunScafiProgram[_, _]] }
+      .map { action => action.asInstanceOf[RunScafiProgram[T, P]] }
+      .collect(Collectors.toList[RunScafiProgram[T, P]])
+    if (possibleRef.size() == 1) {
+      return new SendScafiMessage(env, destinationNode, reaction, possibleRef.get(0))
+    }
+    throw new IllegalStateException("There must be one and one only unconfigured " + RunScafiProgram.getClass.getSimpleName)
   }
 
   /**
    * Effectively executes this action.
    */
   override def execute(): Unit = {
-    import scala.jdk.CollectionConverters._
     val toSend = program.getExport(node.getId).get
     for (
       nbr <- env.getNeighborhood(node).getNeighbors.iterator().asScala;
       action <- ScafiIncarnationUtils.allScafiProgramsFor[T, P](nbr).filter(program.getClass.isInstance(_))) {
-      action.asInstanceOf[RunScafiProgram[T, P]].sendExport(node.getId, toSend)
+      action.sendExport(node.getId, toSend)
     }
     program.prepareForComputationalCycle
   }

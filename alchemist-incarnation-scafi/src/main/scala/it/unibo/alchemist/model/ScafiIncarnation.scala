@@ -17,16 +17,15 @@ import it.unibo.alchemist.model.implementations.reactions.{ChemicalReaction, Eve
 import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, ExponentialTime}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces._
+import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
-
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
+import ScafiIncarnationUtils._
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
-  private[this] def isScafiNode(node: Node[T]): Boolean = node.isInstanceOf[ScafiNode[_,_]]
-
   private[this] def notNull[T](t: T, name: String = "Object"): T = Objects.requireNonNull(t, s"$name must not be null")
 
   private[this] def toDouble(v: Any): Double = v match {
@@ -152,7 +151,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 }
 
 object ScafiIncarnationUtils {
-  import it.unibo.alchemist.model.interfaces.Action
+  def isScafiNode[T](node: Node[T]): Boolean = node.isInstanceOf[ScafiNode[_,_]]
 
   def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for(reaction: Reaction[T] <- node.getReactions().asScala;

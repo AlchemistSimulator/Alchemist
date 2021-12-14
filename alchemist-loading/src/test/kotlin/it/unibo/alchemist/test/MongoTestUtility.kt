@@ -16,7 +16,12 @@ import de.flapdoodle.embed.mongo.config.ImmutableMongodConfig
 import de.flapdoodle.embed.mongo.config.MongodConfig
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
+import de.flapdoodle.embed.process.distribution.Distribution
 import de.flapdoodle.embed.process.runtime.Network
+import de.flapdoodle.os.ImmutablePlatform
+import de.flapdoodle.os.OS
+import de.flapdoodle.os.linux.LinuxDistribution
+import de.flapdoodle.os.linux.UbuntuVersion
 import io.kotest.matchers.shouldNotBe
 import org.slf4j.LoggerFactory
 
@@ -31,7 +36,18 @@ internal fun withMongo(operation: () -> Unit) {
             .version(Version.Main.PRODUCTION)
             .net(Net("localhost", 27017, Network.localhostIsIPv6()))
             .build()
-        val mongodExecutable: MongodExecutable = starter.prepare(mongodConfig)
+        val detectedDistribution = Distribution.detectFor(mongodConfig.version())
+        val actualDistribution = detectedDistribution
+            .takeUnless { with(it.platform()) { operatingSystem() == OS.Linux && distribution().isEmpty } }
+            ?: Distribution.of(
+                mongodConfig.version(),
+                ImmutablePlatform.builder()
+                    .from(detectedDistribution.platform())
+                    .distribution(LinuxDistribution.Ubuntu)
+                    .version(UbuntuVersion.Ubuntu_20_10)
+                    .build()
+            )
+        val mongodExecutable: MongodExecutable = starter.prepare(mongodConfig, actualDistribution)
         mongodExecutable shouldNotBe null
         val mongodProcess: MongodProcess = mongodExecutable.start()
         mongodProcess shouldNotBe null

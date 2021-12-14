@@ -49,6 +49,12 @@ publishing.publications {
                     url.set("https://www.unibo.it/sitoweb/roby.casadei")
                 }
             }
+            contributors {
+                contributor {
+                    name.set("Gianluca Aguzzi")
+                    email.set("gianluca.aguzzi@unibo.it")
+                }
+            }
         }
     }
 }

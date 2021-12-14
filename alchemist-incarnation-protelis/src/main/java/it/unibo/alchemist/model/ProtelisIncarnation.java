@@ -86,11 +86,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final ProtelisNode<?> protelisNode,
             final List<RunProtelisProgram<?>> alreadyDone
     ) {
-        return protelisNode.getReactions().parallelStream()
+        return protelisNode.getReactions().stream()
                 /*
                  * Get the actions
                  */
-                .flatMap(r -> r.getActions().parallelStream())
+                .flatMap(r -> r.getActions().stream())
                 /*
                  * Get only the ProtelisPrograms
                  */
@@ -177,8 +177,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
-            @SuppressWarnings("unchecked") final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
-                    .parallelStream()
+            final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
+                    .stream()
                     .flatMap(r -> r.getConditions().stream())
                     .filter(c -> c instanceof ComputationalRoundComplete)
                     .map(c -> ((ComputationalRoundComplete) c).getProgram())

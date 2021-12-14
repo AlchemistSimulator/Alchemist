@@ -33,7 +33,7 @@ import scala.math.Ordering.Double.TotalOrdering
 
 @SuppressFBWarnings(value = Array("SE_BAD_FIELD"), justification="We are not going to Serialize test classes")
 class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
-  
+
   test("Basic test"){
     testNoVar("/plain_vanilla.yml")
   }
@@ -80,6 +80,10 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
         outputMolecule shouldBe (-400)
       }
     })
+  }
+
+  test("Multiple programs") {
+    testNoVar("/test_multiple_program.yml")
   }
 
   private def testNoVar[T](resource: String, maxSteps: Long = 1000): Environment[T, P] = {

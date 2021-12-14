@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -24,7 +25,6 @@ import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -748,24 +748,24 @@ class TestBioRect2DEnvironmentNoOverlap {
 
             @Override
             public void stepDone(
-                    @NotNull final Environment<Double, Euclidean2DPosition> environment,
+                    @Nonnull final Environment<Double, Euclidean2DPosition> environment,
                     final Reaction<Double> reaction,
-                    @NotNull final Time time,
+                    @Nonnull final Time time,
                     final long step
             ) {
                 assertTrue(thereIsOverlap(environment), "Fail at time: " + time);
             }
 
             @Override
-            public void initialized(@NotNull final Environment<Double, Euclidean2DPosition> environment) {
+            public void initialized(@Nonnull final Environment<Double, Euclidean2DPosition> environment) {
                 assertTrue(thereIsOverlap(environment));
             }
 
             @Override
             public void finished(
-                @NotNull final Environment<Double, Euclidean2DPosition> environment,
-                @NotNull final Time time,
-                final long step
+                    @Nonnull final Environment<Double, Euclidean2DPosition> environment,
+                    @Nonnull final Time time,
+                    final long step
             ) {
                 assertTrue(thereIsOverlap(environment));
             }

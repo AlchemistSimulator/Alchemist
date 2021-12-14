@@ -1,3 +1,15 @@
+## [12.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.0...12.1.1) (2021-12-14)
+
+
+### Bug Fixes
+
+* **fxui:** explicitly use the wildcard type in EffectPropertiesController ([bfb5710](https://github.com/AlchemistSimulator/Alchemist/commit/bfb571060afaa8df01da55640caf5ae273154673))
+
+
+### Performance Improvements
+
+* **protelis:** do not use parallelStream() unnecessarily ([131a47d](https://github.com/AlchemistSimulator/Alchemist/commit/131a47d102eb7dd33d390305c30ba0e352cb337f))
+
 # [12.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/12.0.4...12.1.0) (2021-12-14)
 
 

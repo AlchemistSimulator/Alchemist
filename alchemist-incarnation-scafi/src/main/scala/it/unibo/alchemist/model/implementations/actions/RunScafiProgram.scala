@@ -97,7 +97,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     val localSensors = node.getContents().asScala.map { case (k, v) => k.getName -> v }
 
     val nbrSensors = scala.collection.mutable.Map[NSNS, Map[ID, Any]]()
-    val exports: Iterable[(ID,EXPORT)] = nbrData.view.mapValues { _.export }
+    val exports: Iterable[(ID,EXPORT)] = nbrData.view.mapValues { _.exportData }
     val ctx = new ContextImpl(node.getId, exports, localSensors, Map.empty){
       override def nbrSense[T](nsns: NSNS)(nbr: ID): Option[T] =
         nbrSensors.getOrElseUpdate(nsns, nsns match {
@@ -137,7 +137,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     completed = true
   }
 
-  def sendExport(id: ID, export: NBRData[P]): Unit = { nbrData += id -> export }
+  def sendExport(id: ID, exportData: NBRData[P]): Unit = { nbrData += id -> exportData }
 
   def getExport(id: ID): Option[NBRData[P]] = nbrData.get(id)
 
@@ -148,7 +148,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
 }
 
 object RunScafiProgram {
-  case class NBRData[P <: Position[P]](export: EXPORT, position: P, executionTime: AlchemistTime)
+  case class NBRData[P <: Position[P]](exportData: EXPORT, position: P, executionTime: AlchemistTime)
 
   implicit class RichMap[K,V](m: Map[K,V]) {
     def mapValuesStrict[T](f: V => T): Map[K,T] = m.map(tp => tp._1 -> f(tp._2))

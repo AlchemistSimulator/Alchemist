@@ -1,3 +1,10 @@
+## [12.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.2...12.1.3) (2021-12-15)
+
+
+### Bug Fixes
+
+* **incarnation-scafi:** allow multiple programs per node ([#974](https://github.com/AlchemistSimulator/Alchemist/issues/974)) ([0be5c69](https://github.com/AlchemistSimulator/Alchemist/commit/0be5c691ea2bb0269de107ea49fc0c1cecea3a7a))
+
 ## [12.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.1...12.1.2) (2021-12-15)
 
 

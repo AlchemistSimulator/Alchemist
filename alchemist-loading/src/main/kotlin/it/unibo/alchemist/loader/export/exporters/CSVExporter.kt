@@ -58,10 +58,10 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
             File(exportPath).mkdirs()
         }
         val path = if (exportPath.endsWith(File.separator)) exportPath else "${exportPath}${File.separator}"
-        val nameRoot = if (fileNameRoot.isEmpty()) "" else "${fileNameRoot}_"
-        val variablesHeader = if (variablesDescriptor.isBlank()) "" else "_$variablesDescriptor"
         val time = if (appendTime) "${System.currentTimeMillis()}" else ""
-        val filePrefix = "$nameRoot$variablesHeader$time"
+        val filePrefix = listOf(fileNameRoot, variablesDescriptor, time)
+            .filter(String::isNotBlank)
+            .joinToString(separator = "_")
         require(filePrefix.isNotEmpty()) {
             "No fileNameRoot provided for exporting data, no variables in the environment, and timestamp unset:" +
                 "the file name would be empty. Please provide a file name."

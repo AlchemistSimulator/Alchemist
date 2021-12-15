@@ -1,3 +1,10 @@
+## [12.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.1...12.1.2) (2021-12-15)
+
+
+### Bug Fixes
+
+* **loading:** always use at most one underscore to separate file name sections ([#972](https://github.com/AlchemistSimulator/Alchemist/issues/972)) ([ec41b67](https://github.com/AlchemistSimulator/Alchemist/commit/ec41b67e97428c37b79952b741469fa1f5be0aa9))
+
 ## [12.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.0...12.1.1) (2021-12-14)
 
 

@@ -1,3 +1,10 @@
+## [12.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.3...12.1.4) (2021-12-17)
+
+
+### Bug Fixes
+
+* **deps:** update plugin kotlin-jvm to v1.6.10 ([406df14](https://github.com/AlchemistSimulator/Alchemist/commit/406df14c988ccb47d3fd4c5ffa41828e131f15cc))
+
 ## [12.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.2...12.1.3) (2021-12-15)
 
 

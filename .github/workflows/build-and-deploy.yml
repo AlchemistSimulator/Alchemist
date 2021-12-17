@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 120
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.1.0
+        uses: danysk/action-checkout@0.2.1
       - name: Get branch name
         id: branch
         uses: tj-actions/branch-names@v5
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.1.0
+        uses: danysk/action-checkout@0.2.1
       - uses: DanySK/build-check-deploy-gradle-action@1.1.1
         with:
           java-version: 11

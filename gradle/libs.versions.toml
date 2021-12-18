@@ -114,6 +114,6 @@ kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.8.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.1"
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 publishOnCentral = "org.danilopianini.publish-on-central:0.7.7"
-scalatest = "com.github.maiflai.scalatest:0.31"
+scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:7.1.1"
 taskTree = "com.dorongold.task-tree:2.1.0"

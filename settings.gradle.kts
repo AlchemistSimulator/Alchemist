@@ -6,7 +6,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 plugins {
-    id("com.gradle.enterprise") version "3.7.2"
+    id("com.gradle.enterprise") version "3.8"
 }
 
 include(

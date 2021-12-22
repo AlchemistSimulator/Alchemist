@@ -44,7 +44,6 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
     }
   }
 
-
   test("Gradient"){
     val env = testNoVar[Any]("/test_gradient.yml")
     env.getNodes.iterator().asScala.foreach(node => {
@@ -86,6 +85,10 @@ class TestInSimulator[P <: Position[P]] extends AnyFunSuite with Matchers {
     testNoVar("/test_multiple_program.yml")
   }
 
+  test("Empty molecule concentration") {
+    testNoVar("/empty_molecule_initialization.yml")
+  }
+  
   private def testNoVar[T](resource: String, maxSteps: Long = 1000): Environment[T, P] = {
     testLoading(resource, Map(), maxSteps)
   }

@@ -1,3 +1,10 @@
+## [12.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.4...12.1.5) (2021-12-22)
+
+
+### Bug Fixes
+
+* **incarnation-scafi:** return null (as in ProtelisNode) instead of throwing an exception in createT method to fix the molecule initialisation problem ([966a9fe](https://github.com/AlchemistSimulator/Alchemist/commit/966a9fedbad66fb03da4d8de1910b2874d118784))
+
 ## [12.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.3...12.1.4) (2021-12-17)
 
 

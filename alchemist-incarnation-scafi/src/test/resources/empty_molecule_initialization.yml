@@ -1,0 +1,9 @@
+incarnation: scafi
+
+deployments:
+  - type: Point
+    parameters: [4,4]
+    programs:
+      - time-distribution: 1
+        type: Event
+        actions: { type: it.unibo.alchemist.scafi.test.FooAction, parameters: [ "foo" ] }

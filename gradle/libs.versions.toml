@@ -111,7 +111,7 @@ gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 java-qa = "org.danilopianini.gradle-java-qa:0.13.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.8.1"
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.1"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.2"
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 publishOnCentral = "org.danilopianini.publish-on-central:0.7.7"
 scalatest = "com.github.maiflai.scalatest:0.32"

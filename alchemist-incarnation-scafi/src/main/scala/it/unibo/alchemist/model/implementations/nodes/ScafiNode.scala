@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.{Environment, Molecule, Position, Tim
 class ScafiNode[T, P<:Position[P]](env: Environment[T, P]) extends AbstractNode[T](env) {
   private var lastAccessedMolecule: Molecule = null
 
-  override def createT = throw new IllegalStateException(s"The molecule $lastAccessedMolecule does not exist and cannot create empty concentration")
+  override def createT = null.asInstanceOf[T]
 
   override def getConcentration(mol: Molecule): T = {
     lastAccessedMolecule = mol

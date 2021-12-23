@@ -1,3 +1,31 @@
+## [12.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.4...12.1.5) (2021-12-22)
+
+
+### Bug Fixes
+
+* **incarnation-scafi:** return null (as in ProtelisNode) instead of throwing an exception in createT method to fix the molecule initialisation problem ([966a9fe](https://github.com/AlchemistSimulator/Alchemist/commit/966a9fedbad66fb03da4d8de1910b2874d118784))
+
+## [12.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.3...12.1.4) (2021-12-17)
+
+
+### Bug Fixes
+
+* **deps:** update plugin kotlin-jvm to v1.6.10 ([406df14](https://github.com/AlchemistSimulator/Alchemist/commit/406df14c988ccb47d3fd4c5ffa41828e131f15cc))
+
+## [12.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.2...12.1.3) (2021-12-15)
+
+
+### Bug Fixes
+
+* **incarnation-scafi:** allow multiple programs per node ([#974](https://github.com/AlchemistSimulator/Alchemist/issues/974)) ([0be5c69](https://github.com/AlchemistSimulator/Alchemist/commit/0be5c691ea2bb0269de107ea49fc0c1cecea3a7a))
+
+## [12.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.1...12.1.2) (2021-12-15)
+
+
+### Bug Fixes
+
+* **loading:** always use at most one underscore to separate file name sections ([#972](https://github.com/AlchemistSimulator/Alchemist/issues/972)) ([ec41b67](https://github.com/AlchemistSimulator/Alchemist/commit/ec41b67e97428c37b79952b741469fa1f5be0aa9))
+
 ## [12.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.0...12.1.1) (2021-12-14)
 
 

@@ -61,7 +61,7 @@ kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "
 kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
-logback = "ch.qos.logback:logback-classic:1.2.9"
+logback = "ch.qos.logback:logback-classic:1.2.10"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.16.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.0"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
@@ -110,10 +110,10 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 java-qa = "org.danilopianini.gradle-java-qa:0.13.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.8.1"
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.1"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.8.2"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.2"
 orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
-publishOnCentral = "org.danilopianini.publish-on-central:0.7.7"
+publishOnCentral = "org.danilopianini.publish-on-central:0.7.8"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:7.1.1"
 taskTree = "com.dorongold.task-tree:2.1.0"

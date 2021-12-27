@@ -21,6 +21,7 @@ import java.io.PrintStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.SortedMap
 import java.util.TimeZone
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
@@ -83,10 +84,27 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
         with(outputPrintStream) {
-            dataExtractors.forEach {
-                it.extractData(environment, reaction, time, step).values.forEach { value ->
-                    print(value)
-                    print(' ')
+            dataExtractors.forEach { extractor ->
+                val data = extractor.extractData(environment, reaction, time, step)
+                val names = extractor.columnNames
+                when {
+                    data.size <= 1 -> data.values.forEach { print("$it ") }
+                    // Labels and keys match
+                    data.size == names.size && data.keys.containsAll(names) -> names.forEach {
+                        print(requireNotNull(data[it]) { "Bug in ${this::class.simpleName}" })
+                        print(' ')
+                    }
+                    // If the labels do not match keys, require predictable iteration order
+                    else -> {
+                        require(data is LinkedHashMap || data is SortedMap) {
+                            """
+                            Extractor "${extractor::class.simpleName}" is likely bugged:
+                            1. the set of labels $names does not match the keys ${data.keys}, but iteration may fail as
+                            2. it returned a map with non-predictable iteration order of type ${data::class.simpleName}"
+                            """.trimIndent()
+                        }
+                        data.values.forEach { print("$it ") }
+                    }
                 }
             }
             println()

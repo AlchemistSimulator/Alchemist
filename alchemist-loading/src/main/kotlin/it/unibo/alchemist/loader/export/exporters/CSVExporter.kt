@@ -43,14 +43,6 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 
-    companion object {
-        /**
-         * Character used to separate comments from data on export files.
-         */
-        private const val SEPARATOR = "#####################################################################"
-        private val logger = LoggerFactory.getLogger(CSVExporter::class.java)
-    }
-
     private lateinit var outputPrintStream: PrintStream
 
     override fun setup(environment: Environment<T, P>) {
@@ -67,46 +59,60 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
                 "the file name would be empty. Please provide a file name."
         }
         outputPrintStream = PrintStream("$path$filePrefix.$fileExtension", Charsets.UTF_8.name())
-        outputPrintStream.println(SEPARATOR)
-        outputPrintStream.print("# Alchemist log file - simulation started at: ")
-        val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
-        isoTime.timeZone = TimeZone.getTimeZone("UTC")
-        outputPrintStream.print(isoTime.format(Date()))
-        outputPrintStream.println(" #")
-        outputPrintStream.println(SEPARATOR)
-        outputPrintStream.println(" #")
-        outputPrintStream.println(variablesDescriptor)
-        outputPrintStream.println(" #")
-        outputPrintStream.println("# The columns have the following meaning: ")
-        outputPrintStream.print("# ")
-        dataExtractors.flatMap {
-            it.columnNames
-        }.forEach {
-            outputPrintStream.print(it)
-            outputPrintStream.print(" ")
+        with(outputPrintStream) {
+            println(SEPARATOR)
+            print("# Alchemist log file - simulation started at: ")
+            print(now())
+            println(" #")
+            println(SEPARATOR)
+            println(" #")
+            println(variablesDescriptor)
+            println(" #")
+            println("# The columns have the following meaning: ")
+            print("# ")
+            dataExtractors.flatMap {
+                it.columnNames
+            }.forEach {
+                print(it)
+                print(" ")
+            }
+            outputPrintStream.println()
         }
-        outputPrintStream.println()
         exportData(environment, null, DoubleTime(), 0)
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        dataExtractors.forEach {
-            it.extractData(environment, reaction, time, step).values.forEach { value ->
-                outputPrintStream.print(value)
-                outputPrintStream.print(' ')
+        with(outputPrintStream) {
+            dataExtractors.forEach {
+                it.extractData(environment, reaction, time, step).values.forEach { value ->
+                    print(value)
+                    print(' ')
+                }
             }
+            println()
         }
-        outputPrintStream.println()
     }
 
     override fun close(environment: Environment<T, P>, time: Time, step: Long) {
-        outputPrintStream.println(SEPARATOR)
-        outputPrintStream.print("# End of data export. Simulation finished at: ")
-        val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
-        isoTime.timeZone = TimeZone.getTimeZone("UTC")
-        outputPrintStream.print(isoTime.format(Date()))
-        outputPrintStream.println(" #")
-        outputPrintStream.println(SEPARATOR)
-        outputPrintStream.close()
+        with(outputPrintStream) {
+            println(SEPARATOR)
+            print("# End of data export. Simulation finished at: ")
+            print(now())
+            println(" #")
+            println(SEPARATOR)
+            close()
+        }
+    }
+
+    companion object {
+        /**
+         * Character used to separate comments from data on export files.
+         */
+        private const val SEPARATOR = "#####################################################################"
+        private val logger = LoggerFactory.getLogger(CSVExporter::class.java)
+        private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        private fun now(): String = dateFormat.format(Date())
     }
 }

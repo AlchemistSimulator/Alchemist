@@ -25,6 +25,7 @@ import java.util.SortedMap
 import java.util.TimeZone
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
+import kotlin.reflect.KClass
 
 /**
  * Writes on file data provided by a number of {@link Extractor}s. Produces a
@@ -96,7 +97,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
                     }
                     // If the labels do not match keys, require predictable iteration order
                     else -> {
-                        require(data is LinkedHashMap || data is SortedMap) {
+                        require(data.hasPredictableIteration) {
                             """
                             Extractor "${extractor::class.simpleName}" is likely bugged:
                             1. the set of labels $names does not match the keys ${data.keys}, but iteration may fail as
@@ -127,10 +128,26 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
          * Character used to separate comments from data on export files.
          */
         private const val SEPARATOR = "#####################################################################"
+
         private val logger = LoggerFactory.getLogger(CSVExporter::class.java)
+
         private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
+
         private fun now(): String = dateFormat.format(Date())
+
+        /**
+         * Types listed here are supported as featuring a predictable iteration order.
+         * New types that feature such support should be allow-listed here.
+         */
+        private val mapsWithPredictableIteration: List<KClass<out Map<*, *>>> = listOf(
+            LinkedHashMap::class,
+            SortedMap::class,
+        )
+
+        private val Map<String, Any>.hasPredictableIteration get() = mapsWithPredictableIteration.any { kclass ->
+            kclass.java.isAssignableFrom(this::class.java)
+        }
     }
 }

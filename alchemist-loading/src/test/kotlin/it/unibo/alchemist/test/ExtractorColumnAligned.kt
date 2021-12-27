@@ -15,10 +15,11 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
- * Utility used to verify the correctness of CSVExport: when the columnNames matches the key set
- * returned by extract data, the values for each line should follow the columns name
+ * Utility used to verify the correctness of CSVExport.
+ * When the columnNames matches the key set returned by extract data,
+ * the values for each line should follow the columns name
  */
-class ExtractorColumnAligned() : Extractor<Int> {
+class ExtractorColumnAligned : Extractor<Int> {
     override val columnNames = listOf("d", "c", "b", "a")
     override fun <T> extractData(
         environment: Environment<T, *>,

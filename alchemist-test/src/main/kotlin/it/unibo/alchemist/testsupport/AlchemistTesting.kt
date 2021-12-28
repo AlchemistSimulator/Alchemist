@@ -13,8 +13,14 @@ package it.unibo.alchemist.testsupport
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
+import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.loader.InitializedEnvironment
+import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Position
+import org.kaikikm.threadresloader.ResourceLoader
 
 /**
  * Builds an empty environment, building a simulation [Engine], and binding them.
@@ -30,4 +36,33 @@ fun <T> createEmptyEnvironment(
     environment.simulation = engine
     outputMonitors.forEach { engine.addOutputMonitor(it) }
     return environment
+}
+
+/**
+ * Prepares an [InitializedEnvironment] given a [simulationFile] and, optionally, the [variables]' bindings.
+ */
+fun <T, P : Position<P>> loadAlchemist(
+    simulationFile: String,
+    variables: Map<String, *> = emptyMap<String, Nothing>(),
+): InitializedEnvironment<T, P> {
+    val file = requireNotNull(ResourceLoader.getResource(simulationFile)) {
+        "$simulationFile could not be found in the classpath"
+    }
+    return LoadAlchemist.from(file).getWith(variables)
+}
+
+/**
+ * Builds a new [Engine], adding a [GlobalExporter] with the required [it.unibo.alchemist.loader.export.Exporter]s.
+ */
+fun <T, P : Position<P>> InitializedEnvironment<T, P>.createSimulation() = Engine(environment).also {
+    it.addOutputMonitor(GlobalExporter(exporters))
+}
+
+/**
+ * Runs an existing [Simulation] in the current thread.
+ */
+fun <T, P : Position<P>> Simulation<T, P>.runInCurrentThread(): Simulation<T, P> {
+    play()
+    run()
+    return this
 }

@@ -21,9 +21,11 @@ import java.io.PrintStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.SortedMap
 import java.util.TimeZone
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempDirectory
+import kotlin.reflect.KClass
 
 /**
  * Writes on file data provided by a number of {@link Extractor}s. Produces a
@@ -43,14 +45,6 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     private val appendTime: Boolean = false
 ) : AbstractExporter<T, P>(interval) {
 
-    companion object {
-        /**
-         * Character used to separate comments from data on export files.
-         */
-        private const val SEPARATOR = "#####################################################################"
-        private val logger = LoggerFactory.getLogger(CSVExporter::class.java)
-    }
-
     private lateinit var outputPrintStream: PrintStream
 
     override fun setup(environment: Environment<T, P>) {
@@ -67,46 +61,93 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
                 "the file name would be empty. Please provide a file name."
         }
         outputPrintStream = PrintStream("$path$filePrefix.$fileExtension", Charsets.UTF_8.name())
-        outputPrintStream.println(SEPARATOR)
-        outputPrintStream.print("# Alchemist log file - simulation started at: ")
-        val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
-        isoTime.timeZone = TimeZone.getTimeZone("UTC")
-        outputPrintStream.print(isoTime.format(Date()))
-        outputPrintStream.println(" #")
-        outputPrintStream.println(SEPARATOR)
-        outputPrintStream.println(" #")
-        outputPrintStream.println(variablesDescriptor)
-        outputPrintStream.println(" #")
-        outputPrintStream.println("# The columns have the following meaning: ")
-        outputPrintStream.print("# ")
-        dataExtractors.flatMap {
-            it.columnNames
-        }.forEach {
-            outputPrintStream.print(it)
-            outputPrintStream.print(" ")
+        with(outputPrintStream) {
+            println(SEPARATOR)
+            print("# Alchemist log file - simulation started at: ")
+            print(now())
+            println(" #")
+            println(SEPARATOR)
+            println(" #")
+            println(variablesDescriptor)
+            println(" #")
+            println("# The columns have the following meaning: ")
+            print("# ")
+            dataExtractors.flatMap {
+                it.columnNames
+            }.forEach {
+                print(it)
+                print(" ")
+            }
+            outputPrintStream.println()
         }
-        outputPrintStream.println()
         exportData(environment, null, DoubleTime(), 0)
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
-        dataExtractors.forEach {
-            it.extractData(environment, reaction, time, step).values.forEach { value ->
-                outputPrintStream.print(value)
-                outputPrintStream.print(' ')
+        with(outputPrintStream) {
+            dataExtractors.forEach { extractor ->
+                val data = extractor.extractData(environment, reaction, time, step)
+                val names = extractor.columnNames
+                when {
+                    data.size <= 1 -> data.values.forEach { print("$it ") }
+                    // Labels and keys match
+                    data.size == names.size && data.keys.containsAll(names) -> names.forEach {
+                        print(requireNotNull(data[it]) { "Bug in ${this::class.simpleName}" })
+                        print(' ')
+                    }
+                    // If the labels do not match keys, require predictable iteration order
+                    else -> {
+                        require(data.hasPredictableIteration) {
+                            """
+                            Extractor "${extractor::class.simpleName}" is likely bugged:
+                            1. the set of labels $names does not match the keys ${data.keys}, but iteration may fail as
+                            2. it returned a map with non-predictable iteration order of type ${data::class.simpleName}"
+                            """.trimIndent()
+                        }
+                        data.values.forEach { print("$it ") }
+                    }
+                }
             }
+            println()
         }
-        outputPrintStream.println()
     }
 
     override fun close(environment: Environment<T, P>, time: Time, step: Long) {
-        outputPrintStream.println(SEPARATOR)
-        outputPrintStream.print("# End of data export. Simulation finished at: ")
-        val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US)
-        isoTime.timeZone = TimeZone.getTimeZone("UTC")
-        outputPrintStream.print(isoTime.format(Date()))
-        outputPrintStream.println(" #")
-        outputPrintStream.println(SEPARATOR)
-        outputPrintStream.close()
+        with(outputPrintStream) {
+            println(SEPARATOR)
+            print("# End of data export. Simulation finished at: ")
+            print(now())
+            println(" #")
+            println(SEPARATOR)
+            close()
+        }
+    }
+
+    companion object {
+        /**
+         * Character used to separate comments from data on export files.
+         */
+        private const val SEPARATOR = "#####################################################################"
+
+        private val logger = LoggerFactory.getLogger(CSVExporter::class.java)
+
+        private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+
+        private fun now(): String = dateFormat.format(Date())
+
+        /**
+         * Types listed here are supported as featuring a predictable iteration order.
+         * New types that feature such support should be allow-listed here.
+         */
+        private val mapsWithPredictableIteration: List<KClass<out Map<*, *>>> = listOf(
+            LinkedHashMap::class,
+            SortedMap::class,
+        )
+
+        private val Map<String, Any>.hasPredictableIteration get() = mapsWithPredictableIteration.any { kclass ->
+            kclass.java.isAssignableFrom(this::class.java)
+        }
     }
 }

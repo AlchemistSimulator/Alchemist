@@ -33,7 +33,7 @@ classgraph = "io.github.classgraph:classgraph:4.8.138"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.6.17"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.4"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.5"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }

@@ -10,7 +10,7 @@
         "org.apache.commons:commons-math3",
         "org.danilopianini:listset"
       ],
-      "semanticCommitType": "feat"
+      "semanticCommitScope": "api-deps"
     },
     {
       "description": "Trigger a patch update on some dependencies",
@@ -19,7 +19,7 @@
         "org.protelis:protelis-interpreter",
         "org.protelis:protelis-lang"
       ],
-      "semanticCommitType": "fix"
+      "semanticCommitScope": "core-deps"
     }
   ]
 }

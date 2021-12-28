@@ -1,3 +1,10 @@
+## [12.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.5...12.1.6) (2021-12-28)
+
+
+### Bug Fixes
+
+* require predictable iteration order for extractors in CSVExporter, fixes [#1002](https://github.com/AlchemistSimulator/Alchemist/issues/1002) ([838236a](https://github.com/AlchemistSimulator/Alchemist/commit/838236a2f99771a2aed249074a47d0c661fdf017))
+
 ## [12.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.4...12.1.5) (2021-12-22)
 
 

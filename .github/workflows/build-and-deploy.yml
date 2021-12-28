@@ -57,6 +57,7 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
   build-website:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1

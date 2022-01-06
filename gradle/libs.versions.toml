@@ -65,7 +65,7 @@ logback = "ch.qos.logback:logback-classic:1.2.10"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.17.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.0"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mongodb = "org.mongodb:mongodb-driver-sync:4.4.0"
+mongodb = "org.mongodb:mongodb-driver-sync:4.4.1"
 orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
 orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
 orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }

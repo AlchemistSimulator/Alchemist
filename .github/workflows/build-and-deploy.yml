@@ -47,10 +47,6 @@ jobs:
               contains('Linux', runner.os)
               && contains(github.repository, 'AlchemistSimulator/Alchemist')
               && contains('push workflow_dispatch', github.event_name)
-              && (
-                contains('master develop feature/try-ci-clean', steps.branch.outputs.current_branch)
-                || steps.branch.outputs.is_tag
-              )
             }}
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}

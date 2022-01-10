@@ -13,7 +13,7 @@ mockito = "4.2.0"
 protelis = "15.1.0"
 orchid = "0.21.1"
 scafi = "0.3.3"
-scala = "2.13.7"
+scala = "2.13.8"
 scalacache = "0.28.0"
 
 [libraries]

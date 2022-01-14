@@ -1,3 +1,5 @@
+import Libs.alchemist
+
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main(project"s alchemist/build.gradle file.
  *
@@ -12,6 +14,7 @@ dependencies {
         runtimeOnly(it)
     }
     testImplementation(rootProject)
+    testImplementation(alchemist("euclidean-geometry"))
 }
 
 plugins {

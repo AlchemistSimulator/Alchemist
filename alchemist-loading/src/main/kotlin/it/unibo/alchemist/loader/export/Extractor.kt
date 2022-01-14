@@ -23,7 +23,11 @@ import it.unibo.alchemist.model.interfaces.Time
 interface Extractor<out E : Any> {
 
     /**
-     * Extracts numeric properties from an environment.
+     * Extracts properties from an environment. The returned map must either:
+     *   - contain a single element,
+     *   - have the keys matching [columnNames], or
+     *   - be iterable in predictable order
+     *     (namely, implement [SortedMap] or extend one of [LinkedHashMap] or [ConcurrentLinkedHashMap]).
      *
      * @param environment
      *            the {@link Environment}
@@ -34,7 +38,12 @@ interface Extractor<out E : Any> {
      * @param step
      *            the simulation step
      * @param <T> concentration type
-     * @return the extracted properties
+     * @return
+     *  the extracted properties with their names. The returned map must either:
+     *      - contain a single element,
+     *      - have the keys matching [columnNames], or
+     *      - be iterable in predictable order
+     *      (namely, implement [SortedMap] or extend [LinkedHashMap]).
      */
     fun <T> extractData(environment: Environment<T, *>, reaction: Reaction<T>?, time: Time, step: Long): Map<String, E>
 

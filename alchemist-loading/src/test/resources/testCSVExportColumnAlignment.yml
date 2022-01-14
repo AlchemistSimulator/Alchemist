@@ -1,0 +1,6 @@
+incarnation: protelis
+export:
+  - type: CSVExporter
+    parameters: ["column-alignment"]
+    data:
+      - type: it.unibo.alchemist.test.ExtractorColumnAligned

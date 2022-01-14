@@ -9,6 +9,9 @@ package it.unibo.alchemist
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.ConsoleAppender
 import it.unibo.alchemist.cli.CLIMaker
 import it.unibo.alchemist.launch.Launcher
 import it.unibo.alchemist.launch.Priority
@@ -94,7 +97,7 @@ object Alchemist {
         fun printHelp() = HelpFormatter().printHelp("java -jar alchemist-redist-{version}.jar", opts)
         val parser: CommandLineParser = DefaultParser()
         try {
-            val cmd = parser.parse(opts, args)
+            val cmd: CommandLine = parser.parse(opts, args)
             setVerbosity(cmd)
             val options = cmd.toAlchemist
             if (options.isEmpty || options.help) {
@@ -175,6 +178,7 @@ object Alchemist {
     }
 
     private fun setVerbosity(cmd: CommandLine) {
+        (LoggerFactory.getLogger("org.reflections.Reflections") as Logger).level = Level.OFF
         val verbosity = logLevels.filterKeys { cmd.hasOption(it) }.values
         when {
             verbosity.size > 1 ->
@@ -183,13 +187,20 @@ object Alchemist {
                     ExitStatus.MULTIPLE_VERBOSITY
                 )
             verbosity.size == 1 -> setLogbackLoggingLevel(verbosity.first())
+            else -> setLogbackLoggingLevel(Level.WARN)
         }
     }
 
     private fun setLogbackLoggingLevel(level: Level) {
-        val root =
-            LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
+        val root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
         root.level = level
+        root.addAppender(
+            ConsoleAppender<ILoggingEvent?>().apply {
+                encoder = PatternLayoutEncoder().apply {
+                    pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
+                }
+            }
+        )
     }
 
     private fun exitWith(status: ExitStatus): Nothing {

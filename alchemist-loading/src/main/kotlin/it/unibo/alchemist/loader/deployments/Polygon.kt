@@ -19,7 +19,7 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * Alias for using pairs as bidimensional points.
  */
-typealias Point2D = Pair<Number, Number>
+private typealias Point2D = Pair<Number, Number>
 
 /**
  * Creates a new Polygon with the given points.

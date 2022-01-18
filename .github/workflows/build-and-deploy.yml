@@ -38,6 +38,7 @@ jobs:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Cleanup the old website
+        shell: bash
         run: |
           rm -rf build/website/*
           ls -ahl build/website

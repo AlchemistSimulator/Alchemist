@@ -33,8 +33,9 @@ jobs:
         with:
           path: build/website
           fetch-depth: 0
-          submodules: recursive
           persist-credentials: true
+          repository: AlchemistSimulator/alchemistsimulator.github.io
+          submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Cleanup the old website
         run: |

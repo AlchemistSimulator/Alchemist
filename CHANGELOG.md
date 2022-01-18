@@ -1,3 +1,21 @@
+## [12.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.7...12.2.0) (2022-01-18)
+
+
+### Features
+
+* import RandomTargetInPolygon from the [JCEE experiments](https://github.com/DanySK/Experiment-2021-JCEE-Optimal-Converge-Cast) ([264c404](https://github.com/AlchemistSimulator/Alchemist/commit/264c404a4cb08418196a6720e6be8d853a1b661e))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.2.8 ([9d69ee1](https://github.com/AlchemistSimulator/Alchemist/commit/9d69ee108a7af372c7fce5f78f1cdde0d57ead1e))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.3 ([d756407](https://github.com/AlchemistSimulator/Alchemist/commit/d7564078ae1670bb6884fa2bafbe6c10474c5093))
+
+
+### Refactoring
+
+* **loading:** hide internal type alias in Polygon ([971eb54](https://github.com/AlchemistSimulator/Alchemist/commit/971eb544bd221f5816f96a4e5c92f6d5f1e21206))
+
 ### [12.1.7](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.6...12.1.7) (2022-01-14)
 
 

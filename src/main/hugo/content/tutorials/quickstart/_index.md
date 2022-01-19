@@ -1,5 +1,4 @@
 +++
-chapter = true
 title = "Quickstart"
 weight = 1
 tags = ["quickstart", "installation", "execution"]

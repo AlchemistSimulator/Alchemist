@@ -18,24 +18,24 @@ The first step to take in order to use the simulator, is to answer the question
 
 The world of Alchemist is composed of the following entities:
 
-* **{{ anchor('Molecule') }}**
+* **Molecule**
     * The name of a data item
     * If Alchemist were an imperative programming language, a *molecule* would be the concept of *variable name*
-* **{{anchor('Concentration') }}**
+* **Concentration**
     * The value associated to a particular *molecule*
     * If Alchemist were an imperative programming language, a *concentration* would be the concept of *value associated to a variable*
-* **{{anchor('Node')}}**
+* **Node**
     * A container of *molecules* and *reactions*, living inside an *environment*
-* **{{anchor('Environment')}}**
+* **Environment**
     * The Alchemist abstration for the space. It is a container for *nodes*, and it is able to tell:
         1. Where the nodes are in the space - i.e. their *position*
         2. The distance between two *nodes*
         3. Optionally, support for moving *nodes*
-* **{{anchor('Linking rule', 'LinkingRule')}}**
+* **Linking rule', 'LinkingRule**
     * A function of the current status of the environment that associates to each *node* a *neighborhood*
-* **{{anchor('Neighborhood')}}**
+* **Neighborhood**
     * An entity composed by a *node* (centre) and a set of *nodes* (neighbors)
-* **{{anchor('Reaction')}}**
+* **Reaction**
     * Any event that can change the status of the *{{ anchor('environment', 'Environment') }}*
     * Each *node* has a possibly empty set of *reactions*
     * Each reaction is defined by a possibly empty list of *conditions*, one or more *actions* and a *{{ anchor('time distribution', 'TimeDistribution') }}*
@@ -44,11 +44,11 @@ The world of Alchemist is composed of the following entities:
         2. The value of each *condition*
         3. A "rate equation", that combines the static rate and the value of conditions, giving back an "instantaneous rate"
         4. A *time distribution*
-* **{{anchor('Condition')}}**
+* **Condition**
     * A function that takes the current *environment* as input and outputs a boolean and a number
     * If the *condition* does not hold (i.e. its current output is ``false``), the *reaction* to which it is associated cannot run
     * The outputed number may or may not influence the *reaction* speed (i.e. the average number of times the *reaction* "happens" per time unit), depending on the *reaction* and its *time distribution*.
-* **{{anchor('Action')}}**
+* **Action**
     * Models a change in the environment.
 
 The following image is a visualization of such model:
@@ -76,7 +76,7 @@ are respectively
 An **incarnation** of Alchemist includes a **type** definition of **concentration**,
 and possibly a set of specific conditions, actions and (rarely) environments and reactions that operate on such types.
 In other words, an incarnation is a concrete instance of the Alchemist meta-model.
-In addition, a proper {{anchor('Alchemist incarnation', 'Incarnation')}} must also define:
+In addition, a proper Alchemist incarnation', 'Incarnation must also define:
 
 * Means for translating strings into named entities (molecules)
 * Means for obtaining a number when given a node, a molecule and a string representing a property
@@ -92,7 +92,7 @@ The standalone distribution comes with:
 
 * [Protelis Incarnation](http://protelis.org)
 * [SAPERE Incarnation](http://dx.doi.org/10.1016/j.pmcj.2014.12.002)
-* {{anchor('Biochemistry Incarnation', 'BiochemistryIncarnation')}}
+* Biochemistry Incarnation
 * [Scafi incarnation](https://scafi.github.io/)
 
 
@@ -106,6 +106,10 @@ extended to support addition and removal of reactions, and improved using input 
 in order to prune the dependency graph as much as possible.
 More details on that are demanded to [this scientific paper on Journal of Simulation](http://dx.doi.org/10.1057/jos.2012.27).
 
-The engine's entry point is the {{anchor('Simulation')}}.
-It is equipped with support for commands like play, pause and stop, and can be equipped with an {{anchor('OutputMonitor')}}.
+The engine's entry point is the `Simulation`.
+It is equipped with support for commands like play, pause and stop, and can be equipped with an `OutputMonitor`.
 The output monitor can be a graphical interface, a logger or any kind of environment inspector.
+
+{{< github owner="gciatto" repo="kt-math" path="src/commonMain/kotlin/org/gciatto/kt/math/BigInteger.kt" >}}
+
+{{< code path="README.md" >}}

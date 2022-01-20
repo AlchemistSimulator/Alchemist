@@ -11,6 +11,7 @@ import Libs.incarnation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -319,6 +320,10 @@ tasks {
         .mapValues { it.value.get() }
         .forEach { (folder, task) ->
             hugoBuild.get().dependsOn(task)
-            task.outputDirectory.set(File(websiteDir, folder))
+            val copyTask = register<Copy>("copy${folder.capitalizeAsciiOnly()}IntoWebsite") {
+                from(task.outputDirectory)
+                into(File(websiteDir, "reference/$folder"))
+            }
+            hugoBuild.get().finalizedBy(copyTask)
         }
 }

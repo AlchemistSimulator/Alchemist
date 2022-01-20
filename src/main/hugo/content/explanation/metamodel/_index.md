@@ -3,11 +3,17 @@ pre = ""
 title = "The Alchemist Meta-Model"
 weight = 1
 tags = ["model", "metamodel", "understand", "molecule", "concentration", "node", "environment", "linking rule", "neighborhood", "reaction", "condition", "action"]
+summary = "What does Alchemist simulate? A trip on the abstractions that populate the world of Alchemist."
 +++
 
 The first step to take in order to use the simulator, is to answer the question
 
 > what does Alchemist simulate?
+
+A broad introduction is provided in form of introductory video from the [DAIS 2021](http://www.discotec.org/2021/dais.html)
+conference tutorial.
+
+{{< youtube zF-LHHQjdOg >}}
 
 ### The model
 
@@ -89,19 +95,3 @@ The standalone distribution comes with:
 * [SAPERE Incarnation](http://dx.doi.org/10.1016/j.pmcj.2014.12.002)
 * Biochemistry Incarnation
 * [Scafi incarnation](https://scafi.github.io/)
-
-
-More details on how to use each of the included incarnations will be provided after this introductory chapter.
-
-## The tool
-
-The core part of the tool is the incarnation-agnostic simulation engine.
-Its current implementation is based on [Gibson and Bruck's Next Reaction](http://dx.doi.org/10.1021/jp993732q),
-extended to support addition and removal of reactions, and improved using input and output contexts for reactions,
-in order to prune the dependency graph as much as possible.
-More details on that are demanded to [this scientific paper on Journal of Simulation](http://dx.doi.org/10.1057/jos.2012.27).
-
-The engine's entry point is the `Simulation`.
-It is equipped with support for commands like play, pause and stop, and can be equipped with an `OutputMonitor`.
-The output monitor can be a graphical interface, a logger or any kind of environment inspector.
-

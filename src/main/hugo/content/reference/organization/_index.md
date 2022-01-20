@@ -1,6 +1,8 @@
----
-title: "Organization"
-date: 2022-01-20T14:46:01+01:00
-draft: true
----
++++
+pre = ""
+title = "Project organization"
+weight = 4
+summary = "Locations where things are found: build files, API implementations"
+tags = ["packages", "build system"]
++++
 

@@ -1,12 +1,7 @@
 +++
-chapter = true
-pre = "<b>X. </b>"
-title = "Kdoc"
+pre = "<i>(recommended)</i> "
+title = "KDoc API"
 weight = 5
+summary = "KDoc API docs. Captures both Java and Kotlin API abtractions."
+tags = ["kdoc", "dokka", "api docs"]
 +++
-
-### Chapter X
-
-# Some Chapter title
-
-Lorem Ipsum.

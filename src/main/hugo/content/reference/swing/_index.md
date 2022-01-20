@@ -1,8 +1,10 @@
----
-title: "Swing GUI"
-date: 2022-01-18T12:02:27+01:00
-tags: ["graphical interface", "monitor", "control"]
----
++++
+pre = ""
+title = "Swing GUI"
+weight = 100
+summary = "Key mappings for the Java Swing-based graphical interface"
+tags = ["key mapping", "hotkeys", "gui", "swing", "graphical interface"]
++++
 
 The current, Swing-based graphical interface for Alchemist is being replaced by a new, JavaFX-based interface.
 This page currently hosts minimal information on how to use such legacy GUI.

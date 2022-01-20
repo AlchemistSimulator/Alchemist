@@ -1,12 +1,7 @@
 +++
-chapter = true
-pre = "<b>X. </b>"
-title = "Javadoc"
-weight = 5
+pre = "<i>(legacy)</i> "
+title = "Javadoc API"
+weight = 6
+summary = "Javadoc API docs. Kotlin classes are not captured as well as in KDoc, so the KDoc could be a better pick for most tasks."
+tags = ["javadoc", "api docs"]
 +++
-
-### Chapter X
-
-# Some Chapter title
-
-Lorem Ipsum.

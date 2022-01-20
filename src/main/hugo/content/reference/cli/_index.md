@@ -1,6 +1,8 @@
----
-title: "Cli"
-date: 2022-01-20T14:45:37+01:00
-draft: true
----
++++
+pre = ""
+title = "Command Line interface"
+weight = 1
+summary = "Available CLI options."
+tags = ["cli", "command line", "options", "batch", "variables"]
++++
 

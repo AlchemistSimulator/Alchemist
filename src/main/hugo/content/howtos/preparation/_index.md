@@ -3,10 +3,13 @@ chapter = true
 pre = ""
 title = "Preparation"
 weight = 1
+summary = "Preliminary operations for using Alchemist: installation, setup"
 +++
 
-### Chapter X
+### Set up the simulation environment
 
-# Some Chapter title
+# Preparation
 
-Lorem Ipsum.
+## Contents
+
+{{% children description="true" depth="30" %}}

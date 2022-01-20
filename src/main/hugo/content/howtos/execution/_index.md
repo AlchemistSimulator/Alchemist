@@ -1,12 +1,15 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
+pre = ""
 title = "Execution"
-weight = 5
+weight = 3
+summary = "Execution of multiple simulations, locally or in a distributed environment"
 +++
 
-### Chapter X
+### Run batches, locally or in a distributed fashion
 
-# Some Chapter title
+# Execution
 
-Lorem Ipsum.
+## Contents
+
+{{% children description="true" depth="30" %}}

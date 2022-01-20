@@ -1,12 +1,15 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
+pre = ""
 title = "Workarounds"
-weight = 5
+weight = 4
+summary = "Pre-concocted solutions to well-known issues"
 +++
 
-### Chapter X
+### Pre-concocted solutions to well-known issues
 
-# Some Chapter title
+# Work arounds
 
-Lorem Ipsum.
+## Contents
+
+{{% children description="true" depth="30" %}}

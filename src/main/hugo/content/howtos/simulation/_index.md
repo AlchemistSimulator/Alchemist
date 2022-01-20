@@ -1,12 +1,15 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
+pre = ""
 title = "Simulation"
-weight = 5
+weight = 2
+summary = "Guides on how to create simulation environments, configure node behaviour, and control the simulation details"
 +++
 
-### Chapter X
+### Prepare the simulated environment
 
-# Some Chapter title
+# Simulation
 
-Lorem Ipsum.
+## Contents
+
+{{% children description="true" depth="30" %}}

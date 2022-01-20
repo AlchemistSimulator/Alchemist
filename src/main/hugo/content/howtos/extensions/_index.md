@@ -1,12 +1,15 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
-title = "Extensions"
+pre = ""
+title = "Experiment-specific extensions"
 weight = 5
+summary = "One-time changes or additions to the simulator behavior"
 +++
 
-### Chapter X
+### One-time changes or additions to the simulator behavior
 
-# Some Chapter title
+# Experiment-specific extensions
 
-Lorem Ipsum.
+## Contents
+
+{{% children description="true" depth="30" %}}

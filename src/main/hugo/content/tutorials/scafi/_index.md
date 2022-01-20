@@ -2,7 +2,7 @@
 title = "Scafi Incarnation Tutorial"
 weight = 5
 tags = ["scala", "scafi", "scala fields", "tutorial", "aggregate", "aggregate computing", "aggregate programming"]
-summary = "Ready-to-run examples of increasing complexity with the Protelis incarnation"
+summary = "Ready-to-run examples of increasing complexity with the Scafi incarnation"
 +++
 
 A tutorial similar to the [base tutorial](../basics), with increasingly rich examples,

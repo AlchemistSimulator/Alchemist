@@ -1,12 +1,15 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
+pre = ""
 title = "Development"
-weight = 5
+weight = 6
+summary = "How to contribute to the project, hence achieving eternal glory"
 +++
 
-### Chapter X
+### Guides for the project contributors
 
-# Some Chapter title
+# Development
 
-Lorem Ipsum.
+## Contents
+
+{{% children description="true" depth="30" %}}

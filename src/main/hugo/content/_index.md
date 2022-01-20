@@ -5,9 +5,7 @@ title = "The Alchemist Simulator"
 weight = 5
 +++
 
-# The Alchemist Simulator
-
-![logo](images/logo.svg)
+# ![logo](images/logo-text-path.svg)
 
 This website hosts the documentation of the Alchemist Simulator.
 The simulator, created towards the end of 2010 as a by-product of the European Project SAPERE,

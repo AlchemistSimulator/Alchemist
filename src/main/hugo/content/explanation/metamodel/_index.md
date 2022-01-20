@@ -1,14 +1,9 @@
 +++
-chapter = true
 pre = ""
-title = "Understand"
-weight = 5
+title = "The Alchemist Meta-Model"
+weight = 1
 tags = ["model", "metamodel", "understand", "molecule", "concentration", "node", "environment", "linking rule", "neighborhood", "reaction", "condition", "action"]
 +++
-
-### The Alchemist Simulator metamodel
-
-# The world of Alchemist
 
 The first step to take in order to use the simulator, is to answer the question
 
@@ -110,6 +105,3 @@ The engine's entry point is the `Simulation`.
 It is equipped with support for commands like play, pause and stop, and can be equipped with an `OutputMonitor`.
 The output monitor can be a graphical interface, a logger or any kind of environment inspector.
 
-{{< github owner="gciatto" repo="kt-math" path="src/commonMain/kotlin/org/gciatto/kt/math/BigInteger.kt" >}}
-
-{{< code path="README.md" >}}

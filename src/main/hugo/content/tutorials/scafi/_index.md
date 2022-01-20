@@ -1,22 +1,22 @@
 +++
-title = "Protelis Incarnation Tutorial"
+title = "Scafi Incarnation Tutorial"
 weight = 5
-tags = ["protelis", "tutorial", "aggregate", "aggregate computing", "aggregate programming"]
+tags = ["scala", "scafi", "scala fields", "tutorial", "aggregate", "aggregate computing", "aggregate programming"]
 summary = "Ready-to-run examples of increasing complexity with the Protelis incarnation"
 +++
 
 A tutorial similar to the [base tutorial](../basics), with increasingly rich examples,
-focused on the Protelis incarnation.
+focused on the Scafi incarnation.
 
-The tutorial can be found on [GitHub](https://github.com/AlchemistSimulator/Protelis-Incarnation-tutorial).
+The tutorial can be found on [GitHub](https://github.com/scafi/learning-scafi-alchemist).
 The `README.md` file of the project explains the use and the steps to follow.
 
 {{% expand "Show README.md" %}}
-{{< github repo="Protelis-Incarnation-tutorial" >}}
+{{< github owner="scafi" repo="learning-scafi-alchemist" >}}
 {{% /expand %}}
 
 {{% notice note %}}
 Something went wrong along the line? Drop us an
-[issue report](https://github.com/AlchemistSimulator/Protelis-Incarnation-tutorial/issues/new/choose)
+[issue report](https://github.com/scafi/learning-scafi-alchemist/issues/new/choose)
 and we'll get back to you.
 {{% /notice %}}

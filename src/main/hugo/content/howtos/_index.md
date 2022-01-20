@@ -1,12 +1,14 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
+pre = "<b>2. </b>"
 title = "How-to Guides"
-weight = 5
+weight = 2
 +++
 
-### Chapter X
+### Problem-oriented
 
-# Some Chapter title
+# How-to Guides
 
-Lorem Ipsum.
+## Contents
+
+{{% children description="true" depth="30" %}}

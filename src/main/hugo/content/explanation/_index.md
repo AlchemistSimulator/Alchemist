@@ -1,6 +1,6 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
+pre = "<b>4. </b>"
 title = "Explanation"
 weight = 500
 +++
@@ -17,3 +17,7 @@ conference tutorial.
 {{< youtube zF-LHHQjdOg >}}
 
 The following sections are meant for those that favor reading over watching.
+
+## Contents
+
+{{% children description="true" depth="30" %}}

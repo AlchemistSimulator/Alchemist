@@ -15,4 +15,13 @@
         )
     )
 ) -}}
-{{- highlight ($content) ($language) "" -}}
+<div class="expand">
+    <a class="expand-label" onclick="$t=$(this); if($t.parent('.expand-expanded.expand-marked').length){ $t.next().css('display','none') }else if($t.parent('.expand-marked').length){ $t.next().css('display','block') }else{ $t.next('.expand-content').slideToggle(100); } $t.parent().toggleClass('expand-expanded');">
+        <i class="fas fa-chevron-down"></i>
+        <i class="fas fa-chevron-right"></i>
+        <b>Click to show / hide code</b>
+    </a>
+    <div class="expand-content" style="display: none;">
+        {{- highlight ($content) ($language) "" -}}
+    </div>
+</div>

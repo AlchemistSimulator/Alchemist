@@ -1,12 +1,16 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
+pre = "<b>3. </b>"
 title = "Reference"
-weight = 5
+weight = 3
 +++
 
-### Chapter X
+### Information-oriented
 
-# Some Chapter title
+# Reference
 
 Lorem Ipsum.
+
+## Contents
+
+{{% children description="true" depth="30" %}}

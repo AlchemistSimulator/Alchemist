@@ -1,6 +1,6 @@
 +++
 chapter = true
-pre = "<b>X. </b>"
+pre = "<b>1. </b>"
 title = "Tutorials"
 weight = 1
 +++
@@ -13,3 +13,7 @@ Tutorials are lessons that take the reader by the hand through a series of steps
 They are meant to show a beginner that they can achieve something with Alchemist.
 
 Let's start by getting the simulator to run locally on your PC.
+
+## Contents
+
+{{% children description="true" depth="30" %}}

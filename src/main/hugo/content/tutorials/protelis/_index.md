@@ -1,9 +1,11 @@
 +++
-title = "Quickstart"
-weight = 1
-tags = ["quickstart", "installation", "execution"]
-summary = "A super-fast way to get an instance of the simulator up and running."
+title = "Protelis Incarnation Tutorial"
+weight = 5
+tags = ["protelis", "tutorial", "aggregate", "aggregate computing", "aggregate programming"]
+summary = "Ready-to-run examples of increasing complexity with the Protelis incarnation"
 +++
+
+A tutorial similar to
 
 You need:
 * A terminal, bash compatible preferred

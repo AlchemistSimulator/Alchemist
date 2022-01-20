@@ -16,8 +16,12 @@ has since grown, and it is now a full-fledged simulation framework.
 If you happen to use Alchemist for academic purposes,
 please reference the following paper:
 
-{{< code path="CITATION" from="3" to="5" >}}
+{{< cite >}}
 
 Here is a BibTeX for LaTeX users:
 
-{{< code path="CITATION" from="8" language="bibtex" >}}
+{{< cite bibtex=true >}}
+
+## Index of contents
+
+{{% children description="true" depth="30" %}}

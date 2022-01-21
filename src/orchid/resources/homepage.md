@@ -1,7 +1,0 @@
----
-components:
-  - type: 'readme'
----
-
-
-

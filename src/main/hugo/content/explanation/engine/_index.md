@@ -15,4 +15,3 @@ More details on that are demanded to [this scientific paper on Journal of Simula
 The engine's entry point is the `Simulation`.
 It is equipped with support for commands like play, pause and stop, and can be equipped with an `OutputMonitor`.
 The output monitor can be a graphical interface, a logger or any kind of environment inspector.
-

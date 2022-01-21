@@ -6,22 +6,27 @@
 {{- $end := sub $end $start }}
 {{- $content := after $start (first (add $start $end) $content) -}}
 {{- $content := delimit $content "\n" -}}
-{{- $language := .Get "language" | default (
-    cond (or (strings.HasSuffix $path ".kt") (strings.HasSuffix $path ".kts")) "kotlin" (
-        cond (strings.HasSuffix $path ".yml") "yaml" (
-            cond (strings.HasSuffix $path ".md") "markdown" (
-                replaceRE "^.*\\.(\\w+)$" "$1" $path
+{{- $highlight := .Get "highlight" | default "true" -}}
+{{- if eq $highlight "true" }}
+    {{- $language := .Get "language" | default (
+        cond (or (strings.HasSuffix $path ".kt") (strings.HasSuffix $path ".kts")) "kotlin" (
+            cond (strings.HasSuffix $path ".yml") "yaml" (
+                cond (strings.HasSuffix $path ".md") "markdown" (
+                    replaceRE "^.*\\.(\\w+)$" "$1" $path
+                )
             )
         )
-    )
-) -}}
-<div class="expand">
-    <a class="expand-label" onclick="$t=$(this); if($t.parent('.expand-expanded.expand-marked').length){ $t.next().css('display','none') }else if($t.parent('.expand-marked').length){ $t.next().css('display','block') }else{ $t.next('.expand-content').slideToggle(100); } $t.parent().toggleClass('expand-expanded');">
-        <i class="fas fa-chevron-down"></i>
-        <i class="fas fa-chevron-right"></i>
-        <b>Click to show / hide code</b>
-    </a>
-    <div class="expand-content" style="display: none;">
-        {{- highlight ($content) ($language) "" -}}
+    ) -}}
+    <div class="expand">
+        <a class="expand-label" onclick="$t=$(this); if($t.parent('.expand-expanded.expand-marked').length){ $t.next().css('display','none') }else if($t.parent('.expand-marked').length){ $t.next().css('display','block') }else{ $t.next('.expand-content').slideToggle(100); } $t.parent().toggleClass('expand-expanded');">
+            <i class="fas fa-chevron-down"></i>
+            <i class="fas fa-chevron-right"></i>
+            <b>Click to show / hide code</b>
+        </a>
+        <div class="expand-content" style="display: none;">
+            {{- highlight ($content) ($language) "" -}}
+        </div>
     </div>
-</div>
+{{- else -}}
+{{- $content -}}
+{{- end -}}

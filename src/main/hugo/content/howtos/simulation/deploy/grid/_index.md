@@ -1,5 +1,5 @@
 +++
-title = "Create a Grid of nodes"
+title = "(Irregular) Grids"
 weight = 5
 tags = ["deployment", "node", "nodes", "grid"]
 summary = "Deployment of nodes in (possibly irregular) grids."

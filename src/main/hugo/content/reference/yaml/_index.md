@@ -204,7 +204,12 @@ Same as [parameters](#parameters)
   {{<code path="src/test/resources/website-snippets/deployment-grid.yml" >}}
 * Irregular {{% api package="loader.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically, randomly perturbed of (±`0.1` distance units).
   {{<code path="src/test/resources/website-snippets/deployment-grid-perturbed.yml" >}}
-
+* Nodes located randomly inside a {{% api package="loader.deployments" class="Circle" %}}
+  {{<code path="src/test/resources/website-snippets/deployment-circle.yml" >}}
+* Nodes located randomly inside a {{% api package="loader.deployments" class="Rectangle" %}}
+  {{<code path="src/test/resources/website-snippets/deployment-rectangle.yml" >}}
+* Nodes located randomly inside a {{% api package="loader.deployments" class="Polygon" %}} delimiting the Venice Lagoon
+  {{<code path="src/test/resources/website-snippets/maps-simple.yml" >}}
 
 ---
 

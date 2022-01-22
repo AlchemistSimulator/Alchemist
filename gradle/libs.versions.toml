@@ -108,7 +108,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
-java-qa = "org.danilopianini.gradle-java-qa:0.15.0"
+java-qa = "org.danilopianini.gradle-java-qa:0.16.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.9.0"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.4"

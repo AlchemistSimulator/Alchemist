@@ -21,6 +21,7 @@ import it.unibo.alchemist.loader.export.extractors.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
 import it.unibo.alchemist.loader.m2m.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
+import it.unibo.alchemist.loader.m2m.syntax.SyntaxElement
 import it.unibo.alchemist.loader.shapes.Shape
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable

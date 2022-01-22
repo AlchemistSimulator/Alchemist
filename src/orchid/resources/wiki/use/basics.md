@@ -4,83 +4,6 @@ title: "Basics of an Alchemist simulation"
 
 ---
 
-## Defining the network
-
-The `network-model` key is used to load the implementation of {{ anchor('LinkingRule') }} to be used in the simulation,
-which determines the neighborhood of every node.
-The key is optional, but defaults to {{ anchor('NoLinks') }}, so if unspecified nodes in the environment don't get
-connected.
-Omitting such key is equivalent to writing any of the following:
-```yaml
-network-model:
-  type: NoLinks
-```
-```yaml
-network-model:
-  type: it.unibo.alchemist.model.implementations.linkingrules.NoLinks
-  parameters: []
-```
-```yaml
-network-model:
-  type: NoLinks
-  parameters: []
-```
-If no fully qualified linking rule name is provided for class loading, Alchemist uses the package
-{{ anchor('it.unibo.alchemist.model.implementations.linkingrules') }} to search for the class.
-
-### Linking nodes based on distance
-
-One of the most common ways of linking nodes is to connect those which are close enough to each other. To do so, you can
-use the class {{ anchor('ConnectWithinDistance') }}, passing a parameter representing the maximum connection distance.
-Note that such distance depends on the environment: while the definition of distance is straightforward for euclidean
-spaces, it's not so for [Riemannian manifolds](https://en.wikipedia.org/wiki/Riemannian_geometry), which is a fancy
-name to define geometries such as the one typical of a urban map (you can roughly interpret it as a euclidean space
-"with holes").
-For instance, in case of environments using {{ anchor('GeoPosition') }}, the distance is computed in meters, so the
-distance between `[44.133254, 12.237770]` and `[44.146680, 12.258627]` is about `2240` (meters).
-
-```yaml
-network-model:
-  type: ConnectWithinDistance
-  # Link together all the nodes closer than 100 according to the distance function
-  parameters: [100]
-```
-
-## Writing behaviors (Reactions)
-
-Nodes can be programmed using reactions.
-Reaction are usually highly dependent on the specific incarnation.
-
-```yaml
-# Variable representing the program to be executed
-gradient: &gradient
-  - time-distribution: 1
-    # Make sure that the program folder is part of the project classpath
-    program: program:package:distanceTo
-  - program: send
-deployments:
-  - type: Grid
-    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
-    programs:
-      # Reference to the "gradient" list of programs. This program is executed in all
-      # the grid nodes
-      - *gradient
-```
-
-### Triggers
-
-```yaml
-pools:
-  - pool:
-      - time-distribution:
-          type: Trigger
-          parameters: [0] # the param is the time step
-      type: Event
-      actions:
-        - type: MyActionType
-          parameters: [...] #
-```
-
 ## Layers
 
 It is possible to define overlays (layers) of data that can be sensed everywhere in the environment.
@@ -91,17 +14,12 @@ This implies that reactions that read values from layers should have special car
 In order to create layer, the programmer must define the type of the layer, a molecule that will be used as identifier,
 and possibly the parameters needed for intializing the type of layer you have chosen, as per the [`type/parameter` syntax](#loading-arbitrary-java-classes-with-the-typeparameters-syntax).
 
+{{% code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" %}}
+
 The following example exemplifies the syntax for initializing two {{ anchor('BidimensionalGaussianLayer') }}: 
 
-```yaml
-layers:
-  - type: BidimensionalGaussianLayer
-    molecule: foo
-    parameters: [0.0, 0.0, 2.0, 5.0]
-  - type: BidimensionalGaussianLayer
-    molecule: bar
-    parameters: [0.0, 0.0, 5.0, 10.0]
-```
+{{% code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" %}}
+
 
 ## Terminating the simulation if a condition is met
 

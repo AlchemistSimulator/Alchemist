@@ -52,7 +52,7 @@ jobs:
           check-command: |
             ./gradlew check --parallel || ./gradlew check --parallel
             if [ '${{ matrix.os }}' == 'ubuntu' ]; then
-              docker run --rm -v "$(pwd)/build/website:/lychee" -e GITHUB_TOKEN lycheeverse/lychee '/lychee/**/*.html'
+              docker run --rm -v "$(pwd)/build/website:/lychee" -e GITHUB_TOKEN lycheeverse/lychee '/lychee/**/*.html' --exclude-file /lychee/lycheeignore
             fi
           clean-command: |
             ./gradlew clean --parallel

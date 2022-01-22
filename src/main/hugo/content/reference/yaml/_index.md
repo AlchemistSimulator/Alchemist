@@ -159,6 +159,20 @@ Valid incarnation types in the full distribution:
 
 ---
 
+## `action`
+
+Builds an {{% api class="Action" %}}
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+
+---
+
+## `condition`
+
+Builds a {{% api class="Condition" %}}
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+
+---
+
 ### `deployments`
 
 **Type**: Traversable
@@ -233,6 +247,8 @@ If left unspecified, nodes get created through
 
 ### `deployment.programs`
 
+**Type**: Traversable of [`program`](#program)
+
 ---
 
 ### `content`
@@ -304,11 +320,89 @@ If left unspecified, defaults to a bidimensional Euclidean manifold:
 
 ---
 
+### `layer`
+
+**Type**: SpecMap
+
+Builds a {{% api class="Layer" %}}
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+
+#### Examples
+
+* Creation of two {{% api class="Layer" %}}s
+    {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
+* Creation of two {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}s:
+    {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
+
+---
+
 ### `layers`
+
+**Type**: Traversable of [`layer`](#layer)
+
+#### Examples
+
+* Creation of two {{% api class="Layer" %}}s
+    {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
+* Creation of two {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}s:
+    {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
 
 ---
 
 ### `network-model`
+
+**Type**: SpecMap
+
+Builds a {{% api class="LinkingRule" %}}
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+If unspecified, defaults to {{% api package="model.implementations.linkingrules" class="NoLinks" %}},
+and no nodes will have any neighbor.
+
+#### Examples
+* Nodes connected when closer than some range
+  {{<code path="src/test/resources/website-snippets/deployment-in-three-points.yml" >}}
+
+---
+
+### `program`
+
+**Type**: SpecMap
+
+Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+
+**(Multi)Spec**
+
+| Mandatory keys | Optional keys                                             |
+|----------------|-----------------------------------------------------------|
+| `type`         | `parameters`, `conditions`, `time-distribution` `actions` |
+| `program`      | `time-distribution`                                       |
+
+### `program.type`
+
+Same as [type](#type)
+
+### `program.program`
+
+**Type**: String
+
+Passed to {{% api class="Incarnation" method="createReaction" %}} to be interepreted and 
+
+### `program.actions`
+
+**Type**: Traversable of [`program`](#action)
+
+### `program.conditions`
+
+**Type**: Traversable of [`program`](#action)
+
+### `program.parameters`
+
+Same as [parameters](#parameters)
+
+### `program.time-distribution`
+
+Builds a {{% api class="TimeDistribution" %}}
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 ---
 

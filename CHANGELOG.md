@@ -1,3 +1,21 @@
+### [12.2.1](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.0...12.2.1) (2022-01-22)
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.0 ([e5edc7f](https://github.com/AlchemistSimulator/Alchemist/commit/e5edc7fb9c07be4a7b84e83f40224d97efb6beb7))
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.4 ([1dd9a23](https://github.com/AlchemistSimulator/Alchemist/commit/1dd9a23bb63fc45c3488ef3fbf8bdf12e115b4ee))
+* **deps:** update plugin java-qa to v0.16.0 ([2b88710](https://github.com/AlchemistSimulator/Alchemist/commit/2b88710fd4c303192bc504a9f617d4bc41770107))
+
+
+### Documentation
+
+* **javadoc:** fix error in Incarnation.createNode ([6f24da1](https://github.com/AlchemistSimulator/Alchemist/commit/6f24da10818d710b325f4b363896f6959ddaf118))
+
 ## [12.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.7...12.2.0) (2022-01-18)
 
 

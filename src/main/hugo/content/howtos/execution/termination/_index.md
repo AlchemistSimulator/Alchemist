@@ -9,7 +9,7 @@ Alchemist supports the possibility to write termination conditions for any simul
 Termination conditions are checked after every event, and, if met, cause the immediate termination of a simulation.
 Termination conditions are expected to be found in the {{ anchor('it.unibo.alchemist.model.implementations.terminators') }} package.
 
-They are defined in the `terminators` section of the configuration file.
+They are defined in the [`terminate`](/reference/yaml/#terminate) section of the configuration file.
 Multiple terminators are allowed, the first terminator matching causes the termination of the simulation (they are in and).
 
 ## Terminating the simulation after some time

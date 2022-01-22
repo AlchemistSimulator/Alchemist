@@ -35,6 +35,7 @@ in form of Kotlin code as follows:
 | Type        | Description                                                                                                                                                                                        |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Any         | Any YAML type                                                                                                                                                                                      |
+| Int         | YAML integer number, or other type that can be parsed into an integer                                                                                                                              |
 | List        | Any YAML List                                                                                                                                                                                      |
 | Map         | Any YAML Map                                                                                                                                                                                       |
 | SpecMap     | A YAML Map matching a MultiSpec                                                                                                                                                                    |
@@ -424,6 +425,34 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 ---
 
 ### `seeds`
+
+**Type**: SpecMap
+
+Selection of the seed for the
+[`RandomGenerator`](https://commons.apache.org/proper/commons-math/javadocs/api-3.4/org/apache/commons/math3/random/RandomGenerator.html)s.
+
+**(Multi)Spec**
+
+| Mandatory keys | Optional keys            |
+|----------------|--------------------------|
+|                | `scenario`, `simulation` |
+
+### `seeds.scenario`
+
+**Type**: Int
+
+Selection of the seed for the
+[`RandomGenerator`](https://commons.apache.org/proper/commons-math/javadocs/api-3.4/org/apache/commons/math3/random/RandomGenerator.html)
+controlling the position of random displacements.
+
+### `seeds.simulation`
+
+**Type**: Int
+
+Selection of the seed for the
+[`RandomGenerator`](https://commons.apache.org/proper/commons-math/javadocs/api-3.4/org/apache/commons/math3/random/RandomGenerator.html)
+controlling the evolution of the events of the simulation.
+
 
 ---
 

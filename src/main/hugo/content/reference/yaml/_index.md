@@ -389,11 +389,11 @@ Passed to {{% api class="Incarnation" method="createReaction" %}} to be interepr
 
 ### `program.actions`
 
-**Type**: Traversable of [`program`](#action)
+**Type**: Traversable of [`action`](#action)
 
 ### `program.conditions`
 
-**Type**: Traversable of [`program`](#action)
+**Type**: Traversable of [`condition`](#condition)
 
 ### `program.parameters`
 
@@ -428,6 +428,23 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 ---
 
 ### `terminate`
+
+**Type**: Traversable of [`terminator`](#terminator)
+
+---
+
+### `terminator`
+
+**Type**: SpecMap
+
+Builds a [`Predicate`](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Predicate.html)
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+
+#### Examples
+* Termination after some time
+  {{<code path="alchemist-implementationbase/src/test/resources/termination.yml" >}}
+  {{<code path="alchemist-loading/src/test/resources/testCSVExporter.yml" >}}
+  {{<code path="alchemist-loading/src/test/resources/testMongoExporter.yml" >}}
 
 ---
 

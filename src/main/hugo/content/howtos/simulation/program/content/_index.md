@@ -28,4 +28,3 @@ In the following example, only molecules located inside a {{% api package="loade
 get the `ball` molecule:
 
 {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
-

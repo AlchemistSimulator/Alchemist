@@ -4,20 +4,6 @@ title: "Basics of an Alchemist simulation"
 
 ---
 
-### Customizing the node type
-
-In order to specify a particular node implementation you want to put inside the environment you can use the `nodes` key
-followed by the name of the class, and the parameters required to build it.
-
-```yaml
-deployments:
-  type: ...
-  parameters: ...
-  nodes:
-    type: MyCustomNodeImpl
-    parameters: [...]
-```
-
 ### Customizing the nodes' content
 
 It is possible to set the content of the nodes in a deployment.

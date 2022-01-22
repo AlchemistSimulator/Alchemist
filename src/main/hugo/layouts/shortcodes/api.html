@@ -1,16 +1,24 @@
 {{- $packageRoot := .Get "packageRoot" | default "it.unibo.alchemist" -}}
 {{- $package := .Get "package" | default "model.interfaces" -}}
 {{- $class := .Get "class" | default "" -}}
+{{- $method := .Get "method" | default "" -}}
 [`
 {{- if eq $class "" -}}
     {{- printf "%s.%s" $packageRoot $package -}}
 {{- else -}}
     {{- $class -}}
 {{- end -}}
+{{- if ne $method "" -}}
+    .{{- $method -}}
+{{- end -}}
 `](
 /alchemist/build/website/reference/kdoc/alchemist/
 {{- $packageRoot -}}.{{- $package -}}/
 {{- if ne $class "" -}}
-    {{- lower (replaceRE "([A-Z])" "-$1" $class) -}}
+    {{- lower (replaceRE "([A-Z])" "-$1" $class) -}}/
+{{- end -}}
+{{- if ne $method "" -}}
+    {{- lower (replaceRE "([A-Z])" "-$1" $method) -}}.html
 {{- end -}}
 )
+{{- printf "" -}}

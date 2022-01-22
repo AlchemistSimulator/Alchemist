@@ -50,6 +50,8 @@ in form of Kotlin code as follows:
 
 Alchemist is able to load arbitrary types conforming to the expected `interface`
 (or Scala `trait`).
+The expected type depends on where the class is requested.
+This section describes how the system works independently of the specific target type.
 
 **(Multi)Spec**
 
@@ -168,7 +170,9 @@ Traversable of [`deployment`](#deployment)
 
 Definition of the positions of a set of nodes.
 Builds a 
-{{% api package="loader" class="Deployment" %}}.
+{{% api package="loader" class="Deployment" %}}
+using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system),
+with additional keys.
 
 **(Multi)Spec**
 
@@ -176,24 +180,11 @@ Builds a
 |----------------|-----------------------------------------------|
 | `type`         | `parameters`, `contents`, `nodes`, `programs` |
 
-### `deployment.type`
-
-Same as [type](#type)
-
-### `deployment.parameters`
-
-Same as [parameters](#parameters)
-
-### `deployment.contents`
-
-### `deployment.nodes`
-
-### `deployment.programs`
 
 #### Examples
 
 * Deployment of a single node in a point
-    {{<code path="src/test/resources/website-snippets/deployment-in-point.yml" >}}
+  {{<code path="src/test/resources/website-snippets/deployment-in-point.yml" >}}
 * Deployment of three nodes
   {{<code path="src/test/resources/website-snippets/deployment-in-three-points.yml" >}}
 * Deployment of three nodes, but nesting the traversable
@@ -213,12 +204,45 @@ Same as [parameters](#parameters)
 
 ---
 
+### `deployment.type`
+
+Same as [type](#type)
+
+### `deployment.parameters`
+
+Same as [parameters](#parameters)
+
+### `deployment.contents`
+
+### `deployment.nodes`
+
+**Type**: SpecMap
+
+Forces the type of {{% api class="Node" %}}, building concrete types through
+the [arbitrary class loading system](#arbitrary-class-loading-system).
+If left unspecified, nodes get created through
+{{% api class="Incarnation" method="createNode" %}}.
+
+#### Examples
+
+* Creation of heterogeneous pedestrians
+  {{<code path="alchemist-cognitive-agents/src/test/resources/heterogeneous-pedestrians.yml" >}}
+
+### `deployment.programs`
+
+---
+
 ### `environment`
 
-Same as [arbitrary class loading system](#arbitrary-class-loading-system).
+**Type**: SpecMap
+
+Builds an {{% api class="Environment" %}}
+using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system),
 
 If left unspecified, defaults to a bidimensional Euclidean manifold:
 {{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}}.
+
+**Type**: SpecMap
 
 #### Examples
 

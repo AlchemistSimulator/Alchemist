@@ -1,16 +1,18 @@
----
++++
+pre = ""
+title = "Alchemist via Gradle"
+weight = 5
+tags = ["gradle", "run", "launch", "example", "jar", "shadowjar", "fatjar"]
+summary = "The recommended way to run the simulator and fetch all the required modules."
++++
 
-title: Running Alchemist stand-alone
-
----
-
-Another way of running Alchemist is by using the redistributable jar file.
-However, using the simulator via [Gradle](https://gradle.org) is recommended.
-For further information, see how to {{ anchor('Running Alchemist via Gradle', 'Running Alchemist via Gradle') }}.
+Although we recommend to [run the simulator via Gradle](../gradle/),
+Alchemist can be executed through the redistributable jar file.
 
 Such jar file can be downloaded from the [releases section on github](https://github.com/AlchemistSimulator/Alchemist/releases).
 
-If you got the redistributable, runnable Alchemist jar file, launching the simulator is straightforward. Open a terminal and move to the folder where the jar is located, then issue:
+Obtain [the runnable jar of alchemist-full from GitHub](https://github.com/AlchemistSimulator/Alchemist/releases/latest/),
+the open a terminal and move to the folder where the jar is located, then issue:
 ```bash
 java -jar alchemist-full-VERSION-all.jar
 ```

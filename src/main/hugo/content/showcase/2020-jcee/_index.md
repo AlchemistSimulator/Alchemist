@@ -2,8 +2,9 @@
 pre = ""
 title = "2020: Optimal resilient distributed data collection in mobile edge environments"
 weight = 5
-summary = "Available CLI options."
-tags = ["cli", "command line", "options", "batch", "variables"]
+summary = "Simulation of crowd control with mobile in Turin."
+tags = ["experiment", "maps", "export", "protelis"]
+hidden = true
 +++
 
 Scientific publication: [https://doi.org/10.1016/j.compeleceng.2021.107580](https://doi.org/10.1016/j.compeleceng.2021.107580)

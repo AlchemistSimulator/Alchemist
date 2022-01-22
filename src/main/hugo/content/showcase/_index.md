@@ -11,4 +11,4 @@ hidden = true
 
 ## Contents
 
-{{% children description="true" depth="30" %}}
+{{% children description="true" depth="30" showhidden="true" %}}

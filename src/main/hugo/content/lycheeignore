@@ -2,3 +2,5 @@ https://github.com/Kotlin/dokka
 # Work around https://github.com/Kotlin/dokka/issues/1692
 .*/package-tree.html
 .*/package-summary.html
+# Work around https://github.com/Kotlin/dokka/issues/2320
+https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-nothing/

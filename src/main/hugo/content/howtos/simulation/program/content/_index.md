@@ -7,7 +7,7 @@ summary = "Definition of the initial content of nodes."
 
 It is possible to set the content of the nodes in a deployment.
 Node contents are defined in terms of molecules and their corresponding concentration.
-As such, they depend on the specific incarnation in use.
+As such, they depend on the specific {{% api class="Incarnation" %}} in use.
 
 In the following example, we inject in all the nodes of a {{ anchor('Grid') }} deployment a molecule called `foo`  with
 concentration `1`.

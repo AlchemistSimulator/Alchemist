@@ -9,48 +9,23 @@ It is possible to set the content of the nodes in a deployment.
 Node contents are defined in terms of molecules and their corresponding concentration.
 As such, they depend on the specific {{% api class="Incarnation" %}} in use.
 
-In the following example, we inject in all the nodes of a {{ anchor('Grid') }} deployment a molecule called `foo`  with
-concentration `1`.
-As stated before, it would only make sense if the incarnation supports integer concentrations and it's able to produce
-a valid molecule from the `"foo"` String.
+This is done by listing the contents under [`deployments.contents`](/reference/yaml/#deploymentcontents),
+specifying a {{% api class="Molecule" %}} name and its {{% api class="Concentration" %}}.
 
-```yaml
-deployments:
-  - type: Grid
-    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
-    contents:
-      - molecule: foo
-        concentration: 1
-```
+Unless the [type/parameter syntax](/reference/yaml/#arbitrary-class-loading-system) is used, the data is gets processed by the {{% api class="Incarnation" %}}
+through the {{% api class="Incarnation" method="createMolecule" %}} and {{% api class="Incarnation" method="createConcentration" %}} methods, respectively.
 
-Multiple contents can be listed, e.g.,
-if we want to also have a molecule named `bar` with value `0` along with `foo`,
-we can just add another entry to the list:
+In the following example, three molecules are created and injected into all nodes deployed in the scenario:
 
-```yaml
-deployments:
-  - type: Grid
-    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
-    contents:
-      - molecule: foo
-        concentration: 1
-      - molecule: bar
-        concentration: 0
-```
+{{<code path="alchemist-incarnation-protelis/src/test/resources/gradient.yml" >}}
 
-Molecules can be injected selectively inside a given {{ anchor('Shape') }}.
-To do so, you can a filter with the `in keyword`.
-In the following example, only the nodes inside the {{ anchor('Rectangle') }} area contain
-the `source` molecule.
+By default, all nodes in the deployment will be injected with the required contents.
+It is possible, though, to select only a subset of them through the [`in`](/reference/yaml/#contentin) keyword,
+which expects enough information to be able to build a {{% api package="loader.shapes" class="Shape" %}}
+through the [arbitrary class loading system](/reference/yaml/#arbitrary-class-loading-system).
 
-```yaml
-deployments:
-  - type: Grid
-    parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
-    contents:
-      - in:
-          type: Rectangle
-          parameters: [-6, -6, 2, 2]
-        molecule: source
-        concentration: true
-```
+In the following example, only molecules located inside a {{% api package="loader.shapes" class="Rectangle" %}}
+get the `ball` molecule:
+
+{{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
+

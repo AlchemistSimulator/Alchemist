@@ -32,15 +32,16 @@ in form of Kotlin code as follows:
 
 ### Types of entries
 
-| Type                  | Description                                                                                                                                                                                        |
-|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| List                  | Any YAML List                                                                                                                                                                                      |
-| Map                   | Any YAML Map                                                                                                                                                                                       |
-| SpecMap               | A YAML Map matching a MultiSpec                                                                                                                                                                    |
-| Spec                  | Pair of lists of strings. The first list contains mandatory keys, the second optional keys. A map matches a Spec if it contains all its mandatory keys, any of the optional keys, and no other key |
-| MultiSpec             | A list of Spec. A Map matches a MultiSpec if it matches one and only one of its Spec.                                                                                                              |
-| String                | YAML String                                                                                                                                                                                        |
-| Traversable           | One of: A SpecMap, a List of Traversable, a Map of Traversable                                                                                                                                     |
+| Type        | Description                                                                                                                                                                                        |
+|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Any         | Any YAML type                                                                                                                                                                                      |
+| List        | Any YAML List                                                                                                                                                                                      |
+| Map         | Any YAML Map                                                                                                                                                                                       |
+| SpecMap     | A YAML Map matching a MultiSpec                                                                                                                                                                    |
+| Spec        | Pair of lists of strings. The first list contains mandatory keys, the second optional keys. A map matches a Spec if it contains all its mandatory keys, any of the optional keys, and no other key |
+| MultiSpec   | A list of Spec. A Map matches a MultiSpec if it matches one and only one of its Spec.                                                                                                              |
+| String      | YAML String                                                                                                                                                                                        |
+| Traversable | One of: A SpecMap, a List of Traversable, a Map of Traversable                                                                                                                                     |
 
 ---
 
@@ -214,6 +215,8 @@ Same as [parameters](#parameters)
 
 ### `deployment.contents`
 
+**Type**: Traversable of [`content`](#content)
+
 ### `deployment.nodes`
 
 **Type**: SpecMap
@@ -232,12 +235,52 @@ If left unspecified, nodes get created through
 
 ---
 
+### `content`
+
+**Type**: SpecMap
+
+Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+
+**(Multi)Spec**
+
+| Mandatory keys             | Optional keys |
+|----------------------------|---------------|
+| `molecule`, `concentration` | `in`          |
+
+#### Examples
+* Three molecules injected into all nodes deployed in the scenario
+    {{<code path="alchemist-incarnation-protelis/src/test/resources/gradient.yml" >}}
+* Injection of a molecule only in those nodes located inside a {{% api package="loader.shapes" class="Rectangle" %}}
+    {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
+
+### `content.molecule`
+
+**Type**: String or SpecMap
+
+The name of the molecule to be injected.
+If a String is provided, then it is created via {{% api class="Incarnation" method="createMolecule" %}}.
+Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system) **SHOULD** be used.
+
+### `content`
+
+**Type**: String
+
+The concentration of the molecule to be injected.
+If a String is provided, then it is created via {{% api class="Incarnation" method="createConcentration" %}}.
+Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system) **SHOULD** be used.
+
+### `content.in`
+
+**Type**: Traversable of Shape
+
+---
+
 ### `environment`
 
 **Type**: SpecMap
 
 Builds an {{% api class="Environment" %}}
-using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system),
+using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system).
 
 If left unspecified, defaults to a bidimensional Euclidean manifold:
 {{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}}.
@@ -270,6 +313,19 @@ If left unspecified, defaults to a bidimensional Euclidean manifold:
 ---
 
 ### `remote-dependencies`
+
+---
+
+### `shape`
+
+**Type**: SpecMap
+
+Builds a {{% api package="loader.shapes" class="Shape" %}}
+using the [arbitrary class loading system](#arbitrary-class-loading-system).
+
+#### Examples
+* Injection of a molecule only in those nodes located inside a {{% api package="loader.shapes" class="Rectangle" %}}
+  {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ---
 

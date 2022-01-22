@@ -51,6 +51,9 @@ jobs:
             ./gradlew assemble shadowJar hugoBuild --parallel
           check-command: |
             ./gradlew check --parallel || ./gradlew check --parallel
+            if [ '${{ matrix.os }}' == 'ubuntu' ]; then
+              docker run --rm -v "$(pwd)/build/website:/lychee" -e GITHUB_TOKEN lycheeverse/lychee '/lychee/index.html'
+            fi
           clean-command: |
             ./gradlew clean --parallel
           deploy-command: |

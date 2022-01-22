@@ -52,7 +52,7 @@ relativeURLs = true
     weight = 20
 
   [[Languages.en.menu.shortcuts]]
-    name = "<i class='fas fa-fw fa-camera'></i> Showcases"
+    name = "<i class='fas fa-fw fa-camera'></i> Use cases"
     url = "/showcase/"
     weight = 30
 

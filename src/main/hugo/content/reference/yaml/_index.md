@@ -320,6 +320,111 @@ If left unspecified, defaults to a bidimensional Euclidean manifold:
 
 ### `export`
 
+**Type**: Traversable of [`exporter`](#exporter)
+
+---
+
+### `exporter`
+
+**Type**: SpecMap
+
+Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Concentration" %}}s) of a group of nodes.
+
+**(Multi)Spec**
+
+| Mandatory keys | Optional keys |
+|----------------|---------------|
+| `type`, `data` | `parameters`  |
+
+### `exporter.type`
+
+Same as [type](#type)
+
+### `exporter.data`
+
+**Type**: Traversable of [`extractor`](#extractor)
+
+### `exporter.parameters`
+
+Same as [parameters](#parameters)
+
+---
+
+### `extractor`
+
+**Type**: String or SpecMap
+
+The only supported String is `"time"`.
+Otherwise, a SpecMap **MUST** be provided.
+
+**(Multi)Spec**
+
+| Mandatory keys | Optional keys                             |
+|----------------|-------------------------------------------|
+| `type`         | `parameters`                              |
+| `molecule`     | `property`, `aggregators`, `value-filter` |
+
+### `extractor.type`
+
+Same as [type](#type)
+
+### `extractor.parameters`
+
+Same as [parameters](#parameters)
+
+### `extractor.molecule`
+
+**Type**: String
+
+Name of a {{% api class="Molecule" %}} to be read from nodes and exported.
+The String is passed down to {{% api class="Incarnation" method="createMolecule" %}}.
+The created molecule is read from every node.
+
+### `extractor.property`
+
+**Type**: String
+
+Name of a property to be extracted from the selected {{% api class="Molecule" %}}.
+The Molecule and the String are passed down to {{% api class="Incarnation" method="getProperty" %}}.
+The obtained value is added to the exports.
+
+### `extractor.aggregators`
+
+**Type**: String or List of Strings
+
+Name of any valid
+[`UnivariateStatistic](https://commons.apache.org/proper/commons-math/javadocs/api-3.6/org/apache/commons/math3/stat/descriptive/UnivariateStatistic.html),
+case insensitive.
+All those provided with Apache Commons Math are available by default.
+New statistics can be defined,
+they get loaded transparently as far as their package matches the one of Apache Commons Math.
+
+If the aggregators are specified, only one value per aggregator gets exported,
+instead of one value for each node.
+
+### `extractor.value-filter`
+
+**Type**: String or SpecMap
+
+Builds a {{% api package="loader.export" class="FilteringPolicy" %}},
+to be applied to raw data before being processed by the `aggregators`(#extractoraggregators),
+if present.
+If a String is provided, then it is used to load a policy from {{% api package="loader.export.filters" class="CommonFilters" %}}.
+Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system) **MUST** be used.
+
+
+| Mandatory keys | Optional keys                             |
+|----------------|-------------------------------------------|
+| `type`         | `parameters`                              |
+
+### `extractor.value-filter.type`
+
+Same as [type](#type)
+
+### `extractor.value-filter.parameters`
+
+Same as [parameters](#parameters)
+
 ---
 
 ### `layer`

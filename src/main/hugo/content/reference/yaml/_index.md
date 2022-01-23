@@ -187,7 +187,7 @@ Traversable of [`deployment`](#deployment)
 
 Definition of the positions of a set of nodes.
 Builds a 
-{{% api package="loader" class="Deployment" %}}
+{{% api package="loader.deployments" class="Deployment" %}}
 using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system),
 with additional keys.
 

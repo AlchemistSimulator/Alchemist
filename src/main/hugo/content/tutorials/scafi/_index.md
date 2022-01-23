@@ -12,7 +12,7 @@ The tutorial can be found on [GitHub](https://github.com/scafi/learning-scafi-al
 The `README.md` file of the project explains the use and the steps to follow.
 
 {{% expand "Show README.md" %}}
-{{< github owner="scafi" repo="learning-scafi-alchemist" >}}
+{{< github owner="scafi" repo="learning-scafi-alchemist" highlight="false" >}}
 {{% /expand %}}
 
 {{% notice note %}}

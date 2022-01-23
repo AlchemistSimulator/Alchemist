@@ -5,7 +5,7 @@ tags = ["protelis", "tutorial", "aggregate", "aggregate computing", "aggregate p
 summary = "Ready-to-run examples of increasing complexity with the Protelis incarnation"
 +++
 
-[Protelis](https://protelis.org),
+[Protelis](https://protelis.github.io/),
 from the Latin word figuratively meaning "regarding a team",
 is a language targeting the aggregate of devices rather than the single one.
 It has been developed on the solid foundation of [Field Calculus](https://doi.org/10.1145/3285956),
@@ -16,7 +16,7 @@ and it is written and interoperable with Java.
 The language and all the machinery of Protelis are out of the scope of this tutorial.
 However, we warmly recommend to read [this paper](https://doi.org/10.1145/2695664.2695913) first,
 and then to deepen your knowledge of Protelis by reading the resources available in
-[the official Protelis website](https://protelis.org).
+[the official Protelis website](https://protelis.github.io/).
 
 A tutorial similar to the [base tutorial](../basics),
 with increasingly rich examples and focused on the Protelis incarnation

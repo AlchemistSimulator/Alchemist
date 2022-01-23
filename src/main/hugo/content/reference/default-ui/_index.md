@@ -1,7 +1,7 @@
 +++
 pre = ""
 title = "Default Graphical User Interface"
-weight = 3
+weight = 5
 summary = "Redirect page for the current default graphical interface"
 tags = ["gui", "graphical interface"]
 +++

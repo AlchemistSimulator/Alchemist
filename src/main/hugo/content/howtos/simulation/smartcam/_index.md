@@ -38,9 +38,7 @@ Note: the
 action currently
 only works in 2D environments supporting euclidean geometry,
 for example
-{{% api package="model.implementations.environments" class=Continuous2DEnvironment %}}
-and
-{{% api package="model.implementations.environments" class=Rectangular2DEnvironment %}}
+{{% api package="model.implementations.environments" class=Continuous2DEnvironment %}}.
 {{% /notice %}}
 
 {{% api package="model.implementations.actions" class=CameraSee %}}

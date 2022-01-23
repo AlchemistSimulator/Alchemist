@@ -1,6 +1,0 @@
----
-
-title: Writing custom components
-
----
-

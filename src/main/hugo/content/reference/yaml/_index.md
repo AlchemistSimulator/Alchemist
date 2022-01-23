@@ -38,9 +38,10 @@ in form of Kotlin code as follows:
 | Int         | YAML integer number, or other type that can be parsed into an integer                                                                                                                              |
 | List        | Any YAML List                                                                                                                                                                                      |
 | Map         | Any YAML Map                                                                                                                                                                                       |
-| SpecMap     | A YAML Map matching a MultiSpec                                                                                                                                                                    |
-| Spec        | Pair of lists of strings. The first list contains mandatory keys, the second optional keys. A map matches a Spec if it contains all its mandatory keys, any of the optional keys, and no other key |
 | MultiSpec   | A list of Spec. A Map matches a MultiSpec if it matches one and only one of its Spec.                                                                                                              |
+| Number      | YAML number                                                                                                                                                                                        |
+| Spec        | Pair of lists of strings. The first list contains mandatory keys, the second optional keys. A map matches a Spec if it contains all its mandatory keys, any of the optional keys, and no other key |
+| SpecMap     | A YAML Map matching a MultiSpec                                                                                                                                                                    |
 | String      | YAML String                                                                                                                                                                                        |
 | Traversable | One of: A SpecMap, a List of Traversable, a Map of Traversable                                                                                                                                     |
 
@@ -402,8 +403,11 @@ Same as [parameters](#parameters)
 
 ### `program.time-distribution`
 
-Builds a {{% api class="TimeDistribution" %}}
-using the [arbitrary class loading system](#arbitrary-class-loading-system).
+**Type**: String or SpecMap
+
+Builds a {{% api class="TimeDistribution" %}}.
+If a String is provided, then it is created via {{% api class="Incarnation" method="createTimeDistribution" %}}.
+Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system) **SHOULD** be used.
 
 ---
 
@@ -475,7 +479,92 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
   {{<code path="alchemist-loading/src/test/resources/testCSVExporter.yml" >}}
   {{<code path="alchemist-loading/src/test/resources/testMongoExporter.yml" >}}
 
+
+### `variable`
+
+**Type**: SpecMap
+
+Definition of [free](/howtos/simulation/variables/#free-variables)
+and [dependent](/howtos/simulation/variables/#dependent-variables) variables.
+
+**(Multi)Spec**
+
+| Mandatory keys                  | Optional keys         |
+|---------------------------------|-----------------------|
+| `type`                          | `parameters`          |
+| `min`, `max`, `step`, `default` |                       |
+| `formula`                       | `language`, `timeout` |
+
+Variables can be created in three ways:
+* Using the [arbitrary class loading system](#arbitrary-class-loading-system)
+  to produce an instance of {{% api package="loader.variables" class="Variable" %}} or
+  {{% api package="loader.variables" class="DependentVariable" %}};
+* specifying the parameters of a {{% api package="loader.variables" class="LinearVariable" %}}
+  (minimum and maximum values, incrementation step, and default value);
+* writing an expression that can be interpreted by some JSR-223-compatible language whose interpreter is in the
+  classpath, possibly specifying a timeout. Produces a {{% api package="loader.variables" class="DependentVariable" %}}.
+
+### `variable.type`
+
+Same as [type](#type)
+
+### `variable.parameters`
+
+Same as [parameters](#parameters)
+
+### `variable.default`
+
+**Type**: Number
+
+Default value for a {{% api package="loader.variables" class="LinearVariable" %}},
+to be selected if the variable is not among those generating the batch.
+
+### `variable.max`
+
+**Type**: Number
+
+Maximum value for a {{% api package="loader.variables" class="LinearVariable" %}}
+
+### `variable.min`
+
+**Type**: Number
+
+Minimum value for a {{% api package="loader.variables" class="LinearVariable" %}}
+
+### `variable.step`
+
+**Type**: Number
+
+Size of the incremental step of a {{% api package="loader.variables" class="LinearVariable" %}}
+
+### `variable.formula`
+
+**Type**: String
+
+Code that can be interpreted by a {{% api package="loader.variables" class="JSR223Variable" %}}.
+
+### `variable.language`
+
+**Type**: String
+
+Language to be used by a {{% api package="loader.variables" class="JSR223Variable" %}}.
+The language must be available in the classpath.
+Groovy (default), Kotlin (`kotlin` or `kts`), and Scala (`scala`) are supported natively.
+
+### `variable.timeout`
+
+**Type**: Int
+
+Time in milliseconds after which the interpreter of the
+{{% api package="loader.variables" class="JSR223Variable" %}}
+is considered stuck or in livelock.
+The interpreter gets interrupted and the simulation loading fails to prevent unresponsive simulations.
+Defaults to 1000ms.
+
 ---
 
 ### `variables`
 
+**Type**: Traversable of [`variable`](#layer)
+
+---

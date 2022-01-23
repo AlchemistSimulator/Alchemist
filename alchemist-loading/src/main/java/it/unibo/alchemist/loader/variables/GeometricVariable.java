@@ -43,7 +43,7 @@ public final class GeometricVariable extends PrintableVariable<Double> {
         }
         if (min <= 0d || max <= 0) {
             throw new IllegalArgumentException(
-                    "Both minimum and maximum must be bigger than 0 for a geometric variable to work."
+                "Both minimum and maximum must be bigger than 0 for a geometric variable to work."
             );
         }
         if (samples <= 0) {
@@ -51,7 +51,7 @@ public final class GeometricVariable extends PrintableVariable<Double> {
         }
         if (min == max && samples != 1) {
             throw new IllegalArgumentException(
-                    "Only a single sample can be produced if min and max are exactly equal. (min="
+                "Only a single sample can be produced if min and max are exactly equal. (min="
                     + min + ", max=" + max + ", samples=" + samples
             );
         }
@@ -69,8 +69,8 @@ public final class GeometricVariable extends PrintableVariable<Double> {
     @Override
     public Stream<Double> stream() {
         return IntStream.range(0, maxSamples)
-                .mapToDouble(s -> min * FastMath.pow(max / min, (double) s / Math.max(1, maxSamples - 1)))
-                .boxed();
+            .mapToDouble(s -> min * FastMath.pow(max / min, (double) s / Math.max(1, maxSamples - 1)))
+            .boxed();
     }
 
     @Override

@@ -10,7 +10,7 @@ T.B.D.
 ### Drawing navigation graphs
 
 The GUI includes a simple effect to draw the navigation graph of an
-{{% api package="model.implementations.actions" class="ImageEnvironmentWithGraph" %}}
+{{% api package="model.implementations.environments" class="ImageEnvironmentWithGraph" %}}
 in the gui is available as well.
 Its name is {{% api package="boundary.gui.effects" class="DrawNavigationGraph" %}},
 you can just select it from the available effects in the gui to have your graph drawn.

@@ -89,7 +89,7 @@ the loading system is aware of the current
 `RandomGenerator`,
 {{% api class="Incarnation" %}},
 {{% api class="Environment" %}},
-{{% api package="loader" class="Deployment" %}},
+{{% api package="loader.deployments" class="Deployment" %}},
 {{% api class="Node" %}}, {{% api class="TimeDistribution" %}}, and
 {{% api class="Reaction" %}},
 as the action requires all of them.

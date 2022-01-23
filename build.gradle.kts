@@ -54,15 +54,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter {
-            content {
-                onlyForConfigurations(
-                    "orchidCompileClasspath",
-                    "orchidRuntimeClasspath"
-                )
-            }
-        }
-
         // for tornadofx 2.0.0 snapshot release
         maven {
             url = uri("https://oss.sonatype.org/content/repositories/snapshots")
@@ -178,6 +169,30 @@ allprojects {
     tasks.withType<Javadoc> {
         // Disable Javadoc, use Dokka.
         enabled = false
+    }
+
+    tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
+        dokkaSourceSets.configureEach {
+            jdkVersion.set(11)
+            listOf("kotlin", "java")
+                .map { "src/main/$it" }
+                .map { it to File(projectDir, it) }
+                .toMap()
+                .filterValues { it.exists() }
+                .forEach { path, file ->
+                    sourceLink {
+                        localDirectory.set(file)
+                        val project = if (project == rootProject) "" else project.name
+                        val url = "https://github.com/AlchemistSimulator/Alchemist/blob/master/$project/$path"
+                        remoteUrl.set(uri(url).toURL())
+                        remoteLineSuffix.set("#L")
+                    }
+                }
+            externalDocumentationLink {
+                url.set(uri("https://javadoc.io/doc/org.apache.commons/commons-math3/").toURL())
+            }
+        }
+        failOnWarning.set(true)
     }
 
     if (System.getenv("CI") == true.toString()) {

@@ -153,7 +153,7 @@ This example showcases some complex deployments made possible by Alchemist via [
 The example creates a single environment with three advanced deployments. From left to right: a
 Lobster graph, a banana tree, and a scale-free network with preferential attachment.
 
-![Gradient](graphstream.png)
+![Arbitrary graphs](/images/simulator/graphstream.png)
 
 ## Advanced examples
 

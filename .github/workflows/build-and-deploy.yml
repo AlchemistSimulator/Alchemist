@@ -48,7 +48,10 @@ jobs:
       - uses: DanySK/build-check-deploy-gradle-action@1.2.0
         with:
           build-command: |
-            ./gradlew assemble shadowJar hugoBuild --parallel || ./gradlew assemble shadowJar hugoBuild --parallel
+            ./gradlew assemble shadowJar --parallel || ./gradlew assemble shadowJar --parallel
+            if [ '${{ matrix.os }}' == 'ubuntu' ]; then
+                ./gradlew hugoBuild --parallel
+            fi
           check-command: |
             ./gradlew check --parallel || ./gradlew check --parallel
             if [ '${{ matrix.os }}' == 'ubuntu' ]; then

@@ -71,7 +71,7 @@ jobs:
           should-run-codecov: false
           should-deploy: false
           github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
-  Release:
+  release:
     needs:
       - build
       - build-website
@@ -83,6 +83,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.4.0
         with:
+          submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
@@ -92,7 +93,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
           repository: AlchemistSimulator/alchemistsimulator.github.io
-          submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Cleanup the old website
         shell: bash

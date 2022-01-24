@@ -6,7 +6,7 @@ summary = "Strategies to navigate the environment."
 +++
 
 This section explains the pathfinding strategies and algorithms of Alchemist.
-Instructions on how to exercise them are available [here](/howtos/simulation/pathfinding).
+Instructions on how to exercise them are available [here](/howtos/simulation/environment/pathfinding).
 
 ## Navigation graphs
 

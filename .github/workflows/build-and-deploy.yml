@@ -63,7 +63,7 @@ jobs:
               # https://github.com/Kotlin/dokka/issues/2323
               # Once everything gets fixed, lychee could simply run on '/lychee/**/*.html'
               FILES="$(find build/website/ -name '*.html' | grep -v /kdoc/ | grep -v /javadoc/ | sed -e s#^build##)"
-              docker run -it --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $FILES --exclude-file /website/lycheeignore -m 100 --threads 1
+              docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $FILES --exclude-file /website/lycheeignore -m 100 --threads 1
             fi
           clean-command: |
             ./gradlew clean --parallel

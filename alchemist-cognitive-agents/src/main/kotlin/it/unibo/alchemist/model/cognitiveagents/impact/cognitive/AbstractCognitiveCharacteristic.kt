@@ -27,7 +27,7 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
 
     /**
      * Cognitive characteristics are modeled following the principles of
-     * [Network Oriented Modeling](https://doi. org/10.1007/978-3-662-58611-2_2), which allows
+     * [Network Oriented Modeling](https://doi.org/10.1007/978-3-662-58611-2_2), which allow
      * characteristics to influence each other and evolve during the simulation. Each characteristic
      * is modeled as an equation; weights and constant values used in equations are defined below.
      * These are described in the [IMPACT model](https://doi.org/10.1007/978-3-319-70647-4_11).

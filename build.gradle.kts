@@ -6,13 +6,13 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-import Libs.incarnation
 import Libs.alchemist
+import Libs.incarnation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.ByteArrayOutputStream
-import java.net.URL
 
 plugins {
     alias(libs.plugins.dokka)
@@ -21,13 +21,11 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
-    alias(libs.plugins.orchid)
     alias(libs.plugins.publishOnCentral)
     alias(libs.plugins.shadowJar)
     alias(libs.plugins.taskTree)
+    alias(libs.plugins.hugo)
 }
-
-apply(plugin = rootProject.libs.plugins.orchid.id)
 
 val Provider<PluginDependency>.id get() = get().pluginId
 
@@ -56,15 +54,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter {
-            content {
-                onlyForConfigurations(
-                    "orchidCompileClasspath",
-                    "orchidRuntimeClasspath"
-                )
-            }
-        }
-
         // for tornadofx 2.0.0 snapshot release
         maven {
             url = uri("https://oss.sonatype.org/content/repositories/snapshots")
@@ -180,6 +169,30 @@ allprojects {
     tasks.withType<Javadoc> {
         // Disable Javadoc, use Dokka.
         enabled = false
+    }
+
+    tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
+        dokkaSourceSets.configureEach {
+            jdkVersion.set(11)
+            listOf("kotlin", "java")
+                .map { "src/main/$it" }
+                .map { it to File(projectDir, it) }
+                .toMap()
+                .filterValues { it.exists() }
+                .forEach { path, file ->
+                    sourceLink {
+                        localDirectory.set(file)
+                        val project = if (project == rootProject) "" else project.name
+                        val url = "https://github.com/AlchemistSimulator/Alchemist/blob/master/$project/$path"
+                        remoteUrl.set(uri(url).toURL())
+                        remoteLineSuffix.set("#L")
+                    }
+                }
+            externalDocumentationLink {
+                url.set(uri("https://javadoc.io/doc/org.apache.commons/commons-math3/").toURL())
+            }
+        }
+        failOnWarning.set(true)
     }
 
     if (System.getenv("CI") == true.toString()) {
@@ -305,107 +318,27 @@ dependencies {
     testRuntimeOnly(incarnation("biochemistry"))
     testRuntimeOnly(alchemist("cognitive-agents"))
     testRuntimeOnly(alchemist("physical-agents"))
-
-    // Populate the dependencies for Orchid
-    orchidImplementation(libs.orchid.core)
-    orchidRuntimeOnly(libs.bundles.orchid)
 }
 
 // WEBSITE
 
-fun String.toVersion() = org.danilopianini.gradle.gitsemver.SemanticVersion.fromStringOrNull(this)
-    ?: throw IllegalStateException("Not a valid semantic version: $this")
+val websiteDir = File(buildDir, "website")
 
-val projectVersion = gitSemVer.computeVersion().toVersion()
+hugo { version = "0.92.0" }
 
-@ExperimentalUnsignedTypes
-val isMarkedStable = projectVersion.preRelease.isEmpty()
-
-tasks.withType<org.jetbrains.dokka.gradle.DokkaCollectorTask> {
-    val type = Regex("^dokka(\\w+)Collector\$").matchEntire(name)?.destructured?.component1()?.toLowerCase()
-        ?: throw IllegalStateException("task named $name does not match the expected name pattern for dokka collection tasks")
-    if (type.equals("html", ignoreCase = true) || type.equals("javadoc", ignoreCase = true)) {
-        // Bind Dokka Javadoc and Dokka HTML to Orchid
-        outputDirectory.set(file("$buildDir/docs/orchid/$type"))
-        listOf(tasks.orchidServe, tasks.orchidBuild).forEach { it.get().dependsOn(this) }
-    }
+tasks.hugoBuild {
+    outputDirectory = websiteDir
 }
 
-orchid {
-    theme = "Editorial"
-    // Determine whether it's a deployment or a dry run
-    baseUrl = "https://alchemistsimulator.github.io/${if (isMarkedStable) "" else "latest/"}"
-    // Fetch the latest version of the website, if this one is more recent enable deploy
-    val versionRegex =
-        """.*Currently\s*(.+)\.\s*Created""".toRegex()
-    val matchedVersions: List<String> = runCatching {
-        URL(baseUrl).openConnection().getInputStream().use { stream ->
-            stream.bufferedReader().lineSequence()
-                .flatMap { line ->
-                    versionRegex.find(line)?.groupValues?.last()?.let { sequenceOf(it) } ?: emptySequence()
-                }
-                .toList()
+tasks {
+    mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlCollector)
+        .mapValues { it.value.get() }
+        .forEach { (folder, task) ->
+            hugoBuild.get().dependsOn(task)
+            val copyTask = register<Copy>("copy${folder.capitalizeAsciiOnly()}IntoWebsite") {
+                from(task.outputDirectory)
+                into(File(websiteDir, "reference/$folder"))
+            }
+            hugoBuild.get().finalizedBy(copyTask)
         }
-    }.getOrDefault(emptyList())
-    val shouldDeploy = matchedVersions
-        .takeIf { it.size == 1 }
-        ?.first()
-        ?.let { projectVersion > it.toVersion() }
-        ?: false
-    githubToken = System.getenv("githubToken")
-        ?: project.findProperty("githubToken")?.toString()
-        ?: System.getenv("GITHUB_TOKEN")
-    dryDeploy = shouldDeploy.not().toString()
-    println(
-        when (matchedVersions.size) {
-            0 -> "Unable to fetch the current site version from $baseUrl"
-            1 -> "Website $baseUrl is at version ${matchedVersions.first()}"
-            else -> "Multiple site versions fetched from $baseUrl: $matchedVersions"
-        } + ". Orchid deployment ${if (shouldDeploy) "enabled" else "set as dry run"}."
-    )
 }
-
-gradle.taskGraph.whenReady {
-    if (hasTask(tasks.orchidDeploy.get()) &&
-        orchid.dryDeploy?.toBoolean()?.not() == true &&
-        orchid.githubToken.isNullOrBlank()
-    ) {
-        throw IllegalStateException("Real deployment requested but no GitHub deployment token set")
-    }
-}
-
-val orchidSeedConfiguration by tasks.register("orchidSeedConfiguration") {
-    /*
-     * Detect files
-     */
-    val configFolder = listOf(projectDir.toString(), "src", "orchid", "resources")
-        .joinToString(separator = File.separator)
-    val baseConfigFile = file("$configFolder${File.separator}config-origin.yml")
-    @org.gradle.api.tasks.InputFile
-    fun baseConfig(): File = baseConfigFile
-    val finalConfig = file("$configFolder${File.separator}config.yml")
-    @org.gradle.api.tasks.OutputFile
-    fun finalConfig(): File = finalConfig
-    doLast {
-        /*
-         * Compute Kdoc targets
-         */
-        val baseConfig = baseConfigFile.readText()
-        val deploymentConfiguration = if (!baseConfig.contains("services:")) {
-            """
-                services:
-                  publications:
-                    stages:
-                      - type: githubPages
-                        username: 'DanySK'
-                        commitUsername: Danilo Pianini
-                        commitEmail: danilo.pianini@gmail.com
-                        repo: 'AlchemistSimulator/${if (isMarkedStable) "alchemistsimulator.github.io" else "latest" }'
-                        branch: ${if (isMarkedStable) "master" else "gh-pages"}
-                        publishType: CleanBranchMaintainHistory
-            """.trimIndent()
-        } else ""
-        finalConfig.writeText(baseConfig + deploymentConfiguration)
-    }
-}
-tasks.orchidClasses.orNull!!.dependsOn(orchidSeedConfiguration)

@@ -1,4 +1,4 @@
-Alchemist is Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the pom.xml file available for each
+Alchemist is Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the `pom.xml` file available for each
 module from "The Central Repository", reachable from http://search.maven.org/.
 
 Alchemist is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -8,7 +8,7 @@ documentation is licensed under the [Creative Commons Attribution 3.0 License](h
 Alchemist is distributed in the hope that it will be useful, but **WITHOUT ANY WARRANTY**; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with Alchemist; see the file GPLv3.txt.  If
+You should have received a copy of the GNU General Public License along with Alchemist; see the file `GPLv3.txt`.  If
 not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 Compiling or linking this code statically or dynamically with other modules is making a combined work based on this
@@ -23,4 +23,4 @@ you are not obligated to do so.  If you do not wish to do so, delete this except
 
 Over and above the legal restrictions imposed by this license, if you use this software for an academic publication then
 you are obliged to provide proper attribution. This should be to the paper that describes this simulator, described in
-the CITATION file that comes with this software distribution.
+the `CITATION` file that comes with this software distribution.

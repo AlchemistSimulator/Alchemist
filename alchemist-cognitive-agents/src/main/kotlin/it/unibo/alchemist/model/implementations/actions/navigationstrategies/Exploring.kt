@@ -80,7 +80,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
 
     /**
      * Assigns a weight to a visible door (= passage). This weighting system is derived from the one
-     * by [Andresen et al.](https://doi.org/10.1080/23249935.2018.1432717). By default, it comprises
+     * by [Andresen et al.](https://doi.org/10.1080/23249935.2018.1432717/). By default, it comprises
      * three factors: [volatileMemoryFactor], [congestionFactor] and [impasseFactor].
      */
     protected open fun weight(door: Euclidean2DPassage): Double = door.head.let {

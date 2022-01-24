@@ -391,7 +391,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     /**
      * An {@link ExecutionEnvironment} that can read and shadow the content of a
-     * {@link Node}, but cannot modify it. This is used to prevent badly written
+     * Node, but cannot modify it. This is used to prevent badly written
      * properties to interact with the simulation flow.
      */
     public static final class ProtectedExecutionEnvironment implements ExecutionEnvironment {

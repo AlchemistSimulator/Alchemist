@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils
 import kotlin.math.pow
 
 /**
- * https://en.wikipedia.org/wiki/Logistic_function
+ * [Logistic function](https://en.wikipedia.org/wiki/Logistic_function).
  *
  * @param sigma Steepness parameter of the logistic function.
  * @param tau Threshold parameter of the logistic function.

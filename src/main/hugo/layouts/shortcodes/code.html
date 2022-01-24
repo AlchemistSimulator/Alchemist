@@ -1,0 +1,32 @@
+{{- $path := .Get "path" | default "README.md" | printf "alchemist/%s" -}}
+{{- $content := readFile $path | htmlUnescape -}}
+{{- $content := split $content "\n" -}}
+{{- $start := .Get "from" | default "1" | int | add -1 }}
+{{- $end := .Get "to" | default (len $content) | int }}
+{{- $end := sub $end $start }}
+{{- $content := after $start (first (add $start $end) $content) -}}
+{{- $content := delimit $content "\n" -}}
+{{- $highlight := .Get "highlight" | default "true" -}}
+{{- if eq $highlight "true" }}
+    {{- $language := .Get "language" | default (
+        cond (or (strings.HasSuffix $path ".kt") (strings.HasSuffix $path ".kts")) "kotlin" (
+            cond (strings.HasSuffix $path ".yml") "yaml" (
+                cond (strings.HasSuffix $path ".md") "markdown" (
+                    replaceRE "^.*\\.(\\w+)$" "$1" $path
+                )
+            )
+        )
+    ) -}}
+    <div class="expand">
+        <a class="expand-label" onclick="$t=$(this); if($t.parent('.expand-expanded.expand-marked').length){ $t.next().css('display','none') }else if($t.parent('.expand-marked').length){ $t.next().css('display','block') }else{ $t.next('.expand-content').slideToggle(100); } $t.parent().toggleClass('expand-expanded');">
+            <span class="fas fa-chevron-down"></span>
+            <span class="fas fa-chevron-right"></span>
+            <strong>Click to show / hide code</strong>
+        </a>
+        <div class="expand-content" style="display: none;">
+            {{- highlight ($content) ($language) "" -}}
+        </div>
+    </div>
+{{- else -}}
+{{- $content -}}
+{{- end -}}

@@ -26,6 +26,7 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import java.lang.IllegalStateException
 import java.util.concurrent.Semaphore
 import java.util.function.Predicate

@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 /**
  * A pedestrian capable of interacting physically with others. [PhysicalPedestrian]s have a [comfortArea]: when
  * another node enters such area, this pedestrian is subject to a repulsion force. This is derived from
- * [the work of Pelechano et al](https://bit.ly/3e3C7Tb). Note that [PhysicalPedestrian]s don't actively push each
+ * the work of Pelechano et al.. Note that [PhysicalPedestrian]s don't actively push each
  * other, pushing behavior emerges from the interaction of pedestrians with different comfort areas (see the article
  * linked above).
  */

@@ -1,0 +1,27 @@
+{{- $owner := .Get "owner" | default "AlchemistSimulator" -}}
+{{- $repo := .Get "repo" | default "Alchemist" -}}
+{{- $path := .Get "path" | default "README.md" -}}
+{{- $branch := .Get "branch" | default "master" -}}
+{{- $highlight := .Get "highlight" | default "true" -}}
+{{- $json := getJSON "https://api.github.com/repos/" $owner "/" $repo "/contents/" $path -}}
+{{- $content := $json.content | base64Decode | htmlUnescape -}}
+{{- $content := split $content "\n" -}}
+{{- $start := .Get "from" | default "1" | int | add -1 }}
+{{- $end := .Get "to" | default (len $content) | int }}
+{{- $end := sub $end $start }}
+{{- $content := after $start (first (add $start $end) $content) -}}
+{{- $content := delimit $content "\n" -}}
+{{- if eq $highlight "true" }}
+    {{- $language := .Get "language" | default (
+        cond (or (strings.HasSuffix $path ".kt") (strings.HasSuffix $path ".kts")) "kotlin" (
+            cond (strings.HasSuffix $path ".yml") "yaml" (
+                cond (strings.HasSuffix $path ".md") "markdown" (
+                    replaceRE "^.*\\.(\\w+)$" "$1" $path
+                )
+            )
+        )
+    ) -}}
+    {{- highlight ($content) ($language) "" -}}
+{{- else -}}
+    {{- $content -}}
+{{- end -}}

@@ -63,9 +63,9 @@ jobs:
         uses: danysk/action-checkout@0.2.1
       - uses: DanySK/build-check-deploy-gradle-action@1.2.0
         with:
-          build-command: ./gradlew assemble --parallel
+          build-command: true
           check-command: true
-          deploy-command: ./gradlew closeKotlinMavenOnMavenCentralNexus
+          deploy-command: ./gradlew closeKotlinMavenOnMavenCentralNexus --parallel
           java-version: 11
           should-run-codecov: false
           should-deploy: true

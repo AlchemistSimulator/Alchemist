@@ -5,9 +5,9 @@ weight = 0
 hidden = true
 +++
 
-### Chapter X
+### Examples from published papers
 
-# Some Chapter title
+# Showcase
 
 ## Contents
 

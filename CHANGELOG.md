@@ -1,3 +1,20 @@
+### [12.2.5](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.4...12.2.5) (2022-01-25)
+
+
+### Bug Fixes
+
+* **release:** prevent inconsistent behaviour when no gradle cache is available ([12bbcad](https://github.com/AlchemistSimulator/Alchemist/commit/12bbcada71dd629b6ccc6a485c299a5d17bb9a42))
+
+
+### Documentation
+
+* **website:** sort entries as per [@cric96](https://github.com/cric96)'s suggestion ([7ca0d2e](https://github.com/AlchemistSimulator/Alchemist/commit/7ca0d2ebc2c962fba48744585bb8dac6327c1dee))
+
+
+### Build and continuous integration
+
+* **release:** reduce deploy verbosity ([a9bcb21](https://github.com/AlchemistSimulator/Alchemist/commit/a9bcb219238779ae178bc60e4697371d34d0d482))
+
 ### [12.2.4](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.3...12.2.4) (2022-01-25)
 
 

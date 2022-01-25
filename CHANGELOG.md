@@ -1,3 +1,34 @@
+### [12.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.1...12.2.2) (2022-01-25)
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.3.0 ([5da5a24](https://github.com/AlchemistSimulator/Alchemist/commit/5da5a24ed2b01ec2ece67428b48f185b7ea9935d))
+* **deps:** update dependency org.mockito:mockito-core to v4.3.0 ([1294343](https://github.com/AlchemistSimulator/Alchemist/commit/1294343430e2bad70648d565eb1e0e45ad6fdcf7))
+
+
+### Documentation
+
+* **website:** switch from orchid to hugo ([#1049](https://github.com/AlchemistSimulator/Alchemist/issues/1049)) ([683c92b](https://github.com/AlchemistSimulator/Alchemist/commit/683c92b7e4ac5d6e5e184e26b39173805b937238)), closes [orchidhq/Orchid#393](https://github.com/orchidhq/Orchid/issues/393) [Kotlin/dokka#2320](https://github.com/Kotlin/dokka/issues/2320) [Kotlin/dokka#2321](https://github.com/Kotlin/dokka/issues/2321) [Kotlin/dokka#2322](https://github.com/Kotlin/dokka/issues/2322) [Kotlin/dokka#2323](https://github.com/Kotlin/dokka/issues/2323)
+
+
+### Revert previous changes
+
+* **ci:** switch back ti a three-phase build-and-deploy ([33fd07e](https://github.com/AlchemistSimulator/Alchemist/commit/33fd07ec09c65093440ad6c7d28c456d8762994b))
+
+
+### General maintenance
+
+* **release:** 12.2.2 [skip ci] ([60b5d52](https://github.com/AlchemistSimulator/Alchemist/commit/60b5d529126724527bf3f7ffd3b7dbb81ccae59f)), closes [orchidhq/Orchid#393](https://github.com/orchidhq/Orchid/issues/393) [Kotlin/dokka#2320](https://github.com/Kotlin/dokka/issues/2320) [Kotlin/dokka#2321](https://github.com/Kotlin/dokka/issues/2321) [Kotlin/dokka#2322](https://github.com/Kotlin/dokka/issues/2322) [Kotlin/dokka#2323](https://github.com/Kotlin/dokka/issues/2323)
+
+
+### Build and continuous integration
+
+* build website before deployment ([48caa52](https://github.com/AlchemistSimulator/Alchemist/commit/48caa528895cd45b0f0a8efb515ffc8fd8d5268b))
+* fetch submodules on release ([d0f3fb6](https://github.com/AlchemistSimulator/Alchemist/commit/d0f3fb67af207032ef700c154904e519b2ecb4e2))
+* fix test-deploy job ([2326e56](https://github.com/AlchemistSimulator/Alchemist/commit/2326e56a38d30213b52b5e5787f45c040306382a))
+* restructure in multiple tasks ([7805062](https://github.com/AlchemistSimulator/Alchemist/commit/7805062893629eac28b438a3f6a4bda97980460b))
+
 ### [12.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.1...12.2.2) (2022-01-24)
 
 

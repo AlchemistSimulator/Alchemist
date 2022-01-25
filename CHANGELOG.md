@@ -1,3 +1,25 @@
+### [12.2.3](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.2...12.2.3) (2022-01-25)
+
+
+### Bug Fixes
+
+* **release:** publish secure checksums on Central ([98e93ac](https://github.com/AlchemistSimulator/Alchemist/commit/98e93acebdeeb22d802857d97941cee66c3b340c))
+* **release:** raise tolerance of website version substitution ([f96e959](https://github.com/AlchemistSimulator/Alchemist/commit/f96e959417377251c0bcab84920d2e6d23f1d59a))
+
+
+### Build and continuous integration
+
+* comment the workflow file ([6e15f04](https://github.com/AlchemistSimulator/Alchemist/commit/6e15f0403214849c52a2c4074b9527e075197bcf))
+* improve performance of test-deploy ([7abf5c4](https://github.com/AlchemistSimulator/Alchemist/commit/7abf5c45e29d6cddfff32d08fc982b3fbe3893e8))
+* un-tar silently ([d7ffa4d](https://github.com/AlchemistSimulator/Alchemist/commit/d7ffa4d40ea0dc6087086b276aecccb45313a6c5))
+
+
+### General maintenance
+
+* **build:** remove unused gradle properties ([a2839df](https://github.com/AlchemistSimulator/Alchemist/commit/a2839df3a35e99758d8c7531625f3fa0e23fec9a))
+* delete outdated eclipse configuration file ([9146b8f](https://github.com/AlchemistSimulator/Alchemist/commit/9146b8f840fe5c8cbbcd47c83572b1ebcb1e20f2))
+* ignore .vscode ([8540c51](https://github.com/AlchemistSimulator/Alchemist/commit/8540c5136691be6f52f910824887c113bdd08314))
+
 ### [12.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.1...12.2.2) (2022-01-25)
 
 

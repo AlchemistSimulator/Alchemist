@@ -20,7 +20,7 @@ relativeURLs = true
   themeVariant = "relearn"
   disableSeoHiddenPages = true
   disableLanguageSwitchingButton = true
-  version = "12.0.0"
+  version = "!development preview!"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"] # add JSON to the home page to support lunr search

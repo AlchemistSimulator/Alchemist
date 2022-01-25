@@ -341,4 +341,24 @@ tasks {
             }
             hugoBuild.get().finalizedBy(copyTask)
         }
+    register("injectVersionInWebsite") {
+        val index = File(websiteDir, "index.html")
+        if (!index.exists()) {
+            dependsOn(hugoBuild.get())
+        }
+        inputs.file(index)
+        outputs.file(index)
+        doLast {
+            val version = project.version.toString()
+            val text = index.readText()
+            val devTag = "!development preview!"
+            if (text.contains(devTag)) {
+                index.writeText(text.replace(devTag, version))
+            } else {
+                if (!text.contains(version)) {
+                    logger.warn("Could not inject version $version into the website index page")
+                }
+            }
+        }
+    }
 }

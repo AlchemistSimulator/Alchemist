@@ -344,11 +344,13 @@ tasks {
     register("injectVersionInWebsite") {
         val index = File(websiteDir, "index.html")
         if (!index.exists()) {
+            println("${index.absolutePath} does not exist")
             dependsOn(hugoBuild.get())
         }
-        inputs.file(index)
-        outputs.file(index)
         doLast {
+            require(index.exists()) {
+                "file ${index.absolutePath} existed during configuration, but has been deleted."
+            }
             val version = project.version.toString()
             val text = index.readText()
             val devTag = "!development preview!"

@@ -1,8 +1,8 @@
 ---
 chapter: true
-pre: "<b>4. </b>"
+pre: "<b>3. </b>"
 title: "Explanation"
-weight: 200
+weight: 300
 summary: >-
     Explanation, or discussions, clarify and illuminate a particular topic.
     They are a chance for the documentation to relax and step back from the software, taking a wider view,

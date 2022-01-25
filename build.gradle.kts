@@ -8,13 +8,12 @@
  */
 import Libs.alchemist
 import Libs.incarnation
+import Util.fetchJavadocIOForDependency
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 import java.io.ByteArrayOutputStream
-import java.net.URL
 
 plugins {
     alias(libs.plugins.dokka)
@@ -30,8 +29,6 @@ plugins {
 }
 
 val Provider<PluginDependency>.id get() = get().pluginId
-
-val javadocIO: MutableMap<Dependency, Pair<URL, URL>?> = mutableMapOf()
 
 allprojects {
 
@@ -177,7 +174,7 @@ allprojects {
 
     tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
         dokkaSourceSets.configureEach {
-            jdkVersion.set(11)
+            jdkVersion.set(multiJvm.jvmVersionForCompilation)
             listOf("kotlin", "java")
                 .map { "src/main/$it" }
                 .map { it to File(projectDir, it) }
@@ -193,27 +190,7 @@ allprojects {
                     }
                 }
             configurations.implementation.get().dependencies.forEach { dep ->
-                val javadocIOURLs = javadocIO.getOrPut(dep) {
-                    if (dep.group != project.group.toString()) {
-                        val urlString = "https://javadoc.io/doc/${dep.group}/${dep.name}/${dep.version}"
-                        val packageList = listOf("package-list", "element-list")
-                            .map { URL("$urlString/$it") }
-                            .firstOrNull {
-                                runCatching { it.openStream() }.isSuccess
-                            }
-                        packageList?.let { URL(urlString) to it }?.also {
-                            logger.lifecycle(
-                                "adding {} as a javadoc source for {}:{}:{}",
-                                urlString,
-                                dep.group,
-                                dep.name,
-                                dep.version
-                            )
-                        }
-                    } else {
-                        null
-                    }
-                }
+                val javadocIOURLs = fetchJavadocIOForDependency(dep)
                 if (javadocIOURLs != null) {
                     val (javadoc, packageList) = javadocIOURLs
                     externalDocumentationLink {

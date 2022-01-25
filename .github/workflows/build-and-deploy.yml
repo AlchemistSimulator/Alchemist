@@ -146,12 +146,12 @@ jobs:
             tar -xf website.tar
             echo Copying git information
             mv website/.git build/website/.git
-            git -C build/website/ status
+            # git -C build/website/ status
             echo Removing old website
             rm -rf website
             echo Adding changes to the stage
             git -C build/website/ add .
-            git -C build/website/ status
+            # git -C build/website/ status
           check-command: true
           deploy-command: |
             npm install

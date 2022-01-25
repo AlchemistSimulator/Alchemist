@@ -29,23 +29,46 @@ jobs:
         uses: danysk/action-checkout@0.2.1
       - uses: DanySK/build-check-deploy-gradle-action@1.2.0
         with:
-          build-command: |
-            ./gradlew assemble shadowJar --parallel || ./gradlew assemble shadowJar --parallel
+          build-command: true
           check-command: |
             ./gradlew check --parallel || ./gradlew check --parallel
           clean-command: |
             ./gradlew clean --parallel
-          deploy-command: |
-            ./gradlew signKotlinMavenPublication --parallel
-            ./gradlew closeKotlinMavenOnMavenCentralNexus
           should-run-codecov: ${{ contains('Linux', runner.os) }}
-          should-deploy: >-
-            ${{
-              contains('Linux', runner.os)
-              && contains(github.repository, 'AlchemistSimulator/Alchemist')
-              && contains('push workflow_dispatch', github.event_name)
-            }}
-          github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
+          should-deploy: false
+  test-shadowjar:
+    strategy:
+      matrix:
+        os: [ windows, macos, ubuntu ]
+    runs-on: ${{ matrix.os }}-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.1
+      - uses: DanySK/build-check-deploy-gradle-action@1.2.0
+        with:
+          build-command: |
+            ./gradlew shadowJar --parallel || ./gradlew shadowJar --parallel
+          check-command: true
+          java-version: 11
+          should-run-codecov: false
+          should-deploy: false
+          should-validate-wrapper: false
+  test-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    if: contains(github.repository, 'AlchemistSimulator/Alchemist') && contains('push workflow_dispatch', github.event_name)
+    steps:
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.1
+      - uses: DanySK/build-check-deploy-gradle-action@1.2.0
+        with:
+          build-command: ./gradlew signKotlinMavenPublication --parallel
+          check-command: ./gradlew closeKotlinMavenOnMavenCentralNexus
+          java-version: 11
+          should-run-codecov: false
+          should-deploy: false
+          should-validate-wrapper: false
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
@@ -70,11 +93,21 @@ jobs:
             docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --threads 1
           should-run-codecov: false
           should-deploy: false
+          should-validate-wrapper: false
           github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Tar files
+        run: tar -cvf website.tar build/website
+      - name: Upload website
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: website
+          path: website.tar
   release:
     needs:
       - build
       - build-website
+      - test-deploy
+      - test-shadowjar
     runs-on: ubuntu-latest
     if: >-
       contains('push workflow_dispatch', github.event_name)
@@ -89,20 +122,30 @@ jobs:
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
         uses: actions/checkout@v2.4.0
         with:
-          path: build/website
+          path: website
           fetch-depth: 0
           persist-credentials: true
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - name: Cleanup the old website
-        shell: bash
-        run: |
-          rm -rf build/website/*
-          ls -ahl build/website
+      - name: Download website artifact
+        uses: actions/download-artifact@v2.1.0
+        with:
+          name: website
       - uses: DanySK/build-check-deploy-gradle-action@1.2.0
         with:
           java-version: 11
-          build-command: ./gradlew hugoBuild
+          build-command: |
+            ls -ahl
+            echo Copying the new website
+            tar -xvf website.tar
+            echo Copying git information
+            mv website/.git build/website/.git
+            git -C build/website/ status
+            echo Removing old website
+            rm -rf website
+            echo Adding changes to the stage
+            git -C build/website/ add .
+            git -C build/website/ status
           check-command: true
           deploy-command: |
             npm install

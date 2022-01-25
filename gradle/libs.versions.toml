@@ -9,9 +9,8 @@ konf = "1.1.2"
 kotest = "5.0.3"
 dokka = "1.6.10"
 kotlin = "1.6.10"
-mockito = "4.2.0"
+mockito = "4.3.0"
 protelis = "15.1.0"
-orchid = "0.21.1"
 scafi = "0.3.3"
 scala = "2.13.8"
 scalacache = "0.28.0"
@@ -33,7 +32,7 @@ classgraph = "io.github.classgraph:classgraph:4.8.138"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.6.17"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.7"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.3.0"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
@@ -66,13 +65,6 @@ mapsforge = "org.mapsforge:mapsforge-map-awt:0.17.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.0"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mongodb = "org.mongodb:mongodb-driver-sync:4.4.1"
-orchid-core = { module = "io.github.javaeden.orchid:OrchidCore", version.ref = "orchid" }
-orchid-editorial = { module = "io.github.javaeden.orchid:OrchidEditorial", version.ref = "orchid" }
-orchid-github = { module = "io.github.javaeden.orchid:OrchidGithub", version.ref = "orchid" }
-orchid-plugindocs = { module = "io.github.javaeden.orchid:OrchidPluginDocs", version.ref = "orchid" }
-orchid-search = { module = "io.github.javaeden.orchid:OrchidSearch", version.ref = "orchid" }
-orchid-syntaxhighlighter = { module = "io.github.javaeden.orchid:OrchidSyntaxHighlighter", version.ref = "orchid" }
-orchid-wiki = { module = "io.github.javaeden.orchid:OrchidWiki", version.ref = "orchid" }
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.1.158"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
@@ -96,7 +88,6 @@ trove4j = "net.sf.trove4j:trove4j:3.0.3"
 
 [bundles]
 graphhopper = [ "graphhopper-core" ]
-orchid = [ "orchid-editorial", "orchid-github", "orchid-plugindocs", "orchid-search", "orchid-syntaxhighlighter", "orchid-wiki" ]
 jiconfont = [ "jiconfont-javafx", "jiconfont-materialDesignIcons" ]
 protelis = [ "protelis-interpreter", "protelis-lang" ]
 scala = [ "scala-compiler", "scala-library" ]
@@ -108,11 +99,11 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
-java-qa = "org.danilopianini.gradle-java-qa:0.15.0"
+hugo = "io.github.fstaudt.hugo:0.2.0"
+java-qa = "org.danilopianini.gradle-java-qa:0.16.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.9.0"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.4"
-orchid = { id = "com.eden.orchidPlugin", version.ref = "orchid" }
 publishOnCentral = "org.danilopianini.publish-on-central:0.7.11"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:7.1.2"

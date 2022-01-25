@@ -123,8 +123,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     }
 
     /**
-     * [node].[canFit] must be true for the returned position. For a better understanding of how to compute collision
-     * points with circular hitboxes see [this discussion](https://bit.ly/3f00NvJ).
+     * [node].[canFit] must be true for the returned position.
      */
     override fun farthestPositionReachable(
         node: NodeWithShape<T, *, *>,

@@ -1,3 +1,63 @@
+### [12.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.1...12.2.2) (2022-01-24)
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.3.0 ([5da5a24](https://github.com/AlchemistSimulator/Alchemist/commit/5da5a24ed2b01ec2ece67428b48f185b7ea9935d))
+* **deps:** update dependency org.mockito:mockito-core to v4.3.0 ([1294343](https://github.com/AlchemistSimulator/Alchemist/commit/1294343430e2bad70648d565eb1e0e45ad6fdcf7))
+
+
+### Documentation
+
+* **website:** switch from orchid to hugo ([#1049](https://github.com/AlchemistSimulator/Alchemist/issues/1049)) ([683c92b](https://github.com/AlchemistSimulator/Alchemist/commit/683c92b7e4ac5d6e5e184e26b39173805b937238)), closes [orchidhq/Orchid#393](https://github.com/orchidhq/Orchid/issues/393) [Kotlin/dokka#2320](https://github.com/Kotlin/dokka/issues/2320) [Kotlin/dokka#2321](https://github.com/Kotlin/dokka/issues/2321) [Kotlin/dokka#2322](https://github.com/Kotlin/dokka/issues/2322) [Kotlin/dokka#2323](https://github.com/Kotlin/dokka/issues/2323)
+
+
+### Revert previous changes
+
+* **ci:** switch back ti a three-phase build-and-deploy ([33fd07e](https://github.com/AlchemistSimulator/Alchemist/commit/33fd07ec09c65093440ad6c7d28c456d8762994b))
+
+
+### Build and continuous integration
+
+* build website before deployment ([48caa52](https://github.com/AlchemistSimulator/Alchemist/commit/48caa528895cd45b0f0a8efb515ffc8fd8d5268b))
+* fetch submodules on release ([d0f3fb6](https://github.com/AlchemistSimulator/Alchemist/commit/d0f3fb67af207032ef700c154904e519b2ecb4e2))
+
+### [12.2.1](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.0...12.2.1) (2022-01-22)
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.0 ([e5edc7f](https://github.com/AlchemistSimulator/Alchemist/commit/e5edc7fb9c07be4a7b84e83f40224d97efb6beb7))
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.4 ([1dd9a23](https://github.com/AlchemistSimulator/Alchemist/commit/1dd9a23bb63fc45c3488ef3fbf8bdf12e115b4ee))
+* **deps:** update plugin java-qa to v0.16.0 ([2b88710](https://github.com/AlchemistSimulator/Alchemist/commit/2b88710fd4c303192bc504a9f617d4bc41770107))
+
+
+### Documentation
+
+* **javadoc:** fix error in Incarnation.createNode ([6f24da1](https://github.com/AlchemistSimulator/Alchemist/commit/6f24da10818d710b325f4b363896f6959ddaf118))
+
+## [12.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.7...12.2.0) (2022-01-18)
+
+
+### Features
+
+* import RandomTargetInPolygon from the [JCEE experiments](https://github.com/DanySK/Experiment-2021-JCEE-Optimal-Converge-Cast) ([264c404](https://github.com/AlchemistSimulator/Alchemist/commit/264c404a4cb08418196a6720e6be8d853a1b661e))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.2.8 ([9d69ee1](https://github.com/AlchemistSimulator/Alchemist/commit/9d69ee108a7af372c7fce5f78f1cdde0d57ead1e))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.3 ([d756407](https://github.com/AlchemistSimulator/Alchemist/commit/d7564078ae1670bb6884fa2bafbe6c10474c5093))
+
+
+### Refactoring
+
+* **loading:** hide internal type alias in Polygon ([971eb54](https://github.com/AlchemistSimulator/Alchemist/commit/971eb544bd221f5816f96a4e5c92f6d5f1e21206))
+
 ### [12.1.7](https://github.com/AlchemistSimulator/Alchemist/compare/12.1.6...12.1.7) (2022-01-14)
 
 

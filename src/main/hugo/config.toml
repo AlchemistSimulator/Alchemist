@@ -1,0 +1,68 @@
+baseURL = "https://alchemistsimulator.github.io/"
+canonifyURLs = true
+languageCode = "en"
+defaultContentLanguage = "en"
+
+title = "The Alchemist Simulator"
+theme = "hugo-theme-relearn"
+relativeURLs = true
+
+[params]
+  editURL = "https://github.com/AlchemistSimulator/Alchemist/edit/master/src/main/hugo/content/"
+  description = "The Alchemist Simulator"
+  author = "Danilo Pianini"
+  showVisitedLinks = true
+  disableBreadcrumb = false
+  disableNextPrev = false
+  disableLandingPageButton = false
+  disableMermaid = false
+  titleSeparator = "::"
+  themeVariant = "relearn"
+  disableSeoHiddenPages = true
+  disableLanguageSwitchingButton = true
+  version = "12.0.0"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"] # add JSON to the home page to support lunr search
+
+[markup]
+  [markup.highlight]
+    style = "base16-snazzy" # choose a color theme or create your own
+    guessSyntax = false     # if set to true, avoid unstyled code if no language was given but mermaid code fences will not work anymore
+
+[markup.goldmark.renderer]
+  unsafe= true
+
+[Languages]
+  [Languages.en]
+    title = "Documentation for the Alchemist Simulator"
+    weight = 1
+    languageName = "English"
+    landingPageURL = "/"
+    landingPageName = "<i class='fas fa-home'></i> Home"
+
+  [[Languages.en.menu.shortcuts]]
+    name = "<i class='fab fa-fw fa-github'></i> GitHub repo"
+    identifier = "ds"
+    url = "https://github.com/AlchemistSimulator/Alchemist"
+    weight = 10
+
+  [[Languages.en.menu.shortcuts]]
+    name = "<i class='fab fa-youtube'></i> YouTube channel"
+    url = "https://www.youtube.com/channel/UC0o4FQEhRC6fWLLxxfPByKw"
+    weight = 20
+
+  [[Languages.en.menu.shortcuts]]
+    name = "<i class='fas fa-fw fa-camera'></i> Use cases"
+    url = "/showcase/"
+    weight = 30
+
+  [[Languages.en.menu.shortcuts]]
+    name = "<i class='fas fa-fw fa-tags'></i> Tags"
+    url = "/tags/"
+    weight = 40
+
+  [[Languages.en.menu.shortcuts]]
+    name = "<i class='fas fa-balance-scale'></i> License"
+    url = "/license/"
+    weight = 40

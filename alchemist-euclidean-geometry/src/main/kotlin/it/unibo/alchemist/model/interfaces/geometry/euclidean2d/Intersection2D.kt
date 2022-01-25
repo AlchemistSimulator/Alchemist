@@ -17,31 +17,38 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
  * The requirement is not explicitly enforced to allow the class to work covariantly.
  */
 sealed class Intersection2D<out V> {
+
     /**
      * List of intersection points (in case of infinite points this is empty).
      */
     open val asList: List<V> = emptyList()
+
     /**
      * Objects do not intersect.
      */
     object None : Intersection2D<Nothing>()
+
     /**
      * Objects intersect in a single [point].
      */
     data class SinglePoint<P : Vector2D<P>>(val point: P) : Intersection2D<P>() {
         override val asList = listOf(point)
     }
+
     /**
      * Objects intersect in a discrete number of [points].
      */
     data class MultiplePoints<P : Vector2D<P>>(val points: List<P>) : Intersection2D<P>() {
         override val asList: List<P> get() = points
     }
+
     /**
      * Objects intersect in infinite points (e.g. overlapping segments).
      */
     object InfinitePoints : Intersection2D<Nothing>()
+
     companion object {
+
         /**
          * @returns the correct intersection object depending of the number of items in the list.
          */

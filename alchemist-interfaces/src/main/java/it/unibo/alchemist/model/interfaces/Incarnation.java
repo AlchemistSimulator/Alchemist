@@ -59,7 +59,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the environment that will host this object
      * @param parameter
      *            a {@link String} describing the object
-     * @return a new {@link TimeDistribution}
+     * @return a new {@link Node}
      */
     Node<T> createNode(RandomGenerator randomGenerator, Environment<T, P> environment, @Nullable String parameter);
 

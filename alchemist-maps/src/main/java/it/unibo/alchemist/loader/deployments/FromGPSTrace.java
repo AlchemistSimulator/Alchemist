@@ -29,7 +29,10 @@ public final class FromGPSTrace implements Deployment {
      * @param path
      *            path with the gps tracks
      * @param cycle
-     *            true if considering list of GPSTrace cycle, default false
+     *            true if, in case there are more nodes to deploy than available GPS traces,
+     *            the traces should be reused cyclically. E.g., if 10 nodes must be deployed
+     *            but only 9 GPS traces are available, the first one is reused for the 10th
+     *            node.
      * @param normalizer
      *            class to use to normalize time
      * @param args

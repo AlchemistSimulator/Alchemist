@@ -91,7 +91,8 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
             @Nullable final Molecule interactingMolecule,
             final double speed,
             final double interaction,
-            final double range) {
+            final double range
+    ) {
         super(
             environment,
             node,

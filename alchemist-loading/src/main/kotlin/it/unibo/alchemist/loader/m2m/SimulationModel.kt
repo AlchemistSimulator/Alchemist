@@ -19,8 +19,10 @@ import it.unibo.alchemist.loader.export.extractors.MoleculeReader
 import it.unibo.alchemist.loader.export.extractors.Time
 
 import it.unibo.alchemist.loader.export.filters.CommonFilters
-import it.unibo.alchemist.loader.m2m.DocumentRoot.JavaType
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
+import it.unibo.alchemist.loader.m2m.syntax.SyntaxElement
 import it.unibo.alchemist.loader.shapes.Shape
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
@@ -45,8 +47,8 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
-import it.unibo.alchemist.loader.m2m.DocumentRoot.Deployment.Program as ProgramSyntax
-import it.unibo.alchemist.loader.m2m.DocumentRoot.Layer as LayerSyntax
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Layer as LayerSyntax
 
 /**
  * Contains the model-to-model translation between the Alchemist YAML specification and the

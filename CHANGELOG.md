@@ -1,3 +1,15 @@
+### [12.2.4](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.3...12.2.4) (2022-01-25)
+
+
+### Bug Fixes
+
+* **website:** correctly inject the website version ([3842b81](https://github.com/AlchemistSimulator/Alchemist/commit/3842b81121c8c74f9faf2a0c4d9b6b519135c62c))
+
+
+### Documentation
+
+* **website:** add missing title to the showcase ([a42c9f9](https://github.com/AlchemistSimulator/Alchemist/commit/a42c9f96639ab25627b5b0d85e06a1b648bdc161))
+
 ### [12.2.3](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.2...12.2.3) (2022-01-25)
 
 

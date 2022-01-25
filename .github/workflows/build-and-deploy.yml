@@ -143,7 +143,7 @@ jobs:
           build-command: |
             ls -ahl
             echo Copying the new website
-            tar -xvf website.tar
+            tar -xf website.tar
             echo Copying git information
             mv website/.git build/website/.git
             git -C build/website/ status

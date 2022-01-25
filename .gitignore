@@ -48,3 +48,4 @@ compiler.xml
 misc.xml
 .name
 node_modules/
+.vscode

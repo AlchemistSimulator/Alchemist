@@ -1,3 +1,15 @@
+### [12.2.6](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.5...12.2.6) (2022-01-26)
+
+
+### Dependency updates
+
+* **deps:** update dependency org.slf4j:slf4j-api to v1.7.34 ([8f3032c](https://github.com/AlchemistSimulator/Alchemist/commit/8f3032cd43158631550648a40b0f214354602e8a))
+
+
+### Documentation
+
+* **apidocs:** link libraries from javadoc.io ([#1053](https://github.com/AlchemistSimulator/Alchemist/issues/1053)) ([12020cc](https://github.com/AlchemistSimulator/Alchemist/commit/12020cce470b45a614050e732bd17e3386105f09))
+
 ### [12.2.5](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.4...12.2.5) (2022-01-25)
 
 

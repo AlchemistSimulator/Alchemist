@@ -1,3 +1,22 @@
+### [12.2.7](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.6...12.2.7) (2022-01-26)
+
+
+### Bug Fixes
+
+* **swingui:** allow (de)serialization of LayerToFunctionMapper ([bc48233](https://github.com/AlchemistSimulator/Alchemist/commit/bc48233fa41305853afb2d5a69d71e0d02e48497))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.mockito:mockito-core to v4.3.1 ([e084963](https://github.com/AlchemistSimulator/Alchemist/commit/e08496312f2df1e7ef24c3175ac7757e02c8dceb))
+* **deps:** update dependency org.slf4j:slf4j-api to v1.7.35 ([2e1e162](https://github.com/AlchemistSimulator/Alchemist/commit/2e1e1627815ab7a0dbedaf2ad4392b5743f2a2ee))
+* **deps:** update plugin publishoncentral to v0.7.12 ([e3b3d85](https://github.com/AlchemistSimulator/Alchemist/commit/e3b3d858ce7e39bc5ec6c44ccf68414e2e3708bc))
+
+
+### Tests
+
+* **swingui:** add regression test for layer loading issues ([c17740c](https://github.com/AlchemistSimulator/Alchemist/commit/c17740c3a4bfbd236326cf6bc19ef4203d401ba3))
+
 ### [12.2.6](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.5...12.2.6) (2022-01-26)
 
 

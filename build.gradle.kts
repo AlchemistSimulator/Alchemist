@@ -8,6 +8,7 @@
  */
 import Libs.alchemist
 import Libs.incarnation
+import Util.fetchJavadocIOForDependency
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -173,7 +174,7 @@ allprojects {
 
     tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
         dokkaSourceSets.configureEach {
-            jdkVersion.set(11)
+            jdkVersion.set(multiJvm.jvmVersionForCompilation)
             listOf("kotlin", "java")
                 .map { "src/main/$it" }
                 .map { it to File(projectDir, it) }
@@ -188,8 +189,15 @@ allprojects {
                         remoteLineSuffix.set("#L")
                     }
                 }
-            externalDocumentationLink {
-                url.set(uri("https://javadoc.io/doc/org.apache.commons/commons-math3/").toURL())
+            configurations.implementation.get().dependencies.forEach { dep ->
+                val javadocIOURLs = fetchJavadocIOForDependency(dep)
+                if (javadocIOURLs != null) {
+                    val (javadoc, packageList) = javadocIOURLs
+                    externalDocumentationLink {
+                        url.set(javadoc)
+                        packageListUrl.set(packageList)
+                    }
+                }
             }
         }
         failOnWarning.set(true)

@@ -48,7 +48,11 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
     private String maxLayerValueCached = maxLayerValue;
     private Double minLayerValueDouble = Double.parseDouble(minLayerValueCached);
     private Double maxLayerValueDouble = Double.parseDouble(maxLayerValueCached);
-    private LayerToFunctionMapper mapper;
+    private final LayerToFunctionMapper mapper;
+
+    DrawLayersValues(final LayerToFunctionMapper mapper) {
+        this.mapper = mapper;
+    }
 
     /**
      * {@inheritDoc}
@@ -60,9 +64,6 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
             final Graphics2D graphics,
             final Wormhole2D<P> wormhole
     ) {
-        if (mapper == null) {
-            mapper = createMapper();
-        }
         mapper.prepare(this, toDraw, environment, graphics, wormhole);
         mapper.map(toDraw.stream()).forEach(f -> this.drawFunction(f, environment, graphics, wormhole));
     }
@@ -98,11 +99,6 @@ public abstract class DrawLayersValues extends AbstractDrawLayers implements Fun
             L.warn(minLayerValue + " or " + maxLayerValue + " are not valid values");
         }
     }
-
-    /**
-     * @return a layer to function mapper
-     */
-    protected abstract LayerToFunctionMapper createMapper();
 
     /**
      * @return a string representation of the min layer value

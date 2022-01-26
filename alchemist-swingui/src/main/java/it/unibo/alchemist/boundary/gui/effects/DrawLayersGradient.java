@@ -44,6 +44,13 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
     private RangedInteger samples = new RangedInteger(MIN_SAMPLES, MAX_SAMPLES, MIN_SAMPLES * 10);
 
     /**
+     * @param mapper the {@link LayerToFunctionMapper} converting a layer into a function.
+     */
+    protected DrawLayersGradient(final LayerToFunctionMapper mapper) {
+        super(mapper);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -104,12 +111,6 @@ public abstract class DrawLayersGradient extends DrawLayersValues {
             }
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected abstract LayerToFunctionMapper createMapper();
 
     /**
      * @return the number of samples

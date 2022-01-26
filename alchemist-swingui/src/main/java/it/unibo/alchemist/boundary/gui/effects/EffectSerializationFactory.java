@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.Writer;
 import java.util.List;
 
@@ -40,15 +41,10 @@ import java.util.List;
 @Deprecated
 public final class EffectSerializationFactory {
 
-    private static final RuntimeTypeAdapterFactory<Effect> RUNTIME_TYPE_ADAPTER_FACTORY =
-            RuntimeTypeAdapterFactory.of(Effect.class);
+    private static final Gson GSON;
 
     static {
-        ClassPathScanner.subTypesOf(Effect.class)
-            .forEach(e -> RUNTIME_TYPE_ADAPTER_FACTORY.registerSubtype(e, e.toString()));
-    }
-
-    private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(RUNTIME_TYPE_ADAPTER_FACTORY)
+        final var builder = new GsonBuilder()
             .registerTypeHierarchyAdapter(
                 CollectionWithCurrentElement.class,
                 new TypeAdapter<ImmutableCollectionWithCurrentElement<?>>() {
@@ -87,7 +83,17 @@ public final class EffectSerializationFactory {
                     }
                 }
             )
-            .setPrettyPrinting().create();
+            .setPrettyPrinting();
+        List.of(Effect.class, LayerToFunctionMapper.class).forEach(clazz -> {
+            @SuppressWarnings("unchecked")
+            final var runtimeAdapterFactory = (RuntimeTypeAdapterFactory<Serializable>) RuntimeTypeAdapterFactory.of(clazz);
+            ClassPathScanner
+                .subTypesOf(clazz, clazz.getPackageName(), "it.unibo.alchemist")
+                .forEach(subtype -> runtimeAdapterFactory.registerSubtype(subtype, subtype.toString()));
+            builder.registerTypeAdapterFactory(runtimeAdapterFactory);
+        });
+        GSON = builder.create();
+    }
 
     private EffectSerializationFactory() {
     }
@@ -105,7 +111,6 @@ public final class EffectSerializationFactory {
      * @throws ClassNotFoundException
      *             In case the serialized binary object is not an effect
      */
-    @SuppressWarnings("unchecked")
     @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION", justification = "RuntimeException is willingly caught")
     public static List<Effect> effectsFromFile(final File effectFile) throws IOException, ClassNotFoundException {
         try (Reader fr = new InputStreamReader(new FileInputStream(effectFile), Charsets.UTF_8)) {

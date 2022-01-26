@@ -23,14 +23,9 @@ public class DrawBidimensionalGaussianLayersIsolines extends DrawLayersIsolines 
     /**
      */
     public DrawBidimensionalGaussianLayersIsolines() {
-        super(new ConcreteIsolinesFactory().makeIsolinesFinder(IsolinesFactory.IsolineFinders.CONREC));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected LayerToFunctionMapper createMapper() {
-        return new BidimensionalGaussianLayersMapper();
+        super(
+            new ConcreteIsolinesFactory().makeIsolinesFinder(IsolinesFactory.IsolineFinders.CONREC),
+            new BidimensionalGaussianLayersMapper()
+        );
     }
 }

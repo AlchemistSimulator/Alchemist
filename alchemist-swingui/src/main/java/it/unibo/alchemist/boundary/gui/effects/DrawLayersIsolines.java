@@ -63,9 +63,10 @@ public abstract class DrawLayersIsolines extends DrawLayersValues {
      * Every class extending this one should call this constructor.
      *
      * @param algorithm - the algorithm used to extract isolines
+     * @param mapper - the function converting a layer to a function
      */
-    public DrawLayersIsolines(final IsolinesFinder algorithm) {
-        super();
+    public DrawLayersIsolines(final IsolinesFinder algorithm, final LayerToFunctionMapper mapper) {
+        super(mapper);
         Objects.requireNonNull(algorithm);
         this.algorithm = algorithm;
     }

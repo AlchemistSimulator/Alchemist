@@ -12,6 +12,7 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.engine.spec.tempfile
 import io.kotest.matchers.file.shouldBeAFile
 import io.kotest.matchers.file.shouldExist
 import io.kotest.matchers.file.shouldNotBeEmpty
@@ -19,13 +20,24 @@ import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
+import it.unibo.alchemist.boundary.gui.effects.DrawBidimensionalGaussianLayersGradient
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 
 class TestEffectLoading : StringSpec(
     {
-        "effects with layers should be deserializable" {
+        "effects with layers should be (de)serializable" {
+            val target = DrawBidimensionalGaussianLayersGradient()
+            val tempFile = tempfile()
+            EffectSerializationFactory.effectToFile(tempFile, target)
+            println(tempFile.readText())
+            tempFile.shouldExist()
+            tempFile.shouldBeAFile()
+            tempFile.shouldNotBeEmpty()
+            EffectSerializationFactory.effectsFromFile(tempFile).shouldNotBeNull()
+        }
+        "legacy effects with layers should be deserializable" {
             val target = ResourceLoader.getResource("layer.json")
             target shouldNot beNull()
             val file = File(target.file)

@@ -13,7 +13,7 @@
     "minLayerValueDouble": 0.1,
     "maxLayerValueDouble": 30.0,
     "mapper": {
-      "minAndMaxToBeSet": false
+      "type": "class it.unibo.alchemist.boundary.gui.effects.BidimensionalGaussianLayersMapper"
     },
     "layerFilter": false,
     "molString": "",

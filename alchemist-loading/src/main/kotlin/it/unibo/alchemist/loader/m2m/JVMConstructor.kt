@@ -34,6 +34,8 @@ class OrderedParametersConstructor(
     override fun toString(): String = "$typeName${parameters.joinToString(prefix = "(", postfix = ")")}"
 }
 
+private typealias OrderedParameters = List<KParameter>
+
 /**
  * A [JVMConstructor] whose parameters are named
  * and hence stored in a [parametersMap]
@@ -44,58 +46,44 @@ class NamedParametersConstructor(
     private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()
 ) : JVMConstructor(type) {
 
-    private data class Error(val parameter: KParameter) {
-        override fun toString() = "${parameter.name}: ${parameter.type.jvmErasure.simpleName}"
+    private fun List<OrderedParameters>.description() = joinToString(prefix = "\n- ", separator = "\n- ") {
+        it.namedParametersDescriptor()
     }
 
+    private inline infix fun Boolean.and(then: () -> Boolean): Boolean = if (this) then() else false
+
     override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> {
-        val parameterNames = parametersMap.map { it.key.toString() }
+        val providedNames = parametersMap.map { it.key.toString() }
         val singletons = factory.singletonObjects.keys
-        val availableParameters = target.constructors.map { constructor ->
-            constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }
+        val constructorsWithOrderedParameters = target.constructors.map { constructor ->
+            constructor.valueParameters.filterNot { it.type.jvmErasure.java in singletons }.sortedBy { it.index }
         }
-        val usableParameters: List<List<KParameter>> = availableParameters.filter { constructorParameters ->
-            constructorParameters.mapNotNull { it.name }.containsAll(parameterNames)
-        }
-        if (usableParameters.isEmpty()) {
-            throw IllegalArgumentException(
-                """
-                    No constructor available for ${target.simpleName} with named parameters $parameterNames.
-                    Available constructors have the following *named* parameters:
-                """.trimIndent() +
-                    availableParameters.joinToString(prefix = "\n- ", separator = "\n- ") {
-                        it.namedParametersDescriptor()
-                    }
-            )
-        }
-        val orderedParameters: List<List<*>> = usableParameters.map { parameterList ->
-            parameterList.sortedBy { it.index }
-                .map { parametersMap[it.name] ?: Error(it) }
-                .dropLastWhile { it is Error && it.parameter.isOptional }
-        }.distinct()
-        val (valid, errors) = orderedParameters.partition { parameters -> parameters.none { it is Error } }
-        require(valid.isNotEmpty()) {
-            val problems = errors.map { problematicParameters -> problematicParameters.filterIsInstance<Error>() }
-                .distinct()
-                .mapIndexed { index, list ->
-                    "option ${index + 1}) add the following ${list.size} parameters: " + list.joinToString(", ")
+        val usableConstructors: List<OrderedParameters> = constructorsWithOrderedParameters.filter { parameters ->
+            (providedNames.size <= parameters.size) and {
+                val (optional, mandatory) = parameters.partition { it.isOptional }
+                providedNames.containsAll(mandatory.map { it.name }) and {
+                    val requiredOptionals = optional.take(providedNames.size - mandatory.size)
+                    providedNames.containsAll(requiredOptionals.map { it.name })
                 }
-                .joinToString("\n|")
+            }
+        }
+        require(usableConstructors.isNotEmpty()) {
             """
-                |Invalid named parameters provided for ${target.simpleName}: $parameterNames.
-                |You may try to fix by providing the following missing information:
-                |$problems
-            """.trimMargin()
+            No constructor available for ${target.simpleName} with named parameters $providedNames.
+            Note: Due to the way Kotlin's @JvmOverloads works, all the optional parameters that precede the ones
+            §of interest must be provided.
+            Available constructors have the following *named* parameters:
+            """.trimIndent().replace(Regex("\\R§"), " ") +
+                constructorsWithOrderedParameters.description()
         }
-        if (valid.size > 1) {
-            throw IllegalArgumentException(
-                """
-                    Multiple constructors available for ${target.simpleName} with named parameters $parameterNames.
-                    Conflicting name parameters lists: $orderedParameters
-                """.trimIndent()
-            )
+        require(usableConstructors.size == 1) {
+            """
+            |Ambiguous constructors resolution for ${target.simpleName} with named parameters $providedNames.
+            | ${ usableConstructors.joinToString("\n|") { "Match: ${it.namedParametersDescriptor()}" } }
+            |Available constructors have the following *named* parameters:
+            """.trimMargin() + constructorsWithOrderedParameters.description()
         }
-        return valid.first()
+        return usableConstructors.first().mapNotNull { parametersMap[it.name] }
     }
 
     private fun Collection<KParameter>.namedParametersDescriptor() = "$size-ary constructor: " +

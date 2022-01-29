@@ -373,6 +373,8 @@ Same as [parameters](#parameters)
 The only supported String is `"time"`.
 Otherwise, a SpecMap **MUST** be provided.
 
+Creates instances of {{% api package="loader.export" class="Extractor" %}}.
+
 **(Multi)Spec**
 
 | Mandatory keys | Optional keys                             |

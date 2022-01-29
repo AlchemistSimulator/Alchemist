@@ -11,6 +11,7 @@ package it.unibo.alchemist.test
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
@@ -18,6 +19,7 @@ import it.unibo.alchemist.ClassPathScanner
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader
 import java.io.File
+import java.lang.RuntimeException
 import java.net.URL
 
 val cache: LoadingCache<URL, Loader> = Caffeine.newBuilder().build {
@@ -35,6 +37,11 @@ class TestGuidedTourLoading : FreeSpec(
             "${File(yaml.file).name} should actually define variables" {
                 val parsed = cache.get(yaml)!!
                 (parsed.variables + parsed.dependentVariables).size shouldBeGreaterThan 0
+            }
+        }
+        ClassPathScanner.resourcesMatching(".*\\.[yY][aA]?[mM][lL]", "failures").forEach { yaml ->
+            "${File(yaml.file).name} should not load" {
+                shouldThrow<RuntimeException> { LoadAlchemist.from(yaml).getDefault<Any, Nothing>() }
             }
         }
     }

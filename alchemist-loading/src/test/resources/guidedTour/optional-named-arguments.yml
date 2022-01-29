@@ -1,0 +1,22 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [6]
+
+deployments:
+  type: Rectangle
+  parameters:
+    [1, 0, 0, 100, 100]
+  contents:
+    molecule: grain
+    concentration: 5
+
+layers:
+  - molecule: layer
+    type: BidimensionalGaussianLayer
+    parameters:
+      centerX: 30
+      centerY: 30
+      norm: 30
+      sigmaX: 15

@@ -1,3 +1,31 @@
+### [12.2.8](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.7...12.2.8) (2022-01-29)
+
+
+### Bug Fixes
+
+* **loading:** allow optional parameters on more cases ([ed7efe0](https://github.com/AlchemistSimulator/Alchemist/commit/ed7efe06cfb1973c1220e67e7ecd082cadd0f89d))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.3.1 ([a98024a](https://github.com/AlchemistSimulator/Alchemist/commit/a98024a3101ddeeab299e9132edda6e56bbce1a9))
+
+
+### Build and continuous integration
+
+* **website:** retry the website construction multiple times, as network errors are possible ([9e54998](https://github.com/AlchemistSimulator/Alchemist/commit/9e54998ab46b45ba9e23dd1ae22ffac218e4345e))
+
+
+### Tests
+
+* **loading:** verify that optional arguments can actually be omitted ([33a03d5](https://github.com/AlchemistSimulator/Alchemist/commit/33a03d51f444aa0b49c9e1b9400602ca4baf970d))
+
+
+### Documentation
+
+* **website:** improve the documentation of layers ([0e2a93b](https://github.com/AlchemistSimulator/Alchemist/commit/0e2a93b42fa18b59a656a5ca57e11b40e1bf4a35))
+* **website:** improve the reference about named parameters and provide examples ([eae31e4](https://github.com/AlchemistSimulator/Alchemist/commit/eae31e4fd58c5a70739fdbdf7efa9d4e5ea2e7c4))
+
 ### [12.2.7](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.6...12.2.7) (2022-01-26)
 
 

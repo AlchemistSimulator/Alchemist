@@ -104,6 +104,15 @@ Since Java 11 does not support named arguments,
 this special invocation type is built around the Kotlin reflection,
 thus, the concrete class whose constructor is being invoked **MUST** be written in Kotlin.
 
+When using named arguments,
+if at least one optional parameter is specified,
+then all the previous optional parameters **MUST** be specified as well.
+This limitation is due to the fact that Alchemist supports loading of JVM classes regardless of their origin language,
+and, thus, the simulator must leverage constructor overloading to emulate optional parameters.
+In the case of Kotlin classes, because of the way
+[`@JvmOverloads`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/)
+works, only a (reasonable) subset of all possible overloads gets generated, and they differ by parameter count.
+
 Instantiation is delegated to the [Java Implicit Reflective Factory](https://github.com/DanySK/jirf/).
 
 #### Examples
@@ -113,6 +122,13 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 * Construction of variables with named parameters
     {{<code path="src/test/resources/website-snippets/named-parameters.yml" >}}
 
+#### Counter-examples
+
+* The following simulation **fails on loading**, as
+  {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}
+  has the *first* and *last* parameters marked as optional:
+  in order to provide the latter, the designer must also provide the former.
+    {{< code path="alchemist-loading/src/test/resources/guidedTour/optional-named-arguments.yml" >}}
 
 ---
 

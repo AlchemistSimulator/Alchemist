@@ -1,3 +1,15 @@
+### [12.2.9](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.8...12.2.9) (2022-01-30)
+
+
+### Dependency updates
+
+* **deps:** update plugin kotlin-qa to v0.10.0 ([8e1717d](https://github.com/AlchemistSimulator/Alchemist/commit/8e1717dbbf4a2ec630484f4915de2f6d5c868033))
+
+
+### Documentation
+
+* **website:** document the data export, fixes [#963](https://github.com/AlchemistSimulator/Alchemist/issues/963) ([#1061](https://github.com/AlchemistSimulator/Alchemist/issues/1061)) ([c597401](https://github.com/AlchemistSimulator/Alchemist/commit/c597401047a15bd401db2719e880295cbd5c7551))
+
 ### [12.2.8](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.7...12.2.8) (2022-01-29)
 
 

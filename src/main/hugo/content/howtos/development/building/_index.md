@@ -3,7 +3,7 @@ pre = ""
 title = "Build"
 weight = 5
 tags = ["build", "report", "IntelliJ", "Gradle", "Javadoc"]
-summary = ""
+summary = "How to build the project"
 +++
 
 ## Building the project

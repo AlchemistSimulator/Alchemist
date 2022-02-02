@@ -3,6 +3,8 @@ import org.gradle.api.artifacts.Dependency
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.register
 import java.io.ByteArrayOutputStream
@@ -66,9 +68,9 @@ object Util {
     /**
      * Verifies that the generated shadow jar displays the help, and that SLF4J is not falling back to NOP.
      */
-    fun Project.testShadowJar(jarFile: File) = tasks.register<Exec>(
+    fun Project.testShadowJar(jarFile: Provider<RegularFile>) = tasks.register<Exec>(
         "test${
-        jarFile.nameWithoutExtension
+        jarFile.get().asFile.nameWithoutExtension
             .removeSuffix("-all")
             .removePrefix("alchemist-")
             .capitalize()
@@ -77,15 +79,16 @@ object Util {
         }ShadowJarOutput"
     ) {
         group = "Verification"
-        description = "Verifies the terminal output correctness when asking ${jarFile.name} to print the help"
+        description = "Verifies the terminal output correctness when printing the help via ${jarFile.get().asFile.name}"
         val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
-        val command = arrayOf(javaExecutable, "-jar", jarFile.absolutePath, "--help")
-        commandLine(*command)
         val interceptOutput = ByteArrayOutputStream()
         val interceptError = ByteArrayOutputStream()
         standardOutput = interceptOutput
         errorOutput = interceptError
         isIgnoreExitValue = true
+        doFirst {
+            commandLine(javaExecutable, "-jar", jarFile.get().asFile.absolutePath, "--help")
+        }
         doLast {
             val exit = executionResult.get().exitValue
             require(exit == 0) {
@@ -101,7 +104,7 @@ object Util {
                     }
                 }
                 """
-                |Process '${command.joinToString(" ")}' exited with $exit
+                |Process '${commandLine.joinToString(" ")}' exited with $exit
                 |Output:
                 |${outputs[0]}
                 |Error:

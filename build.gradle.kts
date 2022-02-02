@@ -267,7 +267,9 @@ allprojects {
         destinationDirectory.set(file("${rootProject.buildDir}/shadow"))
         if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
             // Run the jar and check the output
-            this.finalizedBy(testShadowJar(archiveFile.get().asFile.absoluteFile))
+            val testShadowJar = testShadowJar(archiveFile)
+            testShadowJar.get().dependsOn(this)
+            this.finalizedBy(testShadowJar)
         }
     }
 }

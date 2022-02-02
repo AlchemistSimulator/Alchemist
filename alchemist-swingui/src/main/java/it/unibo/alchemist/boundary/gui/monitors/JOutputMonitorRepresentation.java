@@ -118,7 +118,7 @@ public final class JOutputMonitorRepresentation<T> extends JPanel implements Ite
         if (selected) {
             return new Object[] { this };
         } else {
-            return null;
+            return null; // NOPMD: superclass' documentation: "returns the selected items or null if no items are selected"
         }
     }
 

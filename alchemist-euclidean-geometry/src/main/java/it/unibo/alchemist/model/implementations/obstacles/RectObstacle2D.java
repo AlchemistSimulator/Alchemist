@@ -121,7 +121,7 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
 
     @Nullable
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
-    private double[] enforceBorders(// NOPMD: we do want to return null
+    private double[] enforceBorders(
         final double startx,
         final double starty,
         final double endx,
@@ -180,7 +180,7 @@ public final class RectObstacle2D<V extends Vector2D<V>> extends Rectangle2D.Dou
             }
             return res;
         }
-        return null;
+        return null; // NOPMD: we do want to return null
     }
 
     @Override

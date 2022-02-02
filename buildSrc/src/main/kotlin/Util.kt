@@ -72,8 +72,8 @@ object Util {
             .removeSuffix("-all")
             .removePrefix("alchemist-")
             .capitalize()
-            .replace(Regex("-([a-z])")) { it.groups[1]!!.value.capitalize() }
-            .replace("-", "-")
+            .replace(Regex("-([a-z])")) { it.groupValues[1].toUpperCase() }
+            .replace("-", "")
         }ShadowJarOutput"
     ) {
         group = "Verification"

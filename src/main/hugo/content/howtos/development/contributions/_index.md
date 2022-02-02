@@ -16,3 +16,4 @@ Contributions to this project are welcome. Just some notes:
 * Fixes should include a regression test.
 * New features must include appropriate test cases.
 * Any change should cause an extension or modification of the documentation, that must be kept up to date
+

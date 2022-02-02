@@ -9,11 +9,11 @@
 import Libs.alchemist
 import Libs.incarnation
 import Util.fetchJavadocIOForDependency
+import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.dokka)
@@ -251,56 +251,23 @@ allprojects {
                 )
             )
         }
-        exclude("ant_tasks/")
-        exclude("about_files/")
-        exclude("help/about/")
-        exclude("build")
-        exclude(".gradle")
-        exclude("build.gradle")
-        exclude("gradle")
-        exclude("gradlew")
-        exclude("gradlew.bat")
+        exclude(
+            "ant_tasks/",
+            "about_files/",
+            "help/about/",
+            "build",
+            ".gradle",
+            "build.gradle",
+            "gradle",
+            "gradlew.bat",
+            "gradlew",
+        )
         isZip64 = true
         mergeServiceFiles()
         destinationDirectory.set(file("${rootProject.buildDir}/shadow"))
         if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
             // Run the jar and check the output
-            val testShadowJar = tasks.register<Exec>("${this.name}-testWorkingOutput") {
-                val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
-                val command = arrayOf(javaExecutable, "-jar", archiveFile.get().asFile.absolutePath, "--help")
-                commandLine(*command)
-                val interceptOutput = ByteArrayOutputStream()
-                val interceptError = ByteArrayOutputStream()
-                standardOutput = interceptOutput
-                errorOutput = interceptError
-                isIgnoreExitValue = true
-                doLast {
-                    val exit = executionResult.get().exitValue
-                    require(exit == 0) {
-                        val outputs = listOf(interceptOutput, interceptError).map {
-                            String(it.toByteArray(), Charsets.UTF_8)
-                        }
-                        outputs.forEach { text ->
-                            for (illegalKeyword in listOf("SLF4J", "NOP")) {
-                                require(illegalKeyword !in text) {
-                                    """
-                                $illegalKeyword found while printing the help. Complete output:
-                                $text
-                                    """.trimIndent()
-                                }
-                            }
-                        }
-                        """
-                            Process '${command.joinToString(" ")}' exited with $exit
-                            Output:
-                            ${outputs[0]}
-                            Error:
-                            ${outputs[0]}
-                        """.trimIndent()
-                    }
-                }
-            }
-            this.finalizedBy(testShadowJar)
+            this.finalizedBy(testShadowJar(archiveFile.get().asFile.absoluteFile))
         }
     }
 }

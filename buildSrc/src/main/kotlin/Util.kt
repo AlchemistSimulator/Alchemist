@@ -3,6 +3,9 @@ import org.gradle.api.artifacts.Dependency
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.tasks.Exec
+import org.gradle.kotlin.dsl.register
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URL
 
@@ -59,4 +62,52 @@ object Util {
                 javadocIOURLs.second?.let { javadocIOURLs.first to it }
             }
         }
+
+    /**
+     * Verifies that the generated shadow jar displays the help, and that SLF4J is not falling back to NOP.
+     */
+    fun Project.testShadowJar(jarFile: File) = tasks.register<Exec>(
+        "test${
+        jarFile.nameWithoutExtension
+            .removeSuffix("-all")
+            .removePrefix("alchemist-")
+            .capitalize()
+            .replace(Regex("-([a-z])")) { it.groups[1]!!.value.capitalize() }
+            .replace("-", "-")
+        }ShadowJarOutput"
+    ) {
+        group = "Verification"
+        description = "Verifies the terminal output correctness when asking ${jarFile.name} to print the help"
+        val javaExecutable = org.gradle.internal.jvm.Jvm.current().javaExecutable.absolutePath
+        val command = arrayOf(javaExecutable, "-jar", jarFile.absolutePath, "--help")
+        commandLine(*command)
+        val interceptOutput = ByteArrayOutputStream()
+        val interceptError = ByteArrayOutputStream()
+        standardOutput = interceptOutput
+        errorOutput = interceptError
+        isIgnoreExitValue = true
+        doLast {
+            val exit = executionResult.get().exitValue
+            require(exit == 0) {
+                val outputs = listOf(interceptOutput, interceptError).map { String(it.toByteArray(), Charsets.UTF_8) }
+                outputs.forEach { text ->
+                    for (illegalKeyword in listOf("SLF4J", "NOP")) {
+                        require(illegalKeyword !in text) {
+                            """
+                            |$illegalKeyword found while printing the help. Complete output:
+                            |$text
+                            """.trimMargin()
+                        }
+                    }
+                }
+                """
+                |Process '${command.joinToString(" ")}' exited with $exit
+                |Output:
+                |${outputs[0]}
+                |Error:
+                |${outputs[0]}
+                """.trimMargin()
+            }
+        }
+    }
 }

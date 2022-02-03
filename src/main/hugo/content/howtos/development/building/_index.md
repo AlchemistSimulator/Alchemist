@@ -1,9 +1,9 @@
 +++
 pre = ""
-title = "Build"
+title = "Build and run the QA"
 weight = 5
 tags = ["build", "report", "IntelliJ", "Gradle", "Javadoc"]
-summary = "How to build the project"
+summary = "How to locally build and test the simulator"
 +++
 
 ## Building the project
@@ -13,9 +13,6 @@ If you want to generate the artifacts, you can rely on Gradle. Just point a term
 ```bash
 ./gradlew assemble check --parallel
 ```
-
-This will trigger the creation of the artifacts the executions of the tests, the generation of the documentation and of 
-the project reports.
 
 ## Build reports
 Every Alchemist build triggers the creation of a set of reports, that provide hints regarding the current status of 

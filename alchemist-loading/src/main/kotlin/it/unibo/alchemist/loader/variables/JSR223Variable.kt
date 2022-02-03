@@ -1,5 +1,7 @@
 package it.unibo.alchemist.loader.variables
 
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import javax.script.Bindings
@@ -60,18 +62,20 @@ data class JSR223Variable @JvmOverloads constructor(
                         engine.eval(formula, variables.asBindings())
                     }
                 }
-            }.getOrElse {
-                throw java.lang.IllegalStateException(
-                    "The evaluation of the $language script took more than ${timeout}ms, this is usually a sign that " +
-                        "something is looping. Either fix the script, " +
-                        "or allow for a longer time with the 'timeout:' key\n" +
-                        """
-                        |script:
-                        |
-                        |${formula.lines().joinToString("\n|")}
-                        |context: $variables
-                        """.trimMargin()
-                )
+            }.getOrElse { reason ->
+                val whatHappened = "A $language script evaluation failed"
+                val whyHappened = when (reason) {
+                    is ScriptException -> "due to an error in the script: ${reason.message}"
+                    is TimeoutCancellationException -> """
+                        because it reached its ${timeout}ms timeout.
+                        This is usually a sign that something is looping.
+                        Either make the script run faster, or allow for a longer time by specifiying a different
+                        `${DocumentRoot.DependentVariable.timeout}`.
+                    """.trimIndent().replace(Regex("\\R"), "")
+                    else -> "for a reason unknown to Alchemist (look at the original cause)"
+                }
+                val inspection = "context: $variables\nscript:\n$formula"
+                throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection")
             }
         }
     } catch (e: ScriptException) {

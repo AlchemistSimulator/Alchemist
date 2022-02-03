@@ -21,7 +21,7 @@ to fork it and work on your own copy so that you can:
 
 ## Importing the project
 
-1. Clone either the [Alchemitst repository](https://github.com/AlchemistSimulator/Alchemist) 
+1. Clone either the [Alchemist repository](https://github.com/AlchemistSimulator/Alchemist) 
    or your personal fork in a folder of your preference using `git clone --recurse-submodules <ALCHEMIST_REPO_URI>`.
 1. Right click on `settings.gradle.kts`, select "Open With" and use IntelliJ Idea.
 

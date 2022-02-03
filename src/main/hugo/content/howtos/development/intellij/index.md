@@ -12,8 +12,9 @@ The project can be imported directly as a Gradle project.
 If you intend to develop new parts in Scala, we suggest to install the Scala plugin for IntelliJ Idea.
 
 ## Forking the project
-To contribute to the Alchemist project we recommend 
-to fork it and work on your own copy so that you can:
+To contribute to the Alchemist project you must
+[fork it](https://github.com/AlchemistSimulator/Alchemist/fork) and work on your own
+copy. In this way you can:
 
 * push all your commits, saving your work on the cloud;
 * exploit the included continuous integration jobs to check the project status;

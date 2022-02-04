@@ -36,7 +36,7 @@ To perform a QA run
 ```
 
 ### Generating the website
-To generate the alchemist website run
+To generate the Alchemist website run
 ```bash
 ./gradlew hugoBuild
 ```

@@ -1,7 +1,7 @@
 +++
 pre = ""
 title = "Developer's guide"
-weight = 4
+weight = 5
 tags = ["development", "contributions", "commits"]
 summary = "How to contribute"
 +++

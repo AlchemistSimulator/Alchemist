@@ -12,4 +12,4 @@ summary = "How to contribute to the project, hence achieving eternal glory"
 
 ## Contents
 
-{{% children description="true" depth="30" sort="Weight" %}}
+{{% children description="true" depth="30" %}}

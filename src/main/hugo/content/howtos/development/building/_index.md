@@ -11,45 +11,46 @@ Wrapper (in short just “Wrapper”). The Wrapper is a script that invokes a de
 version of Gradle, downloading it beforehand if necessary. As a result, developers
 can get up and running with a Gradle project quickly without having to follow manual
 installation. For more information please refer to the [Gradle's documentation website](https://docs.gradle.org/current/userguide/gradle_wrapper.html).
+
 ### gradlew vs. gradlew.bat
+
 Depending on which scripting environment you are using the wrapper can be invoked with
-`gradlew` or `gradlew.bat`. Windows users are most likely to use the latter.
+`gradlew` or `gradlew.bat`. Windows users are likely to use the latter.
 
 ### Building the project
-While developing, you can rely on IntelliJ to build the project, it will generally do a very good job.
-If you want to generate the artifacts, you can rely on Gradle. Just point a terminal on the project's root and issue
+
+The project can get build via Gradle:
 
 ```bash
 ./gradlew assemble --parallel
 ```
 
+When imported in IntelliJ Idea as Gradle project, the IDE will use Gradle under the hood to run the necessary steps to perform compilation and packaging.
+
 ### Testing
+
 Testing can be executed by issuing
 ```bash
-./gradlew test
+./gradlew test --parallel
 ```
 
 ### Quality Assurance
+
 To perform a QA run
 ```bash
-./gradlew check
+./gradlew check --parallel
 ```
 
 ### Generating the website
+
 To generate the Alchemist website run
 ```bash
-./gradlew hugoBuild
+./gradlew hugoBuild --parallel
 ```
 ### Website preview
-For a preview of the website issue
+
+For a preview of the website issue:
 ```bash
 ./gradlew hugo --command=serve
 ```
-
-## Build reports
-Every Alchemist build triggers the creation of a set of reports, that provide hints regarding the current status of 
-quality of the code base. Such reports are available for both [the latest stable][reports] and 
-[the latest development][reports-unstable] versions.
-
-[reports-unstable]: http://alchemist-unstable-reports.surge.sh/build/reports/buildDashboard/
-[reports]: http://alchemist-reports.surge.sh/build/reports/buildDashboard/
+The terminal output will show a link, most likely [`https://localhost:1313/`](https://localhost:1313/) where the website is being served.

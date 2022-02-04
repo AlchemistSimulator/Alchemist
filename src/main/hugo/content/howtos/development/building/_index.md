@@ -1,7 +1,7 @@
 +++
 pre = ""
 title = "Build and run the QA"
-weight = 6
+weight = 30
 tags = ["build", "report", "IntelliJ", "Gradle", "Javadoc"]
 summary = "How to locally build and test the simulator"
 +++

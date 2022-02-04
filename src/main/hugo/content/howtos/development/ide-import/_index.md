@@ -1,8 +1,8 @@
 +++
 pre = ""
 title = "Import Alchemist in an IDE"
-weight = 4
-tags = ["import", "IDE", "IntelliJ"]
+weight = 20
+tags = ["import", "IDE", "IntelliJ Idea"]
 summary = "The recommended way to get and import the Alchemist project in an IDE"
 +++
 ## Recommended IDE configuration

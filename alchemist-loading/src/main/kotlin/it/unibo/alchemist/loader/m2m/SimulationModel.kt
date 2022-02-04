@@ -50,9 +50,8 @@ import kotlin.reflect.KClass
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Layer as LayerSyntax
 
-/**
- * Contains the model-to-model translation between the Alchemist YAML specification and the
- * loading system.
+/*
+ * UTILITY ALIASES
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =

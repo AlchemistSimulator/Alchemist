@@ -53,4 +53,4 @@ For a preview of the website issue:
 ```bash
 ./gradlew hugo --command=serve
 ```
-The terminal output will show a link, most likely [`https://localhost:1313/`](https://localhost:1313/) where the website is being served.
+The terminal output will show a link, most likely `https://localhost:1313/`, where the website is being served.

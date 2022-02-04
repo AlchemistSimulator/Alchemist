@@ -43,7 +43,7 @@ To generate the Alchemist website run
 ### Website preview
 For a preview of the website issue
 ```bash
-./gradlew hugo --comand=serve
+./gradlew hugo --command=serve
 ```
 
 ## Build reports

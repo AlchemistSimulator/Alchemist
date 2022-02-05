@@ -1,3 +1,54 @@
+### [12.2.10](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.9...12.2.10) (2022-02-05)
+
+
+### Bug Fixes
+
+* **loading:** errors in script syntax are no longer reported as timeouts ([63de374](https://github.com/AlchemistSimulator/Alchemist/commit/63de374a092db3e99b0f4cc921da80132b37ef6f))
+* **loading:** interpret variables once ([8f9fa7e](https://github.com/AlchemistSimulator/Alchemist/commit/8f9fa7eed8d7b7e8a4ea7fbe81aafebadd3a675d))
+* **loading:** track the original cause of failure in JSR223 Variables ([3f0056d](https://github.com/AlchemistSimulator/Alchemist/commit/3f0056d637907fb3aec2b1406be2e4fc98aeea38))
+
+
+### Dependency updates
+
+* **deps:** update plugin java-qa to v0.18.0 ([a6fb64a](https://github.com/AlchemistSimulator/Alchemist/commit/a6fb64a9a95aa5f791cb6cfb9a7e955fa05cba17))
+
+
+### Build and continuous integration
+
+* improve concurrency management ([#1067](https://github.com/AlchemistSimulator/Alchemist/issues/1067)) ([3b02f01](https://github.com/AlchemistSimulator/Alchemist/commit/3b02f01e14cf4beec1318614d7f0eb9b2d1aa8cd))
+* improve test shadow jar task name generation ([34b7f5d](https://github.com/AlchemistSimulator/Alchemist/commit/34b7f5df91ba0374d91f8fad63bbdd8b84d7caa7))
+* late-init the shadowjar run command ([d681543](https://github.com/AlchemistSimulator/Alchemist/commit/d68154376cc7e3aa168db6663ca80d90d1807097))
+* move the shadow jar test task definition to buildSrc ([2a25702](https://github.com/AlchemistSimulator/Alchemist/commit/2a25702b189b2e95f9aa9ac398086d00f59522d6))
+* remove workflow-level concurrency limits ([fb92bb3](https://github.com/AlchemistSimulator/Alchemist/commit/fb92bb3ee036954fac2d2235f98ea79124b8bab8))
+* **website:** allow explanatory links to https://localhost:1313 ([e82bb43](https://github.com/AlchemistSimulator/Alchemist/commit/e82bb433e8b5af474a468a02eb4282c93efb24dc))
+
+
+### Documentation
+
+* **loading:** improve docs of SimulationModel ([8cd33fd](https://github.com/AlchemistSimulator/Alchemist/commit/8cd33fdb5b7f0b22fdcc48c4838a7b77ed4f1a41))
+* **readme:** cleanup all information that should be in the website ([#1064](https://github.com/AlchemistSimulator/Alchemist/issues/1064)) ([6fbf7c7](https://github.com/AlchemistSimulator/Alchemist/commit/6fbf7c7ea26f250d1ac641b84645cdf4ecfb191c))
+* **website:** move README.md content to the website ([#1065](https://github.com/AlchemistSimulator/Alchemist/issues/1065)) ([f02e1ba](https://github.com/AlchemistSimulator/Alchemist/commit/f02e1bafe1adcd819a5f0ddf2f4503216e68e104))
+
+
+### Style improvements
+
+* **loading:** explicitly annotate the return type of `visitIncarnation` ([8b20ace](https://github.com/AlchemistSimulator/Alchemist/commit/8b20ace73f949f1d2f7113967303f68cdff01adf))
+* **loading:** fix wrong comment ([f9cd3be](https://github.com/AlchemistSimulator/Alchemist/commit/f9cd3bec6d1edc6f1c98c92dda8b60b9ed5f389d))
+* **loading:** remove a use of the !! operator ([89d6fdf](https://github.com/AlchemistSimulator/Alchemist/commit/89d6fdfcaab9dca197e8ada2d1b50e408d9e7441))
+* suppress PMD's false positives ([6848a8e](https://github.com/AlchemistSimulator/Alchemist/commit/6848a8e84985d672c4666bf0ef18b3263c43f085))
+
+
+### General maintenance
+
+* **loading:** remove commented lines ([111d846](https://github.com/AlchemistSimulator/Alchemist/commit/111d846938972f54476c9259edc45241eefbc747))
+* **loading:** update the copyright header ([3a7eeea](https://github.com/AlchemistSimulator/Alchemist/commit/3a7eeea10cae7159c082375961d32fabdae74442))
+
+
+### Tests
+
+* **loading:** add regression tests ([e39b381](https://github.com/AlchemistSimulator/Alchemist/commit/e39b38191e61e0c429c965d08bd4de231146b8ba))
+* **website:** allow linking http://localhost:1313/ as example for explaining how Hugo works ([7a31967](https://github.com/AlchemistSimulator/Alchemist/commit/7a3196732597338f9e8bec16cf497ea066329f7f))
+
 ### [12.2.9](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.8...12.2.9) (2022-01-30)
 
 

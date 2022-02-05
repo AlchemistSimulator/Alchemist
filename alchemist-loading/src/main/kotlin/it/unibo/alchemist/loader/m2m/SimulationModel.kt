@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -12,16 +12,15 @@ package it.unibo.alchemist.loader.m2m
 import arrow.core.Either
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.Loader
+import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
-import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.export.extractors.MoleculeReader
 import it.unibo.alchemist.loader.export.extractors.Time
-
 import it.unibo.alchemist.loader.export.filters.CommonFilters
-import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.syntax.SyntaxElement
 import it.unibo.alchemist.loader.shapes.Shape
 import it.unibo.alchemist.loader.variables.Constant

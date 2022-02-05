@@ -56,6 +56,55 @@ private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
     (RandomGenerator, Environment<T, P>, Node<T>, TimeDistribution<T>, Reaction<T>, String?) -> R
 
+/*
+ * UTILITY FUNCTIONS
+ */
+private inline fun <reified T> cantBuildWith(root: Any?, syntax: SyntaxElement? = null): Nothing =
+    cantBuildWith(T::class, root, syntax)
+
+private fun cantBuildWith(clazz: KClass<*>, root: Any?, syntax: SyntaxElement? = null): Nothing =
+    cantBuildWith(clazz.simpleName ?: "unknown type", root, syntax)
+
+private fun cantBuildWith(name: String, root: Any?, syntax: SyntaxElement? = null): Nothing {
+    val type = root?.let { it::class.simpleName }
+    val guide = syntax?.guide?.let { " A guide follows.\n$it" } ?: ""
+    throw IllegalArgumentException(
+        "Invalid $name specification: $root:$type.$guide"
+    )
+}
+
+/*
+ * UTILITY EXTENSIONS
+ */
+private val Any?.className: String get() = this?.let { it::class.simpleName }.toString()
+
+private fun Any?.coerceToDouble(context: Context): Double = SimulationModel.visitBuilding<Double>(context, this)
+    ?.getOrThrow()
+    ?: cantBuildWith<Double>(this)
+
+private fun Any?.removeKeysRecursively(keys: Set<Any>): Any? = when (this) {
+    null -> null
+    is Map<*, *> -> (this - keys).mapValues { it.value.removeKeysRecursively(keys) }
+    is Iterable<*> -> map { it.removeKeysRecursively(keys) }
+    else -> this
+}
+
+private fun Map<*, *>.takeIfNotAConstant(name: String, context: Context) = takeUnless {
+    val isAConstant = name in context.constants
+    if (isAConstant) {
+        require(this == context.constants[name]) {
+            val constant = context.constants[name]
+            """
+            |Illegal state, the same name "$name" has been assigned to both a constant and a variable, and§
+            |their values do not coincide:
+            |constant of type ${constant.className} => $constant
+            |variable of type $className => $this
+            """.trimMargin().replace(Regex("§\\R"), " ")
+        }
+    }
+    isAConstant
+}
+
 /**
  * Contains the model-to-model translation between the Alchemist YAML specification and the
  * executable form of a simulation.
@@ -83,40 +132,19 @@ internal object SimulationModel {
             logger.debug("{} constants: {}", context.constants.size, context.constants)
         }
         logger.info("{} constants: {}", context.constants.size, context.constants)
-        val variables: Map<String, Variable<*>> =
-            visitNamedRecursively(
-                context = context,
-                root = injectedRoot[DocumentRoot.variables] ?: emptyMap<String, Any>(),
-                syntax = null, // Prevent clashes with dependent variables
-            ) { name, element ->
-                (element as? Map<*, *>)?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }?.let {
-                    if (element.containsKey(JavaType.type)) {
-                        visitBuilding<Variable<*>>(context, element)
-                            ?.onFailure { logger.debug("Invalid variable: {} from {}: {}", name, element, it.message) }
-                            ?.takeIf { it.isSuccess }
-                    } else {
-                        fun Any?.toDouble(): Double = visitBuilding<Double>(context, this)
-                            ?.getOrThrow()
-                            ?: cantBuildWith<Double>(this)
-                        runCatching {
-                            LinearVariable(
-                                element[DocumentRoot.Variable.default].toDouble(),
-                                element[DocumentRoot.Variable.min].toDouble(),
-                                element[DocumentRoot.Variable.max].toDouble(),
-                                element[DocumentRoot.Variable.step].toDouble(),
-                            )
-                        }
-                    }
-                }?.also { context.registerVariable(name, element) }
-            }
+        val constantsNames = context.constants.keys
+        val variablesWithoutConstants = injectedRoot[DocumentRoot.variables].removeKeysRecursively(constantsNames)
+        val variables: Map<String, Variable<*>> = visitVariables(
+            context,
+            variablesWithoutConstants
+        )
         logger.info("Variables: {}", variables)
         injectedRoot = inject(context, injectedRoot)
+        val variablesLeft = variablesWithoutConstants.removeKeysRecursively(constantsNames + variables.keys)
         val dependentVariables: Map<String, DependentVariable<*>> =
-            visitNamedRecursively(
-                context = context,
-                root = injectedRoot[DocumentRoot.variables] ?: emptyMap<String, Any>(),
-                syntax = DocumentRoot.DependentVariable,
-            ) { name, element -> visitDependentVariableRegistering(name, context, element) }
+            visitNamedRecursively(context, variablesLeft, syntax = DocumentRoot.DependentVariable) { name, element ->
+                visitDependentVariableRegistering(name, context, element)
+            }
         logger.info("Dependent variables: {}", dependentVariables)
         injectedRoot = inject(context, injectedRoot)
         val remoteDependencies =
@@ -150,20 +178,6 @@ internal object SimulationModel {
             linkingRules.size == 1 -> linkingRules.first()
             else -> CombinedLinkingRule(linkingRules)
         }
-    }
-
-    private inline fun <reified T> cantBuildWith(root: Any?, syntax: SyntaxElement? = null): Nothing =
-        cantBuildWith(T::class, root, syntax)
-
-    private fun cantBuildWith(clazz: KClass<*>, root: Any?, syntax: SyntaxElement? = null): Nothing =
-        cantBuildWith(clazz.simpleName ?: "unknown type", root, syntax)
-
-    private fun cantBuildWith(name: String, root: Any?, syntax: SyntaxElement? = null): Nothing {
-        val type = root?.let { it::class.simpleName }
-        val guide = syntax?.guide?.let { " A guide follows.\n$it" } ?: ""
-        throw IllegalArgumentException(
-            "Invalid $name specification: $root:$type.$guide"
-        )
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -275,7 +289,7 @@ internal object SimulationModel {
     }
 
     private fun visitDependentVariable(name: String, context: Context, root: Any?): Result<DependentVariable<*>>? =
-        (root as? Map<*, *>)?.let {
+        (root as? Map<*, *>)?.takeIfNotAConstant(name, context)?.let {
             if (root.containsKey(DocumentRoot.DependentVariable.formula)) {
                 val formula = root[DocumentRoot.DependentVariable.formula]
                 if (formula is String) {
@@ -542,6 +556,33 @@ internal object SimulationModel {
         is Map<*, *> -> visitBuilding<TimeDistribution<T>>(context, root)?.getOrThrow()
             ?: cantBuildWith<TimeDistribution<T>>(root)
         else -> incarnation.createTimeDistribution(simulationRNG, environment, node, root?.toString())
+    }
+
+    fun visitVariables(context: Context, root: Any?): Map<String, Variable<*>> = visitNamedRecursively(
+        context,
+        root,
+        syntax = null, // Prevent clashes with dependent variables
+    ) { name, element ->
+        (element as? Map<*, *>?)
+            ?.takeIfNotAConstant(name, context)
+            ?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }
+            ?.let {
+                val variable = when (JavaType.type) {
+                    in element -> visitBuilding<Variable<*>>(context, element) // arbitrary type
+                        ?.onFailure { logger.debug("Invalid variable: {} from {}: {}", name, element, it.message) }
+                        ?.takeIf { it.isSuccess }
+                    else -> runCatching { // Must be a linear variable, or else fail
+                        fun Any?.toDouble(): Double = coerceToDouble(context)
+                        LinearVariable(
+                            element[DocumentRoot.Variable.default].toDouble(),
+                            element[DocumentRoot.Variable.min].toDouble(),
+                            element[DocumentRoot.Variable.max].toDouble(),
+                            element[DocumentRoot.Variable.step].toDouble(),
+                        )
+                    }
+                }
+                variable?.also { context.registerVariable(name, element) }
+            }
     }
 
     inline fun <reified T : Any> visitRecursively(

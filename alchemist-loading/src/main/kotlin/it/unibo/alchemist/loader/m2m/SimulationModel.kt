@@ -221,8 +221,6 @@ internal object SimulationModel {
                     ?.map { Constant(it) }
                     ?.getOrNull()
             }
-//            is Iterable<*> -> null
-//            else -> Constant(root)
             else -> null
         }
         if (constant != null) {

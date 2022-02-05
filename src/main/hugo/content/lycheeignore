@@ -12,5 +12,5 @@ https://doi.org/10.1007/s11047-012-9324-y
 .*scafi/assets.*
 
 # Exclude the example link of Hugo:
- ^http://localhost:1313/$
+^https?://localhost:1313/?$
  

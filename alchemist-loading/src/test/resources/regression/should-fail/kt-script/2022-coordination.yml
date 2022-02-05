@@ -1,0 +1,56 @@
+incarnation: protelis
+
+variables:
+  base:
+    language: kotlin
+    timeout: 10000
+    formula: |
+      mapOf(
+        "programs" to listOf(
+          mapOf("time-distribution" to 1, "program" to "org:protelis:tutorial:complete"),
+          mapOf("program" to "send")
+        ),
+        "contents" to mapOf(
+          "molecule" to "grain"
+          "concentration" to 5
+        )
+      )
+  rectangle: &rectangle
+    language: kotlin
+    formula: |
+      base + mapOf(
+        "type" to "Rectangle"
+        "parameters" to listOf()
+      )
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [6]
+
+_gradient: &gradient
+  - time-distribution: 1
+    program: org:protelis:tutorial:leader2
+  - program: send
+
+_deployments:
+  type: Rectangle
+  parameters:
+    [1, 0, 0, 100, 100]
+  programs: *gradient
+  contents:
+    molecule: grain
+    concentration: 5
+
+deployments: *rectangle
+
+layers:
+  - molecule: layer
+    type: BidimensionalGaussianLayer
+    parameters:
+      baseline: 0
+      centerX: 30
+      centerY: 30
+      norm: 30
+      sigmaX: &sigma
+        15
+      sigmaY: *sigma

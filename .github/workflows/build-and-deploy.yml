@@ -13,10 +13,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   # Runs all tests
   build:
@@ -25,6 +21,9 @@ jobs:
         os: [ windows, macos, ubuntu ]
     runs-on: ${{ matrix.os }}-latest
     timeout-minutes: 120
+    concurrency:
+      group: ${{ github.workflow }}-build-${{ matrix.os }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
@@ -44,6 +43,9 @@ jobs:
         os: [ windows, macos, ubuntu ]
     runs-on: ${{ matrix.os }}-latest
     timeout-minutes: 60
+    concurrency:
+      group: ${{ github.workflow }}-test-shadowjar-${{ matrix.os }}-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
@@ -61,6 +63,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     if: contains(github.repository, 'AlchemistSimulator/Alchemist') && contains('push workflow_dispatch', github.event_name)
+    concurrency:
+      group: ${{ github.workflow }}-test-deploy-${{ github.event.number || github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
@@ -110,6 +115,9 @@ jobs:
           path: website.tar
   # Performs a release if needed
   release:
+    concurrency:
+      # Only one release job at a time. Strictly sequential.
+      group: release
     needs:
       - build
       - build-website

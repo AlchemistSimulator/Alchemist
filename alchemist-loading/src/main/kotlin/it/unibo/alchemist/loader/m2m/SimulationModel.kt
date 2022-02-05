@@ -133,7 +133,7 @@ internal object SimulationModel {
         }
     }
 
-    fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?) =
+    fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
                 "Invalid incarnation descriptor: $root. " +

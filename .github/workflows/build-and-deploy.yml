@@ -13,9 +13,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-
 jobs:
   # Runs all tests
   build:

@@ -10,3 +10,7 @@ https://doi.org/10.1007/s11047-012-9324-y
 
 # Stuff imported from outer sources with relative links
 .*scafi/assets.*
+
+# Exclude the example link of Hugo:
+^https?://localhost:1313/?$
+ 

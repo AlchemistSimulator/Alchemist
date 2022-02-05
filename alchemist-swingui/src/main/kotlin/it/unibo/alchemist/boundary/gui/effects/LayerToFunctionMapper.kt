@@ -14,13 +14,14 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Position2D
 import java.awt.Graphics2D
+import java.io.Serializable
 import java.util.function.Function
 import java.util.stream.Stream
 
 /**
  * Defines an object capable of mapping a Layer<T, P> to a Function<* in P, * out Number>.
  */
-interface LayerToFunctionMapper {
+interface LayerToFunctionMapper : Serializable {
     /**
      * Prepare the mapping (if necessary).
      */

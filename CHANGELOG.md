@@ -1,3 +1,156 @@
+### [12.2.9](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.8...12.2.9) (2022-01-30)
+
+
+### Dependency updates
+
+* **deps:** update plugin kotlin-qa to v0.10.0 ([8e1717d](https://github.com/AlchemistSimulator/Alchemist/commit/8e1717dbbf4a2ec630484f4915de2f6d5c868033))
+
+
+### Documentation
+
+* **website:** document the data export, fixes [#963](https://github.com/AlchemistSimulator/Alchemist/issues/963) ([#1061](https://github.com/AlchemistSimulator/Alchemist/issues/1061)) ([c597401](https://github.com/AlchemistSimulator/Alchemist/commit/c597401047a15bd401db2719e880295cbd5c7551))
+
+### [12.2.8](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.7...12.2.8) (2022-01-29)
+
+
+### Bug Fixes
+
+* **loading:** allow optional parameters on more cases ([ed7efe0](https://github.com/AlchemistSimulator/Alchemist/commit/ed7efe06cfb1973c1220e67e7ecd082cadd0f89d))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.3.1 ([a98024a](https://github.com/AlchemistSimulator/Alchemist/commit/a98024a3101ddeeab299e9132edda6e56bbce1a9))
+
+
+### Build and continuous integration
+
+* **website:** retry the website construction multiple times, as network errors are possible ([9e54998](https://github.com/AlchemistSimulator/Alchemist/commit/9e54998ab46b45ba9e23dd1ae22ffac218e4345e))
+
+
+### Tests
+
+* **loading:** verify that optional arguments can actually be omitted ([33a03d5](https://github.com/AlchemistSimulator/Alchemist/commit/33a03d51f444aa0b49c9e1b9400602ca4baf970d))
+
+
+### Documentation
+
+* **website:** improve the documentation of layers ([0e2a93b](https://github.com/AlchemistSimulator/Alchemist/commit/0e2a93b42fa18b59a656a5ca57e11b40e1bf4a35))
+* **website:** improve the reference about named parameters and provide examples ([eae31e4](https://github.com/AlchemistSimulator/Alchemist/commit/eae31e4fd58c5a70739fdbdf7efa9d4e5ea2e7c4))
+
+### [12.2.7](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.6...12.2.7) (2022-01-26)
+
+
+### Bug Fixes
+
+* **swingui:** allow (de)serialization of LayerToFunctionMapper ([bc48233](https://github.com/AlchemistSimulator/Alchemist/commit/bc48233fa41305853afb2d5a69d71e0d02e48497))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.mockito:mockito-core to v4.3.1 ([e084963](https://github.com/AlchemistSimulator/Alchemist/commit/e08496312f2df1e7ef24c3175ac7757e02c8dceb))
+* **deps:** update dependency org.slf4j:slf4j-api to v1.7.35 ([2e1e162](https://github.com/AlchemistSimulator/Alchemist/commit/2e1e1627815ab7a0dbedaf2ad4392b5743f2a2ee))
+* **deps:** update plugin publishoncentral to v0.7.12 ([e3b3d85](https://github.com/AlchemistSimulator/Alchemist/commit/e3b3d858ce7e39bc5ec6c44ccf68414e2e3708bc))
+
+
+### Tests
+
+* **swingui:** add regression test for layer loading issues ([c17740c](https://github.com/AlchemistSimulator/Alchemist/commit/c17740c3a4bfbd236326cf6bc19ef4203d401ba3))
+
+### [12.2.6](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.5...12.2.6) (2022-01-26)
+
+
+### Dependency updates
+
+* **deps:** update dependency org.slf4j:slf4j-api to v1.7.34 ([8f3032c](https://github.com/AlchemistSimulator/Alchemist/commit/8f3032cd43158631550648a40b0f214354602e8a))
+
+
+### Documentation
+
+* **apidocs:** link libraries from javadoc.io ([#1053](https://github.com/AlchemistSimulator/Alchemist/issues/1053)) ([12020cc](https://github.com/AlchemistSimulator/Alchemist/commit/12020cce470b45a614050e732bd17e3386105f09))
+
+### [12.2.5](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.4...12.2.5) (2022-01-25)
+
+
+### Bug Fixes
+
+* **release:** prevent inconsistent behaviour when no gradle cache is available ([12bbcad](https://github.com/AlchemistSimulator/Alchemist/commit/12bbcada71dd629b6ccc6a485c299a5d17bb9a42))
+
+
+### Documentation
+
+* **website:** sort entries as per [@cric96](https://github.com/cric96)'s suggestion ([7ca0d2e](https://github.com/AlchemistSimulator/Alchemist/commit/7ca0d2ebc2c962fba48744585bb8dac6327c1dee))
+
+
+### Build and continuous integration
+
+* **release:** reduce deploy verbosity ([a9bcb21](https://github.com/AlchemistSimulator/Alchemist/commit/a9bcb219238779ae178bc60e4697371d34d0d482))
+
+### [12.2.4](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.3...12.2.4) (2022-01-25)
+
+
+### Bug Fixes
+
+* **website:** correctly inject the website version ([3842b81](https://github.com/AlchemistSimulator/Alchemist/commit/3842b81121c8c74f9faf2a0c4d9b6b519135c62c))
+
+
+### Documentation
+
+* **website:** add missing title to the showcase ([a42c9f9](https://github.com/AlchemistSimulator/Alchemist/commit/a42c9f96639ab25627b5b0d85e06a1b648bdc161))
+
+### [12.2.3](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.2...12.2.3) (2022-01-25)
+
+
+### Bug Fixes
+
+* **release:** publish secure checksums on Central ([98e93ac](https://github.com/AlchemistSimulator/Alchemist/commit/98e93acebdeeb22d802857d97941cee66c3b340c))
+* **release:** raise tolerance of website version substitution ([f96e959](https://github.com/AlchemistSimulator/Alchemist/commit/f96e959417377251c0bcab84920d2e6d23f1d59a))
+
+
+### Build and continuous integration
+
+* comment the workflow file ([6e15f04](https://github.com/AlchemistSimulator/Alchemist/commit/6e15f0403214849c52a2c4074b9527e075197bcf))
+* improve performance of test-deploy ([7abf5c4](https://github.com/AlchemistSimulator/Alchemist/commit/7abf5c45e29d6cddfff32d08fc982b3fbe3893e8))
+* un-tar silently ([d7ffa4d](https://github.com/AlchemistSimulator/Alchemist/commit/d7ffa4d40ea0dc6087086b276aecccb45313a6c5))
+
+
+### General maintenance
+
+* **build:** remove unused gradle properties ([a2839df](https://github.com/AlchemistSimulator/Alchemist/commit/a2839df3a35e99758d8c7531625f3fa0e23fec9a))
+* delete outdated eclipse configuration file ([9146b8f](https://github.com/AlchemistSimulator/Alchemist/commit/9146b8f840fe5c8cbbcd47c83572b1ebcb1e20f2))
+* ignore .vscode ([8540c51](https://github.com/AlchemistSimulator/Alchemist/commit/8540c5136691be6f52f910824887c113bdd08314))
+
+### [12.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.1...12.2.2) (2022-01-25)
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.3.0 ([5da5a24](https://github.com/AlchemistSimulator/Alchemist/commit/5da5a24ed2b01ec2ece67428b48f185b7ea9935d))
+* **deps:** update dependency org.mockito:mockito-core to v4.3.0 ([1294343](https://github.com/AlchemistSimulator/Alchemist/commit/1294343430e2bad70648d565eb1e0e45ad6fdcf7))
+
+
+### Documentation
+
+* **website:** switch from orchid to hugo ([#1049](https://github.com/AlchemistSimulator/Alchemist/issues/1049)) ([683c92b](https://github.com/AlchemistSimulator/Alchemist/commit/683c92b7e4ac5d6e5e184e26b39173805b937238)), closes [orchidhq/Orchid#393](https://github.com/orchidhq/Orchid/issues/393) [Kotlin/dokka#2320](https://github.com/Kotlin/dokka/issues/2320) [Kotlin/dokka#2321](https://github.com/Kotlin/dokka/issues/2321) [Kotlin/dokka#2322](https://github.com/Kotlin/dokka/issues/2322) [Kotlin/dokka#2323](https://github.com/Kotlin/dokka/issues/2323)
+
+
+### Revert previous changes
+
+* **ci:** switch back ti a three-phase build-and-deploy ([33fd07e](https://github.com/AlchemistSimulator/Alchemist/commit/33fd07ec09c65093440ad6c7d28c456d8762994b))
+
+
+### General maintenance
+
+* **release:** 12.2.2 [skip ci] ([60b5d52](https://github.com/AlchemistSimulator/Alchemist/commit/60b5d529126724527bf3f7ffd3b7dbb81ccae59f)), closes [orchidhq/Orchid#393](https://github.com/orchidhq/Orchid/issues/393) [Kotlin/dokka#2320](https://github.com/Kotlin/dokka/issues/2320) [Kotlin/dokka#2321](https://github.com/Kotlin/dokka/issues/2321) [Kotlin/dokka#2322](https://github.com/Kotlin/dokka/issues/2322) [Kotlin/dokka#2323](https://github.com/Kotlin/dokka/issues/2323)
+
+
+### Build and continuous integration
+
+* build website before deployment ([48caa52](https://github.com/AlchemistSimulator/Alchemist/commit/48caa528895cd45b0f0a8efb515ffc8fd8d5268b))
+* fetch submodules on release ([d0f3fb6](https://github.com/AlchemistSimulator/Alchemist/commit/d0f3fb67af207032ef700c154904e519b2ecb4e2))
+* fix test-deploy job ([2326e56](https://github.com/AlchemistSimulator/Alchemist/commit/2326e56a38d30213b52b5e5787f45c040306382a))
+* restructure in multiple tasks ([7805062](https://github.com/AlchemistSimulator/Alchemist/commit/7805062893629eac28b438a3f6a4bda97980460b))
+
 ### [12.2.2](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.1...12.2.2) (2022-01-24)
 
 

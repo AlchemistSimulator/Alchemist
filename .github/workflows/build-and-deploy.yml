@@ -18,6 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Runs all tests
   build:
     strategy:
       matrix:
@@ -36,6 +37,7 @@ jobs:
             ./gradlew clean --parallel
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
+  # Builds all shadow jars and runs them
   test-shadowjar:
     strategy:
       matrix:
@@ -54,6 +56,7 @@ jobs:
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
+  # Performs a dry-deployment if credentials are available
   test-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 120
@@ -63,15 +66,17 @@ jobs:
         uses: danysk/action-checkout@0.2.1
       - uses: DanySK/build-check-deploy-gradle-action@1.2.0
         with:
-          build-command: ./gradlew signKotlinMavenPublication --parallel
-          check-command: ./gradlew closeKotlinMavenOnMavenCentralNexus
+          build-command: true
+          check-command: true
+          deploy-command: ./gradlew closeKotlinMavenOnMavenCentralNexus --parallel
           java-version: 11
           should-run-codecov: false
-          should-deploy: false
+          should-deploy: true
           should-validate-wrapper: false
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+  # Builds the website and verifies link sanity
   build-website:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -80,7 +85,8 @@ jobs:
         uses: danysk/action-checkout@0.2.1
       - uses: DanySK/build-check-deploy-gradle-action@1.2.0
         with:
-          build-command: ./gradlew hugoBuild --parallel
+          build-command: |
+            ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
           check-command: |
             # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
             # See:
@@ -102,6 +108,7 @@ jobs:
         with:
           name: website
           path: website.tar
+  # Performs a release if needed
   release:
     needs:
       - build
@@ -137,15 +144,15 @@ jobs:
           build-command: |
             ls -ahl
             echo Copying the new website
-            tar -xvf website.tar
+            tar -xf website.tar
             echo Copying git information
             mv website/.git build/website/.git
-            git -C build/website/ status
+            # git -C build/website/ status
             echo Removing old website
             rm -rf website
             echo Adding changes to the stage
             git -C build/website/ add .
-            git -C build/website/ status
+            # git -C build/website/ status
           check-command: true
           deploy-command: |
             npm install

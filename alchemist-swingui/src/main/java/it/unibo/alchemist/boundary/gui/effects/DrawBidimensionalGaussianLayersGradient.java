@@ -19,10 +19,9 @@ public class DrawBidimensionalGaussianLayersGradient extends DrawLayersGradient 
     private static final long serialVersionUID = 1L;
 
     /**
-     * {@inheritDoc}
+     * Builds a new {@link DrawBidimensionalGaussianLayersGradient}.
      */
-    @Override
-    protected LayerToFunctionMapper createMapper() {
-        return new BidimensionalGaussianLayersMapper();
+    public DrawBidimensionalGaussianLayersGradient() {
+        super(new BidimensionalGaussianLayersMapper());
     }
 }

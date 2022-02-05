@@ -1,8 +1,8 @@
 ---
 chapter: true
-pre: "<b>3. </b>"
+pre: "<b>4. </b>"
 title: "Reference"
-weight: 3
+weight: 400
 summary: >-
     Reference guides are technical, austere, and to the point descriptions of the machinery and how to operate it.
     Reference guides have one job only: to describe.

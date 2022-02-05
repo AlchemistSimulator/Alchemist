@@ -27,7 +27,7 @@ class GraphStreamDeployment<P>(
     /**
      * Builds a new GraphStream-based deployment, given the [nodeCount],
      * whether or not the arcs of such graph shoud be links ([createLinks]),
-     * the [generatorName] (must be the name of a subclass of BaseGenerator),
+     * the [generatorName] (must be the name of a subclass of [org.graphstream.algorithm.generator.BaseGenerator]),
      * and its [parameters].
      */
     @JvmOverloads constructor(

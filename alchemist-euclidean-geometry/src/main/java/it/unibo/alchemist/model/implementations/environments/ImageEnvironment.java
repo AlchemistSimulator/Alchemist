@@ -187,7 +187,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
 
     @Nullable
     @SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
-    private static int[] searchNext(// NOPMD: we do want to return null
+    private static int[] searchNext(
         final int color,
         final BufferedImage img,
         final int[] s,
@@ -205,7 +205,7 @@ public class ImageEnvironment<T> extends Continuous2DObstacles<T> {
              */
             initx = 0;
         }
-        return null;
+        return null; // NOPMD: we do want to return null
     }
 
     private static void setMatrix(final boolean[][] mat, final int[] sp, final int[] ep) {

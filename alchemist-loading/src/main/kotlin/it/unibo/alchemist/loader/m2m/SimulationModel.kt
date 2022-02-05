@@ -57,7 +57,8 @@ private typealias ReactionComponentFunction<T, P, R> =
     (RandomGenerator, Environment<T, P>, Node<T>, TimeDistribution<T>, Reaction<T>, String?) -> R
 
 /**
- * Converts a representation of an Alchemist simulation into an executable simulation.
+ * Contains the model-to-model translation between the Alchemist YAML specification and the
+ * executable form of a simulation.
  */
 internal object SimulationModel {
 

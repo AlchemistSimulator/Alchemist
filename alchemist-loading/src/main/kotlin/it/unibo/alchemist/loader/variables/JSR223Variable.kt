@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.loader.variables
 
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
@@ -62,10 +71,10 @@ data class JSR223Variable @JvmOverloads constructor(
                         engine.eval(formula, variables.asBindings())
                     }
                 }
-            }.getOrElse { reason ->
+            }.getOrElse { cause ->
                 val whatHappened = "A $language script evaluation failed"
-                val whyHappened = when (reason) {
-                    is ScriptException -> "due to an error in the script: ${reason.message}"
+                val whyHappened = when (cause) {
+                    is ScriptException -> "due to an error in the script: ${cause.message}"
                     is TimeoutCancellationException -> """
                         because it reached its ${timeout}ms timeout.
                         This is usually a sign that something is looping.
@@ -75,7 +84,7 @@ data class JSR223Variable @JvmOverloads constructor(
                     else -> "for a reason unknown to Alchemist (look at the original cause)"
                 }
                 val inspection = "context: $variables\nscript:\n$formula"
-                throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection")
+                throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection", cause)
             }
         }
     } catch (e: ScriptException) {

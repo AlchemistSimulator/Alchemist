@@ -1,3 +1,26 @@
+### [12.2.11](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.10...12.2.11) (2022-02-07)
+
+
+### Dependency updates
+
+* **deps:** update io.kotest to v5.1.0 (minor) ([#1043](https://github.com/AlchemistSimulator/Alchemist/issues/1043)) ([8ede8bc](https://github.com/AlchemistSimulator/Alchemist/commit/8ede8bcc9d9331d91531246e25162cf24af00e85))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to 017f100 ([37cd19e](https://github.com/AlchemistSimulator/Alchemist/commit/37cd19ee29059456b7443895b6480b5df706f267))
+
+
+### General maintenance
+
+* **cache:** update the entries for javadoc.io ([2e3bd23](https://github.com/AlchemistSimulator/Alchemist/commit/2e3bd2330c1007f107a7acd98c8b13aad6c94c2a))
+
+
+### Documentation
+
+* **website:** display the version number on all subpages ([7429748](https://github.com/AlchemistSimulator/Alchemist/commit/7429748f2c1d403429edf0bf56b9233e36834d08))
+
+
+### Build and continuous integration
+
+* **website:** cancel in progress website builds and run only the latest ([5aefb74](https://github.com/AlchemistSimulator/Alchemist/commit/5aefb7483e749df9c7d059eb5cebe533a02ae22e))
+
 ### [12.2.10](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.9...12.2.10) (2022-02-05)
 
 

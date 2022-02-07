@@ -329,15 +329,20 @@ tasks {
                 "file ${index.absolutePath} existed during configuration, but has been deleted."
             }
             val version = project.version.toString()
-            val text = index.readText()
-            val devTag = "!development preview!"
-            if (text.contains(devTag)) {
-                index.writeText(text.replace(devTag, version))
-            } else {
-                if (!text.contains(version)) {
-                    logger.warn("Could not inject version $version into the website index page")
+            index.parentFile.walkTopDown()
+                .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
+                .filterNot { it.path.contains(Regex("${File.separator}(kdoc|javadoc)${File.separator}")) }
+                .forEach { page ->
+                    val text = page.readText()
+                    val devTag = "!development preview!"
+                    if (text.contains(devTag)) {
+                        page.writeText(text.replace(devTag, version))
+                    } else {
+                        if (!text.contains(version)) {
+                            logger.warn("Could not inject version $version into ${page.path}")
+                        }
+                    }
                 }
-            }
         }
     }
 }

@@ -32,9 +32,9 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
      * Use this constructor to displace multiple groups of devices with
      * exponentially varied density along an axis.
      * 
-     * @param env
+     * @param environment
      *            {@link Environment}
-     * @param rng
+     * @param randomGenerator
      *            {@link RandomGenerator}
      * @param nodes
      *            the number of nodes to displace
@@ -59,24 +59,29 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
      * @param increasing
      *            true if device density should increase with the desired axis
      */
-    public GeometricGradientRectangle(final Environment<?, P> env,
-            final RandomGenerator rng,
-            final int nodes,
-            final double x, final double y,
-            final double sizex, final double sizey,
-            final double lambda,
-            final int steps,
-            final boolean horizontal, final boolean increasing) {
-        this(env, rng, nodes, x, y, sizex, sizey, lambda, false, steps, horizontal, increasing);
+    public GeometricGradientRectangle(
+        final RandomGenerator randomGenerator,
+        final Environment<?, P> environment,
+        final int nodes,
+        final double x,
+        final double y,
+        final double sizex,
+        final double sizey,
+        final double lambda,
+        final int steps,
+        final boolean horizontal,
+        final boolean increasing
+    ) {
+        this(randomGenerator, environment, nodes, x, y, sizex, sizey, lambda, false, steps, horizontal, increasing);
     }
 
     /**
      * Use this constructor to displace devices with an exponentially varied
      * density along an axis.
      * 
-     * @param env
+     * @param environment
      *            {@link Environment}
-     * @param rng
+     * @param randomGenerator
      *            {@link RandomGenerator}
      * @param nodes
      *            the number of nodes to displace
@@ -97,26 +102,36 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
      * @param increasing
      *            true if device density should increase with the desired axis
      */
-    public GeometricGradientRectangle(final Environment<?, P> env,
-            final RandomGenerator rng,
-            final int nodes,
-            final double x, final double y,
-            final double sizex, final double sizey,
-            final double lambda,
-            final boolean horizontal, final boolean increasing) {
-        this(env, rng, nodes, x, y, sizex, sizey, lambda, true, Integer.MIN_VALUE, horizontal, increasing);
+    public GeometricGradientRectangle(
+        final RandomGenerator randomGenerator,
+        final Environment<?, P> environment,
+        final int nodes,
+        final double x,
+        final double y,
+        final double sizex,
+        final double sizey,
+        final double lambda,
+        final boolean horizontal,
+        final boolean increasing
+    ) {
+        this(randomGenerator, environment, nodes, x, y, sizex, sizey, lambda, true, Integer.MIN_VALUE, horizontal, increasing);
     }
 
-    private GeometricGradientRectangle(final Environment<?, P> env,
-            final RandomGenerator rng,
-            final int nodes,
-            final double x, final double y,
-            final double sizex, final double sizey,
-            final double lambda,
-            final boolean continuous,
-            final int steps,
-            final boolean horizontal, final boolean increasing) {
-        super(env, rng, nodes, x, y, sizex, sizey);
+    private GeometricGradientRectangle(
+        final RandomGenerator randomGenerator,
+        final Environment<?, P> environment,
+        final int nodes,
+        final double x,
+        final double y,
+        final double sizex,
+        final double sizey,
+        final double lambda,
+        final boolean continuous,
+        final int steps,
+        final boolean horizontal,
+        final boolean increasing
+    ) {
+        super(environment, randomGenerator, nodes, x, y, sizex, sizey);
         if (lambda <= 0 || lambda > 100) {
             throw new IllegalArgumentException("lambda must be in the (0, 100] interval.");
         }
@@ -128,7 +143,7 @@ public final class GeometricGradientRectangle<P extends Position<? extends P>> e
         this.horizontal = horizontal;
         this.increasing = increasing;
         size = FastMath.abs(horizontal ? sizex : sizey);
-        exp = new ExponentialDistribution(rng, size * lambda);
+        exp = new ExponentialDistribution(randomGenerator, size * lambda);
         bound = exp.cumulativeProbability(size);
         /*
          * Determine the bound in terms of cumulative probability

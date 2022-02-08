@@ -9,6 +9,7 @@
 import Libs.alchemist
 import Libs.incarnation
 import Util.fetchJavadocIOForDependency
+import Util.id
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -27,8 +28,6 @@ plugins {
     alias(libs.plugins.taskTree)
     alias(libs.plugins.hugo)
 }
-
-val Provider<PluginDependency>.id get() = get().pluginId
 
 allprojects {
 

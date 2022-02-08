@@ -7,6 +7,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.register
+import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URL
@@ -113,4 +114,9 @@ object Util {
             }
         }
     }
+
+    /**
+     * Directly accesses the plugin id.
+     */
+    val Provider<PluginDependency>.id get() = get().pluginId
 }

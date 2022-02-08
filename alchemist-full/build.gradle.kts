@@ -7,6 +7,9 @@ import Libs.alchemist
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
+plugins {
+    application
+}
 
 dependencies {
     runtimeOnly(rootProject)
@@ -15,10 +18,6 @@ dependencies {
     }
     testImplementation(rootProject)
     testImplementation(alchemist("euclidean-geometry"))
-}
-
-plugins {
-    application
 }
 
 application {

@@ -128,7 +128,7 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
      * @param type the type of capability to retrieve
      * @return an optional with a capability of the requested type
      */
-    Optional<Capability> asCapability(Class<? extends Capability> type);
+    <C extends Capability> C asCapability(Class<C> type);
 
     /**
      * @return a set of the capabilities added to the node

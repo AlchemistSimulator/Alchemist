@@ -12,5 +12,5 @@ package it.unibo.alchemist.model.interfaces
 /**
  * Represents a node capability.
  */
-interface Capability {
-}
+interface Capability
+git

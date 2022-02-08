@@ -10,6 +10,8 @@ package it.unibo.alchemist.model.interfaces;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @param <T>
@@ -115,5 +117,22 @@ public interface Node<T> extends Serializable, Iterable<Reaction<T>>, Comparable
      *            the concentration you want for mol
      */
     void setConcentration(Molecule mol, T c);
+
+    /**
+     * Adds a capability to the node.
+     * @param capability the capability you want to add to the node
+     */
+    void addCapability(Capability capability);
+
+    /**
+     * @param type the type of capability to retrieve
+     * @return an optional with a capability of the requested type
+     */
+    Optional<Capability> asCapability(Class<? extends Capability> type);
+
+    /**
+     * @return a set of the capabilities added to the node
+     */
+    Set<Capability> getCapabilities();
 
 }

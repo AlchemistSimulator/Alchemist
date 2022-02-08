@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.nodes;
 
 import com.google.common.collect.MapMaker;
+import it.unibo.alchemist.model.interfaces.Capability;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -18,17 +19,21 @@ import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 
 /**
@@ -46,6 +51,7 @@ public abstract class AbstractNode<T> implements Node<T> {
     private final int id;
     private final List<Reaction<T>> reactions = new ArrayList<>();
     private final Map<Molecule, T> molecules = new LinkedHashMap<>();
+    private final Map<Class<? extends Capability>, Capability> capabilities = new HashMap<>();
 
     private static int idFromEnv(final Environment<?, ?> env) {
         MUTEX.acquireUninterruptibly();
@@ -188,6 +194,22 @@ public abstract class AbstractNode<T> implements Node<T> {
     @Override
     public void setConcentration(final Molecule molecule, final T concentration) {
         molecules.put(molecule, concentration);
+    }
+
+    @Override
+    public void addCapability(final Capability capability) {
+        this.capabilities.put(capability.getClass(), capability);
+    }
+
+    @Override
+    public Optional<Capability> asCapability(final Class<? extends Capability> type) {
+        return Optional.ofNullable(this.capabilities.get(type));
+    }
+
+    @Override
+    public Set<Capability> getCapabilities() {
+        return this.capabilities.entrySet().stream()
+                .map(Map.Entry::getValue).collect(Collectors.toSet());
     }
 
     @Override

@@ -24,6 +24,7 @@ which contains all the project information.
 ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability-percentage/AlchemistSimulator/Alchemist)
 ![Code Climate maintainability](https://img.shields.io/codeclimate/issues/AlchemistSimulator/Alchemist)
 ![Code Climate maintainability](https://img.shields.io/codeclimate/tech-debt/AlchemistSimulator/Alchemist)
+[![codebeat badge](https://codebeat.co/badges/f72f3917-1d9a-4fac-a5b2-fe068a451969)](https://codebeat.co/projects/github-com-alchemistsimulator-alchemist-master)
 [![CodeFactor](https://www.codefactor.io/repository/github/alchemistsimulator/alchemist/badge)](https://www.codefactor.io/repository/github/alchemistsimulator/alchemist)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AlchemistSimulator_Alchemist&metric=alert_status)](https://sonarcloud.io/dashboard?id=AlchemistSimulator_Alchemist)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=AlchemistSimulator_Alchemist&metric=bugs)](https://sonarcloud.io/dashboard?id=AlchemistSimulator_Alchemist)

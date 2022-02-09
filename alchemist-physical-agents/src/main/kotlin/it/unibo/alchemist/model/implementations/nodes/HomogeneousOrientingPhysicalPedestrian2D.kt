@@ -73,19 +73,19 @@ class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOver
     }
 
     override fun getContents(): MutableMap<Molecule, T> {
-        return super.getContents()
+        return super.contents
     }
 
     override fun getId(): Int {
-        return super.getId()
+        return super.id
     }
 
     override fun getMoleculeCount(): Int {
-        return super.getMoleculeCount()
+        return super.moleculeCount
     }
 
     override fun getReactions(): MutableList<Reaction<T>> {
-        return super.getReactions()
+        return super.reactions
     }
 
     override fun iterator(): MutableIterator<Reaction<T>> {

@@ -1,0 +1,184 @@
+/*
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+package it.unibo.alchemist.model.interfaces
+
+import java.io.Serializable
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.jvm.jvmErasure
+
+/**
+ * @param <T>
+ * The type of the concentration
+ *
+ * This interface must be implemented in every realization of node
+</T> */
+interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
+    /**
+     * Adds a reaction to this node.
+     * The reaction is added only in the node,
+     * but not in the [Simulation] scheduler, so it will never be executed.
+     * To add the reaction also in the scheduler (and start to execute it),
+     * you have to call also the method [Simulation.reactionAdded].
+     * @param r
+     * the reaction to be added
+     */
+    fun addReaction(r: Reaction<T>)
+
+    /**
+     * Creates a new Node which is a clone of the current Node. The new Node
+     * will have all the current Node's properties, such as reactions and
+     * molecules, but it will also have a different ID.
+     *
+     * @param currentTime
+     * the time at which the cloning operation happens
+     *
+     * @return A new Node which is a clone of the current one.
+     *
+     * @throws UnsupportedOperationException
+     * if the implementation does not support node cloning.
+     */
+    fun cloneNode(currentTime: Time): Node<T>
+
+    /**
+     * Tests whether a node contains a [Molecule].
+     *
+     * @param mol
+     * the molecule to check
+     * @return true if the molecule is present, false otherwise
+     */
+    operator fun contains(mol: Molecule): Boolean
+
+    /**
+     * Calculates the concentration of a molecule.
+     *
+     * @param mol
+     * the molecule whose concentration will be returned
+     * @return the concentration of the molecule
+     */
+    fun getConcentration(mol: Molecule): T
+
+    /**
+     * @return the molecule corresponding to the i-th position
+     */
+    fun getContents(): Map<Molecule, T>
+
+    /**
+     * @return an univocal id for this node in the environment
+     */
+    val id: Int
+
+    /**
+     * @return the count of different molecules in this node
+     */
+    val moleculeCount: Int
+
+    /**
+     * @return a list of the node's capabilities
+     */
+    val capabilities: List<Capability>
+
+    /**
+     * This method allows to access all the reaction of the node.
+     *
+     * @return the list of rections belonging to this node
+     */
+    val reactions: List<Reaction<T>>
+
+    override fun hashCode(): Int
+
+    /**
+     * @param mol the molecule that should be removed
+     */
+    fun removeConcentration(mol: Molecule)
+
+    /**
+     * Removes a reaction from this node.
+     * The reaction is removed only in the node,
+     * but not in the [Simulation] scheduler,
+     * so the scheduler will continue to execute the reaction.
+     * To remove the reaction also in the scheduler (and stop to execute it),
+     * you have to call also the method [Simulation.reactionRemoved].
+     *
+     * @param r
+     * the reaction to be removed
+     */
+    fun removeReaction(r: Reaction<T>)
+
+    /**
+     * Sets the concentration of mol to c.
+     *
+     * @param mol
+     * the molecule you want to set the concentration
+     * @param c
+     * the concentration you want for mol
+     */
+    fun setConcentration(mol: Molecule, c: T)
+
+    /**
+     * Adds a capability to the node.
+     * @param capability the capability you want to add to the node
+     */
+    fun addCapability(capability: Capability)
+
+    /**
+     * returns a [Capability] of the provided [type] [C].
+     * @param [C] type of capability
+     * @param superType the type of capability to retrieve
+     * @return a capability of the provided type [C]
+     */
+    fun <C : Capability> asCapability(superType: Class<C>): C? = asCapability(superType.kotlin)
+
+    /**
+     * returns a [Capability] of the provided [type] [C].
+     * @param [C] type of capability
+     * @param superType the type of capability to retrieve
+     * @return a capability of the provided type [C]
+     */
+    fun <C : Capability> asCapability(superType: KClass<C>): C? = capabilities
+        .asSequence()
+        .mapNotNull { capability -> capability::class.distanceFrom(superType)?.let { capability to it } }
+        .minByOrNull { it.second }
+        ?.first as C
+
+    /**
+     * Check whether the node as a particular capability.
+     * @param [C] type of capability
+     * @param superType the type of capability to check
+     * @return true if the node has the capability
+     */
+    fun <C: Capability> hasCapability(superType: KClass<C>) = asCapability(superType) != null
+
+    /**
+     * Check whether the node as a particular capability.
+     * @param [C] type of capability
+     * @param superTypes a list capabilities to check
+     * @return true if the node has all the capabilities
+     */
+    fun <C: Capability> hasCapabilities(superTypes: List<KClass<C>>) = superTypes.all { hasCapability(it) }
+
+    companion object {
+        /**
+         * returns a [Capability] of the provided [type] [C].
+         * @param [C] type of capability
+         * @param superType the type of capability to retrieve
+         * @return a capability of the provided type [C]
+         */
+        inline fun <reified C : Capability> Node<*>.asCapability(): C? = asCapability(C::class)
+
+        private fun KClass<*>.distanceFrom(superType: KClass<*>, depth: Int = 0): Int? = when {
+            !isSubclassOf(superType) -> null
+            superType == this -> depth
+            else -> supertypes.asSequence()
+                .map { it.jvmErasure }
+                .mapNotNull { it.distanceFrom(superType, depth + 1) }
+                .minOrNull()
+        }
+    }
+}

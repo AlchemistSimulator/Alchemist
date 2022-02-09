@@ -13,4 +13,3 @@ package it.unibo.alchemist.model.interfaces
  * Represents a node capability.
  */
 interface Capability
-git

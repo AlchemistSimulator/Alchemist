@@ -143,7 +143,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability> asCapability(superType: KClass<C>): C? = capabilities
+    fun <C : Capability> asCapabilityOrNull(superType: KClass<C>): C? = capabilities
         .asSequence()
         .mapNotNull { capability -> capability::class.distanceFrom(superType)?.let { capability to it } }
         .minByOrNull { it.second }

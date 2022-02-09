@@ -161,9 +161,7 @@ abstract class AbstractNode<T>(
         private val MUTEX = Semaphore(1)
         private fun idFromEnv(env: Environment<*, *>): Int {
             MUTEX.acquireUninterruptibly()
-            var idgen = IDGENERATOR[Objects.requireNonNull(
-                env
-            )]
+            var idgen = IDGENERATOR[Objects.requireNonNull(env)]
             if (idgen == null) {
                 idgen = AtomicInteger()
                 IDGENERATOR[env] = idgen

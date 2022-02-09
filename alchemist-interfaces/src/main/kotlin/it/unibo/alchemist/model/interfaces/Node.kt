@@ -93,6 +93,8 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
 
     override fun hashCode(): Int
 
+    override fun equals(other: Any?): Boolean
+
     /**
      * @param mol the molecule that should be removed
      */
@@ -153,7 +155,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to check
      * @return true if the node has the capability
      */
-    fun <C: Capability> hasCapability(superType: KClass<C>) = asCapability(superType) != null
+    fun <C : Capability> hasCapability(superType: KClass<C>) = asCapability(superType) != null
 
     /**
      * Check whether the node as a particular capability.
@@ -161,7 +163,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superTypes a list capabilities to check
      * @return true if the node has all the capabilities
      */
-    fun <C: Capability> hasCapabilities(superTypes: List<KClass<C>>) = superTypes.all { hasCapability(it) }
+    fun <C : Capability> hasCapabilities(superTypes: List<KClass<C>>) = superTypes.all { hasCapability(it) }
 
     companion object {
         /**

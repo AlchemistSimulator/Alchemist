@@ -135,7 +135,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability> asCapability(superType: Class<C>): C? = asCapability(superType.kotlin)
+    fun <C : Capability> asCapabilityOrNull(superType: Class<C>): C? = asCapability(superType.kotlin)
 
     /**
      * returns a [Capability] of the provided [type] [C].

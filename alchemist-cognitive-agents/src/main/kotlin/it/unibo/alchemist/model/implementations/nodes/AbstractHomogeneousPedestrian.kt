@@ -6,6 +6,9 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.implementations.capabilities.BasicRunningCapability
+import it.unibo.alchemist.model.interfaces.capabilities.RunningCapability
+import it.unibo.alchemist.model.interfaces.capabilities.WalkingCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -30,6 +33,11 @@ F : GeometricShapeFactory<P, A> {
         pedestrianGroup ?: Alone(this)
     }
 
+    init {
+        this.addCapability(BasicRunningCapability())
+        this.addCapability(BasicRunningCapability())
+    }
+
     /**
      * The speed at which the pedestrian moves if it's walking.
      */
@@ -40,5 +48,8 @@ F : GeometricShapeFactory<P, A> {
      */
     protected open val runningSpeed: Double = Speed.default * 3
 
-    override fun speed() = randomGenerator.nextDouble(walkingSpeed, runningSpeed)
+    override fun speed() = randomGenerator.nextDouble(
+        asCapability(WalkingCapability::class).walkingSpeed,
+        asCapability(RunningCapability::class).runningSpeed
+    )
 }

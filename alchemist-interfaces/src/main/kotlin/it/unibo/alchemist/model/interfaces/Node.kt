@@ -135,7 +135,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability> asCapabilityOrNull(superType: Class<C>): C? = asCapability(superType.kotlin)
+    fun <C : Capability> asCapabilityOrNull(superType: Class<C>): C? = asCapabilityOrNull(superType.kotlin)
 
     /**
      * returns a [Capability] of the provided [type] [C].
@@ -150,20 +150,13 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
         ?.first as? C
 
     /**
-     * Check whether the node as a particular capability.
+     * returns a [Capability] of the provided [type] [C].
      * @param [C] type of capability
-     * @param superType the type of capability to check
-     * @return true if the node has the capability
+     * @param superType the type of capability to retrieve
+     * @return a capability of the provided type [C]
      */
-    fun <C : Capability> hasCapability(superType: KClass<C>) = asCapability(superType) != null
-
-    /**
-     * Check whether the node as a particular capability.
-     * @param [C] type of capability
-     * @param superTypes a list capabilities to check
-     * @return true if the node has all the capabilities
-     */
-    fun <C : Capability> hasCapabilities(superTypes: List<KClass<C>>) = superTypes.all { hasCapability(it) }
+    fun <C : Capability> asCapability(superType: KClass<C>): C =
+        asCapabilityOrNull(superType).let { it } ?: TODO()
 
     companion object {
         /**

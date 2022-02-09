@@ -147,7 +147,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
         .asSequence()
         .mapNotNull { capability -> capability::class.distanceFrom(superType)?.let { capability to it } }
         .minByOrNull { it.second }
-        ?.first as C
+        ?.first as? C
 
     /**
      * Check whether the node as a particular capability.

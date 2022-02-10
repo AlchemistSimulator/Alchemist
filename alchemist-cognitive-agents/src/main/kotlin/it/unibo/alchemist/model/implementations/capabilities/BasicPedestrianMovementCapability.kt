@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.implementations.capabilities
 
-import it.unibo.alchemist.model.interfaces.capabilities.MovementCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
 
 /**
- * Implementation of a basic [MovementCapability]
+ * Implementation of a basic [PedestrianMovementCapability]
  */
-class BasicMovementCapability(
+class BasicPedestrianMovementCapability(
     override val walkingSpeed: Double = BasicWalkingCapability().walkingSpeed,
     override val runningSpeed: Double = BasicRunningCapability().runningSpeed
-) : MovementCapability
+) : PedestrianMovementCapability

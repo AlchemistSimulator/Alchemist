@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.HeterogeneousPedestrianModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.implementations.capabilities.BasicMovementCapability
+import it.unibo.alchemist.model.implementations.capabilities.BasicPedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
@@ -45,7 +45,7 @@ abstract class AbstractHeterogeneousPedestrian<T, P, A, F> @JvmOverloads constru
     )
 
     init {
-        addCapability(BasicMovementCapability(pedestrianModel.speed.walking, pedestrianModel.speed.running))
+        addCapability(BasicPedestrianMovementCapability(pedestrianModel.speed.walking, pedestrianModel.speed.running))
     }
 
     override val walkingSpeed = asCapability(WalkingCapability::class).walkingSpeed

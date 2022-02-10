@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.jgrapht.core)
     implementation(libs.trove4j)
+    implementation(alchemist("euclidean-geometry"))
 
     testImplementation(alchemist("loading"))
     testImplementation(alchemist("engine"))

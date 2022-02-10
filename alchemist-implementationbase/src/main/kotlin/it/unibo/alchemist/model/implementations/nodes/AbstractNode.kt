@@ -33,7 +33,7 @@ import javax.annotation.Nonnull
  * @param <T> concentration type
 </T> */
 abstract class AbstractNode<T>(
-    val env: Environment<*, *>,
+    val environment: Environment<*, *>,
     override val id: Int = idFromEnv(env),
     override val reactions: MutableList<Reaction<T>> = ArrayList(),
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),

@@ -10,22 +10,20 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Capability
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
-import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.graph.DefaultEdge
+import kotlin.reflect.KClass
 
 /**
  * A homogeneous [OrientingPedestrian2D] capable of physical interactions.
@@ -48,66 +46,57 @@ class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOver
         group = group,
     ) {
 
-    override val fieldOfView: FieldOfView2D<T>
-        get() = super.fieldOfView
+    override val id = super.id
 
-    override val membershipGroup: PedestrianGroup<T, Euclidean2DPosition, Euclidean2DTransformation>
-        get() = super.membershipGroup
+    override val moleculeCount = super.moleculeCount
 
-    override fun addReaction(reaction: Reaction<T>?) {
-        super.addReaction(reaction)
-    }
+    override val fieldOfView = super.fieldOfView
 
-    override fun cloneNode(currentTime: Time?): Node<T> = TODO()
+    override val membershipGroup = super.membershipGroup
 
-    override fun compareTo(other: Node<T>?): Int {
-        return super.compareTo(other)
-    }
+    override val reactions = super.reactions
 
-    override fun contains(molecule: Molecule?): Boolean {
-        return super.contains(molecule)
-    }
+    override val capabilities = super.capabilities
 
-    override fun getConcentration(molecule: Molecule?): T {
-        return super.getConcentration(molecule)
-    }
+    override fun addCapability(capability: Capability) = super.addCapability(capability)
 
-    override fun getContents(): MutableMap<Molecule, T> {
-        return super.contents
-    }
+    override fun <C : Capability> asCapability(superType: KClass<C>) =
+        super<HomogeneousPhysicalPedestrian2D>.asCapability(superType)
 
-    override fun getId(): Int {
-        return super.id
-    }
+    override fun <C : Capability> asCapability(superType: Class<C>) =
+        super<HomogeneousPhysicalPedestrian2D>.asCapability(superType)
 
-    override fun getMoleculeCount(): Int {
-        return super.moleculeCount
-    }
+    override fun <C : Capability> asCapabilityOrNull(superType: Class<C>) =
+        super<HomogeneousPhysicalPedestrian2D>.asCapabilityOrNull(superType)
 
-    override fun getReactions(): MutableList<Reaction<T>> {
-        return super.reactions
-    }
+    override fun <C : Capability> asCapabilityOrNull(superType: KClass<C>) =
+        super<HomogeneousPhysicalPedestrian2D>.asCapabilityOrNull(superType)
 
-    override fun iterator(): MutableIterator<Reaction<T>> {
-        return super.iterator()
-    }
+    override fun equals(other: Any?) = super.equals(other)
 
-    override fun removeConcentration(mol: Molecule?) {
-        super.removeConcentration(mol)
-    }
+    override fun hashCode() = super.hashCode()
 
-    override fun removeReaction(r: Reaction<T>?) {
-        super.removeReaction(r)
-    }
+    override fun addReaction(reaction: Reaction<T>) = super.addReaction(reaction)
 
-    override fun setConcentration(mol: Molecule?, c: T) {
-        super.setConcentration(mol, c)
-    }
+    override fun cloneNode(currentTime: Time): Node<T> = TODO()
 
-    override fun speed(): Double {
-        return super.speed()
-    }
+    override fun compareTo(other: Node<T>) = super.compareTo(other)
 
-    override val shape: GeometricShape<Euclidean2DPosition, Euclidean2DTransformation>
-        get() = super.shape
+    override fun contains(molecule: Molecule) = super.contains(molecule)
+
+    override fun getConcentration(molecule: Molecule) = super.getConcentration(molecule)
+
+    override val contents = super.contents
+
+    override fun iterator() = super.iterator()
+
+    override fun removeConcentration(mol: Molecule) = super.removeConcentration(mol)
+
+    override fun removeReaction(r: Reaction<T>) = super.removeReaction(r)
+
+    override fun setConcentration(mol: Molecule, c: T) = super.setConcentration(mol, c)
+
+    override fun speed() = super.speed()
+
+    override val shape = super.shape
 }

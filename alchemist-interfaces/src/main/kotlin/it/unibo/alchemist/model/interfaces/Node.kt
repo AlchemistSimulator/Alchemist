@@ -67,7 +67,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * @return the molecule corresponding to the i-th position
      */
-    fun getContents(): Map<Molecule, T>
+    val contents: Map<Molecule, T>
 
     /**
      * @return an univocal id for this node in the environment
@@ -157,6 +157,14 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      */
     fun <C : Capability> asCapability(superType: KClass<C>): C =
         asCapabilityOrNull(superType).let { it } ?: TODO()
+
+    /**
+     * returns a [Capability] of the provided [type] [C].
+     * @param [C] type of capability
+     * @param superType the type of capability to retrieve
+     * @return a capability of the provided type [C]
+     */
+    fun <C : Capability> asCapability(superType: Class<C>): C = asCapability(superType.kotlin)
 
     companion object {
         /**

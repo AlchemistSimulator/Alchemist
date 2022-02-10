@@ -86,9 +86,7 @@ abstract class AbstractNode<T>(
     /**
      * {@inheritDoc}
      */
-    override fun getContents(): Map<Molecule, T> {
-        return Collections.unmodifiableMap(molecules)
-    }
+    override val contents: Map<Molecule, T> = Collections.unmodifiableMap(molecules)
 
     /**
      * {@inheritDoc}

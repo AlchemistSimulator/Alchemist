@@ -10,8 +10,19 @@
 package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
-interface PhysicalCapability<T, P, A, F> : Capability {
+/**
+ * A node's capability to experience physical forces.
+ */
+interface PhysicalCapability<T, P, A, F> : Capability
+    where P : Position<P>, P : Vector<P>,
+          A : GeometricTransformation<P>,
+          F : GeometricShapeFactory<P, A> {
 
     /**
      * @returns a list of vectors representing the physical forces acting on this node

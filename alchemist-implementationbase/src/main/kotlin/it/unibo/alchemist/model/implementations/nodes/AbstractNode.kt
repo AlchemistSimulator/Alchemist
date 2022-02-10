@@ -52,16 +52,9 @@ abstract class AbstractNode<T>(
         throw UnsupportedOperationException()
     }
 
-    override fun compareTo(@Nonnull other: Node<T>): Int {
-        if (other is AbstractNode<*>) {
-            if (id > (other as AbstractNode<*>).id) {
-                return 1
-            }
-            if (id < (other as AbstractNode<*>).id) {
-                return -1
-            }
-        }
-        return 0
+    override fun compareTo(@Nonnull other: Node<T>): Int = when (other) {
+        is AbstractNode<*> -> (id - other.id).coerceIn(-1, 1)
+        else -> 0
     }
 
     /**

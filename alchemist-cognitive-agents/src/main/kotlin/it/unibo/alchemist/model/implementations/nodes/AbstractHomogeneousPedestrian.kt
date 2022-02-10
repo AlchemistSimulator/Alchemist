@@ -1,14 +1,13 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
+import it.unibo.alchemist.model.implementations.capabilities.BasicMovementCapability
 import it.unibo.alchemist.model.implementations.groups.Alone
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.implementations.capabilities.BasicRunningCapability
-import it.unibo.alchemist.model.interfaces.capabilities.RunningCapability
-import it.unibo.alchemist.model.interfaces.capabilities.WalkingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.MovementCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -34,8 +33,7 @@ F : GeometricShapeFactory<P, A> {
     }
 
     init {
-        this.addCapability(BasicRunningCapability())
-        this.addCapability(BasicRunningCapability())
+        addCapability(BasicMovementCapability())
     }
 
     /**
@@ -49,7 +47,7 @@ F : GeometricShapeFactory<P, A> {
     protected open val runningSpeed: Double = Speed.default * 3
 
     override fun speed() = randomGenerator.nextDouble(
-        asCapability(WalkingCapability::class).walkingSpeed,
-        asCapability(RunningCapability::class).runningSpeed
+        asCapability(MovementCapability::class).walkingSpeed,
+        asCapability(MovementCapability::class).runningSpeed
     )
 }

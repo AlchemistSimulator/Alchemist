@@ -11,6 +11,12 @@ package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.interfaces.Capability
 
-interface RunningCapability : Capability{
+/**
+ * A node's capability to run.
+ */
+interface RunningCapability : Capability {
+    /**
+     * The node's running speed.
+     */
     val runningSpeed: Double
 }

@@ -13,6 +13,9 @@ import it.unibo.alchemist.model.interfaces.capabilities.MovementCapability
 import it.unibo.alchemist.model.interfaces.capabilities.RunningCapability
 import it.unibo.alchemist.model.interfaces.capabilities.WalkingCapability
 
+/**
+ * Implementation of a basic [MovementCapability]
+ */
 class BasicMovementCapability :
     MovementCapability,
     WalkingCapability by BasicWalkingCapability(),

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.implementations.capabilities.BasicWalkingCapability
-
+/**
+ * A node capability to move. It includes both [WalkingCapability] and [RunningCapability].
+ */
 interface MovementCapability : WalkingCapability, RunningCapability

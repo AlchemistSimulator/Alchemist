@@ -11,6 +11,12 @@ package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.interfaces.Capability
 
+/**
+ * A node capability to walk.
+ */
 interface WalkingCapability : Capability {
-    val walkingSpeed: Double;
+    /**
+     * The node's walking speed.
+     */
+    val walkingSpeed: Double
 }

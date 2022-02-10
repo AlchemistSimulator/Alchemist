@@ -12,6 +12,9 @@ package it.unibo.alchemist.model.implementations.capabilities
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.capabilities.RunningCapability
 
+/**
+ * Implementation of a basic [RunningCapability].
+ */
 class BasicRunningCapability(
     override val runningSpeed: Double = Speed.default * 3
 ) : RunningCapability

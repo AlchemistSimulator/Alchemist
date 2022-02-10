@@ -10,6 +10,6 @@
 package it.unibo.alchemist.model.interfaces
 
 /**
- * Represents a node capability.
+ * Represents a node's capability.
  */
 interface Capability

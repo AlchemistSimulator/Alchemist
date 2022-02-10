@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Time
-import java.lang.UnsupportedOperationException
 import java.util.ArrayList
 import java.util.Collections
 import java.util.LinkedHashMap
@@ -48,9 +47,8 @@ abstract class AbstractNode<T>(
     /**
      * Default implementation fails: override correctly calling the constructor.
      */
-    override fun cloneNode(currentTime: Time): AbstractNode<T> {
-        throw UnsupportedOperationException()
-    }
+    override fun cloneNode(currentTime: Time): AbstractNode<T> =
+        TODO("Cloning not yet implemented in ${this::class.simpleName}")
 
     override fun compareTo(@Nonnull other: Node<T>): Int = when (other) {
         is AbstractNode<*> -> (id - other.id).coerceIn(-1, 1)

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -94,6 +94,37 @@ class NamedParametersConstructor(
     override fun toString(): String = "$typeName($parametersMap)"
 }
 
+internal data class TypeSearch<out T>(val typeName: String, val targetType: Class<out T>) {
+
+    private val isQualified = typeName.contains('.')
+
+    val subTypes: List<Class<out T>> by lazy {
+        val compatibleTypes = when {
+            targetType.packageName.startsWith("it.unibo.alchemist") ->
+                ClassPathScanner.subTypesOf(targetType, "it.unibo.alchemist")
+                    .takeUnless { it.isEmpty() }
+                    ?: ClassPathScanner.subTypesOf(targetType)
+            else -> ClassPathScanner.subTypesOf(targetType)
+        }
+        compatibleTypes + if (Modifier.isAbstract(targetType.modifiers)) emptyList() else listOf(targetType)
+    }
+
+    val perfectMatches: List<Class<out T>> by lazy {
+        subtypes(ignoreCase = false)
+    }
+
+    val subOptimalMatches: List<Class<out T>> by lazy {
+        subtypes(ignoreCase = true)
+    }
+
+    private fun subtypes(ignoreCase: Boolean) =
+        subTypes.filter { typeName.equals(if (isQualified) it.name else it.simpleName, ignoreCase = ignoreCase) }
+
+    companion object {
+        inline fun <reified T> typeNamed(name: String) = TypeSearch(name, T::class.java)
+    }
+}
+
 /**
  * A constructor for a JVM class of type [typeName].
  */
@@ -115,27 +146,17 @@ sealed class JVMConstructor(val typeName: String) {
      * returning a [Result<T>].
      */
     fun <T : Any> buildAny(type: Class<out T>, factory: Factory): Result<T> {
-        val hasPackage = typeName.contains('.')
-        val compatibleTypes = when {
-            type.packageName.startsWith("it.unibo.alchemist") ->
-                ClassPathScanner.subTypesOf(type, "it.unibo.alchemist")
-                    .takeUnless { it.isEmpty() }
-                    ?: ClassPathScanner.subTypesOf(type)
-            else -> ClassPathScanner.subTypesOf(type)
-        }
-        val subtypes = compatibleTypes + if (Modifier.isAbstract(type.modifiers)) emptyList() else listOf(type)
-        val perfectMatches = subtypes.filter { typeName == if (hasPackage) it.name else it.simpleName }
+        val typeSearch = TypeSearch(typeName, type)
+        val perfectMatches = typeSearch.perfectMatches
         return when (perfectMatches.size) {
             0 -> {
-                val subOptimalMatches = subtypes.filter {
-                    typeName.equals(if (hasPackage) it.name else it.simpleName, ignoreCase = true)
-                }
+                val subOptimalMatches = typeSearch.subOptimalMatches
                 when (subOptimalMatches.size) {
                     0 -> Result.failure(
                         IllegalStateException(
                             """
                             |No valid match for type $typeName among subtypes of ${type.simpleName}.
-                            |Valid subtypes are: ${subtypes.map { it.simpleName }}
+                            |Valid subtypes are: ${typeSearch.subTypes.map { it.simpleName }}
                             """.trimMargin()
                         )
                     )

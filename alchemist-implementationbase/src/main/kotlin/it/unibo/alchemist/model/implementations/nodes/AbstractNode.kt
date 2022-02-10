@@ -34,7 +34,7 @@ import javax.annotation.Nonnull
 </T> */
 abstract class AbstractNode<T>(
     val environment: Environment<*, *>,
-    override val id: Int = idFromEnv(env),
+    override val id: Int = idFromEnv(environment),
     override val reactions: MutableList<Reaction<T>> = ArrayList(),
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
     override val capabilities: MutableList<Capability> = ArrayList()

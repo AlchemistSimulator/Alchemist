@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.implementations.capabilities
 
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.interfaces.capabilities.WalkingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianWalkingCapability
 
 /**
- * Implementation of a basic [WalkingCapability].
+ * Implementation of a basic [PedestrianWalkingCapability].
  */
-class BasicWalkingCapability(
+class BasicPedestrianWalkingCapability(
     override val walkingSpeed: Double = Speed.default
-) : WalkingCapability
+) : PedestrianWalkingCapability

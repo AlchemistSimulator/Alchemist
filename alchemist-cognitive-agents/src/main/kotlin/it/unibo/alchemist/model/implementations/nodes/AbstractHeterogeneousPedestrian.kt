@@ -9,8 +9,8 @@ import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.RunningCapability
-import it.unibo.alchemist.model.interfaces.capabilities.WalkingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianRunningCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianWalkingCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -48,9 +48,9 @@ abstract class AbstractHeterogeneousPedestrian<T, P, A, F> @JvmOverloads constru
         addCapability(BasicPedestrianMovementCapability(pedestrianModel.speed.walking, pedestrianModel.speed.running))
     }
 
-    override val walkingSpeed = asCapability(WalkingCapability::class).walkingSpeed
+    override val walkingSpeed = asCapability(PedestrianWalkingCapability::class).walkingSpeed
 
-    override val runningSpeed = asCapability(RunningCapability::class).runningSpeed
+    override val runningSpeed = asCapability(PedestrianRunningCapability::class).runningSpeed
 
 //    override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T, P, A>) =
 //        model.helpAttitude.level(toHelp.model.age, toHelp.model.gender, membershipGroup.contains(toHelp))

@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Capability
 /**
  * A node's capability to run.
  */
-interface RunningCapability : Capability {
+interface PedestrianRunningCapability : Capability {
     /**
      * The node's running speed.
      */

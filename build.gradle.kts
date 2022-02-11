@@ -300,7 +300,10 @@ dependencies {
 
 val websiteDir = File(buildDir, "website")
 
-hugo { version = "0.92.0" }
+hugo {
+    version = Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)")
+        .find(file("deps-utils/action.yml").readText())!!.groups[1]!!.value
+}
 
 tasks.hugoBuild {
     outputDirectory = websiteDir

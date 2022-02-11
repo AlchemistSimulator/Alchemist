@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -7,34 +7,18 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-import org.gradle.kotlin.dsl.spotbugs
-
-/*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
- *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution's top directory.
- */
+import com.github.spotbugs.snom.SpotBugsTask
+import de.aaschmid.gradle.plugins.cpd.Cpd
 
 dependencies {
     implementation(libs.boilerplate)
 }
 
-spotbugs {
-    ignoreFailures.set(true)
-}
-
-pmd {
-    isIgnoreFailures = true
-}
-
-checkstyle {
-    isIgnoreFailures = true
-}
-
-tasks.withType<de.aaschmid.gradle.plugins.cpd.Cpd> {
-    ignoreFailures = true
+listOf(Pmd::class, Checkstyle::class, SpotBugsTask::class, Cpd::class).forEach {
+    tasks.withType(it) {
+        enabled = false
+        ignoreFailures = true
+    }
 }
 
 tasks.javadoc {

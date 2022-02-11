@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * @param <P> position type
  * @param <T> concentration type
  */
-public final class UniformLayer<T, P extends Position<? extends P>> implements Layer<T, P> {
+public final class ConstantLayer<T, P extends Position<? extends P>> implements Layer<T, P> {
 
     /**
      * 
@@ -28,7 +28,7 @@ public final class UniformLayer<T, P extends Position<? extends P>> implements L
      * @param level
      *            the concentration
      */
-    public UniformLayer(final T level) {
+    public ConstantLayer(final T level) {
         this.level = level;
     }
 

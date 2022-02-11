@@ -59,12 +59,12 @@ class PreventRegressions {
             .from(ResourceLoader.getResource("testCustomExport.yml"))
             .getDefault()
             .getEnvironment();
-        assertTrue(env.getIncarnation().isPresent());
+        assertNotNull(env.getIncarnation());
         final byte[] serialized = SerializationUtils.serialize(env);
         assertNotNull(serialized);
         final Object deserialized = SerializationUtils.deserialize(SerializationUtils.serialize(env));
         assertNotNull(deserialized);
         assertEquals(env.getClass(), deserialized.getClass());
-        assertTrue(((Environment<?, ?>) deserialized).getIncarnation().isPresent()); 
+        assertNotNull(((Environment<?, ?>) deserialized).getIncarnation());
     }
 }

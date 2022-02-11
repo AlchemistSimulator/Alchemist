@@ -174,9 +174,10 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return getPosition(n1).distanceTo(getPosition(n2));
     }
 
+    @Nonnull
     @Override
-    public final Optional<Incarnation<T, P>> getIncarnation() {
-        return Optional.ofNullable(incarnation);
+    public final Incarnation<T, P> getIncarnation() {
+        return incarnation;
     }
 
     @Override

@@ -85,7 +85,7 @@ public abstract class AbstractDrawLayers extends DrawOnce implements DrawLayers 
     ) {
         if (layerFilter && (molecule == null || molString != molStringCached)) {
             molStringCached = molString;
-            environment.getIncarnation().ifPresent(incarnation -> molecule = incarnation.createMolecule(molString));
+            molecule = environment.getIncarnation().createMolecule(molString);
         }
         colorCache = new Color(red.getVal(), green.getVal(), blue.getVal(), alpha.getVal());
         graphics2D.setColor(colorCache);

@@ -79,9 +79,7 @@ class MoleculeReader(
         time: Time,
         step: Long
     ): Map<String, Double> {
-        fun Node<T>.extractData() = environment.incarnation
-            .map { it.getProperty(this, molecule, property) }
-            .orElseThrow { IllegalStateException("No incarnation available in the environment!") }
+        fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
         return when {
             aggregators.isEmpty() -> environment.nodes.asSequence().map { node ->
                 "$singleColumnName@${node.id}" to node.extractData()

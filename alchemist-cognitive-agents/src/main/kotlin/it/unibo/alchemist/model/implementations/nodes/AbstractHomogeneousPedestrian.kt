@@ -7,7 +7,6 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -22,7 +21,7 @@ abstract class AbstractHomogeneousPedestrian<T, P, A, F> @JvmOverloads construct
     protected val randomGenerator: RandomGenerator,
     protected val backingNode: Node<T>,
     group: PedestrianGroup<T, P, A>? = null
-) : Node<T> by backingNode, Pedestrian<T, P, A>
+) : Node<T> by backingNode.withCapability(), Pedestrian<T, P, A>
 where
 P : Position<P>, P : Vector<P>,
 A : GeometricTransformation<P>,
@@ -30,10 +29,6 @@ F : GeometricShapeFactory<P, A> {
     override val membershipGroup: PedestrianGroup<T, P, A> by lazy {
         val pedestrianGroup = group?.addMember(this) as? PedestrianGroup<T, P, A>
         pedestrianGroup ?: Alone(this)
-    }
-
-    init {
-        addCapability(BasicPedestrianMovementCapability())
     }
 
     /**
@@ -46,8 +41,11 @@ F : GeometricShapeFactory<P, A> {
      */
     protected open val runningSpeed: Double = Speed.default * 3
 
-    override fun speed() = randomGenerator.nextDouble(
-        asCapability(PedestrianMovementCapability::class).walkingSpeed,
-        asCapability(PedestrianMovementCapability::class).runningSpeed
-    )
+    override fun speed() = randomGenerator.nextDouble(walkingSpeed, runningSpeed)
+
+    companion object {
+        private fun <T> Node<T>.withCapability() = also {
+            it.addCapability(BasicPedestrianMovementCapability())
+        }
+    }
 }

@@ -32,15 +32,21 @@ import javax.annotation.Nonnull
  *
  * @param <T> concentration type
 </T> */
-abstract class AbstractNode<T>(
+abstract class AbstractNode<T> @JvmOverloads constructor(
+    /**
+     * The environment in which the node is places.
+     */
     val environment: Environment<*, *>,
     override val id: Int = idFromEnv(environment),
     override val reactions: MutableList<Reaction<T>> = ArrayList(),
+    /**
+     * The node's molecules.
+     */
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
     override val capabilities: MutableList<Capability> = ArrayList()
 ) : Node<T> {
 
-    override fun addReaction(reactionToAdd: Reaction<T>) {
+    final override fun addReaction(reactionToAdd: Reaction<T>) {
         reactions.add(reactionToAdd)
     }
 
@@ -50,7 +56,7 @@ abstract class AbstractNode<T>(
     override fun cloneNode(currentTime: Time): AbstractNode<T> =
         TODO("Cloning not yet implemented in ${this::class.simpleName}")
 
-    override fun compareTo(@Nonnull other: Node<T>): Int = when (other) {
+    final override fun compareTo(@Nonnull other: Node<T>): Int = when (other) {
         is AbstractNode<*> -> (id - other.id).coerceIn(-1, 1)
         else -> 0
     }
@@ -66,13 +72,13 @@ abstract class AbstractNode<T>(
      * @return an empty concentration
      */
     protected abstract fun createT(): T
-    override fun equals(other: Any?): Boolean {
-        return if (other is AbstractNode<*>) {
-            other.id == id
-        } else false
-    }
 
-    override fun forEach(action: Consumer<in Reaction<T>>) {
+    final override fun equals(other: Any?): Boolean = other is Node<*> && other.id == id
+
+    /**
+     * Performs an [action] for every reaction.
+     */
+    final override fun forEach(action: Consumer<in Reaction<T>>) {
         reactions.forEach(action)
     }
 
@@ -94,18 +100,18 @@ abstract class AbstractNode<T>(
     override val moleculeCount: Int
         get() = molecules.size
 
-    override fun hashCode(): Int {
-        return id
+    final override fun hashCode(): Int {
+        return id // TODO: better hashing
     }
 
-    override fun iterator(): Iterator<Reaction<T>> {
+    final override fun iterator(): Iterator<Reaction<T>> {
         return reactions.iterator()
     }
 
     /**
      * {@inheritDoc}
      */
-    override fun removeConcentration(moleculeToRemove: Molecule) {
+    final override fun removeConcentration(moleculeToRemove: Molecule) {
         if (molecules.remove(moleculeToRemove) == null) {
             throw NoSuchElementException("$moleculeToRemove was not present in node $id")
         }
@@ -114,13 +120,14 @@ abstract class AbstractNode<T>(
     /**
      * {@inheritDoc}
      */
-    override fun removeReaction(reactionToRemove: Reaction<T>) {
+    final override fun removeReaction(reactionToRemove: Reaction<T>) {
         reactions.remove(reactionToRemove)
     }
 
     /**
      * {@inheritDoc}
      */
+
     override fun setConcentration(molecule: Molecule, concentration: T) {
         molecules[molecule] = concentration
     }
@@ -128,11 +135,14 @@ abstract class AbstractNode<T>(
     /**
      * {@inheritDoc}
      */
-    override fun addCapability(capability: Capability) {
+    final override fun addCapability(capability: Capability) {
         capabilities.add(capability)
     }
 
-    override fun spliterator(): Spliterator<Reaction<T>> {
+    /**
+     * Returns the [reactions] [Spliterator]
+     */
+    final override fun spliterator(): Spliterator<Reaction<T>> {
         return reactions.spliterator()
     }
 
@@ -145,9 +155,11 @@ abstract class AbstractNode<T>(
 
     companion object {
         private const val serialVersionUID = 2496775909028222278L
-        private val IDGENERATOR = MapMaker()
-            .weakKeys().makeMap<Environment<*, *>, AtomicInteger>()
+
+        private val IDGENERATOR = MapMaker().weakKeys().makeMap<Environment<*, *>, AtomicInteger>()
+
         private val MUTEX = Semaphore(1)
+
         private fun idFromEnv(env: Environment<*, *>): Int {
             MUTEX.acquireUninterruptibly()
             var idgen = IDGENERATOR[Objects.requireNonNull(env)]

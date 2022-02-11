@@ -31,5 +31,5 @@ open class CircleNode<T> @JvmOverloads constructor(
     /**
      * Returns null because T is unknown.
      */
-    override fun createT() = null
+    override fun createT() = TODO()
 }

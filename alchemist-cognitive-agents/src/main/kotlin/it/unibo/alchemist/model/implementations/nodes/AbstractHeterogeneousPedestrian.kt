@@ -4,13 +4,10 @@ import it.unibo.alchemist.model.HeterogeneousPedestrianModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.implementations.capabilities.BasicPedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianRunningCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianWalkingCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -44,14 +41,7 @@ abstract class AbstractHeterogeneousPedestrian<T, P, A, F> @JvmOverloads constru
         speed = Speed(age, gender, randomGenerator),
     )
 
-    init {
-        addCapability(BasicPedestrianMovementCapability(pedestrianModel.speed.walking, pedestrianModel.speed.running))
-    }
+    override val walkingSpeed = pedestrianModel.speed.walking
 
-    override val walkingSpeed = asCapability(PedestrianWalkingCapability::class).walkingSpeed
-
-    override val runningSpeed = asCapability(PedestrianRunningCapability::class).runningSpeed
-
-//    override fun probabilityOfHelping(toHelp: HeterogeneousPedestrian<T, P, A>) =
-//        model.helpAttitude.level(toHelp.model.age, toHelp.model.gender, membershipGroup.contains(toHelp))
+    override val runningSpeed = pedestrianModel.speed.running
 }

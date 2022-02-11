@@ -26,6 +26,7 @@ import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Capability;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -38,6 +39,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.NotNull;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
@@ -51,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -510,12 +513,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
-        public void addReaction(final Reaction<Object> r) {
+        public void addReaction(@NotNull final Reaction<Object> r) {
             notImplemented();
         }
 
         @Override
-        public boolean contains(final Molecule mol) {
+        public boolean contains(@NotNull final Molecule mol) {
             return notImplemented();
         }
 
@@ -525,10 +528,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
-        public Object getConcentration(final Molecule mol) {
+        public Object getConcentration(@NotNull final Molecule mol) {
             return notImplemented();
         }
 
+        @NotNull
         @Override
         public Map<Molecule, Object> getContents() {
             return notImplemented();
@@ -539,28 +543,30 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             return notImplemented();
         }
 
+        @NotNull
         @Override
         public List<Reaction<Object>> getReactions() {
             return Collections.emptyList();
         }
 
         @Override
-        public void removeConcentration(final Molecule mol) {
+        public void removeConcentration(@NotNull final Molecule mol) {
             notImplemented();
         }
 
         @Override
-        public void removeReaction(final Reaction<Object> r) {
+        public void removeReaction(@NotNull final Reaction<Object> r) {
             notImplemented();
         }
 
         @Override
-        public void setConcentration(final Molecule mol, final Object c) {
+        public void setConcentration(@NotNull final Molecule mol, final Object c) {
             notImplemented();
         }
 
+        @NotNull
         @Override
-        public Node<Object> cloneNode(final Time t) {
+        public Node<Object> cloneNode(@NotNull final Time t) {
             return notImplemented();
         }
 
@@ -573,6 +579,13 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         public int hashCode() {
             return -1;
         }
+
+        @NotNull
+        @Override
+        public List<Capability> getCapabilities() { return notImplemented(); }
+
+        @Override
+        public void addCapability(@NotNull final Capability capability) { notImplemented(); }
     }
 
 }

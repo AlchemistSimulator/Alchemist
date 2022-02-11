@@ -29,7 +29,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param r
      * the reaction to be added
      */
-    fun addReaction(r: Reaction<T>)
+    fun addReaction(reactionToAdd: Reaction<T>)
 
     /**
      * Creates a new Node which is a clone of the current Node. The new Node
@@ -53,7 +53,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * the molecule to check
      * @return true if the molecule is present, false otherwise
      */
-    operator fun contains(mol: Molecule): Boolean
+    operator fun contains(molecule: Molecule): Boolean
 
     /**
      * Calculates the concentration of a molecule.
@@ -62,7 +62,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * the molecule whose concentration will be returned
      * @return the concentration of the molecule
      */
-    fun getConcentration(mol: Molecule): T
+    fun getConcentration(molecule: Molecule): T
 
     /**
      * @return the molecule corresponding to the i-th position
@@ -98,7 +98,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * @param mol the molecule that should be removed
      */
-    fun removeConcentration(mol: Molecule)
+    fun removeConcentration(moleculeToRemove: Molecule)
 
     /**
      * Removes a reaction from this node.
@@ -111,7 +111,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param r
      * the reaction to be removed
      */
-    fun removeReaction(r: Reaction<T>)
+    fun removeReaction(reactionToRemove: Reaction<T>)
 
     /**
      * Sets the concentration of mol to c.
@@ -121,7 +121,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param c
      * the concentration you want for mol
      */
-    fun setConcentration(mol: Molecule, c: T)
+    fun setConcentration(molecule: Molecule, concentration: T)
 
     /**
      * Adds a capability to the node.
@@ -143,6 +143,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
+    @Suppress("UNCHECKED_CAST")
     fun <C : Capability> asCapabilityOrNull(superType: KClass<C>): C? = capabilities
         .asSequence()
         .mapNotNull { capability -> capability::class.distanceFrom(superType)?.let { capability to it } }

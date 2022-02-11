@@ -15,6 +15,6 @@ import it.unibo.alchemist.model.interfaces.capabilities.PedestrianWalkingCapabil
 /**
  * Implementation of a basic [PedestrianWalkingCapability].
  */
-class BasicPedestrianWalkingCapability @JvmOverloads constructor(
+data class BasicPedestrianWalkingCapability @JvmOverloads constructor(
     override val walkingSpeed: Double = Speed.default
 ) : PedestrianWalkingCapability

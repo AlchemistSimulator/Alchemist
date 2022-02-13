@@ -1,3 +1,21 @@
+### [13.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.0...13.0.1) (2022-02-13)
+
+
+### Dependency updates
+
+* **deps:** update dependency com.google.code.gson:gson to v2.9.0 ([3c51223](https://github.com/AlchemistSimulator/Alchemist/commit/3c512230403c7e1eff6794be6092c6202c85a94d))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.5.0 ([1d7114c](https://github.com/AlchemistSimulator/Alchemist/commit/1d7114c51bc462a426259cf1e4106f18c46eb151))
+
+
+### Build and continuous integration
+
+* **catalogs:** remove deprecated 'VERSION_CATALOGS' (now stable in Gradle) ([61d518c](https://github.com/AlchemistSimulator/Alchemist/commit/61d518c562365b624b319252084b62016a7e18dc))
+
+
+### Documentation
+
+* **website:** add missing comma in tag list ([1cf299e](https://github.com/AlchemistSimulator/Alchemist/commit/1cf299ed123147244620981caf8a2bf946045170))
+
 ## [13.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.11...13.0.0) (2022-02-11)
 
 

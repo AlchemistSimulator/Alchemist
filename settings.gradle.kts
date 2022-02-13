@@ -45,8 +45,6 @@ gradleEnterprise {
     }
 }
 
-enableFeaturePreview("VERSION_CATALOGS")
-
 gitHooks {
     commitMsg { conventionalCommits() }
     preCommit {

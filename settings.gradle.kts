@@ -7,7 +7,7 @@
  */
 plugins {
     id("com.gradle.enterprise") version "3.8.1"
-    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.0.3"
+    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.0.4"
 }
 
 include(
@@ -44,8 +44,6 @@ gradleEnterprise {
         publishAlways()
     }
 }
-
-enableFeaturePreview("VERSION_CATALOGS")
 
 gitHooks {
     commitMsg { conventionalCommits() }

@@ -1,3 +1,84 @@
+### [13.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.0...13.0.1) (2022-02-13)
+
+
+### Dependency updates
+
+* **deps:** update dependency com.google.code.gson:gson to v2.9.0 ([3c51223](https://github.com/AlchemistSimulator/Alchemist/commit/3c512230403c7e1eff6794be6092c6202c85a94d))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.5.0 ([1d7114c](https://github.com/AlchemistSimulator/Alchemist/commit/1d7114c51bc462a426259cf1e4106f18c46eb151))
+
+
+### Build and continuous integration
+
+* **catalogs:** remove deprecated 'VERSION_CATALOGS' (now stable in Gradle) ([61d518c](https://github.com/AlchemistSimulator/Alchemist/commit/61d518c562365b624b319252084b62016a7e18dc))
+
+
+### Documentation
+
+* **website:** add missing comma in tag list ([1cf299e](https://github.com/AlchemistSimulator/Alchemist/commit/1cf299ed123147244620981caf8a2bf946045170))
+
+## [13.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.11...13.0.0) (2022-02-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **base:** rename UniformLayer to ConstantLayer (confusing overlap with uniform distribution)
+* make Environment.incarnation non-optional (fixes #929)
+
+### Bug Fixes
+
+* **loading:** initialize dependent variable before variables ([53f859e](https://github.com/AlchemistSimulator/Alchemist/commit/53f859eb2dd92cad5e4d8595ee69ecee76fa1698))
+* **loading:** work around a Kotlin JSR 223 bug, see https://youtrack.jetbrains.com/issue/KT-51213 ([4197e5a](https://github.com/AlchemistSimulator/Alchemist/commit/4197e5a4815952b7217994c652c424d6a6df4f44))
+
+
+### Style improvements
+
+* **loading:** fix inconsistent style in GeometricGradientRectangle ([225b79e](https://github.com/AlchemistSimulator/Alchemist/commit/225b79eb1033f71a6aa6f065d071ec7f54b75704))
+* **loading:** remove unreachable code in JSR223Variable ([c205bac](https://github.com/AlchemistSimulator/Alchemist/commit/c205bac60f30e3238296a9467648e30433dc0a2a))
+
+
+### Tests
+
+* add utility method with direct loading from resource ([1bad7e7](https://github.com/AlchemistSimulator/Alchemist/commit/1bad7e731e7c99b581cc743f53cf5b9ccc57be69))
+
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v7.4 ([7944cff](https://github.com/AlchemistSimulator/Alchemist/commit/7944cffa69afba4ec06f471d1d2cd4b47b998391))
+* **deps:** update dependency node-fetch to 2.6.7 [security] ([a8237f1](https://github.com/AlchemistSimulator/Alchemist/commit/a8237f166c04f6dd4e8769dee0b9998c8b06c561))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.4.2 ([43eab08](https://github.com/AlchemistSimulator/Alchemist/commit/43eab0805e821362420b79fcab4be65ae6949696))
+* **deps:** update dependency org.slf4j:slf4j-api to v1.7.36 ([f3fea32](https://github.com/AlchemistSimulator/Alchemist/commit/f3fea3242d6b4d02b444b9ca415247dff9db8033))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.5 ([f2dad47](https://github.com/AlchemistSimulator/Alchemist/commit/f2dad47c654cad2aef165a880690c4d260905d67))
+* **deps:** update node.js to 16.14 ([fe50710](https://github.com/AlchemistSimulator/Alchemist/commit/fe507100b1bbdec78a63f3abded0c13e722d2f79))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.4 ([edc0445](https://github.com/AlchemistSimulator/Alchemist/commit/edc04451e888b539f813a970f862ba14759126de))
+* **deps:** update plugin publishoncentral to v0.7.13 ([de950c3](https://github.com/AlchemistSimulator/Alchemist/commit/de950c3915a118ae0c6faadd991babe3427b81ba))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to 29c2b29 ([77a3710](https://github.com/AlchemistSimulator/Alchemist/commit/77a37106bad77dfc44a87f91154d6e63bd6a27c2))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to 96881c3 ([08def2a](https://github.com/AlchemistSimulator/Alchemist/commit/08def2a815bbc5ace5eb5e4fcf2a4e2f7a42dc33))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to f20760b ([fff3efb](https://github.com/AlchemistSimulator/Alchemist/commit/fff3efb44e77097ca93dfedaaf11b4cd593a1591))
+
+
+### General maintenance
+
+* **readme:** add the codebeat badge ([cec77dd](https://github.com/AlchemistSimulator/Alchemist/commit/cec77ddab3484c46478b3ba96b3313f25e96734f))
+* **website:** fix the website theme version to a stable one (2.9.6) ([576b9f5](https://github.com/AlchemistSimulator/Alchemist/commit/576b9f5bcf7a29331175ce01976f5f5d1d458388))
+
+
+### Build and continuous integration
+
+* **codebeat:** tolerate higher arity on Java ([9385432](https://github.com/AlchemistSimulator/Alchemist/commit/9385432634251513084b518bf035c7795c46671d))
+* **codebeat:** tolerate higher Assignment-Branch-Condition complexity on Java ([a6b7f83](https://github.com/AlchemistSimulator/Alchemist/commit/a6b7f83b5c3fdf6d541cbc5a2efa961770653584))
+* **codebeat:** tolerate more instance variables in Java ([4702fa1](https://github.com/AlchemistSimulator/Alchemist/commit/4702fa17e15a4dc6edd36731a4285f29999c2ab9))
+* ignore generated and deprecated code on codebeat ([a166e77](https://github.com/AlchemistSimulator/Alchemist/commit/a166e77c61090fee5a9d7f02594e86e134f6ca15))
+* **mathexp:** disable the Java QA entirely ([b0e1cff](https://github.com/AlchemistSimulator/Alchemist/commit/b0e1cffce743e2469edaff5b820a75c844f0dab2))
+* move plugin id extension to buildSrc ([#1072](https://github.com/AlchemistSimulator/Alchemist/issues/1072)) ([9f72749](https://github.com/AlchemistSimulator/Alchemist/commit/9f72749203565c7ab58323ef739a293fadd6992d))
+* **renovate:** trick renovate into updating Hugo ([6c9e2b2](https://github.com/AlchemistSimulator/Alchemist/commit/6c9e2b2a34bdf16e9eec7c5b738172f447a623ba))
+
+
+### Refactoring
+
+* **base:** rename UniformLayer to ConstantLayer (confusing overlap with uniform distribution) ([90d9a57](https://github.com/AlchemistSimulator/Alchemist/commit/90d9a57a4cdcef01ec0eb5b80e521728550a610a))
+* **loading:** internally expose means to search subtypes ([b0a1f0b](https://github.com/AlchemistSimulator/Alchemist/commit/b0a1f0bc5255f37763dbae3de32377af4b2bf1e2))
+* make Environment.incarnation non-optional (fixes [#929](https://github.com/AlchemistSimulator/Alchemist/issues/929)) ([042f385](https://github.com/AlchemistSimulator/Alchemist/commit/042f38515d21860663cf5d4a864ba69caf76850d))
+
 ### [12.2.11](https://github.com/AlchemistSimulator/Alchemist/compare/12.2.10...12.2.11) (2022-02-07)
 
 

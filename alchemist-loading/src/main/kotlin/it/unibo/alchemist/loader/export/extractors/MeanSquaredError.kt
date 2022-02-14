@@ -65,7 +65,6 @@ class MeanSquaredError<T> @JvmOverloads constructor(
         step: Long
     ): Map<String, Double> {
         val incarnation: Incarnation<T, *> = environment.incarnation
-            .orElseThrow { IllegalStateException("No incarnation available in the environment!") }
         val value: Double = statistic.evaluate(
             environment.nodes.map { incarnation.getProperty(it, mReference, pReference) }.toDoubleArray()
         )

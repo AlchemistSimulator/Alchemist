@@ -21,5 +21,5 @@ data class BasicPedestrianMovementCapability @JvmOverloads constructor(
     override val walkingSpeed: Double = Speed.default,
     override val runningSpeed: Double = Speed.default * 3,
 ) : PedestrianMovementCapability,
-    PedestrianWalkingCapability by BasicPedestrianWalkingCapability(),
-    PedestrianRunningCapability by BasicPedestrianRunningCapability()
+    PedestrianWalkingCapability by BasicPedestrianWalkingCapability(walkingSpeed),
+    PedestrianRunningCapability by BasicPedestrianRunningCapability(runningSpeed)

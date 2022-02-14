@@ -1,12 +1,12 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.implementations.capabilities.BasicPedestrianMovementCapability
 import it.unibo.alchemist.model.implementations.groups.Alone
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -34,14 +34,15 @@ F : GeometricShapeFactory<P, A> {
     /**
      * The speed at which the pedestrian moves if it's walking.
      */
-    protected open val walkingSpeed: Double = Speed.default
+    protected open val walkingSpeed: Double = backingNode.asCapability(PedestrianMovementCapability::class).walkingSpeed
 
     /**
      * The speed at which the pedestrian moves if it's running.
      */
-    protected open val runningSpeed: Double = Speed.default * 3
-
-    override fun speed() = randomGenerator.nextDouble(walkingSpeed, runningSpeed)
+    protected open val runningSpeed: Double = backingNode.asCapability(PedestrianMovementCapability::class).runningSpeed
+    override fun speed() = randomGenerator.nextDouble(
+        walkingSpeed, runningSpeed
+    )
 
     companion object {
         private fun <T> Node<T>.withCapability() = also {

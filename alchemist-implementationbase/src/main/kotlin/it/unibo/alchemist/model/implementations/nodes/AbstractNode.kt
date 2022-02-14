@@ -136,7 +136,9 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
      * {@inheritDoc}
      */
     final override fun addCapability(capability: Capability) {
-        capabilities.add(capability)
+        capabilities.also {
+            it.removeIf { c -> c::class == capability::class }
+        }.add(capability)
     }
 
     /**

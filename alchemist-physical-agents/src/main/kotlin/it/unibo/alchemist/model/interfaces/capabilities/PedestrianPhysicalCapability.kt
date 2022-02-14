@@ -17,8 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
-interface PedestrianPhysicalCapability<T, P, A, F>
-    : PhysicalCapability<T, P, A, F>
+interface PedestrianPhysicalCapability<T, P, A, F> : PhysicalCapability<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {

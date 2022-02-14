@@ -4,11 +4,13 @@ import it.unibo.alchemist.model.HeterogeneousPedestrianModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
+import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianIndividualityCapability
 import it.unibo.alchemist.model.implementations.capabilities.BasicPedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -44,12 +46,18 @@ abstract class AbstractHeterogeneousPedestrian<T, P, A, F> @JvmOverloads constru
     )
 
     init {
-        backingNode.addCapability(
-            BasicPedestrianMovementCapability(
-                pedestrianModel.speed.walking,
-                pedestrianModel.speed.running
+        with(backingNode) {
+            addCapability(
+                BasePedestrianIndividualityCapability<T, P, A>(age, gender, Speed(age, gender, randomGenerator))
             )
-        )
+
+            addCapability(
+                BasicPedestrianMovementCapability(
+                    asCapability(PedestrianIndividualityCapability::class).speed.walking,
+                    asCapability(PedestrianIndividualityCapability::class).speed.running
+                )
+            )
+        }
     }
 
     override val walkingSpeed = backingNode.asCapability(PedestrianMovementCapability::class).walkingSpeed

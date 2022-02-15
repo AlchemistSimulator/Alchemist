@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapabi
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -48,19 +49,22 @@ abstract class AbstractHeterogeneousPedestrian<T, P, A, F> @JvmOverloads constru
     init {
         with(backingNode) {
             addCapability(
-                BasePedestrianIndividualityCapability<T, P, A>(age, gender, Speed(age, gender, randomGenerator))
+                BasePedestrianIndividualityCapability<T, P, A>(
+                    backingNode, age, gender, Speed(age, gender, randomGenerator)
+                )
             )
 
             addCapability(
                 BasicPedestrianMovementCapability(
-                    asCapability(PedestrianIndividualityCapability::class).speed.walking,
-                    asCapability(PedestrianIndividualityCapability::class).speed.running
+                    backingNode,
+                    asCapability<T, PedestrianIndividualityCapability<T, P, A>>().speed.walking,
+                    asCapability<T, PedestrianIndividualityCapability<T, P, A>>().speed.running
                 )
             )
         }
     }
 
-    override val walkingSpeed = backingNode.asCapability(PedestrianMovementCapability::class).walkingSpeed
+    override val walkingSpeed = backingNode.asCapability<T, PedestrianMovementCapability<T>>().walkingSpeed
 
-    override val runningSpeed = backingNode.asCapability(PedestrianMovementCapability::class).runningSpeed
+    override val runningSpeed = backingNode.asCapability<T, PedestrianMovementCapability<T>>().runningSpeed
 }

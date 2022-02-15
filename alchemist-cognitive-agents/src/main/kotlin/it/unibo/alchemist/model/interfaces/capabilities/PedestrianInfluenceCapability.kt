@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 /**
  * The pedestrian's capability to influence other pedestrians.
  */
-interface PedestrianInfluenceCapability : Capability {
+interface PedestrianInfluenceCapability<T> : Capability<T> {
 
     /**
      * The field of view of the pedestrian.

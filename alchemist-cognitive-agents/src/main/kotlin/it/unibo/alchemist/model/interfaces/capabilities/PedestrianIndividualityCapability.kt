@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * A capability representing a pedestrian's individual characteristics.
  */
-interface PedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTransformation<S>> : Capability {
+interface PedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTransformation<S>> : Capability<T> {
 
     /**
      * The age of this pedestrian.

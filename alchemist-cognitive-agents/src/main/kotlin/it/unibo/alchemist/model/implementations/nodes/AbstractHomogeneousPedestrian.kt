@@ -11,6 +11,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.nextDouble
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -21,7 +22,7 @@ abstract class AbstractHomogeneousPedestrian<T, P, A, F> @JvmOverloads construct
     protected val randomGenerator: RandomGenerator,
     protected val backingNode: Node<T>,
     group: PedestrianGroup<T, P, A>? = null
-) : Node<T> by backingNode.withCapability(), Pedestrian<T, P, A>
+) : Node<T> by backingNode, Pedestrian<T, P, A>
 where
 P : Position<P>, P : Vector<P>,
 A : GeometricTransformation<P>,
@@ -31,22 +32,21 @@ F : GeometricShapeFactory<P, A> {
         pedestrianGroup ?: Alone(this)
     }
 
+    init {
+        backingNode.addCapability(BasicPedestrianMovementCapability(backingNode))
+    }
+
     /**
      * The speed at which the pedestrian moves if it's walking.
      */
-    protected open val walkingSpeed: Double = backingNode.asCapability(PedestrianMovementCapability::class).walkingSpeed
+    protected open val walkingSpeed: Double =
+        backingNode.asCapability<T, PedestrianMovementCapability<T>>().walkingSpeed
 
     /**
      * The speed at which the pedestrian moves if it's running.
      */
-    protected open val runningSpeed: Double = backingNode.asCapability(PedestrianMovementCapability::class).runningSpeed
-    override fun speed() = randomGenerator.nextDouble(
-        walkingSpeed, runningSpeed
-    )
+    protected open val runningSpeed: Double =
+        backingNode.asCapability<T, PedestrianMovementCapability<T>>().runningSpeed
 
-    companion object {
-        private fun <T> Node<T>.withCapability() = also {
-            it.addCapability(BasicPedestrianMovementCapability())
-        }
-    }
+    override fun speed() = randomGenerator.nextDouble(walkingSpeed, runningSpeed)
 }

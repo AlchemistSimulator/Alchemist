@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -50,7 +51,7 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
 
     override val cognitiveModel: CognitiveModel by lazy {
         cognitive ?: ImpactModel(
-            backingNode.asCapability(PedestrianIndividualityCapability::class).compliance, ::influencialPeople
+            backingNode.asCapability<T, PedestrianIndividualityCapability<T, P, A>>().compliance, ::influencialPeople
         ) {
             environment.getLayer(danger)
                 .map { it.getValue(environment.getPosition(this)) as Double }
@@ -59,15 +60,15 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
     }
 
     init {
-        backingNode.addCapability(BasePedestrianCognitiveCapability(cognitiveModel))
+        backingNode.addCapability(BasePedestrianCognitiveCapability(backingNode, cognitiveModel))
     }
 
     override fun speed(): Double {
         /*
          * TODO: Discuss this ugly workaround
          */
-        val cognitiveModel = backingNode.asCapability(PedestrianCognitiveCapability::class).cognitiveModel
-        val movementCapability = backingNode.asCapability(PedestrianMovementCapability::class)
+        val cognitiveModel = backingNode.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel
+        val movementCapability = backingNode.asCapability<T, PedestrianMovementCapability<T>>()
 
         return if (cognitiveModel.wantsToEscape()) {
             movementCapability.runningSpeed * minOf(cognitiveModel.escapeIntention(), 1.0)

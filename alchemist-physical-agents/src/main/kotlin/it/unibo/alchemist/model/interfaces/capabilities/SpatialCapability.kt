@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * A node's ability to have a [Shape].
  */
-interface SpacialCapability<S : Vector<S>, A : GeometricTransformation<S>> : Capability {
+interface SpacialCapability<S : Vector<S>, A : GeometricTransformation<S>> : Capability<S> {
     /**
      * The node's shape.
      */

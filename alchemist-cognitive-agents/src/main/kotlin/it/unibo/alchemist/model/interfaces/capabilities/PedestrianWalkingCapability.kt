@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Capability
 /**
  * A node capability to walk.
  */
-interface PedestrianWalkingCapability : Capability {
+interface PedestrianWalkingCapability<T> : Capability<T> {
     /**
      * The node's walking speed.
      */

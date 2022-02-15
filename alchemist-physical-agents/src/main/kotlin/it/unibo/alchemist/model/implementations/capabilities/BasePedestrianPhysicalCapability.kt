@@ -9,11 +9,5 @@
 
 package it.unibo.alchemist.model.implementations.capabilities
 
-import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
-
-class BasePedestrianCognitiveCapability<T>(
-    override val node: Node<T>,
-    override val cognitiveModel: CognitiveModel,
-) : PedestrianCognitiveCapability<T>
+class BasePedestrianPhysicalCapability {
+}

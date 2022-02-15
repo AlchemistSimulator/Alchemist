@@ -14,11 +14,13 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Compliance
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
-class BasePedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTransformation<S>>(
+class BasePedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTransformation<S>> @JvmOverloads constructor(
+    override val node: Node<T>,
     override val age: Age,
     override val gender: Gender,
     override val speed: Speed,

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.Capability
 /**
  * The pedestrian's cognitive capability.
  */
-interface PedestrianCognitiveCapability : Capability {
+interface PedestrianCognitiveCapability<T> : Capability<T> {
     /**
      * The pedestrian's cognitivie model.
      */

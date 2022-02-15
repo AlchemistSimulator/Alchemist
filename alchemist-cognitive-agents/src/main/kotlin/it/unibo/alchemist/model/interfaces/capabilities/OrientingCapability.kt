@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
 /**
  * A node's capability to orient.
  */
-interface OrientingCapability<V, A, L, R> : Capability
+interface OrientingCapability<T, V, A, L, R> : Capability<T>
     where V : Vector<V>,
           A : GeometricTransformation<V>,
           L : ConvexGeometricShape<V, A> {

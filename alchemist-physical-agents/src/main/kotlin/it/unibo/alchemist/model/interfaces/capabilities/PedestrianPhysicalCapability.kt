@@ -19,6 +19,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
+/**
+ * A pedestrian's capability to experience physical forces.
+ */
 interface PedestrianPhysicalCapability<T, P, A, F> : PhysicalCapability<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
@@ -41,5 +44,8 @@ interface PedestrianPhysicalCapability<T, P, A, F> : PhysicalCapability<T, P, A,
     fun repulsionForce(other: NodeWithShape<T, P, A>): P
 }
 
+/**
+ * A pedestrian's capability to experience physical forces in a 2D space.
+ */
 interface Pedestrian2DPhysicalCapability<T> :
     PhysicalCapability<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>

@@ -29,6 +29,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
+/**
+ * Base implementation of a pedestrian's capability to experience physical interactions.
+ */
 class BasePedestrianPhysicalCapability<T, P, A, F>(
     randomGenerator: RandomGenerator,
     override val node: Node<T>,
@@ -85,6 +88,9 @@ class BasePedestrianPhysicalCapability<T, P, A, F>(
     }
 }
 
+/**
+ * Base implementation of a pedestrian's capability to experience physical interactions in a 2D space.
+ */
 class BasePedestrian2DPhysicalCapability<T>(
     randomGenerator: RandomGenerator,
     node: Node<T>,

@@ -43,6 +43,9 @@ private typealias Position2D = Euclidean2DPosition
 private typealias Transformation2D = Euclidean2DTransformation
 private typealias ShapeFactory = Euclidean2DShapeFactory
 
+/**
+ * Base implementation of a node's [OrientingCapability].
+ */
 abstract class BaseOrientingCapability<T, P, A, N, L, F> @JvmOverloads constructor(
     open val randomGenerator: RandomGenerator,
     override val node: Node<T>,
@@ -120,6 +123,9 @@ abstract class BaseOrientingCapability<T, P, A, N, L, F> @JvmOverloads construct
     protected abstract fun createLandmarkIn(area: N): L
 }
 
+/**
+ * Basic implementation of a node's [OrientingCapability] in a 2D space.
+ */
 class BaseOrienting2DCapability<T, N : ConvexPolygon, E>(
     override val randomGenerator: RandomGenerator,
     override val node: Node<T>,

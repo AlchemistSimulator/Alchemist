@@ -1,3 +1,26 @@
+### [13.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.1...13.0.2) (2022-02-15)
+
+
+### Bug Fixes
+
+* **loading:** fix wrong names of MoleculeReader aggregators ([a1b6d26](https://github.com/AlchemistSimulator/Alchemist/commit/a1b6d26b471e1c3b77c054ee427342a51f90c48b))
+* **loading:** generate header description and file names separately in CSVExporter ([4898449](https://github.com/AlchemistSimulator/Alchemist/commit/4898449ba315116e8f09973ae64b52c996215bea))
+
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.139 ([021e023](https://github.com/AlchemistSimulator/Alchemist/commit/021e0235f1deb3d768eb236df4eec6559600bd81))
+* **deps:** update gohugoio/hugo action to v0.92.2 ([f364ed3](https://github.com/AlchemistSimulator/Alchemist/commit/f364ed30c241606035994bb00e72acb4a35ec4f3))
+* **deps:** update plugin kotlin-qa to v0.10.1 ([aeca1d9](https://github.com/AlchemistSimulator/Alchemist/commit/aeca1d949cf5944e0044efa2edb599d3b65564b3))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to 99a7061 ([4d54f54](https://github.com/AlchemistSimulator/Alchemist/commit/4d54f54196b0748d4afd90ac232c208393e63329))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to 9ce12d0 ([242548b](https://github.com/AlchemistSimulator/Alchemist/commit/242548badb55b53ee330b8c415a060465a4201c5))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to ff72c49 ([d292080](https://github.com/AlchemistSimulator/Alchemist/commit/d2920807bc8ef89c819b6cb11bc329a770136c10))
+
+
+### Tests
+
+* **loading:** add regression test for the CSVExporter header format ([0156df4](https://github.com/AlchemistSimulator/Alchemist/commit/0156df439749e349e634376b733c31dff1c27c89))
+
 ### [13.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.0...13.0.1) (2022-02-13)
 
 

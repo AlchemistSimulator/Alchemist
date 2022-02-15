@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.nodes
 
+import it.unibo.alchemist.model.implementations.capabilities.BaseOrienting2DCapability
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -79,6 +80,21 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
         group,
     )
 
+    init {
+        backingNode.addCapability(
+            BaseOrienting2DCapability<T, N, E>(
+                randomGenerator,
+                backingNode,
+                knowledgeDegree,
+                minSide,
+                maxSide
+            )
+        )
+    }
+
+    /*
+     * TODO: Should refer to capability
+     */
     override fun createLandmarkIn(area: N): Ellipse = with(area) {
         val width = randomEllipseSide()
         val height = randomEllipseSide()

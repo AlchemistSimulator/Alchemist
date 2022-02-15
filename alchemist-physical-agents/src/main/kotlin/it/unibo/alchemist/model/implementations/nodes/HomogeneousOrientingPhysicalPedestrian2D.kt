@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.graph.DefaultEdge
 import kotlin.reflect.KClass
@@ -36,7 +37,7 @@ class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOver
     nodeCreationParameter: String? = null,
     knowledgeDegree: Double,
     group: PedestrianGroup2D<T>? = null
-) : HomogeneousPhysicalPedestrian2D<T>(incarnation, randomGenerator, environment, nodeCreationParameter, group),
+) : HomogeneousPhysicalPedestrian2D<T, Euclidean2DPosition, Euclidean2DTransformation>(incarnation, randomGenerator, environment, nodeCreationParameter, group),
     OrientingPedestrian2D<T, Ellipse, DefaultEdge> by HomogeneousOrientingPedestrian2D(
         incarnation = incarnation,
         randomGenerator = randomGenerator,

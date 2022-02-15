@@ -10,7 +10,10 @@
 package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
@@ -18,10 +21,13 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
 /**
  * A node's capability to orient.
  */
-interface OrientingCapability<T, V, A, L, R> : Capability<T>
-    where V : Vector<V>,
-          A : GeometricTransformation<V>,
-          L : ConvexGeometricShape<V, A> {
+interface OrientingCapability<T, P, A, L, N, E, F> : Capability<T>
+    where P : Position<P>,
+          P : Vector<P>,
+          A : GeometricTransformation<P>,
+          L : ConvexGeometricShape<P, A>,
+          N : ConvexGeometricShape<P, A>,
+          F : GeometricShapeFactory<P, A> {
     /**
      * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the
      * percentage of environment the agent is familiar with prior to the start of the simulation (thus it does not
@@ -33,19 +39,19 @@ interface OrientingCapability<T, V, A, L, R> : Capability<T>
      * The cognitive map of the agent. It's a graph composed of landmarks (elements of the environment easy to
      * remember due to their uniqueness) and spatial relations between them. It's modeled as a [NavigationGraph].
      */
-    val cognitiveMap: NavigationGraph<V, A, L, R>
+    fun cognitiveMap(environment: EnvironmentWithGraph<*, T, P, A, N, E>, knowledgeDegree: Double): NavigationGraph<P, A, L, E>
 
     /**
      * The volatile memory of the agent: it models the ability to remember areas of the environment already visited
      * since the start of the simulation. Each area is paired with the number of visits. Areas are assumed to be
      * represented as [ConvexGeometricShape]s, as in [NavigationGraph]s.
      */
-    val volatileMemory: MutableMap<ConvexGeometricShape<V, A>, Int>
+    val volatileMemory: MutableMap<ConvexGeometricShape<P, A>, Int>
 
     /**
      * Registers a visit to the provided [area] in the agent's [volatileMemory].
      */
-    fun <M : ConvexGeometricShape<V, A>> registerVisit(area: M) {
+    fun <M : ConvexGeometricShape<P, A>> registerVisit(area: M) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
 }

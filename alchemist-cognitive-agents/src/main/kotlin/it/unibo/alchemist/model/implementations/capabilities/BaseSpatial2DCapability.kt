@@ -7,19 +7,15 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.interfaces.capabilities
+package it.unibo.alchemist.model.implementations.capabilities
 
-import it.unibo.alchemist.model.interfaces.Capability
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 
-/**
- * A node's ability to have a [Shape].
- */
-interface SpatialCapability<T, S : Vector<S>, A : GeometricTransformation<S>> : Capability<T>{
-    /**
-     * The node's shape.
-     */
-    val shape: GeometricShape<S, A>
-}
+data class BaseSpatial2DCapability<T, S : Vector<S>, A : GeometricTransformation<S>>(
+    override val node: Node<T>,
+    override val shape: Euclidean2DShape,
+) : Spatial2DCapability<T, S, A>

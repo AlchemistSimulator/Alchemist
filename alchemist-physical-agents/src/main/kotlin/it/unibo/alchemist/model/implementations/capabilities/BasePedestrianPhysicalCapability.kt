@@ -63,9 +63,15 @@ class BasePedestrianPhysicalCapability<T, P, A, F>(
         }
     }
 
-    override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>): List<P> {
-        TODO("Not yet implemented")
-    }
+    override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>) =
+        environment.getNodesWithin(comfortArea)
+            .minusElement(node)
+            .filterIsInstance<NodeWithShape<T, P, A>>()
+            .map { repulsionForce(it) }
+            /*
+             * Discard infinitesimal forces.
+             */
+            .filter { it.magnitude > Double.MIN_VALUE }
 
     companion object {
         /**

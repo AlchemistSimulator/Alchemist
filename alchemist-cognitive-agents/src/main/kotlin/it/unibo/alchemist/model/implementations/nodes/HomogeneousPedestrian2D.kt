@@ -1,5 +1,6 @@
 package it.unibo.alchemist.model.implementations.nodes
 
+import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
@@ -50,4 +51,11 @@ open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
         incarnation.createNode(randomGenerator, environment, nodeCreationParameter),
         group
     )
+
+    init {
+        /*
+         * TODO: move constant in companion object
+         */
+        backingNode.addCapability(BaseSpatial2DCapability(backingNode, environment.shapeFactory.circle(0.3)))
+    }
 }

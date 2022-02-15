@@ -67,13 +67,13 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
         /*
          * TODO: Discuss this ugly workaround
          */
-        val cognitiveModel = backingNode.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel
+        val myCognitiveModel = backingNode.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel
         val movementCapability = backingNode.asCapability<T, PedestrianMovementCapability<T>>()
 
-        return if (cognitiveModel.wantsToEscape()) {
-            movementCapability.runningSpeed * minOf(cognitiveModel.escapeIntention(), 1.0)
+        return if (myCognitiveModel.wantsToEscape()) {
+            movementCapability.runningSpeed * minOf(myCognitiveModel.escapeIntention(), 1.0)
         } else {
-            movementCapability.walkingSpeed * minOf(cognitiveModel.remainIntention(), 1.0)
+            movementCapability.walkingSpeed * minOf(myCognitiveModel.remainIntention(), 1.0)
         }
     }
 }

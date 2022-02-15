@@ -4,11 +4,15 @@ import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianCognitiveCapability
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -45,17 +49,30 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
           F : GeometricShapeFactory<P, A> {
 
     override val cognitiveModel: CognitiveModel by lazy {
-        cognitive ?: ImpactModel(pedestrianModel.compliance, ::influencialPeople) {
+        cognitive ?: ImpactModel(
+            backingNode.asCapability(PedestrianIndividualityCapability::class).compliance, ::influencialPeople
+        ) {
             environment.getLayer(danger)
                 .map { it.getValue(environment.getPosition(this)) as Double }
                 .orElse(0.0)
         }
     }
 
-    override fun speed() =
-        if (cognitiveModel.wantsToEscape()) {
-            runningSpeed * minOf(cognitiveModel.escapeIntention(), 1.0)
+    init {
+        backingNode.addCapability(BasePedestrianCognitiveCapability(cognitiveModel))
+    }
+
+    override fun speed(): Double {
+        /*
+         * TODO: Discuss this ugly workaround
+         */
+        val cognitiveModel = backingNode.asCapability(PedestrianCognitiveCapability::class).cognitiveModel
+        val movementCapability = backingNode.asCapability(PedestrianMovementCapability::class)
+
+        return if (cognitiveModel.wantsToEscape()) {
+            movementCapability.runningSpeed * minOf(cognitiveModel.escapeIntention(), 1.0)
         } else {
-            walkingSpeed * minOf(cognitiveModel.remainIntention(), 1.0)
+            movementCapability.walkingSpeed * minOf(cognitiveModel.remainIntention(), 1.0)
         }
+    }
 }

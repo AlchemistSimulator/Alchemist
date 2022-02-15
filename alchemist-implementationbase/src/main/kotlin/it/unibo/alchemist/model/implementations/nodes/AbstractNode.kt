@@ -43,7 +43,7 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
      * The node's molecules.
      */
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
-    override val capabilities: MutableList<Capability> = ArrayList()
+    override val capabilities: MutableList<Capability<T>> = ArrayList()
 ) : Node<T> {
 
     final override fun addReaction(reactionToAdd: Reaction<T>) {
@@ -135,7 +135,7 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
     /**
      * {@inheritDoc}
      */
-    final override fun addCapability(capability: Capability) {
+    final override fun addCapability(capability: Capability<T>) {
         capabilities.also {
             it.removeIf { c -> c::class == capability::class }
         }.add(capability)

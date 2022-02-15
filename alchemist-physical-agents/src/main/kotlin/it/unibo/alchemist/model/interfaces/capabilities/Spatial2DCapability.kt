@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
-interface Spacial2DCapability<S : Vector<S>, A : GeometricTransformation<S>>
-    : SpacialCapability<Euclidean2DPosition, Euclidean2DTransformation> {
+interface Spatial2DCapability<T, S : Vector<S>, A : GeometricTransformation<S>> :
+    SpatialCapability<T, Euclidean2DPosition, Euclidean2DTransformation> {
     override val shape: Euclidean2DShape
 }

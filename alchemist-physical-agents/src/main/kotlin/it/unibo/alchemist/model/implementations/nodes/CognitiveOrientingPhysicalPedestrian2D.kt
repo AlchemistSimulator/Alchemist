@@ -91,20 +91,20 @@ class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverlo
 
     override fun speed() = super.speed()
 
-    override val capabilities: List<Capability> = super.capabilities
+    override val capabilities: List<Capability<T>> = super.capabilities
 
-    override fun addCapability(capability: Capability) = super.addCapability(capability)
+    override fun addCapability(capability: Capability<T>) = super.addCapability(capability)
 
-    override fun <C : Capability> asCapability(superType: Class<C>): C =
+    override fun <C : Capability<T>> asCapability(superType: Class<C>): C =
         super<CognitivePhysicalPedestrian2D>.asCapability(superType)
 
-    override fun <C : Capability> asCapability(superType: KClass<C>): C =
+    override fun <C : Capability<T>> asCapability(superType: KClass<C>): C =
         super<CognitivePhysicalPedestrian2D>.asCapability(superType)
 
-    override fun <C : Capability> asCapabilityOrNull(superType: Class<C>): C? =
+    override fun <C : Capability<T>> asCapabilityOrNull(superType: Class<C>): C? =
         super<CognitivePhysicalPedestrian2D>.asCapabilityOrNull(superType)
 
-    override fun <C : Capability> asCapabilityOrNull(superType: KClass<C>): C? =
+    override fun <C : Capability<T>> asCapabilityOrNull(superType: KClass<C>): C? =
         super<CognitivePhysicalPedestrian2D>.asCapabilityOrNull(superType)
 
     override fun equals(other: Any?) = super.equals(other)

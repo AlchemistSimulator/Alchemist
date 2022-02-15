@@ -82,7 +82,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * @return a list of the node's capabilities
      */
-    val capabilities: List<Capability>
+    val capabilities: List<Capability<T>>
 
     /**
      * This method allows to access all the reaction of the node.
@@ -127,7 +127,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * Adds a capability to the node.
      * @param capability the capability you want to add to the node
      */
-    fun addCapability(capability: Capability)
+    fun addCapability(capability: Capability<T>)
 
     /**
      * returns a [Capability] of the provided [type] [C].
@@ -135,7 +135,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability> asCapabilityOrNull(superType: Class<C>): C? = asCapabilityOrNull(superType.kotlin)
+    fun <C : Capability<T>> asCapabilityOrNull(superType: Class<C>): C? = asCapabilityOrNull(superType.kotlin)
 
     /**
      * returns a [Capability] of the provided [type] [C].
@@ -144,10 +144,10 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @return a capability of the provided type [C]
      */
     @Suppress("UNCHECKED_CAST")
-    fun <C : Capability> asCapabilityOrNull(superType: KClass<C>): C? = capabilities
+    fun <C : Capability<T>> asCapabilityOrNull(superType: KClass<C>): C? = capabilities
         .asSequence()
-        .mapNotNull { capability -> capability::class.distanceFrom(superType)?.let { capability to it } }
-        .minByOrNull { it.second }
+        .mapNotNull { capability: Capability<T> -> capability::class.distanceFrom(superType)?.let { capability to it } }
+        .minByOrNull { it: Pair<Capability<T>, Int> -> it.second }
         ?.first as? C
 
     /**
@@ -156,7 +156,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability> asCapability(superType: KClass<C>): C =
+    fun <C : Capability<T>> asCapability(superType: KClass<C>): C =
         asCapabilityOrNull(superType).let { it } ?: TODO()
 
     /**
@@ -165,7 +165,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability> asCapability(superType: Class<C>): C = asCapability(superType.kotlin)
+    fun <C : Capability<T>> asCapability(superType: Class<C>): C = asCapability(superType.kotlin)
 
     companion object {
         /**
@@ -174,7 +174,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
          * @param superType the type of capability to retrieve
          * @return a capability of the provided type [C]
          */
-        inline fun <reified C : Capability> Node<*>.asCapability(): C? = asCapability(C::class)
+        inline fun <T, reified C : Capability<T>> Node<T>.asCapability(): C = asCapability(C::class)
 
         private fun KClass<*>.distanceFrom(superType: KClass<*>, depth: Int = 0): Int? = when {
             !isSubclassOf(superType) -> null

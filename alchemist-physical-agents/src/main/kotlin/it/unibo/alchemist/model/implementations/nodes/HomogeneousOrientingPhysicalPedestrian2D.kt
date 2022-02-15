@@ -58,18 +58,18 @@ class HomogeneousOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOver
 
     override val capabilities = super.capabilities
 
-    override fun addCapability(capability: Capability) = super.addCapability(capability)
+    override fun addCapability(capability: Capability<T>) = super.addCapability(capability)
 
-    override fun <C : Capability> asCapability(superType: KClass<C>) =
+    override fun <C : Capability<T>> asCapability(superType: KClass<C>) =
         super<HomogeneousPhysicalPedestrian2D>.asCapability(superType)
 
-    override fun <C : Capability> asCapability(superType: Class<C>) =
+    override fun <C : Capability<T>> asCapability(superType: Class<C>) =
         super<HomogeneousPhysicalPedestrian2D>.asCapability(superType)
 
-    override fun <C : Capability> asCapabilityOrNull(superType: Class<C>) =
+    override fun <C : Capability<T>> asCapabilityOrNull(superType: Class<C>) =
         super<HomogeneousPhysicalPedestrian2D>.asCapabilityOrNull(superType)
 
-    override fun <C : Capability> asCapabilityOrNull(superType: KClass<C>) =
+    override fun <C : Capability<T>> asCapabilityOrNull(superType: KClass<C>) =
         super<HomogeneousPhysicalPedestrian2D>.asCapabilityOrNull(superType)
 
     override fun equals(other: Any?) = super.equals(other)

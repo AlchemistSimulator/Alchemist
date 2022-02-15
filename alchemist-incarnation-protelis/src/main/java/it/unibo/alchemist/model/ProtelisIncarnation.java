@@ -580,12 +580,14 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             return -1;
         }
 
-        @NotNull
-        @Override
-        public List<Capability> getCapabilities() { return notImplemented(); }
 
         @Override
-        public void addCapability(@NotNull final Capability capability) { notImplemented(); }
+        public void addCapability(@NotNull final Capability<Object> capability) { notImplemented(); }
+
+        @NotNull
+        @Override
+        public List<Capability<Object>> getCapabilities() { return notImplemented(); }
+
     }
 
 }

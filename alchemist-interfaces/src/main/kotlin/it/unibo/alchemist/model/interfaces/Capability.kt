@@ -12,4 +12,9 @@ package it.unibo.alchemist.model.interfaces
 /**
  * Represents a node's capability.
  */
-interface Capability
+interface Capability<T> {
+    /**
+     * The node to which the capability is added.
+     */
+    val node: Node<T>
+}

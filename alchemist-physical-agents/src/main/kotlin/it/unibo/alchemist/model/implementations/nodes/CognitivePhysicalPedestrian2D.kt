@@ -63,10 +63,10 @@ open class CognitivePhysicalPedestrian2D<T> @JvmOverloads constructor(
         /**
          * Mimimum value for normal state [comfortRay].
          */
-        const val minimumSpaceTreshold = 0.1
+        private const val minimumSpaceTreshold = 0.1
         /**
          * Maximum value for normal state [comfortRay].
          */
-        const val maximumSpaceThreshold = 1.0
+        private const val maximumSpaceThreshold = 1.0
     }
 }

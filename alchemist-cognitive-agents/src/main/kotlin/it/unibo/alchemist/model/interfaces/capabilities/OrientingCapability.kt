@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.interfaces.Capability
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
@@ -54,4 +55,10 @@ interface OrientingCapability<T, P, A, L, N, E, F> : Capability<T>
     fun <M : ConvexGeometricShape<P, A>> registerVisit(area: M) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
+
+    /**
+     * Creates a landmark entirely contained in the given area. If such area contains one or more destinations, the
+     * returned landmark must contain at least one of them.
+     */
+    fun createLandmarkIn(area: N): L
 }

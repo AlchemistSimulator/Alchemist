@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.capabilities.BaseOrienting2DCapability
+import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -17,14 +18,13 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
-import java.awt.geom.Ellipse2D
-import java.awt.geom.Rectangle2D
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 
 private typealias Position2D = Euclidean2DPosition
 private typealias Transformation2D = Euclidean2DTransformation
@@ -48,8 +48,8 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
      * The starting width and height of the generated Ellipses will be a random quantity in
      * ([minSide, maxSide] * the diameter of this pedestrian).
      */
-    private val minSide: Double = 30.0,
-    private val maxSide: Double = 60.0,
+    minSide: Double = 30.0,
+    maxSide: Double = 60.0,
     group: PedestrianGroup2D<T>? = null
 ) :
     Pedestrian2D<T>,
@@ -81,6 +81,7 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     )
 
     init {
+        backingNode.addCapability(BaseSpatial2DCapability(backingNode, environment.shapeFactory.circle(0.3)))
         backingNode.addCapability(
             BaseOrienting2DCapability<T, N, E>(
                 randomGenerator,
@@ -92,10 +93,7 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
         )
     }
 
-    /*
-     * TODO: Should refer to capability
-     */
-    override fun createLandmarkIn(area: N): Ellipse = with(area) {
+    /*override fun createLandmarkIn(area: N): Ellipse = with(area) {
         val width = randomEllipseSide()
         val height = randomEllipseSide()
         val frame = Rectangle2D.Double(centroid.x, centroid.y, width, height)
@@ -104,7 +102,13 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
             frame.height /= 2
         }
         Ellipse(Ellipse2D.Double(frame.x, frame.y, frame.width, frame.height))
-    }
+    }*/
 
-    private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
+    override fun createLandmarkIn(area: N): Ellipse =
+        backingNode
+            .asCapability<T,
+                OrientingCapability<T, Euclidean2DPosition, Transformation2D, Ellipse, N, E, ShapeFactory>>()
+            .createLandmarkIn(area)
+
+    // private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
 }

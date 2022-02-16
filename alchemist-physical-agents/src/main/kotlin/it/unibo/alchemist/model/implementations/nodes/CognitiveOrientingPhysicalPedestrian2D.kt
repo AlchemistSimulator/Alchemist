@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.graph.DefaultEdge
 import kotlin.reflect.KClass
@@ -39,7 +40,7 @@ class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverlo
     age: String,
     gender: String,
     danger: Molecule? = null
-) : CognitivePhysicalPedestrian2D<T>(
+) : CognitivePhysicalPedestrian2D<T, Euclidean2DPosition, Euclidean2DTransformation>(
     incarnation,
     randomGenerator,
     environment,
@@ -49,7 +50,8 @@ class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverlo
     danger,
     group,
 ),
-    OrientingPedestrian2D<T, Ellipse, DefaultEdge> by HomogeneousOrientingPedestrian2D(
+    OrientingPedestrian2D<T, Ellipse, DefaultEdge> by
+    HomogeneousOrientingPedestrian2D(
         incarnation,
         randomGenerator,
         environment,

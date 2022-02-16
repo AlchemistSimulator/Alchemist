@@ -120,7 +120,7 @@ abstract class BaseOrientingCapability<T, P, A, N, L, F> @JvmOverloads construct
      * Creates a landmark entirely contained in the given area. If such area contains one or more destinations, the
      * returned landmark must contain at least one of them.
      */
-    protected abstract fun createLandmarkIn(area: N): L
+    abstract override fun createLandmarkIn(area: N): L
 }
 
 /**

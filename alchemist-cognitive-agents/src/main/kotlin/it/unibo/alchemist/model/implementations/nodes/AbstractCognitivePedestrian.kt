@@ -64,9 +64,6 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
     }
 
     override fun speed(): Double {
-        /*
-         * TODO: Discuss this ugly workaround
-         */
         val myCognitiveModel = backingNode.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel
         val movementCapability = backingNode.asCapability<T, PedestrianMovementCapability<T>>()
 

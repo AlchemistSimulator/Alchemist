@@ -61,9 +61,6 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
         else -> 0
     }
 
-    /**
-     * {@inheritDoc}
-     */
     override fun contains(molecule: Molecule): Boolean {
         return molecules.containsKey(molecule)
     }
@@ -82,21 +79,12 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
         reactions.forEach(action)
     }
 
-    /**
-     * {@inheritDoc}
-     */
     override fun getConcentration(molecule: Molecule): T {
         return molecules[molecule] ?: return createT()
     }
 
-    /**
-     * {@inheritDoc}
-     */
     override val contents: Map<Molecule, T> = Collections.unmodifiableMap(molecules)
 
-    /**
-     * {@inheritDoc}
-     */
     override val moleculeCount: Int
         get() = molecules.size
 
@@ -108,33 +96,20 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
         return reactions.iterator()
     }
 
-    /**
-     * {@inheritDoc}
-     */
     final override fun removeConcentration(moleculeToRemove: Molecule) {
         if (molecules.remove(moleculeToRemove) == null) {
             throw NoSuchElementException("$moleculeToRemove was not present in node $id")
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     final override fun removeReaction(reactionToRemove: Reaction<T>) {
         reactions.remove(reactionToRemove)
     }
-
-    /**
-     * {@inheritDoc}
-     */
 
     override fun setConcentration(molecule: Molecule, concentration: T) {
         molecules[molecule] = concentration
     }
 
-    /**
-     * {@inheritDoc}
-     */
     final override fun addCapability(capability: Capability<T>) {
         capabilities.also {
             it.removeIf { c -> c::class == capability::class }
@@ -148,9 +123,6 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
         return reactions.spliterator()
     }
 
-    /**
-     * {@inheritDoc}
-     */
     override fun toString(): String {
         return molecules.toString()
     }

@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapab
 /**
  * The node's [CognitiveModel].
  */
-class BasePedestrianCognitiveCapability<T>(
+data class BasePedestrianCognitiveCapability<T>(
     override val node: Node<T>,
     override val cognitiveModel: CognitiveModel,
 ) : PedestrianCognitiveCapability<T>

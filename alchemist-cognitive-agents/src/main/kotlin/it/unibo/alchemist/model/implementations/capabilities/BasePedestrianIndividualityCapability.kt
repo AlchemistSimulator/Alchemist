@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * A pedestrian's individual characteristics.
  */
-class BasePedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTransformation<S>> @JvmOverloads constructor(
+data class BasePedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTransformation<S>> @JvmOverloads constructor(
     override val node: Node<T>,
     override val age: Age,
     override val gender: Gender,

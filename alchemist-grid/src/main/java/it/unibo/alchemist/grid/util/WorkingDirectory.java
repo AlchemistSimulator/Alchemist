@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that manage a temp local working directory.
@@ -33,7 +35,7 @@ public final class WorkingDirectory implements AutoCloseable {
         try {
             this.directory = Files.createTempDirectory("alchemist").toFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("An error occure while attempting to create a temporary directory", e);
         }
     }
 

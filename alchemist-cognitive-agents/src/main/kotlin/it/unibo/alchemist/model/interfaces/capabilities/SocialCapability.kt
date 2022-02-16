@@ -16,9 +16,9 @@ import it.unibo.alchemist.model.interfaces.Node
 /**
  * The pedestrian's capability for form groups.
  */
-interface PedestrianSocialCapability<T> : Capability<T> {
+interface SocialCapability<T> : Capability<T> {
     /**
-     * Pedestrian's [Group]
+     * Pedestrian's [Group].
      */
     val group: Group<T, Node<T>>
 }

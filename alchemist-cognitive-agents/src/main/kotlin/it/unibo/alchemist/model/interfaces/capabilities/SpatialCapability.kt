@@ -22,4 +22,11 @@ interface SpatialCapability<T, S : Vector<S>, A : GeometricTransformation<S>> : 
      * The node's shape.
      */
     val shape: GeometricShape<S, A>
+
+    companion object {
+        /**
+         * Default radius of pedestrian's [shape].
+         */
+        const val defaultShapeRadius = 0.3
+    }
 }

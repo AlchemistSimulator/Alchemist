@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
+import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability.Companion.defaultShapeRadius
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
@@ -55,6 +56,6 @@ open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
 
     init {
         backingNode.addCapability(BasePedestrian2DInfluenceCapability(environment, backingNode))
-        backingNode.addCapability(BaseSpatial2DCapability(backingNode, environment.shapeFactory.circle(0.3)))
+        backingNode.addCapability(BaseSpatial2DCapability(backingNode, environment.shapeFactory.circle(defaultShapeRadius)))
     }
 }

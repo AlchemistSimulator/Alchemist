@@ -39,7 +39,10 @@ interface OrientingCapability<T, P, A, L, N, E, F> : Capability<T>
      * The cognitive map of the agent. It's a graph composed of landmarks (elements of the environment easy to
      * remember due to their uniqueness) and spatial relations between them. It's modeled as a [NavigationGraph].
      */
-    fun cognitiveMap(environment: EnvironmentWithGraph<*, T, P, A, N, E>, knowledgeDegree: Double): NavigationGraph<P, A, L, E>
+    fun cognitiveMap(
+        environment: EnvironmentWithGraph<*, T, P, A, N, E>,
+        knowledgeDegree: Double
+    ): NavigationGraph<P, A, L, E>
 
     /**
      * The volatile memory of the agent: it models the ability to remember areas of the environment already visited

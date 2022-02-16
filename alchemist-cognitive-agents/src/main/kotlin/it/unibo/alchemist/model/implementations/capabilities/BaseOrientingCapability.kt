@@ -47,6 +47,9 @@ private typealias ShapeFactory = Euclidean2DShapeFactory
  * Base implementation of a node's [OrientingCapability].
  */
 abstract class BaseOrientingCapability<T, P, A, N, L, F> @JvmOverloads constructor(
+    /**
+     * The simulation [RandomGenerator].
+     */
     open val randomGenerator: RandomGenerator,
     override val node: Node<T>,
     override val knowledgeDegree: Double,

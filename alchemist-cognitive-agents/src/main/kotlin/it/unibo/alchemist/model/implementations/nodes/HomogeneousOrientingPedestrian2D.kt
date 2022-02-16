@@ -25,6 +25,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability.Companion.defaultShapeRadius
 
 private typealias Position2D = Euclidean2DPosition
 private typealias Transformation2D = Euclidean2DTransformation
@@ -81,7 +82,11 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     )
 
     init {
-        backingNode.addCapability(BaseSpatial2DCapability(backingNode, environment.shapeFactory.circle(0.3)))
+        backingNode.addCapability(
+            BaseSpatial2DCapability(
+                backingNode, environment.shapeFactory.circle(defaultShapeRadius)
+            )
+        )
         backingNode.addCapability(
             BaseOrienting2DCapability<T, N, E>(
                 randomGenerator,

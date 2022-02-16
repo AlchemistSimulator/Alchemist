@@ -17,8 +17,6 @@ import java.util.Map.Entry;
 import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class that manage a temp local working directory.

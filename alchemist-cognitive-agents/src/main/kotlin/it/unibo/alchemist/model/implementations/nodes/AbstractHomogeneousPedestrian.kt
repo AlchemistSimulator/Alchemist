@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.capabilities.BaseSocialCapability
-import it.unibo.alchemist.model.implementations.capabilities.BasicPedestrianMovementCapability
+import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianMovementCapability
 import it.unibo.alchemist.model.implementations.groups.Alone
 import it.unibo.alchemist.model.implementations.groups.GenericGroup
 import it.unibo.alchemist.model.interfaces.Node
@@ -35,7 +35,7 @@ F : GeometricShapeFactory<P, A> {
     }
 
     init {
-        backingNode.addCapability(BasicPedestrianMovementCapability(backingNode))
+        backingNode.addCapability(BasePedestrianMovementCapability(backingNode))
         backingNode.addCapability(BaseSocialCapability(backingNode, GenericGroup()))
     }
 

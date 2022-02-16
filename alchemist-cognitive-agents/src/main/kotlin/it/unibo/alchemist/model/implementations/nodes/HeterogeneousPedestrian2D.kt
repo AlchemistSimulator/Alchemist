@@ -43,6 +43,11 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
 ),
     Pedestrian2D<T> {
     init {
-        backingNode.addCapability(BaseSpatial2DCapability(backingNode, environment.shapeFactory.circle(defaultShapeRadius)))
+        backingNode.addCapability(
+            BaseSpatial2DCapability(
+                backingNode,
+                environment.shapeFactory.circle(defaultShapeRadius)
+            )
+        )
     }
 }

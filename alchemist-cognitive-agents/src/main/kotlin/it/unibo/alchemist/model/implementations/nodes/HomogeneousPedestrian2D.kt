@@ -56,6 +56,11 @@ open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
 
     init {
         backingNode.addCapability(BasePedestrian2DInfluenceCapability(environment, backingNode))
-        backingNode.addCapability(BaseSpatial2DCapability(backingNode, environment.shapeFactory.circle(defaultShapeRadius)))
+        backingNode.addCapability(
+            BaseSpatial2DCapability(
+                backingNode,
+                environment.shapeFactory.circle(defaultShapeRadius)
+            )
+        )
     }
 }

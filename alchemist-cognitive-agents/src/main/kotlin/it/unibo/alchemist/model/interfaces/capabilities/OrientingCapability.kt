@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.interfaces.Capability
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph

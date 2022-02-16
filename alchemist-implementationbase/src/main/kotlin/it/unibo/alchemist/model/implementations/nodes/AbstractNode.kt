@@ -117,7 +117,7 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
     }
 
     /**
-     * Returns the [reactions] [Spliterator]
+     * Returns the [reactions] [Spliterator].
      */
     final override fun spliterator(): Spliterator<Reaction<T>> {
         return reactions.spliterator()

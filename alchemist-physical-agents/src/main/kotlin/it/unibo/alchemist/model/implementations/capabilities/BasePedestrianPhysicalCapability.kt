@@ -20,10 +20,10 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 import it.unibo.alchemist.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 import it.unibo.alchemist.model.interfaces.capabilities.Pedestrian2DPhysicalCapability
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
@@ -50,14 +50,11 @@ class BasePedestrianPhysicalCapability<T, P, A, F>(
             desiredSpaceTreshold
         }
 
-    /*
-     * TODO: [other] should be a simple [Node] and this method should retrieve its shape by
-     * accessing its [SpatialCapability]
-     */
-    override fun repulsionForce(other: NodeWithShape<T, P, A>): P {
+    override fun repulsionForce(other: Node<T>): P {
         val myShape = node.asCapability<T, SpatialCapability<T, P, A>>().shape
-        return (myShape.centroid - other.shape.centroid).let {
-            val desiredDistance = myShape.radius + comfortRay + other.shape.radius
+        val otherShape = other.asCapability<T, SpatialCapability<T, P, A>>().shape
+        return (myShape.centroid - otherShape.centroid).let {
+            val desiredDistance = myShape.radius + comfortRay + otherShape.radius
             /*
              * it is the vector leading from the center of other to the center of this node, it.magnitude is the
              * actual distance between the two nodes.
@@ -69,7 +66,7 @@ class BasePedestrianPhysicalCapability<T, P, A, F>(
     override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>) =
         environment.getNodesWithin(comfortArea)
             .minusElement(node)
-            .filterIsInstance<NodeWithShape<T, P, A>>()
+            .filter { it.asCapabilityOrNull<T, SpatialCapability<T, P, A>>() != null }
             .map { repulsionForce(it) }
             /*
              * Discard infinitesimal forces.

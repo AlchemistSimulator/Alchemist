@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
@@ -17,7 +18,6 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
 
 /**
  * A pedestrian's capability to experience physical forces.
@@ -41,7 +41,7 @@ interface PedestrianPhysicalCapability<T, P, A, F> : PhysicalCapability<T, P, A,
      * Computes the repulsion force caused by a node that entered the [comfortArea]. This is derived from the work
      * of [Pelechano et al](https://bit.ly/3e3C7Tb).
      */
-    fun repulsionForce(other: NodeWithShape<T, P, A>): P
+    fun repulsionForce(other: Node<T>): P
 }
 
 /**

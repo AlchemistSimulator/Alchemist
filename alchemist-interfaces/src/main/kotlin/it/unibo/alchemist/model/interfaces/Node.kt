@@ -176,6 +176,14 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
          */
         inline fun <T, reified C : Capability<T>> Node<T>.asCapability(): C = asCapability(C::class)
 
+        /**
+         * returns a [Capability] of the provided [type] [C] or [null] if the node does not have the capabiilty.
+         * @param [C] type of capability
+         * @param superType the type of capability to retrieve
+         * @return if present, a capability of the provided type [C]
+         */
+        inline fun <T, reified C : Capability<T>> Node<T>.asCapabilityOrNull(): C? = asCapabilityOrNull(C::class)
+
         private fun KClass<*>.distanceFrom(superType: KClass<*>, depth: Int = 0): Int? = when {
             !isSubclassOf(superType) -> null
             superType == this -> depth

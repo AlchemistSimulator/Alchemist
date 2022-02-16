@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.nextDouble
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.capabilities.Pedestrian2DPhysicalCapability
 import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -64,10 +65,7 @@ open class CognitivePhysicalPedestrian2D<T, S : Vector<S>, A : GeometricTransfor
      */
     private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 
-    /*
-     * TODO: Should be accessing the capability by interface...
-     */
-    override val comfortRay: Double = backingNode.asCapability<T, BasePedestrian2DPhysicalCapability<T>>().comfortRay
+    override val comfortRay: Double = backingNode.asCapability<T, Pedestrian2DPhysicalCapability<T>>().comfortRay
 
     override val comfortArea = backingNode.asCapability<T, BasePedestrian2DPhysicalCapability<T>>().comfortArea
         get() = environment.getPosition(this).let { field.transformed { origin(it) } }

@@ -48,4 +48,4 @@ interface PedestrianPhysicalCapability<T, P, A, F> : PhysicalCapability<T, P, A,
  * A pedestrian's capability to experience physical forces in a 2D space.
  */
 interface Pedestrian2DPhysicalCapability<T> :
-    PhysicalCapability<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
+    PedestrianPhysicalCapability<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>

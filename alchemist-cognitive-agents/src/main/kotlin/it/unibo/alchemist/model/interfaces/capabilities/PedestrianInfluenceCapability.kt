@@ -21,4 +21,9 @@ interface PedestrianInfluenceCapability<T> : Capability<T> {
      * The field of view of the pedestrian.
      */
     val fieldOfView: InfluenceSphere
+
+    /**
+     * The list of influence spheres belonging to this pedestrian (by default, only its [fieldOfView]).
+     */
+    val senses: List<InfluenceSphere> get() = listOf(fieldOfView)
 }

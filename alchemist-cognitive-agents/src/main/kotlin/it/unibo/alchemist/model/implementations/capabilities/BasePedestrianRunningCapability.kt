@@ -11,12 +11,12 @@ package it.unibo.alchemist.model.implementations.capabilities
 
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianWalkingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianRunningCapability
 
 /**
- * Implementation of a basic [PedestrianWalkingCapability].
+ * Implementation of a basic [PedestrianRunningCapability].
  */
-data class BasicPedestrianWalkingCapability<T> @JvmOverloads constructor(
+data class BasePedestrianRunningCapability<T> @JvmOverloads constructor(
     override val node: Node<T>,
-    override val walkingSpeed: Double = Speed.default
-) : PedestrianWalkingCapability<T>
+    override val runningSpeed: Double = Speed.default * 3
+) : PedestrianRunningCapability<T>

@@ -2,4 +2,3 @@
 	path = src/main/hugo/themes/hugo-theme-relearn
 	url = https://github.com/McShelby/hugo-theme-relearn.git
 	shallow = true
-	branch = 2.9.5

@@ -9,6 +9,8 @@ package it.unibo.alchemist.loader.shapes;
 
 import it.unibo.alchemist.model.interfaces.Position;
 
+import java.util.function.Predicate;
+
 /**
  * A Shape, representing an partition of the space where a {@link Position} may
  * lie in.
@@ -17,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  *
  */
 @FunctionalInterface
-public interface Shape<P extends Position<P>> {
+public interface Shape<P extends Position<P>> extends Predicate<P> {
 
     /**
      * @param position
@@ -26,4 +28,6 @@ public interface Shape<P extends Position<P>> {
      */
     boolean contains(P position);
 
+    @Override
+    default boolean test(final P p) { return contains(p); }
 }

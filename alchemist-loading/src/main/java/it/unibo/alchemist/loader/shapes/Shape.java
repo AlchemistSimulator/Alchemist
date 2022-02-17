@@ -29,5 +29,7 @@ public interface Shape<P extends Position<P>> extends Predicate<P> {
     boolean contains(P position);
 
     @Override
-    default boolean test(final P p) { return contains(p); }
+    default boolean test(final P position) {
+        return contains(position);
+    }
 }

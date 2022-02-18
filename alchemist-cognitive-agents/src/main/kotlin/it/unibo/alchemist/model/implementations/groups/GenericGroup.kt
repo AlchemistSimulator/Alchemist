@@ -6,20 +6,15 @@ import it.unibo.alchemist.model.interfaces.Node
 /**
  * Basic implementation of a group.
  */
-open class GenericGroup<T, N : Node<T>> : Group<T, N> {
+open class GenericGroup<T, N : Node<T>> : Group<T>, MutableList<Node<T>> by mutableListOf() {
 
-    private val _members: MutableList<N> = mutableListOf()
+    /**
+     * adds [node] to the group if not already added.
+     */
+    fun addMember(node: N) = if (!this.contains(node)) this.add(node) else false
 
-    override val members: List<N>
-        get() = _members
-
-    override fun addMember(node: N): Group<T, N> = apply {
-        if (!members.contains(node)) {
-            _members.add(node)
-        }
-    }
-
-    override fun removeMember(node: N): Group<T, N> = apply {
-        _members.remove(node)
-    }
+    /**
+     * removes, if present, [node] from the group.
+     */
+    fun removeMember(node: N) = this.remove(node)
 }

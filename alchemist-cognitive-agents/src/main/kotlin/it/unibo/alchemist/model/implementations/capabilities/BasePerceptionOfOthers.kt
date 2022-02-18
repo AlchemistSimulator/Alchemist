@@ -9,14 +9,14 @@
 
 package it.unibo.alchemist.model.implementations.capabilities
 
-import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.SocialCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PerceptionOfOthers
+import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**
- * Base implementation of a [SocialCapability].
+ * Base implementation of a pedestrian's capability to influence each other.
  */
-data class BaseSocialCapability<T>(
+data class BasePerceptionOfOthers<T> (
     override val node: Node<T>,
-    override val group: Group<T>,
-) : SocialCapability<T>
+    override val fieldOfView: InfluenceSphere<T>,
+) : PerceptionOfOthers<T>

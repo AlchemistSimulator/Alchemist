@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.HeterogeneousPedestrianModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianIndividualityCapability
+import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianIndividuality2DCapability
 import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.HeterogeneousPedestrian
 import it.unibo.alchemist.model.interfaces.Node
@@ -49,7 +49,7 @@ abstract class AbstractHeterogeneousPedestrian<T, P, A, F> @JvmOverloads constru
     init {
         with(backingNode) {
             addCapability(
-                BasePedestrianIndividualityCapability<T, P, A>(
+                BasePedestrianIndividuality2DCapability<T, P, A>(
                     backingNode, age, gender, Speed(age, gender, randomGenerator)
                 )
             )

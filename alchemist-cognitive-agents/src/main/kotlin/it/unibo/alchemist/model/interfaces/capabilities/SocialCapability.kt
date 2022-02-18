@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.interfaces.Capability
 import it.unibo.alchemist.model.interfaces.Group
-import it.unibo.alchemist.model.interfaces.Node
 
 /**
  * The pedestrian's capability for form groups.
@@ -20,5 +19,5 @@ interface SocialCapability<T> : Capability<T> {
     /**
      * Pedestrian's [Group].
      */
-    val group: Group<T, Node<T>>
+    val group: Group<T>
 }

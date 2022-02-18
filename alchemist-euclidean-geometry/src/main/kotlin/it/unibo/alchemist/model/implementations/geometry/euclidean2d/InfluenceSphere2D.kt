@@ -19,12 +19,9 @@ open class InfluenceSphere2D<T>(
     private val env: Physics2DEnvironment<T>,
     private val owner: Node<T>,
     private val shape: Euclidean2DShape
-) : InfluenceSphere {
-
-    override fun influentialNodes(): List<Node<T>> = env.getNodesWithin(
-        shape.transformed {
-            origin(env.getPosition(owner))
-            rotate(env.getHeading(owner))
-        }
-    ).minusElement(owner)
-}
+) : InfluenceSphere<T> by env.getNodesWithin(
+    shape.transformed {
+        origin(env.getPosition(owner))
+        rotate(env.getHeading(owner))
+    }
+).minusElement(owner)

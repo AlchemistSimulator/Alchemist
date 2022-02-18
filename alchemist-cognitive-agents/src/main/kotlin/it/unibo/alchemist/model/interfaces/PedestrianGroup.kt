@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * A [Group] of [Pedestrian]s.
  */
-interface PedestrianGroup<T, P : Vector<P>, A : GeometricTransformation<P>> : Group<T, Pedestrian<T, P, A>>
+interface PedestrianGroup<T, P : Vector<P>, A : GeometricTransformation<P>> : Group<Pedestrian<T, P, A>>
 
 /**
  * A [PedestrianGroup] featuring bidimensional pedestrians.

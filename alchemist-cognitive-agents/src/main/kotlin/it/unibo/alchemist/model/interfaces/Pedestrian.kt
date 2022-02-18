@@ -13,12 +13,12 @@ interface Pedestrian<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeWit
     /**
      * The list of influence spheres belonging to this pedestrian (by default, only its [fieldOfView]).
      */
-    val senses: List<InfluenceSphere> get() = listOf(fieldOfView)
+    val senses: Map<String, InfluenceSphere<T>> get() = mapOf("view" to fieldOfView)
 
     /**
      * The field of view of the pedestrian.
      */
-    val fieldOfView: InfluenceSphere
+    val fieldOfView: InfluenceSphere<T>
 
     /**
      * The group this pedestrian belongs to.

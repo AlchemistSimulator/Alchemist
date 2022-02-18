@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.capabilities.BasePedestrian2DInfluenceCapability
+import it.unibo.alchemist.model.implementations.capabilities.BasePerceptionOfOthers
 import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -55,7 +55,7 @@ open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
     )
 
     init {
-        backingNode.addCapability(BasePedestrian2DInfluenceCapability(environment, backingNode))
+        backingNode.addCapability(BasePerceptionOfOthers(environment, backingNode))
         backingNode.addCapability(
             BaseSpatial2DCapability(
                 backingNode,

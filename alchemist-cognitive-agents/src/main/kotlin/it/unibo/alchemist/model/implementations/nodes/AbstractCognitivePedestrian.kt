@@ -60,7 +60,7 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
     }
 
     init {
-        backingNode.addCapability(BasePedestrianCognitiveCapability(backingNode, cognitiveModel))
+        backingNode.addCapability(BasePedestrianCognitiveCapability(environment, danger, backingNode, cognitiveModel))
     }
 
     override fun speed(): Double {

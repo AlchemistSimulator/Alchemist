@@ -180,6 +180,9 @@ internal abstract class LoadingSystem(
                         node.setConcentration(molecule, concentration)
                     }
                 }
+                // CAPABILITIES
+                val capabilities = SimulationModel.visitCapability<T>(context, descriptor)
+                capabilities.forEach { node.addCapability(it) }
                 // PROGRAMS
                 val programs = SimulationModel.visitRecursively<Reaction<T>>(
                     context,

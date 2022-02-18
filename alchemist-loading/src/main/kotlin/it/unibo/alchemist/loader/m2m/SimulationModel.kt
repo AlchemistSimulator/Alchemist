@@ -33,6 +33,7 @@ import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Action
+import it.unibo.alchemist.model.interfaces.Capability
 import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -308,6 +309,19 @@ internal object SimulationModel {
                     Result.success(Triple(shapes, molecule, concentrationMaker))
                 }
         }
+    }
+
+    fun <T> visitCapability(
+        context: Context,
+        root: Map<*, *>,
+    ): List<Capability<T>> {
+        logger.debug("Visiting capabilities: {}", root)
+        val allCapabilities = root[DocumentRoot.Deployment.capabilities] ?: emptyList<Any>()
+        val capabilities = visitRecursively(context, allCapabilities, DocumentRoot.Deployment) { element ->
+            visitBuilding<Capability<T>>(context, element)
+        }
+        logger.debug("Capabilities: {}", capabilities)
+        return capabilities
     }
 
     private fun visitDependentVariable(name: String, context: Context, root: Any?): Result<DependentVariable<*>>? {

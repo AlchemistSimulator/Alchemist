@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.interfaces.Capability
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**
@@ -26,5 +25,5 @@ interface PerceptionOfOthers<T> : Capability<T> {
     /**
      * The list of influence spheres belonging to this pedestrian (by default, only its [fieldOfView]).
      */
-    val senses: Map<String, List<Node<T>>> get() = mapOf("view" to fieldOfView)
+    val senses: Map<String, InfluenceSphere<T>> get() = mapOf("view" to fieldOfView)
 }

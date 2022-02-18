@@ -19,11 +19,11 @@ import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianCogni
 import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianIndividuality2DCapability
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
@@ -41,7 +41,7 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     backingNode: Node<T>,
     knowledgeDegree: Double,
-    group: PedestrianGroup2D<T>? = null,
+    group: Group<T>? = null,
     age: Age,
     gender: Gender,
     danger: Molecule? = null,
@@ -63,7 +63,7 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
         environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
         nodeCreationParameter: String? = null,
         knowledgeDegree: Double,
-        group: PedestrianGroup2D<T>? = null,
+        group: Group<T>? = null,
         age: Any,
         gender: String,
         danger: Molecule? = null
@@ -102,8 +102,7 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
                     backingNode, age, gender, Speed(age, gender, randomGenerator)
                 )
             )
-
-            addCapability(BasePedestrianCognitive2DCapability(environment, danger, backingNode, cognitiveModel))
+            addCapability(BasePedestrianCognitive2DCapability(environment, backingNode, danger))
         }
     }
 }

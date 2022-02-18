@@ -13,11 +13,11 @@ import it.unibo.alchemist.model.implementations.capabilities.BaseOrienting2DCapa
 import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
-import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -51,7 +51,7 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
      */
     minSide: Double = 30.0,
     maxSide: Double = 60.0,
-    group: PedestrianGroup2D<T>? = null
+    group: Group<T>? = null
 ) :
     Pedestrian2D<T>,
     AbstractOrientingPedestrian<T, Position2D, Transformation2D, Ellipse, N, E, ShapeFactory>(
@@ -70,7 +70,7 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
         knowledgeDegree: Double,
         minSide: Double = 30.0,
         maxSide: Double = 60.0,
-        group: PedestrianGroup2D<T>? = null
+        group: Group<T>? = null
     ) : this(
         randomGenerator,
         environment,
@@ -98,22 +98,9 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
         )
     }
 
-    /*override fun createLandmarkIn(area: N): Ellipse = with(area) {
-        val width = randomEllipseSide()
-        val height = randomEllipseSide()
-        val frame = Rectangle2D.Double(centroid.x, centroid.y, width, height)
-        while (!contains(frame)) {
-            frame.width /= 2
-            frame.height /= 2
-        }
-        Ellipse(Ellipse2D.Double(frame.x, frame.y, frame.width, frame.height))
-    }*/
-
     override fun createLandmarkIn(area: N): Ellipse =
         backingNode
             .asCapability<T,
                 OrientingCapability<T, Euclidean2DPosition, Transformation2D, Ellipse, N, E, ShapeFactory>>()
             .createLandmarkIn(area)
-
-    // private fun randomEllipseSide(): Double = randomGenerator.nextDouble(minSide, maxSide) * shape.diameter
 }

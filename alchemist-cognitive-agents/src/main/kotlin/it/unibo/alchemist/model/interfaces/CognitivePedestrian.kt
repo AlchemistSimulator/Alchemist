@@ -18,7 +18,7 @@ A : GeometricTransformation<V> {
     /**
      * The mind model of all people considered influencial for this cognitive pedestrian.
      */
-    fun influencialPeople(): List<CognitiveModel> = senses.flatMap { (type, sense) -> sense }
+    fun influencialPeople(): List<CognitiveModel> = senses.flatMap { it.value.influentialNodes() }
         .filterIsInstance<CognitivePedestrian<T, V, A>>()
         .map { it.cognitiveModel }
 }

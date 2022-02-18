@@ -4,11 +4,10 @@ import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
-import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianCognitiveCapability
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
@@ -41,7 +40,7 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
     age: Age,
     gender: Gender,
     val danger: Molecule? = null,
-    group: PedestrianGroup<T, P, A>? = null,
+    group: Group<T>? = null,
     cognitive: CognitiveModel? = null
 ) : AbstractHeterogeneousPedestrian<T, P, A, F>(randomGenerator, backingNode, age, gender, group),
     CognitivePedestrian<T, P, A>
@@ -57,10 +56,6 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
                 .map { it.getValue(environment.getPosition(this)) as Double }
                 .orElse(0.0)
         }
-    }
-
-    init {
-        backingNode.addCapability(BasePedestrianCognitiveCapability(environment, danger, backingNode, cognitiveModel))
     }
 
     override fun speed(): Double {

@@ -13,9 +13,9 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
-import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability.Companion.defaultShapeRadius
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
@@ -32,7 +32,7 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
     override val environment: Physics2DEnvironment<T>,
     age: Any,
     gender: String,
-    group: PedestrianGroup2D<T>? = null,
+    group: Group<T>? = null,
     nodeCreationParameter: String? = null,
 ) : AbstractHeterogeneousPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>(
     randomGenerator,

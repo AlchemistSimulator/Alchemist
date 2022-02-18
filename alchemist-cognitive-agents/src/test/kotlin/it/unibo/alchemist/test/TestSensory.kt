@@ -47,9 +47,9 @@ class TestSensory<T> : StringSpec({
             }
         }
         env.nodes.minusElement(observed).forEach {
-            with(FieldOfView2D(env, it, radius, Math.PI / 2).influentialNodes()) {
-                size shouldBe 1
-                first() shouldBe observed
+            with(FieldOfView2D(env, it, radius, Math.PI / 2)) {
+                influentialNodes().size shouldBe 1
+                influentialNodes().first() shouldBe observed
             }
         }
     }

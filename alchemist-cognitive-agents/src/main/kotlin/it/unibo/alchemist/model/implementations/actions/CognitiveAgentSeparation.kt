@@ -6,6 +6,8 @@ import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PerceptionOfOthers
 
 /**
  * Move the agent away from the pedestrians near to him.
@@ -30,7 +32,8 @@ class CognitiveAgentSeparation<T>(
 
     override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)
 
-    override fun group(): List<Pedestrian2D<T>> = pedestrian.fieldOfView
+    override fun group(): List<Pedestrian2D<T>> = pedestrian.asCapability<T, PerceptionOfOthers<T>>()
+        .fieldOfView
         .influentialNodes()
         .filterIsInstance<Pedestrian2D<T>>()
         .plusElement(pedestrian)

@@ -2,13 +2,14 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianCognitive2DCapability
 import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
-import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability.Companion.defaultShapeRadius
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
@@ -39,7 +40,7 @@ open class CognitivePedestrian2D<T> constructor(
     age: Age,
     gender: Gender,
     danger: Molecule? = null,
-    group: PedestrianGroup2D<T>? = null
+    group: Group<T>? = null
 ) :
     Pedestrian2D<T>,
     AbstractCognitivePedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>(
@@ -53,7 +54,7 @@ open class CognitivePedestrian2D<T> constructor(
         age: Any,
         gender: String,
         danger: Molecule? = null,
-        group: PedestrianGroup2D<T>? = null,
+        group: Group<T>? = null,
         nodeCreationParameter: String? = null,
     ) : this(
         randomGenerator,
@@ -66,6 +67,11 @@ open class CognitivePedestrian2D<T> constructor(
     )
 
     init {
+        backingNode.addCapability(
+            BasePedestrianCognitive2DCapability(
+                environment, backingNode, danger
+            )
+        )
         backingNode.addCapability(
             BaseSpatial2DCapability(
                 backingNode, environment.shapeFactory.circle(defaultShapeRadius)

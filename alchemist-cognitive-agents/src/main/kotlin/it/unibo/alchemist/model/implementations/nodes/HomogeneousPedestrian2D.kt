@@ -1,12 +1,12 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.implementations.capabilities.BasePerceptionOfOthers
+import it.unibo.alchemist.model.implementations.capabilities.BasePerceptionOfOthers2D
 import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Pedestrian2D
-import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability.Companion.defaultShapeRadius
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
@@ -33,7 +33,7 @@ open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
      */
     final override val environment: Physics2DEnvironment<T>,
     backingNode: Node<T>,
-    group: PedestrianGroup2D<T>? = null
+    group: Group<T>? = null
 ) : AbstractHomogeneousPedestrian2D<T>(
     randomGenerator,
     backingNode,
@@ -46,7 +46,7 @@ open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
         randomGenerator: RandomGenerator,
         environment: Physics2DEnvironment<T>,
         nodeCreationParameter: String? = null,
-        group: PedestrianGroup2D<T>? = null
+        group: Group<T>? = null
     ) : this(
         randomGenerator,
         environment,
@@ -55,7 +55,7 @@ open class HomogeneousPedestrian2D<T> @JvmOverloads constructor(
     )
 
     init {
-        backingNode.addCapability(BasePerceptionOfOthers(environment, backingNode))
+        backingNode.addCapability(BasePerceptionOfOthers2D(environment, backingNode))
         backingNode.addCapability(
             BaseSpatial2DCapability(
                 backingNode,

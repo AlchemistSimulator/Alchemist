@@ -23,7 +23,7 @@ interface Pedestrian<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeWit
     /**
      * The group this pedestrian belongs to.
      */
-    val membershipGroup: PedestrianGroup<T, S, A>
+    val membershipGroup: Group<T>
 
     /**
      * The speed at which the pedestrian is moving.

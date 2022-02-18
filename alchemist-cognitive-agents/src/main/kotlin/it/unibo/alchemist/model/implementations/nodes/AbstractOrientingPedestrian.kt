@@ -12,9 +12,9 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.implementations.actions.takePercentage
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.pathExists
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian
-import it.unibo.alchemist.model.interfaces.PedestrianGroup
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
@@ -54,7 +54,7 @@ abstract class AbstractOrientingPedestrian<T, P, A, L, N, E, F>(
     /**
      * The environment this pedestrian is into.
      */
-    group: PedestrianGroup<T, P, A>? = null,
+    group: Group<T>? = null,
     /**
      * Environment's areas whose diameter is smaller than ([minArea] * the diameter of this pedestrian) will be
      * regarded as too small and discarded when generating the cognitive map (i.e. no landmark will be placed inside

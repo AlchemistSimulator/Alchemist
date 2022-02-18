@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.interfaces.Capability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
-import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**
  * The pedestrian's cognitive capability.
@@ -28,7 +27,7 @@ interface PedestrianCognitiveCapability<T> : Capability<T> {
      * The mind model of all people considered influential for this cognitive pedestrian.
      */
     fun influencialPeople(): List<CognitiveModel> = node.asCapability<T, PerceptionOfOthers<T>>()
-        .senses.flatMap { (_, sense): Map.Entry<String, InfluenceSphere<T>> -> sense }
+        .senses.flatMap { it.value.influentialNodes() }
         .mapNotNull { it.asCapabilityOrNull<T, PedestrianCognitiveCapability<T>>() }
         .map { it.cognitiveModel }
 }

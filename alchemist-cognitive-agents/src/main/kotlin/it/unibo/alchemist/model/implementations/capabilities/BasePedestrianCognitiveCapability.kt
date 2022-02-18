@@ -10,13 +10,10 @@
 package it.unibo.alchemist.model.implementations.capabilities
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
-import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
@@ -25,26 +22,21 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * The node's [CognitiveModel].
  */
-data class BasePedestrianCognitiveCapability<T, P, A, F>(
+data class BasePedestrianCognitiveCapability<T, P, A, F> @JvmOverloads constructor(
     /**
      * The environment in which the node moves.
      */
     val environment: PhysicsEnvironment<T, P, A, F>,
+    override val node: Node<T>,
     /**
      * The molecule associated with danger in the environment.
      */
     val danger: Molecule? = null,
-    override val node: Node<T>,
-    override val cognitiveModel: CognitiveModel = ImpactModel(
-        node.asCapability<T, PedestrianIndividualityCapability<T, P, A>>().compliance,
-        { node.asCapability<T, PedestrianCognitiveCapability<T>>().influencialPeople() }
-    ) {
-        environment.getLayer(danger)
-            .map { it.getValue(environment.getPosition(node)) as Double }
-            .orElse(0.0)
-    },
+    val cognitiveModelCreator: () -> CognitiveModel,
 ) : PedestrianCognitiveCapability<T>
 where P : Position<P>,
       P : Vector<P>,
       A : GeometricTransformation<P>,
-      F : GeometricShapeFactory<P, A>
+      F : GeometricShapeFactory<P, A> {
+    override val cognitiveModel: CognitiveModel by lazy(cognitiveModelCreator)
+}

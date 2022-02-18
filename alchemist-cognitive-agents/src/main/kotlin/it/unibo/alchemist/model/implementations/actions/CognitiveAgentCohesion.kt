@@ -6,6 +6,8 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.capabilities.SocialCapability
 
 /**
  * Move the agent towards the other members of his group.
@@ -29,5 +31,5 @@ class CognitiveAgentCohesion<T, P, A>(
 
     override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 
-    override fun group(): List<Pedestrian<T, P, *>> = pedestrian.membershipGroup.members
+    override fun group() = pedestrian.asCapability<T, SocialCapability<T>>().group.members
 }

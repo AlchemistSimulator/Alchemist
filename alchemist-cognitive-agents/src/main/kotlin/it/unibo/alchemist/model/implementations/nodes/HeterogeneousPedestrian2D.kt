@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.implementations.capabilities.BasePerceptionOfOthers2D
 import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Group
@@ -43,6 +44,7 @@ class HeterogeneousPedestrian2D<T> @JvmOverloads constructor(
 ),
     Pedestrian2D<T> {
     init {
+        backingNode.addCapability(BasePerceptionOfOthers2D(environment, backingNode))
         backingNode.addCapability(
             BaseSpatial2DCapability(
                 backingNode,

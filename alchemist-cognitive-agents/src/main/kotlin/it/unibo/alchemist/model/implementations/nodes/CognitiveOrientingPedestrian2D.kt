@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianCognitive2DCapability
 import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianIndividuality2DCapability
+import it.unibo.alchemist.model.implementations.capabilities.BasePerceptionOfOthers2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Group
@@ -97,6 +98,7 @@ class CognitiveOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloads cons
 
     init {
         with(backingNode) {
+            addCapability(BasePerceptionOfOthers2D(environment, backingNode))
             addCapability(
                 BasePedestrianIndividuality2DCapability(
                     backingNode, age, gender, Speed(age, gender, randomGenerator)

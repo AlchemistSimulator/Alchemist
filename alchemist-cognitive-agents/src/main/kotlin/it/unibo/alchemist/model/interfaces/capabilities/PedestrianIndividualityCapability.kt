@@ -14,9 +14,11 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Capability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A capability representing a pedestrian's individual characteristics.
@@ -56,3 +58,9 @@ interface PedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTrans
     fun probabilityOfHelping(toHelp: HeterogeneousPedestrianModel<T, S, A>, isGroupMember: Boolean): Double =
         helpAttitude.level(toHelp.age, toHelp.gender, isGroupMember)
 }
+
+/**
+ * A capability representing a pedestrian's individual characteristics in a 2D space.
+ */
+typealias PedestrianIndividuality2DCapability<T> =
+    PedestrianIndividualityCapability<T, Euclidean2DPosition, Euclidean2DTransformation>

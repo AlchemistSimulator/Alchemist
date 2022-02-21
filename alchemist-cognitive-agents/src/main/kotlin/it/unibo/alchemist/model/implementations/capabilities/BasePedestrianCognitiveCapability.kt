@@ -10,10 +10,13 @@
 package it.unibo.alchemist.model.implementations.capabilities
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
+import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
@@ -32,11 +35,18 @@ data class BasePedestrianCognitiveCapability<T, P, A, F> @JvmOverloads construct
      * The molecule associated with danger in the environment.
      */
     val danger: Molecule? = null,
-    val cognitiveModelCreator: () -> CognitiveModel,
 ) : PedestrianCognitiveCapability<T>
 where P : Position<P>,
       P : Vector<P>,
       A : GeometricTransformation<P>,
       F : GeometricShapeFactory<P, A> {
-    override val cognitiveModel: CognitiveModel by lazy(cognitiveModelCreator)
+    override val cognitiveModel: CognitiveModel by lazy {
+        ImpactModel(
+            node.asCapability<T, PedestrianIndividualityCapability<T, P, A>>().compliance, ::influentialPeople
+        ) {
+            environment.getLayer(danger)
+                .map { it.getValue(environment.getPosition(node)) as Double }
+                .orElse(0.0)
+        }
+    }
 }

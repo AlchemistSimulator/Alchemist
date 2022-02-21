@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.capabilities.BaseOrienting2DCapability
+import it.unibo.alchemist.model.implementations.capabilities.BasePerceptionOfOthers2D
 import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -82,6 +83,7 @@ open class HomogeneousOrientingPedestrian2D<T, N : ConvexPolygon, E> @JvmOverloa
     )
 
     init {
+        backingNode.addCapability(BasePerceptionOfOthers2D(environment, backingNode))
         backingNode.addCapability(
             BaseSpatial2DCapability(
                 backingNode, environment.shapeFactory.circle(defaultShapeRadius)

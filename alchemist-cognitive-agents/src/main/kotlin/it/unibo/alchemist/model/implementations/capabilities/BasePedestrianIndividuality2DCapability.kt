@@ -14,10 +14,8 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Compliance
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividuality2DCapability
 
 /**
  * A pedestrian's individual characteristics.
@@ -29,4 +27,4 @@ data class BasePedestrianIndividuality2DCapability<T> @JvmOverloads constructor(
     override val speed: Speed,
     override val compliance: Double = Compliance(age, gender).level,
     override val helpAttitude: HelpAttitude = HelpAttitude(age, gender)
-) : PedestrianIndividualityCapability<T, Euclidean2DPosition, Euclidean2DTransformation>
+) : PedestrianIndividuality2DCapability<T>

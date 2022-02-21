@@ -26,7 +26,7 @@ interface PedestrianCognitiveCapability<T> : Capability<T> {
     /**
      * The mind model of all people considered influential for this cognitive pedestrian.
      */
-    fun influencialPeople(): List<CognitiveModel> = node.asCapability<T, PerceptionOfOthers<T>>()
+    fun influentialPeople(): List<CognitiveModel> = node.asCapability<T, PerceptionOfOthers<T>>()
         .senses.flatMap { it.value.influentialNodes() }
         .mapNotNull { it.asCapabilityOrNull<T, PedestrianCognitiveCapability<T>>() }
         .map { it.cognitiveModel }

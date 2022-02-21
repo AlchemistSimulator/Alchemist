@@ -1,16 +1,15 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
-import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
+import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianCognitiveCapability
 import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
@@ -48,15 +47,12 @@ abstract class AbstractCognitivePedestrian<T, P, A, F> @JvmOverloads constructor
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {
 
-    override val cognitiveModel: CognitiveModel by lazy {
-        cognitive ?: ImpactModel(
-            backingNode.asCapability<T, PedestrianIndividualityCapability<T, P, A>>().compliance, ::influencialPeople
-        ) {
-            environment.getLayer(danger)
-                .map { it.getValue(environment.getPosition(this)) as Double }
-                .orElse(0.0)
-        }
+    init {
+        backingNode.addCapability(BasePedestrianCognitiveCapability(environment, backingNode, danger))
     }
+
+    override val cognitiveModel: CognitiveModel =
+        cognitive ?: backingNode.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel
 
     override fun speed(): Double {
         val myCognitiveModel = backingNode.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel

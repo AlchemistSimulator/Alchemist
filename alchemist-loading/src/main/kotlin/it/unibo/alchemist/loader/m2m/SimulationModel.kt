@@ -275,6 +275,21 @@ internal object SimulationModel {
         return constant?.let { Result.success(it) }
     }
 
+    /**
+     * TODO: Shapes may not be the all filtering possibility
+     */
+    fun <P : Position<P>> visitFilter(
+        context: Context,
+        element: Map<*, *>,
+    ): List<Shape<P>> {
+        val shapesKey = DocumentRoot.Deployment.Filter.shape
+        val shapes = visitRecursively(context, element[shapesKey] ?: emptyList<Any>()) { shape ->
+            visitBuilding<Shape<P>>(context, shape)
+        }
+        logger.debug("Shapes: {}", shapes)
+        return shapes
+    }
+
     fun <T, P : Position<P>> visitContents(
         incarnation: Incarnation<T, P>,
         context: Context,
@@ -289,11 +304,7 @@ internal object SimulationModel {
                 ?.takeIf { element.containsKey(moleculeKey) }
                 ?.let {
                     logger.debug("Found content descriptor: {}", it)
-                    val shapesKey = DocumentRoot.Deployment.Contents.shapes
-                    val shapes = visitRecursively(context, element[shapesKey] ?: emptyList<Any>()) { shape ->
-                        visitBuilding<Shape<P>>(context, shape)
-                    }
-                    logger.debug("Shapes: {}", shapes)
+                    val shapes = visitFilter<P>(context, element)
                     val moleculeElement = element[moleculeKey]
                     require(moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
                         val type = moleculeElement?.let { ": " + it::class.simpleName } ?: ""
@@ -311,17 +322,22 @@ internal object SimulationModel {
         }
     }
 
-    fun <T> visitCapability(
+    fun <T, P : Position<P>> visitCapability(
         context: Context,
         root: Map<*, *>,
-    ): List<Capability<T>> {
+    ): List<Pair<List<Shape<P>>, Capability<T>>> {
         logger.debug("Visiting capabilities: {}", root)
-        val allCapabilities = root[DocumentRoot.Deployment.capabilities] ?: emptyList<Any>()
-        val capabilities = visitRecursively(context, allCapabilities, DocumentRoot.Deployment) { element ->
-            visitBuilding<Capability<T>>(context, element)
+        val capabilitiesKey = DocumentRoot.Deployment.capabilities
+        val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
+        return visitRecursively(context, allCapabilities, DocumentRoot.Deployment.Capabilities) { element ->
+            (element as? Map<*, *>)?.let {
+                val shapes = visitFilter<P>(context, element)
+                val capability = visitBuilding<Capability<T>>(context, element)
+                    ?.getOrThrow() ?: cantBuildWith<Capability<T>>(root, JavaType)
+                logger.debug("Capability: {}", capability)
+                Result.success(Pair(shapes, capability))
+            }
         }
-        logger.debug("Capabilities: {}", capabilities)
-        return capabilities
     }
 
     private fun visitDependentVariable(name: String, context: Context, root: Any?): Result<DependentVariable<*>>? {
@@ -483,7 +499,7 @@ internal object SimulationModel {
         node: Node<T>,
         context: Context,
         program: Map<*, *>
-    ): Result<Reaction<T>>? = if (ProgramSyntax.validateDescriptor(program)) {
+    ): Result<Pair<List<Shape<P>>, Reaction<T>>>? = if (ProgramSyntax.validateDescriptor(program)) {
         val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
             incarnation,
             simulationRNG,
@@ -499,6 +515,7 @@ internal object SimulationModel {
         fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
             makeWith(simulationRNG, environment, node, timeDistribution, reaction, parameter?.toString())
         }
+        val shapes = visitFilter<P>(context, program)
         val conditions = visitRecursively<Condition<T>>(
             context,
             program[ProgramSyntax.conditions] ?: emptyList<Any>(),
@@ -527,7 +544,7 @@ internal object SimulationModel {
         }
         context.factory.deregisterSingleton(reaction)
         context.factory.deregisterSingleton(timeDistribution)
-        Result.success(reaction)
+        Result.success(Pair(shapes, reaction))
     } else {
         null
     }

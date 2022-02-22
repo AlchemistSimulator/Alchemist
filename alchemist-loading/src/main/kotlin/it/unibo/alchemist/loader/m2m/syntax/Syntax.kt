@@ -43,17 +43,33 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor {
                 mandatory(JavaType.type)
                 optional(JavaType.parameters, contents, capabilities, nodes, programs)
-                forbidden(Contents.shapes)
+                forbidden(Filter.shape)
             }
         )
+        object Filter : SyntaxElement {
+            const val shape = "in"
+            override val validDescriptors = setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters)
+                }
+            )
+        }
+        object Capabilities : SyntaxElement {
+            override val validDescriptors = setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters, Filter.shape)
+                }
+            )
+        }
         object Contents : SyntaxElement {
             val molecule by OwnName()
             val concentration by OwnName()
-            const val shapes = "in"
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(molecule, concentration)
-                    optional(shapes)
+                    optional(Filter.shape)
                 }
             )
         }
@@ -65,11 +81,11 @@ internal object DocumentRoot : SyntaxElement {
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(JavaType.type)
-                    optional(JavaType.parameters, conditions, timeDistribution, actions)
+                    optional(JavaType.parameters, Filter.shape, conditions, timeDistribution, actions)
                 },
                 validDescriptor {
                     mandatory(program)
-                    optional(timeDistribution)
+                    optional(timeDistribution, Filter.shape)
                 }
             )
         }

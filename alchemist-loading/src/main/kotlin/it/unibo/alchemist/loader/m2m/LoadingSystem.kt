@@ -22,7 +22,6 @@ import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
@@ -181,10 +180,14 @@ internal abstract class LoadingSystem(
                     }
                 }
                 // CAPABILITIES
-                val capabilities = SimulationModel.visitCapability<T>(context, descriptor)
-                capabilities.forEach { node.addCapability(it) }
+                val capabilities = SimulationModel.visitCapability<T, P>(context, descriptor)
+                capabilities.forEach { (shapes, capability) ->
+                    if (shapes.isEmpty() || shapes.any { position in it }) {
+                        node.addCapability(capability)
+                    }
+                }
                 // PROGRAMS
-                val programs = SimulationModel.visitRecursively<Reaction<T>>(
+                val programs = SimulationModel.visitRecursively(
                     context,
                     programDescriptor,
                     DocumentRoot.Deployment.Program
@@ -194,7 +197,12 @@ internal abstract class LoadingSystem(
                     }
                     (program as? Map<*, *>)?.let {
                         SimulationModel.visitProgram(simulationRNG, incarnation, environment, node, context, it)
-                            ?.onSuccess(node::addReaction)
+                            ?.onSuccess {
+                                (shapes, reaction) ->
+                                if (shapes.isEmpty() || shapes.any { shape -> position in shape }) {
+                                    node.addReaction(reaction)
+                                }
+                            }
                     }
                 }
                 logger.debug("Programs: {}", programs)

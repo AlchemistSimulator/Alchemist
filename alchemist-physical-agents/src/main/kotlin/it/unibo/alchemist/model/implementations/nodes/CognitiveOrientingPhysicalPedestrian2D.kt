@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.implementations.nodes
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
-import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
@@ -36,7 +36,7 @@ class CognitiveOrientingPhysicalPedestrian2D<T, N : ConvexPolygon, E> @JvmOverlo
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, E>,
     nodeCreationParameter: String? = null,
     override val knowledgeDegree: Double,
-    group: PedestrianGroup2D<T>? = null,
+    group: Group<T>? = null,
     age: String,
     gender: String,
     danger: Molecule? = null

@@ -11,9 +11,9 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.capabilities.BasePedestrian2DPhysicalCapability
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.PedestrianGroup2D
 import it.unibo.alchemist.model.interfaces.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.nextDouble
@@ -36,7 +36,7 @@ open class CognitivePhysicalPedestrian2D<T, S : Vector<S>, A : GeometricTransfor
     age: String,
     gender: String,
     danger: Molecule? = null,
-    group: PedestrianGroup2D<T>? = null
+    group: Group<T>? = null
 ) : CognitivePedestrian2D<T>(
     incarnation = incarnation,
     randomGenerator = randomGenerator,

@@ -17,4 +17,9 @@ interface Capability<T> {
      * The node to which the capability is added.
      */
     val node: Node<T>
+
+    /**
+     * Creates an empty base molecule.
+     */
+    fun createMolecule(): T? = null
 }

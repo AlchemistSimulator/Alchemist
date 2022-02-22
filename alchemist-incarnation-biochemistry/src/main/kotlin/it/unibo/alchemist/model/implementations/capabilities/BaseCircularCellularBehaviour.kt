@@ -14,17 +14,15 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.CellularBehaviour
+import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehaviour
 
 /**
- * Base implementation of a [CellularBehaviour].
+ * Base implementation of a [CircularCellularBehaviour].
  */
-class BaseCellularBehaviour<P : Position<P>> @JvmOverloads constructor(
+class BaseCircularCellularBehaviour<P : Position<P>> @JvmOverloads constructor(
     environment: Environment<Double, P>,
     override val node: Node<Double>,
-    override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : CellularBehaviour<P> {
-
-    override var polarizationVersor: P = environment.makePosition(0, 0)
-
-    override fun addPolarizationVersor(versor: P) { polarizationVersor += versor.coordinates }
-}
+    override val diameter: Double,
+    override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap()
+) : CircularCellularBehaviour<P>,
+    CellularBehaviour<P> by BaseCellularBehaviour(environment, node, junctions)

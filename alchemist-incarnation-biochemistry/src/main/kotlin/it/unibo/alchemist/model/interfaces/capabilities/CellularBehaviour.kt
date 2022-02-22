@@ -20,17 +20,6 @@ import it.unibo.alchemist.model.interfaces.Position
 interface CellularBehaviour<P : Position<P>> : Capability<Double> {
 
     /**
-     * The diameter of the cell.
-     */
-    val diameter: Double
-
-    /**
-     * The radius of the cell.
-     */
-    val radius: Double
-        get() = diameter / 2
-
-    /**
      * The map junction - node - quantity.
      */
     val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>>

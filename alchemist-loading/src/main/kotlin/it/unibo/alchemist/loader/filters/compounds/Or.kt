@@ -11,9 +11,17 @@ package it.unibo.alchemist.loader.filters.compounds
 
 import it.unibo.alchemist.loader.filters.Filter
 
+/**
+ * Check if either [filterA] or [filterB] is satisfied.
+ * @param filterA the first filter.
+ * @param filterB the second filter.
+ */
 data class Or<T> (
     val filterA: Filter<T>,
     val filterB: Filter<T>,
 ) : Filter<T> {
+    /**
+     * Returns true if either [filterA] or [filterB] are satisfied.
+     */
     override fun test(something: T): Boolean = filterA.test(something) || filterB.test(something)
 }

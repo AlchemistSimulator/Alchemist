@@ -11,8 +11,15 @@ package it.unibo.alchemist.loader.filters.compounds
 
 import it.unibo.alchemist.loader.filters.Filter
 
+/**
+ * Negates the [filter]'s test.
+ * @param [filter] the filter to be negated.
+ */
 class Not<T> (
     val filter: Filter<T>
 ) : Filter<T> {
+    /**
+     * Returns true if [filter] is not satisfied.
+     */
     override fun test(something: T): Boolean = !filter.test(something)
 }

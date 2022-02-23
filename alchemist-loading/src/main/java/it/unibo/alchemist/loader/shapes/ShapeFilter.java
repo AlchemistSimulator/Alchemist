@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.loader.shapes;
 
+import it.unibo.alchemist.loader.filters.Filter;
 import it.unibo.alchemist.model.interfaces.Position;
 
 /**
@@ -16,8 +17,7 @@ import it.unibo.alchemist.model.interfaces.Position;
  * @param <P> position type
  *
  */
-@FunctionalInterface
-public interface ShapeFilter<P extends Position<P>> {
+public interface ShapeFilter<P extends Position<P>> extends Filter<P> {
 
     /**
      * @param position
@@ -26,4 +26,8 @@ public interface ShapeFilter<P extends Position<P>> {
      */
     boolean contains(P position);
 
+    @Override
+    default boolean test(final P p) {
+        return contains(p);
+    }
 }

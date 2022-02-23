@@ -10,6 +10,6 @@ deployments:
   contents:
     - molecule: hello
     - in:
-        type: Rectangle
+        type: RectangleFilter
         parameters: [-1, -1, 2, 2]
       molecule: token

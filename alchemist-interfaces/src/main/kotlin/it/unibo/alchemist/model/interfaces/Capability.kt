@@ -9,10 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import java.io.Serializable
+
 /**
  * Represents a node's capability.
  */
-interface Capability<T> {
+interface Capability<T> : Serializable {
     /**
      * The node to which the capability is added.
      */

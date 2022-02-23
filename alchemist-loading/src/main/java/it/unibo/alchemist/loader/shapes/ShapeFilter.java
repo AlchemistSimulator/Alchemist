@@ -17,12 +17,12 @@ import it.unibo.alchemist.model.interfaces.Position;
  *
  */
 @FunctionalInterface
-public interface Shape<P extends Position<P>> {
+public interface ShapeFilter<P extends Position<P>> {
 
     /**
      * @param position
      *            the position
-     * @return true if the position is inside the {@link Shape}.
+     * @return true if the position is inside the {@link ShapeFilter}.
      */
     boolean contains(P position);
 

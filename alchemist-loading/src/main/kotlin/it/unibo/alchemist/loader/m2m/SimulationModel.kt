@@ -22,7 +22,7 @@ import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.syntax.SyntaxElement
-import it.unibo.alchemist.loader.shapes.Shape
+import it.unibo.alchemist.loader.shapes.ShapeFilter
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
@@ -281,20 +281,20 @@ internal object SimulationModel {
     fun <P : Position<P>> visitFilter(
         context: Context,
         element: Map<*, *>,
-    ): List<Shape<P>> {
+    ): List<ShapeFilter<P>> {
         val shapesKey = DocumentRoot.Deployment.Filter.shape
-        val shapes = visitRecursively(context, element[shapesKey] ?: emptyList<Any>()) { shape ->
-            visitBuilding<Shape<P>>(context, shape)
+        val shapeFilters = visitRecursively(context, element[shapesKey] ?: emptyList<Any>()) { shape ->
+            visitBuilding<ShapeFilter<P>>(context, shape)
         }
-        logger.debug("Shapes: {}", shapes)
-        return shapes
+        logger.debug("Shapes: {}", shapeFilters)
+        return shapeFilters
     }
 
     fun <T, P : Position<P>> visitContents(
         incarnation: Incarnation<T, P>,
         context: Context,
         root: Map<*, *>
-    ): List<Triple<List<Shape<P>>, Molecule, () -> T>> {
+    ): List<Triple<List<ShapeFilter<P>>, Molecule, () -> T>> {
         logger.debug("Visiting contents: {}", root)
         val allContents = root[DocumentRoot.Deployment.contents] ?: emptyList<Any>()
         return visitRecursively(context, allContents) { element ->
@@ -325,7 +325,7 @@ internal object SimulationModel {
     fun <T, P : Position<P>> visitCapability(
         context: Context,
         root: Map<*, *>,
-    ): List<Pair<List<Shape<P>>, Capability<T>>> {
+    ): List<Pair<List<ShapeFilter<P>>, Capability<T>>> {
         logger.debug("Visiting capabilities: {}", root)
         val capabilitiesKey = DocumentRoot.Deployment.capabilities
         val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
@@ -499,7 +499,7 @@ internal object SimulationModel {
         node: Node<T>,
         context: Context,
         program: Map<*, *>
-    ): Result<Pair<List<Shape<P>>, Reaction<T>>>? = if (ProgramSyntax.validateDescriptor(program)) {
+    ): Result<Pair<List<ShapeFilter<P>>, Reaction<T>>>? = if (ProgramSyntax.validateDescriptor(program)) {
         val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
             incarnation,
             simulationRNG,

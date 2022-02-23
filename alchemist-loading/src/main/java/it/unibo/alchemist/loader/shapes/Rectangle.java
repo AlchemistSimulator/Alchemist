@@ -19,7 +19,7 @@ import static java.lang.Math.abs;
  *
  * @param <P> position type
  */
-public class Rectangle<P extends Position2D<P>> extends Abstract2DShape<P> {
+public class Rectangle<P extends Position2D<P>> extends Abstract2DShapeFilter<P> {
 
     /**
      * @param x

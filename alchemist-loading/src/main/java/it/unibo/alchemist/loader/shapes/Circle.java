@@ -16,7 +16,7 @@ import java.awt.geom.Ellipse2D;
  *
  * @param <P> Position type
  */
-public class Circle<P extends Position2D<P>> extends Abstract2DShape<P> {
+public class Circle<P extends Position2D<P>> extends Abstract2DShapeFilter<P> {
 
     /**
      * @param centerx x coordinate of the center of the circle

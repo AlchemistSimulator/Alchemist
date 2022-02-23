@@ -8,7 +8,7 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.loader.shapes.Circle;
-import it.unibo.alchemist.loader.shapes.Shape;
+import it.unibo.alchemist.loader.shapes.ShapeFilter;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TestCircle {
 
-    private final Shape<GeoPosition> s = new Circle<>(0, 0, 1);
+    private final ShapeFilter<GeoPosition> s = new Circle<>(0, 0, 1);
 
     /**
      * 

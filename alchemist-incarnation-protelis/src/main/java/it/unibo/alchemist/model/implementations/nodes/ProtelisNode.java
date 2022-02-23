@@ -11,11 +11,13 @@ package it.unibo.alchemist.model.implementations.nodes;
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.ProtelisIncarnation;
+import it.unibo.alchemist.model.implementations.BaseProtelisCapability;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Field;
@@ -46,10 +48,12 @@ public final class ProtelisNode<P extends Position<? extends P>>
      * @param environment
      *            the environment
      */
+    @SuppressWarnings("rawtypes")
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public ProtelisNode(final Environment<Object, P> environment) {
         super(environment);
         this.environment = environment;
+        this.addCapability(new BaseProtelisCapability((ProtelisIncarnation<?>) environment.getIncarnation(), this));
     }
 
     @Override
@@ -71,7 +75,7 @@ public final class ProtelisNode<P extends Position<? extends P>>
      *            the {@link AlchemistNetworkManager}
      */
     public void addNetworkManger(final RunProtelisProgram<?> program, final AlchemistNetworkManager networkManager) {
-        networkManagers.put(program, networkManager);
+        this.asCapability(ProtelisCapability.class).addNetworkManger(program, networkManager);
     }
 
     /**
@@ -82,14 +86,14 @@ public final class ProtelisNode<P extends Position<? extends P>>
      */
     public AlchemistNetworkManager getNetworkManager(final RunProtelisProgram<?> program) {
         Objects.requireNonNull(program);
-        return networkManagers.get(program);
+        return this.asCapability(ProtelisCapability.class).getNetworkManager(program);
     }
 
     /**
      * @return all the {@link AlchemistNetworkManager} in this node
      */
     public Map<RunProtelisProgram<?>, AlchemistNetworkManager> getNetworkManagers() {
-        return Collections.unmodifiableMap(networkManagers);
+        return this.asCapability(ProtelisCapability.class).getNetworkManagers();
     }
 
     private static <P extends Position<P>> Molecule makeMol(final String id) {
@@ -98,28 +102,22 @@ public final class ProtelisNode<P extends Position<? extends P>>
 
     @Override
     public boolean has(final String id) {
-        return contains(makeMol(id));
+        return this.asCapability(ProtelisCapability.class).has(id);
     }
 
     @Override
     public Object get(final String id) {
-        final Molecule mid = makeMol(id);
-        return Optional.ofNullable(getConcentration(mid))
-            .orElse(environment.getLayer(mid)
-                .map(it -> it.getValue(environment.getPosition(this)))
-                .orElse(null)
-            );
+        return this.asCapability(ProtelisCapability.class).get(id);
     }
 
     @Override
     public Object get(final String id, final Object defaultValue) {
-        return Optional.ofNullable(get(id)).orElse(defaultValue);
+        return this.asCapability(ProtelisCapability.class).get(id, defaultValue);
     }
 
     @Override
     public boolean put(final String id, final Object v) {
-        setConcentration(makeMol(id), v);
-        return true;
+        return this.asCapability(ProtelisCapability.class).put(id, v);
     }
 
     /**
@@ -130,15 +128,12 @@ public final class ProtelisNode<P extends Position<? extends P>>
      * @return true
      */
     public boolean putField(final String id, final Field v) {
-        setConcentration(makeMol(id), v.toMap());
-        return true;
+        return this.asCapability(ProtelisCapability.class).putField(id, v);
     }
 
     @Override
     public Object remove(final String id) {
-        final Object res = get(id);
-        removeConcentration(makeMol(id));
-        return res;
+        return this.asCapability(ProtelisCapability.class).remove(id);
     }
 
     @Override
@@ -159,8 +154,6 @@ public final class ProtelisNode<P extends Position<? extends P>>
 
     @Override
     public Set<String> keySet() {
-        return getContents().keySet().stream()
-                .map(Molecule::getName)
-                .collect(ImmutableSet.toImmutableSet());
+        return this.asCapability(ProtelisCapability.class).keySet();
     }
 }

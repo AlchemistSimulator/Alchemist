@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.implementations
 
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability
@@ -21,7 +20,6 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager
  * Base implementation of [ProtelisCapability].
  */
 class BaseProtelisCapability<P : Position<P>> @JvmOverloads constructor(
-    environment: Environment<Any, P>,
     override val node: Node<Any>,
     override val networkManagers: MutableMap<RunProtelisProgram<*>, AlchemistNetworkManager> = LinkedHashMap()
 ) : ProtelisCapability {

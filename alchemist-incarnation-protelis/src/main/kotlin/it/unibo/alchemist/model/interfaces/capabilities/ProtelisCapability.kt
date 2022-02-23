@@ -17,8 +17,14 @@ import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.vm.ExecutionEnvironment
 
+/**
+ *
+ */
 interface ProtelisCapability : Capability<Any>, ExecutionEnvironment, DeviceUID {
 
+    /**
+     * An instance of a [ProtelisIncarnation].
+     */
     val incarnation: ProtelisIncarnation<*>
 
     /**
@@ -43,9 +49,7 @@ interface ProtelisCapability : Capability<Any>, ExecutionEnvironment, DeviceUID 
      * [RunProtelisProgram]
      */
     fun getNetworkManager(program: RunProtelisProgram<*>): AlchemistNetworkManager =
-        requireNotNull(networkManagers[program]) {
-            TODO("add a reasonable message here")
-        }
+        requireNotNull(networkManagers[program]) { "No network manager associated with $program" }
 
     /**
      * Writes a Map representation of the Field on the environment.

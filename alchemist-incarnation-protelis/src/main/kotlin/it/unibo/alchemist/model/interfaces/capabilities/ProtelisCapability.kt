@@ -12,8 +12,6 @@ package it.unibo.alchemist.model.interfaces.capabilities
 import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.interfaces.Capability
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
@@ -21,10 +19,13 @@ import org.protelis.vm.ExecutionEnvironment
 
 interface ProtelisCapability : Capability<Any>, ExecutionEnvironment, DeviceUID {
 
+    val incarnation: ProtelisIncarnation<*>
+
     /**
      * All the [AlchemistNetworkManager]s in this node.
      */
-    val networkManagers: MutableMap<RunProtelisProgram<*>, AlchemistNetworkManager>
+    val networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager>
+
     /**
      * Adds a new [AlchemistNetworkManager].
      *
@@ -33,9 +34,7 @@ interface ProtelisCapability : Capability<Any>, ExecutionEnvironment, DeviceUID 
      * @param networkManager
      * the [AlchemistNetworkManager]
      */
-    fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {
-        networkManagers[program] = networkManager
-    }
+    fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager)
 
     /**
      * @param program
@@ -43,9 +42,10 @@ interface ProtelisCapability : Capability<Any>, ExecutionEnvironment, DeviceUID 
      * @return the [AlchemistNetworkManager] for this specific
      * [RunProtelisProgram]
      */
-    fun getNetworkManager(program: RunProtelisProgram<*>): AlchemistNetworkManager? {
-        return networkManagers[program]
-    }
+    fun getNetworkManager(program: RunProtelisProgram<*>): AlchemistNetworkManager =
+        requireNotNull(networkManagers[program]) {
+            TODO("add a reasonable message here")
+        }
 
     /**
      * Writes a Map representation of the Field on the environment.
@@ -54,14 +54,7 @@ interface ProtelisCapability : Capability<Any>, ExecutionEnvironment, DeviceUID 
      * @param v the [Field]
      * @return true
      */
-    fun putField(id: String, v: Field<Any>): Boolean {
-        node.setConcentration(makeMol(id), v.toMap())
-        return true
-    }
-
-    companion object {
-        fun <P : Position<P>?> makeMol(id: String): Molecule {
-            return ProtelisIncarnation<P>().createMolecule(id)
-        }
+    fun putField(id: String, v: Field<Any>) = true.also {
+        node.setConcentration(incarnation.createMolecule(id), v.toMap())
     }
 }

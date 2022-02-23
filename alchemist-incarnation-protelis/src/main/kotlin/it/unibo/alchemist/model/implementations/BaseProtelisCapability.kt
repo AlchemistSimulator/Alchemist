@@ -9,30 +9,38 @@
 
 package it.unibo.alchemist.model.implementations
 
+import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability
-import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability.Companion.makeMol
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
 
 /**
  * Base implementation of [ProtelisCapability].
  */
 class BaseProtelisCapability<P : Position<P>> @JvmOverloads constructor(
+    override val incarnation: ProtelisIncarnation<*>,
     override val node: Node<Any>,
-    override val networkManagers: MutableMap<RunProtelisProgram<*>, AlchemistNetworkManager> = LinkedHashMap()
+    networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf()
 ) : ProtelisCapability {
+
+    override var networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = networkManagers
+        private set
+
+    override fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {
+        networkManagers = networkManagers + (program to networkManager)
+    }
 
     /**
      * Returns true if node contains [id].
      */
-    override fun has(id: String): Boolean = node.contains(makeMol<P>(id))
+    override fun has(id: String): Boolean = node.contains(incarnation.createMolecule(id))
 
     /**
      * Returns the value associated with [id].
      */
-    override fun get(id: String): Any = node.getConcentration(makeMol<P>(id))
+    override fun get(id: String): Any = node.getConcentration(incarnation.createMolecule(id))
 
     /**
      * Returns the value associated with [id].
@@ -43,7 +51,7 @@ class BaseProtelisCapability<P : Position<P>> @JvmOverloads constructor(
      * Stores the value associated with [id].
      */
     override fun put(id: String, v: Any): Boolean {
-        node.setConcentration(makeMol<P>(id), v)
+        node.setConcentration(incarnation.createMolecule(id), v)
         return true
     }
 
@@ -52,7 +60,7 @@ class BaseProtelisCapability<P : Position<P>> @JvmOverloads constructor(
      */
     override fun remove(id: String): Any {
         val value = get(id)
-        node.removeConcentration(makeMol<P>(id))
+        node.removeConcentration(incarnation.createMolecule(id))
         return value
     }
 

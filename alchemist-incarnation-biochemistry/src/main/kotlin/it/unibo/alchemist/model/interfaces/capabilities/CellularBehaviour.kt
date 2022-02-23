@@ -32,7 +32,6 @@ interface CellularBehaviour<P : Position<P>> : Capability<Double> {
     fun addJunction(junction: Junction, neighbor: Node<Double>) {
         if (containsJunction(junction)) {
             junctions[junction]?.let {
-                val temp = it[neighbor]
                 if (it.containsKey(neighbor)) it[neighbor]?.plus(+ 1)
                 else it[neighbor] = 1
                 junctions[junction] = it

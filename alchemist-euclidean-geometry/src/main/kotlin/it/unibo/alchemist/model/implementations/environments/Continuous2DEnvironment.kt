@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
+import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -22,7 +23,10 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
-import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
+import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
+import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability
 
 /**
  * Implementation of [Physics2DEnvironment].
@@ -58,13 +62,11 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
         nodeToHeading[node] = direction
     }
 
-    override fun getShape(node: Node<T>): Euclidean2DShape = when (node) {
-        !is NodeWithShape<*, *, *> -> adimensional
-        else -> shapeFactory.requireCompatible(node.shape).transformed {
+    override fun getShape(node: Node<T>): Euclidean2DShape =
+        node.asCapabilityOrNull<T, Spatial2DCapability<T>>()?.shape?.transformed {
             origin(getPosition(node))
             rotate(getHeading(node))
-        }
-    }
+        } ?: adimensional
 
     /**
      * Keeps track of the largest diameter of the shapes. Throws an [IllegalStateException] if the [node] can't fit
@@ -72,12 +74,12 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      */
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
+        val spatialCapability = node.asCapabilityOrNull<T, SpatialCapability<T, *, *>>()
         check(node.canFit(position)) {
-            node as NodeWithShape<T, *, *>
             "node in $position overlaps with nodes in ${node.overlappingNodes(position).map { getPosition(it) }}."
         }
-        if (node is NodeWithShape<*, *, *> && node.shape.diameter > largestShapeDiameter) {
-            largestShapeDiameter = node.shape.diameter
+        if (spatialCapability != null && spatialCapability.shape.diameter > largestShapeDiameter) {
+            largestShapeDiameter = spatialCapability.shape.diameter
         }
     }
 
@@ -87,9 +89,10 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) =
         super.nodeRemoved(node, neighborhood).also {
             nodeToHeading.remove(node)
-            if (node is NodeWithShape<*, *, *> && largestShapeDiameter <= node.shape.diameter) {
+            val spatialCapability = node.asCapabilityOrNull<T, SpatialCapability<T, *, *>>()
+            if (spatialCapability != null && largestShapeDiameter <= spatialCapability.shape.diameter) {
                 largestShapeDiameter = nodes.asSequence()
-                    .filterIsInstance<NodeWithShape<*, *, *>>()
+                    .mapNotNull { it.asCapabilityOrNull<T, SpatialCapability<T, *, *>>() }
                     .map { it.shape.diameter }
                     .maxOrNull() ?: 0.0
             }
@@ -100,7 +103,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * it is simply moved to [newPosition].
      */
     override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        if (node is NodeWithShape<T, *, *>) {
+        if (node.asCapabilityOrNull<T, BaseSpatial2DCapability<T>>() != null) {
             super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
         } else {
             super.moveNodeToPosition(node, newPosition)
@@ -126,7 +129,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * [node].[canFit] must be true for the returned position.
      */
     override fun farthestPositionReachable(
-        node: NodeWithShape<T, *, *>,
+        node: Node<T>,
         desiredPosition: Euclidean2DPosition,
         hitboxRadius: Double
     ): Euclidean2DPosition {
@@ -141,7 +144,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
         /*
          * If we're already colliding with someone, just return the current position.
          */
-        if (nodesOnPath.any { currentPosition.distanceTo(it.centroid) < it.radius + node.shape.radius }) {
+        if (nodesOnPath.any { currentPosition.distanceTo(it.centroid) < it.radius + getShape(node).radius }) {
             return currentPosition
         }
         return nodesOnPath
@@ -156,15 +159,17 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * @returns all nodes that the given [node] would collide with while performing the [desiredMovement].
      * Such segment should connect the [node]'s current position and its desired position.
      */
-    private fun nodesOnPath(node: NodeWithShape<T, *, *>, desiredMovement: Segment2D<*>): Nodes<T> =
-        with(node.shape) {
+    private fun nodesOnPath(node: Node<T>, desiredMovement: Segment2D<*>): Nodes<T> =
+        with(node.asCapability<T, SpatialCapability<T, *, *>>().shape) {
             shapeFactory.rectangle(desiredMovement.length + diameter, diameter)
                 .transformed {
                     desiredMovement.midPoint.let { origin(it.x, it.y) }
                     rotate(desiredMovement.toVector.asAngle)
                 }
                 .let { movementArea ->
-                    getNodesWithin(movementArea).filterIsInstance<NodeWithShape<T, *, *>>().minusElement(node)
+                    getNodesWithin(movementArea)
+                        .filter { it.asCapabilityOrNull<T, SpatialCapability<T, *, *>>() != null }
+                        .minusElement(node)
                 }
         }
 
@@ -173,16 +178,18 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * node is shapeless, true is returned.
      */
     private fun Node<T>.canFit(position: Euclidean2DPosition): Boolean =
-        this !is NodeWithShape<T, *, *> || overlappingNodes(position).isEmpty()
+        asCapabilityOrNull<T, Spatial2DCapability<T>>() == null || overlappingNodes(position).isEmpty()
 
     /**
      * @returns the nodes in this environment whose shape intersects this node's shape. The [position] of this
      * node must be specified as it may not have been added in the environment yet.
      */
-    private fun NodeWithShape<T, *, *>.overlappingNodes(position: Euclidean2DPosition): Nodes<T> =
-        getNodesWithin(shapeFactory.requireCompatible(shape).transformed { origin(position) })
-            .filterIsInstance<NodeWithShape<T, *, *>>()
+    private fun Node<T>.overlappingNodes(position: Euclidean2DPosition): Nodes<T> {
+        val shape = asCapability<T, Spatial2DCapability<T>>().shape
+        return getNodesWithin(shapeFactory.requireCompatible(shape).transformed { origin(position) })
+            .filter { it.asCapabilityOrNull<T, Spatial2DCapability<T>>() != null }
             .minusElement(this)
+    }
 }
 
-private typealias Nodes<T> = List<NodeWithShape<T, *, *>>
+private typealias Nodes<T> = List<Node<T>>

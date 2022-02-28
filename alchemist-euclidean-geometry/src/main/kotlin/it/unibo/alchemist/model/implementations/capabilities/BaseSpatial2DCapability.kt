@@ -11,14 +11,12 @@ package it.unibo.alchemist.model.implementations.capabilities
 
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 
 /**
  * A node's capability to exist with a shape in a 2D space.
  */
-data class BaseSpatial2DCapability<T, S : Vector<S>, A : GeometricTransformation<S>>(
+data class BaseSpatial2DCapability<T>(
     override val node: Node<T>,
     override val shape: Euclidean2DShape,
-) : Spatial2DCapability<T, S, A>
+) : Spatial2DCapability<T>

@@ -3,11 +3,12 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 
 /**
  * An environment supporting physics and nodes shapes.
@@ -69,8 +70,8 @@ where P : Position<P>,
      * a different radius for the hitbox of the moving node.
      */
     fun farthestPositionReachable(
-        node: NodeWithShape<T, *, *>,
+        node: Node<T>,
         desiredPosition: P,
-        hitboxRadius: Double = node.shape.radius
+        hitboxRadius: Double = node.asCapability<T, SpatialCapability<T, P, A>>().shape.radius
     ): P
 }

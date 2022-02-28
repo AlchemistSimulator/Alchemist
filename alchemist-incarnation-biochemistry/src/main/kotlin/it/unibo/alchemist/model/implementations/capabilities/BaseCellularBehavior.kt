@@ -14,17 +14,29 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior
+import org.apache.commons.math3.util.FastMath
 
 /**
  * Base implementation of a [CellularBehavior].
  */
 class BaseCellularBehavior<P : Position<P>> @JvmOverloads constructor(
-    environment: Environment<Double, P>,
+    val environment: Environment<Double, P>,
     override val node: Node<Double>,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
 ) : CellularBehavior<P> {
 
     override var polarizationVersor: P = environment.makePosition(0, 0)
 
-    override fun addPolarizationVersor(versor: P) { polarizationVersor += versor.coordinates }
+    override fun addPolarizationVersor(versor: P) {
+        val tempCor = polarizationVersor.plus(versor.coordinates).coordinates
+        val module = FastMath.sqrt(
+            FastMath.pow(tempCor[0], 2) + FastMath.pow(
+                tempCor[1], 2
+            )
+        )
+        polarizationVersor = if (module == 0.0) environment.makePosition(0, 0) else environment.makePosition(
+            tempCor[0] / module,
+            tempCor[1] / module
+        )
+    }
 }

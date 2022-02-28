@@ -19,6 +19,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +32,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
      */
     private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<P> env;
+    private final CircularDeformableCellularBehavior<P> deformableCell;
 
     /**
      * 
@@ -43,15 +45,15 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     ) {
         super(node);
         this.env = environment;
+        this.deformableCell = Objects.requireNonNull(
+            node.asCapabilityOrNull(CircularDeformableCellularBehavior.class),
+            "The node must be a " + CircularDeformableCellularBehavior.class.getSimpleName()
+        );
     }
 
     @Override
     public CellTensionPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        if (node.asCapabilityOrNull(CircularDeformableCellularBehavior.class) != null) {
-            return new CellTensionPolarization<>(env, node);
-        }
-        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + node
-                + " of type: " + node.getClass());
+        return new CellTensionPolarization<>(env, node);
     }
 
     @Override
@@ -68,7 +70,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .filter(n -> { // only cells overlapping this cell are selected
-                    if (n.asCapabilityOrNull(CircularCellularBehavior.class) != null) {
+                    final CircularCellularBehavior<P> circularCell = n.asCapabilityOrNull(CircularCellularBehavior.class);
+                    if (circularCell != null) {
                         // computing for each cell the max distance among which can't be overlapping
                         double maxDist;
                         if (n.asCapabilityOrNull(CircularDeformableCellularBehavior.class) != null) {
@@ -164,11 +167,6 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     @Override
     public Context getContext() {
         return Context.LOCAL;
-    }
-
-    @Override
-    public Node<Double> getNode() {
-        return super.getNode();
     }
 
 }

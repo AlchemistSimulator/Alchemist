@@ -80,7 +80,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                             // for simple cells is maxRad + rad
                              maxDist = thisNode
                                      .asCapability(CircularDeformableCellularBehavior.class).getMaximumRadius()
-                                     + n.asCapability(CircularDeformableCellularBehavior.class).getRadius();
+                                     + n.asCapability(CircularCellularBehavior.class).getRadius();
                         }
                         // check
                         return env.getDistanceBetweenNodes(thisNode, n) < maxDist;

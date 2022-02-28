@@ -49,11 +49,6 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
             final Environment<Double, P> environment,
             final String parameter) {
         final Node<Double> node = new GenericNode<Double>(this, environment) {
-            @Override
-            protected Double createT() {
-                return 0d;
-            }
-
             @NotNull
             @Override
             public Node<Double> cloneNode(@NotNull final Time currentTime) {

@@ -10,7 +10,6 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
@@ -19,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -47,7 +47,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     private boolean computationalCycleComplete;
     private final Environment<Object, P> environment;
     private final Molecule name;
-    private final ProtelisNode<P> node;
+    private final Node<Object> node;
     private String originalProgram = "unknown";
     private final ProtelisProgram program;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
@@ -60,7 +60,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
 
     private RunProtelisProgram(
             final Environment<Object, P> environment,
-            final ProtelisNode<P> node,
+            final Node<Object> node,
             final Reaction<Object> reaction,
             final RandomGenerator randomGenerator,
             final ProtelisProgram program,
@@ -80,7 +80,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
         random = requireNonNull(randomGenerator);
         this.reaction = requireNonNull(reaction);
         networkManager = new AlchemistNetworkManager(reaction, this, retentionTime, packetLossDistance);
-        this.node.addNetworkManger(this, networkManager);
+        this.node.asCapability(ProtelisCapability.class).addNetworkManger(this, networkManager);
         executionContext = new AlchemistExecutionContext<>(environment, node, reaction, randomGenerator, networkManager);
         vm = new ProtelisVM(program, executionContext);
         this.retentionTime = retentionTime;
@@ -102,7 +102,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      */
     public RunProtelisProgram(
             final Environment<Object, P> environment,
-            final ProtelisNode<P> node,
+            final Node<Object> node,
             final Reaction<Object> reaction,
             final RandomGenerator randomGenerator,
             final String program
@@ -129,7 +129,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      */
     public RunProtelisProgram(
             final Environment<Object, P> environment,
-            final ProtelisNode<P> node,
+            final Node<Object> node,
             final Reaction<Object> reaction,
             final RandomGenerator randomGenerator,
             final String program,
@@ -164,7 +164,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      */
     public RunProtelisProgram(
             final Environment<Object, P> environment,
-            final ProtelisNode<P> node,
+            final Node<Object> node,
             final Reaction<Object> reaction,
             final RandomGenerator randomGenerator,
             final String program,
@@ -210,7 +210,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      */
     public RunProtelisProgram(
             final Environment<Object, P> environment,
-            final ProtelisNode<P> node,
+            final Node<Object> node,
             final Reaction<Object> reaction,
             final RandomGenerator randomGenerator,
             final String program,
@@ -257,7 +257,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      */
     public RunProtelisProgram(
             final Environment<Object, P> environment,
-            final ProtelisNode<P> node,
+            final Node<Object> node,
             final Reaction<Object> reaction,
             final RandomGenerator randomGenerator,
             final ProtelisProgram program,
@@ -302,7 +302,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      */
     public RunProtelisProgram(
             final Environment<Object, P> environment,
-            final ProtelisNode<P> node,
+            final Node<Object> node,
             final Reaction<Object> reaction,
             final RandomGenerator randomGenerator,
             final String program,
@@ -331,11 +331,11 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     @Override
     @SuppressWarnings("unchecked")
     public RunProtelisProgram<P> cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node instanceof ProtelisNode) {
+        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
             try {
-                return new RunProtelisProgram<>(
+                return new RunProtelisProgram<P>(
                     getEnvironment(),
-                    (ProtelisNode<P>) node,
+                    node,
                     reaction,
                     getRandomGenerator(),
                     originalProgram,
@@ -345,7 +345,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
                 throw new IllegalStateException(e);
             }
         }
-        throw new IllegalArgumentException("The node must be a " + ProtelisNode.class.getSimpleName());
+        throw new IllegalArgumentException("The node must have an instance of " + ProtelisCapability.class.getSimpleName());
     }
 
     @Override
@@ -392,7 +392,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
      * @return the node
      */
     @SuppressFBWarnings(value = EI_EXPOSE_REP, justification = INTENTIONAL)
-    public ProtelisNode<P> getNode() {
+    public Node<Object> getNode() {
         return node;
     }
 

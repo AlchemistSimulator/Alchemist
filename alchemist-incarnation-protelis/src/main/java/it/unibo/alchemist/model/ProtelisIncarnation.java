@@ -15,11 +15,13 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.implementations.BaseProtelisCapability;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
+import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
+import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
@@ -36,6 +38,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -53,7 +56,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -87,7 +89,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             });
 
     private static List<RunProtelisProgram<?>> getIncomplete(
-            final ProtelisNode<?> protelisNode,
+            final Node<?> protelisNode,
             final List<RunProtelisProgram<?>> alreadyDone
     ) {
         return protelisNode.getReactions().stream()
@@ -119,16 +121,16 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final String additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters);
-        if (node instanceof ProtelisNode) {
-            final ProtelisNode<P> pNode = (ProtelisNode<P>) node;
+        Objects.requireNonNull(node);
+        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
             if ("send".equalsIgnoreCase(additionalParameters)) {
-                final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
+                final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
                         .parallelStream()
                         .flatMap(r -> r.getActions().parallelStream())
                         .filter(a -> a instanceof SendToNeighbor)
                         .map(c -> ((SendToNeighbor) c).getProtelisProgram())
                         .collect(Collectors.toList());
-                final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
+                final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
                 if (pList.isEmpty()) {
                     throw new IllegalStateException("There is no program requiring a "
                             + SendToNeighbor.class.getSimpleName() + " action");
@@ -137,10 +139,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     throw new IllegalStateException("There are too many programs requiring a "
                             + SendToNeighbor.class.getName() + " action: " + pList);
                 }
-                return new SendToNeighbor(pNode, reaction, pList.get(0));
+                return new SendToNeighbor(node, reaction, pList.get(0));
             } else {
                 try {
-                    return new RunProtelisProgram<>(environment, pNode, reaction, randomGenerator, additionalParameters);
+                    return new RunProtelisProgram<>(environment, node, reaction, randomGenerator, additionalParameters);
                 } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
                     throw new IllegalArgumentException(
                             "Could not create the requested Protelis program: " + additionalParameters,
@@ -149,8 +151,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 }
             }
         }
-        throw new IllegalArgumentException("The node must be an instance of " + ProtelisNode.class.getSimpleName()
-                + ", it is a " + node.getClass().getName() + " instead");
+        throw new IllegalArgumentException(
+                "The node must have an instance of a " + ProtelisCapability.class.getSimpleName()
+        );
     }
 
     @Override
@@ -167,6 +170,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
+    public Object createConcentration() {
+        return null;
+    }
+
+    @Override
     public Condition<Object> createCondition(
             final RandomGenerator randomGenerator,
             final Environment<Object, P> environment,
@@ -175,18 +183,17 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Reaction<Object> reaction,
             final String additionalParameters
     ) {
-        if (node instanceof ProtelisNode) {
-            final ProtelisNode<?> pNode = (ProtelisNode<?>) node;
+        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
-            final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
+            final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
                     .stream()
                     .flatMap(r -> r.getConditions().stream())
                     .filter(c -> c instanceof ComputationalRoundComplete)
                     .map(c -> ((ComputationalRoundComplete) c).getProgram())
                     .collect(Collectors.toList());
-            final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
+            final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
             if (pList.isEmpty()) {
                 throw new IllegalStateException(
                     "There is no program requiring a " + ComputationalRoundComplete.class.getSimpleName() + " condition"
@@ -198,11 +205,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                         + " condition: " + pList
                 );
             }
-            return new ComputationalRoundComplete(pNode, pList.get(0));
+            return new ComputationalRoundComplete(node, pList.get(0));
         }
         throw new IllegalArgumentException(
-            "The node must be an instance of " + ProtelisNode.class.getSimpleName() + ", it is a "
-                + node.getClass().getName() + " instead"
+                "The node must have an instance instance of " + ProtelisCapability.class.getSimpleName()
         );
     }
 
@@ -217,7 +223,24 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Environment<Object, P> environment,
             final String parameter
     ) {
-        return new ProtelisNode<>(environment);
+        final Node<Object> node = new GenericNode<>(this, environment) {
+
+            @Override
+            protected Object createT() {
+                return createConcentration();
+            }
+
+            @NotNull
+            @Override
+            public Node<Object> cloneNode(@NotNull final Time currentTime) {
+                final Node<Object> result = createNode(randomGenerator, environment, parameter);
+                getContents().forEach(result::setConcentration);
+                getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result, currentTime)));
+                return result;
+            }
+        };
+        node.addCapability(new BaseProtelisCapability<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
+        return node;
     }
 
     @Override
@@ -346,9 +369,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 return "Wapper over a non-ProtelisNode for an invalid DeviceUID, meant to host local-only computation.";
             }
         };
-        private final Node<?> node;
+        private final Node<Object> node;
 
-        private DummyContext(final Node<?> node) {
+        private DummyContext(final Node<Object> node) {
             super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
                 @Override
                 public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
@@ -370,8 +393,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         @SuppressFBWarnings("EI_EXPOSE_REP")
         public DeviceUID getDeviceUID() {
-            if (node instanceof ProtelisNode) {
-                return (ProtelisNode<?>) node;
+            if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
+                return node.asCapability(ProtelisCapability.class);
             }
             return NO_NODE_ID;
         }
@@ -586,7 +609,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         @NotNull
         @Override
-        public List<Capability<Object>> getCapabilities() { return notImplemented(); }
+        public List<Capability<Object>> getCapabilities() { return Collections.emptyList(); }
 
     }
 

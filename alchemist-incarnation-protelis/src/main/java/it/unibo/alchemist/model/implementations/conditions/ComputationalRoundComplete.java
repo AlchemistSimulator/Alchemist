@@ -8,10 +8,10 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
      * @param program
      *            the reference {@link RunProtelisProgram}
      */
-    public ComputationalRoundComplete(final ProtelisNode<?> node, final RunProtelisProgram program) {
+    public ComputationalRoundComplete(final Node<Object> node, final RunProtelisProgram program) {
         super(node);
         this.program = program;
         declareDependencyOn(this.program.asMolecule());
@@ -38,7 +38,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
 
     @Override
     public ComputationalRoundComplete cloneCondition(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node instanceof ProtelisNode) {
+        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
             final List<RunProtelisProgram> possibleRefs = node.getReactions().stream()
                     .map(Reaction::getActions)
                     .flatMap(List::stream)
@@ -46,13 +46,13 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
                     .map(a -> (RunProtelisProgram) a)
                     .collect(Collectors.toList());
             if (possibleRefs.size() == 1) {
-                return new ComputationalRoundComplete((ProtelisNode) node, possibleRefs.get(0));
+                return new ComputationalRoundComplete(node, possibleRefs.get(0));
             }
             throw new IllegalStateException("There must be one and one only unconfigured "
                     + RunProtelisProgram.class.getSimpleName());
         }
-        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node of type "
-                + node.getClass().getSimpleName());
+        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node with a missing "
+                + ProtelisCapability.class.getSimpleName());
     }
 
     @Override
@@ -61,8 +61,8 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     }
 
     @Override
-    public ProtelisNode<?> getNode() {
-        return (ProtelisNode<?>) super.getNode();
+    public Node<Object> getNode() {
+        return super.getNode();
     }
 
     @Override

@@ -53,7 +53,7 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
     /**
      * Default implementation fails: override correctly calling the constructor.
      */
-    override fun cloneNode(currentTime: Time): AbstractNode<T> =
+    override fun cloneNode(currentTime: Time): Node<T> =
         TODO("Cloning not yet implemented in ${this::class.simpleName}")
 
     final override fun compareTo(@Nonnull other: Node<T>): Int = when (other) {
@@ -61,9 +61,7 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
         else -> 0
     }
 
-    override fun contains(molecule: Molecule): Boolean {
-        return molecules.containsKey(molecule)
-    }
+    override fun contains(molecule: Molecule): Boolean = molecules.containsKey(molecule)
 
     /**
      * @return an empty concentration
@@ -75,13 +73,9 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
     /**
      * Performs an [action] for every reaction.
      */
-    final override fun forEach(action: Consumer<in Reaction<T>>) {
-        reactions.forEach(action)
-    }
+    final override fun forEach(action: Consumer<in Reaction<T>>) = reactions.forEach(action)
 
-    override fun getConcentration(molecule: Molecule): T {
-        return molecules[molecule] ?: return createT()
-    }
+    override fun getConcentration(molecule: Molecule): T = molecules[molecule] ?: createT()
 
     override val contents: Map<Molecule, T> = Collections.unmodifiableMap(molecules)
 
@@ -119,13 +113,9 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
     /**
      * Returns the [reactions] [Spliterator].
      */
-    final override fun spliterator(): Spliterator<Reaction<T>> {
-        return reactions.spliterator()
-    }
+    final override fun spliterator(): Spliterator<Reaction<T>> = reactions.spliterator()
 
-    override fun toString(): String {
-        return molecules.toString()
-    }
+    override fun toString(): String = molecules.toString()
 
     companion object {
         private const val serialVersionUID = 2496775909028222278L

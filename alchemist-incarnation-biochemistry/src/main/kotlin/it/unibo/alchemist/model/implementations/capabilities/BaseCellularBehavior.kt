@@ -13,16 +13,16 @@ import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehaviour
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior
 
 /**
- * Base implementation of a [CellularBehaviour].
+ * Base implementation of a [CellularBehavior].
  */
-class BaseCellularBehaviour<P : Position<P>> @JvmOverloads constructor(
+class BaseCellularBehavior<P : Position<P>> @JvmOverloads constructor(
     environment: Environment<Double, P>,
     override val node: Node<Double>,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : CellularBehaviour<P> {
+) : CellularBehavior<P> {
 
     override var polarizationVersor: P = environment.makePosition(0, 0)
 

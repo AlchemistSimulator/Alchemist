@@ -13,17 +13,28 @@ import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehaviour
-import it.unibo.alchemist.model.interfaces.capabilities.CircularDeformableCellularBehaviour
+import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehavior
+import it.unibo.alchemist.model.interfaces.capabilities.CircularDeformableCellularBehavior
 
 /**
- * Base implementation of a [CircularCellularBehaviour].
+ * Base implementation of a [CircularCellularBehavior].
  */
-class BaseCircularDeformableCellularBehaviour<P : Position<P>> @JvmOverloads constructor(
+class BaseCircularDeformableCellularBehavior<P : Position<P>> @JvmOverloads constructor(
     environment: Environment<Double, P>,
     override val node: Node<Double>,
-    override val diameter: Double,
     override val maximumDiameter: Double,
+    override val rigidity: Double,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : CircularDeformableCellularBehaviour<P>,
-    CircularCellularBehaviour<P> by BaseCircularCellularBehaviour(environment, node, diameter, junctions)
+) : CircularDeformableCellularBehavior<P>,
+    CircularCellularBehavior<P> by BaseCircularCellularBehavior(
+        environment,
+        node,
+        maximumDiameter * rigidity,
+        junctions
+    ) {
+    init {
+        assert(rigidity in 0.0..1.0) {
+            "deformability must be between 0 and 1"
+        }
+    }
+}

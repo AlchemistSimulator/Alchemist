@@ -15,15 +15,14 @@ import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.apache.commons.math3.random.MersenneTwister;
@@ -49,8 +48,8 @@ class TestBiomolLayer {
         final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
         final Biomolecule b = new Biomolecule("B");
         final Layer<Double, Euclidean2DPosition> bLayer = new StepLayer<>(10_000.0, 0d);
-        final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
         final MersenneTwister rand = new MersenneTwister(0);
+        final Node<Double> cellNode = INCARNATION.createNode(rand, env, null);
         final Molecule a = new Biomolecule("A");
         final Reaction<Double> underTest = INCARNATION.createReaction(
             rand, env, cellNode,

@@ -7,12 +7,12 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
@@ -30,12 +30,17 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
      * @param node the node
      * @param random the {@link RandomGenerator}
      */
-    public RandomPolarization(final Environment<Double, P> environment, final Node<Double> node, final RandomGenerator random) {
+    public RandomPolarization(
+            final Environment<Double, P> environment,
+            final Node<Double> node,
+            final RandomGenerator random
+    ) {
         super(node, random);
         this.environment = environment;
-        if (!(node instanceof CellNode)) {
-            throw new UnsupportedOperationException("Polarization can happen only in cells, required CellNode, got "
-                + node.getClass());
+        if (!(node.asCapabilityOrNull(CellularBehavior.class) != null)) {
+            throw new UnsupportedOperationException(
+                    "Polarization can happen only in nodes with " + CellularBehavior.class.getSimpleName()
+            );
         }
     }
 
@@ -59,7 +64,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
                 randomVersor = environment.makePosition(x / module, y / module);
             }
         }
-        getNode().addPolarization(randomVersor);
+        getNode().asCapability(CellularBehavior.class).addPolarizationVersor(randomVersor);
     }
 
     /**
@@ -77,8 +82,8 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
 
     @Override
     @SuppressWarnings("unchecked")
-    public CellNode<P> getNode()  {
-        return (CellNode<P>) super.getNode();
+    public Node<Double> getNode()  {
+        return super.getNode();
     }
 
 }

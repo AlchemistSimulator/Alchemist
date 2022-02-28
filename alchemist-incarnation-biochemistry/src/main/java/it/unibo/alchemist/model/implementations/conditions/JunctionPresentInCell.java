@@ -10,11 +10,12 @@ package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
 
 import java.util.Collections;
+import java.util.Map;
 
 /**
  */
@@ -33,7 +34,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
      */
     public JunctionPresentInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction) {
         super(e, n);
-        if (n instanceof CellNode) {
+        if (n.asCapabilityOrNull(CellularBehavior.class) != null) {
             declareDependencyOn(junction);
             j = junction;
             env = e;
@@ -44,7 +45,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
 
     @Override
     public boolean isValid() {
-        return getNode().containsJunction(j);
+        return getNode().asCapability(CellularBehavior.class).containsJunction(j);
     }
 
     @Override
@@ -56,7 +57,8 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor's propensity is computed as the number of junctions it has
         //noinspection SuspiciousMethodCalls
-        return getNode().getJunctions()
+        return ((Map<Junction, Map<Node<Double>, Integer>>)getNode().asCapability(CellularBehavior.class)
+                .getJunctions())
                 .getOrDefault(j, Collections.emptyMap())
                 .getOrDefault(neighbor, 0);
     }
@@ -67,8 +69,8 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     }
 
     @Override
-    public CellNode<?> getNode() {
-        return (CellNode<?>) super.getNode();
+    public Node<Double> getNode() {
+        return super.getNode();
     }
 
 }

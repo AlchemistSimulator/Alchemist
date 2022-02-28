@@ -17,28 +17,40 @@ deployments:
   - type: Circle
     parameters: [4, 0, 0, 5]
     nodes:
-      type: CellNodeImpl
-      parameters: [4, p] # p useless parameter
+      type: GenericNode
+      #parameters: [4, p] # p useless parameter
+    capabilities:
+      type: BaseCircularCellularBehavior
+      parameters: [4]
     programs:
       - *waterDissociation
   - type: Circle
     parameters: [5, 0, 0, 5]
     nodes:
-      type: CellNodeImpl
-      parameters: [3, p] # p useless parameter
+      type: GenericNode
+      #parameters: [3, p] # p useless parameter
+    capabilities:
+      type: BaseCircularCellularBehavior
+      parameters: [3]
     programs:
       - *waterDissociation
   - type: Circle
     parameters: [5, 0, 0, 5]
     nodes:
-      type: CellNodeImpl
-      parameters: [2, p] # p useless parameter
+      type: GenericNode
+      #parameters: [2, p] # p useless parameter
+    capabilities:
+      type: BaseCircularCellularBehavior
+      parameters: [2]
     programs:
       - *waterDissociation
   - type: Circle
     parameters: [5, 0, 0, 5]
     nodes:
-      type: CellNodeImpl
-      parameters: [1, p] # p useless parameter
+      type: GenericNode
+      #parameters: [1, p] # p useless parameter
+    capabilities:
+      type: BaseCircularCellularBehavior
+      parameters: [ 1 ]
     programs:
       - *waterDissociation

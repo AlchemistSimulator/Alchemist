@@ -8,11 +8,11 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
@@ -37,7 +37,7 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
      */
     public AddJunctionInNeighbor(
             final Environment<Double, P> environment,
-            final CellNode<P> node,
+            final Node<Double> node,
             final Junction junction,
             final RandomGenerator randomGenerator
     ) {
@@ -49,10 +49,10 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @SuppressWarnings("unchecked")
     @Override
     public AddJunctionInNeighbor<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        if (node instanceof CellNode) {
+        if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
             return new AddJunctionInNeighbor<>(
                     (Environment<Double, P>) getEnvironment(),
-                    (CellNode<P>) node,
+                    node,
                     jun, getRandomGenerator());
         }
         throw new IllegalArgumentException("Node must be CellNode, found " + node + " of type: " + node.getClass());
@@ -73,8 +73,8 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @Override
     @SuppressWarnings("unchecked")
     public void execute(final Node<Double> targetNode) {
-        if (targetNode instanceof CellNode) {
-            ((CellNode<P>) targetNode).addJunction(jun, getNode());
+        if (targetNode.asCapabilityOrNull(CellularBehavior.class) != null) {
+            targetNode.asCapability(CellularBehavior.class).addJunction(jun, getNode());
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
         }
@@ -87,8 +87,8 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
 
     @Override
     @SuppressWarnings("unchecked")
-    public CellNode<P> getNode() {
-        return (CellNode<P>) super.getNode();
+    public Node<Double> getNode() {
+        return super.getNode();
     }
 
 }

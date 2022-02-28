@@ -9,12 +9,12 @@
 package it.unibo.alchemist.model;
 
 
+import it.unibo.alchemist.model.implementations.capabilities.BaseCircularCellularBehavior;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
+import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -22,9 +22,11 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @param <P> position type, must be a {@link Vector}
@@ -42,14 +44,28 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     }
 
     @Override
-    public CellNode<P> createNode(
+    public Node<Double> createNode(
             final RandomGenerator randomGenerator,
             final Environment<Double, P> environment,
             final String parameter) {
+        final Node<Double> node = new GenericNode<Double>(this, environment) {
+            @Override
+            protected Double createT() {
+                return 0d;
+            }
+
+            @NotNull
+            @Override
+            public Node<Double> cloneNode(@NotNull final Time currentTime) {
+                return createNode(randomGenerator, environment, parameter);
+            }
+        };
         if (parameter == null || parameter.isEmpty()) {
-            return new CellNodeImpl<>(environment);
+            node.addCapability(new BaseCircularCellularBehavior<>(environment, node));
+            return node;
         }
-        return new CellNodeImpl<>(environment, Double.parseDouble(parameter));
+        node.addCapability(new BaseCircularCellularBehavior<>(environment, node, Double.parseDouble(parameter)));
+        return node;
     }
 
     @Override
@@ -113,6 +129,10 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
             return 1d;
         }
         return Double.parseDouble(s);
+    }
+
+    public Double createConcentration() {
+        return createConcentration("0");
     }
 
     @Override

@@ -13,16 +13,16 @@ import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehaviour
-import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehaviour
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior
+import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehavior
 
 /**
- * Base implementation of a [CircularCellularBehaviour].
+ * Base implementation of a [CircularCellularBehavior].
  */
-class BaseCircularCellularBehaviour<P : Position<P>> @JvmOverloads constructor(
+class BaseCircularCellularBehavior<P : Position<P>> @JvmOverloads constructor(
     environment: Environment<Double, P>,
     override val node: Node<Double>,
-    override val diameter: Double,
+    override val diameter: Double = 0.0,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap()
-) : CircularCellularBehaviour<P>,
-    CellularBehaviour<P> by BaseCellularBehaviour(environment, node, junctions)
+) : CircularCellularBehavior<P>,
+    CellularBehavior<P> by BaseCellularBehavior(environment, node, junctions)

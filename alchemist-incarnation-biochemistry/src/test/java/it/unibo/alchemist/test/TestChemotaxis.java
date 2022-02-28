@@ -10,17 +10,17 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehavior;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
@@ -43,7 +43,7 @@ class TestChemotaxis {
     private static final double PRECISION = 1e-15;
     private static final String CELL_MOVE_REACTION = "[] --> [CellMove(false, 1)]";
     private Environment<Double, Euclidean2DPosition> env;
-    private CellNode<Euclidean2DPosition> cellNode1;
+    private Node<Double> cellNode1;
     private EnvironmentNode envNode1;
     private EnvironmentNode envNode2;
     private EnvironmentNode envNode3;
@@ -64,7 +64,7 @@ class TestChemotaxis {
         envNode2 = new EnvironmentNodeImpl(env);
         envNode3 = new EnvironmentNodeImpl(env);
         envNode4 = new EnvironmentNodeImpl(env);
-        cellNode1 = new CellNodeImpl<>(env);
+        cellNode1 = inc.createNode(rand, env, null);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);
     }
@@ -89,11 +89,11 @@ class TestChemotaxis {
         envNode3.setConcentration(biomolA, CONCENTRATION1);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION); 
         r.execute();
-        assertEquals(cellNode1.getPolarizationVersor().getX(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(0),
                 FastMath.sqrt(0.5),
                 PRECISION
                 );
-        assertEquals(cellNode1.getPolarizationVersor().getY(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(1),
                 FastMath.sqrt(0.5),
                 PRECISION
                 );
@@ -119,11 +119,11 @@ class TestChemotaxis {
         envNode3.setConcentration(biomolA, CONCENTRATION1);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
-        assertEquals(cellNode1.getPolarizationVersor().getX(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(0),
                 0,
                 PRECISION
                 );
-        assertEquals(cellNode1.getPolarizationVersor().getY(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(1),
                 0,
                 PRECISION
                 );
@@ -146,11 +146,11 @@ class TestChemotaxis {
         env.addNode(cellNode1, p5);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
-        assertEquals(cellNode1.getPolarizationVersor().getX(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(0),
                 0,
                 PRECISION
                 );
-        assertEquals(cellNode1.getPolarizationVersor().getY(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(1),
                 0,
                 PRECISION
                 );
@@ -165,11 +165,11 @@ class TestChemotaxis {
         env.addNode(cellNode1, p1);
         final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
-        assertEquals(cellNode1.getPolarizationVersor().getX(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(0),
                 0,
                 PRECISION
                 );
-        assertEquals(cellNode1.getPolarizationVersor().getY(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(1),
                 0,
                 PRECISION
                 );
@@ -194,11 +194,11 @@ class TestChemotaxis {
         final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemotacticPolarization(B, up)]");
         r1.execute();
         r2.execute();
-        assertEquals(cellNode1.getPolarizationVersor().getX(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(0),
                 0,
                 PRECISION
                 );
-        assertEquals(cellNode1.getPolarizationVersor().getY(),
+        assertEquals(cellNode1.asCapability(CircularCellularBehavior.class).getPolarizationVersor().getCoordinate(1),
                 0,
                 PRECISION
                 );

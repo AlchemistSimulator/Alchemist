@@ -8,13 +8,13 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.Comparator;
@@ -46,7 +46,7 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
      */
     public ChemotacticPolarization(
             final Environment<Double, P> environment,
-            final CellNode<P> node,
+            final Node<Double> node,
             final Biomolecule biomolecule,
             final String ascendGrad
     ) {
@@ -77,7 +77,7 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
             final String biomolecule,
             final String ascendGrad
     ) {
-        this(environment, asCellNode(node), new Biomolecule(biomolecule), ascendGrad);
+        this(environment, node, new Biomolecule(biomolecule), ascendGrad);
     }
 
 
@@ -89,38 +89,41 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
     @Override
     public void execute() {
         // declaring a variable for the node where this action is set, to have faster access
-        final CellNode<P> thisNode = getNode();
+        final Node<Double> thisNode = getNode();
         final List<Node<Double>> l = env.getNeighborhood(thisNode).getNeighbors().stream()
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            thisNode.addPolarization(env.makePosition(0, 0));
+            thisNode.asCapability(CellularBehavior.class).addPolarizationVersor(env.makePosition(0, 0));
         } else {
             final boolean isNodeOnMaxConc = env.getPosition(l.stream()
                     .max(Comparator.comparingDouble(n -> n.getConcentration(biomol)))
                     .get()).equals(env.getPosition(thisNode));
             if (isNodeOnMaxConc) {
-                thisNode.addPolarization(env.makePosition(0, 0));
+                thisNode.asCapability(CellularBehavior.class)
+                        .addPolarizationVersor(env.makePosition(0, 0));
             } else {
                 P newPolVer = weightedAverageVectors(l, thisNode);
                 final double newPolX = newPolVer.getX();
                 final double newPolY = newPolVer.getY();
                 final double newPolVerModule = FastMath.sqrt(newPolX * newPolX + newPolY * newPolY);
                 if (newPolVerModule == 0) {
-                    thisNode.addPolarization(newPolVer);
+                    thisNode.asCapability(CellularBehavior.class).addPolarizationVersor(newPolVer);
                 } else {
-                    newPolVer = env.makePosition(newPolVer.getX() / newPolVerModule, newPolVer.getY() / newPolVerModule);
+                    newPolVer = env.makePosition(newPolVer.getX() / newPolVerModule,
+                            newPolVer.getY() / newPolVerModule);
                     if (ascend) {
-                        thisNode.addPolarization(newPolVer);
+                        thisNode.asCapability(CellularBehavior.class).addPolarizationVersor(newPolVer);
                     } else {
-                        thisNode.addPolarization(env.makePosition(-newPolVer.getX(), -newPolVer.getY()));
+                        thisNode.asCapability(CellularBehavior.class)
+                                .addPolarizationVersor(env.makePosition(-newPolVer.getX(), -newPolVer.getY()));
                     }
                 }
             }
         }
     }
 
-    private P weightedAverageVectors(final List<Node<Double>> list, final CellNode<P> thisNode) {
+    private P weightedAverageVectors(final List<Node<Double>> list, final Node<Double> thisNode) {
         P res = env.makePosition(0, 0);
         final P thisNodePos = env.getPosition(thisNode);
         for (final Node<Double> n : list) {
@@ -128,7 +131,8 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
             P vecTemp = env.makePosition(
                     nPos.getX() - thisNodePos.getX(),
                     nPos.getY() - thisNodePos.getY());
-            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getX(), 2) + FastMath.pow(vecTemp.getY(), 2));
+            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getX(), 2)
+                    + FastMath.pow(vecTemp.getY(), 2));
             vecTemp = env.makePosition(
                     n.getConcentration(biomol) * (vecTemp.getX() / vecTempModule),
                     n.getConcentration(biomol) * (vecTemp.getY() / vecTempModule));
@@ -145,15 +149,8 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
-    public CellNode<P> getNode() {
-        return asCellNode(super.getNode());
-    }
-
-    private static <P extends Position2D<P>> CellNode<P> asCellNode(final Node<Double> node) {
-         if (node instanceof CellNode) {
-             return (CellNode<P>) node;
-         }
-         throw new IllegalArgumentException("CellNode required, got " + node.getClass());
+    public Node<Double> getNode() {
+        return super.getNode();
     }
 
 }

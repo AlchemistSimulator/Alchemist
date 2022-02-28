@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Position
 /**
  * A node's capability to behave as a cell.
  */
-interface CellularBehaviour<P : Position<P>> : Capability<Double> {
+interface CellularBehavior<P : Position<P>> : Capability<Double> {
 
     /**
      * The map junction - node - quantity.
@@ -97,7 +97,7 @@ interface CellularBehaviour<P : Position<P>> : Capability<Double> {
     /**
      * The total number of junctions presents in this [node].
      */
-    val junctionCount: Int
+    val junctionsCount: Int
         get() = junctions.values.flatMap { it.values }.sum()
 
     /**

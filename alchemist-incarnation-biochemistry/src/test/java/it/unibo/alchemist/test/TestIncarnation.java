@@ -23,11 +23,10 @@ import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell
 import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.apache.commons.math3.random.MersenneTwister;
@@ -50,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class TestIncarnation {
 
     private static final BiochemistryIncarnation<Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
-    private CellNode<Euclidean2DPosition> node;
+    private Node<Double> node;
     private Environment<Double, Euclidean2DPosition> env;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
@@ -66,7 +65,7 @@ class TestIncarnation {
     @BeforeEach
     public void setUp() {
         env = new BioRect2DEnvironment();
-        node = new CellNodeImpl<>(env);
+        node = INCARNATION.createNode(rand, env, null);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);
     }

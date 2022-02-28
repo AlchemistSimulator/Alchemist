@@ -7,13 +7,14 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
-import it.unibo.alchemist.model.interfaces.CircularDeformableCell;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
+import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehavior;
+import it.unibo.alchemist.model.interfaces.capabilities.CircularDeformableCellularBehavior;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 
@@ -38,7 +39,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
      */
     public CellTensionPolarization(
             final EnvironmentSupportingDeformableCells<P> environment,
-            final CircularDeformableCell<P> node
+            final Node<Double> node
     ) {
         super(node);
         this.env = environment;
@@ -46,8 +47,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
 
     @Override
     public CellTensionPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        if (node instanceof CircularDeformableCell) {
-            return new CellTensionPolarization<>(env, (CircularDeformableCell<P>) node);
+        if (node.asCapabilityOrNull(CircularDeformableCellularBehavior.class) != null) {
+            return new CellTensionPolarization<>(env, node);
         }
         throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + node
                 + " of type: " + node.getClass());
@@ -60,22 +61,26 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         // initializing resulting versor
         final double[] resVersor = new double[nodePos.length];
         // declaring a variable for the node where this action is set, to have faster access
-        final CircularDeformableCell<P> thisNode = getNode();
+        final Node<Double> thisNode = getNode();
         // transforming each node around in a vector (Position) 
         final List<P> pushForces = env.getNodesWithinRange(
                 thisNode,
                 env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .filter(n -> { // only cells overlapping this cell are selected
-                    if (n instanceof CellWithCircularArea) {
+                    if (n.asCapabilityOrNull(CircularCellularBehavior.class) != null) {
                         // computing for each cell the max distance among which can't be overlapping
                         double maxDist;
-                        if (n instanceof CircularDeformableCell) {
+                        if (n.asCapabilityOrNull(CircularDeformableCellularBehavior.class) != null) {
                             // for deformable cell is maxRad + maxRad
-                             maxDist = thisNode.getMaxRadius() + ((CircularDeformableCell<P>) n).getMaxRadius();
+                             maxDist = thisNode
+                                     .asCapability(CircularDeformableCellularBehavior.class).getMaximumRadius()
+                                     + n.asCapability(CircularDeformableCellularBehavior.class).getMaximumRadius();
                         } else {
                             // for simple cells is maxRad + rad
-                             maxDist = thisNode.getMaxRadius() + ((CellWithCircularArea<P>) n).getRadius();
+                             maxDist = thisNode
+                                     .asCapability(CircularDeformableCellularBehavior.class).getMaximumRadius()
+                                     + n.asCapability(CircularDeformableCellularBehavior.class).getRadius();
                         }
                         // check
                         return env.getDistanceBetweenNodes(thisNode, n) < maxDist;
@@ -92,17 +97,21 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                     // min radius of n
                     final double localNodeMinRadius;
                     // max radius of this node (thisNode)
-                    final double nodeMaxRadius = thisNode.getMaxRadius();
+                    final double nodeMaxRadius = thisNode.asCapability(CircularDeformableCellularBehavior.class)
+                            .getMaximumRadius();
                     // min radius of this node (thisNode)
-                    final double nodeMinRadius = thisNode.getRadius();
+                    final double nodeMinRadius = thisNode.asCapability(CircularDeformableCellularBehavior.class)
+                            .getRadius();
                     // intensity of tension between n and this node (thisNode), measured as value between 0 and 1
                     final double intensity;
-                    if (n instanceof CircularDeformableCell) {
-                        final CircularDeformableCell<P> localNode = (CircularDeformableCell<P>) n;
-                        localNodeMaxRadius = localNode.getMaxRadius();
-                        localNodeMinRadius = localNode.getRadius();
+                    if (n.asCapabilityOrNull(CircularDeformableCellularBehavior.class) != null) {
+                        final Node<Double> localNode = n;
+                        localNodeMaxRadius = localNode.asCapability(CircularDeformableCellularBehavior.class)
+                                .getMaximumRadius();
+                        localNodeMinRadius = localNode.asCapability(CircularDeformableCellularBehavior.class)
+                                .getRadius();
                     } else {
-                        localNodeMaxRadius = ((CellWithCircularArea<P>) n).getRadius();
+                        localNodeMaxRadius = n.asCapabilityOrNull(CircularCellularBehavior.class).getRadius();
                         localNodeMinRadius = localNodeMaxRadius;
                     }
                     // if both cells has no difference between maxRad and minRad intensity must be 1
@@ -133,7 +142,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 })
                 .collect(Collectors.toList());
         if (pushForces.isEmpty()) {
-            thisNode.addPolarization(env.makePosition(0, 0));
+            thisNode.asCapability(CellularBehavior.class).addPolarizationVersor(env.makePosition(0,0));
         } else {
             for (final P p : pushForces) {
                 resVersor[0] = resVersor[0] + p.getX();
@@ -141,9 +150,13 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
             }
             final double module = FastMath.sqrt(FastMath.pow(resVersor[0], 2) + FastMath.pow(resVersor[1], 2));
             if (module == 0) {
-                thisNode.addPolarization(env.makePosition(0, 0));
+                thisNode.asCapability(CellularBehavior.class).addPolarizationVersor(env.makePosition(0,0));
             } else {
-                thisNode.addPolarization(env.makePosition(resVersor[0] / module, resVersor[1] / module));
+                thisNode.asCapability(CellularBehavior.class)
+                        .addPolarizationVersor(
+                                env.makePosition(resVersor[0] / module,
+                                        resVersor[1] / module)
+                        );
             }
         }
     }
@@ -154,8 +167,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
-    public CircularDeformableCell<P> getNode() {
-        return (CircularDeformableCell<P>) super.getNode();
+    public Node<Double> getNode() {
+        return super.getNode();
     }
 
 }

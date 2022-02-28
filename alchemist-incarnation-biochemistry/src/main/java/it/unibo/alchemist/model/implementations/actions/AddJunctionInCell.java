@@ -8,11 +8,11 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -37,7 +37,7 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
      */
     public AddJunctionInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction j, final RandomGenerator rg) {
         super(n, e, rg);
-        if (n instanceof CellNode) {
+        if (n.asCapabilityOrNull(CellularBehavior.class) != null) {
             declareDependencyTo(j);
             jun = j;
         } else {
@@ -64,8 +64,8 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        if (targetNode instanceof CellNode) {
-            getNode().addJunction(jun, (CellNode<?>) targetNode);
+        if (targetNode.asCapabilityOrNull(CellularBehavior.class) != null) {
+            getNode().asCapability(CellularBehavior.class).addJunction(jun, targetNode);
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
         }
@@ -77,7 +77,7 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
     }
 
     @Override
-    public CellNode<?> getNode() {
-        return (CellNode<?>) super.getNode();
+    public Node<Double> getNode() {
+        return super.getNode();
     }
 }

@@ -32,7 +32,6 @@ import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -41,6 +40,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
@@ -382,9 +382,9 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                     );
                 }
             });
-            if (node instanceof CellNode) {
+            if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
                 actionList.add(new AddJunctionInCell(env, node, j, rand));
-                actionList.add(new AddJunctionInNeighbor<>(env, (CellNode<P>) node, reverseJunction(j), rand));
+                actionList.add(new AddJunctionInNeighbor<>(env, node, reverseJunction(j), rand));
             } else {
                 throw new UnsupportedOperationException(
                         "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
@@ -410,7 +410,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 visit(context.customReactionType());
             }
             junctionList.forEach(j -> {
-                if (node instanceof CellNode) {
+                if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
                     actionList.add(new RemoveJunctionInCell(env, node, j, rand));
                     actionList.add(new RemoveJunctionInNeighbor(env, node, reverseJunction(j), rand));
                 } else {
@@ -445,7 +445,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         public Reaction<Double> visitJunctionReactionJunctionCondition(
                 final BiochemistrydslParser.JunctionReactionJunctionConditionContext context
         ) {
-            if (node instanceof CellNode) {
+            if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
                 final Junction j = createJunction(context.junction());
                 junctionList.add(j);
                 conditionList.add(new JunctionPresentInCell(env, node, j));

@@ -13,17 +13,17 @@ import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
+import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehavior;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,6 +67,9 @@ final class TestEnvironmentNodes {
         injectReaction("[A] --> [A in env]", destination, rate);
     }
 
+    private Node<Double> createNode() {
+        return INCARNATION.createNode(rand, env, null);
+    }
 
     @BeforeEach
     public void setUp() {
@@ -79,7 +82,7 @@ final class TestEnvironmentNodes {
      */
     @Test
     void test1() {
-        final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
+        final Node<Double> cellNode = createNode();
         final EnvironmentNode envNode = new EnvironmentNodeImpl(env);
         final Molecule a = new Biomolecule("A");
         injectAInEnvReaction(cellNode, 1);
@@ -156,7 +159,7 @@ final class TestEnvironmentNodes {
      */
     @Test
     void testDiffusionWithCellNodes() {
-        testDiffusion(new CellNodeImpl<>(env));
+        testDiffusion(createNode());
     }
  
     /**
@@ -164,7 +167,7 @@ final class TestEnvironmentNodes {
      */
     @Test
     void test5() {
-        final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
+        final Node<Double> cellNode = createNode();
         final EnvironmentNode envNode1 = new EnvironmentNodeImpl(env);
         final EnvironmentNode envNode2 = new EnvironmentNodeImpl(env);
         final EnvironmentNode envNode3 = new EnvironmentNodeImpl(env);
@@ -198,7 +201,7 @@ final class TestEnvironmentNodes {
      */
     @Test
     void test6() {
-        final CellNode<Euclidean2DPosition> cellNode = new CellNodeImpl<>(env);
+        final Node<Double> cellNode = createNode();
         final Molecule a = new Biomolecule("A");
         injectAInEnvReaction(cellNode, 1);
         cellNode.setConcentration(a, 1000.0);
@@ -233,7 +236,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv2.yml");
         final Node<Double> center = env.getNodes().stream()
                 .parallel()
-                .filter(n -> n instanceof CellNode)
+                .filter(n -> n.asCapabilityOrNull(CellularBehavior.class) != null)
                 .findAny()
                 .get();
         final double conAInNearest = env.getNodes().stream()
@@ -255,7 +258,7 @@ final class TestEnvironmentNodes {
     void testEnv3() {
         final double conAInCell = (double) testNoVar("testEnv3.yml").getNodes().stream()
                 .parallel()
-                .filter(n -> n.getClass().equals(CellNodeImpl.class))
+                .filter(n -> n.asCapabilityOrNull(CircularCellularBehavior.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -277,7 +280,7 @@ final class TestEnvironmentNodes {
     void testEnv4() {
         final double conAInCell = (double) testNoVar("testEnv4.yml").getNodes().stream()
                 .parallel()
-                .filter(n -> n.getClass().equals(CellNodeImpl.class))
+                .filter(n -> n.asCapabilityOrNull(CircularCellularBehavior.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -328,7 +331,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv7.yml");
         final double conAInCell = (double) env.getNodes().stream()
                 .parallel()
-                .filter(n -> n instanceof CellNode)
+                .filter(n -> n.asCapabilityOrNull(CellularBehavior.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -350,7 +353,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv8.yml");
         final double conAInCell = (double) env.getNodes().stream()
                 .parallel()
-                .filter(n -> n instanceof CellNode)
+                .filter(n -> n.asCapabilityOrNull(CellularBehavior.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));

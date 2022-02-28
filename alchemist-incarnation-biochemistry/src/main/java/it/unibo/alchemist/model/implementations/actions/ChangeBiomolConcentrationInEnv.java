@@ -11,12 +11,12 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
@@ -53,12 +53,13 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
             final RandomGenerator randomGen
     ) {
         super(node, randomGen);
-        if (node instanceof EnvironmentNode || node instanceof CellNode) {
+        // TODO: Previous check ensured node was EnvironmentNode or CellNode
+        if (node instanceof Node) {
             this.biomolecule = biomolecule;
             delta = deltaCon;
             env = environment;
         } else {
-            throw  new UnsupportedOperationException("This condition can be set only in EnvironmentNode and CellNode");
+            throw  new UnsupportedOperationException("This condition can be set only in Node with cellular behaviour");
         }
     }
 
@@ -116,7 +117,8 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
                 }
             } else {
                 // else, sort the list by the distance from the node
-                environmentNodesSurrounding.sort(Comparator.comparingDouble(n -> env.getDistanceBetweenNodes(thisNode, n)));
+                environmentNodesSurrounding.sort(Comparator
+                        .comparingDouble(n -> env.getDistanceBetweenNodes(thisNode, n)));
                 changeConcentrationInSortedNodes(environmentNodesSurrounding);
             }
         }
@@ -184,7 +186,8 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
             }
         } else {
             // if delta > 0, simply add delta to the first node of the list (which has been sorted randomly)
-            final Node<Double> target = envNodesSurrounding.get(getRandomGenerator().nextInt(envNodesSurrounding.size()));
+            final Node<Double> target = envNodesSurrounding
+                    .get(getRandomGenerator().nextInt(envNodesSurrounding.size()));
             target.setConcentration(biomolecule, target.getConcentration(biomolecule) + delta);
         }
     }

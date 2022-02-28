@@ -27,8 +27,10 @@ deployments:
   - type: Point
     parameters: [1, 0]
     nodes:
-      type: CellNodeImpl
+      type: GenericNode
       parameters: []
+    capabilities:
+      type: BaseCircularCellularBehavior
     contents:
       - molecule: B
         concentration: 10

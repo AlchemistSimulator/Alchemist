@@ -14,15 +14,15 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.CellWithCircularArea;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehavior;
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment;
+import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
@@ -107,16 +107,20 @@ class TestBioRect2DEnvironmentNoOverlap {
     private static final Euclidean2DPosition NODE_POS13_3 = new Euclidean2DPosition(-5, -5);
     private static final Euclidean2DPosition NODE_POS13_4 = new Euclidean2DPosition(5, -5);
     private final Euclidean2DPosition originalPos = new Euclidean2DPosition(0, 0);
-    private CellWithCircularArea<Euclidean2DPosition> ng1;
-    private CellWithCircularArea<Euclidean2DPosition> ng2;
-    private CellWithCircularArea<Euclidean2DPosition> ng3;
-    private CellWithCircularArea<Euclidean2DPosition> nm1;
-    private CellWithCircularArea<Euclidean2DPosition> nm2;
-    private CellWithCircularArea<Euclidean2DPosition> np1;
-    private CellWithCircularArea<Euclidean2DPosition> np2;
-    private CellWithCircularArea<Euclidean2DPosition> np3;
+    private Node<Double> ng1;
+    private Node<Double> ng2;
+    private Node<Double> ng3;
+    private Node<Double> nm1;
+    private Node<Double> nm2;
+    private Node<Double> np1;
+    private Node<Double> np2;
+    private Node<Double> np3;
 
     private Euclidean2DEnvironment<Double> env;
+
+    private Node<Double> createNode(final double diameter) {
+        return env.getIncarnation().createNode(new MersenneTwister(), env, Double.toString(diameter));
+    }
 
     /**
      *
@@ -125,14 +129,14 @@ class TestBioRect2DEnvironmentNoOverlap {
     void setUp() {
         env = new BioRect2DEnvironmentNoOverlap();
         env.setLinkingRule(new NoLinks<>());
-        ng1 = new CellNodeImpl<>(env, BIG_CELL_DIAMETER);
-        ng2 = new CellNodeImpl<>(env, BIG_CELL_DIAMETER);
-        ng3 = new CellNodeImpl<>(env, BIG_CELL_DIAMETER);
-        nm1 = new CellNodeImpl<>(env, MEDIUM_CELL_DIAMETER);
-        nm2 = new CellNodeImpl<>(env, MEDIUM_CELL_DIAMETER);
-        np1 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        np2 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        np3 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        ng1 = createNode(BIG_CELL_DIAMETER);
+        ng2 = createNode(BIG_CELL_DIAMETER);
+        ng3 = createNode(BIG_CELL_DIAMETER);
+        nm1 = createNode(MEDIUM_CELL_DIAMETER);
+        nm2 = createNode(MEDIUM_CELL_DIAMETER);
+        np1 = createNode(LITTLE_CELL_DIAMETER);
+        np2 = createNode(LITTLE_CELL_DIAMETER);
+        np3 = createNode(LITTLE_CELL_DIAMETER);
     }
 
     /**
@@ -140,17 +144,17 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testAddNode() {
-        final CellWithCircularArea<Euclidean2DPosition> n1 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n2 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n3 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n4 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n5 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n6 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n7 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n8 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n9 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n10 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> n11 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> n1 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n2 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n3 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n4 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n5 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n6 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n7 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n8 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n9 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n10 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> n11 = createNode(LITTLE_CELL_DIAMETER);
 
         final Euclidean2DPosition p2 = new Euclidean2DPosition(10, 0);
         env.addNode(n1, originalPos);
@@ -205,10 +209,10 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode1() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove1 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> cellToMove1 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove1, originalPos);
         final Euclidean2DPosition p1 = new Euclidean2DPosition(40, 0);
-        final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> c1 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c1, p1);
         env.moveNode(cellToMove1, POSITION_TO_MOVE1);
         assertEquals(
@@ -225,12 +229,12 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode2() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove2 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> cellToMove2 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove2, originalPos);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(40, 5);
         final Euclidean2DPosition p3 = new Euclidean2DPosition(40, -5);
-        final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
-        final CellWithCircularArea<Euclidean2DPosition> c3 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> c2 = createNode(LITTLE_CELL_DIAMETER);
+        final Node<Double> c3 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c2, p2);
         env.addNode(c3, p3);
         env.moveNode(cellToMove2, POSITION_TO_MOVE2);
@@ -249,10 +253,10 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode3() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove3 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> cellToMove3 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove3, originalPos);
         final Euclidean2DPosition p4 = new Euclidean2DPosition(10, 0);
-        final CellWithCircularArea<Euclidean2DPosition> c4 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> c4 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c4, p4);
         env.moveNode(cellToMove3, POSITION_TO_MOVE3);
         assertEquals(
@@ -269,13 +273,14 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode4() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove4 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> cellToMove4 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove4, originalPos);
         final Euclidean2DPosition p5 = new Euclidean2DPosition(
                 0.2,
-                FastMath.sqrt(FastMath.pow(cellToMove4.getDiameter(), 2) - FastMath.pow(0.2, 2))
+                FastMath.sqrt(FastMath.pow(cellToMove4
+                        .asCapability(CircularCellularBehavior.class).getDiameter(), 2) - FastMath.pow(0.2, 2))
         );
-        final CellWithCircularArea<Euclidean2DPosition> c5 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> c5 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c5, p5);
         env.moveNode(cellToMove4, POSITION_TO_MOVE4);
         assertNotEquals(
@@ -292,10 +297,10 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode5() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove5 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> cellToMove5 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove5, originalPos);
         final Euclidean2DPosition p6 = new Euclidean2DPosition(20, 10);
-        final CellWithCircularArea<Euclidean2DPosition> c6 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> c6 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c6, p6);
         env.moveNode(cellToMove5, POSITION_TO_MOVE5);
         assertEquals(
@@ -312,10 +317,10 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode6() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove6 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> cellToMove6 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove6, originalPos);
         final Euclidean2DPosition p7 = new Euclidean2DPosition(-40, 0);
-        final CellWithCircularArea<Euclidean2DPosition> c7 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> c7 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c7, p7);
         env.moveNode(cellToMove6, POSITION_TO_MOVE6);
         assertEquals(
@@ -332,10 +337,10 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode7() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove7 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> cellToMove7 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove7, originalPos);
         final Euclidean2DPosition p8 = new Euclidean2DPosition(40, 40);
-        final CellWithCircularArea<Euclidean2DPosition> c8 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> c8 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c8, p8);
         env.moveNode(cellToMove7, POSITION_TO_MOVE7);
         assertTrueJUnit4("cellToMove7 is in position: " + env.getPosition(cellToMove7),
@@ -349,10 +354,10 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode8() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove8 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> cellToMove8 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(cellToMove8, originalPos);
         final Euclidean2DPosition p9 = new Euclidean2DPosition(-40, -40);
-        final CellWithCircularArea<Euclidean2DPosition> c9 = new CellNodeImpl<>(env, LITTLE_CELL_DIAMETER);
+        final Node<Double> c9 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c9, p9);
         env.moveNode(cellToMove8, POSITION_TO_MOVE8);
         assertTrueJUnit4("cellToMove8 is in position: " + env.getPosition(cellToMove8),
@@ -439,7 +444,7 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveDifferentDiam1() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove1 = np1;
+        final Node<Double> cellToMove1 = np1;
         env.addNode(cellToMove1, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
 
@@ -456,9 +461,9 @@ class TestBioRect2DEnvironmentNoOverlap {
     @Test
     void testMoveDifferentDiam2() {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove2 = np2;
+        final Node<Double> cellToMove2 = np2;
         env.addNode(cellToMove2, originalPos);
-        final CellWithCircularArea<Euclidean2DPosition> bce = new CellNodeImpl<>(env, 50);
+        final Node<Double> bce = createNode(50);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(25, 30);
         env.addNode(bce, p2);
         env.moveNode(cellToMove2, pd);
@@ -472,7 +477,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     @Test
     void testMoveDifferentDiam3() {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove3 = np3;
+        final Node<Double> cellToMove3 = np3;
         env.addNode(cellToMove3, originalPos);
 
         final Euclidean2DPosition p1 = new Euclidean2DPosition(25, 0);
@@ -497,7 +502,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     @Test
     void testMoveDifferentDiam4() {
         final Euclidean2DPosition pd = new Euclidean2DPosition(-50, 0);
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove4 = np3;
+        final Node<Double> cellToMove4 = np3;
         env.addNode(cellToMove4, originalPos);
 
         final Euclidean2DPosition p1 = new Euclidean2DPosition(-25, 0);
@@ -522,7 +527,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     @Test
     void testMoveDifferentDiam5() {
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 50);
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove5 = np3;
+        final Node<Double> cellToMove5 = np3;
         env.addNode(cellToMove5, originalPos);
 
         final Euclidean2DPosition p1 = new Euclidean2DPosition(25, 25);
@@ -548,7 +553,7 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveDifferentDiam6() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove6 = np1;
+        final Node<Double> cellToMove6 = np1;
         env.addNode(cellToMove6, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
 
@@ -568,7 +573,7 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveDifferentDiam7() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove7 = np1;
+        final Node<Double> cellToMove7 = np1;
         env.addNode(cellToMove7, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
 
@@ -586,7 +591,7 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveDifferentDiam8() {
-        final CellWithCircularArea<Euclidean2DPosition> cellToMove8 = np1;
+        final Node<Double> cellToMove8 = np1;
         env.addNode(cellToMove8, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(50, 0);
 
@@ -605,11 +610,11 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveInTwoSteps1() {
-        final CellWithCircularArea<Euclidean2DPosition> c1 = np1;
+        final Node<Double> c1 = np1;
         env.addNode(c1, originalPos);
         final Euclidean2DPosition pd1 = new Euclidean2DPosition(50, 0);
         final Euclidean2DPosition pd2 = new Euclidean2DPosition(100, 0);
-        final CellWithCircularArea<Euclidean2DPosition> c2 = np2;
+        final Node<Double> c2 = np2;
         env.addNode(c2, pd1);
         env.moveNode(c1, POSITION_TO_MOVE_TWOSTEP1);
         assertEquals(EXPECTED_POS_TWOSTEP1_1, env.getPosition(c1), "c1 is in pos : " + env.getPosition(c1));
@@ -624,8 +629,8 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode9() {
-        final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, 1);
-        final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, 1);
+        final Node<Double> c1 = createNode(1);
+        final Node<Double> c2 = createNode(1);
         env.addNode(c2, NODE_POS9);
         env.addNode(c1, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(4.737000465393066, -5.0);
@@ -638,8 +643,8 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @Test
     void testMoveNode10() {
-        final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, 1);
-        final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, 1);
+        final Node<Double> c1 = createNode(1);
+        final Node<Double> c2 = createNode(1);
         env.addNode(c2, NODE_POS10);
         env.addNode(c1, originalPos);
         final Euclidean2DPosition pd = new Euclidean2DPosition(3.122374292470004, -0.6490462479722794);
@@ -653,21 +658,23 @@ class TestBioRect2DEnvironmentNoOverlap {
     @Test
     void testMoveNode11() {
         final double diameter = 1;
-        final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c3 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c4 = new CellNodeImpl<>(env, diameter);
+        final Node<Double> c1 = createNode(diameter);
+        final Node<Double> c2 = createNode(diameter);
+        final Node<Double> c3 = createNode(diameter);
+        final Node<Double> c4 = createNode(diameter);
         env.addNode(c1, NODE_POS11_1);
         env.addNode(c2, NODE_POS11_2);
         env.addNode(c3, NODE_POS11_3);
         env.addNode(c4, NODE_POS11_4);
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.0, -1.8431210525510544);
         env.moveNodeToPosition(c1, pd);
-        assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
+        assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1,
+                                c1.asCapability(CircularCellularBehavior.class).getDiameter()).stream()
                         .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
                         .map(n -> env.getPosition(n).toString())
                         .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1, c1.getDiameter() - DELTA).isEmpty());
+                env.getNodesWithinRange(c1,
+                        c1.asCapability(CircularCellularBehavior.class).getDiameter() - DELTA).isEmpty());
     }
 
     /**
@@ -676,21 +683,23 @@ class TestBioRect2DEnvironmentNoOverlap {
     @Test
     void testMoveNode12() {
         final double diameter = 1;
-        final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c3 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c4 = new CellNodeImpl<>(env, diameter);
+        final Node<Double> c1 = createNode(diameter);
+        final Node<Double> c2 = createNode(diameter);
+        final Node<Double> c3 = createNode(diameter);
+        final Node<Double> c4 = createNode(diameter);
         env.addNode(c1, NODE_POS12_1);
         env.addNode(c2, NODE_POS12_2);
         env.addNode(c3, NODE_POS12_3);
         env.addNode(c4, NODE_POS12_4);
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.3, -1.8431210525510544);
         env.moveNodeToPosition(c1, pd);
-        assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
+        assertTrueJUnit4("Should be empty but is : "
+                        + env.getNodesWithinRange(c1,
+                                c1.asCapability(CircularCellularBehavior.class).getDiameter()).stream()
                         .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
                         .map(n -> env.getPosition(n).toString())
                         .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
+                env.getNodesWithinRange(c1, c1.asCapability(CircularCellularBehavior.class).getDiameter()).isEmpty());
     }
 
     /**
@@ -699,10 +708,10 @@ class TestBioRect2DEnvironmentNoOverlap {
     @Test
     void testMoveNode13() {
         final double diameter = 1;
-        final CellWithCircularArea<Euclidean2DPosition> c1 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c2 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c3 = new CellNodeImpl<>(env, diameter);
-        final CellWithCircularArea<Euclidean2DPosition> c4 = new CellNodeImpl<>(env, diameter);
+        final Node<Double> c1 = createNode(diameter);
+        final Node<Double> c2 = createNode(diameter);
+        final Node<Double> c3 = createNode(diameter);
+        final Node<Double> c4 = createNode(diameter);
         env.addNode(c1, NODE_POS13_1);
         env.addNode(c2, NODE_POS13_2);
         env.addNode(c3, NODE_POS13_3);
@@ -712,11 +721,12 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.moveNodeToPosition(c2, pd);
         env.moveNodeToPosition(c3, pd);
         env.moveNodeToPosition(c4, pd);
-        assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1, c1.getDiameter()).stream()
+        assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1,
+                                c1.asCapability(CircularCellularBehavior.class).getDiameter()).stream()
                         .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
                         .map(n -> env.getPosition(n).toString())
                         .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1, c1.getDiameter()).isEmpty());
+                env.getNodesWithinRange(c1, c1.asCapability(CircularCellularBehavior.class).getDiameter()).isEmpty());
     }
 
     /**
@@ -770,22 +780,27 @@ class TestBioRect2DEnvironmentNoOverlap {
                 assertTrue(thereIsOverlap(environment));
             }
 
-            private Stream<CellWithCircularArea<Euclidean2DPosition>> getNodes() {
+            private Stream<Node<Double>> getNodes() {
                 return env.getNodes().stream()
-                        .filter(n -> n instanceof CellWithCircularArea)
-                        .map(n -> (CellWithCircularArea<Euclidean2DPosition>) n);
+                        .filter(n -> n.asCapabilityOrNull(CircularCellularBehavior.class) != null)
+                        .map(n -> (Node<Double>) n);
             }
 
             private boolean thereIsOverlap(final Environment<Double, Euclidean2DPosition> env) {
                 getNodes().flatMap(n -> getNodes()
                                 .filter(c -> !c.equals(n))
-                                .filter(c -> env.getDistanceBetweenNodes(n, c) < n.getRadius() + c.getRadius() - DELTA)
+                                .filter(c -> env.getDistanceBetweenNodes(n, c)
+                                        < n.asCapability(CircularCellularBehavior.class).getRadius()
+                                        + c.asCapability(CircularCellularBehavior.class).getRadius() - DELTA)
                                 .map(c -> new Pair<>(n, c)))
                         .findAny()
-                        .ifPresent(e -> fail("Nodes " + e.getFirst().getId() + env.getPosition(e.getFirst()) + " and "
+                        .ifPresent(e -> fail("Nodes " + e.getFirst().getId()
+                                + env.getPosition(e.getFirst()) + " and "
                                 + e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. "
                                 + "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond())
-                                + " but should be greater than " + (e.getFirst().getRadius() + e.getSecond().getRadius())));
+                                + " but should be greater than "
+                                + (e.getFirst().asCapability(CircularCellularBehavior.class).getRadius()
+                                + e.getSecond().asCapability(CircularCellularBehavior.class).getRadius())));
                 return true;
             }
         });

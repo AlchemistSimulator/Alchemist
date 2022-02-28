@@ -12,18 +12,17 @@ package it.unibo.alchemist.model.interfaces.capabilities
 import it.unibo.alchemist.model.interfaces.Position
 
 /**
- * A node's capability to behave as a circular deformable cell.
+ * A node's capability to behave as a cell with a circular area.
  */
-interface CircularDeformableCellularBehaviour<P : Position<P>> : CircularCellularBehaviour<P> {
+interface CircularCellularBehavior<P : Position<P>> : CellularBehavior<P> {
     /**
-     *
-     * The max diameter that this cell can have, e.g. the diameter that this cell has if no other cell is around.
+     * The diameter of the cell.
      */
-    val maximumDiameter: Double
+    val diameter: Double
+
     /**
-     *
-     * The max radius that this cell can have, e.g. the radius that this cell has if no other cell is around.
+     * The radius of the cell.
      */
-    val maximumRadius: Double
-        get() = maximumDiameter / 2
+    val radius: Double
+        get() = diameter / 2
 }

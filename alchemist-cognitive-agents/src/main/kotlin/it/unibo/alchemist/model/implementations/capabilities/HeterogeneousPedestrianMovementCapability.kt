@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * A heterogeneous pedestrian's movement capability.
  * Note: to use this capability the node must already have a [PedestrianIndividualityCapability].
  */
-class HeterogeneousPedestrianMovementCapability<T, S, A> (
+open class HeterogeneousPedestrianMovementCapability<T, S, A> (
     randomGenerator: RandomGenerator,
     node: Node<T>,
 ) : BasePedestrianMovementCapability<T> (

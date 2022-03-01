@@ -29,6 +29,9 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
  */
 class BasePedestrianPhysicalCapability<T, P, A, F>(
     randomGenerator: RandomGenerator,
+    /**
+     * The environment in which the pedestrian is moving.
+     */
     val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
 ) : PedestrianPhysicalCapability<T, P, A, F>

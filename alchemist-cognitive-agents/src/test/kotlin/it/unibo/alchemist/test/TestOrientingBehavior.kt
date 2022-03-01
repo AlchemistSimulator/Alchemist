@@ -18,19 +18,24 @@ import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 import org.apache.commons.collections4.queue.CircularFifoQueue
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 
 /**
  * Contains tests concerning [NavigationAction]s and [NavigationStrategy], such tests are
  * dependent on the pedestrian's speed.
  */
 class TestOrientingBehavior<T, P> : StringSpec({
+
+    val filterOrientingNode: (Node<T>) -> Boolean =
+        { it.asCapabilityOrNull<T, OrientingCapability<T, P, *, *, *, *>>() != null }
 
     /**
      * Asserts that the distance of each pedestrian from the target position specified
@@ -43,7 +48,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
     ) {
         val target = env.makePosition(*coords)
         env.nodes
-            .filterIsInstance<OrientingPedestrian<T, *, *, *, *>>()
+            .filter(filterOrientingNode)
             .forEach { p -> env.getPosition(p).distanceTo(target) shouldBeLessThan tolerance }
     }
 
@@ -134,7 +139,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
         loadYamlSimulation<T, P>("congestion-avoidance.yml").startSimulation(
             atEachStep = { env: Environment<T, P>, _, _, _ ->
                 if (env is Euclidean2DEnvironmentWithGraph<*, T, *, *> && !corridorTaken) {
-                    val pedestrian = env.nodes.filterIsInstance<OrientingPedestrian<T, *, *, *, *>>().first()
+                    val pedestrian = env.nodes.filter(filterOrientingNode).first()
                     val corridorToTake = env.graph.nodeContaining(env.makePosition(35.0, 31.0))
                     corridorTaken = corridorToTake?.contains(env.getPosition(pedestrian)) ?: false
                 }

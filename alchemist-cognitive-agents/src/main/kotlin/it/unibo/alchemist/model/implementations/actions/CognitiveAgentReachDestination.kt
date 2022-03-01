@@ -24,7 +24,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
 import org.jgrapht.Graphs
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
 
 /**
  * A [NavigationAction] using [DestinationReaching] navigation strategy.
@@ -51,8 +50,9 @@ class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
         environment.graph.nodeContaining(destination)?.let { room ->
             val neighborhood = Graphs.neighborListOf(environment.graph, room) + room
             pedestrian.asCapability<T, OrientingCapability<T, *, *, L, *, R>>().cognitiveMap.vertexSet()
-                .any { landmark -> neighborhood.any { it.contains(landmark.centroid) }
-            }
+                .any { landmark ->
+                    neighborhood.any { it.contains(landmark.centroid) }
+                }
         } ?: false
 
     override var strategy: NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> by lazyMutable {

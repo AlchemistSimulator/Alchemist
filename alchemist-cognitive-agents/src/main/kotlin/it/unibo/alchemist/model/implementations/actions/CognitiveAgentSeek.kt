@@ -33,6 +33,6 @@ open class CognitiveAgentSeek<T, P, A>(
         vararg coordinates: Number
     ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentSeek<T, P, A>
-    = CognitiveAgentSeek(environment, r, n, target)
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentSeek<T, P, A> =
+        CognitiveAgentSeek(environment, r, n, target)
 }

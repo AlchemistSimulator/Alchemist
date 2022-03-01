@@ -72,11 +72,11 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
         center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded
     } ?: true
 
-    private fun <T: Number> Node<T>.wantsToEscape(): Boolean  {
+    private fun <T : Number> Node<T>.wantsToEscape(): Boolean {
         val cognitiveCapability = asCapability<T, PedestrianCognitiveCapability<T>>()
         val orientingCapability = asCapabilityOrNull<T, OrientingCapability<T, *, *, *, *, *>>()
-        return orientingCapability != null
-            && cognitiveCapability.danger == targetMolecule
-            && cognitiveCapability.cognitiveModel.wantsToEscape()
+        return orientingCapability != null &&
+            cognitiveCapability.danger == targetMolecule &&
+            cognitiveCapability.cognitiveModel.wantsToEscape()
     }
 }

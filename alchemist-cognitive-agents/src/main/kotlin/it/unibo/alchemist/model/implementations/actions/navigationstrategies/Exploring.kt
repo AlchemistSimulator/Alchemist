@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
@@ -22,8 +21,6 @@ import kotlin.math.abs
 import kotlin.math.pow
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A [NavigationStrategy] allowing to explore the environment.
@@ -126,7 +123,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
         /*
          * TODO: There should be a filtering of pedestrians.
          */
-        //.filterIsInstance<Pedestrian<T, *, *>>()
+        // .filterIsInstance<Pedestrian<T, *, *>>()
         .map { environment.getPosition(it) }
         .filter { contains(it) }
         .count()
@@ -149,5 +146,5 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
      */
     protected open fun ConvexPolygon.isKnownImpasse(): Boolean =
         pedestrian.asCapability<T, OrientingCapability<T, *, *, *, *, *>>().volatileMemory.contains(this) &&
-        environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
+            environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
 }

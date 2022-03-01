@@ -57,7 +57,6 @@ open class CognitiveAgentWander<T>(
 
     override fun cloneAction(n: Node<T>, r: Reaction<T>) =
         CognitiveAgentWander(environment, r, n, randomGenerator, offset, radius)
-
 }
 
 /**

@@ -17,7 +17,6 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.shuffled

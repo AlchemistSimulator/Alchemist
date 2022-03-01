@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
-import it.unibo.alchemist.model.implementations.groups.Alone
 import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
@@ -42,9 +41,9 @@ class TestSensory<T> : StringSpec({
     ): Node<T> {
         val node = GenericNode(incarnation, environment)
         node.addCapability(BasePedestrianMovementCapability(randomGenerator, node))
-        node.addCapability(BaseSocialCapability(node, Alone(node)))
+        node.addCapability(BaseSocialCapability(node))
         node.addCapability(BasePerceptionOfOthers2D(environment, node))
-        node.addCapability(BaseSpatial2DCapability(node, environment.shapeFactory.circle(0.3)))
+        node.addCapability(BaseSpatial2DCapability(environment, node))
         return node
     }
 

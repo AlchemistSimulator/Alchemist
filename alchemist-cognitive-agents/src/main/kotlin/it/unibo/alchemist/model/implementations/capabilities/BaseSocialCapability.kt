@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.capabilities
 
+import it.unibo.alchemist.model.implementations.groups.Alone
 import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.capabilities.SocialCapability
@@ -16,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.capabilities.SocialCapability
 /**
  * Base implementation of a [SocialCapability].
  */
-data class BaseSocialCapability<T>(
+data class BaseSocialCapability<T> @JvmOverloads constructor(
     override val node: Node<T>,
-    override val group: Group<T>,
+    override val group: Group<T> = Alone(node),
 ) : SocialCapability<T>

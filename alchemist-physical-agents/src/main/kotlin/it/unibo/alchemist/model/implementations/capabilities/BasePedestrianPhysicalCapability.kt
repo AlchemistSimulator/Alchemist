@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.implementations.capabilities
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
@@ -24,12 +23,6 @@ import it.unibo.alchemist.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
-import it.unibo.alchemist.model.interfaces.capabilities.Pedestrian2DPhysicalCapability
-import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * Base implementation of a pedestrian's capability to experience physical interactions.
@@ -88,21 +81,4 @@ class BasePedestrianPhysicalCapability<T, P, A, F>(
 
     override val comfortArea: GeometricShape<P, A>
         get() = environment.shapeFactory.adimensional()
-}
-
-/**
- * Base implementation of a pedestrian's capability to experience physical interactions in a 2D space.
- */
-class BasePedestrian2DPhysicalCapability<T>(
-    randomGenerator: RandomGenerator,
-    /**
-     * The environment in which the node is moving.
-     */
-    val environment: Physics2DEnvironment<T>,
-    node: Node<T>,
-) : PedestrianPhysicalCapability<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
-by BasePedestrianPhysicalCapability(randomGenerator, environment, node),
-    Pedestrian2DPhysicalCapability<T> {
-    override val comfortArea: Euclidean2DShape get() = environment
-        .shapeFactory.circle(node.asCapability<T, Spatial2DCapability<T>>().shape.radius + comfortRay)
 }

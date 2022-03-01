@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.implementations.actions.physicalstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.PhysicalSteeringStrategy
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment

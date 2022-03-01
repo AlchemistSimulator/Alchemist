@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -26,7 +26,7 @@ abstract class AbstractGroupSteeringAction<T, P, A>(
      */
     protected open val env: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T, P, A>
+    pedestrian: Node<T>
 ) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian),
     GroupSteeringAction<T, P>
     where P : Position<P>, P : Vector<P>,

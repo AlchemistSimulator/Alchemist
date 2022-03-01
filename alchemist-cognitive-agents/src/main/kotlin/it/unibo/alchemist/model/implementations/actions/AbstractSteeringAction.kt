@@ -12,12 +12,13 @@ package it.unibo.alchemist.model.implementations.actions
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringAction
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 
 /**
  * A [SteeringAction] in a vector space. The implementation of [nextPosition] is left to subclasses.
@@ -31,7 +32,7 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The owner of this action.
      */
-    protected open val pedestrian: Pedestrian<T, P, A>
+    protected open val pedestrian: Node<T>
 ) : AbstractMoveNode<T, P>(env, pedestrian),
     SteeringAction<T, P>
     where P : Position<P>, P : Vector<P>,
@@ -40,18 +41,13 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The maximum distance the pedestrian can walk, this is a length.
      */
-    open val maxWalk: Double get() = pedestrian.speed() / reaction.rate
+    open val maxWalk: Double get() = pedestrian.asCapability<T, PedestrianMovementCapability<T>>().speed() / reaction.rate
 
     override fun getNextPosition(): P = nextPosition()
 
-    override fun getNode(): Pedestrian<T, P, A> = pedestrian
+    override fun getNode(): Node<T> = pedestrian
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): Action<T> =
-        requireNodeTypeAndProduce<Pedestrian<T, P, A>, AbstractSteeringAction<T, P, A>>(node) {
-            cloneAction(it, reaction)
-        }
-
-    protected abstract fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>): AbstractSteeringAction<T, P, A>
+    abstract override fun cloneAction(n: Node<T>, r: Reaction<T>): AbstractSteeringAction<T, P, A>
 
     protected inline fun <reified N : Node<*>, S : Action<*>> requireNodeTypeAndProduce(
         node: Node<*>,

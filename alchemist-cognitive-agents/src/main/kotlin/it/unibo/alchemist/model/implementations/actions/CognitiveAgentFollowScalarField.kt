@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
@@ -27,7 +27,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
      */
     private val env: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T, P, A>,
+    pedestrian: Node<T>,
     /**
      * The position of either maximum or minimum value of the scalar field, can be null if such a position doesn't
      * exist or isn't known. Its use is explained in [nextPosition].
@@ -64,7 +64,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) =
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
         CognitiveAgentFollowScalarField(env, r, n, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =

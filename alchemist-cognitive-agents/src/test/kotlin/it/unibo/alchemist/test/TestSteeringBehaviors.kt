@@ -5,7 +5,6 @@ import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Pedestrian
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.testsupport.loadYamlSimulation

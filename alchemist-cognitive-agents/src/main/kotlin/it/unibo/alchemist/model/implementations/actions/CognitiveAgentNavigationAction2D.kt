@@ -11,8 +11,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -35,7 +34,7 @@ private typealias AbstractNavigationAction2D<T, L, R, N, E> =
 open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian2D<T, L, R>,
+    pedestrian: Node<T>,
     /**
      * When crossing [Euclidean2DPassage]s, the pedestrian is pushed away from the wall of
      * a quantity equal to (this factor * the width of the passage). This is performed to prevent
@@ -98,10 +97,9 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
         return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
     }
 
-    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<OrientingPedestrian2D<T, L, R>, CognitiveAgentNavigationAction2D<T, L, R>>(n) {
-            val clone = CognitiveAgentNavigationAction2D(environment, r, it, wallRepulsionFactor)
-            clone.strategy = this.strategy
-            return clone
-        }
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentNavigationAction2D<T, L, R>  {
+        val clone = CognitiveAgentNavigationAction2D<T, L, R>(environment, r, n, wallRepulsionFactor)
+        clone.strategy = this.strategy
+        return clone
+    }
 }

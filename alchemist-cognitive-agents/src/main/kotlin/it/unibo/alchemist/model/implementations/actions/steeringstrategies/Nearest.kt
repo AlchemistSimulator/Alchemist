@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  */
 class Nearest<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Pedestrian2D<T>
+    pedestrian: Node<T>
 ) : Filtered<T, Euclidean2DPosition>(
     DistanceWeighted(environment, pedestrian),
     {
@@ -38,7 +38,7 @@ class Nearest<T>(
  */
 fun <T> List<SteeringAction<T, Euclidean2DPosition>>.pickNearestOrFirst(
     env: Environment<T, Euclidean2DPosition>,
-    pedestrian: Pedestrian2D<T>
+    pedestrian: Node<T>
 ): SteeringAction<T, Euclidean2DPosition>? = this
     .filterIsInstance<SteeringActionWithTarget<T, Euclidean2DPosition>>()
     .minByOrNull { it.targetDistanceTo(pedestrian, env) }

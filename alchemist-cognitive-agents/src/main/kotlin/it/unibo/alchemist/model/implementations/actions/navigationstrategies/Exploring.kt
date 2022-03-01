@@ -9,16 +9,21 @@
 
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import kotlin.math.abs
 import kotlin.math.pow
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A [NavigationStrategy] allowing to explore the environment.
@@ -49,7 +54,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     /**
      * Shortcut to obtain the pedestrian.
      */
-    protected val pedestrian: OrientingPedestrian2D<T, L, R> get() = action.pedestrian
+    protected val pedestrian: Node<T> get() = action.pedestrian
 
     /**
      * Shortcut to obtain the environment.
@@ -93,7 +98,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
      * Less visited rooms are preferred.
      */
     protected open fun volatileMemoryFactor(head: ConvexPolygon): Double =
-        2.0.pow(pedestrian.volatileMemory[head] ?: 0)
+        2.0.pow(orientingCapability.volatileMemory[head] ?: 0)
 
     /**
      * Takes into account the congestion of [head], it is assumed that the pedestrian can estimate the
@@ -118,7 +123,10 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     protected open val ConvexPolygon.congestionLevel: Double get() = environment
         .getNodesWithinRange(centroid, radius)
         .asSequence()
-        .filterIsInstance<Pedestrian<T, *, *>>()
+        /*
+         * TODO: There should be a filtering of pedestrians.
+         */
+        //.filterIsInstance<Pedestrian<T, *, *>>()
         .map { environment.getPosition(it) }
         .filter { contains(it) }
         .count()
@@ -133,11 +141,13 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     /**
      * A rough estimation of the area of a [Pedestrian].
      */
-    protected open val Pedestrian<T, *, *>.area: Double get() = Math.PI * shape.radius.pow(2)
+    protected open val Node<T>.area: Double get() =
+        Math.PI * asCapability<T, Spatial2DCapability<T>>().shape.radius.pow(2)
 
     /**
      * Checks if the pedestrian knows that the area is an impasse (= an area with a single door).
      */
-    protected open fun ConvexPolygon.isKnownImpasse(): Boolean = pedestrian.volatileMemory.contains(this) &&
+    protected open fun ConvexPolygon.isKnownImpasse(): Boolean =
+        pedestrian.asCapability<T, OrientingCapability<T, *, *, *, *, *>>().volatileMemory.contains(this) &&
         environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
 }

@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 open class CognitiveAgentFlee<T, P, A>(
     private val env: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T, P, A>,
+    pedestrian: Node<T>,
     vararg coords: Double
 ) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
@@ -30,7 +30,7 @@ open class CognitiveAgentFlee<T, P, A>(
 
     private val danger: P = env.makePosition(*coords.toTypedArray())
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) =
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentFlee<T, P, A> =
         CognitiveAgentFlee(env, r, n, *danger.coordinates)
 
     override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)

@@ -14,14 +14,22 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianRunningCapability
 import it.unibo.alchemist.model.interfaces.capabilities.PedestrianWalkingCapability
+import it.unibo.alchemist.nextDouble
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Implementation of a basic [PedestrianMovementCapability].
  */
 data class BasePedestrianMovementCapability<T> @JvmOverloads constructor(
+    /**
+     * The simulation random generator.
+     */
+    val randomGenerator: RandomGenerator,
     override val node: Node<T>,
     override val walkingSpeed: Double = Speed.default,
     override val runningSpeed: Double = Speed.default * 3,
 ) : PedestrianMovementCapability<T>,
     PedestrianWalkingCapability<T> by BasePedestrianWalkingCapability(node, walkingSpeed),
-    PedestrianRunningCapability<T> by BasePedestrianRunningCapability(node, runningSpeed)
+    PedestrianRunningCapability<T> by BasePedestrianRunningCapability(node, runningSpeed) {
+    override fun speed(): Double = randomGenerator.nextDouble(walkingSpeed, runningSpeed)
+}

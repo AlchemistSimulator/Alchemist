@@ -1,13 +1,15 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.AbstractCognitivePedestrian
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
 
 /**
  * Move the pedestrian towards positions of the environment with a low concentration of the target molecule.
@@ -26,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 class CognitiveAgentAvoidLayer @JvmOverloads constructor(
     environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    pedestrian: Pedestrian2D<Number>,
+    pedestrian: Node<Number>,
     targetMolecule: Molecule,
     private val viewDepth: Double = Double.POSITIVE_INFINITY
 ) : AbstractLayerAction(environment, reaction, pedestrian, targetMolecule) {
@@ -40,7 +42,7 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
         }
     }
 
-    override fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): CognitiveAgentAvoidLayer =
+    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): CognitiveAgentAvoidLayer =
         CognitiveAgentAvoidLayer(environment, r, n, targetMolecule, viewDepth)
 
     /**
@@ -70,7 +72,11 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
         center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded
     } ?: true
 
-    private fun Pedestrian<*, *, *>.wantsToEscape(): Boolean =
-        this is AbstractCognitivePedestrian<*, *, *, *> &&
-            this.danger == targetMolecule && cognitiveModel.wantsToEscape()
+    private fun <T: Number> Node<T>.wantsToEscape(): Boolean  {
+        val cognitiveCapability = asCapability<T, PedestrianCognitiveCapability<T>>()
+        val orientingCapability = asCapabilityOrNull<T, OrientingCapability<T, *, *, *, *, *>>()
+        return orientingCapability != null
+            && cognitiveCapability.danger == targetMolecule
+            && cognitiveCapability.cognitiveModel.wantsToEscape()
+    }
 }

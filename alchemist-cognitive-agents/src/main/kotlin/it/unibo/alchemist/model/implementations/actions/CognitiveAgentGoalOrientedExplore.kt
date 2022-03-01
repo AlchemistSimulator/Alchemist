@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.actions.navigationstrategies.GoalOrientedExploring
 import it.unibo.alchemist.model.interfaces.NavigationAction
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
 class CognitiveAgentGoalOrientedExplore<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian2D<T, L, R>,
+    pedestrian: Node<T>,
     vararg unknownDestinations: Number
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
 

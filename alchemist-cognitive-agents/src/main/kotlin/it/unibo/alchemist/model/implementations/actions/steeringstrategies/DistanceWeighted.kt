@@ -2,7 +2,6 @@ package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
@@ -20,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  */
 class DistanceWeighted<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Pedestrian2D<T>,
+    pedestrian: Node<T>,
     /**
      * Default weight for steering actions without a defined target.
      */

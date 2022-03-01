@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationAction
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
@@ -46,7 +46,7 @@ private typealias SteeringActions<T> = List<SteeringAction<T, Euclidean2DPositio
  */
 class SinglePrevalent<T, N : ConvexPolygon>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
-    pedestrian: Pedestrian2D<T>,
+    pedestrian: Node<T>,
     private val prevalent: SteeringActions<T>.() -> NavigationAction2D<T, *, *, N, *>,
     /**
      * Tolerance angle in radians.

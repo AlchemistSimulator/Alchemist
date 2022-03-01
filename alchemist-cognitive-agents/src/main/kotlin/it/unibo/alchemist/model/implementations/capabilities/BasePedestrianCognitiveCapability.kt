@@ -31,10 +31,7 @@ data class BasePedestrianCognitiveCapability<T, P, A, F> @JvmOverloads construct
      */
     val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
-    /**
-     * The molecule associated with danger in the environment.
-     */
-    val danger: Molecule? = null,
+    override val danger: Molecule? = null,
 ) : PedestrianCognitiveCapability<T>
 where P : Position<P>,
       P : Vector<P>,

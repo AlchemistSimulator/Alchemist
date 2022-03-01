@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.interfaces.Capability
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
@@ -21,13 +20,12 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
 /**
  * A node's capability to orient.
  */
-interface OrientingCapability<T, P, A, L, N, E, F> : Capability<T>
+interface OrientingCapability<T, P, A, L, N, E> : Capability<T>
     where P : Position<P>,
           P : Vector<P>,
           A : GeometricTransformation<P>,
           L : ConvexGeometricShape<P, A>,
-          N : ConvexGeometricShape<P, A>,
-          F : GeometricShapeFactory<P, A> {
+          N : ConvexGeometricShape<P, A> {
     /**
      * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the
      * percentage of environment the agent is familiar with prior to the start of the simulation (thus it does not
@@ -36,13 +34,15 @@ interface OrientingCapability<T, P, A, L, N, E, F> : Capability<T>
     val knowledgeDegree: Double
 
     /**
+     * The environment in which the node moves.
+     */
+    val environment: EnvironmentWithGraph<*, T, P, A, N, E>
+
+    /**
      * The cognitive map of the agent. It's a graph composed of landmarks (elements of the environment easy to
      * remember due to their uniqueness) and spatial relations between them. It's modeled as a [NavigationGraph].
      */
-    fun cognitiveMap(
-        environment: EnvironmentWithGraph<*, T, P, A, N, E>,
-        knowledgeDegree: Double
-    ): NavigationGraph<P, A, L, E>
+    val cognitiveMap: NavigationGraph<P, A, L, E>
 
     /**
      * The volatile memory of the agent: it models the ability to remember areas of the environment already visited

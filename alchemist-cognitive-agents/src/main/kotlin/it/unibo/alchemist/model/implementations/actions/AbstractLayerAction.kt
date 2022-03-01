@@ -4,8 +4,7 @@ import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLaye
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
@@ -26,16 +25,12 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 abstract class AbstractLayerAction(
     protected val environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    override val pedestrian: Pedestrian2D<Number>,
+    override val pedestrian: Node<Number>,
     protected val targetMolecule: Molecule
 ) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
 
-    override fun cloneAction(
-        n: Pedestrian<Number, Euclidean2DPosition, Euclidean2DTransformation>,
-        r: Reaction<Number>
-    ) = requireNodeTypeAndProduce<Pedestrian2D<Number>, AbstractLayerAction>(n) { cloneAction(it, r) }
 
-    protected abstract fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): AbstractLayerAction
+    abstract override fun cloneAction(n: Node<Number>, r: Reaction<Number>): AbstractLayerAction
 
     /**
      * @returns the layer containing [targetMolecule] or fails.

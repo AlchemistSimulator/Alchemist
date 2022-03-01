@@ -12,4 +12,9 @@ package it.unibo.alchemist.model.interfaces.capabilities
 /**
  * A node capability to move. It includes both [PedestrianWalkingCapability] and [PedestrianRunningCapability].
  */
-interface PedestrianMovementCapability<T> : PedestrianWalkingCapability<T>, PedestrianRunningCapability<T>
+interface PedestrianMovementCapability<T> : PedestrianWalkingCapability<T>, PedestrianRunningCapability<T> {
+    /**
+     * The speed at which the pedestrian is moving.
+     */
+    fun speed(): Double
+}

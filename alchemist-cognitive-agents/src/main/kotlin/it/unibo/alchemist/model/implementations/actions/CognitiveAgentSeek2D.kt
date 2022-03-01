@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
@@ -19,7 +19,7 @@ open class CognitiveAgentSeek2D<T, P, A>(
      */
     protected val environment: EuclideanEnvironment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T, P, A>,
+    pedestrian: Node<T>,
     /**
      * The position the pedestrian wants to reach.
      */
@@ -32,7 +32,7 @@ open class CognitiveAgentSeek2D<T, P, A>(
     constructor(
         environment: EuclideanEnvironment<T, P>,
         reaction: Reaction<T>,
-        pedestrian: Pedestrian<T, P, A>,
+        pedestrian: Node<T>,
         x: Number,
         y: Number
     ) : this(environment, reaction, pedestrian, environment.makePosition(x, y))
@@ -45,5 +45,6 @@ open class CognitiveAgentSeek2D<T, P, A>(
 
     override fun nextPosition(): P = followScalarField.nextPosition()
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = CognitiveAgentSeek2D(environment, r, n, target)
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentSeek2D<T, P, A> =
+        CognitiveAgentSeek2D(environment, r, n, target)
 }

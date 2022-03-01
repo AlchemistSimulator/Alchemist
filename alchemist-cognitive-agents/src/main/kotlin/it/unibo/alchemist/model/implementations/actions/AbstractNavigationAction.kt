@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
@@ -26,6 +25,11 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.CROSSING_DOOR
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_FINAL
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.ARRIVED
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 
 /**
  * An abstract [NavigationAction], taking care of properly moving the pedestrian in the
@@ -42,7 +46,7 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction
 abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
     override val environment: EnvironmentWithGraph<*, T, P, A, N, E>,
     override val reaction: Reaction<T>,
-    final override val pedestrian: OrientingPedestrian<T, P, A, L, R>
+    final override val pedestrian: Node<T>
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     NavigationAction<T, P, A, L, R, N, E>
     where P : Position<P>, P : Vector<P>,
@@ -73,7 +77,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * at present. This workaround allows to specify a minimum distance which is dependent on the pedestrian
      * shape. In the future, something better could be done.
      */
-    protected val minDistance: Double = pedestrian.shape.diameter
+    protected val minDistance: Double = pedestrian.asCapability<T, SpatialCapability<T, P, A>>().shape.diameter
 
     /**
      * @returns true if the distance to [pedestrianPosition] is smaller than or equal to [minDistance].
@@ -219,7 +223,8 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
         when (state) {
             START -> onStart()
             NEW_ROOM -> currentRoom.orFail().let {
-                pedestrian.registerVisit(it)
+                pedestrian.asCapability<T, OrientingCapability<T, P, A, L, N, E>>()
+                    .registerVisit(it)
                 strategy.inNewRoom(it)
             }
             in MOVING_TO_CROSSING_POINT_1..MOVING_TO_FINAL -> moving()

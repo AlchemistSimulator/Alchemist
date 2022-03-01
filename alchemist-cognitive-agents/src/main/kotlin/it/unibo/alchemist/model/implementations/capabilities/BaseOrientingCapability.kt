@@ -33,11 +33,12 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * Base implementation of a node's [OrientingCapability].
  */
-abstract class BaseOrientingCapability<T, P, A, N, L, F> @JvmOverloads constructor(
+abstract class BaseOrientingCapability<T, P, A, N, L> @JvmOverloads constructor(
     /**
      * The simulation [RandomGenerator].
      */
     open val randomGenerator: RandomGenerator,
+    override val environment: EnvironmentWithGraph<*, T, P, A, N, DefaultEdge>,
     override val node: Node<T>,
     override val knowledgeDegree: Double,
     /**
@@ -46,20 +47,16 @@ abstract class BaseOrientingCapability<T, P, A, N, L, F> @JvmOverloads construct
      * them).
      */
     private val minArea: Double = 10.0,
-) : OrientingCapability<T, P, A, L, N, DefaultEdge, F>
+) : OrientingCapability<T, P, A, L, N, DefaultEdge>
     where P : Position<P>,
           P : Vector<P>,
           A : GeometricTransformation<P>,
           L : ConvexGeometricShape<P, A>,
-          N : ConvexGeometricShape<P, A>,
-          F : GeometricShapeFactory<P, A> {
+          N : ConvexGeometricShape<P, A> {
 
     override val volatileMemory: MutableMap<ConvexGeometricShape<P, A>, Int> = HashMap()
 
-    override fun cognitiveMap(
-        environment: EnvironmentWithGraph<*, T, P, A, N, DefaultEdge>,
-        knowledgeDegree: Double
-    ): NavigationGraph<P, A, L, DefaultEdge> {
+    override val cognitiveMap: NavigationGraph<P, A, L, DefaultEdge> by lazy {
         val environmentGraph = environment.graph
         /*
          * The rooms in which landmarks will be placed.
@@ -103,7 +100,7 @@ abstract class BaseOrientingCapability<T, P, A, N, L, F> @JvmOverloads construct
         fullGraph.removeAllEdges(
             fullGraph.edgeSet() - PrimMinimumSpanningTree(fullGraphWeighted).spanningTree.edges
         )
-        return fullGraph
+        fullGraph
     }
 
     /**

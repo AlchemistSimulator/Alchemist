@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 abstract class AbstractSteeringActionWithTarget<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T, P, A>,
+    pedestrian: Node<T>,
     private val targetSelectionStrategy: TargetSelectionStrategy<T, P>
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     SteeringActionWithTarget<T, P>
@@ -32,7 +32,7 @@ abstract class AbstractSteeringActionWithTarget<T, P, A>(
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
-        pedestrian: Pedestrian<T, P, A>,
+        pedestrian: Node<T>,
         target: P
     ) : this(environment, reaction, pedestrian, TargetSelectionStrategy { target })
 

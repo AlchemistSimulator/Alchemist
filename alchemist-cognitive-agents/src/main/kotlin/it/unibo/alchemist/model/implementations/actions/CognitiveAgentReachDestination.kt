@@ -15,13 +15,16 @@ import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.math.lazyMutable
 import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import org.jgrapht.Graphs
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
 
 /**
  * A [NavigationAction] using [DestinationReaching] navigation strategy.
@@ -35,7 +38,7 @@ import org.jgrapht.Graphs
 class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: OrientingPedestrian2D<T, L, R>,
+    pedestrian: Node<T>,
     vararg destinations: Number
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
 
@@ -47,8 +50,8 @@ class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     private fun inferIsKnown(destination: Euclidean2DPosition): Boolean =
         environment.graph.nodeContaining(destination)?.let { room ->
             val neighborhood = Graphs.neighborListOf(environment.graph, room) + room
-            pedestrian.cognitiveMap.vertexSet().any { landmark ->
-                neighborhood.any { it.contains(landmark.centroid) }
+            pedestrian.asCapability<T, OrientingCapability<T, *, *, L, *, R>>().cognitiveMap.vertexSet()
+                .any { landmark -> neighborhood.any { it.contains(landmark.centroid) }
             }
         } ?: false
 

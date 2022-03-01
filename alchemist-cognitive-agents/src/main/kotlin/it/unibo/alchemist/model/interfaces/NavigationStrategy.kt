@@ -10,6 +10,8 @@
 package it.unibo.alchemist.model.interfaces
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -38,6 +40,11 @@ interface NavigationStrategy<T, P, A, L, R, N, E>
      * The [NavigationAction] used to navigate the environment.
      */
     val action: NavigationAction<T, P, A, L, R, N, E>
+
+    /**
+     * The pedestrian's orienting capability.
+     */
+    val orientingCapability get() = action.orientingCapability
 
     /**
      * This is called whenever the pedestrian enters a new room.

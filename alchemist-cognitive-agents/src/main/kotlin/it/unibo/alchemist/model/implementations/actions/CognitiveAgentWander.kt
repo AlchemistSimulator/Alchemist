@@ -2,8 +2,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
@@ -32,7 +31,7 @@ import org.apache.commons.math3.random.RandomGenerator
 open class CognitiveAgentWander<T>(
     private val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian2D<T>,
+    pedestrian: Node<T>,
     protected val randomGenerator: RandomGenerator,
     protected val offset: Double,
     protected val radius: Double
@@ -56,10 +55,9 @@ open class CognitiveAgentWander<T>(
         .first()
         .coerceAtMost(maxWalk)
 
-    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<Pedestrian2D<T>, CognitiveAgentWander<T>>(n) {
-            CognitiveAgentWander(environment, r, it, randomGenerator, offset, radius)
-        }
+    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
+        CognitiveAgentWander(environment, r, n, randomGenerator, offset, radius)
+
 }
 
 /**

@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 open class CognitiveAgentSeek<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T, P, A>,
+    pedestrian: Node<T>,
     target: P
 ) : CognitiveAgentArrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
     where P : Position<P>, P : Vector<P>,
@@ -29,9 +29,10 @@ open class CognitiveAgentSeek<T, P, A>(
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
-        pedestrian: Pedestrian<T, P, A>,
+        pedestrian: Node<T>,
         vararg coordinates: Number
     ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) = CognitiveAgentSeek(environment, r, n, target)
+    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentSeek<T, P, A>
+    = CognitiveAgentSeek(environment, r, n, target)
 }

@@ -20,11 +20,11 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * Implementation of a basic [PedestrianMovementCapability].
  */
-data class BasePedestrianMovementCapability<T> @JvmOverloads constructor(
+open class BasePedestrianMovementCapability<T> @JvmOverloads constructor(
     /**
      * The simulation random generator.
      */
-    val randomGenerator: RandomGenerator,
+    private val randomGenerator: RandomGenerator,
     override val node: Node<T>,
     override val walkingSpeed: Double = Speed.default,
     override val runningSpeed: Double = Speed.default * 3,

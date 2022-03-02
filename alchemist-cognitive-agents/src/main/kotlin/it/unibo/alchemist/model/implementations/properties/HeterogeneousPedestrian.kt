@@ -25,7 +25,8 @@ open class HeterogeneousPedestrian<T, S, A> (
     node: Node<T>,
 ) : Pedestrian<T> (
     randomGenerator,
-    node,
-    node.asProperty<T, HumanProperty<T, S, A>>().speed.walking,
-    node.asProperty<T, HumanProperty<T, S, A>>().speed.running
-) where S : Vector<S>, A : GeometricTransformation<S>
+    node
+) where S : Vector<S>, A : GeometricTransformation<S> {
+    override val walkingSpeed: Double get() = node.asProperty<T, HumanProperty<T, S, A>>().speed.walking
+    override val runningSpeed: Double get() = node.asProperty<T, HumanProperty<T, S, A>>().speed.running
+}

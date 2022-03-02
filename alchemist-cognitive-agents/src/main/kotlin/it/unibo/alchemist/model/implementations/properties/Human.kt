@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.PedestrianIndividuality2DCapability
+import it.unibo.alchemist.model.interfaces.properties.Human2DProperty
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -29,4 +29,14 @@ class Human<T> @JvmOverloads constructor(
     override val speed: Speed = Speed(age, gender, randomGenerator),
     override val compliance: Double = Compliance(age, gender).level,
     override val helpAttitude: HelpAttitude = HelpAttitude(age, gender)
-) : PedestrianIndividuality2DCapability<T>
+) : Human2DProperty<T> {
+    @JvmOverloads constructor(
+        randomGenerator: RandomGenerator,
+        node: Node<T>,
+        age: Any,
+        gender: String,
+        speed: Speed = Speed(Age.fromAny(age), Gender.fromString(gender), randomGenerator),
+        compliance: Double = Compliance(Age.fromAny(age), Gender.fromString(gender)).level,
+        helpAttitude: HelpAttitude = HelpAttitude(Age.fromAny(age), Gender.fromString(gender))
+    ) : this(randomGenerator, node, Age.fromAny(age), Gender.fromString(gender), speed, compliance, helpAttitude)
+}

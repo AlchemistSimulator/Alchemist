@@ -17,14 +17,30 @@ variables:
     formula: *create_friends
     language: kotlin
 
+_homogeneous_properties: &homogeneous_properties
+  pedestrian:
+    type: Pedestrian
+  perceptive:
+    type: Perceptive2D
+  solid:
+    type: Area
+
 deployments:
   - type: Circle
     parameters: [10, 100, 20, 10]
     nodes:
-      type: HomogeneousPedestrian2D
-      parameters: [*group1]
+      type: GenericNode
+    properties:
+      <<: *homogeneous_properties
+      social:
+        type: Social
+        parameters: [*group1]
   - type: Circle
     parameters: [5, 10, 10, 10]
     nodes:
-      type: HomogeneousPedestrian2D
-      parameters: [*group2]
+      type: GenericNode
+    properties:
+      <<: *homogeneous_properties
+      social:
+        type: Social
+        parameters: [*group2]

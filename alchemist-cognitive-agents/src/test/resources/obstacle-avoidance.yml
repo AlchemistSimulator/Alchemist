@@ -28,22 +28,28 @@ _reactions: &behavior
       - type: CognitiveAgentObstacleAvoidance
         parameters: [50]
 
+_homogeous_pedestrian: &homogeneous_pedestrian
+  nodes:
+    type: GenericNode
+  properties:
+    - type: Pedestrian
+    - type: Social
+    - type: Perceptive2D
+    - type: Area
+
 deployments:
   - type: Circle
     parameters: [20, -100, 240, 30]
-    nodes:
-      type: HomogeneousPedestrian2D
+    <<: *homogeneous_pedestrian
     programs:
       - *behavior
   - type: Circle
     parameters: [30, 0, 600, 50]
-    nodes:
-      type: HomogeneousPedestrian2D
+    <<: *homogeneous_pedestrian
     programs:
       - *behavior
   - type: Circle
     parameters: [40, 100, -60, 40]
-    nodes:
-      type: HomogeneousPedestrian2D
+    <<: *homogeneous_pedestrian
     programs:
       - *behavior

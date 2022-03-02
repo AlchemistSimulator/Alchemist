@@ -15,7 +15,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.BaseProtelisCapability;
+import it.unibo.alchemist.model.implementations.properties.Protelis;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
@@ -37,7 +37,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.properties.ProtelisCapability;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -121,7 +121,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     ) {
         Objects.requireNonNull(additionalParameters);
         Objects.requireNonNull(node);
-        if (node.asPropertyOrNull(ProtelisCapability.class) != null) {
+        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
             if ("send".equalsIgnoreCase(additionalParameters)) {
                 final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
                         .parallelStream()
@@ -151,7 +151,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             }
         }
         throw new IllegalArgumentException(
-                "The node must have an instance of a " + ProtelisCapability.class.getSimpleName()
+                "The node must have an instance of a " + ProtelisProperty.class.getSimpleName()
         );
     }
 
@@ -182,7 +182,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Reaction<Object> reaction,
             final String additionalParameters
     ) {
-        if (node.asPropertyOrNull(ProtelisCapability.class) != null) {
+        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
@@ -207,7 +207,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             return new ComputationalRoundComplete(node, pList.get(0));
         }
         throw new IllegalArgumentException(
-                "The node must have an instance instance of " + ProtelisCapability.class.getSimpleName()
+                "The node must have an instance instance of " + ProtelisProperty.class.getSimpleName()
         );
     }
 
@@ -238,7 +238,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 return result;
             }
         };
-        node.addProperty(new BaseProtelisCapability<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
+        node.addProperty(new Protelis<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
         return node;
     }
 
@@ -392,8 +392,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         @SuppressFBWarnings("EI_EXPOSE_REP")
         public DeviceUID getDeviceUID() {
-            if (node.asPropertyOrNull(ProtelisCapability.class) != null) {
-                return node.asCapability(ProtelisCapability.class);
+            if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
+                return node.asProperty(ProtelisProperty.class);
             }
             return NO_NODE_ID;
         }

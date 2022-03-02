@@ -10,13 +10,13 @@
 package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.PercectiveProperty
+import it.unibo.alchemist.model.interfaces.properties.PerceptiveProperty
 import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**
  * Base implementation of a pedestrian's capability to influence each other.
  */
-data class Percective<T> (
+data class Perceptive<T> (
     override val node: Node<T>,
     override val fieldOfView: InfluenceSphere<T>,
-) : PercectiveProperty<T>
+) : PerceptiveProperty<T>

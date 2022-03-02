@@ -22,9 +22,19 @@ deployments:
   - type: Point
     parameters: [0, 0]
     nodes:
-      type: HomogeneousPedestrian2D
+      type: GenericNode
+    properties:
+      - type: Pedestrian
+      - type: Social
+      - type: Percective
+      - type: Area
     programs: *behavior
   - type: Point
     parameters: [1000, 500]
     nodes:
-      type: HomogeneousPedestrian2D
+      type: GenericNode
+    properties:
+      - type: Pedestrian
+      - type: Social
+      - type: Percective
+      - type: Area

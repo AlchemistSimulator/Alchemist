@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * A node's capability to exists with a shape in a 2D space.
  */
-interface Topological2DProperty<T> :
-    TopologicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+interface AreaProperty<T> :
+    OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
     override val shape: Euclidean2DShape
 }

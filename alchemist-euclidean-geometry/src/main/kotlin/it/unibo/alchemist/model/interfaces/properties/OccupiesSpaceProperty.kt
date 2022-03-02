@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * A node's ability to have a [Shape].
  */
-interface TopologicalProperty<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeProperty<T> {
+interface OccupiesSpaceProperty<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeProperty<T> {
     /**
      * The node's shape.
      */

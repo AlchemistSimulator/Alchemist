@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.Topological2DProperty
+import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
@@ -139,7 +139,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
      * A rough estimation of the area of a [Pedestrian].
      */
     protected open val Node<T>.area: Double get() =
-        Math.PI * asCapability<T, Topological2DProperty<T>>().shape.radius.pow(2)
+        Math.PI * asCapability<T, AreaProperty<T>>().shape.radius.pow(2)
 
     /**
      * Checks if the pedestrian knows that the area is an impasse (= an area with a single door).

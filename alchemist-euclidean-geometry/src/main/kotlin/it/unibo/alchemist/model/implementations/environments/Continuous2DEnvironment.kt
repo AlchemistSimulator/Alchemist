@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
-import it.unibo.alchemist.model.implementations.properties.Topological2D
+import it.unibo.alchemist.model.implementations.properties.Area
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -25,8 +25,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
-import it.unibo.alchemist.model.interfaces.properties.Topological2DProperty
-import it.unibo.alchemist.model.interfaces.properties.TopologicalProperty
+import it.unibo.alchemist.model.interfaces.properties.AreaProperty
+import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 
 /**
  * Implementation of [Physics2DEnvironment].
@@ -63,7 +63,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     }
 
     override fun getShape(node: Node<T>): Euclidean2DShape =
-        node.asCapabilityOrNull<T, Topological2DProperty<T>>()?.shape?.transformed {
+        node.asCapabilityOrNull<T, AreaProperty<T>>()?.shape?.transformed {
             origin(getPosition(node))
             rotate(getHeading(node))
         } ?: adimensional
@@ -74,12 +74,12 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      */
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
-        val topologicalProperty = node.asCapabilityOrNull<T, TopologicalProperty<T, *, *>>()
+        val occupiesSpaceProperty = node.asCapabilityOrNull<T, OccupiesSpaceProperty<T, *, *>>()
         check(node.canFit(position)) {
             "node in $position overlaps with nodes in ${node.overlappingNodes(position).map { getPosition(it) }}."
         }
-        if (topologicalProperty != null && topologicalProperty.shape.diameter > largestShapeDiameter) {
-            largestShapeDiameter = topologicalProperty.shape.diameter
+        if (occupiesSpaceProperty != null && occupiesSpaceProperty.shape.diameter > largestShapeDiameter) {
+            largestShapeDiameter = occupiesSpaceProperty.shape.diameter
         }
     }
 
@@ -89,10 +89,10 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) =
         super.nodeRemoved(node, neighborhood).also {
             nodeToHeading.remove(node)
-            val topologicalProperty = node.asCapabilityOrNull<T, TopologicalProperty<T, *, *>>()
-            if (topologicalProperty != null && largestShapeDiameter <= topologicalProperty.shape.diameter) {
+            val occupiesSpaceProperty = node.asCapabilityOrNull<T, OccupiesSpaceProperty<T, *, *>>()
+            if (occupiesSpaceProperty != null && largestShapeDiameter <= occupiesSpaceProperty.shape.diameter) {
                 largestShapeDiameter = nodes.asSequence()
-                    .mapNotNull { it.asCapabilityOrNull<T, TopologicalProperty<T, *, *>>() }
+                    .mapNotNull { it.asCapabilityOrNull<T, OccupiesSpaceProperty<T, *, *>>() }
                     .map { it.shape.diameter }
                     .maxOrNull() ?: 0.0
             }
@@ -103,7 +103,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * it is simply moved to [newPosition].
      */
     override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        if (node.asCapabilityOrNull<T, Topological2D<T>>() != null) {
+        if (node.asCapabilityOrNull<T, Area<T>>() != null) {
             super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
         } else {
             super.moveNodeToPosition(node, newPosition)
@@ -160,7 +160,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * Such segment should connect the [node]'s current position and its desired position.
      */
     private fun nodesOnPath(node: Node<T>, desiredMovement: Segment2D<*>): Nodes<T> =
-        with(node.asCapability<T, TopologicalProperty<T, *, *>>().shape) {
+        with(node.asCapability<T, OccupiesSpaceProperty<T, *, *>>().shape) {
             shapeFactory.rectangle(desiredMovement.length + diameter, diameter)
                 .transformed {
                     desiredMovement.midPoint.let { origin(it.x, it.y) }
@@ -168,7 +168,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
                 }
                 .let { movementArea ->
                     getNodesWithin(movementArea)
-                        .filter { it.asCapabilityOrNull<T, TopologicalProperty<T, *, *>>() != null }
+                        .filter { it.asCapabilityOrNull<T, OccupiesSpaceProperty<T, *, *>>() != null }
                         .minusElement(node)
                 }
         }
@@ -178,16 +178,16 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * node is shapeless, true is returned.
      */
     private fun Node<T>.canFit(position: Euclidean2DPosition): Boolean =
-        asCapabilityOrNull<T, Topological2DProperty<T>>() == null || overlappingNodes(position).isEmpty()
+        asCapabilityOrNull<T, AreaProperty<T>>() == null || overlappingNodes(position).isEmpty()
 
     /**
      * @returns the nodes in this environment whose shape intersects this node's shape. The [position] of this
      * node must be specified as it may not have been added in the environment yet.
      */
     private fun Node<T>.overlappingNodes(position: Euclidean2DPosition): Nodes<T> {
-        val shape = asCapability<T, Topological2DProperty<T>>().shape
+        val shape = asCapability<T, AreaProperty<T>>().shape
         return getNodesWithin(shapeFactory.requireCompatible(shape).transformed { origin(position) })
-            .filter { it.asCapabilityOrNull<T, Topological2DProperty<T>>() != null }
+            .filter { it.asCapabilityOrNull<T, AreaProperty<T>>() != null }
             .minusElement(this)
     }
 }

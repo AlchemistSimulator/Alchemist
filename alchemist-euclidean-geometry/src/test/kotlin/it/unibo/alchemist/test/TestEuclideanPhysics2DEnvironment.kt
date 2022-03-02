@@ -7,7 +7,7 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.model.implementations.properties.Topological2D
+import it.unibo.alchemist.model.implementations.properties.Area
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.GenericNode
@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.test.TestEuclidean2DShapeFactory.Companion.DEFAULT_SHAPE_SIZE
 import org.danilopianini.lang.MathUtils
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.properties.Topological2DProperty
+import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 
 internal infix fun Double.shouldBeFuzzy(other: Double): Unit = MathUtils.fuzzyEquals(this, other) shouldBe true
 
@@ -34,12 +34,12 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
         radius: Double,
     ): Node<Any> {
         return GenericNode(incarnation, environment).also {
-            it.addCapability(Topological2D(it, environment.shapeFactory.circle(radius)))
+            it.addCapability(Area(it, environment.shapeFactory.circle(radius)))
         }
     }
 
     private fun getNodeRadius(node: Node<Any>): Double =
-        node.asCapability<Any, Topological2DProperty<Any>>().shape.radius
+        node.asCapability<Any, AreaProperty<Any>>().shape.radius
 
     override fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)

@@ -15,7 +15,7 @@ import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.properties.MotilePedestrian
 import it.unibo.alchemist.model.implementations.properties.Percective2D
 import it.unibo.alchemist.model.implementations.properties.Social
-import it.unibo.alchemist.model.implementations.properties.Topological2D
+import it.unibo.alchemist.model.implementations.properties.Area
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -43,7 +43,7 @@ class TestSensory<T> : StringSpec({
         node.addCapability(MotilePedestrian(randomGenerator, node))
         node.addCapability(Social(node))
         node.addCapability(Percective2D(environment, node))
-        node.addCapability(Topological2D(environment, node))
+        node.addCapability(Area(environment, node))
         return node
     }
 

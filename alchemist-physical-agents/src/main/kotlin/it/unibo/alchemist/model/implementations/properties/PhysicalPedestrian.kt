@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian
-import it.unibo.alchemist.model.interfaces.properties.TopologicalProperty
+import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
@@ -51,8 +51,8 @@ class PhysicalPedestrian<T, P, A, F>(
     }
 
     override fun repulsionForce(other: Node<T>): P {
-        val myShape = node.asCapability<T, TopologicalProperty<T, P, A>>().shape
-        val otherShape = other.asCapability<T, TopologicalProperty<T, P, A>>().shape
+        val myShape = node.asCapability<T, OccupiesSpaceProperty<T, P, A>>().shape
+        val otherShape = other.asCapability<T, OccupiesSpaceProperty<T, P, A>>().shape
         return (myShape.centroid - otherShape.centroid).let {
             val desiredDistance = myShape.radius + comfortRay + otherShape.radius
             /*
@@ -66,7 +66,7 @@ class PhysicalPedestrian<T, P, A, F>(
     override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>) =
         environment.getNodesWithin(comfortArea)
             .minusElement(node)
-            .filter { it.asCapabilityOrNull<T, TopologicalProperty<T, P, A>>() != null }
+            .filter { it.asCapabilityOrNull<T, OccupiesSpaceProperty<T, P, A>>() != null }
             .map { repulsionForce(it) }
             /*
              * Discard infinitesimal forces.

@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.properties.Spatial2DCapability;
+import it.unibo.alchemist.model.interfaces.properties.Topological2DProperty;
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment;
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
@@ -64,8 +64,8 @@ public final class DrawSmartcam implements Effect {
             final int x,
             final int y
     ) {
-        final GeometricShape<?, ?> geometricShape = node.asCapabilityOrNull(Spatial2DCapability.class) != null
-                ? node.asCapability(Spatial2DCapability.class).getShape()
+        final GeometricShape<?, ?> geometricShape = node.asCapabilityOrNull(Topological2DProperty.class) != null
+                ? node.asCapability(Topological2DProperty.class).getShape()
                 : null;
         if (geometricShape instanceof AwtShapeCompatible) {
             final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));

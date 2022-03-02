@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_FINAL
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.ARRIVED
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.SpatialCapability
+import it.unibo.alchemist.model.interfaces.properties.TopologicalProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 
@@ -76,7 +76,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * at present. This workaround allows to specify a minimum distance which is dependent on the pedestrian
      * shape. In the future, something better could be done.
      */
-    protected val minDistance: Double = pedestrian.asCapability<T, SpatialCapability<T, P, A>>().shape.diameter
+    protected val minDistance: Double = pedestrian.asCapability<T, TopologicalProperty<T, P, A>>().shape.diameter
 
     /**
      * @returns true if the distance to [pedestrianPosition] is smaller than or equal to [minDistance].

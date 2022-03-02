@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
-import it.unibo.alchemist.model.interfaces.properties.Spatial2DCapability
+import it.unibo.alchemist.model.interfaces.properties.Topological2DProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
@@ -62,5 +62,5 @@ class Orienting2D<T, N : ConvexPolygon>(
 
     private fun randomEllipseSide(): Double =
         randomGenerator.nextDouble(minSide, maxSide) *
-            node.asCapability<T, Spatial2DCapability<T>>().shape.diameter
+            node.asCapability<T, Topological2DProperty<T>>().shape.diameter
 }

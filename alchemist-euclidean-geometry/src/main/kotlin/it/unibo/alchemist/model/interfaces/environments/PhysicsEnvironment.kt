@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.properties.SpatialCapability
+import it.unibo.alchemist.model.interfaces.properties.TopologicalProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -72,6 +72,6 @@ where P : Position<P>,
     fun farthestPositionReachable(
         node: Node<T>,
         desiredPosition: P,
-        hitboxRadius: Double = node.asCapability<T, SpatialCapability<T, P, A>>().shape.radius
+        hitboxRadius: Double = node.asCapability<T, TopologicalProperty<T, P, A>>().shape.radius
     ): P
 }

@@ -41,12 +41,14 @@ class BasePedestrianPhysicalCapability<T, P, A, F>(
 
     private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 
-    override val comfortRay: Double get() =
-        if (node.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel.wantsToEscape()) {
+    override val comfortRay: Double get() {
+        val cognitiveModel = node.asCapabilityOrNull<T, PedestrianCognitiveCapability<T>>()?.cognitiveModel
+        return if (cognitiveModel?.wantsToEscape() == true) {
             desiredSpaceTreshold / 3
         } else {
             desiredSpaceTreshold
         }
+    }
 
     override fun repulsionForce(other: Node<T>): P {
         val myShape = node.asCapability<T, SpatialCapability<T, P, A>>().shape

@@ -180,7 +180,7 @@ internal abstract class LoadingSystem(
                     }
                 }
                 // CAPABILITIES
-                val capabilities = SimulationModel.visitCapability<T, P>(context, descriptor)
+                val capabilities = SimulationModel.visitProperty<T, P>(context, descriptor)
                 capabilities.forEach { (shapes, capability) ->
                     if (shapes.isEmpty() || shapes.any { position in it }) {
                         node.addCapability(capability)

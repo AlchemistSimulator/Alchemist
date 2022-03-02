@@ -37,12 +37,12 @@ internal object DocumentRoot : SyntaxElement {
     object Deployment : SyntaxElement {
         val contents by OwnName()
         val nodes by OwnName()
-        val capabilities by OwnName()
+        val properties by OwnName()
         val programs by OwnName()
         override val validDescriptors = setOf(
             validDescriptor {
                 mandatory(JavaType.type)
-                optional(JavaType.parameters, contents, capabilities, nodes, programs)
+                optional(JavaType.parameters, contents, properties, nodes, programs)
                 forbidden(Filter.shape)
             }
         )
@@ -55,7 +55,7 @@ internal object DocumentRoot : SyntaxElement {
                 }
             )
         }
-        object Capabilities : SyntaxElement {
+        object Property : SyntaxElement {
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(JavaType.type)

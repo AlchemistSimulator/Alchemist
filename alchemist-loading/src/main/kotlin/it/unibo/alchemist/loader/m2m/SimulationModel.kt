@@ -322,19 +322,19 @@ internal object SimulationModel {
         }
     }
 
-    fun <T, P : Position<P>> visitCapability(
+    fun <T, P : Position<P>> visitProperty(
         context: Context,
         root: Map<*, *>,
     ): List<Pair<List<ShapeFilter<P>>, NodeProperty<T>>> {
-        logger.debug("Visiting capabilities: {}", root)
-        val capabilitiesKey = DocumentRoot.Deployment.capabilities
+        logger.debug("Visiting properties: {}", root)
+        val capabilitiesKey = DocumentRoot.Deployment.properties
         val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
-        return visitRecursively(context, allCapabilities, DocumentRoot.Deployment.Capabilities) { element ->
+        return visitRecursively(context, allCapabilities, DocumentRoot.Deployment.Property) { element ->
             (element as? Map<*, *>)?.let {
                 val shapes = visitFilter<P>(context, element)
                 val nodeProperty = visitBuilding<NodeProperty<T>>(context, element)
                     ?.getOrThrow() ?: cantBuildWith<NodeProperty<T>>(root, JavaType)
-                logger.debug("Capability: {}", nodeProperty)
+                logger.debug("Property: {}", nodeProperty)
                 Result.success(Pair(shapes, nodeProperty))
             }
         }

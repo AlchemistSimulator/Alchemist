@@ -11,16 +11,16 @@ package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.MotilePedestrianProperty
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.RunningPedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.WalkingPedestrianProperty
 import it.unibo.alchemist.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Implementation of a basic [MotilePedestrianProperty].
+ * Implementation of a basic [PedestrianProperty].
  */
-open class MotilePedestrian<T> @JvmOverloads constructor(
+open class Pedestrian<T> @JvmOverloads constructor(
     /**
      * The simulation random generator.
      */
@@ -28,7 +28,7 @@ open class MotilePedestrian<T> @JvmOverloads constructor(
     override val node: Node<T>,
     override val walkingSpeed: Double = Speed.default,
     override val runningSpeed: Double = Speed.default * 3,
-) : MotilePedestrianProperty<T>,
+) : PedestrianProperty<T>,
     WalkingPedestrianProperty<T> by WalkingPedestrian(node, walkingSpeed),
     RunningPedestrianProperty<T> by RunningPedestrian(node, runningSpeed) {
     override fun speed(): Double = randomGenerator.nextDouble(walkingSpeed, runningSpeed)

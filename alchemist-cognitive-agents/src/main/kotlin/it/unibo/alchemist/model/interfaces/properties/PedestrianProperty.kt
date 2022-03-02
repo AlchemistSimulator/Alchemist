@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.interfaces.properties
 /**
  * A node capability to move. It includes both [WalkingPedestrianProperty] and [RunningPedestrianProperty].
  */
-interface MotilePedestrianProperty<T> : WalkingPedestrianProperty<T>, RunningPedestrianProperty<T> {
+interface PedestrianProperty<T> : WalkingPedestrianProperty<T>, RunningPedestrianProperty<T> {
     /**
      * The speed at which the pedestrian is moving.
      */

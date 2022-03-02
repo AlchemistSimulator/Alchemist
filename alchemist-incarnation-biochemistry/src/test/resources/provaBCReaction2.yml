@@ -19,8 +19,8 @@ deployments:
     nodes:
       type: GenericNode
       #parameters: [4, p] # p useless parameter
-    capabilities:
-      type: BaseCircularCellularBehavior
+    properties:
+      type: CircularCellular
       parameters: [4]
     programs:
       - *waterDissociation
@@ -29,8 +29,8 @@ deployments:
     nodes:
       type: GenericNode
       #parameters: [3, p] # p useless parameter
-    capabilities:
-      type: BaseCircularCellularBehavior
+    properties:
+      type: CircularCellular
       parameters: [3]
     programs:
       - *waterDissociation
@@ -39,8 +39,8 @@ deployments:
     nodes:
       type: GenericNode
       #parameters: [2, p] # p useless parameter
-    capabilities:
-      type: BaseCircularCellularBehavior
+    properties:
+      type: CircularCellular
       parameters: [2]
     programs:
       - *waterDissociation
@@ -49,8 +49,8 @@ deployments:
     nodes:
       type: GenericNode
       #parameters: [1, p] # p useless parameter
-    capabilities:
-      type: BaseCircularCellularBehavior
+    properties:
+      type: CircularCellular
       parameters: [ 1 ]
     programs:
       - *waterDissociation

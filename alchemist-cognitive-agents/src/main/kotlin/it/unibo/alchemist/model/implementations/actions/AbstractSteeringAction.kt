@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringAction
-import it.unibo.alchemist.model.interfaces.properties.MotilePedestrianProperty
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
@@ -41,7 +41,7 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The maximum distance the pedestrian can walk, this is a length.
      */
-    open val maxWalk: Double get() = pedestrian.asProperty<T, MotilePedestrianProperty<T>>().speed() / reaction.rate
+    open val maxWalk: Double get() = pedestrian.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
 
     override fun getNextPosition(): P = nextPosition()
 

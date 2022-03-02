@@ -29,8 +29,8 @@ deployments:
     nodes:
       type: GenericNode
       parameters: []
-    capabilities:
-      type: BaseCircularCellularBehavior
+    properties:
+      type: CircularCellular
     contents:
       - molecule: B
         concentration: 10

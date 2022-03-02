@@ -12,7 +12,7 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.model.implementations.properties.MotilePedestrian
+import it.unibo.alchemist.model.implementations.properties.Pedestrian
 import it.unibo.alchemist.model.implementations.properties.Percective2D
 import it.unibo.alchemist.model.implementations.properties.Social
 import it.unibo.alchemist.model.implementations.properties.Area
@@ -40,7 +40,7 @@ class TestSensory<T> : StringSpec({
         environment: Physics2DEnvironment<T>
     ): Node<T> {
         val node = GenericNode(incarnation, environment)
-        node.addProperty(MotilePedestrian(randomGenerator, node))
+        node.addProperty(Pedestrian(randomGenerator, node))
         node.addProperty(Social(node))
         node.addProperty(Percective2D(environment, node))
         node.addProperty(Area(environment, node))

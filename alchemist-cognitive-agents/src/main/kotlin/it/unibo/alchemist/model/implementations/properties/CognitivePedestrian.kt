@@ -18,10 +18,10 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 /**
  * A cognitive pedestrian's movement capability.
  */
-class MotileCognitivePedestrian<T, S, A>(
+class CognitivePedestrian<T, S, A>(
     randomGenerator: RandomGenerator,
     node: Node<T>,
-) : MotileHeterogeneousPedestrian<T, S, A>(randomGenerator, node)
+) : HeterogeneousPedestrian<T, S, A>(randomGenerator, node)
     where S : Vector<S>, A : GeometricTransformation<S> {
     override fun speed(): Double {
         val myCognitiveModel = node.asProperty<T, CognitiveProperty<T>>().cognitiveModel

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
-import it.unibo.alchemist.model.interfaces.properties.MotilePedestrianProperty
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
@@ -47,7 +47,7 @@ open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads con
         env,
         pedestrian,
         prevalent = { singleNavigationAction() },
-        maxWalk = { pedestrian.asProperty<T, MotilePedestrianProperty<T>>().speed() / timeDistribution.rate },
+        maxWalk = { pedestrian.asProperty<T, PedestrianProperty<T>>().speed() / timeDistribution.rate },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha
     )

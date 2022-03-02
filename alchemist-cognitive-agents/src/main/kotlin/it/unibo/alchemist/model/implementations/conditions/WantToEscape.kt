@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
 /**
@@ -19,5 +19,5 @@ open class WantToEscape<T, S : Vector<S>, A : GeometricTransformation<S>>(
     override fun getPropensityContribution(): Double = 0.0
 
     override fun isValid(): Boolean =
-        pedestrian.asCapability<T, CognitiveProperty<T>>().cognitiveModel.wantsToEscape()
+        pedestrian.asProperty<T, CognitiveProperty<T>>().cognitiveModel.wantsToEscape()
 }

@@ -56,10 +56,10 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
             }
         };
         if (parameter == null || parameter.isEmpty()) {
-            node.addCapability(new CircularCellular<>(environment, node));
+            node.addProperty(new CircularCellular<>(environment, node));
             return node;
         }
-        node.addCapability(new CircularCellular<>(environment, node, Double.parseDouble(parameter)));
+        node.addProperty(new CircularCellular<>(environment, node, Double.parseDouble(parameter)));
         return node;
     }
 

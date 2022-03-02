@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.properties.HumanProperty
@@ -39,7 +39,7 @@ where P : Position<P>,
       F : GeometricShapeFactory<P, A> {
     override val cognitiveModel: CognitiveModel by lazy {
         ImpactModel(
-            node.asCapability<T, HumanProperty<T, P, A>>().compliance, ::influentialPeople
+            node.asProperty<T, HumanProperty<T, P, A>>().compliance, ::influentialPeople
         ) {
             environment.getLayer(danger)
                 .map { it.getValue(environment.getPosition(node)) as Double }

@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.implementations.properties
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.properties.HumanProperty
 import org.apache.commons.math3.random.RandomGenerator
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 
@@ -26,6 +26,6 @@ open class MotileHeterogeneousPedestrian<T, S, A> (
 ) : MotilePedestrian<T> (
     randomGenerator,
     node,
-    node.asCapability<T, HumanProperty<T, S, A>>().speed.walking,
-    node.asCapability<T, HumanProperty<T, S, A>>().speed.running
+    node.asProperty<T, HumanProperty<T, S, A>>().speed.walking,
+    node.asProperty<T, HumanProperty<T, S, A>>().speed.running
 ) where S : Vector<S>, A : GeometricTransformation<S>

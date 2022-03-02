@@ -37,7 +37,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
     ) {
         super(node, random);
         this.environment = environment;
-        if (!(node.asCapabilityOrNull(CellularProperty.class) != null)) {
+        if (!(node.asPropertyOrNull(CellularProperty.class) != null)) {
             throw new UnsupportedOperationException(
                     "Polarization can happen only in nodes with " + CellularProperty.class.getSimpleName()
             );
@@ -64,7 +64,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
                 randomVersor = environment.makePosition(x / module, y / module);
             }
         }
-        getNode().asCapability(CellularProperty.class).addPolarizationVersor(randomVersor);
+        getNode().asProperty(CellularProperty.class).addPolarizationVersor(randomVersor);
     }
 
     /**

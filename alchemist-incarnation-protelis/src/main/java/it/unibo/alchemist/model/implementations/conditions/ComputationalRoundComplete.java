@@ -38,7 +38,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
 
     @Override
     public ComputationalRoundComplete cloneCondition(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node.asCapabilityOrNull(ProtelisProperty.class) != null) {
+        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
             final List<RunProtelisProgram> possibleRefs = node.getReactions().stream()
                     .map(Reaction::getActions)
                     .flatMap(List::stream)

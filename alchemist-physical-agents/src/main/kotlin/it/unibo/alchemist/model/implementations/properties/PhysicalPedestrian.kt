@@ -21,8 +21,8 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 
 /**
  * Base implementation of a pedestrian's capability to experience physical interactions.
@@ -42,7 +42,7 @@ class PhysicalPedestrian<T, P, A, F>(
     private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 
     override val comfortRay: Double get() {
-        val cognitiveModel = node.asCapabilityOrNull<T, CognitiveProperty<T>>()?.cognitiveModel
+        val cognitiveModel = node.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel
         return if (cognitiveModel?.wantsToEscape() == true) {
             desiredSpaceTreshold / 3
         } else {
@@ -51,8 +51,8 @@ class PhysicalPedestrian<T, P, A, F>(
     }
 
     override fun repulsionForce(other: Node<T>): P {
-        val myShape = node.asCapability<T, OccupiesSpaceProperty<T, P, A>>().shape
-        val otherShape = other.asCapability<T, OccupiesSpaceProperty<T, P, A>>().shape
+        val myShape = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape
+        val otherShape = other.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape
         return (myShape.centroid - otherShape.centroid).let {
             val desiredDistance = myShape.radius + comfortRay + otherShape.radius
             /*
@@ -66,7 +66,7 @@ class PhysicalPedestrian<T, P, A, F>(
     override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>) =
         environment.getNodesWithin(comfortArea)
             .minusElement(node)
-            .filter { it.asCapabilityOrNull<T, OccupiesSpaceProperty<T, P, A>>() != null }
+            .filter { it.asPropertyOrNull<T, OccupiesSpaceProperty<T, P, A>>() != null }
             .map { repulsionForce(it) }
             /*
              * Discard infinitesimal forces.

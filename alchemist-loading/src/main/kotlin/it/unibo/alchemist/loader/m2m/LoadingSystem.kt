@@ -179,11 +179,11 @@ internal abstract class LoadingSystem(
                         node.setConcentration(molecule, concentration)
                     }
                 }
-                // CAPABILITIES
-                val capabilities = SimulationModel.visitProperty<T, P>(context, descriptor)
-                capabilities.forEach { (shapes, capability) ->
+                // PROPERTIES
+                val properties = SimulationModel.visitProperty<T, P>(context, descriptor)
+                properties.forEach { (shapes, property) ->
                     if (shapes.isEmpty() || shapes.any { position in it }) {
-                        node.addCapability(capability)
+                        node.addProperty(property)
                     }
                 }
                 // PROGRAMS

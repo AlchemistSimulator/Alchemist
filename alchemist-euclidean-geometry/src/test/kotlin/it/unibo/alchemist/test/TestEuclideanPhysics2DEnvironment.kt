@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.test.TestEuclidean2DShapeFactory.Companion.DEFAULT_SHAPE_SIZE
 import org.danilopianini.lang.MathUtils
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 
 internal infix fun Double.shouldBeFuzzy(other: Double): Unit = MathUtils.fuzzyEquals(this, other) shouldBe true
@@ -34,12 +34,12 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
         radius: Double,
     ): Node<Any> {
         return GenericNode(incarnation, environment).also {
-            it.addCapability(Area(it, environment.shapeFactory.circle(radius)))
+            it.addProperty(Area(it, environment.shapeFactory.circle(radius)))
         }
     }
 
     private fun getNodeRadius(node: Node<Any>): Double =
-        node.asCapability<Any, AreaProperty<Any>>().shape.radius
+        node.asProperty<Any, AreaProperty<Any>>().shape.radius
 
     override fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)

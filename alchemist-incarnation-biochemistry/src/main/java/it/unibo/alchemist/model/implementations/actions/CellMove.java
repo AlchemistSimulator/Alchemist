@@ -48,11 +48,11 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     ) {
         super(environment, node);
         this.inPer = inPercent;
-        if (node.asCapabilityOrNull(CellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CellularProperty.class) != null) {
             if (inPercent) {
-                if (node.asCapabilityOrNull(CircularCellularProperty.class) != null
-                        && node.asCapability(CircularCellularProperty.class).getRadius() != 0) {
-                    this.delta = node.asCapability(CircularCellularProperty.class).getDiameter() * delta;
+                if (node.asPropertyOrNull(CircularCellularProperty.class) != null
+                        && node.asProperty(CircularCellularProperty.class).getRadius() != 0) {
+                    this.delta = node.asProperty(CircularCellularProperty.class).getDiameter() * delta;
                 } else {
                     throw new IllegalArgumentException(
                             "Can't set distance in percent of the cell's diameter if cell has not a diameter"
@@ -74,16 +74,16 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     @Override
     public P getNextPosition() {
         return getEnvironment().makePosition(
-                delta * getNode().asCapability(CellularProperty.class)
+                delta * getNode().asProperty(CellularProperty.class)
                         .getPolarizationVersor().getCoordinate(0),
-                delta * getNode().asCapability(CellularProperty.class).getPolarizationVersor().getCoordinate(1)
+                delta * getNode().asProperty(CellularProperty.class).getPolarizationVersor().getCoordinate(1)
         );
     }
 
     @Override
     public void execute() {
         super.execute();
-        getNode().asCapability(CellularProperty.class)
+        getNode().asProperty(CellularProperty.class)
                 .setPolarizationVersor(getEnvironment().makePosition(0, 0));
     }
 

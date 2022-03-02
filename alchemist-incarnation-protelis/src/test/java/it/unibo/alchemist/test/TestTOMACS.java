@@ -38,7 +38,7 @@ class TestTOMACS {
                     .flatMap(Collection::stream)
                     .filter(a -> a instanceof RunProtelisProgram)
                     .map(a -> (RunProtelisProgram) a)
-                    .map(a -> n.asCapability(ProtelisProperty.class).getNetworkManager(a)))
+                    .map(a -> n.asProperty(ProtelisProperty.class).getNetworkManager(a)))
             .mapToDouble(AlchemistNetworkManager::getRetentionTime)
             .peek(d -> Assertions.assertTrue(Double.isFinite(d)))
             .count() > 0);

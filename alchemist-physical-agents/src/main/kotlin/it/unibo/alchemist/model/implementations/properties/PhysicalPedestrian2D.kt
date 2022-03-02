@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2DProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
@@ -35,5 +35,5 @@ class PhysicalPedestrian2D<T>(
 by PhysicalPedestrian(randomGenerator, environment, node),
     PhysicalPedestrian2DProperty<T> {
     override val comfortArea: Euclidean2DShape get() = environment
-        .shapeFactory.circle(node.asCapability<T, AreaProperty<T>>().shape.radius + comfortRay)
+        .shapeFactory.circle(node.asProperty<T, AreaProperty<T>>().shape.radius + comfortRay)
 }

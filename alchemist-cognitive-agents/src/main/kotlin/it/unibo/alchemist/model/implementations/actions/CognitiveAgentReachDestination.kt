@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import org.jgrapht.Graphs
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 
 /**
@@ -49,7 +49,7 @@ class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     private fun inferIsKnown(destination: Euclidean2DPosition): Boolean =
         environment.graph.nodeContaining(destination)?.let { room ->
             val neighborhood = Graphs.neighborListOf(environment.graph, room) + room
-            pedestrian.asCapability<T, OrientingProperty<T, *, *, L, *, R>>().cognitiveMap.vertexSet()
+            pedestrian.asProperty<T, OrientingProperty<T, *, *, L, *, R>>().cognitiveMap.vertexSet()
                 .any { landmark ->
                     neighborhood.any { it.contains(landmark.centroid) }
                 }

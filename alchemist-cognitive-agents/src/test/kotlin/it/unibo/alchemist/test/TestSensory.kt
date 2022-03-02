@@ -40,10 +40,10 @@ class TestSensory<T> : StringSpec({
         environment: Physics2DEnvironment<T>
     ): Node<T> {
         val node = GenericNode(incarnation, environment)
-        node.addCapability(MotilePedestrian(randomGenerator, node))
-        node.addCapability(Social(node))
-        node.addCapability(Percective2D(environment, node))
-        node.addCapability(Area(environment, node))
+        node.addProperty(MotilePedestrian(randomGenerator, node))
+        node.addProperty(Social(node))
+        node.addProperty(Percective2D(environment, node))
+        node.addProperty(Area(environment, node))
         return node
     }
 

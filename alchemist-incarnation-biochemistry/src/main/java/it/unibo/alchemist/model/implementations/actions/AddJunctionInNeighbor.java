@@ -49,7 +49,7 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @SuppressWarnings("unchecked")
     @Override
     public AddJunctionInNeighbor<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        if (node.asCapabilityOrNull(CellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CellularProperty.class) != null) {
             return new AddJunctionInNeighbor<>(
                     (Environment<Double, P>) getEnvironment(),
                     node,
@@ -73,8 +73,8 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @Override
     @SuppressWarnings("unchecked")
     public void execute(final Node<Double> targetNode) {
-        if (targetNode.asCapabilityOrNull(CellularProperty.class) != null) {
-            targetNode.asCapability(CellularProperty.class).addJunction(jun, getNode());
+        if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
+            targetNode.asProperty(CellularProperty.class).addJunction(jun, getNode());
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
         }

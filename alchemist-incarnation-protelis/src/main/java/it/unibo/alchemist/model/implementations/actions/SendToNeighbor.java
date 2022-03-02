@@ -44,7 +44,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public SendToNeighbor cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node.asCapabilityOrNull(ProtelisProperty.class) != null) {
+        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
             final List<RunProtelisProgram<?>> possibleRefs = node.getReactions().stream()
                     .map(Reaction::getActions)
                     .flatMap(List::stream)
@@ -69,7 +69,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public void execute() {
-        final AlchemistNetworkManager mgr = getNode().asCapability(ProtelisProperty.class).getNetworkManager(program);
+        final AlchemistNetworkManager mgr = getNode().asProperty(ProtelisProperty.class).getNetworkManager(program);
         Objects.requireNonNull(mgr);
         mgr.simulateMessageArrival(reaction.getTau().toDouble());
         program.prepareForComputationalCycle();

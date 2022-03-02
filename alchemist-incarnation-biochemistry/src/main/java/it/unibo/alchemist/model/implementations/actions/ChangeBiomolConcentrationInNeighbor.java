@@ -59,12 +59,12 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
         final List<Integer> validTargetsIds = new ArrayList<>();
         if (delta < 0) {
             neighborhood.getNeighbors().stream()
-            .filter(n -> n.asCapabilityOrNull(CellularProperty.class) != null && n.getConcentration(mol) >= delta)
+            .filter(n -> n.asPropertyOrNull(CellularProperty.class) != null && n.getConcentration(mol) >= delta)
             .mapToInt(Node::getId)
             .forEach(validTargetsIds::add);
         } else {
             neighborhood.getNeighbors().stream()
-            .filter(n -> n.asCapabilityOrNull(CellularProperty.class) != null && n.getConcentration(mol) >= delta)
+            .filter(n -> n.asPropertyOrNull(CellularProperty.class) != null && n.getConcentration(mol) >= delta)
             .mapToInt(Node::getId)
             .forEach(validTargetsIds::add);
         }

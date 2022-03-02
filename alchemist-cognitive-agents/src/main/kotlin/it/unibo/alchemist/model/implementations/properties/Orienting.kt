@@ -24,7 +24,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
 import org.jgrapht.graph.AsWeightedGraph
 import org.jgrapht.graph.DefaultEdge
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 import org.apache.commons.math3.random.RandomGenerator
@@ -61,7 +61,7 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
          * The rooms in which landmarks will be placed.
          */
         val rooms = environmentGraph.vertexSet()
-            .filter { it.diameter > node.asCapability<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter * minArea }
+            .filter { it.diameter > node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter * minArea }
             .shuffled(randomGenerator)
             .toList()
             .takePercentage(knowledgeDegree)

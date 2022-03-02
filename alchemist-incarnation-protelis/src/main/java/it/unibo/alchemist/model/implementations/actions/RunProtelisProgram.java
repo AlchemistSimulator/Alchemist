@@ -80,7 +80,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
         random = requireNonNull(randomGenerator);
         this.reaction = requireNonNull(reaction);
         networkManager = new AlchemistNetworkManager(reaction, this, retentionTime, packetLossDistance);
-        this.node.asCapability(ProtelisProperty.class).addNetworkManger(this, networkManager);
+        this.node.asProperty(ProtelisProperty.class).addNetworkManger(this, networkManager);
         executionContext = new AlchemistExecutionContext<>(environment, node, reaction, randomGenerator, networkManager);
         vm = new ProtelisVM(program, executionContext);
         this.retentionTime = retentionTime;
@@ -331,7 +331,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     @Override
     @SuppressWarnings("unchecked")
     public RunProtelisProgram<P> cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node.asCapabilityOrNull(ProtelisProperty.class) != null) {
+        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
             try {
                 return new RunProtelisProgram<P>(
                     getEnvironment(),

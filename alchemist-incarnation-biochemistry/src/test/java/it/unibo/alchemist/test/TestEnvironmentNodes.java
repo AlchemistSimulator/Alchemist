@@ -236,7 +236,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv2.yml");
         final Node<Double> center = env.getNodes().stream()
                 .parallel()
-                .filter(n -> n.asCapabilityOrNull(CellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CellularProperty.class) != null)
                 .findAny()
                 .get();
         final double conAInNearest = env.getNodes().stream()
@@ -258,7 +258,7 @@ final class TestEnvironmentNodes {
     void testEnv3() {
         final double conAInCell = (double) testNoVar("testEnv3.yml").getNodes().stream()
                 .parallel()
-                .filter(n -> n.asCapabilityOrNull(CircularCellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -280,7 +280,7 @@ final class TestEnvironmentNodes {
     void testEnv4() {
         final double conAInCell = (double) testNoVar("testEnv4.yml").getNodes().stream()
                 .parallel()
-                .filter(n -> n.asCapabilityOrNull(CircularCellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -331,7 +331,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv7.yml");
         final double conAInCell = (double) env.getNodes().stream()
                 .parallel()
-                .filter(n -> n.asCapabilityOrNull(CellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CellularProperty.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -353,7 +353,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> env = testNoVar("testEnv8.yml");
         final double conAInCell = (double) env.getNodes().stream()
                 .parallel()
-                .filter(n -> n.asCapabilityOrNull(CellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CellularProperty.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));

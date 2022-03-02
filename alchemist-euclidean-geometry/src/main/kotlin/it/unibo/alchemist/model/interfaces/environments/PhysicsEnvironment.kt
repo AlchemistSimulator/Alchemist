@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * An environment supporting physics and nodes shapes.
@@ -72,6 +72,6 @@ where P : Position<P>,
     fun farthestPositionReachable(
         node: Node<T>,
         desiredPosition: P,
-        hitboxRadius: Double = node.asCapability<T, OccupiesSpaceProperty<T, P, A>>().shape.radius
+        hitboxRadius: Double = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.radius
     ): P
 }

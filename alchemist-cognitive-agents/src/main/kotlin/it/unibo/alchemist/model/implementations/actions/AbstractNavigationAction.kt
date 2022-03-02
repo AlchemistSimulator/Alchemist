@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.ARRIVED
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 
 /**
@@ -76,7 +76,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * at present. This workaround allows to specify a minimum distance which is dependent on the pedestrian
      * shape. In the future, something better could be done.
      */
-    protected val minDistance: Double = pedestrian.asCapability<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter
+    protected val minDistance: Double = pedestrian.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter
 
     /**
      * @returns true if the distance to [pedestrianPosition] is smaller than or equal to [minDistance].
@@ -222,7 +222,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
         when (state) {
             START -> onStart()
             NEW_ROOM -> currentRoom.orFail().let {
-                pedestrian.asCapability<T, OrientingProperty<T, P, A, L, N, E>>()
+                pedestrian.asProperty<T, OrientingProperty<T, P, A, L, N, E>>()
                     .registerVisit(it)
                 strategy.inNewRoom(it)
             }

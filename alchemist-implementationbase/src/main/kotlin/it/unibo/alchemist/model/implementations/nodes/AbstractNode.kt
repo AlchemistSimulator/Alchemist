@@ -104,7 +104,7 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
         molecules[molecule] = concentration
     }
 
-    final override fun addCapability(nodeProperty: NodeProperty<T>) {
+    final override fun addProperty(nodeProperty: NodeProperty<T>) {
         capabilities.also {
             it.removeIf { c -> c::class == nodeProperty::class }
         }.add(nodeProperty)

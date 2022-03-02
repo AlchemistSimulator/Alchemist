@@ -46,7 +46,7 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
             final RandomGenerator randomGenerator
     ) {
         super(node, environment, randomGenerator);
-        if (node.asCapabilityOrNull(CellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CellularProperty.class) != null) {
             declareDependencyTo(junction);
             for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
                 declareDependencyTo(entry.getKey());
@@ -76,8 +76,8 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        if (targetNode.asCapabilityOrNull(CellularProperty.class) != null) {
-            getNode().asCapability(CellularProperty.class).removeJunction(jun, targetNode);
+        if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
+            getNode().asProperty(CellularProperty.class).removeJunction(jun, targetNode);
         } else {
             throw new UnsupportedOperationException("Can't remove Junction in a node that it's not a CellNode");
         }

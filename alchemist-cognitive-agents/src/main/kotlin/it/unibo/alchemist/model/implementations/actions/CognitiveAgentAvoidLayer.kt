@@ -6,8 +6,8 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
@@ -73,8 +73,8 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
     } ?: true
 
     private fun <T : Number> Node<T>.wantsToEscape(): Boolean {
-        val cognitiveCapability = asCapability<T, CognitiveProperty<T>>()
-        val orientingProperty = asCapabilityOrNull<T, OrientingProperty<T, *, *, *, *, *>>()
+        val cognitiveCapability = asProperty<T, CognitiveProperty<T>>()
+        val orientingProperty = asPropertyOrNull<T, OrientingProperty<T, *, *, *, *, *>>()
         return orientingProperty != null &&
             cognitiveCapability.danger == targetMolecule &&
             cognitiveCapability.cognitiveModel.wantsToEscape()

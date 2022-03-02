@@ -64,18 +64,18 @@ public final class BioRect2DEnvironmentNoOverlap
     protected boolean nodeShouldBeAdded(final Node<Double> node, final Euclidean2DPosition p) {
         final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
         if (isWithinLimits) {
-            if (node.asCapabilityOrNull(CircularCellularProperty.class) != null) {
+            if (node.asPropertyOrNull(CircularCellularProperty.class) != null) {
                 final Node<Double> thisNode = node;
                 double range = getMaxDiameterAmongCellWithCircularShape();
-                if (thisNode.asCapability(CircularCellularProperty.class).getDiameter() > range) {
-                    range = thisNode.asCapability(CircularCellularProperty.class).getDiameter();
+                if (thisNode.asProperty(CircularCellularProperty.class).getDiameter() > range) {
+                    range = thisNode.asProperty(CircularCellularProperty.class).getDiameter();
                 }
-                final double nodeRadius = thisNode.asCapability(CircularCellularProperty.class).getRadius();
+                final double nodeRadius = thisNode.asProperty(CircularCellularProperty.class).getRadius();
                 return range <= 0
                         || getNodesWithinRange(p, range).stream()
-                            .filter(n -> n.asCapabilityOrNull(CircularCellularProperty.class) != null)
+                            .filter(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null)
                             .noneMatch(n -> getPosition(n).distanceTo(p) < nodeRadius
-                                    + n.asCapability(CircularCellularProperty.class).getRadius());
+                                    + n.asProperty(CircularCellularProperty.class).getRadius());
             } else {
                 return true;
             }
@@ -90,7 +90,7 @@ public final class BioRect2DEnvironmentNoOverlap
         final double[] cur = getPosition(node).getCoordinates();
         final double[] np = newPos.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);
-        if (node.asCapabilityOrNull(CircularCellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CircularCellularProperty.class) != null) {
             final Euclidean2DPosition nextPos = findNearestFreePosition(
                     node,
                     new Euclidean2DPosition(cur[0], cur[1]),
@@ -117,7 +117,7 @@ public final class BioRect2DEnvironmentNoOverlap
             return requestedPos;
         }
         final double distanceToScan = distanceToReq + nodeToMove
-                .asCapability(CircularCellularProperty.class).getRadius() + (maxDiameter / 2);
+                .asProperty(CircularCellularProperty.class).getRadius() + (maxDiameter / 2);
         final double halfDistance = distanceToScan / 2;
         // compute position of the midpoint between originalPos and a point at distance distanceToScan
         final double rx = requestedPos.getX();
@@ -137,18 +137,18 @@ public final class BioRect2DEnvironmentNoOverlap
         double range = FastMath.sqrt(FastMath.pow(halfDistance, 2) + FastMath.pow(maxDiameter, 2));
         final double newMaxDiameter = getNodesWithinRange(midPoint, range).stream()
                 .parallel()
-                .filter(n -> n.asCapabilityOrNull(CircularCellularProperty.class) != null)
-                .mapToDouble(n -> n.asCapability(CircularCellularProperty.class).getDiameter())
+                .filter(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null)
+                .mapToDouble(n -> n.asProperty(CircularCellularProperty.class).getDiameter())
                 .max()
                 .orElse(0);
         final double newDistanceToScan = distanceToReq
-                + nodeToMove.asCapability(CircularCellularProperty.class).getRadius() + newMaxDiameter / 2;
+                + nodeToMove.asProperty(CircularCellularProperty.class).getRadius() + newMaxDiameter / 2;
         final double newHalfDistance = newDistanceToScan / 2;
         final Euclidean2DPosition vecToMid2 = new Euclidean2DPosition(xVer * newHalfDistance, yVer * newHalfDistance);
         final Euclidean2DPosition newMidPoint = originalPos.plus(vecToMid2);
         range = FastMath.sqrt(FastMath.pow(newHalfDistance, 2) + FastMath.pow(newMaxDiameter, 2));
         return getNodesWithinRange(newMidPoint, range).stream()
-                .filter(n -> !n.equals(nodeToMove) && n.asCapabilityOrNull(CircularCellularProperty.class) != null)
+                .filter(n -> !n.equals(nodeToMove) && n.asPropertyOrNull(CircularCellularProperty.class) != null)
                 .filter(n -> selectNodes(n, nodeToMove, getPosition(nodeToMove), requestedPos, xVer, yVer))
                 .map(n -> getPositionIfNodeIsObstacle(nodeToMove, n, originalPos, oy, ox, ry, rx)) 
                 .filter(Optional::isPresent) 
@@ -178,8 +178,8 @@ public final class BioRect2DEnvironmentNoOverlap
                 oppositeVersor.getX() * nodeOrientationFromReq.getX()
                 + oppositeVersor.getY() * nodeOrientationFromReq.getY();
         if (scalarProductResult2 <= 0) {
-            return nodePos.distanceTo(requestedPos) < node.asCapability(CircularCellularProperty.class).getRadius()
-                    + nodeToMove.asCapability(CircularCellularProperty.class).getRadius()
+            return nodePos.distanceTo(requestedPos) < node.asProperty(CircularCellularProperty.class).getRadius()
+                    + nodeToMove.asProperty(CircularCellularProperty.class).getRadius()
                     && scalarProductResult1 >= 0;
         }
         return scalarProductResult1 >= 0;
@@ -200,8 +200,8 @@ public final class BioRect2DEnvironmentNoOverlap
         final double yn = possibleObstaclePosition.getY();
         final double xn = possibleObstaclePosition.getX();
         // cellular range
-        final double cellRange = node.asCapability(CircularCellularProperty.class).getRadius()
-                + nodeToMove.asCapability(CircularCellularProperty.class).getRadius();
+        final double cellRange = node.asProperty(CircularCellularProperty.class).getRadius()
+                + nodeToMove.asProperty(CircularCellularProperty.class).getRadius();
         // compute intersection
         final double xIntersect;
         final double yIntersect;
@@ -254,16 +254,16 @@ public final class BioRect2DEnvironmentNoOverlap
             final @Nonnull Neighborhood<Double> neighborhood
     ) {
         super.nodeAdded(node, position, neighborhood);
-        if (node.asCapabilityOrNull(CircularCellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CircularCellularProperty.class) != null) {
             final Node<Double> cell = node;
-            if (cell.asCapability(CircularCellularProperty.class)
+            if (cell.asProperty(CircularCellularProperty.class)
                     .getDiameter() > getMaxDiameterAmongCellWithCircularShape()) {
                 biggestCellWithCircularArea = Optional.of(cell); 
             }
         }
-        if (node.asCapabilityOrNull(CircularDeformableCellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CircularDeformableCellularProperty.class) != null) {
             final Node<Double> cell = node;
-            if (cell.asCapability(CircularDeformableCellularProperty.class)
+            if (cell.asProperty(CircularDeformableCellularProperty.class)
                     .getMaximumDiameter() > getMaxDiameterAmongCircularDeformableCells()) {
                 biggestCircularDeformableCell = Optional.of(cell); 
             }
@@ -273,7 +273,7 @@ public final class BioRect2DEnvironmentNoOverlap
     @SuppressWarnings(UNCHECKED)
     @Override
     protected void nodeRemoved(final @Nonnull Node<Double> node, final @Nonnull Neighborhood<Double> neighborhood) {
-        if (node.asCapabilityOrNull(CircularCellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CircularCellularProperty.class) != null) {
             if (biggestCircularDeformableCell.isPresent() && biggestCircularDeformableCell.get().equals(node)) {
                 biggestCircularDeformableCell = getBiggest(CircularDeformableCellularProperty.class)
                         .transform(CircularDeformableCellularProperty::getNode);
@@ -352,9 +352,9 @@ public final class BioRect2DEnvironmentNoOverlap
 
     private double getDiameterFromCell(final Optional<Node<Double>> biggest) {
         return biggest
-                .transform(n -> n.asCapabilityOrNull(CircularDeformableCellularProperty.class) != null
-                        ? n.asCapability(CircularDeformableCellularProperty.class).getMaximumDiameter()
-                        : n.asCapability(CircularCellularProperty.class).getDiameter())
+                .transform(n -> n.asPropertyOrNull(CircularDeformableCellularProperty.class) != null
+                        ? n.asProperty(CircularDeformableCellularProperty.class).getMaximumDiameter()
+                        : n.asProperty(CircularCellularProperty.class).getDiameter())
                 .or(0d);
     }
         }

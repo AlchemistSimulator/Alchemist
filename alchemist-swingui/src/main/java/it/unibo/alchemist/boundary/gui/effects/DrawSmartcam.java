@@ -64,8 +64,8 @@ public final class DrawSmartcam implements Effect {
             final int x,
             final int y
     ) {
-        final GeometricShape<?, ?> geometricShape = node.asCapabilityOrNull(AreaProperty.class) != null
-                ? node.asCapability(AreaProperty.class).getShape()
+        final GeometricShape<?, ?> geometricShape = node.asPropertyOrNull(AreaProperty.class) != null
+                ? node.asProperty(AreaProperty.class).getShape()
                 : null;
         if (geometricShape instanceof AwtShapeCompatible) {
             final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));

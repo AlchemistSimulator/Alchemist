@@ -46,7 +46,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         super(node);
         this.env = environment;
         this.deformableCell = Objects.requireNonNull(
-            node.asCapabilityOrNull(CircularDeformableCellularProperty.class),
+            node.asPropertyOrNull(CircularDeformableCellularProperty.class),
             "The node must be a " + CircularDeformableCellularProperty.class.getSimpleName()
         );
     }
@@ -70,20 +70,20 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 env.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .filter(n -> { // only cells overlapping this cell are selected
-                    final CircularCellularProperty<P> circularCell = n.asCapabilityOrNull(CircularCellularProperty.class);
+                    final CircularCellularProperty<P> circularCell = n.asPropertyOrNull(CircularCellularProperty.class);
                     if (circularCell != null) {
                         // computing for each cell the max distance among which can't be overlapping
                         double maxDist;
-                        if (n.asCapabilityOrNull(CircularDeformableCellularProperty.class) != null) {
+                        if (n.asPropertyOrNull(CircularDeformableCellularProperty.class) != null) {
                             // for deformable cell is maxRad + maxRad
                              maxDist = thisNode
-                                     .asCapability(CircularDeformableCellularProperty.class).getMaximumRadius()
-                                     + n.asCapability(CircularDeformableCellularProperty.class).getMaximumRadius();
+                                     .asProperty(CircularDeformableCellularProperty.class).getMaximumRadius()
+                                     + n.asProperty(CircularDeformableCellularProperty.class).getMaximumRadius();
                         } else {
                             // for simple cells is maxRad + rad
                              maxDist = thisNode
-                                     .asCapability(CircularDeformableCellularProperty.class).getMaximumRadius()
-                                     + n.asCapability(CircularCellularProperty.class).getRadius();
+                                     .asProperty(CircularDeformableCellularProperty.class).getMaximumRadius()
+                                     + n.asProperty(CircularCellularProperty.class).getRadius();
                         }
                         // check
                         return env.getDistanceBetweenNodes(thisNode, n) < maxDist;
@@ -100,21 +100,21 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                     // min radius of n
                     final double localNodeMinRadius;
                     // max radius of this node (thisNode)
-                    final double nodeMaxRadius = thisNode.asCapability(CircularDeformableCellularProperty.class)
+                    final double nodeMaxRadius = thisNode.asProperty(CircularDeformableCellularProperty.class)
                             .getMaximumRadius();
                     // min radius of this node (thisNode)
-                    final double nodeMinRadius = thisNode.asCapability(CircularDeformableCellularProperty.class)
+                    final double nodeMinRadius = thisNode.asProperty(CircularDeformableCellularProperty.class)
                             .getRadius();
                     // intensity of tension between n and this node (thisNode), measured as value between 0 and 1
                     final double intensity;
-                    if (n.asCapabilityOrNull(CircularDeformableCellularProperty.class) != null) {
+                    if (n.asPropertyOrNull(CircularDeformableCellularProperty.class) != null) {
                         final Node<Double> localNode = n;
-                        localNodeMaxRadius = localNode.asCapability(CircularDeformableCellularProperty.class)
+                        localNodeMaxRadius = localNode.asProperty(CircularDeformableCellularProperty.class)
                                 .getMaximumRadius();
-                        localNodeMinRadius = localNode.asCapability(CircularDeformableCellularProperty.class)
+                        localNodeMinRadius = localNode.asProperty(CircularDeformableCellularProperty.class)
                                 .getRadius();
                     } else {
-                        localNodeMaxRadius = n.asCapabilityOrNull(CircularCellularProperty.class).getRadius();
+                        localNodeMaxRadius = n.asPropertyOrNull(CircularCellularProperty.class).getRadius();
                         localNodeMinRadius = localNodeMaxRadius;
                     }
                     // if both cells has no difference between maxRad and minRad intensity must be 1
@@ -145,7 +145,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 })
                 .collect(Collectors.toList());
         if (pushForces.isEmpty()) {
-            thisNode.asCapability(CellularProperty.class).addPolarizationVersor(env.makePosition(0,0));
+            thisNode.asProperty(CellularProperty.class).addPolarizationVersor(env.makePosition(0,0));
         } else {
             for (final P p : pushForces) {
                 resVersor[0] = resVersor[0] + p.getX();
@@ -153,9 +153,9 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
             }
             final double module = FastMath.sqrt(FastMath.pow(resVersor[0], 2) + FastMath.pow(resVersor[1], 2));
             if (module == 0) {
-                thisNode.asCapability(CellularProperty.class).addPolarizationVersor(env.makePosition(0,0));
+                thisNode.asProperty(CellularProperty.class).addPolarizationVersor(env.makePosition(0,0));
             } else {
-                thisNode.asCapability(CellularProperty.class)
+                thisNode.asProperty(CellularProperty.class)
                         .addPolarizationVersor(
                                 env.makePosition(resVersor[0] / module,
                                         resVersor[1] / module)

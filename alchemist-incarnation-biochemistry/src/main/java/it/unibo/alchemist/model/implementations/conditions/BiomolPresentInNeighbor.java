@@ -56,7 +56,7 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
         } else {
             final Neighborhood<Double> neighborhood = getEnvironment().getNeighborhood(getNode());
             return getValidNeighbors().entrySet().stream()
-                    .filter(n -> n.getKey().asCapabilityOrNull(CellularProperty.class) != null)
+                    .filter(n -> n.getKey().asPropertyOrNull(CellularProperty.class) != null)
                     .allMatch(n -> neighborhood.contains(n.getKey()) 
                             && n.getKey().getConcentration(mol) >=  conc);
         }
@@ -71,7 +71,7 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
     protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor is eligible, its propensity is computed using the concentration of the biomolecule
         return Optional.of(neighbor)
-                .filter(it -> it.asCapabilityOrNull(CellularProperty.class) != null)
+                .filter(it -> it.asPropertyOrNull(CellularProperty.class) != null)
                 .map(it -> it.getConcentration(mol))
                 .filter(it -> it >= conc)
                 .map(it -> binomialCoefficientDouble(it.intValue(), (int) FastMath.ceil(conc)))

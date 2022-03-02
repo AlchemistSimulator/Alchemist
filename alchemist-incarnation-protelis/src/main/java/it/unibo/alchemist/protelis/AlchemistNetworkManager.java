@@ -186,10 +186,10 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     public void simulateMessageArrival(final double currentTime) {
         Objects.requireNonNull(toBeSent);
         if (!toBeSent.isEmpty()) {
-            final MessageInfo msg = new MessageInfo(currentTime, node.asCapability(ProtelisProperty.class), toBeSent);
+            final MessageInfo msg = new MessageInfo(currentTime, node.asProperty(ProtelisProperty.class), toBeSent);
             environment.getNeighborhood(node).forEach(n -> {
-                if (n.asCapabilityOrNull(ProtelisProperty.class) != null) {
-                    final AlchemistNetworkManager destination = n.asCapability(ProtelisProperty.class).getNetworkManager(program);
+                if (n.asPropertyOrNull(ProtelisProperty.class) != null) {
+                    final AlchemistNetworkManager destination = n.asProperty(ProtelisProperty.class).getNetworkManager(program);
                     boolean packetArrives = true;
                     if (distanceLossDistribution != null) {
                         final var distance = environment.getDistanceBetweenNodes(node, n);

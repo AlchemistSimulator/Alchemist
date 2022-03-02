@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A [SteeringAction] allowing a pedestrian to navigate an environment consciously (e.g. without getting stuck in
@@ -44,7 +44,7 @@ interface NavigationAction<T, P, A, L, R, N, E> : SteeringAction<T, P>
     /**
      * The pedestrian's orienting capability.
      */
-    val orientingProperty get() = pedestrian.asCapability<T, OrientingProperty<T, P, A, L, N, E>>()
+    val orientingProperty get() = pedestrian.asProperty<T, OrientingProperty<T, P, A, L, N, E>>()
 
     /**
      * The environment the [pedestrian] is into.

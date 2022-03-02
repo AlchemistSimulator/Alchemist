@@ -127,7 +127,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * Adds a capability to the node.
      * @param nodeProperty the capability you want to add to the node
      */
-    fun addCapability(nodeProperty: NodeProperty<T>)
+    fun addProperty(nodeProperty: NodeProperty<T>)
 
     /**
      * returns a [NodeProperty] of the provided [type] [C].
@@ -135,7 +135,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : NodeProperty<T>> asCapabilityOrNull(superType: Class<in C>): C? = asCapabilityOrNull(superType.kotlin)
+    fun <C : NodeProperty<T>> asPropertyOrNull(superType: Class<in C>): C? = asPropertyOrNull(superType.kotlin)
 
     /**
      * returns a [NodeProperty] of the provided [type] [C].
@@ -144,7 +144,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @return a capability of the provided type [C]
      */
     @Suppress("UNCHECKED_CAST")
-    fun <C : NodeProperty<T>> asCapabilityOrNull(superType: KClass<in C>): C? = capabilities
+    fun <C : NodeProperty<T>> asPropertyOrNull(superType: KClass<in C>): C? = capabilities
         .asSequence()
         .mapNotNull { nodeProperty: NodeProperty<T> -> nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it } }
         .minByOrNull { it: Pair<NodeProperty<T>, Int> -> it.second }
@@ -156,8 +156,8 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : NodeProperty<T>> asCapability(superType: KClass<C>): C =
-        asCapabilityOrNull(superType).let { it } ?: TODO()
+    fun <C : NodeProperty<T>> asProperty(superType: KClass<C>): C =
+        asPropertyOrNull(superType).let { it } ?: TODO()
 
     /**
      * returns a [NodeProperty] of the provided [type] [C].
@@ -165,7 +165,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : NodeProperty<T>> asCapability(superType: Class<C>): C = asCapability(superType.kotlin)
+    fun <C : NodeProperty<T>> asProperty(superType: Class<C>): C = asProperty(superType.kotlin)
 
     companion object {
         /**
@@ -174,7 +174,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
          * @param superType the type of capability to retrieve
          * @return a capability of the provided type [C]
          */
-        inline fun <T, reified C : NodeProperty<T>> Node<T>.asCapability(): C = asCapability(C::class)
+        inline fun <T, reified C : NodeProperty<T>> Node<T>.asProperty(): C = asProperty(C::class)
 
         /**
          * returns a [NodeProperty] of the provided [type] [C] or [null] if the node does not have the capabiilty.
@@ -182,7 +182,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
          * @param superType the type of capability to retrieve
          * @return if present, a capability of the provided type [C]
          */
-        inline fun <T, reified C : NodeProperty<T>> Node<T>.asCapabilityOrNull(): C? = asCapabilityOrNull(C::class)
+        inline fun <T, reified C : NodeProperty<T>> Node<T>.asPropertyOrNull(): C? = asPropertyOrNull(C::class)
 
         private fun KClass<*>.distanceFrom(superType: KClass<*>, depth: Int = 0): Int? = when {
             !isSubclassOf(superType) -> null

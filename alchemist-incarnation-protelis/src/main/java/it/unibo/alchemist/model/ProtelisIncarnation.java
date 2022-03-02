@@ -121,7 +121,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     ) {
         Objects.requireNonNull(additionalParameters);
         Objects.requireNonNull(node);
-        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
+        if (node.asPropertyOrNull(ProtelisCapability.class) != null) {
             if ("send".equalsIgnoreCase(additionalParameters)) {
                 final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
                         .parallelStream()
@@ -182,7 +182,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Reaction<Object> reaction,
             final String additionalParameters
     ) {
-        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
+        if (node.asPropertyOrNull(ProtelisCapability.class) != null) {
             /*
              * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
              */
@@ -238,7 +238,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 return result;
             }
         };
-        node.addCapability(new BaseProtelisCapability<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
+        node.addProperty(new BaseProtelisCapability<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
         return node;
     }
 
@@ -392,7 +392,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         @SuppressFBWarnings("EI_EXPOSE_REP")
         public DeviceUID getDeviceUID() {
-            if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
+            if (node.asPropertyOrNull(ProtelisCapability.class) != null) {
                 return node.asCapability(ProtelisCapability.class);
             }
             return NO_NODE_ID;
@@ -604,7 +604,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
 
         @Override
-        public void addCapability(@NotNull final NodeProperty<Object> nodeProperty) { notImplemented(); }
+        public void addProperty(@NotNull final NodeProperty<Object> nodeProperty) { notImplemented(); }
 
         @NotNull
         @Override

@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.properties.MotilePedestrianProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A [SteeringBehavior] using [SinglePrevalent] steering strategy and accepting a collection of actions
@@ -47,7 +47,7 @@ open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads con
         env,
         pedestrian,
         prevalent = { singleNavigationAction() },
-        maxWalk = { pedestrian.asCapability<T, MotilePedestrianProperty<T>>().speed() / timeDistribution.rate },
+        maxWalk = { pedestrian.asProperty<T, MotilePedestrianProperty<T>>().speed() / timeDistribution.rate },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha
     )

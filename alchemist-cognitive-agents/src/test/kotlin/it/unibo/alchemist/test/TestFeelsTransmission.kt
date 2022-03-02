@@ -13,17 +13,17 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
 class TestFeelsTransmission<T, P> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
         fun Environment<T, P>.perceivedDanger() = nodes
-            .mapNotNull { it.asCapabilityOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
+            .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
             .sumOf { it.dangerBelief() }
         fun EuclideanEnvironment<T, P>.dangerIsLoaded() = this.also {
-            nodes.mapNotNull { it.asCapabilityOrNull<T, CognitiveProperty<T>>()?.danger }.forEach {
+            nodes.mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }.forEach {
                 it shouldNotBe null
             }
         }

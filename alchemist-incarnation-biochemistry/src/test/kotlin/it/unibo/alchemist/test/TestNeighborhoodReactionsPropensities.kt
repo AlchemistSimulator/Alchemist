@@ -30,7 +30,7 @@ import it.unibo.alchemist.model.interfaces.properties.CellularProperty
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
 import kotlin.properties.Delegates
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 private const val BIOMOLECULE_NEEDED = 5
 private const val NEIGHBORHOOD_PRESENT_REACTION = "[5 token] --> [5 token in neighbor]"
@@ -56,7 +56,7 @@ class TestNeighborhoodReactionsPropensities : StringSpec({
     "test junction present propensities" {
         0.rangeTo(9).forEach {
             0.rangeTo(it).forEach { _ ->
-                centralNode.asCapability<Double, CellularProperty<Euclidean2DPosition>>()
+                centralNode.asProperty<Double, CellularProperty<Euclidean2DPosition>>()
                     .addJunction(JUNCTION, neighbors[it])
             }
         }
@@ -125,7 +125,7 @@ private val Node<Double>.neighborhoodPresentPropensity: Double
 
 private val Node<Double>.junctionPresentPropensity: Double
     get() = checkCellNodeAndGetPropensity {
-        centralNode.asCapability<Double, CellularProperty<Euclidean2DPosition>>()
+        centralNode.asProperty<Double, CellularProperty<Euclidean2DPosition>>()
             .junctions.getOrDefault(JUNCTION, emptyMap()).getOrDefault(it, 0).toDouble()
     }
 
@@ -135,4 +135,4 @@ private val Node<Double>.biomoleculeInNeighborPropensity: Double
     }
 
 private fun Node<Double>.checkCellNodeAndGetPropensity(propensityFunction: (Node<Double>) -> Double) =
-    if (this.asCapabilityOrNull(CellularProperty::class) != null) { propensityFunction(this) } else { 0.0 }
+    if (this.asPropertyOrNull(CellularProperty::class) != null) { propensityFunction(this) } else { 0.0 }

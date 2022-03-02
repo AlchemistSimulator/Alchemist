@@ -102,7 +102,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
             final Reaction<Object> reaction,
             final RandomGenerator random,
             final AlchemistNetworkManager networkManager) {
-        super(localNode.asCapability(ProtelisProperty.class), networkManager);
+        super(localNode.asProperty(ProtelisProperty.class), networkManager);
         this.environment = environment;
         node = localNode;
         this.reaction = reaction;
@@ -136,7 +136,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * @return the distance
      */
     public double distanceTo(final int target) {
-        return distanceTo(environment.getNodeByID(target).asCapability(ProtelisProperty.class));
+        return distanceTo(environment.getNodeByID(target).asProperty(ProtelisProperty.class));
     }
 
     @Override
@@ -174,7 +174,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public DeviceUID getDeviceUID() {
-        return node.asCapability(ProtelisProperty.class);
+        return node.asProperty(ProtelisProperty.class);
     }
 
     /**

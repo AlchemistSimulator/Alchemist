@@ -40,13 +40,13 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
     @Override
     protected double getNeighborPropensity(final Node<T> neighbor) {
         // to be eligible (p = 1) a neighbor just needs to be instance of CellNode
-        return neighbor.asCapabilityOrNull(CellularProperty.class) != null ? 1d : 0d;
+        return neighbor.asPropertyOrNull(CellularProperty.class) != null ? 1d : 0d;
     }
 
     @Override
     public boolean isValid() {
         return getEnvironment().getNeighborhood(getNode()).getNeighbors().stream()
-                .anyMatch(n -> n.asCapabilityOrNull(CellularProperty.class) != null);
+                .anyMatch(n -> n.asPropertyOrNull(CellularProperty.class) != null);
     }
 
     @Override

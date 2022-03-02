@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.interfaces.properties
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 
 /**
  * The pedestrian's cognitive capability.
@@ -32,8 +32,8 @@ interface CognitiveProperty<T> : NodeProperty<T> {
     /**
      * The mind model of all people considered influential for this cognitive pedestrian.
      */
-    fun influentialPeople(): List<CognitiveModel> = node.asCapability<T, PercectiveProperty<T>>()
+    fun influentialPeople(): List<CognitiveModel> = node.asProperty<T, PercectiveProperty<T>>()
         .senses.flatMap { it.value.influentialNodes() }
-        .mapNotNull { it.asCapabilityOrNull<T, CognitiveProperty<T>>() }
+        .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>() }
         .map { it.cognitiveModel }
 }

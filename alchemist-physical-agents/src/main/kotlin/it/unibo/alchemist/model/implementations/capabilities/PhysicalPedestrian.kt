@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.implementations.capabilities
 
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianPhysicalCapability
+import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
+import it.unibo.alchemist.model.interfaces.capabilities.PhysicalPedestrian
 import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
@@ -27,14 +27,14 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 /**
  * Base implementation of a pedestrian's capability to experience physical interactions.
  */
-class BasePedestrianPhysicalCapability<T, P, A, F>(
+class PhysicalPedestrian<T, P, A, F>(
     randomGenerator: RandomGenerator,
     /**
      * The environment in which the pedestrian is moving.
      */
     val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
-) : PedestrianPhysicalCapability<T, P, A, F>
+) : PhysicalPedestrian<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {
@@ -42,7 +42,7 @@ class BasePedestrianPhysicalCapability<T, P, A, F>(
     private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 
     override val comfortRay: Double get() {
-        val cognitiveModel = node.asCapabilityOrNull<T, PedestrianCognitiveCapability<T>>()?.cognitiveModel
+        val cognitiveModel = node.asCapabilityOrNull<T, CognitiveProperty<T>>()?.cognitiveModel
         return if (cognitiveModel?.wantsToEscape() == true) {
             desiredSpaceTreshold / 3
         } else {

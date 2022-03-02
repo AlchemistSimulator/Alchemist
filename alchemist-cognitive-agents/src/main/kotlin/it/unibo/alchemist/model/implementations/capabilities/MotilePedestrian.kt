@@ -11,16 +11,16 @@ package it.unibo.alchemist.model.implementations.capabilities
 
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianRunningCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianWalkingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.MotilePedestrianProperty
+import it.unibo.alchemist.model.interfaces.capabilities.RunningPedestrianProperty
+import it.unibo.alchemist.model.interfaces.capabilities.WalkingPedestrianProperty
 import it.unibo.alchemist.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Implementation of a basic [PedestrianMovementCapability].
+ * Implementation of a basic [MotilePedestrianProperty].
  */
-open class BasePedestrianMovementCapability<T> @JvmOverloads constructor(
+open class MotilePedestrian<T> @JvmOverloads constructor(
     /**
      * The simulation random generator.
      */
@@ -28,8 +28,8 @@ open class BasePedestrianMovementCapability<T> @JvmOverloads constructor(
     override val node: Node<T>,
     override val walkingSpeed: Double = Speed.default,
     override val runningSpeed: Double = Speed.default * 3,
-) : PedestrianMovementCapability<T>,
-    PedestrianWalkingCapability<T> by BasePedestrianWalkingCapability(node, walkingSpeed),
-    PedestrianRunningCapability<T> by BasePedestrianRunningCapability(node, runningSpeed) {
+) : MotilePedestrianProperty<T>,
+    WalkingPedestrianProperty<T> by WalkingPedestrian(node, walkingSpeed),
+    RunningPedestrianProperty<T> by RunningPedestrian(node, runningSpeed) {
     override fun speed(): Double = randomGenerator.nextDouble(walkingSpeed, runningSpeed)
 }

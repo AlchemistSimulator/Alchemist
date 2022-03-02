@@ -12,13 +12,13 @@ package it.unibo.alchemist.model.implementations.capabilities
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
+import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 
 /**
  * The node's [CognitiveModel].
  */
-class BasePedestrianCognitive2DCapability<T> @JvmOverloads constructor(
+class Cognitive2D<T> @JvmOverloads constructor(
     /**
      * The environment in which the node moves.
      */
@@ -28,7 +28,7 @@ class BasePedestrianCognitive2DCapability<T> @JvmOverloads constructor(
      * The molecule associated with danger in the environment.
      */
     danger: Molecule? = null,
-) : PedestrianCognitiveCapability<T> by BasePedestrianCognitiveCapability(
+) : CognitiveProperty<T> by Cognitive(
     environment,
     node,
     danger,

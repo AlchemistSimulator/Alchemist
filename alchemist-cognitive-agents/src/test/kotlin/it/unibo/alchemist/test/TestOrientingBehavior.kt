@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
@@ -35,7 +35,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 class TestOrientingBehavior<T, P> : StringSpec({
 
     val filterOrientingNode: (Node<T>) -> Boolean =
-        { it.asCapabilityOrNull<T, OrientingCapability<T, P, *, *, *, *>>() != null }
+        { it.asCapabilityOrNull<T, OrientingProperty<T, P, *, *, *, *>>() != null }
 
     /**
      * Asserts that the distance of each pedestrian from the target position specified

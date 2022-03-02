@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
 
 /**
  * An abstract [NavigationAction], taking care of properly moving the pedestrian in the
@@ -222,7 +222,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
         when (state) {
             START -> onStart()
             NEW_ROOM -> currentRoom.orFail().let {
-                pedestrian.asCapability<T, OrientingCapability<T, P, A, L, N, E>>()
+                pedestrian.asCapability<T, OrientingProperty<T, P, A, L, N, E>>()
                     .registerVisit(it)
                 strategy.inNewRoom(it)
             }

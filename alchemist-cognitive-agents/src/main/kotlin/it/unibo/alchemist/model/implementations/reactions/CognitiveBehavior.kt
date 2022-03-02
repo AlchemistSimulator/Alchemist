@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
+import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
 
 /**
  * Reaction representing the cognitive behavior of a pedestrian.
@@ -30,5 +30,5 @@ class CognitiveBehavior<T, V, A>(
     override fun getRate() = timeDistribution.rate
 
     override fun updateInternalStatus(curTime: Time, executed: Boolean, env: Environment<T, *>) =
-        pedestrian.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel.update(rate)
+        pedestrian.asCapability<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
 }

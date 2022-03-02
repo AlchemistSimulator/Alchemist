@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.interfaces
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -44,7 +44,7 @@ interface NavigationAction<T, P, A, L, R, N, E> : SteeringAction<T, P>
     /**
      * The pedestrian's orienting capability.
      */
-    val orientingCapability get() = pedestrian.asCapability<T, OrientingCapability<T, P, A, L, N, E>>()
+    val orientingProperty get() = pedestrian.asCapability<T, OrientingProperty<T, P, A, L, N, E>>()
 
     /**
      * The environment the [pedestrian] is into.

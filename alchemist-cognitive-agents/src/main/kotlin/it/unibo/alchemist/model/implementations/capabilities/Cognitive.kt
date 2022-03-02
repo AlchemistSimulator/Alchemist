@@ -15,8 +15,8 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianIndividualityCapability
+import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
+import it.unibo.alchemist.model.interfaces.capabilities.HumanProperty
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
@@ -25,21 +25,21 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * The node's [CognitiveModel].
  */
-data class BasePedestrianCognitiveCapability<T, P, A, F> @JvmOverloads constructor(
+data class Cognitive<T, P, A, F> @JvmOverloads constructor(
     /**
      * The environment in which the node moves.
      */
     val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
     override val danger: Molecule? = null,
-) : PedestrianCognitiveCapability<T>
+) : CognitiveProperty<T>
 where P : Position<P>,
       P : Vector<P>,
       A : GeometricTransformation<P>,
       F : GeometricShapeFactory<P, A> {
     override val cognitiveModel: CognitiveModel by lazy {
         ImpactModel(
-            node.asCapability<T, PedestrianIndividualityCapability<T, P, A>>().compliance, ::influentialPeople
+            node.asCapability<T, HumanProperty<T, P, A>>().compliance, ::influentialPeople
         ) {
             environment.getLayer(danger)
                 .map { it.getValue(environment.getPosition(node)) as Double }

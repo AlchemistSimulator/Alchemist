@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * A capability representing a pedestrian's individual characteristics.
  */
-interface PedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeProperty<T> {
+interface HumanProperty<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeProperty<T> {
 
     /**
      * The age of this pedestrian.
@@ -63,4 +63,4 @@ interface PedestrianIndividualityCapability<T, S : Vector<S>, A : GeometricTrans
  * A capability representing a pedestrian's individual characteristics in a 2D space.
  */
 typealias PedestrianIndividuality2DCapability<T> =
-    PedestrianIndividualityCapability<T, Euclidean2DPosition, Euclidean2DTransformation>
+    HumanProperty<T, Euclidean2DPosition, Euclidean2DTransformation>

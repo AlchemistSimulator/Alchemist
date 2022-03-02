@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianMovementCapability
+import it.unibo.alchemist.model.interfaces.capabilities.MotilePedestrianProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
@@ -51,7 +51,7 @@ open class CognitiveAgentArrive<T, P, A>(
         when {
             this < arrivalTolerance -> 0.0
             this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
-            else -> pedestrian.asCapability<T, PedestrianMovementCapability<T>>().speed() / reaction.rate
+            else -> pedestrian.asCapability<T, MotilePedestrianProperty<T>>().speed() / reaction.rate
         }
     }
 

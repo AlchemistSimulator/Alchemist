@@ -11,11 +11,11 @@ import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.SocialCapability
+import it.unibo.alchemist.model.interfaces.capabilities.SocialProperty
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
 
-    val filterSocialNode: (Node<T>) -> Boolean = { it.asCapabilityOrNull<T, SocialCapability<T>>() != null }
+    val filterSocialNode: (Node<T>) -> Boolean = { it.asCapabilityOrNull<T, SocialProperty<T>>() != null }
 
     "homogeneous pedestrians loading" {
         loadYamlSimulation<T, P>("homogeneous-pedestrians.yml").startSimulation()
@@ -40,7 +40,7 @@ class TestPedestriansLoading<T, P, A> : StringSpec({
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
             onceInitialized = { e ->
                 e.nodes.filter(filterSocialNode).forEach {
-                    println("${it.id} -> ${ it.asCapability<T, SocialCapability<T>>().group }")
+                    println("${it.id} -> ${ it.asCapability<T, SocialProperty<T>>().group }")
                 }
             }
         )

@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.Undir
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.pathExists
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -30,9 +30,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * Base implementation of a node's [OrientingCapability].
+ * Base implementation of a node's [OrientingProperty].
  */
-abstract class BaseOrientingCapability<T, P, A, N, L> @JvmOverloads constructor(
+abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
     /**
      * The simulation [RandomGenerator].
      */
@@ -46,7 +46,7 @@ abstract class BaseOrientingCapability<T, P, A, N, L> @JvmOverloads constructor(
      * them).
      */
     private val minArea: Double = 10.0,
-) : OrientingCapability<T, P, A, L, N, DefaultEdge>
+) : OrientingProperty<T, P, A, L, N, DefaultEdge>
     where P : Position<P>,
           P : Vector<P>,
           A : GeometricTransformation<P>,

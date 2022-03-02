@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
 import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -30,9 +30,9 @@ private typealias Transformation2D = Euclidean2DTransformation
 private typealias ShapeFactory = Euclidean2DShapeFactory
 
 /**
- * Basic implementation of a node's [OrientingCapability] in a 2D space.
+ * Basic implementation of a node's [OrientingProperty] in a 2D space.
  */
-class BaseOrienting2DCapability<T, N : ConvexPolygon>(
+class Orienting2D<T, N : ConvexPolygon>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, N, DefaultEdge>,
     override val randomGenerator: RandomGenerator,
     override val node: Node<T>,
@@ -43,7 +43,7 @@ class BaseOrienting2DCapability<T, N : ConvexPolygon>(
      */
     private val minSide: Double = 30.0,
     private val maxSide: Double = 60.0,
-) : BaseOrientingCapability<T, Position2D, Transformation2D, N, Ellipse>(
+) : Orienting<T, Position2D, Transformation2D, N, Ellipse>(
     randomGenerator,
     environment,
     node,

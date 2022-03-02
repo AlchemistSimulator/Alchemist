@@ -12,18 +12,18 @@ package it.unibo.alchemist.model.implementations.capabilities
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.InfluenceSphere2D
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.PerceptionOfOthers
+import it.unibo.alchemist.model.interfaces.capabilities.PercectiveProperty
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 
 /**
  * Base implementation of a pedestrian's capability to influence each other in a 2D space.
  */
-class BasePerceptionOfOthers2D<T> @JvmOverloads constructor(
+class Percective2D<T> @JvmOverloads constructor(
     environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
     override val fieldOfView: InfluenceSphere2D<T> =
         FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
-) : PerceptionOfOthers<T> by BasePerceptionOfOthers(
+) : PercectiveProperty<T> by Percective(
     node,
     fieldOfView,
 ) {

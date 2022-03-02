@@ -9,15 +9,14 @@
 
 package it.unibo.alchemist.model.implementations.capabilities
 
-import it.unibo.alchemist.model.implementations.groups.Alone
-import it.unibo.alchemist.model.interfaces.Group
+import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.SocialCapability
+import it.unibo.alchemist.model.interfaces.capabilities.RunningPedestrianProperty
 
 /**
- * Base implementation of a [SocialCapability].
+ * Implementation of a basic [RunningPedestrianProperty].
  */
-data class BaseSocialCapability<T> @JvmOverloads constructor(
+data class RunningPedestrian<T> @JvmOverloads constructor(
     override val node: Node<T>,
-    override val group: Group<T> = Alone(node),
-) : SocialCapability<T>
+    override val runningSpeed: Double = Speed.default * 3
+) : RunningPedestrianProperty<T>

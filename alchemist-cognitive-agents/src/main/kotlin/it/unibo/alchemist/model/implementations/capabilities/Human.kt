@@ -21,7 +21,7 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * A pedestrian's individual characteristics.
  */
-class BasePedestrianIndividuality2DCapability<T> @JvmOverloads constructor(
+class Human<T> @JvmOverloads constructor(
     randomGenerator: RandomGenerator,
     override val node: Node<T>,
     override val age: Age,

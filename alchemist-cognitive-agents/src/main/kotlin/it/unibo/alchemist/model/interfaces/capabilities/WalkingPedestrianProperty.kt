@@ -10,20 +10,13 @@
 package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.interfaces.NodeProperty
-import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**
- * The pedestrian's capability to influence other pedestrians.
+ * A node capability to walk.
  */
-interface PerceptionOfOthers<T> : NodeProperty<T> {
-
+interface WalkingPedestrianProperty<T> : NodeProperty<T> {
     /**
-     * The field of view of the pedestrian.
+     * The node's walking speed.
      */
-    val fieldOfView: InfluenceSphere<T>
-
-    /**
-     * The list of influence spheres belonging to this pedestrian (by default, only its [fieldOfView]).
-     */
-    val senses: Map<String, InfluenceSphere<T>> get() = mapOf("view" to fieldOfView)
+    val walkingSpeed: Double
 }

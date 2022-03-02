@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.interfaces.capabilities
 import it.unibo.alchemist.model.interfaces.NodeProperty
 
 /**
- * A node capability to walk.
+ * A node's capability to run.
  */
-interface PedestrianWalkingCapability<T> : NodeProperty<T> {
+interface RunningPedestrianProperty<T> : NodeProperty<T> {
     /**
-     * The node's walking speed.
+     * The node's running speed.
      */
-    val walkingSpeed: Double
+    val runningSpeed: Double
 }

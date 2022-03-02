@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
 import kotlin.math.abs
 import kotlin.math.pow
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
 
 /**
  * A [NavigationStrategy] allowing to explore the environment.
@@ -145,6 +145,6 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
      * Checks if the pedestrian knows that the area is an impasse (= an area with a single door).
      */
     protected open fun ConvexPolygon.isKnownImpasse(): Boolean =
-        pedestrian.asCapability<T, OrientingCapability<T, *, *, *, *, *>>().volatileMemory.contains(this) &&
+        pedestrian.asCapability<T, OrientingProperty<T, *, *, *, *, *>>().volatileMemory.contains(this) &&
             environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
 }

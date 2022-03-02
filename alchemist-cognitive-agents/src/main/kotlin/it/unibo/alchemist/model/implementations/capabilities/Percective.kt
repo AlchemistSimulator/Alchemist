@@ -9,14 +9,14 @@
 
 package it.unibo.alchemist.model.implementations.capabilities
 
-import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianRunningCapability
+import it.unibo.alchemist.model.interfaces.capabilities.PercectiveProperty
+import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**
- * Implementation of a basic [PedestrianRunningCapability].
+ * Base implementation of a pedestrian's capability to influence each other.
  */
-data class BasePedestrianRunningCapability<T> @JvmOverloads constructor(
+data class Percective<T> (
     override val node: Node<T>,
-    override val runningSpeed: Double = Speed.default * 3
-) : PedestrianRunningCapability<T>
+    override val fieldOfView: InfluenceSphere<T>,
+) : PercectiveProperty<T>

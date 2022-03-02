@@ -10,14 +10,20 @@
 package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.interfaces.NodeProperty
-import it.unibo.alchemist.model.interfaces.Group
+import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**
- * The pedestrian's capability for form groups.
+ * The pedestrian's capability to influence other pedestrians.
  */
-interface SocialCapability<T> : NodeProperty<T> {
+interface PercectiveProperty<T> : NodeProperty<T> {
+
     /**
-     * Pedestrian's [Group].
+     * The field of view of the pedestrian.
      */
-    val group: Group<T>
+    val fieldOfView: InfluenceSphere<T>
+
+    /**
+     * The list of influence spheres belonging to this pedestrian (by default, only its [fieldOfView]).
+     */
+    val senses: Map<String, InfluenceSphere<T>> get() = mapOf("view" to fieldOfView)
 }

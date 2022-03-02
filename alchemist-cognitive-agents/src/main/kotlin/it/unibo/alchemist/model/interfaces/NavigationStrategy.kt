@@ -42,7 +42,7 @@ interface NavigationStrategy<T, P, A, L, R, N, E>
     /**
      * The pedestrian's orienting capability.
      */
-    val orientingCapability get() = action.orientingCapability
+    val orientingCapability get() = action.orientingProperty
 
     /**
      * This is called whenever the pedestrian enters a new room.

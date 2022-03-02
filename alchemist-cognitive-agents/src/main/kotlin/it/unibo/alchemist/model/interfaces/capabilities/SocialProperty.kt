@@ -9,12 +9,15 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
+import it.unibo.alchemist.model.interfaces.NodeProperty
+import it.unibo.alchemist.model.interfaces.Group
+
 /**
- * A node capability to move. It includes both [PedestrianWalkingCapability] and [PedestrianRunningCapability].
+ * The pedestrian's capability for form groups.
  */
-interface PedestrianMovementCapability<T> : PedestrianWalkingCapability<T>, PedestrianRunningCapability<T> {
+interface SocialProperty<T> : NodeProperty<T> {
     /**
-     * The speed at which the pedestrian is moving.
+     * Pedestrian's [Group].
      */
-    fun speed(): Double
+    val group: Group<T>
 }

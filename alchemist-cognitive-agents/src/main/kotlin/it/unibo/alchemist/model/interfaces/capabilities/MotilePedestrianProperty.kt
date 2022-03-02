@@ -9,14 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.interfaces.NodeProperty
-
 /**
- * A node's capability to run.
+ * A node capability to move. It includes both [WalkingPedestrianProperty] and [RunningPedestrianProperty].
  */
-interface PedestrianRunningCapability<T> : NodeProperty<T> {
+interface MotilePedestrianProperty<T> : WalkingPedestrianProperty<T>, RunningPedestrianProperty<T> {
     /**
-     * The node's running speed.
+     * The speed at which the pedestrian is moving.
      */
-    val runningSpeed: Double
+    fun speed(): Double
 }

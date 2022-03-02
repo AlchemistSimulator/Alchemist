@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 /**
  * The pedestrian's cognitive capability.
  */
-interface PedestrianCognitiveCapability<T> : NodeProperty<T> {
+interface CognitiveProperty<T> : NodeProperty<T> {
     /**
      * The molecule associated with danger in the environment.
      */
@@ -32,8 +32,8 @@ interface PedestrianCognitiveCapability<T> : NodeProperty<T> {
     /**
      * The mind model of all people considered influential for this cognitive pedestrian.
      */
-    fun influentialPeople(): List<CognitiveModel> = node.asCapability<T, PerceptionOfOthers<T>>()
+    fun influentialPeople(): List<CognitiveModel> = node.asCapability<T, PercectiveProperty<T>>()
         .senses.flatMap { it.value.influentialNodes() }
-        .mapNotNull { it.asCapabilityOrNull<T, PedestrianCognitiveCapability<T>>() }
+        .mapNotNull { it.asCapabilityOrNull<T, CognitiveProperty<T>>() }
         .map { it.cognitiveModel }
 }

@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * A node's capability to experience physical forces.
  */
-interface PhysicalCapability<T, P, A, F> : NodeProperty<T>
+interface PhysicalProperty<T, P, A, F> : NodeProperty<T>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {

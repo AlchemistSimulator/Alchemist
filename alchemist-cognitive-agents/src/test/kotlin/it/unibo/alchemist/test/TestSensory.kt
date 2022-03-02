@@ -12,9 +12,9 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.model.implementations.capabilities.BasePedestrianMovementCapability
-import it.unibo.alchemist.model.implementations.capabilities.BasePerceptionOfOthers2D
-import it.unibo.alchemist.model.implementations.capabilities.BaseSocialCapability
+import it.unibo.alchemist.model.implementations.capabilities.MotilePedestrian
+import it.unibo.alchemist.model.implementations.capabilities.Percective2D
+import it.unibo.alchemist.model.implementations.capabilities.Social
 import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
@@ -40,9 +40,9 @@ class TestSensory<T> : StringSpec({
         environment: Physics2DEnvironment<T>
     ): Node<T> {
         val node = GenericNode(incarnation, environment)
-        node.addCapability(BasePedestrianMovementCapability(randomGenerator, node))
-        node.addCapability(BaseSocialCapability(node))
-        node.addCapability(BasePerceptionOfOthers2D(environment, node))
+        node.addCapability(MotilePedestrian(randomGenerator, node))
+        node.addCapability(Social(node))
+        node.addCapability(Percective2D(environment, node))
         node.addCapability(BaseSpatial2DCapability(environment, node))
         return node
     }

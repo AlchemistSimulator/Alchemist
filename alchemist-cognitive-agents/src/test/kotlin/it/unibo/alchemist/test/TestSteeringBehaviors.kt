@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.capabilities.SocialCapability
+import it.unibo.alchemist.model.interfaces.capabilities.SocialProperty
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
@@ -18,7 +18,7 @@ private const val EPSILON = 0.001
 
 class TestSteeringBehaviors<T, P> : StringSpec({
 
-    val filterSocialNode: (Node<T>) -> Boolean = { it.asCapabilityOrNull<T, SocialCapability<T>>() != null }
+    val filterSocialNode: (Node<T>) -> Boolean = { it.asCapabilityOrNull<T, SocialProperty<T>>() != null }
 
     "nodes seeking a target must approach it" {
         val startDistances = mutableMapOf<Node<T>, Double>()
@@ -87,7 +87,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
             whenFinished = { e, _, _ ->
                 e.nodes.asSequence()
                     .filter(filterSocialNode)
-                    .groupBy { it.asCapability<T, SocialCapability<T>>().group }
+                    .groupBy { it.asCapability<T, SocialProperty<T>>().group }
                     .values
                     .forEach {
                         for (nodePos in it.map { node -> e.getPosition(node) }) {

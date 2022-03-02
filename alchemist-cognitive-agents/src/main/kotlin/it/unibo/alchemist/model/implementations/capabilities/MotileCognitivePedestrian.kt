@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.implementations.capabilities
 
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
+import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import org.apache.commons.math3.random.RandomGenerator
@@ -18,13 +18,13 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 /**
  * A cognitive pedestrian's movement capability.
  */
-class CognitivePedestrianMovementCapability<T, S, A>(
+class MotileCognitivePedestrian<T, S, A>(
     randomGenerator: RandomGenerator,
     node: Node<T>,
-) : HeterogeneousPedestrianMovementCapability<T, S, A>(randomGenerator, node)
+) : MotileHeterogeneousPedestrian<T, S, A>(randomGenerator, node)
     where S : Vector<S>, A : GeometricTransformation<S> {
     override fun speed(): Double {
-        val myCognitiveModel = node.asCapability<T, PedestrianCognitiveCapability<T>>().cognitiveModel
+        val myCognitiveModel = node.asCapability<T, CognitiveProperty<T>>().cognitiveModel
         return if (myCognitiveModel.wantsToEscape()) {
             runningSpeed * minOf(myCognitiveModel.escapeIntention(), 1.0)
         } else {

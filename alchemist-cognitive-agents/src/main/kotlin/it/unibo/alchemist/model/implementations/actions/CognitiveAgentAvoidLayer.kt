@@ -8,8 +8,8 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PedestrianCognitiveCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
+import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
 
 /**
  * Move the pedestrian towards positions of the environment with a low concentration of the target molecule.
@@ -73,9 +73,9 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
     } ?: true
 
     private fun <T : Number> Node<T>.wantsToEscape(): Boolean {
-        val cognitiveCapability = asCapability<T, PedestrianCognitiveCapability<T>>()
-        val orientingCapability = asCapabilityOrNull<T, OrientingCapability<T, *, *, *, *, *>>()
-        return orientingCapability != null &&
+        val cognitiveCapability = asCapability<T, CognitiveProperty<T>>()
+        val orientingProperty = asCapabilityOrNull<T, OrientingProperty<T, *, *, *, *, *>>()
+        return orientingProperty != null &&
             cognitiveCapability.danger == targetMolecule &&
             cognitiveCapability.cognitiveModel.wantsToEscape()
     }

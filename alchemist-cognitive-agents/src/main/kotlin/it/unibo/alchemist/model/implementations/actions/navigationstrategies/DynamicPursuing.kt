@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingCapability
+import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
 
 /**
  * [Pursuing] strategy allowing to dynamically change [destination].
@@ -51,7 +51,7 @@ open class DynamicPursuing<T, L : Euclidean2DConvexShape, R>(
              * forget known impasses as well (an impasse is known when volatileMemory[area] != null). Setting
              * volatileMemory[anyArea] to zero allows to remember known impasses.
              */
-            pedestrian.asCapability<T, OrientingCapability<T, *, *, *, *, *>>().volatileMemory.replaceAll { _, _ -> 0 }
+            pedestrian.asCapability<T, OrientingProperty<T, *, *, *, *, *>>().volatileMemory.replaceAll { _, _ -> 0 }
         }
     }
 }

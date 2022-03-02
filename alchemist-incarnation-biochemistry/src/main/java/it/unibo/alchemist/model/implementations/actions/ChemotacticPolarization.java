@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.Comparator;
@@ -94,13 +94,13 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            thisNode.asCapability(CellularBehavior.class).addPolarizationVersor(env.makePosition(0, 0));
+            thisNode.asCapability(CellularProperty.class).addPolarizationVersor(env.makePosition(0, 0));
         } else {
             final boolean isNodeOnMaxConc = env.getPosition(l.stream()
                     .max(Comparator.comparingDouble(n -> n.getConcentration(biomol)))
                     .get()).equals(env.getPosition(thisNode));
             if (isNodeOnMaxConc) {
-                thisNode.asCapability(CellularBehavior.class)
+                thisNode.asCapability(CellularProperty.class)
                         .addPolarizationVersor(env.makePosition(0, 0));
             } else {
                 P newPolVer = weightedAverageVectors(l, thisNode);
@@ -108,14 +108,14 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
                 final double newPolY = newPolVer.getY();
                 final double newPolVerModule = FastMath.sqrt(newPolX * newPolX + newPolY * newPolY);
                 if (newPolVerModule == 0) {
-                    thisNode.asCapability(CellularBehavior.class).addPolarizationVersor(newPolVer);
+                    thisNode.asCapability(CellularProperty.class).addPolarizationVersor(newPolVer);
                 } else {
                     newPolVer = env.makePosition(newPolVer.getX() / newPolVerModule,
                             newPolVer.getY() / newPolVerModule);
                     if (ascend) {
-                        thisNode.asCapability(CellularBehavior.class).addPolarizationVersor(newPolVer);
+                        thisNode.asCapability(CellularProperty.class).addPolarizationVersor(newPolVer);
                     } else {
-                        thisNode.asCapability(CellularBehavior.class)
+                        thisNode.asCapability(CellularProperty.class)
                                 .addPolarizationVersor(env.makePosition(-newPolVer.getX(), -newPolVer.getY()));
                     }
                 }

@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -80,7 +80,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
         random = requireNonNull(randomGenerator);
         this.reaction = requireNonNull(reaction);
         networkManager = new AlchemistNetworkManager(reaction, this, retentionTime, packetLossDistance);
-        this.node.asCapability(ProtelisCapability.class).addNetworkManger(this, networkManager);
+        this.node.asCapability(ProtelisProperty.class).addNetworkManger(this, networkManager);
         executionContext = new AlchemistExecutionContext<>(environment, node, reaction, randomGenerator, networkManager);
         vm = new ProtelisVM(program, executionContext);
         this.retentionTime = retentionTime;
@@ -331,7 +331,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     @Override
     @SuppressWarnings("unchecked")
     public RunProtelisProgram<P> cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
+        if (node.asCapabilityOrNull(ProtelisProperty.class) != null) {
             try {
                 return new RunProtelisProgram<P>(
                     getEnvironment(),
@@ -345,7 +345,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
                 throw new IllegalStateException(e);
             }
         }
-        throw new IllegalArgumentException("The node must have an instance of " + ProtelisCapability.class.getSimpleName());
+        throw new IllegalArgumentException("The node must have an instance of " + ProtelisProperty.class.getSimpleName());
     }
 
     @Override

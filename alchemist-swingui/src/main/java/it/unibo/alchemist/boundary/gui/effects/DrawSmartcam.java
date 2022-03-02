@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability;
+import it.unibo.alchemist.model.interfaces.properties.Spatial2DCapability;
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment;
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;

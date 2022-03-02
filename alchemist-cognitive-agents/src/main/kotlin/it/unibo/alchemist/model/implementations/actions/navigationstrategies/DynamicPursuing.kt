@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 
 /**
  * [Pursuing] strategy allowing to dynamically change [destination].

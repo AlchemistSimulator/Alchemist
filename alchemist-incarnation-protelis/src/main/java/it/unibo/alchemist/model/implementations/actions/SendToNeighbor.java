@@ -11,7 +11,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public SendToNeighbor cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
+        if (node.asCapabilityOrNull(ProtelisProperty.class) != null) {
             final List<RunProtelisProgram<?>> possibleRefs = node.getReactions().stream()
                     .map(Reaction::getActions)
                     .flatMap(List::stream)
@@ -59,7 +59,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
             );
         }
         throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node with a missing "
-                + ProtelisCapability.class.getSimpleName());
+                + ProtelisProperty.class.getSimpleName());
     }
 
     @Override
@@ -69,7 +69,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public void execute() {
-        final AlchemistNetworkManager mgr = getNode().asCapability(ProtelisCapability.class).getNetworkManager(program);
+        final AlchemistNetworkManager mgr = getNode().asCapability(ProtelisProperty.class).getNetworkManager(program);
         Objects.requireNonNull(mgr);
         mgr.simulateMessageArrival(reaction.getTau().toDouble());
         program.prepareForComputationalCycle();

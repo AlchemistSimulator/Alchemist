@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +38,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
 
     @Override
     public ComputationalRoundComplete cloneCondition(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node.asCapabilityOrNull(ProtelisCapability.class) != null) {
+        if (node.asCapabilityOrNull(ProtelisProperty.class) != null) {
             final List<RunProtelisProgram> possibleRefs = node.getReactions().stream()
                     .map(Reaction::getActions)
                     .flatMap(List::stream)
@@ -52,7 +52,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
                     + RunProtelisProgram.class.getSimpleName());
         }
         throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node with a missing "
-                + ProtelisCapability.class.getSimpleName());
+                + ProtelisProperty.class.getSimpleName());
     }
 
     @Override

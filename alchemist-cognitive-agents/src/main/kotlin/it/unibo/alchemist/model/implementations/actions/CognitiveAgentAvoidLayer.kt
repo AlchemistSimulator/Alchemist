@@ -8,8 +8,8 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
-import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
+import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
 /**
  * Move the pedestrian towards positions of the environment with a low concentration of the target molecule.

@@ -13,14 +13,14 @@ import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
+import it.unibo.alchemist.model.interfaces.properties.Spatial2DCapability
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import kotlin.math.abs
 import kotlin.math.pow
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 
 /**
  * A [NavigationStrategy] allowing to explore the environment.

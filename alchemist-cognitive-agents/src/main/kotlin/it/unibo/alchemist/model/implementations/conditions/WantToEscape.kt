@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
+import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
 /**
  * The intention of the pedestrian to evacuate or not.

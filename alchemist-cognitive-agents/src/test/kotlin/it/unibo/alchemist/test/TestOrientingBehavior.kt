@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation

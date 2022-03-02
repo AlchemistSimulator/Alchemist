@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,18 +94,18 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
     @Override
     @SuppressWarnings("unchecked")
     public final void moveNode(final Node<Double> node, final Euclidean2DPosition direction) {
-        if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
+        if (node.asCapabilityOrNull(CellularProperty.class) != null) {
             super.moveNode(node, direction);
             final Node<Double> nodeToMove = node;
             final Neighborhood<Double> neigh = getNeighborhood(nodeToMove);
             final Map<Junction, Map<Node<Double>, Integer>> jun = nodeToMove
-                    .asCapability(CellularBehavior.class).getJunctions();
+                    .asCapability(CellularProperty.class).getJunctions();
             jun.forEach((key, value) -> value.forEach((key1, value1) -> {
                 if (!neigh.contains(key1)) {
                     // there is a junction that links a node which isn't in the neighborhood after the movement
                     for (int i = 0; i < value1; i++) {
-                        nodeToMove.asCapability(CellularBehavior.class).removeJunction(key, key1);
-                        key1.asCapability(CellularBehavior.class).removeJunction(key.reverse(), nodeToMove);
+                        nodeToMove.asCapability(CellularProperty.class).removeJunction(key, key1);
+                        key1.asCapability(CellularProperty.class).removeJunction(key.reverse(), nodeToMove);
                     }
                 }
             }));

@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
-import it.unibo.alchemist.model.interfaces.capabilities.CognitiveProperty
+import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
 class TestFeelsTransmission<T, P> : StringSpec({
 

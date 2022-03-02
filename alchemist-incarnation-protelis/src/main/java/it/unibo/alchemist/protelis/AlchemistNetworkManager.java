@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
@@ -186,10 +186,10 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     public void simulateMessageArrival(final double currentTime) {
         Objects.requireNonNull(toBeSent);
         if (!toBeSent.isEmpty()) {
-            final MessageInfo msg = new MessageInfo(currentTime, node.asCapability(ProtelisCapability.class), toBeSent);
+            final MessageInfo msg = new MessageInfo(currentTime, node.asCapability(ProtelisProperty.class), toBeSent);
             environment.getNeighborhood(node).forEach(n -> {
-                if (n.asCapabilityOrNull(ProtelisCapability.class) != null) {
-                    final AlchemistNetworkManager destination = n.asCapability(ProtelisCapability.class).getNetworkManager(program);
+                if (n.asCapabilityOrNull(ProtelisProperty.class) != null) {
+                    final AlchemistNetworkManager destination = n.asCapability(ProtelisProperty.class).getNetworkManager(program);
                     boolean packetArrives = true;
                     if (distanceLossDistribution != null) {
                         final var distance = environment.getDistanceBetweenNodes(node, n);

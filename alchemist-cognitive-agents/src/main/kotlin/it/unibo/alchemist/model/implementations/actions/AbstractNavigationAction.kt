@@ -26,9 +26,9 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_FINAL
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.ARRIVED
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability
+import it.unibo.alchemist.model.interfaces.properties.SpatialCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 
 /**
  * An abstract [NavigationAction], taking care of properly moving the pedestrian in the

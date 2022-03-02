@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,7 +34,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
      */
     public JunctionPresentInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction) {
         super(e, n);
-        if (n.asCapabilityOrNull(CellularBehavior.class) != null) {
+        if (n.asCapabilityOrNull(CellularProperty.class) != null) {
             declareDependencyOn(junction);
             j = junction;
             env = e;
@@ -45,7 +45,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
 
     @Override
     public boolean isValid() {
-        return getNode().asCapability(CellularBehavior.class).containsJunction(j);
+        return getNode().asCapability(CellularProperty.class).containsJunction(j);
     }
 
     @Override
@@ -57,7 +57,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor's propensity is computed as the number of junctions it has
         //noinspection SuspiciousMethodCalls
-        return ((Map<Junction, Map<Node<Double>, Integer>>)getNode().asCapability(CellularBehavior.class)
+        return ((Map<Junction, Map<Node<Double>, Integer>>)getNode().asCapability(CellularProperty.class)
                 .getJunctions())
                 .getOrDefault(j, Collections.emptyMap())
                 .getOrDefault(neighbor, 0);

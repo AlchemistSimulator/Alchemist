@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
-import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
+import it.unibo.alchemist.model.implementations.properties.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -25,8 +25,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
-import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
-import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability
+import it.unibo.alchemist.model.interfaces.properties.Spatial2DCapability
+import it.unibo.alchemist.model.interfaces.properties.SpatialCapability
 
 /**
  * Implementation of [Physics2DEnvironment].

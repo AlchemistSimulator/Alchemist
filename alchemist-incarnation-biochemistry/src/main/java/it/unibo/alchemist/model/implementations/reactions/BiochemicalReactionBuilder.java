@@ -40,7 +40,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
@@ -382,7 +382,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                     );
                 }
             });
-            if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
+            if (node.asCapabilityOrNull(CellularProperty.class) != null) {
                 actionList.add(new AddJunctionInCell(env, node, j, rand));
                 actionList.add(new AddJunctionInNeighbor<>(env, node, reverseJunction(j), rand));
             } else {
@@ -410,7 +410,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 visit(context.customReactionType());
             }
             junctionList.forEach(j -> {
-                if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
+                if (node.asCapabilityOrNull(CellularProperty.class) != null) {
                     actionList.add(new RemoveJunctionInCell(env, node, j, rand));
                     actionList.add(new RemoveJunctionInNeighbor(env, node, reverseJunction(j), rand));
                 } else {
@@ -445,7 +445,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         public Reaction<Double> visitJunctionReactionJunctionCondition(
                 final BiochemistrydslParser.JunctionReactionJunctionConditionContext context
         ) {
-            if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
+            if (node.asCapabilityOrNull(CellularProperty.class) != null) {
                 final Junction j = createJunction(context.junction());
                 junctionList.add(j);
                 conditionList.add(new JunctionPresentInCell(env, node, j));

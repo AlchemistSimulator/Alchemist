@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConve
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import org.jgrapht.Graphs
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.OrientingProperty
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 
 /**
  * A [NavigationAction] using [DestinationReaching] navigation strategy.

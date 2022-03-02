@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.capabilities.SpatialCapability
+import it.unibo.alchemist.model.interfaces.properties.SpatialCapability
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation

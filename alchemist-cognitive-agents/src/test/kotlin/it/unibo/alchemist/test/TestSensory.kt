@@ -12,10 +12,10 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.model.implementations.capabilities.MotilePedestrian
-import it.unibo.alchemist.model.implementations.capabilities.Percective2D
-import it.unibo.alchemist.model.implementations.capabilities.Social
-import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
+import it.unibo.alchemist.model.implementations.properties.MotilePedestrian
+import it.unibo.alchemist.model.implementations.properties.Percective2D
+import it.unibo.alchemist.model.implementations.properties.Social
+import it.unibo.alchemist.model.implementations.properties.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

@@ -37,7 +37,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisCapability;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
-import it.unibo.alchemist.model.interfaces.capabilities.MotilePedestrianProperty
+import it.unibo.alchemist.model.interfaces.properties.MotilePedestrianProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability

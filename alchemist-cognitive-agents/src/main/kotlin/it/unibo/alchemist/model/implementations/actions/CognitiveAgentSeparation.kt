@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.PercectiveProperty
+import it.unibo.alchemist.model.interfaces.properties.PercectiveProperty
 
 /**
  * Move the agent away from the pedestrians near to him.

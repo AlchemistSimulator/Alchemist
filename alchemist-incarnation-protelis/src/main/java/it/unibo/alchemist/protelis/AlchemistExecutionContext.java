@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -102,7 +102,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
             final Reaction<Object> reaction,
             final RandomGenerator random,
             final AlchemistNetworkManager networkManager) {
-        super(localNode.asCapability(ProtelisCapability.class), networkManager);
+        super(localNode.asCapability(ProtelisProperty.class), networkManager);
         this.environment = environment;
         node = localNode;
         this.reaction = reaction;
@@ -123,8 +123,8 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      */
     @SuppressWarnings("unchecked")
     public double distanceTo(final DeviceUID target) {
-        assert target instanceof ProtelisCapability;
-        return environment.getDistanceBetweenNodes(node, ((ProtelisCapability) target).getNode());
+        assert target instanceof ProtelisProperty;
+        return environment.getDistanceBetweenNodes(node, ((ProtelisProperty) target).getNode());
     }
 
     /**
@@ -136,7 +136,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * @return the distance
      */
     public double distanceTo(final int target) {
-        return distanceTo(environment.getNodeByID(target).asCapability(ProtelisCapability.class));
+        return distanceTo(environment.getNodeByID(target).asCapability(ProtelisProperty.class));
     }
 
     @Override
@@ -174,7 +174,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public DeviceUID getDeviceUID() {
-        return node.asCapability(ProtelisCapability.class);
+        return node.asCapability(ProtelisProperty.class);
     }
 
     /**

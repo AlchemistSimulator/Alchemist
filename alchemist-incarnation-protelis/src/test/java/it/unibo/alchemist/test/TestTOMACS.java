@@ -11,7 +11,7 @@ import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.ProtelisCapability;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class TestTOMACS {
                     .flatMap(Collection::stream)
                     .filter(a -> a instanceof RunProtelisProgram)
                     .map(a -> (RunProtelisProgram) a)
-                    .map(a -> n.asCapability(ProtelisCapability.class).getNetworkManager(a)))
+                    .map(a -> n.asCapability(ProtelisProperty.class).getNetworkManager(a)))
             .mapToDouble(AlchemistNetworkManager::getRetentionTime)
             .peek(d -> Assertions.assertTrue(Double.isFinite(d)))
             .count() > 0);

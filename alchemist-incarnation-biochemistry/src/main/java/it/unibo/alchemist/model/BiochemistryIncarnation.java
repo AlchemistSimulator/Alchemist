@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model;
 
 
-import it.unibo.alchemist.model.implementations.capabilities.BaseCircularCellularBehavior;
+import it.unibo.alchemist.model.implementations.properties.CircularCellular;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
@@ -56,10 +56,10 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
             }
         };
         if (parameter == null || parameter.isEmpty()) {
-            node.addCapability(new BaseCircularCellularBehavior<>(environment, node));
+            node.addCapability(new CircularCellular<>(environment, node));
             return node;
         }
-        node.addCapability(new BaseCircularCellularBehavior<>(environment, node, Double.parseDouble(parameter)));
+        node.addCapability(new CircularCellular<>(environment, node, Double.parseDouble(parameter)));
         return node;
     }
 

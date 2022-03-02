@@ -8,7 +8,7 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.model.BiochemistryIncarnation;
-import it.unibo.alchemist.model.implementations.capabilities.BaseCircularDeformableCellularBehavior;
+import it.unibo.alchemist.model.implementations.properties.DeformableCircularCellular;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.capabilities.CircularDeformableCellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellularProperty;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,7 +79,7 @@ class TestDeformableCell {
     private Node<Double> createDeformableCell(final double maxDiameter, final double rigidity) {
         return new GenericNode<>(inc, env) {
             {
-                addCapability(new BaseCircularDeformableCellularBehavior<>(env, this, maxDiameter, rigidity));
+                addCapability(new DeformableCircularCellular<>(env, this, maxDiameter, rigidity));
             }
             @Override
             protected Double createT() {
@@ -229,24 +229,24 @@ class TestDeformableCell {
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, -1), cellNode1
-                .asCapability(CircularDeformableCellularBehavior.class).getPolarizationVersor());
+                .asCapability(CircularDeformableCellularProperty.class).getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL1_1);
-        cellNode1.asCapability(CircularDeformableCellularBehavior.class)
+        cellNode1.asCapability(CircularDeformableCellularProperty.class)
                 .setPolarizationVersor(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, -1), cellNode1
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL1_2);
-        cellNode1.asCapability(CircularDeformableCellularBehavior.class)
+        cellNode1.asCapability(CircularDeformableCellularProperty.class)
                 .setPolarizationVersor(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 0), cellNode1
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
     }
 
@@ -264,21 +264,21 @@ class TestDeformableCell {
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 0), cellNode1
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL2_1);
         cellNode1.getReactions().stream()
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 1), cellNode1
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL2_2);
         cellNode1.getReactions().stream()
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 1), cellNode1
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
     }
 
@@ -296,32 +296,32 @@ class TestDeformableCell {
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(1, 0), cellNode1
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
         env.moveNodeToPosition(cellNode3, MOVE_TO_POS_TENSPOL3_1);
-        cellNode1.asCapability(CircularDeformableCellularBehavior.class)
+        cellNode1.asCapability(CircularDeformableCellularProperty.class)
                 .setPolarizationVersor(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .orElseThrow().execute();
         assertEquals(
-                cellNode1.asCapability(CircularDeformableCellularBehavior.class)
+                cellNode1.asCapability(CircularDeformableCellularProperty.class)
                         .getPolarizationVersor().getCoordinate(0),
-                cellNode1.asCapability(CircularDeformableCellularBehavior.class)
+                cellNode1.asCapability(CircularDeformableCellularProperty.class)
                         .getPolarizationVersor().getCoordinate(0),
                 PRECISION
         );
         env.moveNodeToPosition(cellNode3, new Euclidean2DPosition(-1, 1));
         env.moveNodeToPosition(cellNode5, MOVE_TO_POS_TENSPOL3_3);
-        cellNode1.asCapability(CircularDeformableCellularBehavior.class)
+        cellNode1.asCapability(CircularDeformableCellularProperty.class)
                 .setPolarizationVersor(new Euclidean2DPosition(0, 0));
         cellNode1.getReactions().stream()
         .findFirst()
         .orElseThrow().execute();
         assertEquals(
-                cellNode1.asCapability(CircularDeformableCellularBehavior.class)
+                cellNode1.asCapability(CircularDeformableCellularProperty.class)
                         .getPolarizationVersor().getCoordinate(0),
-                -cellNode1.asCapability(CircularDeformableCellularBehavior.class)
+                -cellNode1.asCapability(CircularDeformableCellularProperty.class)
                         .getPolarizationVersor().getCoordinate(1),
                 PRECISION
         );
@@ -341,7 +341,7 @@ class TestDeformableCell {
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(1, 0), cellNode3
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
     }
 
@@ -359,7 +359,7 @@ class TestDeformableCell {
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(1, 0), cellNode3
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
     }
 
@@ -377,7 +377,7 @@ class TestDeformableCell {
         .findFirst()
         .orElseThrow().execute();
         assertEquals(new Euclidean2DPosition(0, 0), cellNode3
-                .asCapability(CircularDeformableCellularBehavior.class)
+                .asCapability(CircularDeformableCellularProperty.class)
                 .getPolarizationVersor());
     }
 

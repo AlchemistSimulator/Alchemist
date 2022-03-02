@@ -8,7 +8,7 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
@@ -37,7 +37,7 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
      */
     public AddJunctionInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction j, final RandomGenerator rg) {
         super(n, e, rg);
-        if (n.asCapabilityOrNull(CellularBehavior.class) != null) {
+        if (n.asCapabilityOrNull(CellularProperty.class) != null) {
             declareDependencyTo(j);
             jun = j;
         } else {
@@ -64,8 +64,8 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        if (targetNode.asCapabilityOrNull(CellularBehavior.class) != null) {
-            getNode().asCapability(CellularBehavior.class).addJunction(jun, targetNode);
+        if (targetNode.asCapabilityOrNull(CellularProperty.class) != null) {
+            getNode().asCapability(CellularProperty.class).addJunction(jun, targetNode);
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
         }

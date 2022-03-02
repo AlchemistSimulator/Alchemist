@@ -7,7 +7,7 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.model.implementations.capabilities.BaseSpatial2DCapability
+import it.unibo.alchemist.model.implementations.properties.BaseSpatial2DCapability
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.GenericNode
@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.test.TestEuclidean2DShapeFactory.Companion.DEFAULT_SHAPE_SIZE
 import org.danilopianini.lang.MathUtils
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.Spatial2DCapability
+import it.unibo.alchemist.model.interfaces.properties.Spatial2DCapability
 
 internal infix fun Double.shouldBeFuzzy(other: Double): Unit = MathUtils.fuzzyEquals(this, other) shouldBe true
 

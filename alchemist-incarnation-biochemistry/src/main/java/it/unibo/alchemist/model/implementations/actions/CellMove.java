@@ -11,8 +11,8 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
-import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty;
 
 /**
  * 
@@ -48,11 +48,11 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     ) {
         super(environment, node);
         this.inPer = inPercent;
-        if (node.asCapabilityOrNull(CellularBehavior.class) != null) {
+        if (node.asCapabilityOrNull(CellularProperty.class) != null) {
             if (inPercent) {
-                if (node.asCapabilityOrNull(CircularCellularBehavior.class) != null
-                        && node.asCapability(CircularCellularBehavior.class).getRadius() != 0) {
-                    this.delta = node.asCapability(CircularCellularBehavior.class).getDiameter() * delta;
+                if (node.asCapabilityOrNull(CircularCellularProperty.class) != null
+                        && node.asCapability(CircularCellularProperty.class).getRadius() != 0) {
+                    this.delta = node.asCapability(CircularCellularProperty.class).getDiameter() * delta;
                 } else {
                     throw new IllegalArgumentException(
                             "Can't set distance in percent of the cell's diameter if cell has not a diameter"
@@ -74,16 +74,16 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     @Override
     public P getNextPosition() {
         return getEnvironment().makePosition(
-                delta * getNode().asCapability(CellularBehavior.class)
+                delta * getNode().asCapability(CellularProperty.class)
                         .getPolarizationVersor().getCoordinate(0),
-                delta * getNode().asCapability(CellularBehavior.class).getPolarizationVersor().getCoordinate(1)
+                delta * getNode().asCapability(CellularProperty.class).getPolarizationVersor().getCoordinate(1)
         );
     }
 
     @Override
     public void execute() {
         super.execute();
-        getNode().asCapability(CellularBehavior.class)
+        getNode().asCapability(CellularProperty.class)
                 .setPolarizationVersor(getEnvironment().makePosition(0, 0));
     }
 

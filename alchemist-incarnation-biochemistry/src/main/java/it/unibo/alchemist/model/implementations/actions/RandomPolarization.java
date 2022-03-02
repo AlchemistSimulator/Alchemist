@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.capabilities.CellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
@@ -37,9 +37,9 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
     ) {
         super(node, random);
         this.environment = environment;
-        if (!(node.asCapabilityOrNull(CellularBehavior.class) != null)) {
+        if (!(node.asCapabilityOrNull(CellularProperty.class) != null)) {
             throw new UnsupportedOperationException(
-                    "Polarization can happen only in nodes with " + CellularBehavior.class.getSimpleName()
+                    "Polarization can happen only in nodes with " + CellularProperty.class.getSimpleName()
             );
         }
     }
@@ -64,7 +64,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
                 randomVersor = environment.makePosition(x / module, y / module);
             }
         }
-        getNode().asCapability(CellularBehavior.class).addPolarizationVersor(randomVersor);
+        getNode().asCapability(CellularProperty.class).addPolarizationVersor(randomVersor);
     }
 
     /**

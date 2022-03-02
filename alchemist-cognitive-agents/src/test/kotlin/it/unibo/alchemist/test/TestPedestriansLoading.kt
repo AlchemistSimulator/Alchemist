@@ -11,7 +11,7 @@ import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
-import it.unibo.alchemist.model.interfaces.capabilities.SocialProperty
+import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
 

@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.capabilities.CircularCellularBehavior;
+import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty;
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.util.FastMath;
@@ -278,7 +278,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition p5 = new Euclidean2DPosition(
                 0.2,
                 FastMath.sqrt(FastMath.pow(cellToMove4
-                        .asCapability(CircularCellularBehavior.class).getDiameter(), 2) - FastMath.pow(0.2, 2))
+                        .asCapability(CircularCellularProperty.class).getDiameter(), 2) - FastMath.pow(0.2, 2))
         );
         final Node<Double> c5 = createNode(LITTLE_CELL_DIAMETER);
         env.addNode(c5, p5);
@@ -669,12 +669,12 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.0, -1.8431210525510544);
         env.moveNodeToPosition(c1, pd);
         assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1,
-                                c1.asCapability(CircularCellularBehavior.class).getDiameter()).stream()
+                                c1.asCapability(CircularCellularProperty.class).getDiameter()).stream()
                         .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
                         .map(n -> env.getPosition(n).toString())
                         .collect(Collectors.toList()),
                 env.getNodesWithinRange(c1,
-                        c1.asCapability(CircularCellularBehavior.class).getDiameter() - DELTA).isEmpty());
+                        c1.asCapability(CircularCellularProperty.class).getDiameter() - DELTA).isEmpty());
     }
 
     /**
@@ -695,11 +695,11 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.moveNodeToPosition(c1, pd);
         assertTrueJUnit4("Should be empty but is : "
                         + env.getNodesWithinRange(c1,
-                                c1.asCapability(CircularCellularBehavior.class).getDiameter()).stream()
+                                c1.asCapability(CircularCellularProperty.class).getDiameter()).stream()
                         .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
                         .map(n -> env.getPosition(n).toString())
                         .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1, c1.asCapability(CircularCellularBehavior.class).getDiameter()).isEmpty());
+                env.getNodesWithinRange(c1, c1.asCapability(CircularCellularProperty.class).getDiameter()).isEmpty());
     }
 
     /**
@@ -722,11 +722,11 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.moveNodeToPosition(c3, pd);
         env.moveNodeToPosition(c4, pd);
         assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1,
-                                c1.asCapability(CircularCellularBehavior.class).getDiameter()).stream()
+                                c1.asCapability(CircularCellularProperty.class).getDiameter()).stream()
                         .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
                         .map(n -> env.getPosition(n).toString())
                         .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1, c1.asCapability(CircularCellularBehavior.class).getDiameter()).isEmpty());
+                env.getNodesWithinRange(c1, c1.asCapability(CircularCellularProperty.class).getDiameter()).isEmpty());
     }
 
     /**
@@ -782,7 +782,7 @@ class TestBioRect2DEnvironmentNoOverlap {
 
             private Stream<Node<Double>> getNodes() {
                 return env.getNodes().stream()
-                        .filter(n -> n.asCapabilityOrNull(CircularCellularBehavior.class) != null)
+                        .filter(n -> n.asCapabilityOrNull(CircularCellularProperty.class) != null)
                         .map(n -> (Node<Double>) n);
             }
 
@@ -790,8 +790,8 @@ class TestBioRect2DEnvironmentNoOverlap {
                 getNodes().flatMap(n -> getNodes()
                                 .filter(c -> !c.equals(n))
                                 .filter(c -> env.getDistanceBetweenNodes(n, c)
-                                        < n.asCapability(CircularCellularBehavior.class).getRadius()
-                                        + c.asCapability(CircularCellularBehavior.class).getRadius() - DELTA)
+                                        < n.asCapability(CircularCellularProperty.class).getRadius()
+                                        + c.asCapability(CircularCellularProperty.class).getRadius() - DELTA)
                                 .map(c -> new Pair<>(n, c)))
                         .findAny()
                         .ifPresent(e -> fail("Nodes " + e.getFirst().getId()
@@ -799,8 +799,8 @@ class TestBioRect2DEnvironmentNoOverlap {
                                 + e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. "
                                 + "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond())
                                 + " but should be greater than "
-                                + (e.getFirst().asCapability(CircularCellularBehavior.class).getRadius()
-                                + e.getSecond().asCapability(CircularCellularBehavior.class).getRadius())));
+                                + (e.getFirst().asCapability(CircularCellularProperty.class).getRadius()
+                                + e.getSecond().asCapability(CircularCellularProperty.class).getRadius())));
                 return true;
             }
         });

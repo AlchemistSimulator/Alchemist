@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapability
 import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asCapabilityOrNull
 /**
  * The pedestrian's cognitive capability.
  */
-interface PedestrianCognitiveCapability<T> : Capability<T> {
+interface PedestrianCognitiveCapability<T> : NodeProperty<T> {
     /**
      * The molecule associated with danger in the environment.
      */

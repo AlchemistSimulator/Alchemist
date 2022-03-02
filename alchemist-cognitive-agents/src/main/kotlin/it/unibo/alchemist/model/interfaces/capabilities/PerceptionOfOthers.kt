@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**
  * The pedestrian's capability to influence other pedestrians.
  */
-interface PerceptionOfOthers<T> : Capability<T> {
+interface PerceptionOfOthers<T> : NodeProperty<T> {
 
     /**
      * The field of view of the pedestrian.

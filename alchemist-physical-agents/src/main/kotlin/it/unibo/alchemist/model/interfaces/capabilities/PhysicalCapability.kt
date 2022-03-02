@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * A node's capability to experience physical forces.
  */
-interface PhysicalCapability<T, P, A, F> : Capability<T>
+interface PhysicalCapability<T, P, A, F> : NodeProperty<T>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {

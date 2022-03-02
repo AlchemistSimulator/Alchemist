@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.interfaces
 /**
  * A node's LSA Behaviour.
  */
-interface LSABehaviour : Capability<ILsaMolecule> {
+interface LSABehaviour : NodeProperty<ILsaMolecule> {
 
     /**
      * Tests whether a node contains a [Molecule].

@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * A node's ability to have a [Shape].
  */
-interface SpatialCapability<T, S : Vector<S>, A : GeometricTransformation<S>> : Capability<T> {
+interface SpatialCapability<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeProperty<T> {
     /**
      * The node's shape.
      */

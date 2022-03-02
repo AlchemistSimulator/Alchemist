@@ -14,7 +14,7 @@ import java.io.Serializable
 /**
  * Represents a node's capability.
  */
-interface Capability<T> : Serializable {
+interface NodeProperty<T> : Serializable {
     /**
      * The node to which the capability is added.
      */

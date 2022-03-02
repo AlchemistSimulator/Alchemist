@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 
 /**
  * A node's capability to run.
  */
-interface PedestrianRunningCapability<T> : Capability<T> {
+interface PedestrianRunningCapability<T> : NodeProperty<T> {
     /**
      * The node's running speed.
      */

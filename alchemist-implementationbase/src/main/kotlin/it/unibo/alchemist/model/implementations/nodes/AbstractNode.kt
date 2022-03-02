@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import com.google.common.collect.MapMaker
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Molecule
@@ -43,7 +43,7 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
      * The node's molecules.
      */
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
-    override val capabilities: MutableList<Capability<T>> = ArrayList()
+    override val capabilities: MutableList<NodeProperty<T>> = ArrayList()
 ) : Node<T> {
 
     final override fun addReaction(reactionToAdd: Reaction<T>) {
@@ -104,10 +104,10 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
         molecules[molecule] = concentration
     }
 
-    final override fun addCapability(capability: Capability<T>) {
+    final override fun addCapability(nodeProperty: NodeProperty<T>) {
         capabilities.also {
-            it.removeIf { c -> c::class == capability::class }
-        }.add(capability)
+            it.removeIf { c -> c::class == nodeProperty::class }
+        }.add(nodeProperty)
     }
 
     /**

@@ -33,7 +33,7 @@ import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Action
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -325,17 +325,17 @@ internal object SimulationModel {
     fun <T, P : Position<P>> visitCapability(
         context: Context,
         root: Map<*, *>,
-    ): List<Pair<List<ShapeFilter<P>>, Capability<T>>> {
+    ): List<Pair<List<ShapeFilter<P>>, NodeProperty<T>>> {
         logger.debug("Visiting capabilities: {}", root)
         val capabilitiesKey = DocumentRoot.Deployment.capabilities
         val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
         return visitRecursively(context, allCapabilities, DocumentRoot.Deployment.Capabilities) { element ->
             (element as? Map<*, *>)?.let {
                 val shapes = visitFilter<P>(context, element)
-                val capability = visitBuilding<Capability<T>>(context, element)
-                    ?.getOrThrow() ?: cantBuildWith<Capability<T>>(root, JavaType)
-                logger.debug("Capability: {}", capability)
-                Result.success(Pair(shapes, capability))
+                val nodeProperty = visitBuilding<NodeProperty<T>>(context, element)
+                    ?.getOrThrow() ?: cantBuildWith<NodeProperty<T>>(root, JavaType)
+                logger.debug("Capability: {}", nodeProperty)
+                Result.success(Pair(shapes, nodeProperty))
             }
         }
     }

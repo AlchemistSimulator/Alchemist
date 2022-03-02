@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
 /**
  * A node's capability to orient.
  */
-interface OrientingCapability<T, P, A, L, N, E> : Capability<T>
+interface OrientingCapability<T, P, A, L, N, E> : NodeProperty<T>
     where P : Position<P>,
           P : Vector<P>,
           A : GeometricTransformation<P>,

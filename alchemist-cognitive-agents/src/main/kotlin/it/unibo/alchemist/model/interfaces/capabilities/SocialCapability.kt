@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Group
 
 /**
  * The pedestrian's capability for form groups.
  */
-interface SocialCapability<T> : Capability<T> {
+interface SocialCapability<T> : NodeProperty<T> {
     /**
      * Pedestrian's [Group].
      */

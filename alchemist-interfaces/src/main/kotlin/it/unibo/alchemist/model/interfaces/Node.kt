@@ -82,7 +82,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * @return a list of the node's capabilities
      */
-    val capabilities: List<Capability<T>>
+    val capabilities: List<NodeProperty<T>>
 
     /**
      * This method allows to access all the reaction of the node.
@@ -125,64 +125,64 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
 
     /**
      * Adds a capability to the node.
-     * @param capability the capability you want to add to the node
+     * @param nodeProperty the capability you want to add to the node
      */
-    fun addCapability(capability: Capability<T>)
+    fun addCapability(nodeProperty: NodeProperty<T>)
 
     /**
-     * returns a [Capability] of the provided [type] [C].
+     * returns a [NodeProperty] of the provided [type] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability<T>> asCapabilityOrNull(superType: Class<in C>): C? = asCapabilityOrNull(superType.kotlin)
+    fun <C : NodeProperty<T>> asCapabilityOrNull(superType: Class<in C>): C? = asCapabilityOrNull(superType.kotlin)
 
     /**
-     * returns a [Capability] of the provided [type] [C].
+     * returns a [NodeProperty] of the provided [type] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
     @Suppress("UNCHECKED_CAST")
-    fun <C : Capability<T>> asCapabilityOrNull(superType: KClass<in C>): C? = capabilities
+    fun <C : NodeProperty<T>> asCapabilityOrNull(superType: KClass<in C>): C? = capabilities
         .asSequence()
-        .mapNotNull { capability: Capability<T> -> capability::class.distanceFrom(superType)?.let { capability to it } }
-        .minByOrNull { it: Pair<Capability<T>, Int> -> it.second }
+        .mapNotNull { nodeProperty: NodeProperty<T> -> nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it } }
+        .minByOrNull { it: Pair<NodeProperty<T>, Int> -> it.second }
         ?.first as? C
 
     /**
-     * returns a [Capability] of the provided [type] [C].
+     * returns a [NodeProperty] of the provided [type] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability<T>> asCapability(superType: KClass<C>): C =
+    fun <C : NodeProperty<T>> asCapability(superType: KClass<C>): C =
         asCapabilityOrNull(superType).let { it } ?: TODO()
 
     /**
-     * returns a [Capability] of the provided [type] [C].
+     * returns a [NodeProperty] of the provided [type] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
-    fun <C : Capability<T>> asCapability(superType: Class<C>): C = asCapability(superType.kotlin)
+    fun <C : NodeProperty<T>> asCapability(superType: Class<C>): C = asCapability(superType.kotlin)
 
     companion object {
         /**
-         * returns a [Capability] of the provided [type] [C].
+         * returns a [NodeProperty] of the provided [type] [C].
          * @param [C] type of capability
          * @param superType the type of capability to retrieve
          * @return a capability of the provided type [C]
          */
-        inline fun <T, reified C : Capability<T>> Node<T>.asCapability(): C = asCapability(C::class)
+        inline fun <T, reified C : NodeProperty<T>> Node<T>.asCapability(): C = asCapability(C::class)
 
         /**
-         * returns a [Capability] of the provided [type] [C] or [null] if the node does not have the capabiilty.
+         * returns a [NodeProperty] of the provided [type] [C] or [null] if the node does not have the capabiilty.
          * @param [C] type of capability
          * @param superType the type of capability to retrieve
          * @return if present, a capability of the provided type [C]
          */
-        inline fun <T, reified C : Capability<T>> Node<T>.asCapabilityOrNull(): C? = asCapabilityOrNull(C::class)
+        inline fun <T, reified C : NodeProperty<T>> Node<T>.asCapabilityOrNull(): C? = asCapabilityOrNull(C::class)
 
         private fun KClass<*>.distanceFrom(superType: KClass<*>, depth: Int = 0): Int? = when {
             !isSubclassOf(superType) -> null

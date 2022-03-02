@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.interfaces.capabilities
 
 import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
@@ -20,7 +20,7 @@ import org.protelis.vm.ExecutionEnvironment
 /**
  *
  */
-interface ProtelisCapability : Capability<Any>, ExecutionEnvironment, DeviceUID {
+interface ProtelisCapability : NodeProperty<Any>, ExecutionEnvironment, DeviceUID {
 
     /**
      * An instance of a [ProtelisIncarnation].

@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.reactions.Event;
@@ -28,7 +27,7 @@ import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.Capability;
+import it.unibo.alchemist.model.interfaces.NodeProperty;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -605,11 +604,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
 
         @Override
-        public void addCapability(@NotNull final Capability<Object> capability) { notImplemented(); }
+        public void addCapability(@NotNull final NodeProperty<Object> nodeProperty) { notImplemented(); }
 
         @NotNull
         @Override
-        public List<Capability<Object>> getCapabilities() { return Collections.emptyList(); }
+        public List<NodeProperty<Object>> getCapabilities() { return Collections.emptyList(); }
 
     }
 

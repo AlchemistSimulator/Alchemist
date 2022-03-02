@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.capabilities
 
-import it.unibo.alchemist.model.interfaces.Capability
+import it.unibo.alchemist.model.interfaces.NodeProperty
 
 /**
  * A node capability to walk.
  */
-interface PedestrianWalkingCapability<T> : Capability<T> {
+interface PedestrianWalkingCapability<T> : NodeProperty<T> {
     /**
      * The node's walking speed.
      */

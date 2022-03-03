@@ -28,7 +28,7 @@ deployments:
       - type: CognitivePedestrian
       - type: Cognitive2D
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
     programs: *behavior
   - type: Circle
     parameters: [50, 0, 0, 20]
@@ -40,5 +40,5 @@ deployments:
       - type: CognitivePedestrian
       - type: Cognitive2D
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
     programs: *behavior

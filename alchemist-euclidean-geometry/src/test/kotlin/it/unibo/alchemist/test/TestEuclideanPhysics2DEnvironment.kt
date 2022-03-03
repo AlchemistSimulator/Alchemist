@@ -7,11 +7,11 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
-import it.unibo.alchemist.model.implementations.properties.Area
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.properties.CircularArea
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
@@ -34,7 +34,7 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
         radius: Double,
     ): Node<Any> {
         return GenericNode(incarnation, environment).also {
-            it.addProperty(Area(it, environment.shapeFactory.circle(radius)))
+            it.addProperty(CircularArea(environment, it, radius))
         }
     }
 

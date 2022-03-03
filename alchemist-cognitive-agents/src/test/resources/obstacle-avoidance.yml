@@ -35,7 +35,7 @@ _homogeous_pedestrian: &homogeneous_pedestrian
     - type: Pedestrian
     - type: Social
     - type: Perceptive2D
-    - type: Area
+    - type: CircularArea
 
 deployments:
   - type: Circle

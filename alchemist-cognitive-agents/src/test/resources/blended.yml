@@ -27,7 +27,7 @@ deployments:
       - type: Pedestrian
       - type: Social
       - type: Percective
-      - type: Area
+      - type: CircularArea
     programs: *behavior
   - type: Point
     parameters: [1000, 500]
@@ -37,4 +37,4 @@ deployments:
       - type: Pedestrian
       - type: Social
       - type: Percective
-      - type: Area
+      - type: CircularArea

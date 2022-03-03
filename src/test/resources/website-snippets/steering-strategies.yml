@@ -22,7 +22,7 @@ deployments:
     properties:
       - type: Pedestrian
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
       - type: Social
     programs:
       - *behavior

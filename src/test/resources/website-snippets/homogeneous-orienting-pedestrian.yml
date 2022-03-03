@@ -13,6 +13,6 @@ deployments:
       type: GenericNode
     properties:
       - type: Pedestrian
-      - type: Area
+      - type: CircularArea
       - type: Orienting2D
         parameters: [0.5]

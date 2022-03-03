@@ -9,17 +9,21 @@
 
 package it.unibo.alchemist.model.implementations.properties
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.AreaProperty
-import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 
 /**
- * A node's capability to exist with a shape in a 2D space.
+ * The [node] occupies a rectangular width x height area.
  */
-class Area<T> @JvmOverloads constructor(
+class RectangularArea<T>(
     environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
-    override val shape: Euclidean2DShape = environment.shapeFactory.circle(OccupiesSpaceProperty.defaultShapeRadius),
-) : AreaProperty<T>
+    width: Double,
+    height: Double
+) : OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+    override val shape: Euclidean2DShape = environment.shapeFactory.rectangle(width, height)
+}

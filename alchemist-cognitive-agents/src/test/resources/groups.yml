@@ -23,7 +23,7 @@ _homogeneous_properties: &homogeneous_properties
   perceptive:
     type: Perceptive2D
   solid:
-    type: Area
+    type: CircularArea
 
 deployments:
   - type: Circle

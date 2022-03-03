@@ -26,7 +26,7 @@ deployments:
       - type: Pedestrian
       - type: PhysicalPedestrian2D
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
       - type: Social
     programs:
       - *behavior

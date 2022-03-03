@@ -10,7 +10,7 @@ deployments:
         parameters: ["elderly", "female"]
       - type: HeterogeneousPedestrian
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:
@@ -20,4 +20,4 @@ deployments:
         parameters: ["child", "male"]
       - type: HeterogeneousPedestrian
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea

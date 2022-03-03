@@ -16,7 +16,7 @@ deployments:
     properties:
       - type: Pedestrian
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
       - type: Social
         parameters: [*group1]
   - type: Circle
@@ -26,6 +26,6 @@ deployments:
     properties:
       - type: Pedestrian
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
       - type: Social
         parameters: [*group2]

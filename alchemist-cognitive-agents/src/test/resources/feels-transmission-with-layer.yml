@@ -38,7 +38,7 @@ _deployment_males: &males
     - type: Cognitive2D
       parameters: [*danger]
     - type: Perceptive2D
-    - type: Area
+    - type: CircularArea
   programs: *behavior
 
 deployments:
@@ -51,4 +51,4 @@ deployments:
       - type: Cognitive2D
         parameters: [*danger]
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea

@@ -15,12 +15,12 @@ import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.properties.Pedestrian
 import it.unibo.alchemist.model.implementations.properties.Perceptive2D
 import it.unibo.alchemist.model.implementations.properties.Social
-import it.unibo.alchemist.model.implementations.properties.Area
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.implementations.nodes.GenericNode
+import it.unibo.alchemist.model.implementations.properties.CircularArea
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
@@ -43,7 +43,7 @@ class TestSensory<T> : StringSpec({
         node.addProperty(Pedestrian(randomGenerator, node))
         node.addProperty(Social(node))
         node.addProperty(Perceptive2D(environment, node))
-        node.addProperty(Area(environment, node))
+        node.addProperty(CircularArea(environment, node))
         return node
     }
 

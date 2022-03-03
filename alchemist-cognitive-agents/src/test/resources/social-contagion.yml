@@ -50,7 +50,7 @@ _nodes: &nodes
     - type: Cognitive2D
       parameters: [ *danger ]
     - type: Perceptive2D
-    - type: Area
+    - type: CircularArea
   programs: *behavior
 
 deployments:

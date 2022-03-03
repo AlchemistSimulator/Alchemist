@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
-import it.unibo.alchemist.model.implementations.properties.Area
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -103,7 +102,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * it is simply moved to [newPosition].
      */
     override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        if (node.asPropertyOrNull<T, Area<T>>() != null) {
+        if (node.asPropertyOrNull<T, AreaProperty<T>>() != null) {
             super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
         } else {
             super.moveNodeToPosition(node, newPosition)

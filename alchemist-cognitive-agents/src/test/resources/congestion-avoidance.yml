@@ -23,7 +23,7 @@ deployments:
     nodes:
       type: GenericNode
     properties:
-      - type: Area
+      - type: CircularArea
       - type: Orienting2D
         parameters: [1.0]
       - type: Pedestrian
@@ -37,7 +37,7 @@ deployments:
     properties:
       - type: Pedestrian
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
       - type: Social
   - type: Grid
     parameters: [30, 40, 50, 45, 0.5, 0.5, 0.3, 0.3]
@@ -46,5 +46,5 @@ deployments:
     properties:
       - type: Pedestrian
       - type: Perceptive2D
-      - type: Area
+      - type: CircularArea
       - type: Social

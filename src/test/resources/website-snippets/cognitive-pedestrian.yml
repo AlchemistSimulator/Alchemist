@@ -17,7 +17,7 @@ deployments:
       - type: Perceptive2D
       - type: CognitivePedestrian
       - type: Cognitive2D
-      - type: Area
+      - type: CircularArea
     programs:
       - *behavior
   - type: Circle
@@ -30,6 +30,6 @@ deployments:
       - type: Perceptive2D
       - type: CognitivePedestrian
       - type: Cognitive2D
-      - type: Area
+      - type: CircularArea
     programs:
       - *behavior

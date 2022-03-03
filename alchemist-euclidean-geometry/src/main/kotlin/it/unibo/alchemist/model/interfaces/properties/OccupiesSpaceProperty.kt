@@ -9,10 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A node's ability to have a [Shape].
@@ -22,11 +24,9 @@ interface OccupiesSpaceProperty<T, S : Vector<S>, A : GeometricTransformation<S>
      * The node's shape.
      */
     val shape: GeometricShape<S, A>
-
-    companion object {
-        /**
-         * Default radius of pedestrian's [shape].
-         */
-        const val defaultShapeRadius = 0.3
-    }
 }
+
+/**
+ * A node's ability to occupy space in a 2D space.
+ */
+typealias AreaProperty<T> = OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation>

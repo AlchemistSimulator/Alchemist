@@ -23,7 +23,7 @@ _deployment_hetero: &male-deployment
       parameters: [ "adult", "male" ]
     - type: HeterogeneousPedestrian
     - type: Perceptive2D
-    - type: Area
+    - type: CircularArea
   programs: *behavior
 
 deployments:
@@ -36,4 +36,4 @@ deployments:
           parameters: [ "adult", "female" ]
         - type: HeterogeneousPedestrian
         - type: Perceptive2D
-        - type: Area
+        - type: CircularArea

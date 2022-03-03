@@ -41,8 +41,8 @@ public final class TensionPresent extends AbstractCondition<Double> {
         if (node.asPropertyOrNull(CircularDeformableCellularProperty.class) != null) {
             return new TensionPresent(env, node);
         }
-        throw new IllegalArgumentException("Node must be CircularDeformableCell, found " + node
-                + " of type: " + node.getClass());
+        throw new IllegalArgumentException("Node must have a "
+                + CircularDeformableCellularProperty.class.getSimpleName());
     }
 
     @Override

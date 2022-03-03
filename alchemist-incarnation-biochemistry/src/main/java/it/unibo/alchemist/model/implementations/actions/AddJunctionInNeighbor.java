@@ -55,7 +55,7 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
                     node,
                     jun, getRandomGenerator());
         }
-        throw new IllegalArgumentException("Node must be CellNode, found " + node + " of type: " + node.getClass());
+        throw new IllegalArgumentException("Node must have a " + CellularProperty.class.getSimpleName());
     }
 
     /**
@@ -76,7 +76,8 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
         if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
             targetNode.asProperty(CellularProperty.class).addJunction(jun, getNode());
         } else {
-            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+            throw new UnsupportedOperationException("Can't add Junction in a node with no "
+                    + CellularProperty.class.getSimpleName());
         }
     }
 

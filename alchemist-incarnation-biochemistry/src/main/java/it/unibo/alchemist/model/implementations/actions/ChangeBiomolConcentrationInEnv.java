@@ -59,7 +59,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
             env = environment;
         } else {
             throw  new UnsupportedOperationException(
-                    "This condition can be set only in Node with cellular behaviour or with an "
+                    "This condition can be set only in Node with nodes with " + CellularProperty.class.getSimpleName() + " or "
                             + EnvironmentNode.class.getSimpleName()
             );
         }

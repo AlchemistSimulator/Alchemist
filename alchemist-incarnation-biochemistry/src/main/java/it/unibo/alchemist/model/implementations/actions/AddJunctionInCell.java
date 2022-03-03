@@ -41,7 +41,8 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
             declareDependencyTo(j);
             jun = j;
         } else {
-            throw new UnsupportedOperationException("This Action can be set only in CellNodes");
+            throw new UnsupportedOperationException("This Action can be set only in nodes with "
+                    + CellularProperty.class.getSimpleName());
         }
     }
 
@@ -67,7 +68,8 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
         if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
             getNode().asProperty(CellularProperty.class).addJunction(jun, targetNode);
         } else {
-            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+            throw new UnsupportedOperationException("Can't add Junction in a node with no "
+                    + CellularProperty.class.getSimpleName());
         }
     }
 

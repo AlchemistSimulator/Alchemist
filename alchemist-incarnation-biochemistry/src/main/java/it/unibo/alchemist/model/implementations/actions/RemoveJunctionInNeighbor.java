@@ -73,7 +73,8 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
         if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
             targetNode.asProperty(CellularProperty.class).removeJunction(jun, getNode());
         } else {
-            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+            throw new UnsupportedOperationException("Can't add Junction in a node with no "
+                    + CellularProperty.class.getSimpleName());
         }
     }
 

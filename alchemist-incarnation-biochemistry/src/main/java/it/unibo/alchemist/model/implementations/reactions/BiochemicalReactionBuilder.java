@@ -387,7 +387,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 actionList.add(new AddJunctionInNeighbor<>(env, node, reverseJunction(j), rand));
             } else {
                 throw new UnsupportedOperationException(
-                        "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                        "Junctions are supported ONLY in nodes with " + CellularProperty.class.getSimpleName()
                 );
             }
             return reaction;
@@ -415,7 +415,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                     actionList.add(new RemoveJunctionInNeighbor(env, node, reverseJunction(j), rand));
                 } else {
                     throw new UnsupportedOperationException(
-                            "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                            "Junctions are supported ONLY in node with " + CellularProperty.class.getSimpleName()
                     );
                 }
             });
@@ -452,7 +452,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 return reaction;
             } else {
                 throw new UnsupportedOperationException(
-                        "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                        "Junctions are supported ONLY in nodes with " + CellularProperty.class.getSimpleName()
                 );
             }
         }

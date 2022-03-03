@@ -47,7 +47,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         this.env = environment;
         this.deformableCell = Objects.requireNonNull(
             node.asPropertyOrNull(CircularDeformableCellularProperty.class),
-            "The node must be a " + CircularDeformableCellularProperty.class.getSimpleName()
+            "The node must have a " + CircularDeformableCellularProperty.class.getSimpleName()
         );
     }
 

@@ -7,10 +7,10 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.properties.AreaProperty;
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment;
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
+import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty;
 import org.jooq.lambda.function.Consumer2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +64,8 @@ public final class DrawSmartcam implements Effect {
             final int x,
             final int y
     ) {
-        final GeometricShape<?, ?> geometricShape = node.asPropertyOrNull(AreaProperty.class) != null
-                ? node.asProperty(AreaProperty.class).getShape()
+        final GeometricShape<?, ?> geometricShape = node.asPropertyOrNull(OccupiesSpaceProperty.class) != null
+                ? node.asProperty(OccupiesSpaceProperty.class).getShape()
                 : null;
         if (geometricShape instanceof AwtShapeCompatible) {
             final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));

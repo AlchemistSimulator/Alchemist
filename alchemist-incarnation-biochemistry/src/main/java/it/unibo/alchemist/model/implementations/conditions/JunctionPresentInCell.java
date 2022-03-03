@@ -39,7 +39,8 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
             j = junction;
             env = e;
         } else {
-            throw new UnsupportedOperationException("This Condition can be set only in CellNodes");
+            throw new UnsupportedOperationException("This Condition can be set only in node with "
+                    + CellularProperty.class.getSimpleName());
         }
     }
 

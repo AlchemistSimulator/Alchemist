@@ -42,11 +42,15 @@ _reactions: &behavior
 
 _nodes: &nodes
   nodes:
-    type: CognitivePedestrian2D
-    parameters:
-      age: "adult"
-      gender: "male"
-      danger: *danger
+    type: GenericNode
+  properties:
+    - type: Human
+      parameters: [ "adult", "male" ]
+    - type: CognitivePedestrian
+    - type: Cognitive2D
+      parameters: [ *danger ]
+    - type: Perceptive2D
+    - type: Area
   programs: *behavior
 
 deployments:

@@ -120,10 +120,6 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     protected open val ConvexPolygon.congestionLevel: Double get() = environment
         .getNodesWithinRange(centroid, radius)
         .asSequence()
-        /*
-         * TODO: There should be a filtering of pedestrians.
-         */
-        // .filterIsInstance<Pedestrian<T, *, *>>()
         .map { environment.getPosition(it) }
         .filter { contains(it) }
         .count()

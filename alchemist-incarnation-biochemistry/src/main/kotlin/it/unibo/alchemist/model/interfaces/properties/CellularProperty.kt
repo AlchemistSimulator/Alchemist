@@ -84,7 +84,7 @@ interface CellularProperty<P : Position<P>> : NodeProperty<Double> {
      * Returns a set of [Node]s which are linked with the current node by a junction of the type [junction].
      */
     fun getNeighborLinkWithJunction(junction: Junction): Set<Node<Double>> {
-        return (junctions.getOrElse(junction) { LinkedHashMap() }).keys
+        return junctions.getOrElse(junction) { LinkedHashMap() }.keys
     }
 
     /**

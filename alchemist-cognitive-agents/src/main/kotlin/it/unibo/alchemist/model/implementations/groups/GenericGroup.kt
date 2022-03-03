@@ -11,7 +11,7 @@ open class GenericGroup<T, N : Node<T>> : Group<T>, MutableList<Node<T>> by muta
     /**
      * adds [node] to the group if not already added.
      */
-    fun addMember(node: N) = if (!this.contains(node)) this.add(node) else false
+    fun addMember(node: N) = node !in this && add(node)
 
     /**
      * removes, if present, [node] from the group.

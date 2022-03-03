@@ -32,7 +32,7 @@ private typealias ShapeFactory = Euclidean2DShapeFactory
 /**
  * Basic implementation of a node's [OrientingProperty] in a 2D space.
  */
-class Orienting2D<T, N : ConvexPolygon>(
+class Orienting2D<T, N : ConvexPolygon> @JvmOverloads constructor(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, N, DefaultEdge>,
     override val randomGenerator: RandomGenerator,
     override val node: Node<T>,

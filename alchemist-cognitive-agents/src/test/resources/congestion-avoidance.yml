@@ -21,15 +21,30 @@ deployments:
   - type: Point
     parameters: [70, 50]
     nodes:
-      type: HomogeneousOrientingPedestrian2D
-      parameters: [1.0]
+      type: GenericNode
+    properties:
+      - type: Area
+      - type: Orienting2D
+        parameters: [1.0]
+      - type: Pedestrian
+      - type: Social
     programs:
       - *behavior
   - type: Grid
     parameters: [27, 52, 56, 58, 0.5, 0.5, 0.3, 0.3]
     nodes:
-      type: HomogeneousPedestrian2D
+      type: GenericNode
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: Area
+      - type: Social
   - type: Grid
     parameters: [30, 40, 50, 45, 0.5, 0.5, 0.3, 0.3]
     nodes:
-      type: HomogeneousPedestrian2D
+      type: GenericNode
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: Area
+      - type: Social

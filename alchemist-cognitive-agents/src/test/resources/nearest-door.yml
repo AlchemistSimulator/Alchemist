@@ -22,7 +22,12 @@ deployments:
   - type: Point
     parameters: [108, 88]
     nodes:
-      type: HomogeneousOrientingPedestrian2D
-      parameters: [0.0]
+      type: GenericNode
+    properties:
+      - type: Area
+      - type: Orienting2D
+        parameters: [0.0]
+      - type: Pedestrian
+      - type: Social
     programs:
       - *behavior

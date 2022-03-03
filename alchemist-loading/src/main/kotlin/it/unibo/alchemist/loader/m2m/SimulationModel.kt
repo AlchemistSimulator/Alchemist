@@ -275,9 +275,6 @@ internal object SimulationModel {
         return constant?.let { Result.success(it) }
     }
 
-    /**
-     * TODO: Shapes may not be the all filtering possibility
-     */
     fun <P : Position<P>> visitFilter(
         context: Context,
         element: Map<*, *>,

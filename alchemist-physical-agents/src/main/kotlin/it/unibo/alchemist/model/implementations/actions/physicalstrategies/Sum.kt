@@ -10,22 +10,25 @@
 package it.unibo.alchemist.model.implementations.actions.physicalstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.PhysicalSteeringStrategy
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2DProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A [PhysicalSteeringStrategy] performing a simple sum of the overall intentional force and the physical ones.
  */
 class Sum<T>(
     private val environment: Physics2DEnvironment<T>,
-    override val node: PhysicalPedestrian2D<T>,
+    override val node: Node<T>,
     override val nonPhysicalStrategy: SteeringStrategy<T, Euclidean2DPosition>
 ) : PhysicalSteeringStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
 
     override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition =
-        (node.physicalForces(environment) + overallIntentionalForce)
+        (node.asProperty<T, PhysicalPedestrian2DProperty<T>>().physicalForces(environment) + overallIntentionalForce)
             .reduce { acc, p -> acc + p }
 }

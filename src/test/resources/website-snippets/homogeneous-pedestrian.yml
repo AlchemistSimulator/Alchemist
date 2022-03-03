@@ -4,4 +4,9 @@ deployments:
   - type: Circle
     parameters: [100, 0, 0, 20]
     nodes:
-      type: HomogeneousPedestrian2D
+      type: GenericNode
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: Area
+      - type: Social

@@ -27,7 +27,7 @@ interface PhysicalSteeringStrategy<T, P, A, F> : SteeringStrategy<T, P>
     /**
      * The node to be moved.
      */
-    val node: PhysicalNode<T, P, A, F>
+    val node: Node<T>
 
     /**
      * The combination of intentional forces (= steering actions) and [computeTarget] are delegated to this strategy.

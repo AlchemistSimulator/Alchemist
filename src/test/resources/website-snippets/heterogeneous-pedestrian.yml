@@ -4,10 +4,20 @@ deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:
-      type: HeterogeneousPedestrian2D
-      parameters: ["elderly", "female"]
+      type: GenericNode
+    properties:
+      - type: Human
+        parameters: ["elderly", "female"]
+      - type: HeterogeneousPedestrian
+      - type: Perceptive2D
+      - type: Area
   - type: Circle
     parameters: [50, 0, 0, 20]
     nodes:
-      type: HeterogeneousPedestrian2D
-      parameters: ["child", "male"]
+      type: GenericNode
+    properties:
+      - type: Human
+        parameters: ["child", "male"]
+      - type: HeterogeneousPedestrian
+      - type: Perceptive2D
+      - type: Area

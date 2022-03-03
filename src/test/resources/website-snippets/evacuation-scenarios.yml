@@ -25,7 +25,13 @@ deployments:
   - type: Circle
     parameters: [100, 0, 0, 50]
     nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "female", *danger]
+      type: GenericNode
+    properties:
+      - type: Human
+        parameters: ["adult", "female"]
+      - type: Perceptive2D
+      - type: CognitivePedestrian
+      - type: Cognitive2D
+      - type: Area
     programs:
       - *behavior

@@ -10,5 +10,9 @@ deployments:
   - type: Point
     parameters: [2, 2]
     nodes:
-      type: HomogeneousOrientingPedestrian2D
-      parameters: [0.5]
+      type: GenericNode
+    properties:
+      - type: Pedestrian
+      - type: Area
+      - type: Orienting2D
+        parameters: [0.5]

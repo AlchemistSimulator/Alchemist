@@ -72,10 +72,10 @@ class Protelis<P : Position<P>> @JvmOverloads constructor(
     /**
      * Called just after the VM is executed, to finalize information of the execution for the environment.
      */
-    override fun commit() {}
+    override fun commit() = throw NotImplementedError()
 
     /**
      * Called just before the VM is executed, to enable and preparations needed in the environment.
      */
-    override fun setup() {}
+    override fun setup() = throw NotImplementedError()
 }

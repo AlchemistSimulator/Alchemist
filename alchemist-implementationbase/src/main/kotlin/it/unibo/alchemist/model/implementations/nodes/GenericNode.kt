@@ -17,6 +17,9 @@ import it.unibo.alchemist.model.interfaces.Node
  * A generic [Node].
  */
 open class GenericNode<T>(
+    /**
+     * simulation incarnation.
+     */
     val incarnation: Incarnation<T, *>,
     environment: Environment<*, *>
 ) : AbstractNode<T>(environment) {

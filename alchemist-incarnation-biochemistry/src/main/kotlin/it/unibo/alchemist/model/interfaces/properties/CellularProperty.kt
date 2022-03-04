@@ -59,21 +59,19 @@ interface CellularProperty<P : Position<P>> : NodeProperty<Double> {
         if (containsJunction(junction)) {
             val inner: MutableMap<Node<Double>, Int>? = junctions[junction]
             inner?.let {
-                if (it.containsKey(neighbor)) {
-                    if (it[neighbor] == 1) {
-                        it.remove(neighbor)
-                    } else {
-                        it[neighbor]?.minus(1)
-                    }
-                    if (it.isEmpty()) {
-                        junctions.remove(junction)
-                    } else {
-                        junctions[junction] = inner
-                    }
-                    junction.moleculesInCurrentNode.forEach { (biomolecule, value) ->
-                        with(node) {
-                            setConcentration(biomolecule, getConcentration(biomolecule) + value)
-                        }
+                if (it[neighbor] == 1) {
+                    it.remove(neighbor)
+                } else {
+                    it[neighbor]?.minus(1)
+                }
+                if (it.isEmpty()) {
+                    junctions.remove(junction)
+                } else {
+                    junctions[junction] = inner
+                }
+                junction.moleculesInCurrentNode.forEach { (biomolecule, value) ->
+                    with(node) {
+                        setConcentration(biomolecule, getConcentration(biomolecule) + value)
                     }
                 }
             }

@@ -32,6 +32,7 @@ import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -652,6 +653,17 @@ class TestBioRect2DEnvironmentNoOverlap {
         assertNotEquals(env.getPosition(c1), pd);
     }
 
+    private List<Node<Double>> getOverlappingNodes(final Node<Double> node) {
+        final double diameter = node.asProperty(CircularCellularProperty.class).getDiameter();
+        return  env.getNodesWithinRange(node, diameter).stream()
+                .filter(n -> env.getDistanceBetweenNodes(node, n) < diameter)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> mapToNodePositions(final List<Node<Double>> nodes) {
+        return nodes.stream().map(node -> env.getPosition(node).toString()).collect(Collectors.toList());
+    }
+
     /**
      * Testing if node moves respecting dimension of all the others.
      */
@@ -668,13 +680,8 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(c4, NODE_POS11_4);
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.0, -1.8431210525510544);
         env.moveNodeToPosition(c1, pd);
-        assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1,
-                                c1.asProperty(CircularCellularProperty.class).getDiameter()).stream()
-                        .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
-                        .map(n -> env.getPosition(n).toString())
-                        .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1,
-                        c1.asProperty(CircularCellularProperty.class).getDiameter() - DELTA).isEmpty());
+        assertTrueJUnit4("Should be empty but is : " + mapToNodePositions(getOverlappingNodes(c1)),
+                env.getNodesWithinRange(c1, diameter - DELTA).isEmpty());
     }
 
     /**
@@ -693,13 +700,10 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.addNode(c4, NODE_POS12_4);
         final Euclidean2DPosition pd = new Euclidean2DPosition(5.3, -1.8431210525510544);
         env.moveNodeToPosition(c1, pd);
-        assertTrueJUnit4("Should be empty but is : "
-                        + env.getNodesWithinRange(c1,
-                                c1.asProperty(CircularCellularProperty.class).getDiameter()).stream()
-                        .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
-                        .map(n -> env.getPosition(n).toString())
-                        .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1, c1.asProperty(CircularCellularProperty.class).getDiameter()).isEmpty());
+        assertTrueJUnit4(
+                "Should be empty but is : " + mapToNodePositions(getOverlappingNodes(c1)),
+                env.getNodesWithinRange(c1, diameter).isEmpty()
+        );
     }
 
     /**
@@ -721,12 +725,8 @@ class TestBioRect2DEnvironmentNoOverlap {
         env.moveNodeToPosition(c2, pd);
         env.moveNodeToPosition(c3, pd);
         env.moveNodeToPosition(c4, pd);
-        assertTrueJUnit4("Should be empty but is : " + env.getNodesWithinRange(c1,
-                                c1.asProperty(CircularCellularProperty.class).getDiameter()).stream()
-                        .filter(n -> env.getDistanceBetweenNodes(c1, n) < diameter)
-                        .map(n -> env.getPosition(n).toString())
-                        .collect(Collectors.toList()),
-                env.getNodesWithinRange(c1, c1.asProperty(CircularCellularProperty.class).getDiameter()).isEmpty());
+        assertTrueJUnit4("Should be empty but is : " + mapToNodePositions(getOverlappingNodes(c1)),
+                env.getNodesWithinRange(c1, diameter).isEmpty());
     }
 
     /**

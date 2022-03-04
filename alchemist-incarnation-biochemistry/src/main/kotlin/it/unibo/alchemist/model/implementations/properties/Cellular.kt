@@ -20,6 +20,9 @@ import org.apache.commons.math3.util.FastMath
  * Base implementation of a [CellularProperty].
  */
 class Cellular<P : Position<P>> @JvmOverloads constructor(
+    /**
+     * The environment in which [node] is moving.
+     */
     val environment: Environment<Double, P>,
     override val node: Node<Double>,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),

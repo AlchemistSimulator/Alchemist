@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.0
+      - uses: DanySK/build-check-deploy-gradle-action@1.2.4
         with:
           build-command: true
           check-command: |
@@ -49,7 +49,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.0
+      - uses: DanySK/build-check-deploy-gradle-action@1.2.4
         with:
           build-command: |
             ./gradlew shadowJar --parallel || ./gradlew shadowJar --parallel
@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.0
+      - uses: DanySK/build-check-deploy-gradle-action@1.2.4
         with:
           build-command: true
           check-command: true
@@ -91,7 +91,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.0
+      - uses: DanySK/build-check-deploy-gradle-action@1.2.4
         with:
           build-command: |
             ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
@@ -104,7 +104,7 @@ jobs:
             # https://github.com/Kotlin/dokka/issues/2323
             # Once everything gets fixed, lychee could simply run on '/lychee/**/*.html'
             FILES="$(find build/website/ -name '*.html' | grep -v /kdoc/ | grep -v /javadoc/ | sed -e 's#^build##')"
-            docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --threads 1
+            docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 429
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
@@ -112,7 +112,7 @@ jobs:
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3.0.0
         with:
           name: website
           path: website.tar
@@ -132,13 +132,13 @@ jobs:
       && contains(github.repository, 'AlchemistSimulator/Alchemist')
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3.0.0
         with:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout the docs
         if: contains(github.repository, 'AlchemistSimulator/Alchemist')
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3.0.0
         with:
           path: website
           fetch-depth: 0
@@ -146,10 +146,10 @@ jobs:
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Download website artifact
-        uses: actions/download-artifact@v2.1.0
+        uses: actions/download-artifact@v3.0.0
         with:
           name: website
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.0
+      - uses: DanySK/build-check-deploy-gradle-action@1.2.4
         with:
           java-version: 11
           build-command: |

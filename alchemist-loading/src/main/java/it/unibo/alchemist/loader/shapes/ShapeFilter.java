@@ -27,7 +27,8 @@ public interface ShapeFilter<P extends Position<P>> extends Filter<P> {
     boolean contains(P position);
 
     @Override
-    default boolean test(final P p) {
-        return contains(p);
+
+    default boolean test(final P position) {
+        return contains(position);
     }
 }

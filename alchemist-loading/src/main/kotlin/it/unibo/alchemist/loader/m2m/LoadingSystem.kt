@@ -116,7 +116,7 @@ internal abstract class LoadingSystem(
                         setCurrentRandomGenerator(scenarioRNG)
                         SimulationModel.visitBuilding<Deployment<P>>(context, element)?.onSuccess {
                             setCurrentRandomGenerator(simulationRNG)
-                            populateDisplacement(simulationRNG, incarnation, environment, it, element)
+                            populateDeployment(simulationRNG, incarnation, environment, it, element)
                         }
                     }
                 }
@@ -141,7 +141,7 @@ internal abstract class LoadingSystem(
             return EnvironmentAndExports(environment, exporters)
         }
 
-        private fun <T, P : Position<P>> populateDisplacement(
+        private fun <T, P : Position<P>> populateDeployment(
             simulationRNG: RandomGenerator,
             incarnation: Incarnation<T, P>,
             environment: Environment<T, P>,

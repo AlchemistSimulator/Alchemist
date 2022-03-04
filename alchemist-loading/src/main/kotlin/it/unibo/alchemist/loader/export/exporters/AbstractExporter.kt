@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -31,8 +31,15 @@ abstract class AbstractExporter<T, P : Position<P>> (
 
     /**
      * A description of the [Variable]s of the current simulation and their values.
+     * The format is like: `var0-value0_var1-value1`.
      */
     protected lateinit var variablesDescriptor: String
+
+    /**
+     * A description of the [Variable]s of the current simulation and their values.
+     * The format is like: `var0 = value0, var1 = value1`.
+     */
+    protected lateinit var verboseVariablesDescriptor: String
 
     /**
      * A value used to check if it's time to export data.
@@ -58,11 +65,21 @@ abstract class AbstractExporter<T, P : Position<P>> (
         require(!this::variablesDescriptor.isInitialized) {
             "Re-binding variables is forbidden. Currently bound: $variablesDescriptor"
         }
-        variablesDescriptor = computeDescriptor(variables)
+        require(!this::verboseVariablesDescriptor.isInitialized) {
+            "Re-binding variables is forbidden. Currently bound: $verboseVariablesDescriptor"
+        }
+        val descriptors = computeDescriptors(variables)
+        variablesDescriptor = descriptors.first
+        verboseVariablesDescriptor = descriptors.second
     }
 
-    protected fun computeDescriptor(variables: Map<String, *>): String =
-        variables.entries.joinToString("_") { (name, value) -> "$name-$value" }
+    /**
+     * Computes the [variablesDescriptor] and the [verboseVariablesDescriptor] provided the variables.
+     */
+    protected fun computeDescriptors(variables: Map<String, *>): Pair<String, String> =
+        variables.map { (name, value) -> "$name-$value" to "$name = $value" }
+            .unzip()
+            .run { first.joinToString("_") to second.joinToString(", ") }
 
     /**
      *  Every step of the simulation check if is time to export data depending on the sampling interval.

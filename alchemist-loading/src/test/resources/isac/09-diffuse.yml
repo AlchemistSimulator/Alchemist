@@ -15,7 +15,7 @@ deployments:
   type: Grid
   parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
   contents:
-    type: Rectangle
+    type: RectangleFilter
     parameters: [-0.5, -0.5, 1, 1]
     molecule: token
   programs:

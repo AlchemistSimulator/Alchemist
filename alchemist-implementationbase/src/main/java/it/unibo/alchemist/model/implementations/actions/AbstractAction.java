@@ -89,7 +89,7 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * Checks if the molecule  is contained in this node.
+     * Checks if the molecule is contained in this node.
      * @param molecule the molecule
      *
      * @return true if the local node contains the molecule.

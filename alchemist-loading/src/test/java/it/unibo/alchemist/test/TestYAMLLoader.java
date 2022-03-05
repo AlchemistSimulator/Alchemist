@@ -168,7 +168,8 @@ class TestYAMLLoader {
             final Map<String, Double> vars
     ) {
         assertNotNull(resource, "Missing test resource " + resource);
-        final Environment<T, P> environment = LoadAlchemist.from(resource, YamlProvider.INSTANCE).<T, P>getWith(vars).getEnvironment();
+        final Environment<T, P> environment = LoadAlchemist.from(resource, YamlProvider.INSTANCE)
+                .<T, P>getWith(vars).getEnvironment();
         final Simulation<T, P> sim = new Engine<>(environment, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {

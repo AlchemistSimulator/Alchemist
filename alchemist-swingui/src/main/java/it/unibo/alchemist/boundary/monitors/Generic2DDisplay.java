@@ -723,7 +723,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      *         and has mobile obstacles
      */
     protected static boolean envHasMobileObstacles(final Environment<?, ?> environment) {
-        return environment instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?>) environment).hasMobileObstacles();
+        return environment instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?>) environment)
+                .hasMobileObstacles();
     }
 
     /**

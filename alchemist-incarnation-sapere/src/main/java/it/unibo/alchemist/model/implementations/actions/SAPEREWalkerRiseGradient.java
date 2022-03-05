@@ -130,7 +130,8 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
 
         @Override
         public GeoPosition getTarget() {
-            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment = this.environment;
+            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment =
+                    this.environment;
             final List<ILsaMolecule> matches = node.getConcentration(template);
             /*
              * If there is no gradient and: - there is no goal, or - the goal

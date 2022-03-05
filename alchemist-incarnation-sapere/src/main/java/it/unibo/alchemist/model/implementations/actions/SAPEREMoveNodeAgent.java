@@ -52,7 +52,11 @@ public abstract class SAPEREMoveNodeAgent<P extends Position<? extends P>> exten
      * @param molecule
      *            The modified molecule template
      */
-    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node, final ILsaMolecule molecule) {
+    public SAPEREMoveNodeAgent(
+            final Environment<List<ILsaMolecule>, P> environment,
+            final ILsaNode node,
+            final ILsaMolecule molecule
+    ) {
         super(node, molecule);
         this.environment = environment;
     }

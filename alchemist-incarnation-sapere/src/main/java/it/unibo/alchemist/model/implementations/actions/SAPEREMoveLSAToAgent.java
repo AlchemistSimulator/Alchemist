@@ -39,7 +39,12 @@ public final class SAPEREMoveLSAToAgent extends SAPEREAgent {
      * @param template
      *            the template LSA to match and move
      */
-    public SAPEREMoveLSAToAgent(final Environment<?, ?> environment, final ILsaNode node, final int destinationId, final ILsaMolecule template) {
+    public SAPEREMoveLSAToAgent(
+            final Environment<?, ?> environment,
+            final ILsaNode node,
+            final int destinationId,
+            final ILsaMolecule template
+    ) {
         this(node, (ILsaNode) environment.getNodeByID(destinationId), template);
     }
 

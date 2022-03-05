@@ -76,7 +76,11 @@ class TestGrid {
      */
     @Test
     void testbug73() {
-        assertEquals(20L * 20, new Grid(environment(), randomGenerator(), 0, 0, 20, 20, 1, 1, 0.8, 0.8).stream().distinct().count());
+        assertEquals(
+                20L * 20,
+                new Grid(environment(), randomGenerator(), 0, 0, 20, 20, 1, 1, 0.8, 0.8)
+                        .stream().distinct().count()
+        );
     }
 
     /**

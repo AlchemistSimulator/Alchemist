@@ -79,7 +79,9 @@ final class TestIncarnation {
     }
 
     private void testTD(final String param, final double rate, final double occurrence) {
-        final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(randomGenerator, environment, node, param);
+        final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(
+                randomGenerator, environment, node, param
+        );
         assertNotNull(t0);
         if (!Double.isNaN(rate)) {
             assertEquals(rate, t0.getRate(), Double.MIN_VALUE);
@@ -115,7 +117,9 @@ final class TestIncarnation {
             final int nneighact,
             final int nallneighact
     ) {
-        final Reaction<List<ILsaMolecule>> r = incarnation.createReaction(randomGenerator, environment, node, timeDistribution, param);
+        final Reaction<List<ILsaMolecule>> r = incarnation.createReaction(
+                randomGenerator, environment, node, timeDistribution, param
+        );
         assertNotNull(r);
         assertEquals(ncond, r.getConditions().size());
         assertEquals(nact, r.getActions().size());

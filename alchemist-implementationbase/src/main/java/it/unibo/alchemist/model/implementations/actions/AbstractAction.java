@@ -89,8 +89,8 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * @param molecule
-     *            the molecule
+     * @param molecule the molecule
+     *
      * @return true if the local node contains the molecule
      */
     protected final boolean nodeContains(final Molecule molecule) {
@@ -100,8 +100,7 @@ public abstract class AbstractAction<T> implements Action<T> {
     /**
      * Deletes a molecule entirely in the local node.
      * 
-     * @param molecule
-     *            molecule
+     * @param molecule molecule
      */
     protected final void removeConcentration(final Molecule molecule) {
         getNode().removeConcentration(Objects.requireNonNull(molecule, "The molecule can not be null"));

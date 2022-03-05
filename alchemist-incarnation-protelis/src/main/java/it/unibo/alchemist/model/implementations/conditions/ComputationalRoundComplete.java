@@ -61,11 +61,6 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
     }
 
     @Override
-    public Node<Object> getNode() {
-        return super.getNode();
-    }
-
-    @Override
     public double getPropensityContribution() {
         return isValid() ? 1 : 0;
     }

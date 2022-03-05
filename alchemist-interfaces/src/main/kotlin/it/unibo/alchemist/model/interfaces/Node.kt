@@ -147,7 +147,9 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     @Suppress("UNCHECKED_CAST")
     fun <C : NodeProperty<T>> asPropertyOrNull(superType: KClass<in C>): C? = capabilities
         .asSequence()
-        .mapNotNull { nodeProperty: NodeProperty<T> -> nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it } }
+        .mapNotNull { nodeProperty: NodeProperty<T> ->
+            nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it }
+        }
         .minByOrNull { it: Pair<NodeProperty<T>, Int> -> it.second }
         ?.first as? C
 

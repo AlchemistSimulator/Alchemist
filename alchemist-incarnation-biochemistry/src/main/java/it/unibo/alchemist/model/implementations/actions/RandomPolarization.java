@@ -16,6 +16,8 @@ import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
+import java.util.Objects;
+
 /**
  *
  * @param <P> position type
@@ -24,6 +26,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
 
     private static final long serialVersionUID = 1L;
     private final Environment<Double, P> environment;
+    private final CellularProperty<P> cell;
 
     /**
      * @param environment the environment
@@ -37,11 +40,10 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
     ) {
         super(node, random);
         this.environment = environment;
-        if (!(node.asPropertyOrNull(CellularProperty.class) != null)) {
-            throw new UnsupportedOperationException(
-                    "Polarization can happen only in nodes with " + CellularProperty.class.getSimpleName()
-            );
-        }
+        this.cell = node.asPropertyOrNull(CellularProperty.class);
+        Objects.requireNonNull(cell,
+                "Polarization can happen only in nodes with " + CellularProperty.class.getSimpleName()
+        );
     }
 
     /**
@@ -64,7 +66,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
                 randomVersor = environment.makePosition(x / module, y / module);
             }
         }
-        getNode().asProperty(CellularProperty.class).addPolarizationVersor(randomVersor);
+        cell.addPolarizationVersor(randomVersor);
     }
 
     /**
@@ -78,12 +80,6 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
     @Override
     public RandomPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
         return new RandomPolarization<>(environment, node, getRandomGenerator());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Node<Double> getNode()  {
-        return super.getNode();
     }
 
 }

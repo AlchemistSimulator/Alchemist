@@ -126,6 +126,7 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
         return Double.parseDouble(s);
     }
 
+    @Override
     public Double createConcentration() {
         return createConcentration("0");
     }

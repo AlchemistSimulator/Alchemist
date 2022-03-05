@@ -141,6 +141,7 @@ internal abstract class LoadingSystem(
             return EnvironmentAndExports(environment, exporters)
         }
 
+        @Suppress("ComplexMethod")
         private fun <T, P : Position<P>> populateDeployment(
             simulationRNG: RandomGenerator,
             incarnation: Incarnation<T, P>,

@@ -11,4 +11,8 @@ package it.unibo.alchemist.loader.filters
 
 import java.util.function.Predicate
 
+/**
+ * Filtering condition for deployments. (e.g inject a [Module] in a node if [test]
+ * is satisfied).
+ */
 interface Filter<T> : Predicate<T>

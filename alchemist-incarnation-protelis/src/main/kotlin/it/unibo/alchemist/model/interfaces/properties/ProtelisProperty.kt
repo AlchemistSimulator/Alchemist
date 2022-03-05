@@ -23,6 +23,11 @@ import org.protelis.vm.ExecutionEnvironment
 interface ProtelisProperty : NodeProperty<Any>, ExecutionEnvironment, DeviceUID {
 
     /**
+     * The node's id.
+     */
+    val id: Int get() = node.id
+
+    /**
      * An instance of a [ProtelisIncarnation].
      */
     val incarnation: ProtelisIncarnation<*>

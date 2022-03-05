@@ -50,7 +50,7 @@ final class TestContinuous2DEnvironment {
 
     private Node<Integer> createIntNode(
             final Incarnation<Integer, Euclidean2DPosition> incarnation,
-            Environment<Integer, Euclidean2DPosition> environment
+            final Environment<Integer, Euclidean2DPosition> environment
     ) {
         return new GenericNode<>(incarnation, environment) {
             @Override

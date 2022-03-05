@@ -24,22 +24,22 @@ import java.util.stream.Stream;
 public final class TensionPresent extends AbstractCondition<Double> {
 
     private static final long serialVersionUID = 1L;
-    private final EnvironmentSupportingDeformableCells<?> env;
+    private final EnvironmentSupportingDeformableCells<?> environment;
 
     /**
      *
      * @param node the node
-     * @param env the environment
+     * @param environment the environment
      */
-    public TensionPresent(final EnvironmentSupportingDeformableCells<?> env, final Node<Double> node) {
+    public TensionPresent(final EnvironmentSupportingDeformableCells<?> environment, final Node<Double> node) {
         super(node);
-        this.env = env;
+        this.environment = environment;
     }
 
     @Override
     public TensionPresent cloneCondition(final Node<Double> node, final Reaction<Double> reaction) {
         if (node.asPropertyOrNull(CircularDeformableCellularProperty.class) != null) {
-            return new TensionPresent(env, node);
+            return new TensionPresent(environment, node);
         }
         throw new IllegalArgumentException("Node must have a "
                 + CircularDeformableCellularProperty.class.getSimpleName());
@@ -53,7 +53,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
     @Override
     public double getPropensityContribution() {
         final Node<Double> thisNode = getNode();
-        return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()
+        return environment.getNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).stream()
                 //.parallel()
                 .flatMap(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null
                         ? Stream.of(n)
@@ -72,7 +72,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
                         maxRn = n.asProperty(CircularCellularProperty.class).getRadius();
                         minRn = maxRn;
                     }
-                    final double distance = env.getDistanceBetweenNodes(n, thisNode);
+                    final double distance = environment.getDistanceBetweenNodes(n, thisNode);
                     if (maxRn + maxRN - distance < 0) {
                         return 0;
                     } else {
@@ -89,7 +89,7 @@ public final class TensionPresent extends AbstractCondition<Double> {
     @Override
     public boolean isValid() {
         final Node<Double> thisNode = getNode();
-        return env.getNodesWithinRange(thisNode, env.getMaxDiameterAmongCircularDeformableCells()).stream()
+        return environment.getNodesWithinRange(thisNode, environment.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .flatMap(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null
                         ? Stream.of(n)
@@ -98,11 +98,11 @@ public final class TensionPresent extends AbstractCondition<Double> {
                     final double maxDN =  thisNode.asProperty(CircularDeformableCellularProperty.class)
                             .getMaximumRadius();
                     if (n.asPropertyOrNull(CircularDeformableCellularProperty.class) != null) {
-                        return env.getDistanceBetweenNodes(n, thisNode)
+                        return environment.getDistanceBetweenNodes(n, thisNode)
                                 < (maxDN + n.asProperty(CircularDeformableCellularProperty.class)
                                 .getMaximumRadius());
                     } else {
-                        return env.getDistanceBetweenNodes(n, thisNode) < (maxDN
+                        return environment.getDistanceBetweenNodes(n, thisNode) < (maxDN
                                 + n.asProperty(CircularCellularProperty.class).getRadius());
                     }
                 });

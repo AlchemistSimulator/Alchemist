@@ -18,10 +18,10 @@ public final class TestNode extends AbstractNode<Object> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param env the environment
+     * @param environment the environment
      */
-    public TestNode(final Environment<?, ?> env) {
-        super(env);
+    public TestNode(final Environment<?, ?> environment) {
+        super(environment);
     }
 
     @Override

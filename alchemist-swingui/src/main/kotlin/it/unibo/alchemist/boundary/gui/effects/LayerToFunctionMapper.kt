@@ -28,7 +28,7 @@ interface LayerToFunctionMapper : Serializable {
     fun <T, P : Position2D<P>> prepare(
         effect: DrawLayersValues,
         toDraw: Collection<Layer<T, P>>,
-        env: Environment<T, P>,
+        environment: Environment<T, P>,
         g: Graphics2D,
         wormhole: Wormhole2D<P>
     ) = Unit // defaults to nothing

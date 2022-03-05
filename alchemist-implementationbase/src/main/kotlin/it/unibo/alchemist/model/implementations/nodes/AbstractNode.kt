@@ -124,12 +124,12 @@ abstract class AbstractNode<T> @JvmOverloads constructor(
 
         private val MUTEX = Semaphore(1)
 
-        private fun idFromEnv(env: Environment<*, *>): Int {
+        private fun idFromEnv(environment: Environment<*, *>): Int {
             MUTEX.acquireUninterruptibly()
-            var idgen = IDGENERATOR[Objects.requireNonNull(env)]
+            var idgen = IDGENERATOR[Objects.requireNonNull(environment)]
             if (idgen == null) {
                 idgen = AtomicInteger()
-                IDGENERATOR[env] = idgen
+                IDGENERATOR[environment] = idgen
             }
             MUTEX.release()
             return idgen.getAndIncrement()

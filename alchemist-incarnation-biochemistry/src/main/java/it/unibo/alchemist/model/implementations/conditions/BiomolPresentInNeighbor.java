@@ -28,25 +28,25 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
 
     private static final long serialVersionUID = 499903479123400111L;
 
-    private final Biomolecule mol;
-    private final Double conc;
+    private final Biomolecule molecule;
+    private final Double concentration;
 
     /**
      * 
      * @param molecule the molecule to check
      * @param concentration the minimum concentration
      * @param node the local node
-     * @param env the environment
+     * @param environment the environment
      */
     public BiomolPresentInNeighbor(
-            final Environment<Double, ?> env,
+            final Environment<Double, ?> environment,
             final Node<Double> node,
             final Biomolecule molecule,
             final Double concentration) {
-        super(env, node);
+        super(environment, node);
         declareDependencyOn(molecule);
-        mol = molecule;
-        conc = concentration;
+        this.molecule = molecule;
+        this.concentration = concentration;
     }
 
     @Override
@@ -58,13 +58,13 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
             return getValidNeighbors().entrySet().stream()
                     .filter(n -> n.getKey().asPropertyOrNull(CellularProperty.class) != null)
                     .allMatch(n -> neighborhood.contains(n.getKey()) 
-                            && n.getKey().getConcentration(mol) >=  conc);
+                            && n.getKey().getConcentration(molecule) >= concentration);
         }
     }
 
     @Override
-    public BiomolPresentInNeighbor cloneCondition(final Node<Double> node, final Reaction<Double> r) {
-        return new BiomolPresentInNeighbor(getEnvironment(), node, mol, conc);
+    public BiomolPresentInNeighbor cloneCondition(final Node<Double> node, final Reaction<Double> reaction) {
+        return new BiomolPresentInNeighbor(getEnvironment(), node, molecule, concentration);
     }
 
     @Override
@@ -72,15 +72,15 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
         // the neighbor is eligible, its propensity is computed using the concentration of the biomolecule
         return Optional.of(neighbor)
                 .filter(it -> it.asPropertyOrNull(CellularProperty.class) != null)
-                .map(it -> it.getConcentration(mol))
-                .filter(it -> it >= conc)
-                .map(it -> binomialCoefficientDouble(it.intValue(), (int) FastMath.ceil(conc)))
+                .map(it -> it.getConcentration(molecule))
+                .filter(it -> it >= concentration)
+                .map(it -> binomialCoefficientDouble(it.intValue(), (int) FastMath.ceil(concentration)))
                 .orElse(0d);
     }
 
     @Override
     public String toString() {
-        return mol.toString() + " >= " + conc + " in neighbor";
+        return molecule.toString() + " >= " + concentration + " in neighbor";
     }
 
 }

@@ -28,7 +28,7 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
 
     private static final long serialVersionUID = -7128058274012426458L;
     private final HashString countVarName;
-    private final Environment<List<ILsaMolecule>, ?> env;
+    private final Environment<List<ILsaMolecule>, ?> environment;
     private final ILsaMolecule mol;
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All implementations are actually serializable")
     private final RandomGenerator rnd;
@@ -61,7 +61,7 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
     ) {
         super(node);
         rnd = rand;
-        env = environment;
+        this.environment = environment;
         countVarName = new HashString(countVar);
         mol = molToCount;
     }
@@ -112,8 +112,8 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
     public void execute() {
         final List<IExpression> l = mol.allocateVar(getMatches());
         Double num = 0.0;
-        if (env.getNeighborhood(getNode()) != null) {
-            for (final Node<List<ILsaMolecule>> nod : env.getNeighborhood(getNode()).getNeighbors()) {
+        if (environment.getNeighborhood(getNode()) != null) {
+            for (final Node<List<ILsaMolecule>> nod : environment.getNeighborhood(getNode()).getNeighbors()) {
                 if (nod.getConcentration(new LsaMolecule(l)).size() != 0) {
                     num++;
                 }
@@ -126,7 +126,7 @@ public final class LsaCountNeighborsAction extends SAPERELocalAgent {
      * @return the current environment
      */
     protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
-        return env;
+        return environment;
     }
 
     /**

@@ -37,7 +37,7 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
      * Initializes a new {@link MapWormhole} copying the state of the one in
      * input.
      *
-     * @param env
+     * @param environment
      *            the {@link Environment}
      * @param comp
      *            the controlled {@link Component}
@@ -45,8 +45,8 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
      *            the {@link IMapViewPosition}
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
-    public MapWormhole(final Environment<?, GeoPosition> env, final Component comp, final IMapViewPosition m) {
-        super(env, comp);
+    public MapWormhole(final Environment<?, GeoPosition> environment, final Component comp, final IMapViewPosition m) {
+        super(environment, comp);
         mapModel = m;
         super.setMode(Mode.MAP);
     }
@@ -129,12 +129,12 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
     public void optimalZoom() {
         byte zoom = MAX_ZOOM;
         @SuppressWarnings("unchecked")
-        final Environment<Object, GeoPosition> env = (Environment<Object, GeoPosition>) getEnvironment();
+        final Environment<Object, GeoPosition> environment = (Environment<Object, GeoPosition>) getEnvironment();
         do {
             setZoom(zoom);
             zoom--;
-        } while (zoom > 1 && !env.getNodes().parallelStream()
-                .map(env::getPosition)
+        } while (zoom > 1 && !environment.getNodes().parallelStream()
+                .map(environment::getPosition)
                 .map(this::getViewPoint)
                 .allMatch(this::isInsideView));
     }

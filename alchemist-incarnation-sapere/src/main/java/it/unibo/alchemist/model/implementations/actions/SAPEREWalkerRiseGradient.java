@@ -116,12 +116,12 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
         private GeoPosition curPos;
 
         NextTargetStrategy(
-                final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> env,
+                final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment,
                 final Node<List<ILsaMolecule>> n,
                 final Molecule patt,
                 final int pos
         ) {
-            environment = requireNonNull(env);
+            this.environment = requireNonNull(environment);
             node = requireNonNull(n);
             curNode = n;
             template = requireNonNull(ensureIsSAPERE(patt));
@@ -130,7 +130,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
 
         @Override
         public GeoPosition getTarget() {
-            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> env = environment;
+            final MapEnvironment<List<ILsaMolecule>, GraphHopperOptions, GraphHopperRoutingService> environment = this.environment;
             final List<ILsaMolecule> matches = node.getConcentration(template);
             /*
              * If there is no gradient and: - there is no goal, or - the goal
@@ -138,7 +138,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
              * 
              * then remain still.
              */
-            final GeoPosition currentPosition = env.getPosition(node);
+            final GeoPosition currentPosition = environment.getPosition(node);
             if (matches.isEmpty()) {
                 if (curPos == null || currentPosition.equals(curPos)) {
                     return currentPosition;
@@ -150,15 +150,15 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
              * If current target node has moved, destination should be
              * re-computed.
              */
-            final Position<?> curNodeActualPos = env.getPosition(curNode);
+            final Position<?> curNodeActualPos = environment.getPosition(curNode);
             if (curNode.equals(node)
                     || !curPos.equals(curNodeActualPos)
-                    || env.getNeighborhood(node).contains(curNode)) {
+                    || environment.getNeighborhood(node).contains(curNode)) {
                 /*
                  * Update target
                  */
-                curNode = env.getNodeByID(nid);
-                curPos = env.getPosition(curNode);
+                curNode = environment.getNodeByID(nid);
+                curPos = environment.getPosition(curNode);
             }
             return curPos;
         }

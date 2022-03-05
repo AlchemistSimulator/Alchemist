@@ -62,8 +62,8 @@ class TestCSVExporter<T, P : Position<P>> : FreeSpec({
 }) {
     /* common utility functions */
     companion object {
-        fun <T, P : Position<P>> getCSVExporter(env: InitializedEnvironment<T, P>): CSVExporter<T, P> {
-            val exporter = env.exporters.first()
+        fun <T, P : Position<P>> getCSVExporter(environment: InitializedEnvironment<T, P>): CSVExporter<T, P> {
+            val exporter = environment.exporters.first()
             require(exporter is CSVExporter) {
                 "Invalid exporter type '${exporter::class.simpleName}'"
             }

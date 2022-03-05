@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
  * Move the agent towards a target position.
  * It is similar to [CognitiveAgentSeek] but attempts to arrive at the target position with a zero velocity.
  *
- * @param env
+ * @param environment
  *          the environment inside which the pedestrian moves.
  * @param reaction
  *          the reaction which executes this action.
@@ -28,24 +28,31 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
  *          the position the pedestrian moves towards.
  */
 open class CognitiveAgentArrive<T, P, A>(
-    protected val env: Environment<T, P>,
+    environment: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Node<T>,
     protected val decelerationRadius: Double,
     protected val arrivalTolerance: Double,
     protected val target: P
-) : AbstractSteeringActionWithTarget<T, P, A>(env, reaction, pedestrian, target)
+) : AbstractSteeringActionWithTarget<T, P, A>(environment, reaction, pedestrian, target)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
     constructor(
-        env: Environment<T, P>,
+        environment: Environment<T, P>,
         reaction: Reaction<T>,
         pedestrian: Node<T>,
         decelerationRadius: Double,
         arrivalTolerance: Double,
         vararg coordinates: Number
-    ) : this(env, reaction, pedestrian, decelerationRadius, arrivalTolerance, env.makePosition(*coordinates))
+    ) : this(
+        environment,
+        reaction,
+        pedestrian,
+        decelerationRadius,
+        arrivalTolerance,
+        environment.makePosition(*coordinates)
+    )
 
     override val maxWalk: Double get() = with((currentPosition as Vector<P>).distanceTo(target)) {
         when {
@@ -56,5 +63,5 @@ open class CognitiveAgentArrive<T, P, A>(
     }
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentArrive<T, P, A> =
-        CognitiveAgentArrive(env, reaction, node, decelerationRadius, arrivalTolerance, target)
+        CognitiveAgentArrive(environment, reaction, node, decelerationRadius, arrivalTolerance, target)
 }

@@ -21,21 +21,23 @@ public final class EnvironmentNodeImpl extends DoubleNode implements Environment
 
     /**
      * Create a new environment node.
-     * @param env the environment
+     * @param environment the environment
      */
-    public EnvironmentNodeImpl(final Environment<Double, ?> env) {
-        super(env);
+    public EnvironmentNodeImpl(final Environment<Double, ?> environment) {
+        super(environment);
     }
 
     @Override
-    public void setConcentration(final Molecule mol, final Double c) {
-        if (c < 0) {
-            throw new IllegalArgumentException("No negative concentrations allowed (" + mol + " -> " + c + ")");
+    public void setConcentration(final Molecule molecule, final Double concentration) {
+        if (concentration < 0) {
+            throw new IllegalArgumentException(
+                    "No negative concentrations allowed (" + molecule + " -> " + concentration + ")"
+            );
         }
-        if (c > 0) {
-            super.setConcentration(mol, c);
+        if (concentration > 0) {
+            super.setConcentration(molecule, concentration);
         } else {
-            removeConcentration(mol);
+            removeConcentration(molecule);
         }
     }
 }

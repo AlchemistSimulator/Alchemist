@@ -28,7 +28,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
  * @param N type of nodes of the environment's graph.
  */
 open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads constructor(
-    env: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
+    environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: Node<T>,
     timeDistribution: TimeDistribution<T>,
     /**
@@ -40,11 +40,11 @@ open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads con
      */
     alpha: Double = SinglePrevalent.DEFAULT_ALPHA
 ) : SteeringBehavior<T>(
-    env,
+    environment,
     pedestrian,
     timeDistribution,
     SinglePrevalent(
-        env,
+        environment,
         pedestrian,
         prevalent = { singleNavigationAction() },
         maxWalk = { pedestrian.asProperty<T, PedestrianProperty<T>>().speed() / timeDistribution.rate },

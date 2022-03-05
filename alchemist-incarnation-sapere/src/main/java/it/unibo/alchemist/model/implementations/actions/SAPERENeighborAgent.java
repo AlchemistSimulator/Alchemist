@@ -33,16 +33,16 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * you must be sure that your agent only modifies molecules matching the
      * template passed as m1.
      * 
-     * @param env
+     * @param environment
      *            The current environment
      * @param node
      *            The node in which this agent stays
      * @param m1
      *            The molecule template it modifies
      */
-    public SAPERENeighborAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule m1) {
+    public SAPERENeighborAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node, final ILsaMolecule m1) {
         super(node, m1);
-        environment = env;
+        this.environment = environment;
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * sure that your agent only modifies molecules matching the template passed
      * as m1 and/or the template passed in m2.
      * 
-     * @param env
+     * @param environment
      *            The current environment
      * @param node
      *            The node in which this agent stays
@@ -60,13 +60,13 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      *            The second molecule template it modifies
      */
     public SAPERENeighborAgent(
-            final Environment<List<ILsaMolecule>, P> env,
+            final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,
             final ILsaMolecule m1,
             final ILsaMolecule m2
     ) {
         super(node, m1, m2);
-        environment = env;
+        this.environment = environment;
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      * sure that your agent only modifies molecules matching the template passed
      * as m1 and/or the template passed in m2 and/or the template passed in m3.
      * 
-     * @param env
+     * @param environment
      *            The current environment
      * @param node
      *            The node in which this agent stays
@@ -86,13 +86,13 @@ public abstract class SAPERENeighborAgent<P extends Position<P>> extends SAPEREA
      *            The third molecule template it modifies
      */
     public SAPERENeighborAgent(
-            final Environment<List<ILsaMolecule>, P> env,
+            final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node, final ILsaMolecule m1,
             final ILsaMolecule m2,
             final ILsaMolecule m3
     ) {
         super(node, m1, m2, m3);
-        environment = env;
+        this.environment = environment;
     }
 
     /*

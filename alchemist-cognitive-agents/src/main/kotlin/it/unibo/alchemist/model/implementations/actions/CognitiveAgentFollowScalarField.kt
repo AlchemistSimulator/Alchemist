@@ -22,10 +22,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
  * Moves the pedestrian where the given scalar field is higher.
  */
 class CognitiveAgentFollowScalarField<T, P, A>(
-    /**
-     * The environment the pedestrian is into.
-     */
-    private val env: Environment<T, P>,
+    environment: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Node<T>,
     /**
@@ -37,7 +34,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
      * A function mapping each position to a scalar value (= the scalar field).
      */
     private val valueIn: (P) -> Double
-) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position2D<P>, P : Vector2D<P>,
           A : GeometricTransformation<P> {
 
@@ -65,13 +62,17 @@ class CognitiveAgentFollowScalarField<T, P, A>(
     }
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
-        CognitiveAgentFollowScalarField(env, reaction, node, center, valueIn)
+        CognitiveAgentFollowScalarField(environment, reaction, node, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
-        if (env is EnvironmentWithObstacles<*, T, P>) map { env.next(currentPosition, it) } else this
+        if (environment is EnvironmentWithObstacles<*, T, P>) map {
+            (environment as EnvironmentWithObstacles<*, T, P>).next(currentPosition, it)
+        } else this
 
     private fun Sequence<P>.enforceOthers(): Sequence<P> =
-        if (env is PhysicsEnvironment<T, P, *, *>) map { env.farthestPositionReachable(pedestrian, it) } else this
+        if (environment is PhysicsEnvironment<T, P, *, *>) map {
+            (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(pedestrian, it)
+        } else this
 
     private fun Sequence<P>.maxOr(position: P): P =
         maxByOrNull { valueIn(it) }

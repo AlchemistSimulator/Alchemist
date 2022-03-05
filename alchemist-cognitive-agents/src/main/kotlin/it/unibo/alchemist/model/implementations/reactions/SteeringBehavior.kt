@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
 /**
  * Reaction representing the steering behavior of a pedestrian.
  *
- * @param env
+ * @param environment
  *          the environment inside which the pedestrian moves.
  * @param pedestrian
  *          the owner of this reaction.
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  *          the strategy used to combine steering actions.
  */
 open class SteeringBehavior<T>(
-    private val env: Environment<T, Euclidean2DPosition>,
+    private val environment: Environment<T, Euclidean2DPosition>,
     private val pedestrian: Node<T>,
     timeDistribution: TimeDistribution<T>,
     open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>
@@ -35,7 +35,7 @@ open class SteeringBehavior<T>(
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
-        SteeringBehavior(env, node, timeDistribution, steerStrategy)
+        SteeringBehavior(environment, node, timeDistribution, steerStrategy)
 
     override fun getRate() = timeDistribution.rate
 
@@ -47,6 +47,6 @@ open class SteeringBehavior<T>(
 
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
-        CognitiveAgentCombineSteering(env, this, pedestrian, steerActions(), steerStrategy).execute()
+        CognitiveAgentCombineSteering(environment, this, pedestrian, steerActions(), steerStrategy).execute()
     }
 }

@@ -21,13 +21,10 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * An abstract [GroupSteeringAction].
  */
 abstract class AbstractGroupSteeringAction<T, P, A>(
-    /**
-     * The environment in which this action executes.
-     */
-    protected open val env: Environment<T, P>,
+    environment: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Node<T>
-) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian),
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     GroupSteeringAction<T, P>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
@@ -36,6 +33,6 @@ abstract class AbstractGroupSteeringAction<T, P, A>(
      * Computes the centroid of the [group] in absolute coordinates.
      */
     protected fun centroid(): P = with(group()) {
-        map { env.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
+        map { environment.getPosition(it) }.reduce { acc, pos -> acc + pos } / size.toDouble()
     }
 }

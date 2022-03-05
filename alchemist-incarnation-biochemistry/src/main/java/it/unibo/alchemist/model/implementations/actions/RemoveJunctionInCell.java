@@ -30,7 +30,7 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     private static final long serialVersionUID = 3565077605882164314L;
 
     private final Junction jun;
-    private final Environment<Double, ?> env;
+    private final Environment<Double, ?> environment;
 
     /**
      * 
@@ -52,7 +52,7 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
                 declareDependencyTo(entry.getKey());
             }
             jun = junction;
-            env = environment;
+            this.environment = environment;
         } else {
             throw new UnsupportedOperationException(
                     "This Action can be set only in nodes with " + CellularProperty.class.getSimpleName()
@@ -62,7 +62,7 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
 
     @Override
     public RemoveJunctionInCell cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new RemoveJunctionInCell(env, node, jun, getRandomGenerator());
+        return new RemoveJunctionInCell(environment, node, jun, getRandomGenerator());
     }
 
     /**

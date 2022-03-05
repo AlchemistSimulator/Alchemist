@@ -45,26 +45,28 @@ class TestBiomolLayer {
      */
     @Test
     void testBiomolStepLayer() {
-        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
+        final Environment<Double, Euclidean2DPosition> environment = new BioRect2DEnvironment();
         final Biomolecule b = new Biomolecule("B");
         final Layer<Double, Euclidean2DPosition> bLayer = new StepLayer<>(10_000.0, 0d);
         final MersenneTwister rand = new MersenneTwister(0);
-        final Node<Double> cellNode = INCARNATION.createNode(rand, env, null);
+        final Node<Double> cellNode = INCARNATION.createNode(rand, environment, null);
         final Molecule a = new Biomolecule("A");
         final Reaction<Double> underTest = INCARNATION.createReaction(
-            rand, env, cellNode,
-            INCARNATION.createTimeDistribution(rand, env, cellNode, "1"),
+            rand, environment, cellNode,
+            INCARNATION.createTimeDistribution(rand, environment, cellNode, "1"),
             "[B in env] --> [A]"
         );
         cellNode.addReaction(underTest);
         cellNode.addReaction(INCARNATION.createReaction(
-            rand, env, cellNode, new DiracComb<>(100d), "[] --> [BrownianMove(10)]"
+            rand, environment, cellNode, new DiracComb<>(100d), "[] --> [BrownianMove(10)]"
         ));
         cellNode.setConcentration(a, 0d);
-        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
-        env.addNode(cellNode, new Euclidean2DPosition(0, 0));
-        env.addLayer(b, bLayer);
-        final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(env, 3000);
+        environment.setLinkingRule(
+                new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2)
+        );
+        environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
+        environment.addLayer(b, bLayer);
+        final Simulation<Double, Euclidean2DPosition> sim = new Engine<>(environment, 3000);
         sim.play();
         sim.addOutputMonitor(new OutputMonitor<>() {
             private static final long serialVersionUID = 0L;

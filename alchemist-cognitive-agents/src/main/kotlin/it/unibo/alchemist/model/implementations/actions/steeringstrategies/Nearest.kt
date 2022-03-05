@@ -37,9 +37,9 @@ class Nearest<T>(
  * action of the list if none of them has a defined target. If the list is empty, null is returned.
  */
 fun <T> List<SteeringAction<T, Euclidean2DPosition>>.pickNearestOrFirst(
-    env: Environment<T, Euclidean2DPosition>,
+    environment: Environment<T, Euclidean2DPosition>,
     pedestrian: Node<T>
 ): SteeringAction<T, Euclidean2DPosition>? = this
     .filterIsInstance<SteeringActionWithTarget<T, Euclidean2DPosition>>()
-    .minByOrNull { it.targetDistanceTo(pedestrian, env) }
+    .minByOrNull { it.targetDistanceTo(pedestrian, environment) }
     ?: firstOrNull()

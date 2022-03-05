@@ -77,9 +77,9 @@ class TestLoadGPSTrace {
     <T> void testLoadGPSTrace() {
         final var res = ResourceLoader.getResource("testgps.yml");
         assertNotNull(res, "Missing test resource " + "testgps.yml");
-        final Environment<T, GeoPosition> env = LoadAlchemist.from(res).<T, GeoPosition>getDefault().getEnvironment();
-        assertTrue(env.getNodeCount() > 0);
-        env.getNodes().forEach(node -> {
+        final Environment<T, GeoPosition> environment = LoadAlchemist.from(res).<T, GeoPosition>getDefault().getEnvironment();
+        assertTrue(environment.getNodeCount() > 0);
+        environment.getNodes().forEach(node -> {
             final var reactions = node.getReactions();
             assertFalse(reactions.isEmpty());
             reactions.forEach(reaction -> {
@@ -87,19 +87,19 @@ class TestLoadGPSTrace {
                 assertEquals(1, reaction.getActions().size());
             });
         });
-        final Simulation<T, GeoPosition> sim = new Engine<>(env, new DoubleTime(TIME_TO_REACH));
+        final Simulation<T, GeoPosition> sim = new Engine<>(environment, new DoubleTime(TIME_TO_REACH));
         sim.addOutputMonitor(new OutputMonitor<>() {
 
             @Override
             public void finished(
-                @Nonnull final Environment<T, GeoPosition> env,
+                @Nonnull final Environment<T, GeoPosition> environment,
                 @Nonnull final Time time,
                 final long step
             ) {
-                for (final Node<T> node : env.getNodes()) {
+                for (final Node<T> node : environment.getNodes()) {
                     final GeoPosition start = Objects.requireNonNull(NODE_START_POSITION.get(node));
                     final GeoPosition idealArrive = Objects.requireNonNull(START_ARRIVE_POSITION.get(start));
-                    final GeoPosition realArrive = Objects.requireNonNull(env.getPosition(node));
+                    final GeoPosition realArrive = Objects.requireNonNull(environment.getPosition(node));
                     assertEquals(
                             0.0,
                             idealArrive.distanceTo(realArrive),
@@ -111,9 +111,9 @@ class TestLoadGPSTrace {
             }
 
             @Override
-            public void initialized(@Nonnull final Environment<T, GeoPosition> env) {
-                for (final Node<T> node : env.getNodes()) {
-                    final GeoPosition position = env.getPosition(node);
+            public void initialized(@Nonnull final Environment<T, GeoPosition> environment) {
+                for (final Node<T> node : environment.getNodes()) {
+                    final GeoPosition position = environment.getPosition(node);
                     /*
                      * We don't know the actual type of position, we use LatLongPosition here, so we need to make sure
                      * that types match, or the map won't return what we expect
@@ -124,7 +124,7 @@ class TestLoadGPSTrace {
 
             @Override
             public void stepDone(
-                @Nonnull final Environment<T, GeoPosition> env, final Reaction<T> r,
+                @Nonnull final Environment<T, GeoPosition> environment, final Reaction<T> r,
                 @Nonnull final Time time,
                 final long step
             ) { }

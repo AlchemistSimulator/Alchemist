@@ -33,7 +33,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
     private static final long serialVersionUID = 1L;
     private final double delta;
     private final Biomolecule biomolecule;
-    private final Environment<Double, ?> env;
+    private final Environment<Double, ?> environment;
 
     /**
      * Initialize a new {@link Action} that change concentration of the given
@@ -56,7 +56,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
         if (node instanceof EnvironmentNode || node.asPropertyOrNull(CellularProperty.class) != null) {
             this.biomolecule = biomolecule;
             delta = deltaCon;
-            env = environment;
+            this.environment = environment;
         } else {
             throw  new UnsupportedOperationException(
                     "This condition can be set only in Node with nodes with " + CellularProperty.class.getSimpleName() + " or "
@@ -84,7 +84,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
 
     @Override
     public Action<Double> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new ChangeBiomolConcentrationInEnv(node, biomolecule, env, getRandomGenerator());
+        return new ChangeBiomolConcentrationInEnv(node, biomolecule, environment, getRandomGenerator());
     }
 
     @Override
@@ -100,7 +100,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
         } else {
             // if getNode() instanceof CellNode, check if all nodes are at the same distance
             final boolean areAllEnvNodesAtTheSameDistance = environmentNodesSurrounding.stream()
-                    .mapToDouble(n -> env.getDistanceBetweenNodes(thisNode, n))
+                    .mapToDouble(n -> environment.getDistanceBetweenNodes(thisNode, n))
                     .distinct()
                     .count() == 1;
             if (areAllEnvNodesAtTheSameDistance) {
@@ -120,7 +120,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
             } else {
                 // else, sort the list by the distance from the node
                 environmentNodesSurrounding.sort(Comparator
-                        .comparingDouble(n -> env.getDistanceBetweenNodes(thisNode, n)));
+                        .comparingDouble(n -> environment.getDistanceBetweenNodes(thisNode, n)));
                 changeConcentrationInSortedNodes(environmentNodesSurrounding);
             }
         }
@@ -136,7 +136,7 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
      * @return a list containing the environment nodes around
      */
     protected List<EnvironmentNode> getEnvironmentNodesSurrounding() {
-        return env.getNeighborhood(getNode()).getNeighbors().stream()
+        return environment.getNeighborhood(getNode()).getNeighbors().stream()
                 .parallel()
                 .flatMap(n -> n instanceof EnvironmentNode ? Stream.of((EnvironmentNode) n) : Stream.empty())
                 .collect(Collectors.toList());

@@ -21,10 +21,10 @@ public class DoubleNode extends AbstractNode<Double> {
 
     /**
      * Builds a new DoubleNode.
-     * @param env the environment
+     * @param environment the environment
      */
-    public DoubleNode(final Environment<Double, ?> env) {
-        super(env);
+    public DoubleNode(final Environment<Double, ?> environment) {
+        super(environment);
     }
 
     @Override

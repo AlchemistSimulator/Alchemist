@@ -26,7 +26,7 @@ import kotlin.math.sin
  * but keeping a [distance] from it.
  *
  * @param <T> concentration type
- * @param env the environment containing the nodes
+ * @param environment the environment containing the nodes
  * @param node the follower
  * @param reaction the reaction hosting this action
  * @param target molecule from which to read the destination to follow in the form of coordinates or a tuple
@@ -36,7 +36,7 @@ import kotlin.math.sin
 class FollowAtDistance<T>(
     node: Node<T>,
     private val reaction: Reaction<T>,
-    private val env: Environment<T, Euclidean2DPosition>,
+    private val environment: Environment<T, Euclidean2DPosition>,
     private val target: Molecule,
     private val distance: Double,
     private val speed: Double
@@ -45,12 +45,12 @@ class FollowAtDistance<T>(
     private val speedStrategy = GloballyConstantSpeed<T, Euclidean2DPosition>(reaction, speed)
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        FollowAtDistance(node, reaction, env, target, distance, speed)
+        FollowAtDistance(node, reaction, environment, target, distance, speed)
 
     override fun execute() {
         node.getConcentration(target)?.also {
-            val targetPosition = it.toPosition(env)
-            val currentPosition = env.getPosition(node)
+            val targetPosition = it.toPosition(environment)
+            val currentPosition = environment.getPosition(node)
             var destination = targetPosition.surroundingPointAt(currentPosition - targetPosition, distance)
             if (currentPosition != destination) { // avoid "bouncing"
                 val currentSpeed = min(
@@ -61,7 +61,7 @@ class FollowAtDistance<T>(
                 val angle = direction.asAngle
                 destination = currentPosition +
                     Euclidean2DPosition(currentSpeed * cos(angle), currentSpeed * sin(angle))
-                env.moveNodeToPosition(node, destination)
+                environment.moveNodeToPosition(node, destination)
             }
         }
     }

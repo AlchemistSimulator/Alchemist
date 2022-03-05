@@ -58,7 +58,7 @@ class TestTargetMapWalker {
      * Near Montefiore
      */
     private static final GeoPosition ENDPOSITION = new LatLongPosition(ENDLAT, ENDLON);
-    private MapEnvironment<Object, ?, ?> env;
+    private MapEnvironment<Object, ?, ?> environment;
     private Node<Object> node;
     private Reaction<Object> reaction;
 
@@ -71,9 +71,9 @@ class TestTargetMapWalker {
     @BeforeEach
     public void setUp() throws ClassNotFoundException, IOException {
         try {
-            env = new OSMEnvironment<>(INCARNATION, TESTMAP, true, true);
-            env.setLinkingRule(new NoLinks<>());
-            node = new AbstractNode<>(env) {
+            environment = new OSMEnvironment<>(INCARNATION, TESTMAP, true, true);
+            environment.setLinkingRule(new NoLinks<>());
+            node = new AbstractNode<>(environment) {
                 private static final long serialVersionUID = -3982001064673078159L;
                 @Override
                 protected Object createT() {
@@ -81,9 +81,9 @@ class TestTargetMapWalker {
                 }
             };
             reaction = new Event<>(node, new DiracComb<>(1));
-            reaction.setActions(Lists.newArrayList(new TargetMapWalker<>(env, node, reaction, TRACK, INTERACTING)));
+            reaction.setActions(Lists.newArrayList(new TargetMapWalker<>(environment, node, reaction, TRACK, INTERACTING)));
             node.addReaction(reaction);
-            env.addNode(node, STARTPOSITION);
+            environment.addNode(node, STARTPOSITION);
         } catch (IllegalStateException e) {
             e.printStackTrace(); // NOPMD
             fail(e.getMessage());
@@ -93,7 +93,7 @@ class TestTargetMapWalker {
     private void run() {
         IntStream.range(0, STEPS).forEach(i -> {
             reaction.execute();
-            reaction.update(reaction.getTau(), true, env);
+            reaction.update(reaction.getTau(), true, environment);
         });
     }
 
@@ -102,7 +102,7 @@ class TestTargetMapWalker {
      */
     @Test
     void testNoPosition() {
-        final GeoPosition start = env.getPosition(node);
+        final GeoPosition start = environment.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -111,7 +111,7 @@ class TestTargetMapWalker {
         /*
          * Node should not move at all
          */
-        assertEquals(start, env.getPosition(node));
+        assertEquals(start, environment.getPosition(node));
     }
 
     /**
@@ -119,7 +119,7 @@ class TestTargetMapWalker {
      */
     @Test
     void testPosition() {
-        final GeoPosition start = env.getPosition(node);
+        final GeoPosition start = environment.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -129,7 +129,7 @@ class TestTargetMapWalker {
         /*
          * Node should get to the final position
          */
-        assertEquals(ENDPOSITION, env.getPosition(node));
+        assertEquals(ENDPOSITION, environment.getPosition(node));
     }
 
     /**
@@ -137,7 +137,7 @@ class TestTargetMapWalker {
      */
     @Test
     void testIterableDouble() {
-        final GeoPosition start = env.getPosition(node);
+        final GeoPosition start = environment.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -147,7 +147,7 @@ class TestTargetMapWalker {
         /*
          * Node should get to the final position
          */
-        assertEquals(ENDPOSITION, env.getPosition(node));
+        assertEquals(ENDPOSITION, environment.getPosition(node));
     }
 
     /**
@@ -155,7 +155,7 @@ class TestTargetMapWalker {
      */
     @Test
     void testIterableStrings() {
-        final GeoPosition start = env.getPosition(node);
+        final GeoPosition start = environment.getPosition(node);
         assertNotNull(start);
         /*
          * Should not be more than 10 meters afar the suggested start
@@ -166,7 +166,7 @@ class TestTargetMapWalker {
         /*
          * Node should get to the final position
          */
-        assertEquals(ENDPOSITION, env.getPosition(node));
+        assertEquals(ENDPOSITION, environment.getPosition(node));
     }
 
     /**
@@ -174,7 +174,7 @@ class TestTargetMapWalker {
      */
     @Test
     void testStrings01() {
-        final GeoPosition start = env.getPosition(node);
+        final GeoPosition start = environment.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -184,7 +184,7 @@ class TestTargetMapWalker {
         /*
          * Node should get to the final position
          */
-        assertEquals(ENDPOSITION, env.getPosition(node));
+        assertEquals(ENDPOSITION, environment.getPosition(node));
     }
 
     /**
@@ -192,7 +192,7 @@ class TestTargetMapWalker {
      */
     @Test
     void testStrings02() {
-        final GeoPosition start = env.getPosition(node);
+        final GeoPosition start = environment.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -202,7 +202,7 @@ class TestTargetMapWalker {
         /*
          * Node should get to the final position
          */
-        assertEquals(ENDPOSITION, env.getPosition(node));
+        assertEquals(ENDPOSITION, environment.getPosition(node));
     }
 
     /**
@@ -210,7 +210,7 @@ class TestTargetMapWalker {
      */
     @Test
     void testStrings03() {
-        final GeoPosition start = env.getPosition(node);
+        final GeoPosition start = environment.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -220,7 +220,7 @@ class TestTargetMapWalker {
         /*
          * Node should get to the final position
          */
-        assertEquals(ENDPOSITION, env.getPosition(node));
+        assertEquals(ENDPOSITION, environment.getPosition(node));
     }
 
     /**
@@ -228,7 +228,7 @@ class TestTargetMapWalker {
      */
     @Test
     void testStrings04() {
-        final GeoPosition start = env.getPosition(node);
+        final GeoPosition start = environment.getPosition(node);
         /*
          * Should not be more than 10 meters afar the suggested start
          */
@@ -238,7 +238,7 @@ class TestTargetMapWalker {
         /*
          * Node should get to the final position
          */
-        assertEquals(ENDPOSITION, env.getPosition(node));
+        assertEquals(ENDPOSITION, environment.getPosition(node));
     }
 
 

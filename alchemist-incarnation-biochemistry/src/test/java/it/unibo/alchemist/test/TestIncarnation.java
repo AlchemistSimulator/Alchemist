@@ -50,7 +50,7 @@ class TestIncarnation {
 
     private static final BiochemistryIncarnation<Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
     private Node<Double> node;
-    private Environment<Double, Euclidean2DPosition> env;
+    private Environment<Double, Euclidean2DPosition> environment;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
 
@@ -64,8 +64,8 @@ class TestIncarnation {
      */
     @BeforeEach
     public void setUp() {
-        env = new BioRect2DEnvironment();
-        node = INCARNATION.createNode(rand, env, null);
+        environment = new BioRect2DEnvironment();
+        node = INCARNATION.createNode(rand, environment, null);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);
     }
@@ -98,7 +98,7 @@ class TestIncarnation {
             final int nNeighAct,
             final int nEnvCond, 
             final int nEnvAct) { // TODO custom conditions and actions
-        final Reaction<Double> r = INCARNATION.createReaction(rand, env, node, time, param);
+        final Reaction<Double> r = INCARNATION.createReaction(rand, environment, node, time, param);
         assertNotNull(r);
         assertEquals(nCond, r.getConditions().size());
         assertEquals(nAct, r.getActions().size());
@@ -120,7 +120,7 @@ class TestIncarnation {
 
     private void testNoR(final String param) { // used for cases like [A] + [B in neighbor] --> [junction A-C]
         try {
-            INCARNATION.createReaction(rand, env, node, time, param);
+            INCARNATION.createReaction(rand, environment, node, time, param);
             fail();
         } catch (final BiochemistryParseException e) {
             assertFalse(e.getMessage().isEmpty());
@@ -194,7 +194,7 @@ class TestIncarnation {
      */
     @Test
     void testCreateNode() {
-        assertThrows(IllegalArgumentException.class, () -> INCARNATION.createNode(rand, env, "foo"));
+        assertThrows(IllegalArgumentException.class, () -> INCARNATION.createNode(rand, environment, "foo"));
     }
 
 }

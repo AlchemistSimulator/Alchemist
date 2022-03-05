@@ -33,7 +33,7 @@ import java.util.Map;
 public final class LsaNeighborhoodCondition extends LsaStandardCondition {
 
     private static final long serialVersionUID = 5472803597473997104L;
-    private final Environment<List<ILsaMolecule>, ?> env;
+    private final Environment<List<ILsaMolecule>, ?> environment;
 
     /**
      * @param node the node
@@ -46,12 +46,12 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
             final Environment<List<ILsaMolecule>, ?> environment
     ) {
         super(molecule, node);
-        env = environment;
+        this.environment = environment;
     }
 
     @Override
     public LsaNeighborhoodCondition cloneCondition(final Node<List<ILsaMolecule>> node, final Reaction<List<ILsaMolecule>> r) {
-        return new LsaNeighborhoodCondition((ILsaNode) node, getMolecule(), env);
+        return new LsaNeighborhoodCondition((ILsaNode) node, getMolecule(), environment);
     }
 
     @Override
@@ -213,7 +213,7 @@ public final class LsaNeighborhoodCondition extends LsaStandardCondition {
      * @return the current environment
      */
     protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
-        return env;
+        return environment;
     }
 
     /*

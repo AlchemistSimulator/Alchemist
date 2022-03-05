@@ -52,10 +52,15 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         mongoService.stopService()
     }
 
-    private fun convertToDocument(env: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long): Document {
+    private fun convertToDocument(
+        environment: Environment<T, P>,
+        reaction: Reaction<T>?,
+        time: Time,
+        step: Long
+    ): Document {
         val document = Document()
         dataExtractors.forEach { extractor ->
-            extractor.extractData(env, reaction, time, step).forEach { (dataLabel, dataValue) ->
+            extractor.extractData(environment, reaction, time, step).forEach { (dataLabel, dataValue) ->
                 document.append(dataLabel, dataValue)
             }
         }

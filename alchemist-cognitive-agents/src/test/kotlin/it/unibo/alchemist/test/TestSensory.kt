@@ -48,26 +48,26 @@ class TestSensory<T> : StringSpec({
     }
 
     "field of view" {
-        val env = Continuous2DEnvironment<T>(
+        val environment = Continuous2DEnvironment<T>(
             SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow()
         )
         val rand = MersenneTwister(1)
-        env.linkingRule = NoLinks()
+        environment.linkingRule = NoLinks()
         val incarnation: Incarnation<T, Euclidean2DPosition> = SupportedIncarnations
             .get<T, Euclidean2DPosition>(SupportedIncarnations.getAvailableIncarnations().first())
             .get()
-        val observed = createHomogeneousPedestrian(incarnation, rand, env)
+        val observed = createHomogeneousPedestrian(incarnation, rand, environment)
         val origin = Euclidean2DPosition(5.0, 5.0)
-        env.addNode(observed, origin)
+        environment.addNode(observed, origin)
         val radius = 10.0
         origin.surrounding(radius).forEach {
-            with(createHomogeneousPedestrian(incarnation, rand, env)) {
-                env.addNode(this, it)
-                env.setHeading(this, origin - it)
+            with(createHomogeneousPedestrian(incarnation, rand, environment)) {
+                environment.addNode(this, it)
+                environment.setHeading(this, origin - it)
             }
         }
-        env.nodes.minusElement(observed).forEach {
-            with(FieldOfView2D(env, it, radius, Math.PI / 2)) {
+        environment.nodes.minusElement(observed).forEach {
+            with(FieldOfView2D(environment, it, radius, Math.PI / 2)) {
                 influentialNodes().size shouldBe 1
                 influentialNodes().first() shouldBe observed
             }

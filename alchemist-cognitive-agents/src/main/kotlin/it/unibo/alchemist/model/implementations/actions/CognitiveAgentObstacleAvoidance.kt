@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * Move the agent avoiding potential obstacles in its path.
  *
- * @param env
+ * @param environment
  *          the environment inside which the pedestrian moves.
  * @param reaction
  *          the reaction which executes this action.
@@ -21,30 +21,30 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  *          the distance at which an obstacle is perceived by the pedestrian.
  */
 class CognitiveAgentObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
-    private val env: Environment2DWithObstacles<W, T>,
+    private val environment: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
     pedestrian: Node<T>,
     private val proximityRange: Double
-) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
+) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
         require(reaction is SteeringBehavior<T>) { "steering behavior needed but found ${this.reaction}" }
-        return CognitiveAgentObstacleAvoidance(env, reaction, node, proximityRange)
+        return CognitiveAgentObstacleAvoidance(environment, reaction, node, proximityRange)
     }
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->
-        env.getObstaclesInRange(currentPosition, proximityRange)
+        environment.getObstaclesInRange(currentPosition, proximityRange)
             .asSequence()
             .map { obstacle: W ->
                 obstacle.nearestIntersection(currentPosition, target) to obstacle.bounds2D
             }
             .minByOrNull { (intersection, _) -> currentPosition.distanceTo(intersection) }
-            ?.let { (intersection, bound) -> intersection to env.makePosition(bound.centerX, bound.centerY) }
+            ?.let { (intersection, bound) -> intersection to environment.makePosition(bound.centerX, bound.centerY) }
             ?.let { (intersection, center) -> (intersection - center).coerceAtMost(maxWalk) }
             /*
              * Otherwise we just don't apply any repulsion force.
              */
-            ?: env.origin
+            ?: environment.origin
     }
 
     /**

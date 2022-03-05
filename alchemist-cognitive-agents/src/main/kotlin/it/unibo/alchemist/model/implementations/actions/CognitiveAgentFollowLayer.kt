@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 /**
  * Move the pedestrian towards positions of the environment with a high concentration of the target molecule.
  *
- * @param env
+ * @param euclidean
  *          the environment inside which the pedestrian moves.
  * @param reaction
  *          the reaction which executes this action.
@@ -19,11 +19,11 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  */
 open class CognitiveAgentFollowLayer(
-    env: Euclidean2DEnvironment<Number>,
+    euclidean: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
     pedestrian: Node<Number>,
     targetMolecule: Molecule
-) : AbstractLayerAction(env, reaction, pedestrian, targetMolecule) {
+) : AbstractLayerAction(euclidean, reaction, pedestrian, targetMolecule) {
 
     private val followScalarField = getLayerOrFail().let { layer ->
         CognitiveAgentFollowScalarField(environment, reaction, pedestrian, layer.center()) {

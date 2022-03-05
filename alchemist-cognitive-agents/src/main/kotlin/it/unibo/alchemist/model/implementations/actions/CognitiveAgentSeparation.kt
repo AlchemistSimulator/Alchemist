@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.properties.PerceptiveProperty
 /**
  * Move the agent away from the pedestrians near to him.
  *
- * @param env
+ * @param environment
  *          the environment inside which the pedestrian moves.
  * @param reaction
  *          the reaction which executes this action.
@@ -19,13 +19,13 @@ import it.unibo.alchemist.model.interfaces.properties.PerceptiveProperty
  *          the owner of this action.
  */
 class CognitiveAgentSeparation<T>(
-    override val env: Physics2DEnvironment<T>,
+    val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
     override val pedestrian: Node<T>
-) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
+) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeparation<T> =
-        CognitiveAgentSeparation(env, reaction, node)
+        CognitiveAgentSeparation(environment, reaction, node)
 
     override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)
 

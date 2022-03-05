@@ -23,21 +23,21 @@ import org.apache.commons.math3.util.FastMath.toRadians
 class Spin<T>(
     node: Node<T>,
     private val reaction: Reaction<T>,
-    private val env: Physics2DEnvironment<T>,
+    private val environment: Physics2DEnvironment<T>,
     private val angularSpeedDegrees: Double
 ) : AbstractAction<T>(node) {
 
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = Spin(node, reaction, env, angularSpeedDegrees)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = Spin(node, reaction, environment, angularSpeedDegrees)
 
     /**
      * Spins the node around itself.
      */
     override fun execute() {
         val realSpeed = angularSpeedRadians / reaction.timeDistribution.rate
-        val headingAngle = env.getHeading(node).asAngle + realSpeed
-        env.setHeading(node, env.makePosition(cos(headingAngle), sin(headingAngle)))
+        val headingAngle = environment.getHeading(node).asAngle + realSpeed
+        environment.setHeading(node, environment.makePosition(cos(headingAngle), sin(headingAngle)))
     }
 
     override fun getContext() = Context.LOCAL

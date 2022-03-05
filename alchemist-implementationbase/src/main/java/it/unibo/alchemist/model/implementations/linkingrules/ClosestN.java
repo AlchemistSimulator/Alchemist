@@ -116,26 +116,26 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
-    private Stream<Node<T>> closestN(final Node<T> center, final Environment<T, ?> env) {
+    private Stream<Node<T>> closestN(final Node<T> center, final Environment<T, ?> environment) {
         if (!nodeIsEnabled(center)) {
             return Stream.empty();
         }
-        double currentRange = getRange(env, center);
+        double currentRange = getRange(environment, center);
         Set<Node<T>> inRange;
-        final double maxRange = Doubles.max(env.getSizeInDistanceUnits()) * 2;
+        final double maxRange = Doubles.max(environment.getSizeInDistanceUnits()) * 2;
         do {
-            inRange = (env.getNodeCount() > n && currentRange < maxRange
-                    ? nodesInRange(env, center, currentRange).stream()
-                    : env.getNodes().stream())
+            inRange = (environment.getNodeCount() > n && currentRange < maxRange
+                    ? nodesInRange(environment, center, currentRange).stream()
+                    : environment.getNodes().stream())
                         .filter(n -> !n.equals(center) && nodeIsEnabled(n))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
             currentRange *= 2;
-        } while (inRange.size() < n && inRange.size() < env.getNodeCount() - 1 && currentRange < maxRange * 2);
+        } while (inRange.size() < n && inRange.size() < environment.getNodeCount() - 1 && currentRange < maxRange * 2);
         if (inRange.isEmpty()) {
             return Stream.empty();
         }
         final MinMaxPriorityQueue<Tuple2<Double, Node<T>>> closestN = inRange.stream()
-                .map(node -> new Tuple2<>(env.getDistanceBetweenNodes(center, node), node))
+                .map(node -> new Tuple2<>(environment.getDistanceBetweenNodes(center, node), node))
                 .collect(new SmallestN<>(n));
         final var farthestNode = closestN.peekLast();
         if (farthestNode == null) {
@@ -153,13 +153,16 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
     }
 
     /**
-     * @param env the {@link Environment}
+     * @param environment the {@link Environment}
      * @param node the {@link Node}
      * @param range the communication range
      * @return the set of nodes within the communication range
      */
-    protected final Set<Node<T>> nodesInRange(final Environment<T, ?> env, final Node<T> node, final double range) {
-        return env.getNodesWithinRange(node, range);
+    protected final Set<Node<T>> nodesInRange(
+            final Environment<T, ?> environment,
+            final Node<T> node, final double range
+    ) {
+        return environment.getNodesWithinRange(node, range);
     }
 
     /**
@@ -176,28 +179,30 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
     /**
      * Gets the communication range of a node.
      * 
-     * @param env
+     * @param environment
      *            the environment
      * @param center
      *            the node
      * @return the communication range
      */
-    protected final double getRange(final Environment<T, ?> env, final Node<T> center) {
+    protected final double getRange(final Environment<T, ?> environment, final Node<T> center) {
         try {
             /*
              * Range estimation: twice the radius of a circle with an area that
              * would, on average, contain the number of required devices
              */
             return ranges().get(center, () -> {
-                final int nodes = env.getNodeCount();
+                final int nodes = environment.getNodeCount();
                 if (nodes < n || nodes < 10) {
                     return Double.MAX_VALUE;
                 }
-                final double[] size = env.getSizeInDistanceUnits();
+                final double[] size = environment.getSizeInDistanceUnits();
                 final double x = size[0];
                 final double y = size[1];
                 final double density = x * y / nodes;
-                return Math.max(Double.MIN_VALUE, Math.min(2 * FastMath.sqrt(density / Math.PI * n), Double.MAX_VALUE));
+                return Math.max(Double.MIN_VALUE,
+                        Math.min(2 * FastMath.sqrt(density / Math.PI * n), Double.MAX_VALUE)
+                );
             });
         } catch (ExecutionException e) {
             throw new IllegalStateException("Couldn't compute ranges. This is most likely a bug.", e);

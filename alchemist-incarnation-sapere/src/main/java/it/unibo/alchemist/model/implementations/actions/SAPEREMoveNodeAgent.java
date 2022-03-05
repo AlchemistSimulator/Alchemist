@@ -31,30 +31,30 @@ public abstract class SAPEREMoveNodeAgent<P extends Position<? extends P>> exten
      * must be sure that your agent does not modify any molecule (e.g. an agent
      * that just moves a node).
      * 
-     * @param env
+     * @param environment
      *            The current environment
      * @param node
      *            The node in which this agent stays
      */
-    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node) {
+    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node) {
         super(node);
-        environment = env;
+        this.environment = environment;
     }
 
     /**
      * Creates a new SAPERE Local Agent stub. Use this constructor if you agent
      * modifies a molecule (locally!)
      * 
-     * @param env
+     * @param environment
      *            The current environment
      * @param node
      *            The node in which this agent stays
-     * @param m
+     * @param molecule
      *            The modified molecule template
      */
-    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> env, final ILsaNode node, final ILsaMolecule m) {
-        super(node, m);
-        environment = env;
+    public SAPEREMoveNodeAgent(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node, final ILsaMolecule molecule) {
+        super(node, molecule);
+        this.environment = environment;
     }
 
     /**

@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
  * A [SteeringAction] in a vector space. The implementation of [nextPosition] is left to subclasses.
  */
 abstract class AbstractSteeringAction<T, P, A>(
-    env: Environment<T, P>,
+    environment: Environment<T, P>,
     /**
      * The reaction in which this action is executed.
      */
@@ -33,7 +33,7 @@ abstract class AbstractSteeringAction<T, P, A>(
      * The owner of this action.
      */
     protected open val pedestrian: Node<T>
-) : AbstractMoveNode<T, P>(env, pedestrian),
+) : AbstractMoveNode<T, P>(environment, pedestrian),
     SteeringAction<T, P>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {

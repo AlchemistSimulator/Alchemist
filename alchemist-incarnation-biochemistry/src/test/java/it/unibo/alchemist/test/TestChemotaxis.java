@@ -42,7 +42,7 @@ class TestChemotaxis {
     private static final int EXPECTED_NODES = 5;
     private static final double PRECISION = 1e-15;
     private static final String CELL_MOVE_REACTION = "[] --> [CellMove(false, 1)]";
-    private Environment<Double, Euclidean2DPosition> env;
+    private Environment<Double, Euclidean2DPosition> environment;
     private Node<Double> cellNode1;
     private EnvironmentNode envNode1;
     private EnvironmentNode envNode2;
@@ -58,13 +58,15 @@ class TestChemotaxis {
      */
     @BeforeEach
     public void setUp() {
-        env = new BioRect2DEnvironmentNoOverlap();
-        env.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
-        envNode1 = new EnvironmentNodeImpl(env);
-        envNode2 = new EnvironmentNodeImpl(env);
-        envNode3 = new EnvironmentNodeImpl(env);
-        envNode4 = new EnvironmentNodeImpl(env);
-        cellNode1 = inc.createNode(rand, env, null);
+        environment = new BioRect2DEnvironmentNoOverlap();
+        environment.setLinkingRule(
+                new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2)
+        );
+        envNode1 = new EnvironmentNodeImpl(environment);
+        envNode2 = new EnvironmentNodeImpl(environment);
+        envNode3 = new EnvironmentNodeImpl(environment);
+        envNode4 = new EnvironmentNodeImpl(environment);
+        cellNode1 = inc.createNode(rand, environment, null);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);
     }
@@ -79,15 +81,15 @@ class TestChemotaxis {
         final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
         final Euclidean2DPosition p4 =  new Euclidean2DPosition(1, 1);
         final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
-        env.addNode(envNode1, p1);
-        env.addNode(envNode2, p2);
-        env.addNode(envNode3, p3);
-        env.addNode(envNode4, p4);
-        env.addNode(cellNode1, p5);
+        environment.addNode(envNode1, p1);
+        environment.addNode(envNode2, p2);
+        environment.addNode(envNode3, p3);
+        environment.addNode(envNode4, p4);
+        environment.addNode(cellNode1, p5);
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION); 
+        final Reaction<Double> r = inc.createReaction(rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(cellNode1.asProperty(CircularCellularProperty.class).getPolarizationVersor().getCoordinate(0),
                 FastMath.sqrt(0.5),
@@ -109,15 +111,15 @@ class TestChemotaxis {
         final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
         final Euclidean2DPosition p4 =  new Euclidean2DPosition(3, 3);
         final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
-        env.addNode(envNode1, p1);
-        env.addNode(envNode2, p2);
-        env.addNode(envNode3, p3);
-        env.addNode(envNode4, p4);
-        env.addNode(cellNode1, p5);
+        environment.addNode(envNode1, p1);
+        environment.addNode(envNode2, p2);
+        environment.addNode(envNode3, p3);
+        environment.addNode(envNode4, p4);
+        environment.addNode(cellNode1, p5);
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
+        final Reaction<Double> r = inc.createReaction(rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(cellNode1.asProperty(CircularCellularProperty.class).getPolarizationVersor().getCoordinate(0),
                 0,
@@ -139,12 +141,12 @@ class TestChemotaxis {
         final Euclidean2DPosition p3 =  new Euclidean2DPosition(0, 1);
         final Euclidean2DPosition p4 =  new Euclidean2DPosition(1, 1);
         final Euclidean2DPosition p5 =  new Euclidean2DPosition(0.5, 0.5);
-        env.addNode(envNode1, p1);
-        env.addNode(envNode2, p2);
-        env.addNode(envNode3, p3);
-        env.addNode(envNode4, p4);
-        env.addNode(cellNode1, p5);
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
+        environment.addNode(envNode1, p1);
+        environment.addNode(envNode2, p2);
+        environment.addNode(envNode3, p3);
+        environment.addNode(envNode4, p4);
+        environment.addNode(cellNode1, p5);
+        final Reaction<Double> r = inc.createReaction(rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(cellNode1.asProperty(CircularCellularProperty.class).getPolarizationVersor().getCoordinate(0),
                 0,
@@ -162,8 +164,8 @@ class TestChemotaxis {
     @Test
     void testChemotacticPolarization4() {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(0.5, 0.5);
-        env.addNode(cellNode1, p1);
-        final Reaction<Double> r = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
+        environment.addNode(cellNode1, p1);
+        final Reaction<Double> r = inc.createReaction(rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
         r.execute();
         assertEquals(cellNode1.asProperty(CircularCellularProperty.class).getPolarizationVersor().getCoordinate(0),
                 0,
@@ -183,15 +185,15 @@ class TestChemotaxis {
         final Euclidean2DPosition p1 = new Euclidean2DPosition(0, 0);
         final Euclidean2DPosition p2 = new Euclidean2DPosition(1, 0);
         final Euclidean2DPosition p3 = new Euclidean2DPosition(-1, 0);
-        env.addNode(cellNode1, p1);
+        environment.addNode(cellNode1, p1);
         final Molecule a = new Biomolecule("A");
         final Molecule b = new Biomolecule("B");
         envNode1.setConcentration(a, CONCENTRATION3);
         envNode2.setConcentration(b, CONCENTRATION3);
-        env.addNode(envNode1, p2);
-        env.addNode(envNode2, p3);
-        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
-        final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, "[] --> [ChemotacticPolarization(B, up)]");
+        environment.addNode(envNode1, p2);
+        environment.addNode(envNode2, p3);
+        final Reaction<Double> r1 = inc.createReaction(rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
+        final Reaction<Double> r2 = inc.createReaction(rand, environment, cellNode1, time, "[] --> [ChemotacticPolarization(B, up)]");
         r1.execute();
         r2.execute();
         assertEquals(cellNode1.asProperty(CircularCellularProperty.class).getPolarizationVersor().getCoordinate(0),
@@ -214,20 +216,20 @@ class TestChemotaxis {
         final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
         final Euclidean2DPosition p4 = new Euclidean2DPosition(1, 1);
         final Euclidean2DPosition p5 = new Euclidean2DPosition(0.5, 0.5);
-        env.addNode(envNode1, p1);
-        env.addNode(envNode2, p2);
-        env.addNode(envNode3, p3);
-        env.addNode(envNode4, p4);
-        env.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, env.getNodeCount());
+        environment.addNode(envNode1, p1);
+        environment.addNode(envNode2, p2);
+        environment.addNode(envNode3, p3);
+        environment.addNode(envNode4, p4);
+        environment.addNode(cellNode1, p5);
+        assertEquals(EXPECTED_NODES, environment.getNodeCount());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
-        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
-        final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, CELL_MOVE_REACTION);
+        final Reaction<Double> r1 = inc.createReaction(rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
+        final Reaction<Double> r2 = inc.createReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();
         r2.execute();
-        assertEquals(new Euclidean2DPosition(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)), env.getPosition(cellNode1));
+        assertEquals(new Euclidean2DPosition(0.5 + FastMath.sqrt(0.5), 0.5 + FastMath.sqrt(0.5)), environment.getPosition(cellNode1));
     }
 
     /**
@@ -240,25 +242,25 @@ class TestChemotaxis {
         final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
         final Euclidean2DPosition p4 = new Euclidean2DPosition(1, 1);
         final Euclidean2DPosition p5 = new Euclidean2DPosition(1, 1);
-        env.addNode(envNode1, p1);
-        env.addNode(envNode2, p2);
-        env.addNode(envNode3, p3);
-        env.addNode(envNode4, p4);
-        env.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, env.getNodeCount());
+        environment.addNode(envNode1, p1);
+        environment.addNode(envNode2, p2);
+        environment.addNode(envNode3, p3);
+        environment.addNode(envNode4, p4);
+        environment.addNode(cellNode1, p5);
+        assertEquals(EXPECTED_NODES, environment.getNodeCount());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION1);
         envNode3.setConcentration(biomolA, CONCENTRATION1);
-        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
-        final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, CELL_MOVE_REACTION);
+        final Reaction<Double> r1 = inc.createReaction(rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
+        final Reaction<Double> r2 = inc.createReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();
         r2.execute();
         assertEquals(1,
-                env.getPosition(cellNode1).getX(),
+                environment.getPosition(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(1,
-                env.getPosition(cellNode1).getY(),
+                environment.getPosition(cellNode1).getY(),
                 PRECISION
                 );
     }
@@ -273,27 +275,27 @@ class TestChemotaxis {
         final Euclidean2DPosition p3 = new Euclidean2DPosition(0, 1);
         final Euclidean2DPosition p4 = new Euclidean2DPosition(1, 1);
         final Euclidean2DPosition p5 = new Euclidean2DPosition(0.5, 0.5);
-        env.addNode(envNode1, p1);
-        env.addNode(envNode2, p2);
-        env.addNode(envNode3, p3);
-        env.addNode(envNode4, p4);
-        env.addNode(cellNode1, p5);
-        assertEquals(EXPECTED_NODES, env.getNodeCount());
+        environment.addNode(envNode1, p1);
+        environment.addNode(envNode2, p2);
+        environment.addNode(envNode3, p3);
+        environment.addNode(envNode4, p4);
+        environment.addNode(cellNode1, p5);
+        assertEquals(EXPECTED_NODES, environment.getNodeCount());
         envNode4.setConcentration(biomolA, CONCENTRATION2);
         envNode2.setConcentration(biomolA, CONCENTRATION2);
         envNode3.setConcentration(biomolA, CONCENTRATION2);
         envNode1.setConcentration(biomolA, CONCENTRATION2);
-        final Reaction<Double> r1 = inc.createReaction(rand, env, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
-        final Reaction<Double> r2 = inc.createReaction(rand, env, cellNode1, time, CELL_MOVE_REACTION);
+        final Reaction<Double> r1 = inc.createReaction(rand, environment, cellNode1, time, CHEMIOTACTIC_POLARIZATION_REACTION);
+        final Reaction<Double> r2 = inc.createReaction(rand, environment, cellNode1, time, CELL_MOVE_REACTION);
         r1.execute();
         r2.execute();
         r2.execute();
         assertEquals(0.5,
-                env.getPosition(cellNode1).getX(),
+                environment.getPosition(cellNode1).getX(),
                 PRECISION
                 );
         assertEquals(0.5,
-                env.getPosition(cellNode1).getY(),
+                environment.getPosition(cellNode1).getY(),
                 PRECISION
                 );
     }

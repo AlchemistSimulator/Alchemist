@@ -46,11 +46,11 @@ class TestJunction {
      */
     @BeforeEach
     public void setUp() {
-        final Environment<Double, Euclidean2DPosition> env = new BioRect2DEnvironment();
+        final Environment<Double, Euclidean2DPosition> environment = new BioRect2DEnvironment();
         final Incarnation<Double, Euclidean2DPosition> inc = new BiochemistryIncarnation<>();
-        node1 = inc.createNode(new MersenneTwister(), env, null);
-        node2 = inc.createNode(new MersenneTwister(), env, null);
-        node3 = inc.createNode(new MersenneTwister(), env, null);
+        node1 = inc.createNode(new MersenneTwister(), environment, null);
+        node2 = inc.createNode(new MersenneTwister(), environment, null);
+        node3 = inc.createNode(new MersenneTwister(), environment, null);
     }
 
     /**

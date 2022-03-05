@@ -41,5 +41,5 @@ class DistanceWeighted<T>(
  */
 fun <T, P> SteeringActionWithTarget<T, P>.targetDistanceTo(
     node: Node<T>,
-    env: Environment<T, P>
-): Double where P : Position<P>, P : Vector<P> = target().distanceTo(env.getPosition(node))
+    environment: Environment<T, P>
+): Double where P : Position<P>, P : Vector<P> = target().distanceTo(environment.getPosition(node))

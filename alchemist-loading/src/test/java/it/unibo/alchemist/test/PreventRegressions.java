@@ -55,16 +55,16 @@ class PreventRegressions {
      */
     @Test
     void testLoadAndSerialize() {
-        final Environment<?, ?> env = LoadAlchemist
+        final Environment<?, ?> environment = LoadAlchemist
             .from(ResourceLoader.getResource("testCustomExport.yml"))
             .getDefault()
             .getEnvironment();
-        assertNotNull(env.getIncarnation());
-        final byte[] serialized = SerializationUtils.serialize(env);
+        assertNotNull(environment.getIncarnation());
+        final byte[] serialized = SerializationUtils.serialize(environment);
         assertNotNull(serialized);
-        final Object deserialized = SerializationUtils.deserialize(SerializationUtils.serialize(env));
+        final Object deserialized = SerializationUtils.deserialize(SerializationUtils.serialize(environment));
         assertNotNull(deserialized);
-        assertEquals(env.getClass(), deserialized.getClass());
+        assertEquals(environment.getClass(), deserialized.getClass());
         assertNotNull(((Environment<?, ?>) deserialized).getIncarnation());
     }
 }

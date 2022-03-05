@@ -44,20 +44,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TestConcurrency {
 
-    private Environment<Object, Euclidean2DPosition> env;
+    private Environment<Object, Euclidean2DPosition> environment;
 
     /**
      * Setup phase.
      */
     @BeforeEach
     public void setUp() {
-        env = new Continuous2DEnvironment<>(SupportedIncarnations.<Object, Euclidean2DPosition>get("sapere").get());
-        final Node<Object> n = new DummyNode(env);
-        env.setLinkingRule(new NoLinks<>());
+        environment = new Continuous2DEnvironment<>(
+                SupportedIncarnations.<Object, Euclidean2DPosition>get("sapere").get()
+        );
+        final Node<Object> n = new DummyNode(environment);
+        environment.setLinkingRule(new NoLinks<>());
         final TimeDistribution<Object> td = new DiracComb<>(1);
         final Reaction<Object> r = new Event<>(n, td);
         n.addReaction(r);
-        env.addNode(n, env.makePosition(0, 0));
+        environment.addNode(n, environment.makePosition(0, 0));
     }
 
     /**
@@ -74,7 +76,7 @@ class TestConcurrency {
     )
     void testCommandInterleaving() throws InterruptedException, ExecutionException {
         final int inWaitCount = 100;
-        final Simulation<?, ?> sim = new Engine<>(env, 10);
+        final Simulation<?, ?> sim = new Engine<>(environment, 10);
         sim.pause();
         final ExecutorService container = Executors.newFixedThreadPool(inWaitCount + 1);
         container.submit(sim);

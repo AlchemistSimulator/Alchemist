@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
  * [Sum] strategy is used to combine steering actions and physical forces.
  */
 class NavigationPrioritisedSteeringWithPhysics<T, N : ConvexPolygon> @JvmOverloads constructor(
-    env: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, *>,
+    environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, *>,
     pedestrian: Node<T>,
     timeDistribution: TimeDistribution<T>,
     /**
@@ -34,7 +34,7 @@ class NavigationPrioritisedSteeringWithPhysics<T, N : ConvexPolygon> @JvmOverloa
      * Alpha value for exponential smoothing (see [SinglePrevalent]).
      */
     alpha: Double = SinglePrevalent.DEFAULT_ALPHA
-) : NavigationPrioritisedSteering<T, N>(env, pedestrian, timeDistribution, toleranceAngle, alpha) {
+) : NavigationPrioritisedSteering<T, N>(environment, pedestrian, timeDistribution, toleranceAngle, alpha) {
 
-    override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = Sum(env, pedestrian, super.steerStrategy)
+    override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = Sum(environment, pedestrian, super.steerStrategy)
 }

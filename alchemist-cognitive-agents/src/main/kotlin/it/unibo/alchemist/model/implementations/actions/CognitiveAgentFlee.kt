@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * Move the agent away from a target position. It's the opposite of [CognitiveAgentSeek].
  *
- * @param env
+ * @param environment
  *          the environment inside which the pedestrian moves.
  * @param reaction
  *          the reaction which executes this action.
@@ -20,18 +20,18 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  *          the coordinates of the position the pedestrian moves away.
  */
 open class CognitiveAgentFlee<T, P, A>(
-    private val env: Environment<T, P>,
+    environment: Environment<T, P>,
     reaction: Reaction<T>,
     pedestrian: Node<T>,
     vararg coords: Double
-) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
-    private val danger: P = env.makePosition(*coords.toTypedArray())
+    private val danger: P = environment.makePosition(*coords.toTypedArray())
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFlee<T, P, A> =
-        CognitiveAgentFlee(env, reaction, node, *danger.coordinates)
+        CognitiveAgentFlee(environment, reaction, node, *danger.coordinates)
 
     override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)
 }

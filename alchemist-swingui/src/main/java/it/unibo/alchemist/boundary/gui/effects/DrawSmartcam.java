@@ -43,9 +43,9 @@ public final class DrawSmartcam implements Effect {
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {
-            final Physics2DEnvironment<T> env = (Physics2DEnvironment<T>) environment;
-            drawShape(graphics, node, env, zoom, x, y);
-            drawFieldOfView(graphics, node, env, zoom, x, y);
+            final Physics2DEnvironment<T> physicsEnvironment = (Physics2DEnvironment<T>) environment;
+            drawShape(graphics, node, physicsEnvironment, zoom, x, y);
+            drawFieldOfView(graphics, node, physicsEnvironment, zoom, x, y);
         } else {
             logOnce("DrawSmartcam only works with EuclideanPhysics2DEnvironment", Logger::warn);
         }
@@ -105,8 +105,8 @@ public final class DrawSmartcam implements Effect {
             });
     }
 
-    private <T> double getRotation(final Node<T> node, final Physics2DEnvironment<T> env) {
-        final Euclidean2DPosition direction = env.getHeading(node);
+    private <T> double getRotation(final Node<T> node, final Physics2DEnvironment<T> environment) {
+        final Euclidean2DPosition direction = environment.getHeading(node);
         return Math.atan2(direction.getY(), direction.getX());
     }
 

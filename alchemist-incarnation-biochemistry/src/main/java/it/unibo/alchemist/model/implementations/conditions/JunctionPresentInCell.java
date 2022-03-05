@@ -24,7 +24,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
     private static final long serialVersionUID = 4213307452790768059L;
 
     private final Junction junction;
-    private final Environment<Double, ?> env;
+    private final Environment<Double, ?> environment;
     private final CellularProperty<?> cell;
 
     /**
@@ -40,7 +40,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
                 + CellularProperty.class.getSimpleName());
         declareDependencyOn(junction);
         this.junction = junction;
-        env = e;
+        environment = e;
     }
 
     @Override
@@ -50,7 +50,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
 
     @Override
     public JunctionPresentInCell cloneCondition(final Node<Double> node, final Reaction<Double> r) {
-        return new JunctionPresentInCell(env, node, junction);
+        return new JunctionPresentInCell(environment, node, junction);
     }
 
     @Override

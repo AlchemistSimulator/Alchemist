@@ -40,8 +40,8 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
         }
     }
 
-    override fun cloneAction(n: Node<Number>, r: Reaction<Number>): CognitiveAgentAvoidLayer =
-        CognitiveAgentAvoidLayer(environment, r, n, targetMolecule, viewDepth)
+    override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): CognitiveAgentAvoidLayer =
+        CognitiveAgentAvoidLayer(environment, reaction, node, targetMolecule, viewDepth)
 
     /**
      * @returns the next relative position. The pedestrian is moved only if he/she percepts the danger

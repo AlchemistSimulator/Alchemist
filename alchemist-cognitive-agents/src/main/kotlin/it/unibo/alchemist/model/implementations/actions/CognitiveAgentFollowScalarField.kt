@@ -64,8 +64,8 @@ class CognitiveAgentFollowScalarField<T, P, A>(
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
-        CognitiveAgentFollowScalarField(env, r, n, center, valueIn)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
+        CognitiveAgentFollowScalarField(env, reaction, node, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
         if (env is EnvironmentWithObstacles<*, T, P>) map { env.next(currentPosition, it) } else this

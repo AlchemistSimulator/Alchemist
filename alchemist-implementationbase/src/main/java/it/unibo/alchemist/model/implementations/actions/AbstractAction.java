@@ -60,14 +60,14 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * @param m
+     * @param molecule
      *            the molecule
      * @return An {@link Optional} with the value of concentration, or an empty
      *         {@link Optional} if the molecule if
      *         {@link Node#getConcentration(Molecule)} returns null
      */
-    protected final Optional<T> getConcentration(final Molecule m) {
-        return Optional.ofNullable(getNode().getConcentration(m));
+    protected final Optional<T> getConcentration(final Molecule molecule) {
+        return Optional.ofNullable(getNode().getConcentration(molecule));
     }
 
     /**
@@ -89,12 +89,12 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
-     * @param m
+     * @param molecule
      *            the molecule
      * @return true if the local node contains the molecule
      */
-    protected final boolean nodeContains(final Molecule m) {
-        return getNode().contains(m);
+    protected final boolean nodeContains(final Molecule molecule) {
+        return getNode().contains(molecule);
     }
 
     /**

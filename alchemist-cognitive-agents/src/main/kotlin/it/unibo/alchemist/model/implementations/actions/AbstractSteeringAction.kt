@@ -43,12 +43,33 @@ abstract class AbstractSteeringAction<T, P, A>(
      */
     open val maxWalk: Double get() = pedestrian.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
 
+    /**
+     * @return The next position where to move, in absolute or relative coordinates depending on the
+     *         value of isAbsolute.
+     */
     override fun getNextPosition(): P = nextPosition()
 
+    /**
+     * @return the node this action belongs to
+     */
     override fun getNode(): Node<T> = pedestrian
 
-    abstract override fun cloneAction(n: Node<T>, r: Reaction<T>): AbstractSteeringAction<T, P, A>
+    /**
+     * This method allows to clone this action on a new node. It may result
+     * useful to support runtime creation of nodes with the same reaction
+     * programming, e.g. for morphogenesis.
+     *
+     * @param [node]
+     *            The node where to clone this {@link Action}
+     * @param [reaction]
+     *            The reaction to which the CURRENT action is assigned
+     * @return the cloned action
+     */
+    abstract override fun cloneAction(node: Node<T>, reaction: Reaction<T>): AbstractSteeringAction<T, P, A>
 
+    /**
+     * Ensures that the passed [node] has type [N].
+     */
     protected inline fun <reified N : Node<*>, S : Action<*>> requireNodeTypeAndProduce(
         node: Node<*>,
         builder: (N) -> S

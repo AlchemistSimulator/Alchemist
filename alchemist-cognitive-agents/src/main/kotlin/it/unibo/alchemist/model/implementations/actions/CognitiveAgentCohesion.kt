@@ -27,8 +27,8 @@ class CognitiveAgentCohesion<T, P, A>(
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentCohesion<T, P, A> =
-        CognitiveAgentCohesion(env, r, n)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentCohesion<T, P, A> =
+        CognitiveAgentCohesion(env, reaction, node)
 
     override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 

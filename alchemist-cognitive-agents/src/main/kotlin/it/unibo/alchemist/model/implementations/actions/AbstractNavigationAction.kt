@@ -83,21 +83,28 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      */
     protected open fun P.isReached(): Boolean = distanceTo(pedestrianPosition) <= minDistance
 
+    /**
+     * The navigation state.
+     */
     protected var state: NavigationState = START
+
     /**
      * Caches the room the pedestrian is into when he/she starts moving. When the pedestrian is crossing a door, it
      * contains the room being left. When in [NavigationState.MOVING_TO_FINAL], it contains the room the pedestrian
      * was (and should be) into. It's used to detect if the pedestrian ended up in an unexpected room while moving.
      */
     protected var previousRoom: N? = null
+
     /**
      * Defined when crossing a door. See [crossDoor].
      */
     protected var crossingPoints: Pair<P, P>? = null
+
     /**
      * Defined when crossing a door.
      */
     protected var expectedNewRoom: N? = null
+
     /**
      * Defined in [NavigationState.MOVING_TO_FINAL].
      */
@@ -134,6 +141,9 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
         }
     }
 
+    /**
+     * Execute on navigation start.
+     */
     protected open fun onStart() {
         state = when {
             currentRoom != null -> NEW_ROOM

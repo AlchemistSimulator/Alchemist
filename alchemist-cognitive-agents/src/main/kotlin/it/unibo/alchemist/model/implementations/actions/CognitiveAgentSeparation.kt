@@ -24,8 +24,8 @@ class CognitiveAgentSeparation<T>(
     override val pedestrian: Node<T>
 ) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentSeparation<T> =
-        CognitiveAgentSeparation(env, r, n)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeparation<T> =
+        CognitiveAgentSeparation(env, reaction, node)
 
     override fun nextPosition(): Euclidean2DPosition = (currentPosition - centroid()).coerceAtMost(maxWalk)
 

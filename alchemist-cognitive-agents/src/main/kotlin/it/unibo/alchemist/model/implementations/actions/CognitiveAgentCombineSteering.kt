@@ -31,8 +31,8 @@ class CognitiveAgentCombineSteering<T, P, A>(
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentCombineSteering<T, P, A> =
-        CognitiveAgentCombineSteering(env, r, n, actions, steerStrategy)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentCombineSteering<T, P, A> =
+        CognitiveAgentCombineSteering(env, reaction, node, actions, steerStrategy)
 
     override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).coerceAtMost(maxWalk)
 }

@@ -97,8 +97,8 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
         return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
     }
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {
-        val clone = CognitiveAgentNavigationAction2D<T, L, R>(environment, r, n, wallRepulsionFactor)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {
+        val clone = CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, node, wallRepulsionFactor)
         clone.strategy = this.strategy
         return clone
     }

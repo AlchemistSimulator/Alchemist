@@ -55,8 +55,8 @@ open class CognitiveAgentWander<T>(
         .first()
         .coerceAtMost(maxWalk)
 
-    override fun cloneAction(n: Node<T>, r: Reaction<T>) =
-        CognitiveAgentWander(environment, r, n, randomGenerator, offset, radius)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
+        CognitiveAgentWander(environment, reaction, node, randomGenerator, offset, radius)
 }
 
 /**

@@ -89,9 +89,10 @@ public abstract class AbstractAction<T> implements Action<T> {
     }
 
     /**
+     * Checks if {@param  molecule}  is contained in this node.
      * @param molecule the molecule
      *
-     * @return true if the local node contains the molecule
+     * @return true if the local node contains the molecule.
      */
     protected final boolean nodeContains(final Molecule molecule) {
         return getNode().contains(molecule);

@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 public interface ShapeFilter<P extends Position<P>> extends Filter<P> {
 
     /**
+     * Checks if the position is inside the shape.
      * @param position
      *            the position
      * @return true if the position is inside the {@link ShapeFilter}.
@@ -27,7 +28,6 @@ public interface ShapeFilter<P extends Position<P>> extends Filter<P> {
     boolean contains(P position);
 
     @Override
-
     default boolean test(final P position) {
         return contains(position);
     }

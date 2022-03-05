@@ -153,6 +153,7 @@ public class ClosestN<T, P extends Position<P>> implements LinkingRule<T, P> {
     }
 
     /**
+     * The set of nodes within the comunication range.
      * @param environment the {@link Environment}
      * @param node the {@link Node}
      * @param range the communication range

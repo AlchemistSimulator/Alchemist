@@ -36,5 +36,6 @@ class NavigationPrioritisedSteeringWithPhysics<T, N : ConvexPolygon> @JvmOverloa
     alpha: Double = SinglePrevalent.DEFAULT_ALPHA
 ) : NavigationPrioritisedSteering<T, N>(environment, pedestrian, timeDistribution, toleranceAngle, alpha) {
 
-    override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> = Sum(environment, pedestrian, super.steerStrategy)
+    override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
+        Sum(environment, pedestrian, super.steerStrategy)
 }

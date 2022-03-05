@@ -100,7 +100,8 @@ class TestOrientingBehavior<T, P> : StringSpec({
                 if (environment is Euclidean2DEnvironmentWithGraph<*, T, *, *>) {
                     val pedestrian = environment.nodes.first()
                     val waypointToSkip = environment.makePosition(70, 105)
-                    environment.graph.nodeContaining(waypointToSkip)?.contains(environment.getPosition(pedestrian)) shouldBe false
+                    environment.graph
+                        .nodeContaining(waypointToSkip)?.contains(environment.getPosition(pedestrian)) shouldBe false
                 }
             },
             whenFinished = { environment, _, _ -> assertPedestriansReached(environment, 1.0, 85, 80) },

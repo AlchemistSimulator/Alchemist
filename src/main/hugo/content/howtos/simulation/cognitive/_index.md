@@ -10,7 +10,7 @@ to better understand the contents of this how-to.
 
 Different kinds of pedestrians are obtainable by attaching {{%api class=NodeProperty %}}s to nodes (e.g {{%api package=model.implementations.nodes class=GenericNode %}}).
 Common properties regards abilities such as perceiving other nodes ({{%api package=model.interfaces.properties class=PerceptiveProperty %}}) and occuping space in an environment 
-({{%api package=model.interfaces.properties class=OccupiesSpace %}}), but more specific ones
+({{%api package=model.interfaces.properties class=OccupiesSpaceProperty %}}), but more specific ones
 are also available as we are going to see.
 
 
@@ -26,7 +26,7 @@ along with some other generic ones.
 The age groups available are: *child*, *adult*, *elderly*;
 alternatively you can specify the exact age.
 The genders available are: *male*, *female*. This informations are held by the {{%api package=model.implementations.properties class=Human %}} property and used 
-by the {{%api package=model.implementations.nodes class=HeterogenousPedestrian %}} property
+by the {{%api package=model.implementations.properties class=HeterogenousPedestrian %}} property
 
 {{< code path="src/test/resources/website-snippets/heterogeneous-pedestrian.yml" >}}
 
@@ -34,7 +34,7 @@ by the {{%api package=model.implementations.nodes class=HeterogenousPedestrian %
 Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities given by a {{%api package=model.interfaces.properties class=CognitiveProperty %}}.
 They have an emotional state and are able to influence and be influenced by others with the same capabilities. As an example, cognitive pedestrians can perceive fear via social contagion 
 (e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).
-To express how a cognitive pedestrians moves, based on it's emotional state, also attach the {{%api package=model.implementations.nodes class=CognitivePedestrian %}} property
+To express how a cognitive pedestrians moves, based on it's emotional state, also attach the {{%api package=model.implementations.properties class=CognitivePedestrian %}} property
 
 {{< code path="src/test/resources/website-snippets/cognitive-pedestrian.yml" >}}
 

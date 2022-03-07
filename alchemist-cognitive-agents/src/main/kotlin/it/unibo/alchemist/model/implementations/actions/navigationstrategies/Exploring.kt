@@ -49,9 +49,9 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     }
 
     /**
-     * Shortcut to obtain the pedestrian.
+     * Shortcut to obtain the node.
      */
-    protected val pedestrian: Node<T> get() = action.pedestrian
+    protected val node: Node<T> get() = action.navigatingNode
 
     /**
      * Shortcut to obtain the environment.
@@ -123,7 +123,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
         .map { environment.getPosition(it) }
         .filter { contains(it) }
         .count()
-        .let { it * pedestrian.area / area }
+        .let { it * node.area / area }
         .coerceAtMost(1.0)
 
     /**
@@ -141,6 +141,6 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
      * Checks if the pedestrian knows that the area is an impasse (= an area with a single door).
      */
     protected open fun ConvexPolygon.isKnownImpasse(): Boolean =
-        pedestrian.asProperty<T, OrientingProperty<T, *, *, *, *, *>>().volatileMemory.contains(this) &&
+        node.asProperty<T, OrientingProperty<T, *, *, *, *, *>>().volatileMemory.contains(this) &&
             environment.graph.outgoingEdgesOf(this).distinct().count() <= 1
 }

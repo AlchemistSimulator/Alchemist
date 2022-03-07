@@ -31,25 +31,25 @@ import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
  * known and unknown ones.
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param L the type of landmarks of the node's cognitive map.
+ * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
  */
 class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     vararg destinations: Number
-) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
+) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, node) {
 
     /**
-     * Infers if a [destination] is known by the [pedestrian] (see [Pursuing]). A destination is considered
-     * to be known if the pedestrian's cognitive map contains at least one landmark located in the same
+     * Infers if a [destination] is known by the [navigatingNode] (see [Pursuing]). A destination is considered
+     * to be known if the node's cognitive map contains at least one landmark located in the same
      * room (= [environment]'s area) of the destination, or in an adjacent room.
      */
     private fun inferIsKnown(destination: Euclidean2DPosition): Boolean =
         environment.graph.nodeContaining(destination)?.let { room ->
             val neighborhood = Graphs.neighborListOf(environment.graph, room) + room
-            pedestrian.asProperty<T, OrientingProperty<T, *, *, L, *, R>>().cognitiveMap.vertexSet()
+            navigatingNode.asProperty<T, OrientingProperty<T, *, *, L, *, R>>().cognitiveMap.vertexSet()
                 .any { landmark ->
                     neighborhood.any { it.contains(landmark.centroid) }
                 }

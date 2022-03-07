@@ -14,10 +14,10 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  * Abstract implementation of an action influenced by the concentration of a given molecule in the environment.
  *
  * @param environment
- *          the environment inside which the pedestrian moves.
+ *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param pedestrian
+ * @param node
  *          the owner of this action.
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
@@ -25,9 +25,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 abstract class AbstractLayerAction(
     protected val environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    override val pedestrian: Node<Number>,
+    node: Node<Number>,
     protected val targetMolecule: Molecule
-) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
+) : AbstractSteeringAction<Number, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, node) {
 
     abstract override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): AbstractLayerAction
 

@@ -24,19 +24,19 @@ private typealias SteeringActions<T> = List<SteeringAction<T, Euclidean2DPositio
 /**
  * A [SteeringStrategy] in which one action is prevalent. Only [NavigationAction]s can be prevalent, because
  * they guarantee to navigate the environment consciously (e.g. without getting stuck in obstacles). The
- * purpose of this strategy is to linearly combine the potentially contrasting forces to which the pedestrian
+ * purpose of this strategy is to linearly combine the potentially contrasting forces to which the node
  * is subject, while maintaining that warranty. Such forces are combined as follows:
  * let f be the prevalent force,
- * - if f leads the pedestrian outside the room (= environment's area) he/she is into, no combination is performed
+ * - if f leads the node outside the room (= environment's area) he/she is into, no combination is performed
  * and f is used as it is. This because crossing doors can be a thorny issue and we don't want to introduce
  * disturbing forces.
  * - Otherwise, a linear combination is performed: f is assigned unitary weight, all other forces are assigned
  * weight w equal to the maximum value in [0,1] so that the resulting force:
  * - forms with f an angle smaller than or equal to the specified [toleranceAngle],
- * - doesn't lead the pedestrian outside the current room.
+ * - doesn't lead the node outside the current room.
  * The idea is to decrease the intensity of non-prevalent forces until the resulting one enters in some tolerance
  * sector defined by both the tolerance angle and the current room's boundary. With a suitable tolerance angle
- * this allows to steer the pedestrian towards the target defined by the prevalent force, while using a trajectory
+ * this allows to steer the node towards the target defined by the prevalent force, while using a trajectory
  * which takes into account other urges as well.
  * Finally, an exponential smoothing with the given [alpha] is applied to the resulting force in order to decrease
  * oscillatory movements (this also known as shaking behavior).
@@ -46,7 +46,7 @@ private typealias SteeringActions<T> = List<SteeringAction<T, Euclidean2DPositio
  */
 class SinglePrevalent<T, N : ConvexPolygon>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     private val prevalent: SteeringActions<T>.() -> NavigationAction2D<T, *, *, N, *>,
     /**
      * Tolerance angle in radians.
@@ -57,11 +57,11 @@ class SinglePrevalent<T, N : ConvexPolygon>(
      */
     private val alpha: Double = DEFAULT_ALPHA,
     /**
-     * Function computing the maximum distance the pedestrian can walk.
+     * Function computing the maximum distance the node can walk.
      */
     private val maxWalk: () -> Double,
     /**
-     * When the pedestrian is subject to contrasting forces the resulting one may be small in magnitude.
+     * When the node is subject to contrasting forces the resulting one may be small in magnitude.
      * This parameter allows to specify a minimum magnitude for the resulting force computed as
      * [maxWalk] * [maxWalkRatio]
      */
@@ -73,7 +73,7 @@ class SinglePrevalent<T, N : ConvexPolygon>(
      * reduced to O(1) in the future.
      */
     private val delta: Double = DEFAULT_DELTA
-) : Weighted<T>(environment, pedestrian, { 0.0 }) {
+) : Weighted<T>(environment, node, { 0.0 }) {
 
     companion object {
         /**

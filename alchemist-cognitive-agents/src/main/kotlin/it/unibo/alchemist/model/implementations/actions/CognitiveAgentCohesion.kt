@@ -13,17 +13,17 @@ import it.unibo.alchemist.model.interfaces.properties.SocialProperty
  * Move the agent towards the other members of his group.
  *
  * @param environment
- *          the environment inside which the pedestrian moves.
+ *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param pedestrian
+ * @param node
  *          the owner of this action.
  */
 class CognitiveAgentCohesion<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Node<T>
-) : AbstractGroupSteeringAction<T, P, A>(environment, reaction, pedestrian)
+    node: Node<T>
+) : AbstractGroupSteeringAction<T, P, A>(environment, reaction, node)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
@@ -32,5 +32,5 @@ class CognitiveAgentCohesion<T, P, A>(
 
     override fun nextPosition(): P = (centroid() - currentPosition).coerceAtMost(maxWalk)
 
-    override fun group() = pedestrian.asProperty<T, SocialProperty<T>>().group.members
+    override fun group() = node.asProperty<T, SocialProperty<T>>().group.members
 }

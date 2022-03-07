@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
  */
 open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads constructor(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     timeDistribution: TimeDistribution<T>,
     /**
      * Tolerance angle in degrees (see [SinglePrevalent]).
@@ -38,16 +38,16 @@ open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads con
     /**
      * Alpha value for exponential smoothing (see [SinglePrevalent]).
      */
-    alpha: Double = SinglePrevalent.DEFAULT_ALPHA
+    alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
 ) : SteeringBehavior<T>(
     environment,
-    pedestrian,
+    node,
     timeDistribution,
     SinglePrevalent(
         environment,
-        pedestrian,
+        node,
         prevalent = { singleNavigationAction() },
-        maxWalk = { pedestrian.asProperty<T, PedestrianProperty<T>>().speed() / timeDistribution.rate },
+        maxWalk = { node.asProperty<T, PedestrianProperty<T>>().speed() / timeDistribution.rate },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha
     )

@@ -12,15 +12,15 @@ import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 /**
  * Reaction representing the cognitive behavior of a pedestrian.
  *
- * @param pedestrian
+ * @param node
  *          the owner of this reaction.
  * @param timeDistribution
  *          the time distribution according to this the reaction executes.
  */
 class CognitiveBehavior<T, V, A>(
-    private val pedestrian: Node<T>,
+    node: Node<T>,
     timeDistribution: TimeDistribution<T>
-) : AbstractReaction<T>(pedestrian, timeDistribution)
+) : AbstractReaction<T>(node, timeDistribution)
     where V : Vector<V>, A : GeometricTransformation<V> {
 
     @Suppress("UNCHECKED_CAST")
@@ -30,5 +30,5 @@ class CognitiveBehavior<T, V, A>(
     override fun getRate() = timeDistribution.rate
 
     override fun updateInternalStatus(curTime: Time, executed: Boolean, environment: Environment<T, *>) =
-        pedestrian.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
+        node.asProperty<T, CognitiveProperty<T>>().cognitiveModel.update(rate)
 }

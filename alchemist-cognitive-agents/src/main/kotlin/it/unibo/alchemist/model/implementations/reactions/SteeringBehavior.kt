@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  *
  * @param environment
  *          the environment inside which the pedestrian moves.
- * @param pedestrian
+ * @param node
  *          the owner of this reaction.
  * @param timeDistribution
  *          the time distribution according to which this reaction executes.
@@ -23,10 +23,10 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  */
 open class SteeringBehavior<T>(
     private val environment: Environment<T, Euclidean2DPosition>,
-    private val pedestrian: Node<T>,
+    node: Node<T>,
     timeDistribution: TimeDistribution<T>,
     open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>
-) : AbstractReaction<T>(pedestrian, timeDistribution) {
+) : AbstractReaction<T>(node, timeDistribution) {
 
     /**
      * The list of steering actions in this reaction.
@@ -47,6 +47,6 @@ open class SteeringBehavior<T>(
 
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
-        CognitiveAgentCombineSteering(environment, this, pedestrian, steerActions(), steerStrategy).execute()
+        CognitiveAgentCombineSteering(environment, this, node, steerActions(), steerStrategy).execute()
     }
 }

@@ -10,13 +10,13 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  *
  * @param environment
  *          the environment inside which the pedestrian moves.
- * @param pedestrian
+ * @param node
  *          the owner of this reaction.
  * @param timeDistribution
  *          the time distribution according to this the reaction executes.
  */
 class PrioritySteering<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Node<T>,
-    timeDistribution: TimeDistribution<T>
-) : SteeringBehavior<T>(environment, pedestrian, timeDistribution, Nearest(environment, pedestrian))
+    node: Node<T>,
+    timeDistribution: TimeDistribution<T>,
+) : SteeringBehavior<T>(environment, node, timeDistribution, Nearest(environment, node))

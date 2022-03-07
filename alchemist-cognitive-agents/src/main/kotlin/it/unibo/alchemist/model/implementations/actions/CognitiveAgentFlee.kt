@@ -11,20 +11,20 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * Move the agent away from a target position. It's the opposite of [CognitiveAgentSeek].
  *
  * @param environment
- *          the environment inside which the pedestrian moves.
+ *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param pedestrian
+ * @param node
  *          the owner of this action.
  * @param coords
- *          the coordinates of the position the pedestrian moves away.
+ *          the coordinates of the position the node moves away.
  */
 open class CognitiveAgentFlee<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     vararg coords: Double
-) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
+) : AbstractSteeringAction<T, P, A>(environment, reaction, node)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 

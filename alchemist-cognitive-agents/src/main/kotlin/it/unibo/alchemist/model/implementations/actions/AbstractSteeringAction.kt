@@ -32,27 +32,22 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The owner of this action.
      */
-    protected open val pedestrian: Node<T>
-) : AbstractMoveNode<T, P>(environment, pedestrian),
+    node: Node<T>
+) : AbstractMoveNode<T, P>(environment, node),
     SteeringAction<T, P>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
     /**
-     * The maximum distance the pedestrian can walk, this is a length.
+     * The maximum distance the node can walk, this is a length.
      */
-    open val maxWalk: Double get() = pedestrian.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
+    open val maxWalk: Double get() = node.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
 
     /**
      * @return The next position where to move, in absolute or relative coordinates depending on the
      *         value of isAbsolute.
      */
     override fun getNextPosition(): P = nextPosition()
-
-    /**
-     * @return the node this action belongs to
-     */
-    override fun getNode(): Node<T> = pedestrian
 
     /**
      * This method allows to clone this action on a new node. It may result

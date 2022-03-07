@@ -34,7 +34,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Draws an orienting pedestrian' cognitive map.
+ * Draws an orienting node's cognitive map.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP")
 public class DrawCognitiveMap extends DrawOnce {

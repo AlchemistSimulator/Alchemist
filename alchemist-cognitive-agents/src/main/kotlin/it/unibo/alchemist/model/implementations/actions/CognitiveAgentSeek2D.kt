@@ -10,21 +10,21 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
  * [CognitiveAgentSeek] behavior in a bidimensional environment, delegated to [CognitiveAgentFollowScalarField]
- * (this means the pedestrian tries to overtake others on its path,
+ * (this means the node tries to overtake others on its path,
  * in general its movements are more sophisticated than [CognitiveAgentSeek]).
  */
 open class CognitiveAgentSeek2D<T, P, A>(
     /**
-     * The environment the pedestrian is into.
+     * The environment the node is into.
      */
     protected val environment: EuclideanEnvironment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     /**
-     * The position the pedestrian wants to reach.
+     * The position the node wants to reach.
      */
     private val target: P
-) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
+) : AbstractSteeringAction<T, P, A>(environment, reaction, node),
     SteeringActionWithTarget<T, P>
     where P : Position2D<P>, P : Vector2D<P>,
           A : GeometricTransformation<P> {
@@ -32,12 +32,12 @@ open class CognitiveAgentSeek2D<T, P, A>(
     constructor(
         environment: EuclideanEnvironment<T, P>,
         reaction: Reaction<T>,
-        pedestrian: Node<T>,
+        node: Node<T>,
         x: Number,
-        y: Number
-    ) : this(environment, reaction, pedestrian, environment.makePosition(x, y))
+        y: Number,
+    ) : this(environment, reaction, node, environment.makePosition(x, y))
 
-    private val followScalarField = CognitiveAgentFollowScalarField(environment, reaction, pedestrian, target) {
+    private val followScalarField = CognitiveAgentFollowScalarField(environment, reaction, node, target) {
         -it.distanceTo(target)
     }
 

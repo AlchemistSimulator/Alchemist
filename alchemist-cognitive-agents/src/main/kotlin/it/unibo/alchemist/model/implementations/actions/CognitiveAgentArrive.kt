@@ -15,50 +15,50 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
  * It is similar to [CognitiveAgentSeek] but attempts to arrive at the target position with a zero velocity.
  *
  * @param environment
- *          the environment inside which the pedestrian moves.
+ *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param pedestrian
+ * @param node
  *          the owner of this action.
  * @param decelerationRadius
- *          the distance from which the pedestrian starts to decelerate.
+ *          the distance from which the node starts to decelerate.
  * @param arrivalTolerance
- *          the distance at which the pedestrian is considered arrived to the target.
+ *          the distance at which the node is considered arrived to the target.
  * @param target
- *          the position the pedestrian moves towards.
+ *          the position the node moves towards.
  */
 open class CognitiveAgentArrive<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     protected val decelerationRadius: Double,
     protected val arrivalTolerance: Double,
-    protected val target: P
-) : AbstractSteeringActionWithTarget<T, P, A>(environment, reaction, pedestrian, target)
+    protected val target: P,
+) : AbstractSteeringActionWithTarget<T, P, A>(environment, reaction, node, target)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
-        pedestrian: Node<T>,
+        node: Node<T>,
         decelerationRadius: Double,
         arrivalTolerance: Double,
         vararg coordinates: Number
     ) : this(
         environment,
         reaction,
-        pedestrian,
+        node,
         decelerationRadius,
         arrivalTolerance,
-        environment.makePosition(*coordinates)
+        environment.makePosition(*coordinates),
     )
 
     override val maxWalk: Double get() = with((currentPosition as Vector<P>).distanceTo(target)) {
         when {
             this < arrivalTolerance -> 0.0
             this < decelerationRadius -> Speed.default * this / decelerationRadius / reaction.rate
-            else -> pedestrian.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
+            else -> node.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
         }
     }
 

@@ -12,20 +12,20 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  * Move the agent avoiding potential obstacles in its path.
  *
  * @param environment
- *          the environment inside which the pedestrian moves.
+ *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param pedestrian
+ * @param node
  *          the owner of this action.
  * @param proximityRange
- *          the distance at which an obstacle is perceived by the pedestrian.
+ *          the distance at which an obstacle is perceived by the node.
  */
 class CognitiveAgentObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     private val environment: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     private val proximityRange: Double
-) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
+) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, node) {
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
         require(reaction is SteeringBehavior<T>) { "steering behavior needed but found ${this.reaction}" }
@@ -48,7 +48,7 @@ class CognitiveAgentObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     }
 
     /**
-     * Computes the target of the pedestrian, delegating to [reaction].steerStrategy.computeTarget.
+     * Computes the target of the node, delegating to [reaction].steerStrategy.computeTarget.
      */
     private fun target(): Euclidean2DPosition = with(reaction) {
         steerStrategy.computeTarget(steerActions().filterNot { it is CognitiveAgentObstacleAvoidance<*, *> })

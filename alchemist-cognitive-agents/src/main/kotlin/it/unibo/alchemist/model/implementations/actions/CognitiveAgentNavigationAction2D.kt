@@ -28,23 +28,23 @@ private typealias AbstractNavigationAction2D<T, L, R, N, E> =
  * contains [ConvexPolygon]al nodes and [Euclidean2DPassage]s as edges.
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param L the type of landmarks of the node's cognitive map.
+ * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
  */
 open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     /**
-     * When crossing [Euclidean2DPassage]s, the pedestrian is pushed away from the wall of
+     * When crossing [Euclidean2DPassage]s, the node is pushed away from the wall of
      * a quantity equal to (this factor * the width of the passage). This is performed to prevent
-     * the pedestrian from moving attached to the wall. This factor must be in [0.0, 0.5).
+     * the node from moving attached to the wall. This factor must be in [0.0, 0.5).
      */
-    private val wallRepulsionFactor: Double = DEFAULT_WALL_REPULSION_FACTOR
+    private val wallRepulsionFactor: Double = DEFAULT_WALL_REPULSION_FACTOR,
 ) : AbstractNavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>(
     environment,
     reaction,
-    pedestrian
+    node
 ) {
 
     companion object {
@@ -83,7 +83,7 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
         super.moving()
         if (state == NavigationState.MOVING_TO_CROSSING_POINT_1) {
             /*
-             * When moving towards a door the most convenient crossing point may change depending on the pedestrian
+             * When moving towards a door the most convenient crossing point may change depending on the node
              * position. Recomputing the crossing points allows more natural movement (even though it's costly).
              */
             if (currentRoom != null) {
@@ -94,7 +94,7 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
 
     override fun nextPosition(): Euclidean2DPosition {
         update()
-        return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
+        return CognitiveAgentSeek2D(environment, reaction, navigatingNode, desiredPosition).nextPosition
     }
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {

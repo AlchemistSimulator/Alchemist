@@ -29,7 +29,7 @@ interface RoutingService<P : Position<P>, O : RoutingServiceOptions<O>> : Serial
 
     /**
      * Retrieves (if available) the valid point closest to [position] with the provided [options].
-     * For instance, this method could be used to find the pedestrian-allowed road closer to a highway.
+     * For instance, this method could be used to find the node-allowed road closer to a highway.
      */
     fun allowedPointClosestTo(position: P, options: O): P?
 

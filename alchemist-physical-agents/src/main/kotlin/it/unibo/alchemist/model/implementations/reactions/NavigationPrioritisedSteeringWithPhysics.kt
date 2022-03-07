@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
  */
 class NavigationPrioritisedSteeringWithPhysics<T, N : ConvexPolygon> @JvmOverloads constructor(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, N, *>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     timeDistribution: TimeDistribution<T>,
     /**
      * Tolerance angle in degrees (see [SinglePrevalent]).
@@ -34,8 +34,8 @@ class NavigationPrioritisedSteeringWithPhysics<T, N : ConvexPolygon> @JvmOverloa
      * Alpha value for exponential smoothing (see [SinglePrevalent]).
      */
     alpha: Double = SinglePrevalent.DEFAULT_ALPHA
-) : NavigationPrioritisedSteering<T, N>(environment, pedestrian, timeDistribution, toleranceAngle, alpha) {
+) : NavigationPrioritisedSteering<T, N>(environment, node, timeDistribution, toleranceAngle, alpha) {
 
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
-        Sum(environment, pedestrian, super.steerStrategy)
+        Sum(environment, node, super.steerStrategy)
 }

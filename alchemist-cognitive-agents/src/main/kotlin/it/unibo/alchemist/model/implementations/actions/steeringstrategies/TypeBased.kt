@@ -11,15 +11,15 @@ import kotlin.reflect.KClass
  * by the client).
  *
  * @param environment
- *          the environment in which the pedestrian moves.
- * @param pedestrian
+ *          the environment in which the node moves.
+ * @param node
  *          the owner of the steering actions combined by this strategy.
  * @param typeWeights
  *          the weight for each type of steering action.
  */
 class TypeBased<T>(
     environment: Euclidean2DEnvironment<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     typeWeights: LinkedHashMap<KClass<SteeringAction<T, Euclidean2DPosition>>, Double>,
-    defaultWeight: Double = 0.0
-) : Weighted<T>(environment, pedestrian, { typeWeights[this::class] ?: defaultWeight })
+    defaultWeight: Double = 0.0,
+) : Weighted<T>(environment, node, { typeWeights[this::class] ?: defaultWeight })

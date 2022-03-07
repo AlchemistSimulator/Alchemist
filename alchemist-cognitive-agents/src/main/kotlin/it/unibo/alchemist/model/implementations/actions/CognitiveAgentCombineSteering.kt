@@ -13,21 +13,21 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * Combination of multiple steering actions.
  *
  * @param environment
- *          the environment inside which the pedestrian moves.
- * @param pedestrian
+ *          the environment inside which the node moves.
+ * @param node
  *          the owner of this action.
  * @param actions
- *          the list of actions to combine to determine the pedestrian movement.
+ *          the list of actions to combine to determine the node movement.
  * @param steerStrategy
  *          the logic according to the steering actions are combined.
  */
 class CognitiveAgentCombineSteering<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     private val actions: List<SteeringAction<T, P>>,
     private val steerStrategy: SteeringStrategy<T, P>
-) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
+) : AbstractSteeringAction<T, P, A>(environment, reaction, node)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 

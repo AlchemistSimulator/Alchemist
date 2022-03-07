@@ -15,36 +15,36 @@ import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Give the impression of a random walk through the environment targeting an ever changing pseudo-randomly point
- * of a circumference at a given distance and with a given radius from the current pedestrian position.
+ * of a circumference at a given distance and with a given radius from the current node position.
  *
  * @param environment
- *          the environment inside which the pedestrian moves.
- * @param pedestrian
+ *          the environment inside which the node moves.
+ * @param node
  *          the owner of this action.
  * @param randomGenerator
  *          the simulation {@link RandomGenerator}.
  * @param offset
- *          the distance from the pedestrian position of the center of the circle.
+ *          the distance from the node position of the center of the circle.
  * @param radius
  *          the radius of the circle.
  */
 open class CognitiveAgentWander<T>(
     private val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    pedestrian: Node<T>,
+    node: Node<T>,
     protected val randomGenerator: RandomGenerator,
     protected val offset: Double,
-    protected val radius: Double
+    protected val radius: Double,
 ) : AbstractSteeringActionWithTarget<T, Euclidean2DPosition, Euclidean2DTransformation>(
     environment,
     reaction,
-    pedestrian,
+    node,
     TargetSelectionStrategy { randomGenerator.position(environment) }
 ) {
 
     private val heading by lazy {
-        environment.setHeading(pedestrian, randomGenerator.random2DVersor(environment)).let {
-            { environment.getHeading(pedestrian) }
+        environment.setHeading(node, randomGenerator.random2DVersor(environment)).let {
+            { environment.getHeading(node) }
         }
     }
 

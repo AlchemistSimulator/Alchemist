@@ -22,13 +22,13 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  * other (i.e. the path leading from a waypoint to the next one may or may not be representable
  * as a single segment), for this reason [Pursuing] behavior is used to reach each waypoint.
  * In this context, a waypoint is considered reached when it's inside the current room (not when the
- * pedestrian reach that exact position), apart from the last waypoint which is actually approached.
- * Cuts to the route are allowed (i.e. if the pedestrian finds a waypoint which is farther than the
+ * node reach that exact position), apart from the last waypoint which is actually approached.
+ * Cuts to the route are allowed (i.e. if the node finds a waypoint which is farther than the
  * expected next one, he/she skips all the waypoints in between).
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param L the type of landmarks of the node's cognitive map.
+ * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
  */
 open class RouteFollowing<T, L : Euclidean2DConvexShape, R> constructor(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
@@ -41,7 +41,7 @@ open class RouteFollowing<T, L : Euclidean2DConvexShape, R> constructor(
     private var indexOfNextWaypoint: Int = 0
 
     /**
-     * When in an unexpected room the pedestrian gets back to [previousRoom] so as to continue following the
+     * When in an unexpected room the node gets back to [previousRoom] so as to continue following the
      * route correctly.
      */
     override fun inUnexpectedNewRoom(

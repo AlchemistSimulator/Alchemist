@@ -12,8 +12,8 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  * A [SteeringStrategy] performing a weighted sum of steering actions (see [computeNextPosition]).
  *
  * @param environment
- *          the environment in which the pedestrian moves.
- * @param pedestrian
+ *          the environment in which the node moves.
+ * @param node
  *          the owner of the steering actions combined by this strategy.
  * @param weight
  *          lambda used to assign a weight to each steering action: the higher the weight, the greater the
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
  */
 open class Weighted<T>(
     private val environment: Euclidean2DEnvironment<T>,
-    private val pedestrian: Node<T>,
+    private val node: Node<T>,
     private val weight: SteeringAction<T, Euclidean2DPosition>.() -> Double
 ) : SteeringStrategy<T, Euclidean2DPosition> {
 
@@ -40,7 +40,7 @@ open class Weighted<T>(
      * the closest target is picked.
      */
     override fun computeTarget(actions: List<SteeringAction<T, Euclidean2DPosition>>): Euclidean2DPosition =
-        environment.getPosition(pedestrian).let { currPos ->
+        environment.getPosition(node).let { currPos ->
             actions.filterIsInstance<SteeringActionWithTarget<T, out Euclidean2DPosition>>()
                 .map { it.target() }
                 .minByOrNull { it.distanceTo(currPos) }

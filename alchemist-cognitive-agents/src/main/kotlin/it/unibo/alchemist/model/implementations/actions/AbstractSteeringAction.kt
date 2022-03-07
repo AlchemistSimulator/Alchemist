@@ -32,10 +32,11 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The owner of this action.
      */
-    node: Node<T>
+    node: Node<T>,
 ) : AbstractMoveNode<T, P>(environment, node),
     SteeringAction<T, P>
-    where P : Position<P>, P : Vector<P>,
+    where P : Position<P>,
+          P : Vector<P>,
           A : GeometricTransformation<P> {
 
     /**

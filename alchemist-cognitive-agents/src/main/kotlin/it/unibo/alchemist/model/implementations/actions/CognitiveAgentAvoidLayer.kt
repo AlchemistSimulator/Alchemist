@@ -28,7 +28,7 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
     reaction: Reaction<Number>,
     node: Node<Number>,
     targetMolecule: Molecule,
-    private val viewDepth: Double = Double.POSITIVE_INFINITY
+    private val viewDepth: Double = Double.POSITIVE_INFINITY,
 ) : AbstractLayerAction(environment, reaction, node, targetMolecule) {
 
     private val followScalarField = getLayerOrFail().let { layer ->

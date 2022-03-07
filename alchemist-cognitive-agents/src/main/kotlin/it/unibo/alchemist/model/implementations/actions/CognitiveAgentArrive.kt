@@ -35,7 +35,8 @@ open class CognitiveAgentArrive<T, P, A>(
     protected val arrivalTolerance: Double,
     protected val target: P,
 ) : AbstractSteeringActionWithTarget<T, P, A>(environment, reaction, node, target)
-    where P : Position<P>, P : Vector<P>,
+    where P : Position<P>,
+          P : Vector<P>,
           A : GeometricTransformation<P> {
 
     constructor(
@@ -44,7 +45,7 @@ open class CognitiveAgentArrive<T, P, A>(
         node: Node<T>,
         decelerationRadius: Double,
         arrivalTolerance: Double,
-        vararg coordinates: Number
+        vararg coordinates: Number,
     ) : this(
         environment,
         reaction,

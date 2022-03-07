@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.properties.PerceptiveProperty
 class CognitiveAgentSeparation<T>(
     val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    override val node: Node<T>
+    node: Node<T>,
 ) : AbstractGroupSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, node) {
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeparation<T> =

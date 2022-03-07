@@ -23,7 +23,7 @@ abstract class AbstractSteeringActionWithTarget<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
     node: Node<T>,
-    private val targetSelectionStrategy: TargetSelectionStrategy<T, P>
+    private val targetSelectionStrategy: TargetSelectionStrategy<T, P>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, node),
     SteeringActionWithTarget<T, P>
     where P : Position<P>, P : Vector<P>,
@@ -33,7 +33,7 @@ abstract class AbstractSteeringActionWithTarget<T, P, A>(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
         node: Node<T>,
-        target: P
+        target: P,
     ) : this(environment, reaction, node, TargetSelectionStrategy { target })
 
     override fun target(): P = targetSelectionStrategy.target

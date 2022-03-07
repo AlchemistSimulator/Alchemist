@@ -10,7 +10,7 @@ kotest = "5.1.0"
 dokka = "1.6.10"
 kotlin = "1.6.10"
 mockito = "4.3.1"
-protelis = "15.1.0"
+protelis = "15.1.1"
 scafi = "0.3.3"
 scala = "2.13.8"
 scalacache = "0.28.0"
@@ -36,7 +36,7 @@ embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.3"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
-groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.9"
+groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.10"
 gson = "com.google.code.gson:gson:2.9.0"
 gson-extras = "org.danilopianini:gson-extras:0.4.0"
 guava = "com.google.guava:guava:31.1-jre"
@@ -100,7 +100,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 hugo = "io.github.fstaudt.hugo:0.2.0"
-java-qa = "org.danilopianini.gradle-java-qa:0.20.0"
+java-qa = "org.danilopianini.gradle-java-qa:0.20.1"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.10.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.4"

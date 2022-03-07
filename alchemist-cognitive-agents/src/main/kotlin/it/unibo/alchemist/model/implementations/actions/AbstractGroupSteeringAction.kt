@@ -26,7 +26,7 @@ abstract class AbstractGroupSteeringAction<T, P, A>(
     node: Node<T>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, node),
     GroupSteeringAction<T, P>
-    where P : Position<P>, 
+    where P : Position<P>,
           P : Vector<P>,
           A : GeometricTransformation<P> {
 

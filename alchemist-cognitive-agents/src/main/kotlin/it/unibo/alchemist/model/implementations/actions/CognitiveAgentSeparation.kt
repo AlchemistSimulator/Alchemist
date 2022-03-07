@@ -32,6 +32,5 @@ class CognitiveAgentSeparation<T>(
     override fun group(): List<Node<T>> = node.asProperty<T, PerceptiveProperty<T>>()
         .fieldOfView
         .influentialNodes()
-        .filterIsInstance<Node<T>>()
         .plusElement(node)
 }

@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 abstract class AbstractGroupSteeringAction<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    node: Node<T>
+    node: Node<T>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, node),
     GroupSteeringAction<T, P>
     where P : Position<P>, P : Vector<P>,

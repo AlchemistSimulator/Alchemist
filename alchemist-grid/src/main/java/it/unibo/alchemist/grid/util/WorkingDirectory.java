@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.nio.file.Files;
+import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 
@@ -24,17 +25,19 @@ import org.apache.commons.io.FileUtils;
  */
 public final class WorkingDirectory implements AutoCloseable {
 
-    private File directory;
+    private final File directory;
 
     /**
      * Create new local temp working directory.
      */
     public WorkingDirectory() {
+        File tryDirectory = null;
         try {
-            this.directory = Files.createTempDirectory("alchemist").toFile();
+            tryDirectory = Files.createTempDirectory("alchemist").toFile();
         } catch (IOException e) {
             throw new IllegalStateException("An error occure while attempting to create a temporary directory", e);
         }
+        this.directory = Objects.requireNonNull(tryDirectory);
     }
 
     /**

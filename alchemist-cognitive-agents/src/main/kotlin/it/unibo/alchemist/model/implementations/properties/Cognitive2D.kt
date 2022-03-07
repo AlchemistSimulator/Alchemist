@@ -28,8 +28,4 @@ class Cognitive2D<T> @JvmOverloads constructor(
      * The molecule associated with danger in the environment.
      */
     danger: Molecule? = null,
-) : CognitiveProperty<T> by Cognitive(
-    environment,
-    node,
-    danger,
-)
+) : CognitiveProperty<T> by Cognitive(environment, node, danger)

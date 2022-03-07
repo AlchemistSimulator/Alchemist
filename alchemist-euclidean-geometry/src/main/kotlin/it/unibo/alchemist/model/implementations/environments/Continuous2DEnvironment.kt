@@ -73,12 +73,12 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      */
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
-        val occupiesSpaceProperty = node.asPropertyOrNull<T, OccupiesSpaceProperty<T, *, *>>()
+        val occupiesSpace = node.asPropertyOrNull<T, OccupiesSpaceProperty<T, *, *>>()
         check(node.canFit(position)) {
             "node in $position overlaps with nodes in ${node.overlappingNodes(position).map { getPosition(it) }}."
         }
-        if (occupiesSpaceProperty != null && occupiesSpaceProperty.shape.diameter > largestShapeDiameter) {
-            largestShapeDiameter = occupiesSpaceProperty.shape.diameter
+        if (occupiesSpace != null && occupiesSpace.shape.diameter > largestShapeDiameter) {
+            largestShapeDiameter = occupiesSpace.shape.diameter
         }
     }
 

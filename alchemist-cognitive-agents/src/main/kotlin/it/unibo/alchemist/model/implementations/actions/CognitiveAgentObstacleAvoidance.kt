@@ -27,10 +27,10 @@ class CognitiveAgentObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     private val proximityRange: Double
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, node) {
 
-    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> {
-        require(reaction is SteeringBehavior<T>) { "steering behavior needed but found ${this.reaction}" }
-        return CognitiveAgentObstacleAvoidance(environment, reaction, node, proximityRange)
-    }
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> =
+        if (reaction is SteeringBehavior<T>)
+            CognitiveAgentObstacleAvoidance(environment, reaction, node, proximityRange)
+        else throw IllegalArgumentException("steering behavior needed but found ${this.reaction}")
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->
         environment.getObstaclesInRange(currentPosition, proximityRange)

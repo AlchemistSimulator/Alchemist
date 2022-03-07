@@ -41,7 +41,8 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
         super(node, random);
         this.environment = environment;
         this.cell = node.asPropertyOrNull(CellularProperty.class);
-        Objects.requireNonNull(cell,
+        Objects.requireNonNull(
+                cell,
                 "Polarization can happen only in nodes with " + CellularProperty.class.getSimpleName()
         );
     }

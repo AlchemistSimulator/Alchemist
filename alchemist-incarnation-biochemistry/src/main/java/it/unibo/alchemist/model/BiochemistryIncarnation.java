@@ -47,7 +47,8 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     public Node<Double> createNode(
             final RandomGenerator randomGenerator,
             final Environment<Double, P> environment,
-            final String parameter) {
+            final String parameter
+    ) {
         final Node<Double> node = new GenericNode<Double>(this, environment) {
             @NotNull
             @Override

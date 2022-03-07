@@ -72,6 +72,6 @@ where P : Position<P>,
     fun farthestPositionReachable(
         node: Node<T>,
         desiredPosition: P,
-        hitboxRadius: Double = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.radius
+        hitboxRadius: Double = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.radius,
     ): P
 }

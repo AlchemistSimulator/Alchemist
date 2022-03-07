@@ -10,7 +10,6 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
@@ -39,9 +38,7 @@ class TestPedestriansLoading<T, P, A> : StringSpec({
     "groups of pedestrians loading" {
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
             onceInitialized = { e ->
-                e.nodes.filter(filterSocialNode).forEach {
-                    println("${it.id} -> ${ it.asProperty<T, SocialProperty<T>>().group }")
-                }
+                e.nodes.filter(filterSocialNode)
             }
         )
     }

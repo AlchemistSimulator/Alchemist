@@ -16,10 +16,10 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
-import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.commons.math3.util.FastMath.nextAfter;
 
 /**
  */
@@ -51,15 +51,15 @@ class TestContinuous2DObstacle {
         environment.addObstacle(R1021);
         environment.addObstacle(R0527);
 
-        assertEquals(new Euclidean2DPosition(
-                FastMath.nextAfter(1.0, 0.0),
-                FastMath.nextAfter(1.0, 0.0)
-        ), environment.next(0, 0, 1, 1));
+        assertEquals(
+                new Euclidean2DPosition(nextAfter(1.0, 0.0),nextAfter(1.0, 0.0)),
+                environment.next(0, 0, 1, 1)
+        );
         assertEquals(new Euclidean2DPosition(0, 0), environment.next(1, 1, 0, 0));
-        assertEquals(new Euclidean2DPosition(
-                FastMath.nextAfter(1.0, 0.0),
-                FastMath.nextAfter(0.5, 0.0)
-        ), environment.next(0, 0, 2, 1));
+        assertEquals(
+                new Euclidean2DPosition(nextAfter(1.0, 0.0), nextAfter(0.5, 0.0)),
+                environment.next(0, 0, 2, 1)
+        );
 
         environment.addNode(createIntNode(incarnation, environment), new Euclidean2DPosition(0, 0));
         assertEquals(environment.getNodeCount(), 1);

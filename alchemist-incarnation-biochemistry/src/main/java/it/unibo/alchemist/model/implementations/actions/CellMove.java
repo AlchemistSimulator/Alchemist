@@ -14,6 +14,8 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty;
 
+import java.util.Objects;
+
 /**
  * 
  * @param <P> {@link Position} type
@@ -21,8 +23,9 @@ import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty;
 public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Double, P> {
 
     private static final long serialVersionUID = 1L;
-    private final boolean inPer;
+    private final boolean inPercent;
     private final double delta;
+    private final CellularProperty<P> cell;
 
     /**
      * Initialize an Action that move the cell of a given space delta, which can be expressed in percent of the cell's
@@ -47,50 +50,40 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
             final double delta
     ) {
         super(environment, node);
-        this.inPer = inPercent;
-        if (node.asPropertyOrNull(CellularProperty.class) != null) {
-            if (inPercent) {
-                if (node.asPropertyOrNull(CircularCellularProperty.class) != null
-                        && node.asProperty(CircularCellularProperty.class).getRadius() != 0) {
-                    this.delta = node.asProperty(CircularCellularProperty.class).getDiameter() * delta;
-                } else {
-                    throw new IllegalArgumentException(
-                            "Can't set distance in percent of the cell's diameter if cell has not a diameter"
-                    );
-                }
+        this.inPercent = inPercent;
+        cell = Objects.requireNonNull(
+                node.asPropertyOrNull(CellularProperty.class),
+                "CellMove can be setted only in cells."
+        );
+        if (inPercent) {
+            if (cell instanceof CircularCellularProperty && ((CircularCellularProperty<P>) cell).getRadius() != 0) {
+                this.delta = ((CircularCellularProperty<P>)cell).getDiameter() * delta;
             } else {
-                this.delta = delta;
+                throw new IllegalArgumentException(
+                        "Can't set distance in percent of the cell's diameter if cell has not a diameter"
+                );
             }
         } else {
-            throw  new UnsupportedOperationException("CellMove can be setted only in cells.");
+            this.delta = delta;
         }
     }
 
     @Override
     public CellMove<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new CellMove<>(getEnvironment(), node, inPer, delta);
+        return new CellMove<>(getEnvironment(), node, inPercent, delta);
     }
 
     @Override
     public P getNextPosition() {
         return getEnvironment().makePosition(
-                delta * getNode().asProperty(CellularProperty.class)
-                        .getPolarizationVersor().getCoordinate(0),
-                delta * getNode().asProperty(CellularProperty.class).getPolarizationVersor().getCoordinate(1)
+                delta * cell.getPolarizationVersor().getCoordinate(0),
+                delta * cell.getPolarizationVersor().getCoordinate(1)
         );
     }
 
     @Override
     public void execute() {
         super.execute();
-        getNode().asProperty(CellularProperty.class)
-                .setPolarizationVersor(getEnvironment().makePosition(0, 0));
+        cell.setPolarizationVersor(getEnvironment().makePosition(0, 0));
     }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Node<Double> getNode() {
-        return super.getNode();
-    }
-
 }

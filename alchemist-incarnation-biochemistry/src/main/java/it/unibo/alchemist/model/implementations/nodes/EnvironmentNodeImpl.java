@@ -10,21 +10,31 @@ package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
 /**
  *
  */
-public final class EnvironmentNodeImpl extends DoubleNode implements EnvironmentNode {
+public final class EnvironmentNodeImpl extends GenericNode<Double> implements EnvironmentNode {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * Create a new environment node.
+     * @param incarnation the simulation incarnation
+     * @param environment the environment
+     */
+    public EnvironmentNodeImpl(final Incarnation<Double, ?> incarnation, final Environment<Double, ?> environment) {
+        super(incarnation, environment);
+    }
 
     /**
      * Create a new environment node.
      * @param environment the environment
      */
     public EnvironmentNodeImpl(final Environment<Double, ?> environment) {
-        super(environment);
+        super(environment.getIncarnation(), environment);
     }
 
     @Override

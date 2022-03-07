@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represent the action of removing a junction between the current node and a neighbor.
@@ -31,6 +32,7 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
 
     private final Junction jun;
     private final Environment<Double, ?> environment;
+    private final CellularProperty<?> cell;
 
     /**
      * 
@@ -46,18 +48,16 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
             final RandomGenerator randomGenerator
     ) {
         super(node, environment, randomGenerator);
-        if (node.asPropertyOrNull(CellularProperty.class) != null) {
-            declareDependencyTo(junction);
-            for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
-                declareDependencyTo(entry.getKey());
-            }
-            jun = junction;
-            this.environment = environment;
-        } else {
-            throw new UnsupportedOperationException(
-                    "This Action can be set only in nodes with " + CellularProperty.class.getSimpleName()
-            );
+        cell = Objects.requireNonNull(
+                node.asPropertyOrNull(CellularProperty.class),
+                "This Action can be set only in nodes with " + CellularProperty.class.getSimpleName()
+        );
+        declareDependencyTo(junction);
+        for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
+            declareDependencyTo(entry.getKey());
         }
+        jun = junction;
+        this.environment = environment;
     }
 
     @Override
@@ -77,20 +77,16 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     @Override
     public void execute(final Node<Double> targetNode) { 
         if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
-            getNode().asProperty(CellularProperty.class).removeJunction(jun, targetNode);
+            cell.removeJunction(jun, targetNode);
         } else {
-            throw new UnsupportedOperationException("Can't remove Junction in a node with no "
-                    + CellularProperty.class.getSimpleName());
+            throw new UnsupportedOperationException(
+                "Can't remove Junction in a node with no " + CellularProperty.class.getSimpleName()
+            );
         }
     }
 
     @Override 
     public String toString() {
         return "remove junction " + jun.toString() + " in cell";
-    }
-
-    @Override
-    public Node<Double> getNode() {
-        return super.getNode();
     }
 }

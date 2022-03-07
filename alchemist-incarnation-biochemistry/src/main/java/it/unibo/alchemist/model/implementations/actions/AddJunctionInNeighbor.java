@@ -86,10 +86,4 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
         return "add junction " + jun.toString() + " in neighbor";
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Node<Double> getNode() {
-        return super.getNode();
-    }
-
 }

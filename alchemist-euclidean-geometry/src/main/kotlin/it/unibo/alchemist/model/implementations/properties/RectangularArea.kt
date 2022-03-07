@@ -23,7 +23,7 @@ class RectangularArea<T>(
     environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
     width: Double,
-    height: Double
+    height: Double,
 ) : OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
     override val shape: Euclidean2DShape = environment.shapeFactory.rectangle(width, height)
 }

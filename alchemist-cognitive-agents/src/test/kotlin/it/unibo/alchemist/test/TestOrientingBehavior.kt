@@ -44,7 +44,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
     fun assertPedestriansReached(
         environment: Environment<T, P>,
         tolerance: Double,
-        vararg coords: Number
+        vararg coords: Number,
     ) {
         val target = environment.makePosition(*coords)
         environment.nodes

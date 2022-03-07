@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.interfaces.Node
  */
 interface InfluenceSphere<T> {
     /**
-     * List of influential node's. (e.g. node's withing a field of view).
+     * List of influential nodes. (e.g. nodes withing a field of view).
      */
     fun influentialNodes(): List<Node<T>>
 }

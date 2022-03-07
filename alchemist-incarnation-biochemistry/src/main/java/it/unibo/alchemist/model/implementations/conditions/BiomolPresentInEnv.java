@@ -45,10 +45,12 @@ public final class BiomolPresentInEnv<P extends Position<? extends P>> extends G
      * @param environment
      *            the {@link Environment} where the node is located.
      */
-    public BiomolPresentInEnv(final Environment<Double, P> environment,
-                              final Node<Double> node,
-                              final Biomolecule biomolecule,
-                              final Double concentration) {
+    public BiomolPresentInEnv(
+            final Environment<Double, P> environment,
+            final Node<Double> node,
+            final Biomolecule biomolecule,
+            final Double concentration
+    ) {
         super(node, biomolecule, concentration);
         this.environment = environment;
     }

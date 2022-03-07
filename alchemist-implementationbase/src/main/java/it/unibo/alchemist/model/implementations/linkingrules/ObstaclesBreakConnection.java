@@ -41,7 +41,7 @@ public final class ObstaclesBreakConnection<T, P extends Position<P> & Vector<P>
     public Neighborhood<T> computeNeighborhood(final Node<T> center, final Environment<T, P> environment) {
         Neighborhood<T> normal = super.computeNeighborhood(center, environment);
         if (!normal.isEmpty() && environment instanceof EnvironmentWithObstacles) {
-            final P cp = environment.getPosition(center);
+            final P centerPosition = environment.getPosition(center);
             final EnvironmentWithObstacles<?, T, P> environmentWithObstacles =
                     (EnvironmentWithObstacles<?, T, P>) environment;
             environmentWithObstacles.intersectsObstacle(
@@ -52,9 +52,8 @@ public final class ObstaclesBreakConnection<T, P extends Position<P> & Vector<P>
                     environmentWithObstacles,
                     center,
                     StreamSupport.stream(normal.spliterator(), false)
-                            .filter(
-                                    node -> !environmentWithObstacles
-                                            .intersectsObstacle(cp, environmentWithObstacles.getPosition(node))
+                            .filter(node -> !environmentWithObstacles
+                                    .intersectsObstacle(centerPosition, environmentWithObstacles.getPosition(node))
                             )
                             .collect(Collectors.toList()));
         }

@@ -48,7 +48,7 @@ class RandomTarget<T>(
         { environment.getPosition(node) },
         { x, y -> environment.makePosition(x, y) },
         directionRng,
-        distanceDistribution
+        distanceDistribution,
     )
 
     override fun chooseTarget() = with(directionRng.nextDouble(0.0, 2 * PI)) {

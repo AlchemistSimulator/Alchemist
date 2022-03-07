@@ -31,16 +31,18 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
      * 
      * @param junction the junction
      * @param node the node
-     * @param e the environment
+     * @param environment the environment
      */
-    public JunctionPresentInCell(final Environment<Double, ?> e, final Node<Double> node, final Junction junction) {
-        super(e, node);
+    public JunctionPresentInCell(final Environment<Double, ?> environment, final Node<Double> node, final Junction junction) {
+        super(environment, node);
         cell = node.asPropertyOrNull(CellularProperty.class);
-        Objects.requireNonNull(cell, "This Condition can be set only in node with "
-                + CellularProperty.class.getSimpleName());
+        Objects.requireNonNull(
+                cell,
+                "This Condition can be set only in node with " + CellularProperty.class.getSimpleName()
+        );
         declareDependencyOn(junction);
         this.junction = junction;
-        environment = e;
+        this.environment = environment;
     }
 
     @Override

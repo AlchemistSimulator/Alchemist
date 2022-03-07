@@ -49,10 +49,10 @@ class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     private fun inferIsKnown(destination: Euclidean2DPosition): Boolean =
         environment.graph.nodeContaining(destination)?.let { room ->
             val neighborhood = Graphs.neighborListOf(environment.graph, room) + room
-            navigatingNode.asProperty<T, OrientingProperty<T, *, *, L, *, R>>().cognitiveMap.vertexSet()
-                .any { landmark ->
-                    neighborhood.any { it.contains(landmark.centroid) }
-                }
+            navigatingNode.asProperty<T, OrientingProperty<T, *, *, L, *, R>>()
+                .cognitiveMap
+                .vertexSet()
+                .any { landmark -> neighborhood.any { it.contains(landmark.centroid) } }
         } ?: false
 
     override var strategy: NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> by lazyMutable {

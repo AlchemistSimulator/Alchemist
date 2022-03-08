@@ -178,7 +178,7 @@ and
 {{% api package="model.implementations.reactions" class="NavigationPrioritisedSteeringWithPhysics" %}}
 are available.
 
-Here's a simple code for loading an Homogeneous pedestrian with physical properties
+Here's a simple code for loading a homogeneous pedestrian with physical properties
 with
 {{% api package="model.implementations.actions" class="CognitiveAgentSeek" %}}
 and

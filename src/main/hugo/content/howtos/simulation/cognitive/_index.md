@@ -51,8 +51,9 @@ and even pedestrians with the same knowledge degree can be different as each one
 can be familiar with different portions of the environment.
 Be also aware that orienting pedestrians can only be placed in an
 {{% api package="model.interfaces.environments" class="EnvironmentWithGraph" %}}
-which is a type of environment providing a navigation graph. In order to give a node orienting capabilities enhance 
-a node with an {{%api package=model.interfaces.properties class=OrientingProperty %}}
+which is a type of environment providing a navigation graph.
+In order to give a node orienting capabilities enhance a node with an
+{{% api package=model.interfaces.properties class=OrientingProperty %}}
 
 {{< code path="src/test/resources/website-snippets/homogeneous-orienting-pedestrian.yml" >}}
 

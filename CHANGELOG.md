@@ -1,3 +1,29 @@
+### [13.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.5...13.0.6) (2022-03-08)
+
+
+### Dependency updates
+
+* **core-deps:** update org.protelis to v15.2.1 ([695fc48](https://github.com/AlchemistSimulator/Alchemist/commit/695fc485ec10142f768e921dc64ead111756a738))
+
+### [13.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.4...13.0.5) (2022-03-08)
+
+
+### Dependency updates
+
+* **core-deps:** update org.protelis to v15.2.0 ([cdd97db](https://github.com/AlchemistSimulator/Alchemist/commit/cdd97db6ed574a01524f3738ae31d6f599723251))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.6 ([239c457](https://github.com/AlchemistSimulator/Alchemist/commit/239c45724526704ffd5518dc1f4019b03eb080fc))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to 710713d ([34acb84](https://github.com/AlchemistSimulator/Alchemist/commit/34acb843a7d3facb586d644289cef6f570f3e9f9))
+
+### [13.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.3...13.0.4) (2022-03-07)
+
+
+### Dependency updates
+
+* **core-deps:** update org.protelis to v15.1.2 ([b7b490a](https://github.com/AlchemistSimulator/Alchemist/commit/b7b490a59d9c5de7704120ac1eb908356f24f096))
+* **deps:** update dependency org.codehaus.groovy:groovy-jsr223 to v3.0.10 ([ea8b27a](https://github.com/AlchemistSimulator/Alchemist/commit/ea8b27a9f8bd0f6afe24c8d06cf0055031b67727))
+* **deps:** update plugin kotlin-qa to v0.12.0 ([#1146](https://github.com/AlchemistSimulator/Alchemist/issues/1146)) ([a7487eb](https://github.com/AlchemistSimulator/Alchemist/commit/a7487eb03a26e661ecdcc7ff55ce476935528233))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to 7d09e09 ([537f34b](https://github.com/AlchemistSimulator/Alchemist/commit/537f34bc9f3994af197418a79bfe8ea1df14a006))
+
 ### [13.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.2...13.0.3) (2022-03-06)
 
 

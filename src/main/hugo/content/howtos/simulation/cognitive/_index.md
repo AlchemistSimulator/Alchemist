@@ -10,7 +10,7 @@ to better understand the contents of this how-to.
 
 Different kinds of pedestrians are obtainable by attaching {{% api class=NodeProperty %}}s to nodes (e.g {{%api package=model.implementations.nodes class=GenericNode %}}).
 Common properties regards abilities such as perceiving other nodes ({{% api package=model.interfaces.properties class=PerceptiveProperty %}}) and occuping space in an environment 
-({{%api package=model.interfaces.properties class=OccupiesSpaceProperty %}}), but more specific ones
+({{% api package=model.interfaces.properties class=OccupiesSpaceProperty %}}), but more specific ones
 are also available as we are going to see.
 
 

@@ -36,7 +36,7 @@ class TestSensory<T> : StringSpec({
     fun createHomogeneousPedestrian(
         incarnation: Incarnation<T, Euclidean2DPosition>,
         randomGenerator: RandomGenerator,
-        environment: Physics2DEnvironment<T>
+        environment: Physics2DEnvironment<T>,
     ): Node<T> {
         val node = GenericNode(incarnation, environment)
         node.addProperty(Pedestrian(randomGenerator, node))

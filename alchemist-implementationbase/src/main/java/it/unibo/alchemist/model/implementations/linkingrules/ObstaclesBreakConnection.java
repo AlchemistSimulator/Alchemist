@@ -48,14 +48,11 @@ public final class ObstaclesBreakConnection<T, P extends Position<P> & Vector<P>
                     environmentWithObstacles.getPosition(center),
                     environmentWithObstacles.getPosition(center)
             );
-            normal = Neighborhoods.make(
-                    environmentWithObstacles,
-                    center,
-                    StreamSupport.stream(normal.spliterator(), false)
-                            .filter(node -> !environmentWithObstacles
-                                    .intersectsObstacle(centerPosition, environmentWithObstacles.getPosition(node))
-                            )
-                            .collect(Collectors.toList()));
+            final Iterable<Node<T>> neighbors = StreamSupport.stream(normal.spliterator(), false)
+                    .filter(node -> !environmentWithObstacles
+                            .intersectsObstacle(centerPosition, environmentWithObstacles.getPosition(node))
+                    ).collect(Collectors.toList());
+            normal = Neighborhoods.make(environmentWithObstacles, center, neighbors);
         }
         return normal;
     }

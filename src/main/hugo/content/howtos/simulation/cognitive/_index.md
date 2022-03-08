@@ -161,7 +161,9 @@ Here's a list of all the hardcoded parameters.
 ### Physical pedestrians
 
 Physical pedestrians are capable of pushing and bumping into each other.
-To express those physical interactions use a {{%api package=model.interfaces.properties class=PhysicalPedestrian %}} property.
+To express those physical interactions use a
+{{% api package=model.interfaces.properties class=PhysicalPedestrian %}}
+property.
 
 ### Physical steering strategies
 

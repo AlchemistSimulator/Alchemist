@@ -31,7 +31,8 @@ by the {{%api package=model.implementations.properties class=HeterogeneousPedest
 {{< code path="src/test/resources/website-snippets/heterogeneous-pedestrian.yml" >}}
 
 ## Cognitive Pedestrian
-Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities given by a {{%api package=model.interfaces.properties class=CognitiveProperty %}}.
+Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities given by a
+{{% api package=model.interfaces.properties class=CognitiveProperty %}}.
 They have an emotional state and are able to influence and be influenced by others with the same capabilities.
 As an example, cognitive pedestrians can perceive fear via social contagion 
 (e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).

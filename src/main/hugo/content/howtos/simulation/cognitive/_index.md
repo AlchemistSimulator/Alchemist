@@ -16,7 +16,8 @@ are also available as we are going to see.
 
 ## Homogeneous Pedestrian
 
-As shown in the below example, this kind of pedestrian is obtained by attaching the {{% api package=model.implementations.properties class=Pedestrian %}} property
+As shown in the example below, this kind of pedestrian is obtained by attaching the
+{{% API package=model.implementations.properties class=Pedestrian %}} property
 along with some other generic ones.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-pedestrian.yml" >}}

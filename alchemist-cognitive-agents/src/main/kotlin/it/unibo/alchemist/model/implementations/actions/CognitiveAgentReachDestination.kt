@@ -38,7 +38,7 @@ class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
     node: Node<T>,
-    vararg destinations: Number
+    vararg destinations: Number,
 ) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, node) {
 
     /**

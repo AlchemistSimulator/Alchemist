@@ -21,8 +21,6 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [0, 0]
-    nodes:
-      type: GenericNode
     properties:
       - type: Pedestrian
       - type: Social
@@ -31,8 +29,6 @@ deployments:
     programs: *behavior
   - type: Point
     parameters: [1000, 500]
-    nodes:
-      type: GenericNode
     properties:
       - type: Pedestrian
       - type: Social

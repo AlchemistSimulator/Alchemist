@@ -29,8 +29,6 @@ _reactions: &behavior
 _deployment_males: &males
   type: Circle
   parameters: [ 50, 0, 0, 20 ]
-  nodes:
-    type: GenericNode
   properties:
     - type: Human
       parameters: ["adult", "male"]

@@ -16,8 +16,6 @@ _reactions: &behavior
 _deployment_hetero: &male-deployment
   type: Circle
   parameters: [ 50, 0, 0, 20 ]
-  nodes:
-    type: GenericNode
   properties:
     - type: Human
       parameters: [ "adult", "male" ]
@@ -29,11 +27,9 @@ _deployment_hetero: &male-deployment
 deployments:
   - *male-deployment
   - <<: *male-deployment
-    nodes:
-      type: GenericNode
-      properties:
-        - type: Human
-          parameters: [ "adult", "female" ]
-        - type: HeterogeneousPedestrian
-        - type: Perceptive2D
-        - type: CircularArea
+    properties:
+      - type: Human
+        parameters: [ "adult", "female" ]
+      - type: HeterogeneousPedestrian
+      - type: Perceptive2D
+      - type: CircularArea

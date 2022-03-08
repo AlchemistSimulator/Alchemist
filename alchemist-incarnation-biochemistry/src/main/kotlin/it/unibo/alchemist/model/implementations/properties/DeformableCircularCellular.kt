@@ -33,7 +33,7 @@ class DeformableCircularCellular<P : Position<P>> @JvmOverloads constructor(
         junctions
     ) {
     init {
-        assert(rigidity in 0.0..1.0) {
+        require(rigidity in 0.0..1.0) {
             "deformability must be between 0 and 1"
         }
     }

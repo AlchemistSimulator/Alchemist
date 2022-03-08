@@ -41,8 +41,6 @@ _reactions: &behavior
       - type: HeadTowardRandomDirection
 
 _nodes: &nodes
-  nodes:
-    type: GenericNode
   properties:
     - type: Human
       parameters: [ "adult", "male" ]

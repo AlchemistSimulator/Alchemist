@@ -19,8 +19,6 @@ _reactions: &behavior
 deployments:
   - type: Circle
     parameters: [40, 0, 0, 20]
-    nodes:
-      type: GenericNode
     properties:
       - type: Pedestrian
       - type: Social

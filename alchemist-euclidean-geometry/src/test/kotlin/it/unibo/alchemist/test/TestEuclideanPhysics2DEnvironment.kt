@@ -9,6 +9,7 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
+import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.properties.CircularArea
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -31,10 +32,8 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
         incarnation: Incarnation<Any, Euclidean2DPosition>,
         environment: Physics2DEnvironment<Any>,
         radius: Double,
-    ): Node<Any> {
-        return GenericNode(incarnation, environment).also {
-            it.addProperty(CircularArea(environment, it, radius))
-        }
+    ) = GenericNode(incarnation, environment).apply {
+        addProperty(CircularArea(environment, this, radius))
     }
 
     private fun getNodeRadius(node: Node<Any>): Double =
@@ -62,8 +61,8 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
             environment.addNode(node1, Euclidean2DPosition(0.0, 0.0))
             environment.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
             environment.moveNodeToPosition(node2, environment.getPosition(node1))
-            environment.getPosition(node1).distanceTo(environment.getPosition(node2)) shouldBeFuzzy
-                getNodeRadius(node1) + getNodeRadius(node2)
+            val distance = environment.getPosition(node1).distanceTo(environment.getPosition(node2))
+            distance shouldBeFuzzy getNodeRadius(node1) + getNodeRadius(node2)
         }
 
         "Get nodes within a small shape" {

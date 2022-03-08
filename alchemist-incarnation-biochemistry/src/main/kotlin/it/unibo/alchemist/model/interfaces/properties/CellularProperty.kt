@@ -59,10 +59,9 @@ interface CellularProperty<P : Position<P>> : NodeProperty<Double> {
         if (containsJunction(junction)) {
             val inner: MutableMap<Node<Double>, Int>? = junctions[junction]
             inner?.let {
-                if (it[neighbor] == 1) {
-                    it.remove(neighbor)
-                } else {
-                    it[neighbor]?.minus(1)
+                when (it[neighbor]) {
+                    1 -> it.remove((neighbor))
+                    else -> it[neighbor]?.minus(1)
                 }
                 if (it.isEmpty()) {
                     junctions.remove(junction)

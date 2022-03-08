@@ -21,8 +21,6 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [15, 15]
-    nodes:
-      type: GenericNode
     properties:
       - type: CircularArea
       - type: Orienting2D

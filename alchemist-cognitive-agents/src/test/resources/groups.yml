@@ -28,8 +28,6 @@ _homogeneous_properties: &homogeneous_properties
 deployments:
   - type: Circle
     parameters: [10, 100, 20, 10]
-    nodes:
-      type: GenericNode
     properties:
       <<: *homogeneous_properties
       social:
@@ -37,8 +35,6 @@ deployments:
         parameters: [*group1]
   - type: Circle
     parameters: [5, 10, 10, 10]
-    nodes:
-      type: GenericNode
     properties:
       <<: *homogeneous_properties
       social:

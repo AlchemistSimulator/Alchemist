@@ -10,6 +10,7 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
+import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -24,11 +25,10 @@ class TestNeighborhood {
     private fun createIntNode(
         incarnation: Incarnation<Int, Euclidean2DPosition>,
         environment: Environment<Int, Euclidean2DPosition>
-    ): Node<Int> {
-        return object : GenericNode<Int>(incarnation, environment) {
-            override fun createT(): Int = 0
-        }
+    ): Node<Int> = object : GenericNode<Int>(incarnation, environment) {
+        override fun createT(): Int = 0
     }
+
     /**
      * Tests whether the clone function of the
      * [it.unibo.alchemist.model.implementations.neighborhoods.SimpleNeighborhood] class works as expected.

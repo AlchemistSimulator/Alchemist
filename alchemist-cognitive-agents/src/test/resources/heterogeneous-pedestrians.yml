@@ -10,8 +10,6 @@ seeds:
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
-    nodes:
-      type: GenericNode
     properties:
       - type: Human
         parameters: ["elderly", "female"]
@@ -21,8 +19,6 @@ deployments:
       - type: Social
   - type: Circle
     parameters: [50, 0, 0, 20]
-    nodes:
-      type: GenericNode
     properties:
       - type: Human
         parameters: ["child", "male"]

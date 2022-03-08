@@ -51,8 +51,6 @@ _homogeneous_properties: &homogeneous_properties
 deployments:
   - type: Circle
     parameters: [8, 0, 0, 15]
-    nodes:
-      type: GenericNode
     properties:
       <<: *homogeneous_properties
       social:
@@ -61,8 +59,6 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [4, 0, 0, 15]
-    nodes:
-      type: GenericNode
     properties:
       <<: *homogeneous_properties
       social:
@@ -71,8 +67,6 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [10, 0, 0, 15]
-    nodes:
-      type: GenericNode
     properties:
       <<: *homogeneous_properties
       social:
@@ -81,8 +75,6 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [2, 0, 0, 15]
-    nodes:
-      type: GenericNode
     properties:
       <<: *homogeneous_properties
       social:

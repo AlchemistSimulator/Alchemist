@@ -129,7 +129,7 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
 
     @Override
     public Double createConcentration() {
-        return createConcentration("0");
+        return 0d;
     }
 
     @Override

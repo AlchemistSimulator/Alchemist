@@ -23,6 +23,5 @@ interface CircularCellularProperty<P : Position<P>> : CellularProperty<P> {
     /**
      * The radius of the cell.
      */
-    val radius: Double
-        get() = diameter / 2
+    val radius: Double get() = diameter / 2
 }

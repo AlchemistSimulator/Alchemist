@@ -19,9 +19,9 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
+import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.implementations.properties.CircularArea
 import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
@@ -37,13 +37,13 @@ class TestSensory<T> : StringSpec({
         incarnation: Incarnation<T, Euclidean2DPosition>,
         randomGenerator: RandomGenerator,
         environment: Physics2DEnvironment<T>,
-    ): Node<T> {
-        val node = GenericNode(incarnation, environment)
-        node.addProperty(Pedestrian(randomGenerator, node))
-        node.addProperty(Social(node))
-        node.addProperty(Perceptive2D(environment, node))
-        node.addProperty(CircularArea(environment, node))
-        return node
+    ) = GenericNode(incarnation, environment).apply {
+        listOf(
+            Pedestrian(randomGenerator, this),
+            Social(this),
+            Perceptive2D(environment, this),
+            CircularArea(environment, this),
+        ).forEach(this::addProperty)
     }
 
     "field of view" {

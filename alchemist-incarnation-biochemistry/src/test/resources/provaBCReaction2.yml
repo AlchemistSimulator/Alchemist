@@ -18,7 +18,6 @@ deployments:
     parameters: [4, 0, 0, 5]
     nodes:
       type: GenericNode
-      #parameters: [4, p] # p useless parameter
     properties:
       type: CircularCellular
       parameters: [4]
@@ -28,7 +27,6 @@ deployments:
     parameters: [5, 0, 0, 5]
     nodes:
       type: GenericNode
-      #parameters: [3, p] # p useless parameter
     properties:
       type: CircularCellular
       parameters: [3]
@@ -38,7 +36,6 @@ deployments:
     parameters: [5, 0, 0, 5]
     nodes:
       type: GenericNode
-      #parameters: [2, p] # p useless parameter
     properties:
       type: CircularCellular
       parameters: [2]
@@ -48,9 +45,8 @@ deployments:
     parameters: [5, 0, 0, 5]
     nodes:
       type: GenericNode
-      #parameters: [1, p] # p useless parameter
     properties:
       type: CircularCellular
-      parameters: [ 1 ]
+      parameters: [1]
     programs:
       - *waterDissociation

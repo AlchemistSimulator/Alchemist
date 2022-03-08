@@ -57,7 +57,7 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
         );
         if (inPercent) {
             if (cell instanceof CircularCellularProperty && ((CircularCellularProperty<P>) cell).getRadius() != 0) {
-                this.delta = ((CircularCellularProperty<P>)cell).getDiameter() * delta;
+                this.delta = ((CircularCellularProperty<P>) cell).getDiameter() * delta;
             } else {
                 throw new IllegalArgumentException(
                         "Can't set distance in percent of the cell's diameter if cell has not a diameter"

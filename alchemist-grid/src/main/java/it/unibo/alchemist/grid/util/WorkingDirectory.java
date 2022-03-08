@@ -31,7 +31,7 @@ public final class WorkingDirectory implements AutoCloseable {
      * Create new local temp working directory.
      */
     public WorkingDirectory() {
-        File tryDirectory = null;
+        File tryDirectory;
         try {
             tryDirectory = Files.createTempDirectory("alchemist").toFile();
         } catch (IOException e) {

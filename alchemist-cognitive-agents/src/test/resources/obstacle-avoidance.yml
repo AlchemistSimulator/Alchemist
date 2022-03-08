@@ -29,8 +29,6 @@ _reactions: &behavior
         parameters: [50]
 
 _homogeous_pedestrian: &homogeneous_pedestrian
-  nodes:
-    type: GenericNode
   properties:
     - type: Pedestrian
     - type: Social

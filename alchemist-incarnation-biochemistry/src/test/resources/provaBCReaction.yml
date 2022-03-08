@@ -18,7 +18,6 @@ deployments:
     parameters: [20, 0, 0, 5]
     nodes:
       type: GenericNode
-      #parameters: [1, p] # p useless parameter
     properties:
       type: CircularCellular
       parameters: [1]

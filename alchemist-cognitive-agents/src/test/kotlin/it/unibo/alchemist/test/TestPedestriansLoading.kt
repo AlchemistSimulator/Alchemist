@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
 
-    val filterSocialNode: (Node<T>) -> Boolean = { it.asPropertyOrNull<T, SocialProperty<T>>() != null }
+    val isSocialNode: (Node<T>) -> Boolean = { it.asPropertyOrNull<T, SocialProperty<T>>() != null }
 
     "homogeneous pedestrians loading" {
         loadYamlSimulation<T, P>("homogeneous-pedestrians.yml").startSimulation()
@@ -37,8 +37,8 @@ class TestPedestriansLoading<T, P, A> : StringSpec({
 
     "groups of pedestrians loading" {
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
-            onceInitialized = { e ->
-                e.nodes.filter(filterSocialNode)
+            onceInitialized = { environment ->
+                assert(environment.nodes.all(isSocialNode))
             }
         )
     }

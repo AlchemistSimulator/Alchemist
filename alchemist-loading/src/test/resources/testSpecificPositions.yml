@@ -7,8 +7,6 @@ environment:
 deployments:
   type: SpecificPositions
   parameters: [[1,2],[3,4]]
-  nodes:
-    type: GenericNode
   properties:
     - type: CircularArea
       parameters: [1]

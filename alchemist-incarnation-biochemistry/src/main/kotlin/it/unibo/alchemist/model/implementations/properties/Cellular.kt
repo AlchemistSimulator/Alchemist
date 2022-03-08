@@ -31,12 +31,8 @@ class Cellular<P : Position<P>> @JvmOverloads constructor(
     override var polarizationVersor: P = environment.makePosition(0, 0)
 
     override fun addPolarizationVersor(versor: P) {
-        val tempCor = polarizationVersor.plus(versor.coordinates).coordinates
-        val module = FastMath.sqrt(
-            FastMath.pow(tempCor[0], 2) + FastMath.pow(
-                tempCor[1], 2
-            )
-        )
+        val tempCor = (polarizationVersor + versor.coordinates).coordinates
+        val module = FastMath.hypot(tempCor[0], tempCor[1])
         polarizationVersor = if (module == 0.0) environment.makePosition(0, 0) else environment.makePosition(
             tempCor[0] / module,
             tempCor[1] / module

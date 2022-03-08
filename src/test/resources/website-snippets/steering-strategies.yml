@@ -17,8 +17,6 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [0, 0]
-    nodes:
-      type: GenericNode
     properties:
       - type: Pedestrian
       - type: Perceptive2D

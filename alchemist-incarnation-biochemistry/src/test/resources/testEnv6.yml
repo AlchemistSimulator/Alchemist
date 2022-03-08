@@ -26,11 +26,6 @@ deployments:
       - *reactions
   - type: Point
     parameters: [1, 0]
-    nodes:
-      type: GenericNode
-      parameters: []
-    properties:
-      type: CircularCellular
     contents:
       - molecule: B
         concentration: 10

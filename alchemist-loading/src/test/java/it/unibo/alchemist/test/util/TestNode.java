@@ -20,7 +20,7 @@ public final class TestNode extends GenericNode<Object> {
     /**
      * @param environment the environment
      */
-    public TestNode(final Environment<?, ?> environment) {
+    public TestNode(final Environment<Object, ?> environment) {
         super(environment);
     }
 

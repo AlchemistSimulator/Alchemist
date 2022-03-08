@@ -28,7 +28,7 @@ interface CircularDeformableCellularProperty<P : Position<P>> : CircularCellular
         get() = maximumDiameter / 2
 
     /**
-     *
+     * Cellular rigidity.
      */
     val rigidity: Double
 }

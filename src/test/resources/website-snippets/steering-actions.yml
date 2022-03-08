@@ -19,8 +19,6 @@ _reactions: &behavior
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 25]
-    nodes:
-      type: GenericNode
     properties:
       - type: Pedestrian
       - type: Perceptive2D

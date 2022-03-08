@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.implementations.actions.TargetMapWalker;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
@@ -24,6 +23,7 @@ import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -73,13 +73,7 @@ class TestTargetMapWalker {
         try {
             environment = new OSMEnvironment<>(INCARNATION, TESTMAP, true, true);
             environment.setLinkingRule(new NoLinks<>());
-            node = new AbstractNode<>(environment) {
-                private static final long serialVersionUID = -3982001064673078159L;
-                @Override
-                protected Object createT() {
-                    return null;
-                }
-            };
+            node = INCARNATION.createNode(new MersenneTwister(), environment, null);
             reaction = new Event<>(node, new DiracComb<>(1));
             reaction.setActions(Lists.newArrayList(new TargetMapWalker<>(environment, node, reaction, TRACK, INTERACTING)));
             node.addReaction(reaction);

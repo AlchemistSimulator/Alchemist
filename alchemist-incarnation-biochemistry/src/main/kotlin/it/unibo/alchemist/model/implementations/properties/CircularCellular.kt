@@ -24,5 +24,4 @@ class CircularCellular<P : Position<P>> @JvmOverloads constructor(
     override val node: Node<Double>,
     override val diameter: Double = 0.0,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap()
-) : CircularCellularProperty<P>,
-    CellularProperty<P> by Cellular(environment, node, junctions)
+) : CircularCellularProperty<P>, CellularProperty<P> by Cellular(environment, node, junctions)

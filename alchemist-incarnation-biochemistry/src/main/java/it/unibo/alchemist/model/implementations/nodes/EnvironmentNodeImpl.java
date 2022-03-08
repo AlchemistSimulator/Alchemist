@@ -13,8 +13,10 @@ import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
+import javax.annotation.Nonnull;
+
 /**
- *
+ * A node with non-negative concentration.
  */
 public final class EnvironmentNodeImpl extends GenericNode<Double> implements EnvironmentNode {
 
@@ -38,10 +40,10 @@ public final class EnvironmentNodeImpl extends GenericNode<Double> implements En
     }
 
     @Override
-    public void setConcentration(final Molecule molecule, final Double concentration) {
+    public void setConcentration(@Nonnull final Molecule molecule, @Nonnull final Double concentration) {
         if (concentration < 0) {
             throw new IllegalArgumentException(
-                    "No negative concentrations allowed (" + molecule + " -> " + concentration + ")"
+                "No negative concentrations allowed (" + molecule + " -> " + concentration + ")"
             );
         }
         if (concentration > 0) {

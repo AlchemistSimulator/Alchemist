@@ -11,6 +11,7 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.beEmpty
+import io.kotest.matchers.collections.shouldNotBeIn
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
@@ -100,8 +101,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
                 if (environment is Euclidean2DEnvironmentWithGraph<*, T, *, *>) {
                     val node = environment.nodes.first()
                     val waypointToSkip = environment.makePosition(70, 105)
-                    environment.graph
-                        .nodeContaining(waypointToSkip)?.contains(environment.getPosition(node)) shouldBe false
+                    environment.getPosition(node).shouldNotBeIn(environment.graph.nodeContaining(waypointToSkip))
                 }
             },
             whenFinished = { environment, _, _ -> assertPedestriansReached(environment, 1.0, 85, 80) },

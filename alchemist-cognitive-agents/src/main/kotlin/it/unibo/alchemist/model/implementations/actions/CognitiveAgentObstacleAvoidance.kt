@@ -24,7 +24,7 @@ class CognitiveAgentObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     private val environment: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
     node: Node<T>,
-    private val proximityRange: Double
+    private val proximityRange: Double,
 ) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, node) {
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> =

@@ -20,8 +20,6 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [2, 2]
-    nodes:
-      type: GenericNode
     properties:
       - type: Pedestrian
       - type: PhysicalPedestrian2D

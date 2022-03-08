@@ -20,8 +20,6 @@ _reactions: &behavior
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
-    nodes:
-      type: GenericNode
     properties:
       - type: Human
         parameters: [ "adult", "male" ]
@@ -32,8 +30,6 @@ deployments:
     programs: *behavior
   - type: Circle
     parameters: [50, 0, 0, 20]
-    nodes:
-      type: GenericNode
     properties:
       - type: Human
         parameters: [ "adult", "female" ]

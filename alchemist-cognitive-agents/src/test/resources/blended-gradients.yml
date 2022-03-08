@@ -37,8 +37,6 @@ _reactions: &behavior
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 33]
-    nodes:
-      type: GenericNode
     properties:
       - type: Pedestrian
       - type: Social

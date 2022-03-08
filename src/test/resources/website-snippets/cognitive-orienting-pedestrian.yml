@@ -15,8 +15,6 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [2, 2]
-    nodes:
-      type: GenericNode
     properties:
       - type: Human
         parameters: ["adult", "male"]

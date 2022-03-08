@@ -40,7 +40,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     /**
      * The environment in which the node is places.
      */
-    val environment: Environment<*, *>,
+    val environment: Environment<T, *>,
     override val id: Int = idFromEnv(environment),
     override val reactions: MutableList<Reaction<T>> = ArrayList(),
     /**
@@ -49,6 +49,10 @@ open class GenericNode<T> @JvmOverloads constructor(
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
     override val capabilities: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
+
+    constructor(
+        environment: Environment<T, *>,
+    ) : this(environment.incarnation, environment)
 
     final override fun addReaction(reactionToAdd: Reaction<T>) {
         reactions.add(reactionToAdd)

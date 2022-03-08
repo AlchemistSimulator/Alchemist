@@ -1,3 +1,12 @@
+### [13.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.4...13.0.5) (2022-03-08)
+
+
+### Dependency updates
+
+* **core-deps:** update org.protelis to v15.2.0 ([cdd97db](https://github.com/AlchemistSimulator/Alchemist/commit/cdd97db6ed574a01524f3738ae31d6f599723251))
+* **deps:** update dependency org.danilopianini:jirf to v0.4.6 ([239c457](https://github.com/AlchemistSimulator/Alchemist/commit/239c45724526704ffd5518dc1f4019b03eb080fc))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn commit hash to 710713d ([34acb84](https://github.com/AlchemistSimulator/Alchemist/commit/34acb843a7d3facb586d644289cef6f570f3e9f9))
+
 ### [13.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.3...13.0.4) (2022-03-07)
 
 

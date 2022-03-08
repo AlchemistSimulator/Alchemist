@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
@@ -53,13 +53,13 @@ public final class ChangeBiomolConcentrationInEnv extends AbstractRandomizableAc
             final RandomGenerator randomGen
     ) {
         super(node, randomGen);
-        if (node instanceof EnvironmentNode || node.asPropertyOrNull(CellularProperty.class) != null) {
+        if (node instanceof EnvironmentNode || node.asPropertyOrNull(CellProperty.class) != null) {
             this.biomolecule = biomolecule;
             delta = deltaCon;
             this.environment = environment;
         } else {
             throw  new UnsupportedOperationException(
-                    "This condition can be set only in Node with nodes with " + CellularProperty.class.getSimpleName() + " or "
+                    "This condition can be set only in Node with nodes with " + CellProperty.class.getSimpleName() + " or "
                             + EnvironmentNode.class.getSimpleName()
             );
         }

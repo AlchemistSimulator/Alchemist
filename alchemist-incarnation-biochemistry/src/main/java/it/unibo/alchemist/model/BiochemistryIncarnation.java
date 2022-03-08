@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model;
 
 
-import it.unibo.alchemist.model.implementations.properties.CircularCellular;
+import it.unibo.alchemist.model.implementations.properties.CircularCell;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
@@ -49,19 +49,13 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
             final Environment<Double, P> environment,
             final String parameter
     ) {
-        final Node<Double> node = new GenericNode<Double>(this, environment) {
-            @NotNull
-            @Override
-            public Node<Double> cloneNode(@NotNull final Time currentTime) {
-                return createNode(randomGenerator, environment, parameter);
+        return new GenericNode<>(this, environment) {{
+            if (parameter == null || parameter.isEmpty()) {
+                addProperty(new CircularCell<>(environment, this));
+            } else {
+                addProperty(new CircularCell<>(environment, this, Double.parseDouble(parameter)));
             }
-        };
-        if (parameter == null || parameter.isEmpty()) {
-            node.addProperty(new CircularCellular<>(environment, node));
-            return node;
-        }
-        node.addProperty(new CircularCellular<>(environment, node, Double.parseDouble(parameter)));
-        return node;
+        }};
     }
 
     @Override

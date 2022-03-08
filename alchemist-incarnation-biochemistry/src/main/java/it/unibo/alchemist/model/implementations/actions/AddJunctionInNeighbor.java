@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
@@ -49,13 +49,13 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @SuppressWarnings("unchecked")
     @Override
     public AddJunctionInNeighbor<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        if (node.asPropertyOrNull(CellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CellProperty.class) != null) {
             return new AddJunctionInNeighbor<>(
                     (Environment<Double, P>) getEnvironment(),
                     node,
                     jun, getRandomGenerator());
         }
-        throw new IllegalArgumentException("Node must have a " + CellularProperty.class.getSimpleName());
+        throw new IllegalArgumentException("Node must have a " + CellProperty.class.getSimpleName());
     }
 
     /**
@@ -73,11 +73,11 @@ public final class AddJunctionInNeighbor<P extends Position<? extends P>> extend
     @Override
     @SuppressWarnings("unchecked")
     public void execute(final Node<Double> targetNode) {
-        if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
-            targetNode.asProperty(CellularProperty.class).addJunction(jun, getNode());
+        if (targetNode.asPropertyOrNull(CellProperty.class) != null) {
+            targetNode.asProperty(CellProperty.class).addJunction(jun, getNode());
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node with no "
-                    + CellularProperty.class.getSimpleName());
+                    + CellProperty.class.getSimpleName());
         }
     }
 

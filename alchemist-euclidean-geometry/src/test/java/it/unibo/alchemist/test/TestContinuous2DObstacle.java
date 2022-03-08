@@ -29,8 +29,8 @@ class TestContinuous2DObstacle {
     private static final RectObstacle2D<Euclidean2DPosition> R0527 = new RectObstacle2D<>(0, 5, 2, -2);
 
     private Node<Integer> createIntNode(
-            final Incarnation<Integer, Euclidean2DPosition> incarnation,
-            final Environment<Integer, Euclidean2DPosition> environment
+        final Incarnation<Integer, Euclidean2DPosition> incarnation,
+        final Environment<Integer, Euclidean2DPosition> environment
     ) {
         return new GenericNode<>(incarnation, environment) {
             @Override

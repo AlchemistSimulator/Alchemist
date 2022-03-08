@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import java.util.Map;
@@ -44,7 +44,7 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
             final Junction junction,
             final RandomGenerator randomGenerator) {
         super(node, environment, randomGenerator);
-        if (node.asPropertyOrNull(CellularProperty.class) != null) {
+        if (node.asPropertyOrNull(CellProperty.class) != null) {
             declareDependencyTo(junction);
             for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
                 declareDependencyTo(entry.getKey());
@@ -52,7 +52,7 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
             jun = junction;
         } else {
             throw new UnsupportedOperationException(
-                    "This Action can be set only in nodes with " + CellularProperty.class.getSimpleName()
+                    "This Action can be set only in nodes with " + CellProperty.class.getSimpleName()
             );
         }
     }
@@ -70,11 +70,11 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
 
     @Override
     public void execute(final Node<Double> targetNode) {
-        if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
-            targetNode.asProperty(CellularProperty.class).removeJunction(jun, getNode());
+        if (targetNode.asPropertyOrNull(CellProperty.class) != null) {
+            targetNode.asProperty(CellProperty.class).removeJunction(jun, getNode());
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node with no "
-                    + CellularProperty.class.getSimpleName());
+                    + CellProperty.class.getSimpleName());
         }
     }
 

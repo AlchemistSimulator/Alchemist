@@ -11,8 +11,8 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
-import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
+import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
 
 import java.util.Objects;
 
@@ -25,7 +25,7 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     private static final long serialVersionUID = 1L;
     private final boolean inPercent;
     private final double delta;
-    private final CellularProperty<P> cell;
+    private final CellProperty<P> cell;
 
     /**
      * Initialize an Action that move the cell of a given space delta, which can be expressed in percent of the cell's
@@ -52,12 +52,12 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
         super(environment, node);
         this.inPercent = inPercent;
         cell = Objects.requireNonNull(
-                node.asPropertyOrNull(CellularProperty.class),
+                node.asPropertyOrNull(CellProperty.class),
                 "CellMove can be setted only in cells."
         );
         if (inPercent) {
-            if (cell instanceof CircularCellularProperty && ((CircularCellularProperty<P>) cell).getRadius() != 0) {
-                this.delta = ((CircularCellularProperty<P>) cell).getDiameter() * delta;
+            if (cell instanceof CircularCellProperty && ((CircularCellProperty<P>) cell).getRadius() != 0) {
+                this.delta = ((CircularCellProperty<P>) cell).getDiameter() * delta;
             } else {
                 throw new IllegalArgumentException(
                         "Can't set distance in percent of the cell's diameter if cell has not a diameter"

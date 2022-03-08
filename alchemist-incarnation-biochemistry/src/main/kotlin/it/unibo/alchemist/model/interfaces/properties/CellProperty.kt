@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.Position
 /**
  * A node's capability to behave as a cell.
  */
-interface CellularProperty<P : Position<P>> : NodeProperty<Double> {
+interface CellProperty<P : Position<P>> : NodeProperty<Double> {
 
     /**
      * The map junction - node - quantity.

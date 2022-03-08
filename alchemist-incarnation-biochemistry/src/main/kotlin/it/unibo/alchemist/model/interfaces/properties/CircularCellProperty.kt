@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Position
 /**
  * A node's capability to behave as a cell with a circular area.
  */
-interface CircularCellularProperty<P : Position<P>> : CellularProperty<P> {
+interface CircularCellProperty<P : Position<P>> : CellProperty<P> {
     /**
      * The diameter of the cell.
      */

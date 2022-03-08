@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.util.FastMath;
@@ -279,7 +279,7 @@ class TestBioRect2DEnvironmentNoOverlap {
         final Euclidean2DPosition p5 = new Euclidean2DPosition(
                 0.2,
                 FastMath.sqrt(FastMath.pow(cellToMove4
-                        .asProperty(CircularCellularProperty.class).getDiameter(), 2) - FastMath.pow(0.2, 2))
+                        .asProperty(CircularCellProperty.class).getDiameter(), 2) - FastMath.pow(0.2, 2))
         );
         final Node<Double> c5 = createNode(LITTLE_CELL_DIAMETER);
         environment.addNode(c5, p5);
@@ -654,7 +654,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     }
 
     private List<Node<Double>> getOverlappingNodes(final Node<Double> node) {
-        final double diameter = node.asProperty(CircularCellularProperty.class).getDiameter();
+        final double diameter = node.asProperty(CircularCellProperty.class).getDiameter();
         return  environment.getNodesWithinRange(node, diameter).stream()
                 .filter(n -> environment.getDistanceBetweenNodes(node, n) < diameter)
                 .collect(Collectors.toList());
@@ -782,7 +782,7 @@ class TestBioRect2DEnvironmentNoOverlap {
 
             private Stream<Node<Double>> getNodes() {
                 return env.getNodes().stream()
-                        .filter(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null)
+                        .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
                         .map(n -> (Node<Double>) n);
             }
 
@@ -790,8 +790,8 @@ class TestBioRect2DEnvironmentNoOverlap {
                 getNodes().flatMap(n -> getNodes()
                                 .filter(c -> !c.equals(n))
                                 .filter(c -> env.getDistanceBetweenNodes(n, c)
-                                        < n.asProperty(CircularCellularProperty.class).getRadius()
-                                        + c.asProperty(CircularCellularProperty.class).getRadius() - DELTA)
+                                        < n.asProperty(CircularCellProperty.class).getRadius()
+                                        + c.asProperty(CircularCellProperty.class).getRadius() - DELTA)
                                 .map(c -> new Pair<>(n, c)))
                         .findAny()
                         .ifPresent(e -> fail("Nodes " + e.getFirst().getId()
@@ -799,8 +799,8 @@ class TestBioRect2DEnvironmentNoOverlap {
                                 + e.getSecond().getId() + env.getPosition(e.getSecond()) + " are overlapping. "
                                 + "Their distance is: " + env.getDistanceBetweenNodes(e.getFirst(), e.getSecond())
                                 + " but should be greater than "
-                                + (e.getFirst().asProperty(CircularCellularProperty.class).getRadius()
-                                + e.getSecond().asProperty(CircularCellularProperty.class).getRadius())));
+                                + (e.getFirst().asProperty(CircularCellProperty.class).getRadius()
+                                + e.getSecond().asProperty(CircularCellProperty.class).getRadius())));
                 return true;
             }
         });

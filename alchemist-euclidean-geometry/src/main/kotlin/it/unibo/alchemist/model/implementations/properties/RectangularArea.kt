@@ -20,10 +20,22 @@ import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
  * The [node] occupies a rectangular width x height area.
  */
 class RectangularArea<T>(
-    environment: Physics2DEnvironment<T>,
+    /**
+     * The environment in which [node] is moving.
+     */
+    val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
-    width: Double,
-    height: Double,
+    /**
+     * The rectangle width.
+     */
+    val width: Double,
+    /**
+     * The rectangle height.
+     */
+    val height: Double,
 ) : OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+
     override val shape: Euclidean2DShape = environment.shapeFactory.rectangle(width, height)
+
+    override fun cloneOnNewNode(node: Node<T>) = RectangularArea(environment, node, width, height)
 }

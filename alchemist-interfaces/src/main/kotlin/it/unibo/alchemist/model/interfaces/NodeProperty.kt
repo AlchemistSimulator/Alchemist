@@ -19,4 +19,9 @@ interface NodeProperty<T> : Serializable {
      * The node to which the capability is added.
      */
     val node: Node<T>
+
+    /**
+     * Clones this property to be added on a new [node].
+     */
+    fun cloneOnNewNode(node: Node<T>): NodeProperty<T>
 }

@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import java.util.Map;
@@ -32,7 +32,7 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
 
     private final Junction jun;
     private final Environment<Double, ?> environment;
-    private final CellularProperty<?> cell;
+    private final CellProperty<?> cell;
 
     /**
      * 
@@ -49,8 +49,8 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
     ) {
         super(node, environment, randomGenerator);
         cell = Objects.requireNonNull(
-                node.asPropertyOrNull(CellularProperty.class),
-                "This Action can be set only in nodes with " + CellularProperty.class.getSimpleName()
+                node.asPropertyOrNull(CellProperty.class),
+                "This Action can be set only in nodes with " + CellProperty.class.getSimpleName()
         );
         declareDependencyTo(junction);
         for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
@@ -76,11 +76,11 @@ public final class RemoveJunctionInCell extends AbstractNeighborAction<Double> {
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
+        if (targetNode.asPropertyOrNull(CellProperty.class) != null) {
             cell.removeJunction(jun, targetNode);
         } else {
             throw new UnsupportedOperationException(
-                "Can't remove Junction in a node with no " + CellularProperty.class.getSimpleName()
+                "Can't remove Junction in a node with no " + CellProperty.class.getSimpleName()
             );
         }
     }

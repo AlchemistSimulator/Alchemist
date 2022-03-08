@@ -12,8 +12,8 @@ import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty;
-import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
+import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellProperty;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.lang.MathUtils;
 
@@ -31,7 +31,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
      */
     private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<P> environment;
-    private final CircularDeformableCellularProperty<P> deformableCell;
+    private final CircularDeformableCellProperty<P> deformableCell;
 
     /**
      * 
@@ -45,16 +45,16 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         super(node);
         this.environment = environment;
         this.deformableCell = Objects.requireNonNull(getDeformableCell(node),
-            "The node must have a " + CircularDeformableCellularProperty.class.getSimpleName()
+            "The node must have a " + CircularDeformableCellProperty.class.getSimpleName()
         );
     }
 
-    private CircularDeformableCellularProperty<P> getDeformableCell(final Node<Double> node) {
-        return node.asPropertyOrNull(CircularDeformableCellularProperty.class);
+    private CircularDeformableCellProperty<P> getDeformableCell(final Node<Double> node) {
+        return node.asPropertyOrNull(CircularDeformableCellProperty.class);
     }
 
-    private CircularCellularProperty<P> getCircularCell(final Node<Double> node) {
-        return node.asPropertyOrNull(CircularCellularProperty.class);
+    private CircularCellProperty<P> getCircularCell(final Node<Double> node) {
+        return node.asPropertyOrNull(CircularCellProperty.class);
     }
 
     private boolean isDeformableCell(final Node<Double> node) {
@@ -80,7 +80,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 environment.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .filter(node -> { // only cells overlapping this cell are selected
-                    final CircularCellularProperty<P> circularCell = getCircularCell(node);
+                    final CircularCellProperty<P> circularCell = getCircularCell(node);
                     if (!Objects.isNull(circularCell)) {
                         // computing for each cell the max distance among which can't be overlapping
                         double maxDistance;

@@ -58,11 +58,11 @@ open class GenericNode<T> @JvmOverloads constructor(
         reactions.add(reactionToAdd)
     }
 
-    /**
-     * Default implementation fails: override correctly calling the constructor.
-     */
-    override fun cloneNode(currentTime: Time): Node<T> =
-        TODO("Cloning not yet implemented in ${this::class.simpleName}")
+    override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
+        this.capabilities.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
+        this.contents.forEach(it::setConcentration)
+        this.reactions.forEach { reaction -> it.addReaction(reaction.cloneOnNewNode(it, currentTime)) }
+    }
 
     final override fun compareTo(@Nonnull other: Node<T>): Int = id.compareTo(other.id)
 

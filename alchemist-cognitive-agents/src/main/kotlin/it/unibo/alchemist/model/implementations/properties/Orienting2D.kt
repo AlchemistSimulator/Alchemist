@@ -34,7 +34,7 @@ private typealias ShapeFactory = Euclidean2DShapeFactory
  */
 class Orienting2D<T, N : ConvexPolygon> @JvmOverloads constructor(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, N, DefaultEdge>,
-    override val randomGenerator: RandomGenerator,
+    randomGenerator: RandomGenerator,
     override val node: Node<T>,
     override val knowledgeDegree: Double,
     /**
@@ -63,4 +63,13 @@ class Orienting2D<T, N : ConvexPolygon> @JvmOverloads constructor(
     private fun randomEllipseSide(): Double =
         randomGenerator.nextDouble(minSide, maxSide) *
             node.asProperty<T, AreaProperty<T>>().shape.diameter
+
+    override fun cloneOnNewNode(node: Node<T>) = Orienting2D(
+        environment,
+        randomGenerator,
+        node,
+        knowledgeDegree,
+        minSide,
+        maxSide,
+    )
 }

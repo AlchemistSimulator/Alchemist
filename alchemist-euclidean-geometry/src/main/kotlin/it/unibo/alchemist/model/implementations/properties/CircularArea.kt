@@ -20,9 +20,15 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  * The [node] occupies a circular space with the provided radius.
  */
 class CircularArea<T> @JvmOverloads constructor(
-    environment: Physics2DEnvironment<T>,
+    /**
+     * The environment in witch the node moves.
+     */
+    val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
     radius: Double = 0.3,
 ) : OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+
     override val shape: Euclidean2DShape = environment.shapeFactory.circle(radius)
+
+    override fun cloneOnNewNode(node: Node<T>) = CircularArea(environment, node, shape.radius)
 }

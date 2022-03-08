@@ -19,7 +19,7 @@ deployments:
     nodes:
       type: GenericNode
     properties:
-      type: CircularCellular
+      type: CircularCell
       parameters: [4]
     programs:
       - *waterDissociation
@@ -28,7 +28,7 @@ deployments:
     nodes:
       type: GenericNode
     properties:
-      type: CircularCellular
+      type: CircularCell
       parameters: [3]
     programs:
       - *waterDissociation
@@ -37,7 +37,7 @@ deployments:
     nodes:
       type: GenericNode
     properties:
-      type: CircularCellular
+      type: CircularCell
       parameters: [2]
     programs:
       - *waterDissociation
@@ -46,7 +46,7 @@ deployments:
     nodes:
       type: GenericNode
     properties:
-      type: CircularCellular
+      type: CircularCell
       parameters: [1]
     programs:
       - *waterDissociation

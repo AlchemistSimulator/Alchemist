@@ -10,11 +10,22 @@
 package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 
 /**
  * The node's [CognitiveModel].
  */
-typealias Cognitive2D<T> = Cognitive<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
+class Cognitive2D<T> @JvmOverloads constructor(
+    /**
+     * The environment in which the node moves.
+     */
+    environment: Physics2DEnvironment<T>,
+    node: Node<T>,
+    /**
+     * The molecule associated with danger in the environment.
+     */
+    danger: Molecule? = null,
+) : CognitiveProperty<T> by Cognitive(environment, node, danger)

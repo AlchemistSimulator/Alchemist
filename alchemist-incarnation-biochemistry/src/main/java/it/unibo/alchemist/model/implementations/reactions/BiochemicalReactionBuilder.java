@@ -40,7 +40,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
@@ -382,12 +382,12 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                     );
                 }
             });
-            if (node.asPropertyOrNull(CellularProperty.class) != null) {
+            if (node.asPropertyOrNull(CellProperty.class) != null) {
                 actionList.add(new AddJunctionInCell(environment, node, j, rand));
                 actionList.add(new AddJunctionInNeighbor<>(environment, node, reverseJunction(j), rand));
             } else {
                 throw new UnsupportedOperationException(
-                        "Junctions are supported ONLY in nodes with " + CellularProperty.class.getSimpleName()
+                        "Junctions are supported ONLY in nodes with " + CellProperty.class.getSimpleName()
                 );
             }
             return reaction;
@@ -410,12 +410,12 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 visit(context.customReactionType());
             }
             junctionList.forEach(j -> {
-                if (node.asPropertyOrNull(CellularProperty.class) != null) {
+                if (node.asPropertyOrNull(CellProperty.class) != null) {
                     actionList.add(new RemoveJunctionInCell(environment, node, j, rand));
                     actionList.add(new RemoveJunctionInNeighbor(environment, node, reverseJunction(j), rand));
                 } else {
                     throw new UnsupportedOperationException(
-                            "Junctions are supported ONLY in node with " + CellularProperty.class.getSimpleName()
+                            "Junctions are supported ONLY in node with " + CellProperty.class.getSimpleName()
                     );
                 }
             });
@@ -445,14 +445,14 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         public Reaction<Double> visitJunctionReactionJunctionCondition(
                 final BiochemistrydslParser.JunctionReactionJunctionConditionContext context
         ) {
-            if (node.asPropertyOrNull(CellularProperty.class) != null) {
+            if (node.asPropertyOrNull(CellProperty.class) != null) {
                 final Junction j = createJunction(context.junction());
                 junctionList.add(j);
                 conditionList.add(new JunctionPresentInCell(environment, node, j));
                 return reaction;
             } else {
                 throw new UnsupportedOperationException(
-                        "Junctions are supported ONLY in nodes with " + CellularProperty.class.getSimpleName()
+                        "Junctions are supported ONLY in nodes with " + CellProperty.class.getSimpleName()
                 );
             }
         }

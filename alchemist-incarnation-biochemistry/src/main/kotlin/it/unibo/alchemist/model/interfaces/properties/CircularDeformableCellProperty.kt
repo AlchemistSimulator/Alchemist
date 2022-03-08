@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Position
 /**
  * A node's capability to behave as a circular deformable cell.
  */
-interface CircularDeformableCellularProperty<P : Position<P>> : CircularCellularProperty<P> {
+interface CircularDeformableCellProperty<P : Position<P>> : CircularCellProperty<P> {
     /**
      *
      * The max diameter that this cell can have, e.g. the diameter that this cell has if no other cell is around.

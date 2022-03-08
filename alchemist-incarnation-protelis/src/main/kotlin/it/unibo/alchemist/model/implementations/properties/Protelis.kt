@@ -32,6 +32,8 @@ class Protelis<P : Position<P>> @JvmOverloads constructor(
         networkManagers = networkManagers + (program to networkManager)
     }
 
+    override fun cloneOnNewNode(node: Node<Any>) = Protelis(incarnation, node)
+
     /**
      * Returns true if node contains [id].
      */

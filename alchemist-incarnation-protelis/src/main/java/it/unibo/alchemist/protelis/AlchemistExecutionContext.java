@@ -82,6 +82,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     private final Node<Object> node;
     private final RandomGenerator randomGenerator;
     private final Reaction<Object> reaction;
+    private final ProtelisProperty protelisProperty;
 
     /**
      * @param environment
@@ -105,6 +106,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
         super(localNode.asProperty(ProtelisProperty.class), networkManager);
         this.environment = environment;
         node = localNode;
+        protelisProperty = node.asProperty(ProtelisProperty.class);
         this.reaction = reaction;
         randomGenerator = random;
     }
@@ -174,7 +176,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public DeviceUID getDeviceUID() {
-        return node.asProperty(ProtelisProperty.class);
+        return protelisProperty;
     }
 
     /**

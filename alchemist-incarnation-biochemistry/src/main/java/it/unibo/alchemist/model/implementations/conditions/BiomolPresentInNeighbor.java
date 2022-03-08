@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.Optional;
@@ -56,7 +56,7 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
         } else {
             final Neighborhood<Double> neighborhood = getEnvironment().getNeighborhood(getNode());
             return getValidNeighbors().entrySet().stream()
-                    .filter(n -> n.getKey().asPropertyOrNull(CellularProperty.class) != null)
+                    .filter(n -> n.getKey().asPropertyOrNull(CellProperty.class) != null)
                     .allMatch(n -> neighborhood.contains(n.getKey()) 
                             && n.getKey().getConcentration(molecule) >= concentration);
         }
@@ -71,7 +71,7 @@ public final class BiomolPresentInNeighbor extends AbstractNeighborCondition<Dou
     protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor is eligible, its propensity is computed using the concentration of the biomolecule
         return Optional.of(neighbor)
-                .filter(it -> it.asPropertyOrNull(CellularProperty.class) != null)
+                .filter(it -> it.asPropertyOrNull(CellProperty.class) != null)
                 .map(it -> it.getConcentration(molecule))
                 .filter(it -> it >= concentration)
                 .map(it -> binomialCoefficientDouble(it.intValue(), (int) FastMath.ceil(concentration)))

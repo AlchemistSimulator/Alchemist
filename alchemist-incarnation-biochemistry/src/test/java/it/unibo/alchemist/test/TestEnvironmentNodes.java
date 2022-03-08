@@ -22,8 +22,8 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
-import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
+import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -236,7 +236,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> environment = testNoVar("testEnv2.yml");
         final Node<Double> center = environment.getNodes().stream()
                 .parallel()
-                .filter(n -> n.asPropertyOrNull(CellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CellProperty.class) != null)
                 .findAny()
                 .get();
         final double conAInNearest = environment.getNodes().stream()
@@ -258,7 +258,7 @@ final class TestEnvironmentNodes {
     void testEnv3() {
         final double conAInCell = (double) testNoVar("testEnv3.yml").getNodes().stream()
                 .parallel()
-                .filter(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -280,7 +280,7 @@ final class TestEnvironmentNodes {
     void testEnv4() {
         final double conAInCell = (double) testNoVar("testEnv4.yml").getNodes().stream()
                 .parallel()
-                .filter(n -> n.asPropertyOrNull(CircularCellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -331,7 +331,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> environment = testNoVar("testEnv7.yml");
         final double conAInCell = (double) environment.getNodes().stream()
                 .parallel()
-                .filter(n -> n.asPropertyOrNull(CellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CellProperty.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));
@@ -353,7 +353,7 @@ final class TestEnvironmentNodes {
         final Environment<Double, Euclidean2DPosition> environment = testNoVar("testEnv8.yml");
         final double conAInCell = (double) environment.getNodes().stream()
                 .parallel()
-                .filter(n -> n.asPropertyOrNull(CellularProperty.class) != null)
+                .filter(n -> n.asPropertyOrNull(CellProperty.class) != null)
                 .findAny()
                 .get()
                 .getConcentration(new Biomolecule("A"));

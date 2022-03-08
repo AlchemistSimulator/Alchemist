@@ -22,13 +22,13 @@ import org.apache.commons.math3.random.RandomGenerator
  * A pedestrian's individual characteristics.
  */
 class Human<T> @JvmOverloads constructor(
-    randomGenerator: RandomGenerator,
+    private val randomGenerator: RandomGenerator,
     override val node: Node<T>,
     override val age: Age,
     override val gender: Gender,
     override val speed: Speed = Speed(age, gender, randomGenerator),
     override val compliance: Double = Compliance(age, gender).level,
-    override val helpAttitude: HelpAttitude = HelpAttitude(age, gender)
+    override val helpAttitude: HelpAttitude = HelpAttitude(age, gender),
 ) : Human2DProperty<T> {
     @JvmOverloads constructor(
         randomGenerator: RandomGenerator,
@@ -39,4 +39,14 @@ class Human<T> @JvmOverloads constructor(
         compliance: Double = Compliance(Age.fromAny(age), Gender.fromString(gender)).level,
         helpAttitude: HelpAttitude = HelpAttitude(Age.fromAny(age), Gender.fromString(gender))
     ) : this(randomGenerator, node, Age.fromAny(age), Gender.fromString(gender), speed, compliance, helpAttitude)
+
+    override fun cloneOnNewNode(node: Node<T>) = Human(
+        randomGenerator,
+        node,
+        age,
+        gender,
+        speed,
+        compliance,
+        helpAttitude,
+    )
 }

@@ -8,7 +8,7 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
@@ -37,12 +37,12 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
      */
     public AddJunctionInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction j, final RandomGenerator rg) {
         super(n, e, rg);
-        if (n.asPropertyOrNull(CellularProperty.class) != null) {
+        if (n.asPropertyOrNull(CellProperty.class) != null) {
             declareDependencyTo(j);
             jun = j;
         } else {
             throw new UnsupportedOperationException("This Action can be set only in nodes with "
-                    + CellularProperty.class.getSimpleName());
+                    + CellProperty.class.getSimpleName());
         }
     }
 
@@ -65,11 +65,11 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        if (targetNode.asPropertyOrNull(CellularProperty.class) != null) {
-            getNode().asProperty(CellularProperty.class).addJunction(jun, targetNode);
+        if (targetNode.asPropertyOrNull(CellProperty.class) != null) {
+            getNode().asProperty(CellProperty.class).addJunction(jun, targetNode);
         } else {
             throw new UnsupportedOperationException("Can't add Junction in a node with no "
-                    + CellularProperty.class.getSimpleName());
+                    + CellProperty.class.getSimpleName());
         }
     }
 

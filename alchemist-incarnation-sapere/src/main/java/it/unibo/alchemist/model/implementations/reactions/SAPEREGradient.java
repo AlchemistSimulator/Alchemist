@@ -204,15 +204,17 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             final String expression,
             final String contextTemplate,
             final double gradThreshold) {
-        this(environment,
-                node,
-                new LsaMolecule(sourceTemplate),
-                new LsaMolecule(gradientTemplate),
-                valuePosition,
-                expression,
-                new LsaMolecule(contextTemplate),
-                gradThreshold,
-                timeDistribution);
+        this(
+            environment,
+            node,
+            new LsaMolecule(sourceTemplate),
+            new LsaMolecule(gradientTemplate),
+            valuePosition,
+            expression,
+            new LsaMolecule(contextTemplate),
+            gradThreshold,
+            timeDistribution
+        );
     }
 
     @Override

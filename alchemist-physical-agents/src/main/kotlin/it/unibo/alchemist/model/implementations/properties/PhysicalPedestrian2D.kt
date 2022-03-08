@@ -31,8 +31,8 @@ class PhysicalPedestrian2D<T>(
      */
     val environment: Physics2DEnvironment<T>,
     node: Node<T>,
-) : PhysicalPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
-by PhysicalPedestrian(randomGenerator, environment, node),
+) : PhysicalPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> by
+PhysicalPedestrian(randomGenerator, environment, node),
     PhysicalPedestrian2DProperty<T> {
     override val comfortArea: Euclidean2DShape get() = environment
         .shapeFactory.circle(node.asProperty<T, AreaProperty<T>>().shape.radius + comfortRay)

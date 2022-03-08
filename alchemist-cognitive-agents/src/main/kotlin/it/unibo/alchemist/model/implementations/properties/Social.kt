@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.implementations.groups.Alone
+import it.unibo.alchemist.model.implementations.groups.GenericGroup
 import it.unibo.alchemist.model.interfaces.Group
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
@@ -20,4 +21,7 @@ import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 data class Social<T> @JvmOverloads constructor(
     override val node: Node<T>,
     override val group: Group<T> = Alone(node),
-) : SocialProperty<T>
+) : SocialProperty<T> {
+
+    override fun cloneOnNewNode(node: Node<T>) = Social(node, GenericGroup(listOf(node)))
+}

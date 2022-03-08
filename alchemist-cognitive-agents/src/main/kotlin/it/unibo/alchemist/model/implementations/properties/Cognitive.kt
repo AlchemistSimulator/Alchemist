@@ -26,10 +26,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * The node's [CognitiveModel].
  */
 data class Cognitive<T, P, A, F> @JvmOverloads constructor(
-    /**
-     * The environment in which the node moves.
-     */
-    val environment: PhysicsEnvironment<T, P, A, F>,
+    private val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
     override val danger: Molecule? = null,
 ) : CognitiveProperty<T>
@@ -39,11 +36,13 @@ where P : Position<P>,
       F : GeometricShapeFactory<P, A> {
     override val cognitiveModel: CognitiveModel by lazy {
         ImpactModel(
-            node.asProperty<T, HumanProperty<T, P, A>>().compliance, ::influentialPeople
+            node.asProperty<T, HumanProperty<T, P, A>>().compliance, ::influentialPeople,
         ) {
             environment.getLayer(danger)
                 .map { it.getValue(environment.getPosition(node)) as Double }
                 .orElse(0.0)
         }
     }
+
+    override fun cloneOnNewNode(node: Node<T>) = Cognitive(environment, node, danger)
 }

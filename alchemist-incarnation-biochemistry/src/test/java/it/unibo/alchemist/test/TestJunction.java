@@ -18,7 +18,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,8 @@ class TestJunction {
     private Node<Double> node2;
     private Node<Double> node3;
 
-    private CellularProperty<Euclidean2DPosition> getCell(final Node<Double> node) {
-        return node.asProperty(CellularProperty.class);
+    private CellProperty<Euclidean2DPosition> getCell(final Node<Double> node) {
+        return node.asProperty(CellProperty.class);
     }
 
     /**
@@ -83,7 +83,7 @@ class TestJunction {
 
         assertEquals(getCell(node1).getJunctionsCount(), 2);
         assertEquals(getCell(node2).getJunctionsCount(), 0);
-        final CellularProperty<Euclidean2DPosition> b = getCell(node3);
+        final CellProperty<Euclidean2DPosition> b = getCell(node3);
         assertEquals(b.getJunctionsCount(), 0);
         //CHECKSTYLE:OFF magicnumber
         final int totJ = 123;

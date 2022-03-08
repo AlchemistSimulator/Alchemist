@@ -36,7 +36,7 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
     /**
      * The simulation [RandomGenerator].
      */
-    open val randomGenerator: RandomGenerator,
+    val randomGenerator: RandomGenerator,
     override val environment: EnvironmentWithGraph<*, T, P, A, N, DefaultEdge>,
     override val node: Node<T>,
     override val knowledgeDegree: Double,

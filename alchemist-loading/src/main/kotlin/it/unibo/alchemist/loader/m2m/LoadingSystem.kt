@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
@@ -76,14 +75,14 @@ internal abstract class LoadingSystem(
             setCurrentRandomGenerator(simulationRNG)
             // INCARNATION
             val incarnation = SimulationModel.visitIncarnation<P, T>(root[DocumentRoot.incarnation])
-            registerSingleton<Incarnation<T, P>>(incarnation)
+            registerSingleton(incarnation)
             registerImplicit<String, Molecule>(incarnation::createMolecule)
             registerImplicit<String, Any?>(incarnation::createConcentration)
             // ENVIRONMENT
             val environment: Environment<T, P> =
                 SimulationModel.visitEnvironment(incarnation, context, root[DocumentRoot.environment])
             logger.info("Created environment: {}", environment)
-            registerSingleton<Environment<T, P>>(environment)
+            registerSingleton(environment)
             // LAYERS
             val layers: List<Pair<Molecule, Layer<T, P>>> =
                 SimulationModel.visitLayers(incarnation, context, root[DocumentRoot.layers])
@@ -102,7 +101,7 @@ internal abstract class LoadingSystem(
             val linkingRule =
                 SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.linkingRule))
             environment.linkingRule = linkingRule
-            registerSingleton<LinkingRule<T, P>>(linkingRule)
+            registerSingleton(linkingRule)
             // DISPLACEMENTS
             setCurrentRandomGenerator(scenarioRNG)
             val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
@@ -171,7 +170,7 @@ internal abstract class LoadingSystem(
             val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Deployment.programs)
             deployment.stream().forEach { position ->
                 val node = SimulationModel.visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
-                registerSingleton<Node<T>>(node)
+                registerSingleton(node)
                 // NODE CONTENTS
                 contents.forEach { (shapes, molecule, concentrationMaker) ->
                     if (shapes.isEmpty() || shapes.any { position in it }) {
@@ -181,12 +180,9 @@ internal abstract class LoadingSystem(
                     }
                 }
                 // PROPERTIES
-                val properties = SimulationModel.visitProperty<T, P>(context, descriptor)
-                properties.forEach { (shapes, property) ->
-                    if (shapes.isEmpty() || shapes.any { position in it }) {
-                        node.addProperty(property)
-                    }
-                }
+                SimulationModel.visitProperty<T, P>(context, descriptor)
+                    .filter { (shapes, _) -> shapes.isEmpty() || shapes.any { position in it } }
+                    .forEach { (_, property) -> node.addProperty(property) }
                 // PROGRAMS
                 val programs = SimulationModel.visitRecursively(
                     context,
@@ -198,8 +194,7 @@ internal abstract class LoadingSystem(
                     }
                     (program as? Map<*, *>)?.let {
                         SimulationModel.visitProgram(simulationRNG, incarnation, environment, node, context, it)
-                            ?.onSuccess {
-                                (shapes, reaction) ->
+                            ?.onSuccess { (shapes, reaction) ->
                                 if (shapes.isEmpty() || shapes.any { shape -> position in shape }) {
                                     node.addReaction(reaction)
                                 }

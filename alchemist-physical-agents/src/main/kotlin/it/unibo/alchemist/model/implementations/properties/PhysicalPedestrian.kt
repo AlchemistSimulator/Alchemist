@@ -28,7 +28,10 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
  * Base implementation of a pedestrian's capability to experience physical interactions.
  */
 class PhysicalPedestrian<T, P, A, F>(
-    randomGenerator: RandomGenerator,
+    /**
+     * The simulation's [RandomGenerator].
+     */
+    private val randomGenerator: RandomGenerator,
     /**
      * The environment in which the pedestrian is moving.
      */
@@ -75,7 +78,7 @@ class PhysicalPedestrian<T, P, A, F>(
 
     companion object {
         /**
-         * Mimimum value for normal state [comfortRay].
+         * Minimum value for normal state [comfortRay].
          */
         private const val minimumSpaceTreshold = 0.1
         /**
@@ -84,6 +87,7 @@ class PhysicalPedestrian<T, P, A, F>(
         private const val maximumSpaceThreshold = 1.0
     }
 
-    override val comfortArea: GeometricShape<P, A>
-        get() = environment.shapeFactory.adimensional()
+    override val comfortArea: GeometricShape<P, A> get() = environment.shapeFactory.adimensional()
+
+    override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian(randomGenerator, environment, node)
 }

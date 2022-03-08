@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -25,7 +25,7 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
 
     private final Junction junction;
     private final Environment<Double, ?> environment;
-    private final CellularProperty<?> cell;
+    private final CellProperty<?> cell;
 
     /**
      * 
@@ -35,10 +35,10 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
      */
     public JunctionPresentInCell(final Environment<Double, ?> environment, final Node<Double> node, final Junction junction) {
         super(environment, node);
-        cell = node.asPropertyOrNull(CellularProperty.class);
+        cell = node.asPropertyOrNull(CellProperty.class);
         Objects.requireNonNull(
                 cell,
-                "This Condition can be set only in node with " + CellularProperty.class.getSimpleName()
+                "This Condition can be set only in node with " + CellProperty.class.getSimpleName()
         );
         declareDependencyOn(junction);
         this.junction = junction;

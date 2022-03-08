@@ -31,5 +31,8 @@ open class Pedestrian<T> @JvmOverloads constructor(
 ) : PedestrianProperty<T>,
     WalkingPedestrianProperty<T> by WalkingPedestrian(node, walkingSpeed),
     RunningPedestrianProperty<T> by RunningPedestrian(node, runningSpeed) {
+
     override fun speed(): Double = randomGenerator.nextDouble(walkingSpeed, runningSpeed)
+
+    override fun cloneOnNewNode(node: Node<T>) = Pedestrian(randomGenerator, node, walkingSpeed, runningSpeed)
 }

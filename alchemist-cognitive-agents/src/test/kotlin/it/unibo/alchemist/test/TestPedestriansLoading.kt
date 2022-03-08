@@ -3,7 +3,7 @@ package it.unibo.alchemist.test
 import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
-import it.unibo.alchemist.model.interfaces.Node
+import io.kotest.matchers.nulls.shouldNotBeNull
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -13,8 +13,6 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
-
-    val isSocialNode: (Node<T>) -> Boolean = { it.asPropertyOrNull<T, SocialProperty<T>>() != null }
 
     "homogeneous pedestrians loading" {
         loadYamlSimulation<T, P>("homogeneous-pedestrians.yml").startSimulation()
@@ -38,7 +36,7 @@ class TestPedestriansLoading<T, P, A> : StringSpec({
     "groups of pedestrians loading" {
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
             onceInitialized = { environment ->
-                assert(environment.nodes.all(isSocialNode))
+                environment.nodes.forEach { it.asPropertyOrNull<T, SocialProperty<T>>().shouldNotBeNull() }
             }
         )
     }

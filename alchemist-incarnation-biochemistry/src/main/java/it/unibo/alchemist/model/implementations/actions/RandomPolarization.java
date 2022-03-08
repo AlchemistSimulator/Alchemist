@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
@@ -26,7 +26,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
 
     private static final long serialVersionUID = 1L;
     private final Environment<Double, P> environment;
-    private final CellularProperty<P> cell;
+    private final CellProperty<P> cell;
 
     /**
      * @param environment the environment
@@ -40,10 +40,10 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
     ) {
         super(node, random);
         this.environment = environment;
-        this.cell = node.asPropertyOrNull(CellularProperty.class);
+        this.cell = node.asPropertyOrNull(CellProperty.class);
         Objects.requireNonNull(
                 cell,
-                "Polarization can happen only in nodes with " + CellularProperty.class.getSimpleName()
+                "Polarization can happen only in nodes with " + CellProperty.class.getSimpleName()
         );
     }
 

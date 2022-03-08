@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.conditions;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 
 /**
  * A condition is valid if the node has a neighborhood, formally if the node has at least one node 
@@ -40,13 +40,13 @@ public final class NeighborhoodPresent<T> extends AbstractNeighborCondition<T> {
     @Override
     protected double getNeighborPropensity(final Node<T> neighbor) {
         // to be eligible (p = 1) a neighbor just needs to be instance of CellNode
-        return neighbor.asPropertyOrNull(CellularProperty.class) != null ? 1d : 0d;
+        return neighbor.asPropertyOrNull(CellProperty.class) != null ? 1d : 0d;
     }
 
     @Override
     public boolean isValid() {
         return getEnvironment().getNeighborhood(getNode()).getNeighbors().stream()
-                .anyMatch(n -> n.asPropertyOrNull(CellularProperty.class) != null);
+                .anyMatch(n -> n.asPropertyOrNull(CellProperty.class) != null);
     }
 
     @Override

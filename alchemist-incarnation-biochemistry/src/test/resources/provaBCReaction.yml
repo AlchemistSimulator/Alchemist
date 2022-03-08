@@ -19,7 +19,7 @@ deployments:
     nodes:
       type: GenericNode
     properties:
-      type: CircularCellular
+      type: CircularCell
       parameters: [1]
     programs:
       - *waterDissociation

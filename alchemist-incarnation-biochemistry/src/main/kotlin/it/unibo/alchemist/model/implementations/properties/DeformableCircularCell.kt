@@ -13,20 +13,20 @@ import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.properties.CircularCellularProperty
-import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellularProperty
+import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty
+import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellProperty
 
 /**
- * Base implementation of a [CircularCellularProperty].
+ * Base implementation of a [CircularCellProperty].
  */
-class DeformableCircularCellular<P : Position<P>> @JvmOverloads constructor(
+class DeformableCircularCell<P : Position<P>> @JvmOverloads constructor(
     environment: Environment<Double, P>,
     override val node: Node<Double>,
     override val maximumDiameter: Double,
     override val rigidity: Double,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : CircularDeformableCellularProperty<P>,
-    CircularCellularProperty<P> by CircularCellular(
+) : CircularDeformableCellProperty<P>,
+    CircularCellProperty<P> by CircularCell(
         environment,
         node,
         maximumDiameter * rigidity,

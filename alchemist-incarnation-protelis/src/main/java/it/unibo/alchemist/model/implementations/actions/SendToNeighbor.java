@@ -75,11 +75,6 @@ public final class SendToNeighbor extends AbstractAction<Object> {
         program.prepareForComputationalCycle();
     }
 
-    @Override
-    public Node<Object> getNode() {
-        return super.getNode();
-    }
-
     /**
      * @return the {@link RunProtelisProgram} whose data will be sent
      */

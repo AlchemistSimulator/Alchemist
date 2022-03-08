@@ -81,6 +81,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(new CacheLoader<>() {
+                @NotNull
                 @Override
                 public SynchronizedVM load(@Nonnull final CacheKey key) {
                     return new SynchronizedVM(key);
@@ -207,7 +208,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             return new ComputationalRoundComplete(node, pList.get(0));
         }
         throw new IllegalArgumentException(
-                "The node must have an instance instance of " + ProtelisProperty.class.getSimpleName()
+            "The node must have an instance instance of " + ProtelisProperty.class.getSimpleName()
         );
     }
 
@@ -222,24 +223,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Environment<Object, P> environment,
             final String parameter
     ) {
-        final Node<Object> node = new GenericNode<>(this, environment) {
-
-            @Override
-            protected Object createT() {
-                return createConcentration();
-            }
-
-            @NotNull
-            @Override
-            public Node<Object> cloneNode(@NotNull final Time currentTime) {
-                final Node<Object> result = createNode(randomGenerator, environment, parameter);
-                getContents().forEach(result::setConcentration);
-                getReactions().forEach(r -> result.addReaction(r.cloneOnNewNode(result, currentTime)));
-                return result;
-            }
-        };
-        node.addProperty(new Protelis<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
-        return node;
+        return new GenericNode<>(this, environment) {{
+            addProperty(new Protelis<P>((ProtelisIncarnation<?>) environment.getIncarnation(), this));
+        }};
     }
 
     @Override

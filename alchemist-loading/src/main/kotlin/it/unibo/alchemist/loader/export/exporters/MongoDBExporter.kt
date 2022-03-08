@@ -26,7 +26,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     val uri: String,
     val dbName: String = DEFAULT_DATABASE,
     val interval: Double = DEFAULT_INTERVAL,
-    private val appendTime: Boolean = false
+    private val appendTime: Boolean = false,
 ) : AbstractExporter<T, P>(interval) {
 
     /**
@@ -56,7 +56,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>?,
         time: Time,
-        step: Long
+        step: Long,
     ): Document {
         val document = Document()
         dataExtractors.forEach { extractor ->

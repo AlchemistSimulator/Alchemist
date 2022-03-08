@@ -35,8 +35,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
  */
 class TestOrientingBehavior<T, P> : StringSpec({
 
-    val filterOrientingNode: (Node<T>) -> Boolean =
-        { it.asPropertyOrNull<T, OrientingProperty<T, P, *, *, *, *>>() != null }
+    fun Iterable<Node<T>>.orienting() = filter { it.asPropertyOrNull<T, OrientingProperty<T, P, *, *, *, *>>() != null }
 
     /**
      * Asserts that the distance of each pedestrian from the target position specified
@@ -49,7 +48,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
     ) {
         val target = environment.makePosition(*coords)
         environment.nodes
-            .filter(filterOrientingNode)
+            .orienting()
             .forEach { p -> environment.getPosition(p).distanceTo(target) shouldBeLessThan tolerance }
     }
 
@@ -140,7 +139,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
         loadYamlSimulation<T, P>("congestion-avoidance.yml").startSimulation(
             atEachStep = { environment: Environment<T, P>, _, _, _ ->
                 if (environment is Euclidean2DEnvironmentWithGraph<*, T, *, *> && !corridorTaken) {
-                    val node = environment.nodes.filter(filterOrientingNode).first()
+                    val node = environment.nodes.orienting().first()
                     val corridorToTake = environment.graph.nodeContaining(environment.makePosition(35.0, 31.0))
                     corridorTaken = corridorToTake?.contains(environment.getPosition(node)) ?: false
                 }

@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.CellularProperty;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.Comparator;
@@ -34,7 +34,7 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
     private final Environment<Double, P> environment;
     private final Biomolecule biomolecule;
     private final boolean ascend;
-    private final CellularProperty<P> cell;
+    private final CellProperty<P> cell;
 
     /**
      * 
@@ -53,8 +53,8 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
     ) {
         super(node);
         this.cell = Objects.requireNonNull(
-                node.asPropertyOrNull(CellularProperty.class),
-                "This action can't be added to nodes with no " + CellularProperty.class.getSimpleName()
+                node.asPropertyOrNull(CellProperty.class),
+                "This action can't be added to nodes with no " + CellProperty.class.getSimpleName()
         );
         this.environment = Objects.requireNonNull(environment);
         this.biomolecule = Objects.requireNonNull(biomolecule);

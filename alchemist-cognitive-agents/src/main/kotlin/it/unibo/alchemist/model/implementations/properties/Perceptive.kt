@@ -19,4 +19,7 @@ import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 data class Perceptive<T> (
     override val node: Node<T>,
     override val fieldOfView: InfluenceSphere<T>,
-) : PerceptiveProperty<T>
+) : PerceptiveProperty<T> {
+
+    override fun cloneOnNewNode(node: Node<T>) = Perceptive(node, fieldOfView)
+}

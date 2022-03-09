@@ -43,11 +43,16 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor {
                 mandatory(JavaType.type)
                 optional(JavaType.parameters, contents, properties, nodes, programs)
-                forbidden(Filter.shape)
+                forbidden(Filter.filter)
             }
         )
+        /*
+         * in:
+         *   - type: FilterType
+         *     parameters: [...]
+         */
         object Filter : SyntaxElement {
-            const val shape = "in"
+            const val filter = "in"
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(JavaType.type)
@@ -59,7 +64,7 @@ internal object DocumentRoot : SyntaxElement {
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(JavaType.type)
-                    optional(JavaType.parameters, Filter.shape)
+                    optional(JavaType.parameters, Filter.filter)
                 }
             )
         }
@@ -69,7 +74,7 @@ internal object DocumentRoot : SyntaxElement {
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(molecule, concentration)
-                    optional(Filter.shape)
+                    optional(Filter.filter)
                 }
             )
         }
@@ -81,11 +86,11 @@ internal object DocumentRoot : SyntaxElement {
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(JavaType.type)
-                    optional(JavaType.parameters, Filter.shape, conditions, timeDistribution, actions)
+                    optional(JavaType.parameters, Filter.filter, conditions, timeDistribution, actions)
                 },
                 validDescriptor {
                     mandatory(program)
-                    optional(timeDistribution, Filter.shape)
+                    optional(timeDistribution, Filter.filter)
                 }
             )
         }

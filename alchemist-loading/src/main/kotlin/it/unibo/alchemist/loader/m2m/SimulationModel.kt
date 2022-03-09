@@ -279,11 +279,11 @@ internal object SimulationModel {
         context: Context,
         element: Map<*, *>,
     ): List<Filter<P>> {
-        val shapesKey = DocumentRoot.Deployment.Filter.shape
-        val filters = visitRecursively(context, element[shapesKey] ?: emptyList<Any>()) { shape ->
+        val filterKey = DocumentRoot.Deployment.Filter.filter
+        val filters = visitRecursively(context, element[filterKey] ?: emptyList<Any>()) { shape ->
             visitBuilding<Filter<P>>(context, shape)
         }
-        logger.debug("Shapes: {}", filters)
+        logger.debug("Filters: {}", filters)
         return filters
     }
 
@@ -301,7 +301,7 @@ internal object SimulationModel {
                 ?.takeIf { element.containsKey(moleculeKey) }
                 ?.let {
                     logger.debug("Found content descriptor: {}", it)
-                    val shapes = visitFilter<P>(context, element)
+                    val filters = visitFilter<P>(context, element)
                     val moleculeElement = element[moleculeKey]
                     require(moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
                         val type = moleculeElement?.let { ": " + it::class.simpleName } ?: ""
@@ -314,7 +314,7 @@ internal object SimulationModel {
                     val concentrationMaker: () -> T = {
                         element[concentrationKey]?.toString().let { incarnation.createConcentration(it) }
                     }
-                    Result.success(Triple(shapes, molecule, concentrationMaker))
+                    Result.success(Triple(filters, molecule, concentrationMaker))
                 }
         }
     }
@@ -328,11 +328,12 @@ internal object SimulationModel {
         val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
         return visitRecursively(context, allCapabilities, DocumentRoot.Deployment.Property) { element ->
             (element as? Map<*, *>)?.let {
-                val shapes = visitFilter<P>(context, element)
+                val filters = visitFilter<P>(context, element)
                 val nodeProperty = visitBuilding<NodeProperty<T>>(context, element)
-                    ?.getOrThrow() ?: cantBuildWith<NodeProperty<T>>(root, JavaType)
+                    ?.getOrThrow()
+                    ?: cantBuildWith<NodeProperty<T>>(root, JavaType)
                 logger.debug("Property: {}", nodeProperty)
-                Result.success(Pair(shapes, nodeProperty))
+                Result.success(Pair(filters, nodeProperty))
             }
         }
     }
@@ -512,7 +513,7 @@ internal object SimulationModel {
         fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
             makeWith(simulationRNG, environment, node, timeDistribution, reaction, parameter?.toString())
         }
-        val shapes = visitFilter<P>(context, program)
+        val filters = visitFilter<P>(context, program)
         val conditions = visitRecursively<Condition<T>>(
             context,
             program[ProgramSyntax.conditions] ?: emptyList<Any>(),
@@ -541,7 +542,7 @@ internal object SimulationModel {
         }
         context.factory.deregisterSingleton(reaction)
         context.factory.deregisterSingleton(timeDistribution)
-        Result.success(Pair(shapes, reaction))
+        Result.success(Pair(filters, reaction))
     } else {
         null
     }

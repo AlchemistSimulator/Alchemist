@@ -288,7 +288,7 @@ Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Con
 #### Examples
 * Three molecules injected into all nodes deployed in the scenario
     {{<code path="alchemist-incarnation-protelis/src/test/resources/gradient.yml" >}}
-* Injection of a molecule only in those nodes located inside a {{% api package="loader.shapes" class="RectangleFilter" %}}
+* Injection of a molecule only in those nodes located inside a {{% api package="loader.filters" class="Rectangle" %}}
     {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ### `content.molecule`
@@ -572,11 +572,11 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 
 **Type**: SpecMap
 
-Builds a {{% api package="loader.shapes" class="ShapeFilter" %}}
+Builds a {{% api package="loader.filters" class="Filter" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 #### Examples
-* Injection of a molecule only in those nodes located inside a {{% api package="loader.shapes" class="RectangleFilter" %}}
+* Injection of a molecule only in those nodes located inside a {{% api package="loader.filters" class="Rectangle" %}}
   {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ---

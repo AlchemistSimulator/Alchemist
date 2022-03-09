@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellProp
 /**
  * Base implementation of a [CircularCellProperty].
  */
-class DeformableCircularCell<P : Position<P>> @JvmOverloads constructor(
+class CircularDeformableCell<P : Position<P>> @JvmOverloads constructor(
     environment: Environment<Double, P>,
     override val node: Node<Double>,
     override val maximumDiameter: Double,

@@ -64,7 +64,7 @@ In order to do that, however, the environment must feature appropriate support, 
 {{% api package="model.implementations.environments" class="BioRect2DEnvironmentNoOverlap" %}}.
 
 The cells must support deformation as well, as, for instance, a node with
-{{% api package="model.implementations.properties" class="DeformableCircularCellular" %}} property.
+{{% api package="model.implementations.properties" class="CircularDeformableCell" %}} property.
 
 The minimum radius of the cell is so that ``min-radius = rigidity * max-radius``
 and the two parameters are used to compute collisions and impacts between the cells.

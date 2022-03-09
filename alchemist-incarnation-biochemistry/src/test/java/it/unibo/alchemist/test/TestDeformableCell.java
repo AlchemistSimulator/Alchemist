@@ -8,7 +8,7 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.model.BiochemistryIncarnation;
-import it.unibo.alchemist.model.implementations.properties.DeformableCircularCell;
+import it.unibo.alchemist.model.implementations.properties.CircularDeformableCell;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
@@ -79,7 +79,7 @@ class TestDeformableCell {
     private Node<Double> createDeformableCell(final double maxDiameter, final double rigidity) {
         return new GenericNode<>(inc, environment) {
             {
-                addProperty(new DeformableCircularCell<>(environment, this, maxDiameter, rigidity));
+                addProperty(new CircularDeformableCell<>(environment, this, maxDiameter, rigidity));
             }
             @Override
             protected Double createT() {

@@ -223,9 +223,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Environment<Object, P> environment,
             final String parameter
     ) {
-        return new GenericNode<>(this, environment) {{
-            addProperty(new Protelis<P>((ProtelisIncarnation<?>) environment.getIncarnation(), this));
-        }};
+        final Node<Object> node = new GenericNode<>(this, environment);
+        node.addProperty(new Protelis<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
+        return node;
     }
 
     @Override

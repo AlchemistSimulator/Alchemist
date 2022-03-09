@@ -179,7 +179,7 @@ internal abstract class LoadingSystem(
             val programs = SimulationModel.visitRecursively(
                 context,
                 programDescriptor,
-                DocumentRoot.Deployment.Program
+                DocumentRoot.Deployment.Program,
             ) { program ->
                 requireNotNull(program) {
                     "null is not a valid program in $descriptor. ${DocumentRoot.Deployment.Program.guide}"

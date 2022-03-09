@@ -47,13 +47,13 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
             final Environment<Double, P> environment,
             final String parameter
     ) {
-        return new GenericNode<>(this, environment) {{
-            if (parameter == null || parameter.isEmpty()) {
-                addProperty(new CircularCell<>(environment, this));
-            } else {
-                addProperty(new CircularCell<>(environment, this, Double.parseDouble(parameter)));
-            }
-        }};
+        final Node<Double> node = new GenericNode<>(this, environment);
+        if (parameter == null || parameter.isEmpty()) {
+            node.addProperty(new CircularCell<P>(environment, node));
+        } else {
+            node.addProperty(new CircularCell<P>(environment, node, Double.parseDouble(parameter)));
+        }
+        return node;
     }
 
     @Override

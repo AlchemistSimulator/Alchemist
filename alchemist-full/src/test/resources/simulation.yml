@@ -20,7 +20,7 @@ deployments:
     parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
     contents:
       - in:
-          type: RectangleFilter
+          type: Rectangle
           parameters: [-6, -6, 2, 2]
         molecule: source
         concentration: true

@@ -5,7 +5,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.loader.shapes;
+package it.unibo.alchemist.loader.filters;
 
 import it.unibo.alchemist.model.interfaces.Position2D;
 
@@ -19,7 +19,7 @@ import static java.lang.Math.abs;
  *
  * @param <P> position type
  */
-public class RectangleFilter<P extends Position2D<P>> extends Abstract2DShapeFilter<P> {
+public class Rectangle<P extends Position2D<P>> extends Abstract2DShape<P> {
 
     /**
      * @param x
@@ -31,7 +31,7 @@ public class RectangleFilter<P extends Position2D<P>> extends Abstract2DShapeFil
      * @param h
      *            height
      */
-    public RectangleFilter(final double x, final double y, final double w, final double h) {
+    public Rectangle(final double x, final double y, final double w, final double h) {
         super(new Rectangle2D.Double(min(x, x + w), min(y, y + h), abs(w), abs(h)));
     }
 

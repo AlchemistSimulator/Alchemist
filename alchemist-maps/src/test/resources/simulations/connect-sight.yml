@@ -39,7 +39,7 @@ deployments:
       - *latitude_space
     contents:
       - in:
-          type: RectangleFilter
+          type: Rectangle
           parameters: [-6, -6, 2, 2]
         molecule: source
         concentration: true

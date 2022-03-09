@@ -5,23 +5,23 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.loader.shapes;
+package it.unibo.alchemist.loader.filters;
 
 import it.unibo.alchemist.model.interfaces.Position2D;
 
 /**
- * A bidimensional Alchemist {@link ShapeFilter} that relies on AWT {@link java.awt.Shape}.
+ * A bidimensional Alchemist {@link Filter} that relies on AWT {@link java.awt.Shape}.
  *
  * @param <P> position type
  */
-public abstract class Abstract2DShapeFilter<P extends Position2D<P>> implements ShapeFilter<P> {
+public abstract class Abstract2DShape<P extends Position2D<P>> implements Filter<P> {
 
     private final java.awt.Shape shape;
 
     /**
      * @param shape any Java AWT {@link java.awt.Shape}
      */
-    protected Abstract2DShapeFilter(final java.awt.Shape shape) {
+    protected Abstract2DShape(final java.awt.Shape shape) {
         this.shape = shape;
     }
 

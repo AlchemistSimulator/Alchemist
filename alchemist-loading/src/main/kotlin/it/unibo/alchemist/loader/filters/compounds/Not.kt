@@ -10,16 +10,17 @@
 package it.unibo.alchemist.loader.filters.compounds
 
 import it.unibo.alchemist.loader.filters.Filter
+import it.unibo.alchemist.model.interfaces.Position
 
 /**
  * Negates the [filter]'s test.
  * @param [filter] the filter to be negated.
  */
-class Not<T> (
-    val filter: Filter<T>
-) : Filter<T> {
+class Not<P : Position<P>> (
+    val filter: Filter<P>
+) : Filter<P> {
     /**
      * Returns true if [filter] is not satisfied.
      */
-    override fun test(something: T): Boolean = !filter.test(something)
+    override operator fun contains(position: P) = position !in filter
 }

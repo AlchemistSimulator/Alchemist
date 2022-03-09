@@ -44,7 +44,7 @@ _pool: &program
 _contents:
   - source: &content
       in:
-        type: RectangleFilter
+        type: Rectangle
         parameters: [-0.2, -0.2, 2.4, 2.4]
       molecule: source
       concentration: true

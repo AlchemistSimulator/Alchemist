@@ -10,18 +10,19 @@
 package it.unibo.alchemist.loader.filters.compounds
 
 import it.unibo.alchemist.loader.filters.Filter
+import it.unibo.alchemist.model.interfaces.Position
 
 /**
  * Check if only one between [filterA] and [filterB] is satisfied.
  * @param filterA the first filter.
  * @param filterB the second filter.
  */
-data class Xor<T> (
-    val filterA: Filter<T>,
-    val filterB: Filter<T>,
-) : Filter<T> {
+data class Xor<P : Position<P>> (
+    val filterA: Filter<P>,
+    val filterB: Filter<P>,
+) : Filter<P> {
     /**
      * Returns true if only one [filterA] and [filterB] is satisfied.
      */
-    override fun test(something: T): Boolean = filterA.test(something) != filterB.test(something)
+    override operator fun contains(position: P) = (position in filterA) != (position in filterB)
 }

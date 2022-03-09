@@ -11,7 +11,7 @@ deployments:
       - molecule: "source"
         concentration: true
         in:
-          type: CircleFilter
+          type: Circle
           parameters: [107.96487911806524, 102.49167432603535, 10]
     programs:
       - time-distribution: 1 # This is a frequency

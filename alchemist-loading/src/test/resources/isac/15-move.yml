@@ -47,7 +47,7 @@ deployments:
     parameters: [*mSize, *mSize, *size, *size, 0.25, 0.25, 0.1, 0.1]
     contents:
       in:
-        type: RectangleFilter
+        type: Rectangle
         parameters: [*sourceStart, *sourceStart, *sourceSize, *sourceSize]
       molecule: token, 0, []
     programs:

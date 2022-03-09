@@ -5,7 +5,7 @@ deployments:
   parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1] # A perturbed grid of devices
   contents:
     - molecule: "{hit, 0}" # Everywhere, no one has been hit
-    - in: { type: RectangleFilter, parameters: [-0.5, -0.5, 1, 1] } # Inside this shape...
+    - in: { type: Rectangle, parameters: [-0.5, -0.5, 1, 1] } # Inside this shape...
       molecule: ball # ...every node has a ball
   programs:
     - time-distribution: 1 # This is a frequency, time distribution type is left to the incarnation

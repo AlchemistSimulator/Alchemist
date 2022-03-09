@@ -9,10 +9,24 @@
 
 package it.unibo.alchemist.loader.filters
 
+import it.unibo.alchemist.model.interfaces.Position
 import java.util.function.Predicate
 
 /**
  * Filtering condition for deployments. (e.g inject a [Module] in a node if [test]
  * is satisfied).
  */
-interface Filter<T> : Predicate<T>
+interface Filter<P : Position<P>> : Predicate<P> {
+
+    /**
+     * Checks if the [position] is inside the shape.
+     * @return true if the position is inside the [Filter].
+     */
+    operator fun contains(position: P): Boolean
+
+    /**
+     * Checks if the [position] is inside the shape.
+     * @return true if the position is inside the [Filter].
+     */
+    override fun test(position: P) = contains(position)
+}

@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.loader.shapes.RectangleFilter;
-import it.unibo.alchemist.loader.shapes.ShapeFilter;
+import it.unibo.alchemist.loader.filters.Filter;
+import it.unibo.alchemist.loader.filters.Rectangle;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
@@ -26,7 +26,7 @@ class TestRectangleFilter {
      */
     @Test
     void test() {
-        final ShapeFilter<GeoPosition> s = new RectangleFilter<>(12, 44, 1, 1);
+        final Filter<GeoPosition> s = new Rectangle<>(12, 44, 1, 1);
         // CHECKSTYLE: MagicNumber OFF
         assertTrue(s.contains(new LatLongPosition(44.132300, 12.233000))); // NOPMD
         // CHECKSTYLE: MagicNumber ON
@@ -40,7 +40,7 @@ class TestRectangleFilter {
         /*
          * In this rectangle the x should go from 10 to 15 and the y from 45 to 35
          */
-        final ShapeFilter<Euclidean2DPosition> s = new RectangleFilter<>(15, 45, -5, -10);
+        final Filter<Euclidean2DPosition> s = new Rectangle<>(15, 45, -5, -10);
         // CHECKSTYLE: MagicNumber OFF
         assertTrue(s.contains(new Euclidean2DPosition(12, 40)));
         // CHECKSTYLE: MagicNumber ON

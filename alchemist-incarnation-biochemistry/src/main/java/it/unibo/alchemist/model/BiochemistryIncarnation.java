@@ -9,9 +9,9 @@
 package it.unibo.alchemist.model;
 
 
-import it.unibo.alchemist.model.implementations.properties.CircularCell;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.implementations.properties.CircularCell;
 import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Action;
@@ -22,11 +22,9 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @param <P> position type, must be a {@link Vector}

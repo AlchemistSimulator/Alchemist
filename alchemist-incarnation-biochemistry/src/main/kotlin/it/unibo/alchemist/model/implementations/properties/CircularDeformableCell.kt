@@ -30,7 +30,7 @@ class CircularDeformableCell<P : Position<P>> @JvmOverloads constructor(
         environment,
         node,
         maximumDiameter * rigidity,
-        junctions
+        junctions,
     ) {
     init {
         require(rigidity in 0.0..1.0) {

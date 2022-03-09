@@ -77,15 +77,11 @@ class TestDeformableCell {
     private TimeDistribution<Double> time;
 
     private Node<Double> createDeformableCell(final double maxDiameter, final double rigidity) {
-        return new GenericNode<>(inc, environment) {
-            {
-                addProperty(new CircularDeformableCell<>(environment, this, maxDiameter, rigidity));
-            }
-            @Override
-            protected Double createT() {
-                return 0d;
-            }
-        };
+        final Node<Double> node =  new GenericNode<>(inc, environment);
+        node.addProperty(
+            new CircularDeformableCell<>(environment, node, maxDiameter, rigidity)
+        );
+        return node;
     }
 
     /**

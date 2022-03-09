@@ -111,6 +111,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 .collect(Collectors.toList());
     }
 
+    private void checkIsProtelisNode(final Node<Object> node, final String exceptionMessage) {
+        Objects.requireNonNull(node.asPropertyOrNull(ProtelisProperty.class), exceptionMessage);
+    }
+
     @Override
     public Action<Object> createAction(
             final RandomGenerator randomGenerator,
@@ -121,39 +125,34 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final String additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters);
-        Objects.requireNonNull(node);
-        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
-            if ("send".equalsIgnoreCase(additionalParameters)) {
-                final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
-                        .parallelStream()
-                        .flatMap(r -> r.getActions().parallelStream())
-                        .filter(a -> a instanceof SendToNeighbor)
-                        .map(c -> ((SendToNeighbor) c).getProtelisProgram())
-                        .collect(Collectors.toList());
-                final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
-                if (pList.isEmpty()) {
-                    throw new IllegalStateException("There is no program requiring a "
-                            + SendToNeighbor.class.getSimpleName() + " action");
-                }
-                if (pList.size() > 1) {
-                    throw new IllegalStateException("There are too many programs requiring a "
-                            + SendToNeighbor.class.getName() + " action: " + pList);
-                }
-                return new SendToNeighbor(node, reaction, pList.get(0));
-            } else {
-                try {
-                    return new RunProtelisProgram<>(environment, node, reaction, randomGenerator, additionalParameters);
-                } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
-                    throw new IllegalArgumentException(
-                            "Could not create the requested Protelis program: " + additionalParameters,
-                            e
-                    );
-                }
+        checkIsProtelisNode(node, "The node must have a " + ProtelisProperty.class.getSimpleName());
+        if ("send".equalsIgnoreCase(additionalParameters)) {
+            final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
+                    .parallelStream()
+                    .flatMap(r -> r.getActions().parallelStream())
+                    .filter(a -> a instanceof SendToNeighbor)
+                    .map(c -> ((SendToNeighbor) c).getProtelisProgram())
+                    .collect(Collectors.toList());
+            final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
+            if (pList.isEmpty()) {
+                throw new IllegalStateException("There is no program requiring a "
+                        + SendToNeighbor.class.getSimpleName() + " action");
+            }
+            if (pList.size() > 1) {
+                throw new IllegalStateException("There are too many programs requiring a "
+                        + SendToNeighbor.class.getName() + " action: " + pList);
+            }
+            return new SendToNeighbor(node, reaction, pList.get(0));
+        } else {
+            try {
+                return new RunProtelisProgram<>(environment, node, reaction, randomGenerator, additionalParameters);
+            } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
+                throw new IllegalArgumentException(
+                        "Could not create the requested Protelis program: " + additionalParameters,
+                        e
+                );
             }
         }
-        throw new IllegalArgumentException(
-                "The node must have an instance of a " + ProtelisProperty.class.getSimpleName()
-        );
     }
 
     @Override
@@ -183,33 +182,29 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Reaction<Object> reaction,
             final String additionalParameters
     ) {
-        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
-            /*
-             * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
-             */
-            final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
-                    .stream()
-                    .flatMap(r -> r.getConditions().stream())
-                    .filter(c -> c instanceof ComputationalRoundComplete)
-                    .map(c -> ((ComputationalRoundComplete) c).getProgram())
-                    .collect(Collectors.toList());
-            final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
-            if (pList.isEmpty()) {
-                throw new IllegalStateException(
-                    "There is no program requiring a " + ComputationalRoundComplete.class.getSimpleName() + " condition"
-                );
-            }
-            if (pList.size() > 1) {
-                throw new IllegalStateException(
-                    "There are too many programs requiring a " + ComputationalRoundComplete.class.getSimpleName()
-                        + " condition: " + pList
-                );
-            }
-            return new ComputationalRoundComplete(node, pList.get(0));
+        checkIsProtelisNode(node, "The node must have a " + ProtelisProperty.class.getSimpleName());
+        /*
+         * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
+         */
+        final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
+                .stream()
+                .flatMap(r -> r.getConditions().stream())
+                .filter(c -> c instanceof ComputationalRoundComplete)
+                .map(c -> ((ComputationalRoundComplete) c).getProgram())
+                .collect(Collectors.toList());
+        final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
+        if (pList.isEmpty()) {
+            throw new IllegalStateException(
+                "There is no program requiring a " + ComputationalRoundComplete.class.getSimpleName() + " condition"
+            );
         }
-        throw new IllegalArgumentException(
-            "The node must have an instance instance of " + ProtelisProperty.class.getSimpleName()
-        );
+        if (pList.size() > 1) {
+            throw new IllegalStateException(
+                "There are too many programs requiring a " + ComputationalRoundComplete.class.getSimpleName()
+                    + " condition: " + pList
+            );
+        }
+        return new ComputationalRoundComplete(node, pList.get(0));
     }
 
     @Override
@@ -378,10 +373,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         @SuppressFBWarnings("EI_EXPOSE_REP")
         public DeviceUID getDeviceUID() {
-            if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
-                return node.asProperty(ProtelisProperty.class);
-            }
-            return NO_NODE_ID;
+            final ProtelisProperty protelisProperty = node.asPropertyOrNull(ProtelisProperty.class);
+            return protelisProperty != null ? protelisProperty : NO_NODE_ID;
         }
 
         @Override

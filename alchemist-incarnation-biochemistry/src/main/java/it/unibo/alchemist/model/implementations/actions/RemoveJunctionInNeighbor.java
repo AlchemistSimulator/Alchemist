@@ -82,10 +82,4 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
     public String toString() {
         return "remove junction " + jun.toString() + " in neighbor";
     }
-
-    @Override
-    public Node<Double> getNode() {
-        return super.getNode();
-    }
-
 }

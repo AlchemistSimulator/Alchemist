@@ -77,9 +77,4 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
     public String toString() {
         return "add junction " + jun.toString() + " in node";
     }
-
-    @Override
-    public Node<Double> getNode() {
-        return super.getNode();
-    }
 }

@@ -26,8 +26,11 @@ along with some other generic ones.
 
 The age groups available are: *child*, *adult*, *elderly*;
 alternatively you can specify the exact age.
-The genders available are: *male*, *female*. This informations are held by the {{%api package=model.implementations.properties class=Human %}} property and used 
-by the {{%api package=model.implementations.properties class=HeterogeneousPedestrian %}} property
+The genders available are: *male*, *female*. 
+This informations is included in the 
+{{%api package=model.implementations.properties class=Human %}} property and used by the 
+{{%api package=model.implementations.properties class=HeterogeneousPedestrian %}} 
+property.
 
 {{< code path="src/test/resources/website-snippets/heterogeneous-pedestrian.yml" >}}
 

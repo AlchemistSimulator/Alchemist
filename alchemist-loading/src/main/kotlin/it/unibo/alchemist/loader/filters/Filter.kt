@@ -16,7 +16,7 @@ import java.util.function.Predicate
  * Filtering condition for deployments. (e.g inject a [Module] in a node if [test]
  * is satisfied).
  */
-interface Filter<P : Position<P>> : Predicate<P> {
+interface Filter<P : Position<P>> : Predicate<P>, (P) -> Boolean {
 
     /**
      * Checks if the [position] is inside the shape.
@@ -29,4 +29,10 @@ interface Filter<P : Position<P>> : Predicate<P> {
      * @return true if the position is inside the [Filter].
      */
     override fun test(position: P) = contains(position)
+
+    /**
+     * Checks if the [position] is inside the shape.
+     * @return true if the position is inside the [Filter].
+     */
+    override fun invoke(position: P): Boolean = contains(position)
 }

@@ -60,7 +60,7 @@ interface CellProperty<P : Position<P>> : NodeProperty<Double> {
             val inner: MutableMap<Node<Double>, Int>? = junctions[junction]
             inner?.let {
                 when (it[neighbor]) {
-                    1 -> it.remove((neighbor))
+                    1 -> it.remove(neighbor)
                     else -> it[neighbor]?.minus(1)
                 }
                 if (it.isEmpty()) {

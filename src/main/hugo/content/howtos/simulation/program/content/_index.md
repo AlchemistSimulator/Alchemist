@@ -13,7 +13,11 @@ This is done by listing the contents under [`deployments.contents`](/reference/y
 specifying a {{% api class="Molecule" %}} name and its {{% api class="Concentration" %}}.
 
 Unless the [type/parameter syntax](/reference/yaml/#arbitrary-class-loading-system) is used, the data is gets processed 
-by the {{% api class="Incarnation" %}} through the {{% api class="Incarnation" method="createMolecule" %}} and
+by the
+{{% api class="Incarnation" %}}
+through the
+{{% api class="Incarnation" method="createMolecule" %}}
+and
 {{% api class="Incarnation" method="createConcentration" %}} methods, respectively.
 
 In the following example, three molecules are created and injected into all nodes deployed in the scenario:

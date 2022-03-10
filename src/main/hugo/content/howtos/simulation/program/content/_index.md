@@ -18,7 +18,8 @@ by the
 through the
 {{% api class="Incarnation" method="createMolecule" %}}
 and
-{{% api class="Incarnation" method="createConcentration" %}} methods, respectively.
+{{% api class="Incarnation" method="createConcentration" %}}
+methods, respectively.
 
 In the following example, three molecules are created and injected into all nodes deployed in the scenario:
 

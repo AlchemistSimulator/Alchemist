@@ -19,8 +19,8 @@ and occuping space in an environment
 ## Homogeneous Pedestrian
 
 As shown in the example below, this kind of pedestrian is obtained by attaching the
-{{% api package=model.implementations.properties class=Pedestrian %}} property
-along with some other generic ones.
+{{% api package=model.implementations.properties class=Pedestrian %}}
+property.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-pedestrian.yml" >}}
 

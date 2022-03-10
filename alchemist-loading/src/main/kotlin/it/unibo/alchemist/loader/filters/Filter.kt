@@ -34,5 +34,5 @@ interface Filter<P : Position<P>> : Predicate<P>, (P) -> Boolean {
      * Checks if the [position] is inside the shape.
      * @return true if the position is inside the [Filter].
      */
-    override fun invoke(position: P): Boolean = contains(position)
+    override operator fun invoke(position: P): Boolean = contains(position)
 }

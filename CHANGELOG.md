@@ -1,3 +1,25 @@
+## [14.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.6...14.0.0) (2022-03-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** add capabilities to nodes (#1073)
+
+### Features
+
+* **api:** add capabilities to nodes ([#1073](https://github.com/AlchemistSimulator/Alchemist/issues/1073)) ([c0150e1](https://github.com/AlchemistSimulator/Alchemist/commit/c0150e1d75bfdec7f45102d23e1e3f1d1a32d54d))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.6.0 ([296d6ce](https://github.com/AlchemistSimulator/Alchemist/commit/296d6ce49f560030671657ed6f455f281ed268e3))
+* **deps:** update dependency com.graphhopper:graphhopper-core to v5.0-pre3 ([cf7e302](https://github.com/AlchemistSimulator/Alchemist/commit/cf7e302febf7364baed5838025a6624f3ea03bdc))
+* **deps:** update dependency gradle to v7.4.1 ([422b2ce](https://github.com/AlchemistSimulator/Alchemist/commit/422b2cee21a6dd9cb944c8f1116fcb4eedb40202))
+* **deps:** update dependency org.mockito:mockito-core to v4.4.0 ([d08ac46](https://github.com/AlchemistSimulator/Alchemist/commit/d08ac46607948be5556da3afa56014615a81b0c3))
+* **deps:** update gohugoio/hugo action to v0.93.3 ([ebe6fb6](https://github.com/AlchemistSimulator/Alchemist/commit/ebe6fb69661ee69360f019cb73647030f87dfeb7))
+* **deps:** update plugin hugo to v0.3.0 ([c8a2b26](https://github.com/AlchemistSimulator/Alchemist/commit/c8a2b2691d92446d6c5533e8bb7c27e7f8e24a91))
+* **deps:** update plugin java-qa to v0.21.0 ([968ef61](https://github.com/AlchemistSimulator/Alchemist/commit/968ef6167f0ec4ec4cda2e4033307ba25354deb6))
+
 ### [13.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.5...13.0.6) (2022-03-08)
 
 

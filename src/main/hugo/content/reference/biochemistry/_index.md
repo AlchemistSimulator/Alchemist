@@ -63,7 +63,7 @@ The Biochemistry Incarnation supports cell collisions and deformations too.
 In order to do that, however, the environment must feature appropriate support, as for instance
 {{% api package="model.implementations.environments" class="BioRect2DEnvironmentNoOverlap" %}}.
 
-The cells must support deformation as well, as, for instance, a node with
+The cells must support deformation as well, as, for instance, a node with the
 {{% api package="model.implementations.properties" class="CircularDeformableCell" %}}
 property.
 

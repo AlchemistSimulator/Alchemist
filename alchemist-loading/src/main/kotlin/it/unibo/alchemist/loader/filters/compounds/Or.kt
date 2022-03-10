@@ -24,5 +24,5 @@ data class Or<P : Position<P>> (
     /**
      * Returns true if either [filterA] or [filterB] are satisfied.
      */
-    override operator fun contains(position: P) = (position in filterA) || (position in filterB)
+    override operator fun contains(position: P) = position in filterA || position in filterB
 }

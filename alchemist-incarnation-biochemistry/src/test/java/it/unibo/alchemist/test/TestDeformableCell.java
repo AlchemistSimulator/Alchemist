@@ -372,9 +372,10 @@ class TestDeformableCell {
         cellNode3.getReactions().stream()
         .findFirst()
         .orElseThrow().execute();
-        assertEquals(new Euclidean2DPosition(0, 0), cellNode3
-                .asProperty(CircularDeformableCellProperty.class)
-                .getPolarizationVersor());
+        assertEquals(
+            new Euclidean2DPosition(0, 0),
+            cellNode3.asProperty(CircularDeformableCellProperty.class).getPolarizationVersor()
+        );
     }
 
     /**

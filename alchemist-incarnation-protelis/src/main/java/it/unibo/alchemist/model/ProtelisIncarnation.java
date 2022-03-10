@@ -112,7 +112,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     private void checkIsProtelisNode(final Node<Object> node, final String exceptionMessage) {
-        Objects.requireNonNull(node.asPropertyOrNull(ProtelisProperty.class), exceptionMessage);
+        if (node == null || node.asPropertyOrNull(ProtelisProperty.class) == null) {
+            throw new IllegalArgumentException(exceptionMessage);
+        }
     }
 
     @Override

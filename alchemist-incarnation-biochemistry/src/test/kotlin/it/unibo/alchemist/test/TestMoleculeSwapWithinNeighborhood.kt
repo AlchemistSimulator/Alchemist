@@ -18,11 +18,10 @@ import it.unibo.alchemist.model.BiochemistryIncarnation
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.interfaces.CellNode
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import kotlin.properties.Delegates
 import org.apache.commons.math3.random.MersenneTwister
@@ -36,7 +35,7 @@ private val TIME = ExponentialTime<Double>(1.0, RANDOM)
 private val LINKING_RULE = ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
 private val INITIAL_POSITIONS = Pair(Euclidean2DPosition(0.0, 0.0), Euclidean2DPosition(1.0, 0.0))
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
-private var nodes: Pair<CellNode<Euclidean2DPosition>, CellNode<Euclidean2DPosition>> by Delegates.notNull()
+private var nodes: Pair<Node<Double>, Node<Double>> by Delegates.notNull()
 
 class TestMoleculeSwapWithinNeighborhood : StringSpec({
     "send molecule to a neighbor" {
@@ -58,7 +57,10 @@ class TestMoleculeSwapWithinNeighborhood : StringSpec({
 }) {
     override fun beforeTest(testCase: TestCase) {
         environment = BioRect2DEnvironment()
-        nodes = Pair(CellNodeImpl(environment), CellNodeImpl(environment))
+        nodes = Pair(
+            INCARNATION.createNode(RANDOM, environment, null),
+            INCARNATION.createNode(RANDOM, environment, null)
+        )
         environment.linkingRule = LINKING_RULE
         environment.addNode(nodes.first, INITIAL_POSITIONS.first)
         environment.addNode(nodes.second, INITIAL_POSITIONS.second)

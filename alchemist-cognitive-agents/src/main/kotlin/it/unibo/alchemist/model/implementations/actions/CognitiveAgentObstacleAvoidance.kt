@@ -2,9 +2,8 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.SteeringBehavior
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Obstacle2D
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
@@ -12,45 +11,44 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * Move the agent avoiding potential obstacles in its path.
  *
- * @param env
- *          the environment inside which the pedestrian moves.
+ * @param environment
+ *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param pedestrian
+ * @param node
  *          the owner of this action.
  * @param proximityRange
- *          the distance at which an obstacle is perceived by the pedestrian.
+ *          the distance at which an obstacle is perceived by the node.
  */
 class CognitiveAgentObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
-    private val env: Environment2DWithObstacles<W, T>,
+    private val environment: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
-    pedestrian: Pedestrian2D<T>,
-    private val proximityRange: Double
-) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(env, reaction, pedestrian) {
+    node: Node<T>,
+    private val proximityRange: Double,
+) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, node) {
 
-    override fun cloneAction(n: Pedestrian<T, Euclidean2DPosition, Euclidean2DTransformation>, r: Reaction<T>) =
-        requireNodeTypeAndProduce<Pedestrian2D<T>, CognitiveAgentObstacleAvoidance<W, T>>(n) {
-            require(r is SteeringBehavior<T>) { "steering behavior needed but found $reaction" }
-            CognitiveAgentObstacleAvoidance(env, r, it, proximityRange)
-        }
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> =
+        if (reaction is SteeringBehavior<T>)
+            CognitiveAgentObstacleAvoidance(environment, reaction, node, proximityRange)
+        else throw IllegalArgumentException("steering behavior needed but found ${this.reaction}")
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->
-        env.getObstaclesInRange(currentPosition, proximityRange)
+        environment.getObstaclesInRange(currentPosition, proximityRange)
             .asSequence()
             .map { obstacle: W ->
                 obstacle.nearestIntersection(currentPosition, target) to obstacle.bounds2D
             }
             .minByOrNull { (intersection, _) -> currentPosition.distanceTo(intersection) }
-            ?.let { (intersection, bound) -> intersection to env.makePosition(bound.centerX, bound.centerY) }
+            ?.let { (intersection, bound) -> intersection to environment.makePosition(bound.centerX, bound.centerY) }
             ?.let { (intersection, center) -> (intersection - center).coerceAtMost(maxWalk) }
             /*
              * Otherwise we just don't apply any repulsion force.
              */
-            ?: env.origin
+            ?: environment.origin
     }
 
     /**
-     * Computes the target of the pedestrian, delegating to [reaction].steerStrategy.computeTarget.
+     * Computes the target of the node, delegating to [reaction].steerStrategy.computeTarget.
      */
     private fun target(): Euclidean2DPosition = with(reaction) {
         steerStrategy.computeTarget(steerActions().filterNot { it is CognitiveAgentObstacleAvoidance<*, *> })

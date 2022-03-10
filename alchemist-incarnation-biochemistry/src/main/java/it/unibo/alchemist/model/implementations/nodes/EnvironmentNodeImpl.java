@@ -10,32 +10,46 @@ package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
+import javax.annotation.Nonnull;
+
 /**
- *
+ * A node with non-negative concentration.
  */
-public final class EnvironmentNodeImpl extends DoubleNode implements EnvironmentNode {
+public final class EnvironmentNodeImpl extends GenericNode<Double> implements EnvironmentNode {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * Create a new environment node.
-     * @param env the environment
+     * @param incarnation the simulation incarnation
+     * @param environment the environment
      */
-    public EnvironmentNodeImpl(final Environment<Double, ?> env) {
-        super(env);
+    public EnvironmentNodeImpl(final Incarnation<Double, ?> incarnation, final Environment<Double, ?> environment) {
+        super(incarnation, environment);
+    }
+
+    /**
+     * Create a new environment node.
+     * @param environment the environment
+     */
+    public EnvironmentNodeImpl(final Environment<Double, ?> environment) {
+        super(environment.getIncarnation(), environment);
     }
 
     @Override
-    public void setConcentration(final Molecule mol, final Double c) {
-        if (c < 0) {
-            throw new IllegalArgumentException("No negative concentrations allowed (" + mol + " -> " + c + ")");
+    public void setConcentration(@Nonnull final Molecule molecule, @Nonnull final Double concentration) {
+        if (concentration < 0) {
+            throw new IllegalArgumentException(
+                "No negative concentrations allowed (" + molecule + " -> " + concentration + ")"
+            );
         }
-        if (c > 0) {
-            super.setConcentration(mol, c);
+        if (concentration > 0) {
+            super.setConcentration(molecule, concentration);
         } else {
-            removeConcentration(mol);
+            removeConcentration(molecule);
         }
     }
 }

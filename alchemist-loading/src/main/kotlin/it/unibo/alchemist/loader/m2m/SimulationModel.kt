@@ -22,7 +22,7 @@ import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.syntax.SyntaxElement
-import it.unibo.alchemist.loader.shapes.Shape
+import it.unibo.alchemist.loader.filters.Filter
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
@@ -33,6 +33,7 @@ import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Action
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
@@ -274,11 +275,23 @@ internal object SimulationModel {
         return constant?.let { Result.success(it) }
     }
 
+    fun <P : Position<P>> visitFilter(
+        context: Context,
+        element: Map<*, *>,
+    ): List<Filter<P>> {
+        val filterKey = DocumentRoot.Deployment.Filter.filter
+        val filters = visitRecursively(context, element[filterKey] ?: emptyList<Any>()) { shape ->
+            visitBuilding<Filter<P>>(context, shape)
+        }
+        logger.debug("Filters: {}", filters)
+        return filters
+    }
+
     fun <T, P : Position<P>> visitContents(
         incarnation: Incarnation<T, P>,
         context: Context,
         root: Map<*, *>
-    ): List<Triple<List<Shape<P>>, Molecule, () -> T>> {
+    ): List<Triple<List<Filter<P>>, Molecule, () -> T>> {
         logger.debug("Visiting contents: {}", root)
         val allContents = root[DocumentRoot.Deployment.contents] ?: emptyList<Any>()
         return visitRecursively(context, allContents) { element ->
@@ -288,11 +301,7 @@ internal object SimulationModel {
                 ?.takeIf { element.containsKey(moleculeKey) }
                 ?.let {
                     logger.debug("Found content descriptor: {}", it)
-                    val shapesKey = DocumentRoot.Deployment.Contents.shapes
-                    val shapes = visitRecursively(context, element[shapesKey] ?: emptyList<Any>()) { shape ->
-                        visitBuilding<Shape<P>>(context, shape)
-                    }
-                    logger.debug("Shapes: {}", shapes)
+                    val filters = visitFilter<P>(context, element)
                     val moleculeElement = element[moleculeKey]
                     require(moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
                         val type = moleculeElement?.let { ": " + it::class.simpleName } ?: ""
@@ -305,8 +314,27 @@ internal object SimulationModel {
                     val concentrationMaker: () -> T = {
                         element[concentrationKey]?.toString().let { incarnation.createConcentration(it) }
                     }
-                    Result.success(Triple(shapes, molecule, concentrationMaker))
+                    Result.success(Triple(filters, molecule, concentrationMaker))
                 }
+        }
+    }
+
+    fun <T, P : Position<P>> visitProperty(
+        context: Context,
+        root: Map<*, *>,
+    ): List<Pair<List<Filter<P>>, NodeProperty<T>>> {
+        logger.debug("Visiting properties: {}", root)
+        val capabilitiesKey = DocumentRoot.Deployment.properties
+        val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
+        return visitRecursively(context, allCapabilities, DocumentRoot.Deployment.Property) { element ->
+            (element as? Map<*, *>)?.let {
+                val filters = visitFilter<P>(context, element)
+                val nodeProperty = visitBuilding<NodeProperty<T>>(context, element)
+                    ?.getOrThrow()
+                    ?: cantBuildWith<NodeProperty<T>>(root, JavaType)
+                logger.debug("Property: {}", nodeProperty)
+                Result.success(Pair(filters, nodeProperty))
+            }
         }
     }
 
@@ -469,7 +497,7 @@ internal object SimulationModel {
         node: Node<T>,
         context: Context,
         program: Map<*, *>
-    ): Result<Reaction<T>>? = if (ProgramSyntax.validateDescriptor(program)) {
+    ): Result<Pair<List<Filter<P>>, Reaction<T>>>? = if (ProgramSyntax.validateDescriptor(program)) {
         val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
             incarnation,
             simulationRNG,
@@ -485,6 +513,7 @@ internal object SimulationModel {
         fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
             makeWith(simulationRNG, environment, node, timeDistribution, reaction, parameter?.toString())
         }
+        val filters = visitFilter<P>(context, program)
         val conditions = visitRecursively<Condition<T>>(
             context,
             program[ProgramSyntax.conditions] ?: emptyList<Any>(),
@@ -513,7 +542,7 @@ internal object SimulationModel {
         }
         context.factory.deregisterSingleton(reaction)
         context.factory.deregisterSingleton(timeDistribution)
-        Result.success(reaction)
+        Result.success(Pair(filters, reaction))
     } else {
         null
     }

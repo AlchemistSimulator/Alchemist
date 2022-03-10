@@ -19,16 +19,16 @@ class Neighborhoods private constructor() {
         /**
          * Creates a [SimpleNeighborhood].
          *
-         * @param env The environment of the neighborhood.
+         * @param environment The environment of the neighborhood.
          * @param center The center of the neighborhood.
          * @param neighbors The neighbors in the neighborhood, defaults to empty.
          *
          * @return The newly created [SimpleNeighborhood].
          */
         @JvmStatic @JvmOverloads fun <T, P : Position<P>> make(
-            env: Environment<T, P>,
+            environment: Environment<T, P>,
             center: Node<T>,
             neighbors: Iterable<Node<T>> = emptyList()
-        ) = SimpleNeighborhood(env, center, neighbors)
+        ) = SimpleNeighborhood(environment, center, neighbors)
     }
 }

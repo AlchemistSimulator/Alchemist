@@ -22,15 +22,15 @@ import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.implementations.molecules.Junction
-import it.unibo.alchemist.model.implementations.nodes.CellNodeImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.interfaces.CellNode
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.properties.CellProperty
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
 import kotlin.properties.Delegates
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 private const val BIOMOLECULE_NEEDED = 5
 private const val NEIGHBORHOOD_PRESENT_REACTION = "[5 token] --> [5 token in neighbor]"
@@ -46,8 +46,8 @@ private val TIME = ExponentialTime<Double>(1.0, RANDOM)
 private val LINKING_RULE = ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
 private val POSITION = Euclidean2DPosition(0.0, 0.0)
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
-private var centralNode: CellNode<Euclidean2DPosition> by Delegates.notNull()
-private var neighbors: List<CellNode<Euclidean2DPosition>> by Delegates.notNull()
+private var centralNode: Node<Double> by Delegates.notNull()
+private var neighbors: List<Node<Double>> by Delegates.notNull()
 
 class TestNeighborhoodReactionsPropensities : StringSpec({
     "test neighborhood present propensities" {
@@ -55,7 +55,10 @@ class TestNeighborhoodReactionsPropensities : StringSpec({
     }
     "test junction present propensities" {
         0.rangeTo(9).forEach {
-            0.rangeTo(it).forEach { _ -> centralNode.addJunction(JUNCTION, neighbors[it]) }
+            0.rangeTo(it).forEach { _ ->
+                centralNode.asProperty<Double, CellProperty<Euclidean2DPosition>>()
+                    .addJunction(JUNCTION, neighbors[it])
+            }
         }
         testSimulation(JUNCTION_PRESENT_REACTION)
     }
@@ -66,11 +69,11 @@ class TestNeighborhoodReactionsPropensities : StringSpec({
     override fun beforeTest(testCase: TestCase) {
         environment = BioRect2DEnvironment()
         environment.linkingRule = LINKING_RULE
-        centralNode = CellNodeImpl(environment)
+        centralNode = INCARNATION.createNode(RANDOM, environment, null)
         centralNode.setConcentration(BIOMOLECULE, 100.0)
         environment.addNode(centralNode, POSITION)
         neighbors = 1.rangeTo(10)
-            .map { Pair(it * 10.0, CellNodeImpl(environment)) }
+            .map { Pair(it * 10.0, INCARNATION.createNode(RANDOM, environment, null)) }
             .onEach { it.second.setConcentration(BIOMOLECULE, it.first) }
             .map { it.second }
             .onEach { environment.addNode(it, POSITION) }
@@ -122,7 +125,8 @@ private val Node<Double>.neighborhoodPresentPropensity: Double
 
 private val Node<Double>.junctionPresentPropensity: Double
     get() = checkCellNodeAndGetPropensity {
-        centralNode.junctions.getOrDefault(JUNCTION, emptyMap()).getOrDefault(it, 0).toDouble()
+        centralNode.asProperty<Double, CellProperty<Euclidean2DPosition>>()
+            .junctions.getOrDefault(JUNCTION, emptyMap()).getOrDefault(it, 0).toDouble()
     }
 
 private val Node<Double>.biomoleculeInNeighborPropensity: Double
@@ -130,5 +134,5 @@ private val Node<Double>.biomoleculeInNeighborPropensity: Double
         binomialCoefficientDouble(it.getConcentration(BIOMOLECULE).toInt(), BIOMOLECULE_NEEDED)
     }
 
-private fun Node<Double>.checkCellNodeAndGetPropensity(propensityFunction: (CellNode<*>) -> Double) =
-    if (this is CellNode<*>) { propensityFunction(this) } else { 0.0 }
+private fun Node<Double>.checkCellNodeAndGetPropensity(propensityFunction: (Node<Double>) -> Double) =
+    if (this.asPropertyOrNull(CellProperty::class) != null) { propensityFunction(this) } else { 0.0 }

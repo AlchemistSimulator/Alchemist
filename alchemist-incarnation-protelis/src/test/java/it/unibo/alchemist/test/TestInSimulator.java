@@ -121,8 +121,8 @@ class TestInSimulator {
     private static <T, P extends Position<P>> void testLoading(final String resource, final Map<String, Double> vars) {
         final var res = ResourceLoader.getResource(resource);
         assertNotNull(res, "Missing test resource " + resource);
-        final Environment<T, P> env = LoadAlchemist.from(res).<T, P>getWith(vars).getEnvironment();
-        final Simulation<T, P> sim = new Engine<>(env, 10_000);
+        final Environment<T, P> environment = LoadAlchemist.from(res).<T, P>getWith(vars).getEnvironment();
+        final Simulation<T, P> sim = new Engine<>(environment, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);

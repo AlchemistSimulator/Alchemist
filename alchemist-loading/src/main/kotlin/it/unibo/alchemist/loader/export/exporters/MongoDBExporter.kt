@@ -26,7 +26,7 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
     val uri: String,
     val dbName: String = DEFAULT_DATABASE,
     val interval: Double = DEFAULT_INTERVAL,
-    private val appendTime: Boolean = false
+    private val appendTime: Boolean = false,
 ) : AbstractExporter<T, P>(interval) {
 
     /**
@@ -52,10 +52,15 @@ class MongoDBExporter<T, P : Position<P>> @JvmOverloads constructor(
         mongoService.stopService()
     }
 
-    private fun convertToDocument(env: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long): Document {
+    private fun convertToDocument(
+        environment: Environment<T, P>,
+        reaction: Reaction<T>?,
+        time: Time,
+        step: Long,
+    ): Document {
         val document = Document()
         dataExtractors.forEach { extractor ->
-            extractor.extractData(env, reaction, time, step).forEach { (dataLabel, dataValue) ->
+            extractor.extractData(environment, reaction, time, step).forEach { (dataLabel, dataValue) ->
                 document.append(dataLabel, dataValue)
             }
         }

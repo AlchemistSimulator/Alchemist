@@ -16,29 +16,21 @@ _ionic: &waterDissociation
 deployments:
   - type: Circle
     parameters: [4, 0, 0, 5]
-    nodes:
-      type: CellNodeImpl
-      parameters: [4, p] # p useless parameter
+    nodes: "4" # radius of the CircularCell
     programs:
       - *waterDissociation
   - type: Circle
     parameters: [5, 0, 0, 5]
-    nodes:
-      type: CellNodeImpl
-      parameters: [3, p] # p useless parameter
+    nodes: "3"
     programs:
       - *waterDissociation
   - type: Circle
     parameters: [5, 0, 0, 5]
-    nodes:
-      type: CellNodeImpl
-      parameters: [2, p] # p useless parameter
+    nodes: "2"
     programs:
       - *waterDissociation
   - type: Circle
     parameters: [5, 0, 0, 5]
-    nodes:
-      type: CellNodeImpl
-      parameters: [1, p] # p useless parameter
+    nodes: "1"
     programs:
       - *waterDissociation

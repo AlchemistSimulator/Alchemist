@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
@@ -30,8 +29,8 @@ import org.protelis.lang.datatype.DatatypeFactory
 
 class TestGetPosition {
     private val environment: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment(ProtelisIncarnation())
-    private val node = ProtelisNode(environment)
     private val randomGenerator = MersenneTwister(0)
+    private val node = ProtelisIncarnation<Euclidean2DPosition>().createNode(randomGenerator, environment, null)
     private val reaction = Event(node, ExponentialTime(1.0, randomGenerator))
     private val action = RunProtelisProgram(environment, node, reaction, randomGenerator, "self.getCoordinates()")
 

@@ -7,14 +7,16 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
+
+import java.util.Objects;
 
 /**
  *
@@ -24,19 +26,25 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
 
     private static final long serialVersionUID = 1L;
     private final Environment<Double, P> environment;
+    private final CellProperty<P> cell;
 
     /**
      * @param environment the environment
      * @param node the node
      * @param random the {@link RandomGenerator}
      */
-    public RandomPolarization(final Environment<Double, P> environment, final Node<Double> node, final RandomGenerator random) {
+    public RandomPolarization(
+            final Environment<Double, P> environment,
+            final Node<Double> node,
+            final RandomGenerator random
+    ) {
         super(node, random);
         this.environment = environment;
-        if (!(node instanceof CellNode)) {
-            throw new UnsupportedOperationException("Polarization can happen only in cells, required CellNode, got "
-                + node.getClass());
-        }
+        this.cell = node.asPropertyOrNull(CellProperty.class);
+        Objects.requireNonNull(
+                cell,
+                "Polarization can happen only in nodes with " + CellProperty.class.getSimpleName()
+        );
     }
 
     /**
@@ -59,7 +67,7 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
                 randomVersor = environment.makePosition(x / module, y / module);
             }
         }
-        getNode().addPolarization(randomVersor);
+        cell.addPolarizationVersor(randomVersor);
     }
 
     /**
@@ -73,12 +81,6 @@ public final class RandomPolarization<P extends Position2D<P>> extends AbstractR
     @Override
     public RandomPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
         return new RandomPolarization<>(environment, node, getRandomGenerator());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public CellNode<P> getNode()  {
-        return (CellNode<P>) super.getNode();
     }
 
 }

@@ -12,13 +12,19 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
+import it.unibo.alchemist.model.implementations.properties.Pedestrian
+import it.unibo.alchemist.model.implementations.properties.Perceptive2D
+import it.unibo.alchemist.model.implementations.properties.Social
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
-import it.unibo.alchemist.model.implementations.nodes.HomogeneousPedestrian2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
+import it.unibo.alchemist.model.implementations.nodes.GenericNode
+import it.unibo.alchemist.model.implementations.properties.CircularArea
 import it.unibo.alchemist.model.interfaces.Incarnation
+import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import org.apache.commons.math3.random.MersenneTwister
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Tests that pedestrians can detect other objects in the environment.
@@ -27,29 +33,42 @@ import org.apache.commons.math3.random.MersenneTwister
  */
 class TestSensory<T> : StringSpec({
 
+    fun createHomogeneousPedestrian(
+        incarnation: Incarnation<T, Euclidean2DPosition>,
+        randomGenerator: RandomGenerator,
+        environment: Physics2DEnvironment<T>,
+    ) = GenericNode(incarnation, environment).apply {
+        listOf(
+            Pedestrian(randomGenerator, this),
+            Social(this),
+            Perceptive2D(environment, this),
+            CircularArea(environment, this),
+        ).forEach(this::addProperty)
+    }
+
     "field of view" {
-        val env = Continuous2DEnvironment<T>(
+        val environment = Continuous2DEnvironment<T>(
             SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow()
         )
         val rand = MersenneTwister(1)
-        env.linkingRule = NoLinks()
+        environment.linkingRule = NoLinks()
         val incarnation: Incarnation<T, Euclidean2DPosition> = SupportedIncarnations
             .get<T, Euclidean2DPosition>(SupportedIncarnations.getAvailableIncarnations().first())
             .get()
-        val observed = HomogeneousPedestrian2D(incarnation, rand, env)
+        val observed = createHomogeneousPedestrian(incarnation, rand, environment)
         val origin = Euclidean2DPosition(5.0, 5.0)
-        env.addNode(observed, origin)
+        environment.addNode(observed, origin)
         val radius = 10.0
         origin.surrounding(radius).forEach {
-            with(HomogeneousPedestrian2D(incarnation, rand, env)) {
-                env.addNode(this, it)
-                env.setHeading(this, origin - it)
+            with(createHomogeneousPedestrian(incarnation, rand, environment)) {
+                environment.addNode(this, it)
+                environment.setHeading(this, origin - it)
             }
         }
-        env.nodes.minusElement(observed).forEach {
-            with(FieldOfView2D(env, it, radius, Math.PI / 2).influentialNodes()) {
-                size shouldBe 1
-                first() shouldBe observed
+        environment.nodes.minusElement(observed).forEach {
+            with(FieldOfView2D(environment, it, radius, Math.PI / 2)) {
+                influentialNodes().size shouldBe 1
+                influentialNodes().first() shouldBe observed
             }
         }
     }

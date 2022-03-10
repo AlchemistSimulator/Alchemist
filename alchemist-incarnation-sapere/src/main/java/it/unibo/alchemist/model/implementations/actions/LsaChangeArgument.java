@@ -25,7 +25,7 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
 
     private static final long serialVersionUID = -7128058274012426458L;
     private static final HashString OLD = new HashString("OldType");
-    private final Environment<List<ILsaMolecule>, ?> env;
+    private final Environment<List<ILsaMolecule>, ?> environment;
     @SuppressFBWarnings(
             value = "SE_BAD_FIELD",
             justification = "All provided RandomGenerator implementations are actually Serializable"
@@ -62,7 +62,7 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
     ) {
         super(node);
         rnd = random;
-        env = environment;
+        this.environment = environment;
         newTargetVar = new HashString(targetVariable);
         listT = Arrays.copyOf(listTarget, listTarget.length);
     }
@@ -89,7 +89,7 @@ public final class LsaChangeArgument extends SAPERELocalAgent {
      * @return the current environment
      */
     protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
-        return env;
+        return environment;
     }
 
     /**

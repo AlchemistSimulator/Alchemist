@@ -8,13 +8,13 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.Comparator;
@@ -31,9 +31,10 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final Environment<Double, P> env;
-    private final Biomolecule biomol;
+    private final Environment<Double, P> environment;
+    private final Biomolecule biomolecule;
     private final boolean ascend;
+    private final CellProperty<P> cell;
 
     /**
      * 
@@ -46,13 +47,17 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
      */
     public ChemotacticPolarization(
             final Environment<Double, P> environment,
-            final CellNode<P> node,
+            final Node<Double> node,
             final Biomolecule biomolecule,
             final String ascendGrad
     ) {
         super(node);
-        this.env = Objects.requireNonNull(environment);
-        this.biomol = Objects.requireNonNull(biomolecule);
+        this.cell = Objects.requireNonNull(
+                node.asPropertyOrNull(CellProperty.class),
+                "This action can't be added to nodes with no " + CellProperty.class.getSimpleName()
+        );
+        this.environment = Objects.requireNonNull(environment);
+        this.biomolecule = Objects.requireNonNull(biomolecule);
         if ("up".equalsIgnoreCase(ascendGrad)) {
             this.ascend = true;
         } else if ("down".equalsIgnoreCase(ascendGrad)) {
@@ -77,62 +82,64 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
             final String biomolecule,
             final String ascendGrad
     ) {
-        this(environment, asCellNode(node), new Biomolecule(biomolecule), ascendGrad);
+        this(environment, node, new Biomolecule(biomolecule), ascendGrad);
     }
 
 
     @Override
     public ChemotacticPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new ChemotacticPolarization<>(env, node, biomol.toString(), ascend ? "up" : "down");
+        return new ChemotacticPolarization<>(environment, node, biomolecule.toString(), ascend ? "up" : "down");
     }
 
     @Override
     public void execute() {
         // declaring a variable for the node where this action is set, to have faster access
-        final CellNode<P> thisNode = getNode();
-        final List<Node<Double>> l = env.getNeighborhood(thisNode).getNeighbors().stream()
-                .filter(n -> n instanceof EnvironmentNode && n.contains(biomol))
+        final Node<Double> thisNode = getNode();
+        final List<Node<Double>> l = environment.getNeighborhood(thisNode).getNeighbors().stream()
+                .filter(n -> n instanceof EnvironmentNode && n.contains(biomolecule))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            thisNode.addPolarization(env.makePosition(0, 0));
+            cell.addPolarizationVersor(environment.makePosition(0, 0));
         } else {
-            final boolean isNodeOnMaxConc = env.getPosition(l.stream()
-                    .max(Comparator.comparingDouble(n -> n.getConcentration(biomol)))
-                    .get()).equals(env.getPosition(thisNode));
+            final boolean isNodeOnMaxConc = environment.getPosition(l.stream()
+                    .max(Comparator.comparingDouble(n -> n.getConcentration(biomolecule)))
+                    .get()).equals(environment.getPosition(thisNode));
             if (isNodeOnMaxConc) {
-                thisNode.addPolarization(env.makePosition(0, 0));
+                cell.addPolarizationVersor(environment.makePosition(0, 0));
             } else {
                 P newPolVer = weightedAverageVectors(l, thisNode);
                 final double newPolX = newPolVer.getX();
                 final double newPolY = newPolVer.getY();
                 final double newPolVerModule = FastMath.sqrt(newPolX * newPolX + newPolY * newPolY);
                 if (newPolVerModule == 0) {
-                    thisNode.addPolarization(newPolVer);
+                    cell.addPolarizationVersor(newPolVer);
                 } else {
-                    newPolVer = env.makePosition(newPolVer.getX() / newPolVerModule, newPolVer.getY() / newPolVerModule);
+                    newPolVer = environment.makePosition(newPolVer.getX() / newPolVerModule,
+                            newPolVer.getY() / newPolVerModule);
                     if (ascend) {
-                        thisNode.addPolarization(newPolVer);
+                        cell.addPolarizationVersor(newPolVer);
                     } else {
-                        thisNode.addPolarization(env.makePosition(-newPolVer.getX(), -newPolVer.getY()));
+                        cell.addPolarizationVersor(environment.makePosition(-newPolVer.getX(), -newPolVer.getY()));
                     }
                 }
             }
         }
     }
 
-    private P weightedAverageVectors(final List<Node<Double>> list, final CellNode<P> thisNode) {
-        P res = env.makePosition(0, 0);
-        final P thisNodePos = env.getPosition(thisNode);
+    private P weightedAverageVectors(final List<Node<Double>> list, final Node<Double> thisNode) {
+        P res = environment.makePosition(0, 0);
+        final P thisNodePos = environment.getPosition(thisNode);
         for (final Node<Double> n : list) {
-            final P nPos = env.getPosition(n);
-            P vecTemp = env.makePosition(
+            final P nPos = environment.getPosition(n);
+            P vecTemp = environment.makePosition(
                     nPos.getX() - thisNodePos.getX(),
                     nPos.getY() - thisNodePos.getY());
-            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getX(), 2) + FastMath.pow(vecTemp.getY(), 2));
-            vecTemp = env.makePosition(
-                    n.getConcentration(biomol) * (vecTemp.getX() / vecTempModule),
-                    n.getConcentration(biomol) * (vecTemp.getY() / vecTempModule));
-            res = env.makePosition(
+            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getX(), 2)
+                    + FastMath.pow(vecTemp.getY(), 2));
+            vecTemp = environment.makePosition(
+                    n.getConcentration(biomolecule) * (vecTemp.getX() / vecTempModule),
+                    n.getConcentration(biomolecule) * (vecTemp.getY() / vecTempModule));
+            res = environment.makePosition(
                     res.getX() + vecTemp.getX(),
                     res.getY() + vecTemp.getY());
         }
@@ -142,18 +149,6 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
     @Override
     public Context getContext() {
         return Context.LOCAL;
-    }
-
-    @Override
-    public CellNode<P> getNode() {
-        return asCellNode(super.getNode());
-    }
-
-    private static <P extends Position2D<P>> CellNode<P> asCellNode(final Node<Double> node) {
-         if (node instanceof CellNode) {
-             return (CellNode<P>) node;
-         }
-         throw new IllegalArgumentException("CellNode required, got " + node.getClass());
     }
 
 }

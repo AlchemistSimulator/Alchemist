@@ -7,23 +7,24 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.model.implementations.nodes.AbstractCognitivePedestrian
-import it.unibo.alchemist.model.interfaces.CognitivePedestrian
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
 class TestFeelsTransmission<T, P> : StringSpec({
 
     "danger layer affects cognitive pedestrians" {
-        fun Environment<T, P>.perceivedDanger() = nodes.filterIsInstance<CognitivePedestrian<*, *, *>>()
-            .sumOf { it.cognitiveModel.dangerBelief() }
+        fun Environment<T, P>.perceivedDanger() = nodes
+            .mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel }
+            .sumOf { it.dangerBelief() }
         fun EuclideanEnvironment<T, P>.dangerIsLoaded() = this.also {
-            nodes.filterIsInstance<AbstractCognitivePedestrian<*, *, *, *>>().forEach {
-                it.danger shouldNotBe null
+            nodes.mapNotNull { it.asPropertyOrNull<T, CognitiveProperty<T>>()?.danger }.forEach {
+                it shouldNotBe null
             }
         }
         val aggregateDangerWithLayer = loadYamlSimulation<T, P>("feels-transmission-with-layer.yml")

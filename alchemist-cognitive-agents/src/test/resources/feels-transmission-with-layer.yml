@@ -29,20 +29,24 @@ _reactions: &behavior
 _deployment_males: &males
   type: Circle
   parameters: [ 50, 0, 0, 20 ]
-  nodes:
-    type: CognitivePedestrian2D
-    parameters:
-      age: "adult"
-      gender: "male"
-      danger: *danger
+  properties:
+    - type: Human
+      parameters: ["adult", "male"]
+    - type: CognitivePedestrian
+    - type: Cognitive2D
+      parameters: [*danger]
+    - type: Perceptive2D
+    - type: CircularArea
   programs: *behavior
 
 deployments:
   - *males
   - <<: *males
-    nodes:
-      type: CognitivePedestrian2D
-      parameters:
-        age: "adult"
-        gender: "female"
-        danger: *danger
+    properties:
+      - type: Human
+        parameters: ["adult", "female"]
+      - type: CognitivePedestrian
+      - type: Cognitive2D
+        parameters: [*danger]
+      - type: Perceptive2D
+      - type: CircularArea

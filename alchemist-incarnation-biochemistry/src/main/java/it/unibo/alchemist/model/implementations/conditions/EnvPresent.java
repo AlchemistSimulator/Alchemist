@@ -28,11 +28,11 @@ public final class EnvPresent extends AbstractCondition<Double> {
     /**
      * 
      * @param node the node
-     * @param env the environment
+     * @param environment the environment
      */
-    public EnvPresent(final Environment<Double, ?> env, final Node<Double> node) {
+    public EnvPresent(final Environment<Double, ?> environment, final Node<Double> node) {
         super(node);
-        environment = env;
+        this.environment = environment;
     }
 
     @Override

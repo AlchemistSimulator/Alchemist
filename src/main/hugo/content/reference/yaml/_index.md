@@ -263,6 +263,10 @@ If left unspecified, nodes get created through
 * Creation of heterogeneous pedestrians
   {{<code path="alchemist-cognitive-agents/src/test/resources/heterogeneous-pedestrians.yml" >}}
 
+### `deployment.properties`
+
+**Type**: Traversable of [`property`](#property)
+
 ### `deployment.programs`
 
 **Type**: Traversable of [`program`](#program)
@@ -277,14 +281,14 @@ Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Con
 
 **(Multi)Spec**
 
-| Mandatory keys             | Optional keys |
-|----------------------------|---------------|
+| Mandatory keys              | Optional keys |
+|-----------------------------|---------------|
 | `molecule`, `concentration` | `in`          |
 
 #### Examples
 * Three molecules injected into all nodes deployed in the scenario
     {{<code path="alchemist-incarnation-protelis/src/test/resources/gradient.yml" >}}
-* Injection of a molecule only in those nodes located inside a {{% api package="loader.shapes" class="Rectangle" %}}
+* Injection of a molecule only in those nodes located inside a {{% api package="loader.filters" class="Rectangle" %}}
     {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ### `content.molecule`
@@ -295,7 +299,7 @@ The name of the molecule to be injected.
 If a String is provided, then it is created via {{% api class="Incarnation" method="createMolecule" %}}.
 Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system) **SHOULD** be used.
 
-### `content`
+### `content.concentration`
 
 **Type**: String
 
@@ -305,7 +309,29 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 
 ### `content.in`
 
-**Type**: Traversable of Shape
+**Type**: Traversable of [shapeFilter](#shapefilter)
+
+### `property`
+
+**Type**: SpecMap
+
+**(Multi)Spec**
+
+| Mandatory keys | Optional keys      |
+|----------------|--------------------|
+| `type`         | `parameters`, `in` |
+
+### `property.type`
+
+Same as [type](#type)
+
+### `property.parameters`
+
+Same as [parameters](#parameters)
+
+### `property.in`
+
+**Type**: Traversable of [shapeFilter](#shapefilter)
 
 ---
 
@@ -510,7 +536,11 @@ Same as [type](#type)
 
 **Type**: String
 
-Passed to {{% api class="Incarnation" method="createReaction" %}} to be interepreted and 
+Passed to {{% api class="Incarnation" method="createReaction" %}} to be interepreted and
+
+### `program.in`
+
+**Type**: Traversable of [shapeFilter](#shapefilter)
 
 ### `program.actions`
 
@@ -538,15 +568,15 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 
 ---
 
-### `shape`
+### `shapeFilter`
 
 **Type**: SpecMap
 
-Builds a {{% api package="loader.shapes" class="Shape" %}}
+Builds a {{% api package="loader.filters" class="Filter" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 #### Examples
-* Injection of a molecule only in those nodes located inside a {{% api package="loader.shapes" class="Rectangle" %}}
+* Injection of a molecule only in those nodes located inside a {{% api package="loader.filters" class="Rectangle" %}}
   {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ---

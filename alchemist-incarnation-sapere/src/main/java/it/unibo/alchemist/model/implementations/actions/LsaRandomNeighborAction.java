@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class LsaRandomNeighborAction extends LsaStandardAction {
     private static final long serialVersionUID = -7128058274012426458L;
-    private final Environment<List<ILsaMolecule>, ?> env;
+    private final Environment<List<ILsaMolecule>, ?> environment;
     private final MapEnvironment<List<ILsaMolecule>, ?, ?> menv;
     private final boolean initO, initD, initNeigh, initRoute, mapEnv;
     @SuppressFBWarnings(
@@ -65,9 +65,9 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
         initD = molString.contains(LsaMolecule.SYN_D);
         initNeigh = molString.contains(LsaMolecule.SYN_NEIGH);
         initRoute = molString.contains(LsaMolecule.SYN_ROUTE);
-        env = environment;
+        this.environment = environment;
         mapEnv = environment instanceof MapEnvironment;
-        menv = mapEnv ? (MapEnvironment<List<ILsaMolecule>, ?, ?>) env : null;
+        menv = mapEnv ? (MapEnvironment<List<ILsaMolecule>, ?, ?>) this.environment : null;
         randomEngine = randomGenerator;
     }
 
@@ -124,7 +124,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
      * @return the current environment
      */
     protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
-        return env;
+        return environment;
     }
 
     /**
@@ -163,7 +163,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
          * #NEIGH
          */
         if (initNeigh) {
-            setSyntheticNeigh(env.getNeighborhood(node).getNeighbors());
+            setSyntheticNeigh(environment.getNeighborhood(node).getNeighbors());
         }
         /*
          * #O
@@ -174,7 +174,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     }
 
     private double computeDistance(final ILsaNode node) {
-        return env.getDistanceBetweenNodes(getNode(), node);
+        return environment.getDistanceBetweenNodes(getNode(), node);
     }
 
     /**

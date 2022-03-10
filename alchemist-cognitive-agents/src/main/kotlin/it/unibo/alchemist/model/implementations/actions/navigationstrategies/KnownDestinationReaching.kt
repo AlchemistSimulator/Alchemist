@@ -46,7 +46,7 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
 
     init {
         route = emptyList<Euclidean2DPosition>().takeIf { destinations.isEmpty() } ?: with(action) {
-            val currPos = environment.getPosition(pedestrian)
+            val currPos = environment.getPosition(navigatingNode)
             val (closestDest, distanceToClosestDest) = destinations
                 .asSequence()
                 .map { it to it.distanceTo(currPos) }
@@ -71,7 +71,7 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
     }
 
     /**
-     * Finds a known path to the specified [destination]. The path is obtained from the [pedestrian]'s cognitive
+     * Finds a known path to the specified [destination]. The path is obtained from the [node]'s cognitive
      * map and consists of a list of landmarks, it is computed so as to minimize the distance between the first
      * landmark and the pedestrian's position and the distance between the last landmark and the destination. In
      * spite of this, the first landmark may be far from the pedestrian's position and the same applies to the
@@ -82,9 +82,9 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
      * from the pedestrian's position than the destination itself it's just more convenient to pursue the latter.
      * If the cognitive map is empty the path will be empty as well.
      */
-    private fun findKnownPathTo(destination: Euclidean2DPosition): List<L> = with(pedestrian.cognitiveMap) {
+    private fun findKnownPathTo(destination: Euclidean2DPosition): List<L> = with(orientingCapability.cognitiveMap) {
         emptyList<L>().takeIf { vertexSet().isEmpty() } ?: let {
-            val currPos = environment.getPosition(pedestrian)
+            val currPos = environment.getPosition(node)
             val currRoom = environment.graph.nodeContaining(currPos)
             val destRoom = environment.graph.nodeContaining(destination)
             if (currRoom == null || destRoom == null) {
@@ -121,7 +121,7 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
      */
     private fun buildSequence(startRoom: ConvexPolygon, endRoom: ConvexPolygon): Sequence<Pair<L, L>> {
         val landmarksIn: (room: ConvexPolygon) -> Sequence<L> = { room ->
-            pedestrian.cognitiveMap.vertexSet().asSequence().filter { room.contains(it.centroid) }
+            orientingCapability.cognitiveMap.vertexSet().asSequence().filter { room.contains(it.centroid) }
         }
         val landmarksInAny: (rooms: List<ConvexPolygon>) -> Sequence<L> = { rooms ->
             rooms.asSequence().flatMap(landmarksIn)

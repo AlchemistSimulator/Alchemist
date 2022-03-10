@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
@@ -19,15 +19,12 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 
 /**
- * Moves the pedestrian where the given scalar field is higher.
+ * Moves the node where the given scalar field is higher.
  */
 class CognitiveAgentFollowScalarField<T, P, A>(
-    /**
-     * The environment the pedestrian is into.
-     */
-    private val env: Environment<T, P>,
+    environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T, P, A>,
+    node: Node<T>,
     /**
      * The position of either maximum or minimum value of the scalar field, can be null if such a position doesn't
      * exist or isn't known. Its use is explained in [nextPosition].
@@ -36,17 +33,17 @@ class CognitiveAgentFollowScalarField<T, P, A>(
     /**
      * A function mapping each position to a scalar value (= the scalar field).
      */
-    private val valueIn: (P) -> Double
-) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
+    private val valueIn: (P) -> Double,
+) : AbstractSteeringAction<T, P, A>(environment, reaction, node)
     where P : Position2D<P>, P : Vector2D<P>,
           A : GeometricTransformation<P> {
 
     /**
-     * @returns the next relative position reached by the pedestrian. The set of reachable positions is discretized
+     * @returns the next relative position reached by the node. The set of reachable positions is discretized
      * using [Vector2D.surrounding] from the current position (radius is [maxWalk]). If the scalar field has a
      * [center], two more positions are taken into account: one towards the center along the direction connecting the
      * latter to the current position, and another away from the center along the same direction. The position with
-     * maximum value is then selected: if its value is higher than the current one, the pedestrian moves there.
+     * maximum value is then selected: if its value is higher than the current one, the node moves there.
      * Otherwise, it doesn't move at all.
      */
     override fun nextPosition(): P = currentPosition.let { currentPosition ->
@@ -64,14 +61,18 @@ class CognitiveAgentFollowScalarField<T, P, A>(
             .maxOr(currentPosition) - currentPosition
     }
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) =
-        CognitiveAgentFollowScalarField(env, r, n, center, valueIn)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
+        CognitiveAgentFollowScalarField(environment, reaction, node, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
-        if (env is EnvironmentWithObstacles<*, T, P>) map { env.next(currentPosition, it) } else this
+        if (environment is EnvironmentWithObstacles<*, T, P>) map {
+            (environment as EnvironmentWithObstacles<*, T, P>).next(currentPosition, it)
+        } else this
 
     private fun Sequence<P>.enforceOthers(): Sequence<P> =
-        if (env is PhysicsEnvironment<T, P, *, *>) map { env.farthestPositionReachable(pedestrian, it) } else this
+        if (environment is PhysicsEnvironment<T, P, *, *>) map {
+            (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(node, it)
+        } else this
 
     private fun Sequence<P>.maxOr(position: P): P =
         maxByOrNull { valueIn(it) }

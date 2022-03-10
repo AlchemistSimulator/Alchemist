@@ -84,6 +84,8 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     CachedInterpreter[AnyRef](if(doCacheValue) v else v.tail, doCacheValue).asInstanceOf[T]
   }
 
+  override def createConcentration(): T = createConcentration("")
+
   override def createCondition(rand: RandomGenerator, env: Environment[T, P] , node: Node[T], time: TimeDistribution[T], reaction: Reaction[T], param: String): Condition[T] = {
     if(!isScafiNode(node)) {
       throw new IllegalArgumentException(s"The node must be an instance of ${classOf[ScafiNode[_,_]]}"

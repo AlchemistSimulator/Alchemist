@@ -29,15 +29,15 @@ class TestWormhole2D {
     @Test
     void testZeroSizeEnvironment() {
         final var incarnation = SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").orElseThrow();
-        final Environment<Object, Euclidean2DPosition> env = new Continuous2DEnvironment<>(incarnation);
-        final AbstractWormhole2D<Euclidean2DPosition> worm = new TestPurposeWormhole<>(env);
+        final Environment<Object, Euclidean2DPosition> environment = new Continuous2DEnvironment<>(incarnation);
+        final AbstractWormhole2D<Euclidean2DPosition> worm = new TestPurposeWormhole<>(environment);
         worm.center();
     }
 
     private static class TestPurposeWormhole<P extends Position2D<? extends P>> extends AbstractWormhole2D<P> {
-        TestPurposeWormhole(final Environment<?, P> env) {
+        TestPurposeWormhole(final Environment<?, P> environment) {
             super(
-                    env,
+                    environment,
                     new ViewPort() {
                         @Override
                         public double getWidth() {

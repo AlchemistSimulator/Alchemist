@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.physicalstrategies.Sum
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.PhysicalPedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
@@ -22,10 +22,10 @@ import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnviro
  */
 class BlendedSteeringWithPhysics<T>(
     environment: EuclideanPhysics2DEnvironmentWithGraph<*, T, *, *>,
-    pedestrian: PhysicalPedestrian2D<T>,
+    node: Node<T>,
     timeDistribution: TimeDistribution<T>
-) : BlendedSteering<T>(environment, pedestrian, timeDistribution) {
+) : BlendedSteering<T>(environment, node, timeDistribution) {
 
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
-        Sum(environment, pedestrian, super.steerStrategy)
+        Sum(environment, node, super.steerStrategy)
 }

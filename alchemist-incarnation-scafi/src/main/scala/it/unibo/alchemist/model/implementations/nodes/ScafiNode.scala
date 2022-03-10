@@ -9,7 +9,7 @@ package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.interfaces.{Environment, Molecule, Position, Time}
 
-class ScafiNode[T, P<:Position[P]](env: Environment[T, P]) extends AbstractNode[T](env) {
+class ScafiNode[T, P<:Position[P]](env: Environment[T, P]) extends GenericNode[T](env) {
   private var lastAccessedMolecule: Molecule = null
 
   override def createT = null.asInstanceOf[T]

@@ -15,15 +15,21 @@ _reactions: &behavior
 
 _deployment_hetero: &male-deployment
   type: Circle
-    parameters: [ 50, 0, 0, 20 ]
-    nodes:
-      type: HeterogeneousPedestrian2D
+  parameters: [ 50, 0, 0, 20 ]
+  properties:
+    - type: Human
       parameters: [ "adult", "male" ]
-    programs: *behavior
+    - type: HeterogeneousPedestrian
+    - type: Perceptive2D
+    - type: CircularArea
+  programs: *behavior
 
 deployments:
   - *male-deployment
   - <<: *male-deployment
-    nodes:
-      type: HeterogeneousPedestrian2D
-      parameters: ["adult", "female"]
+    properties:
+      - type: Human
+        parameters: [ "adult", "female" ]
+      - type: HeterogeneousPedestrian
+      - type: Perceptive2D
+      - type: CircularArea

@@ -10,10 +10,10 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import java.util.Map;
@@ -44,14 +44,16 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
             final Junction junction,
             final RandomGenerator randomGenerator) {
         super(node, environment, randomGenerator);
-        if (node instanceof CellNode) {
+        if (node.asPropertyOrNull(CellProperty.class) != null) {
             declareDependencyTo(junction);
             for (final Map.Entry<Biomolecule, Double> entry : junction.getMoleculesInCurrentNode().entrySet()) {
                 declareDependencyTo(entry.getKey());
             }
             jun = junction;
         } else {
-            throw new UnsupportedOperationException("This Action can be set only in CellNodes");
+            throw new UnsupportedOperationException(
+                    "This Action can be set only in nodes with " + CellProperty.class.getSimpleName()
+            );
         }
     }
 
@@ -68,10 +70,11 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
 
     @Override
     public void execute(final Node<Double> targetNode) {
-        if (targetNode instanceof CellNode) {
-            ((CellNode<?>) targetNode).removeJunction(jun, getNode());
+        if (targetNode.asPropertyOrNull(CellProperty.class) != null) {
+            targetNode.asProperty(CellProperty.class).removeJunction(jun, getNode());
         } else {
-            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+            throw new UnsupportedOperationException("Can't add Junction in a node with no "
+                    + CellProperty.class.getSimpleName());
         }
     }
 
@@ -79,10 +82,4 @@ public final class RemoveJunctionInNeighbor extends AbstractNeighborAction<Doubl
     public String toString() {
         return "remove junction " + jun.toString() + " in neighbor";
     }
-
-    @Override
-    public CellNode<?> getNode() {
-        return (CellNode<?>) super.getNode();
-    }
-
 }

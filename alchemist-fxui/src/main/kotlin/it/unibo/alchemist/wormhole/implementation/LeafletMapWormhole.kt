@@ -69,11 +69,11 @@ class LeafletMapWormhole(
     override fun optimalZoom() {
         zoom = CustomLeafletMapView.MAX_ZOOM_VALUE.toDouble()
         @Suppress("UNCHECKED_CAST")
-        val env = environment as Environment<Any?, GeoPosition>
+        val environment = environment as Environment<Any?, GeoPosition>
         while (
             zoom > CustomLeafletMapView.MIN_ZOOM_VALUE &&
-            !env.nodes
-                .map(env::getPosition)
+            !environment.nodes
+                .map(environment::getPosition)
                 .map(::getViewPoint)
                 .all(::isInsideView)
         ) {

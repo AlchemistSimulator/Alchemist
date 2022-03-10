@@ -18,13 +18,18 @@ _reactions: &behavior
     - type: Flee
       parameters: [500, -500]
 
+_homogeneous_pedestrian: &pedestrianInPoint
+  - type: Point
+    properties:
+      - type: Pedestrian
+      - type: Social
+      - type: Percective
+      - type: CircularArea
+
 deployments:
-  - type: Point
+  - <<: *pedestrianInPoint
     parameters: [0, 0]
-    nodes:
-      type: HomogeneousPedestrian2D
     programs: *behavior
-  - type: Point
+
+  - <<: *pedestrianInPoint
     parameters: [1000, 500]
-    nodes:
-      type: HomogeneousPedestrian2D

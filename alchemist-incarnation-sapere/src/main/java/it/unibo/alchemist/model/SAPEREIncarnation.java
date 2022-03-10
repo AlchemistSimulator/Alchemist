@@ -284,7 +284,11 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
 
     @Override
     public List<ILsaMolecule> createConcentration(final String s) {
-        return Collections.emptyList();
+        return createConcentration();
     }
 
+    @Override
+    public List<ILsaMolecule> createConcentration() {
+        return Collections.emptyList();
+    }
 }

@@ -8,11 +8,11 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 
@@ -37,11 +37,12 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
      */
     public AddJunctionInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction j, final RandomGenerator rg) {
         super(n, e, rg);
-        if (n instanceof CellNode) {
+        if (n.asPropertyOrNull(CellProperty.class) != null) {
             declareDependencyTo(j);
             jun = j;
         } else {
-            throw new UnsupportedOperationException("This Action can be set only in CellNodes");
+            throw new UnsupportedOperationException("This Action can be set only in nodes with "
+                    + CellProperty.class.getSimpleName());
         }
     }
 
@@ -64,20 +65,16 @@ public final class AddJunctionInCell extends AbstractNeighborAction<Double> { //
      */
     @Override
     public void execute(final Node<Double> targetNode) { 
-        if (targetNode instanceof CellNode) {
-            getNode().addJunction(jun, (CellNode<?>) targetNode);
+        if (targetNode.asPropertyOrNull(CellProperty.class) != null) {
+            getNode().asProperty(CellProperty.class).addJunction(jun, targetNode);
         } else {
-            throw new UnsupportedOperationException("Can't add Junction in a node that it's not a CellNode");
+            throw new UnsupportedOperationException("Can't add Junction in a node with no "
+                    + CellProperty.class.getSimpleName());
         }
     }
 
     @Override 
     public String toString() {
         return "add junction " + jun.toString() + " in node";
-    }
-
-    @Override
-    public CellNode<?> getNode() {
-        return (CellNode<?>) super.getNode();
     }
 }

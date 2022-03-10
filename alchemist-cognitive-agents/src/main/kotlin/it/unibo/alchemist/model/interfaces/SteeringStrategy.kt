@@ -7,7 +7,7 @@ package it.unibo.alchemist.model.interfaces
 interface SteeringStrategy<T, P : Position<P>> {
 
     /**
-     * Computes the next position starting from the steering actions the pedestrian obey to,
+     * Computes the next position starting from the steering actions the node obey to,
      * in relative coordinates with respect to its current position.
      *
      * @param actions
@@ -16,7 +16,7 @@ interface SteeringStrategy<T, P : Position<P>> {
     fun computeNextPosition(actions: List<SteeringAction<T, P>>): P
 
     /**
-     * Computes the target to reach starting from the steering actions the pedestrian obey to,
+     * Computes the target to reach starting from the steering actions the node obey to,
      * in absolute coordinates.
      *
      * @param actions

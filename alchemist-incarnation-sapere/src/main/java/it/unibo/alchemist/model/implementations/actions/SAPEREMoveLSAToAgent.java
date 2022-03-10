@@ -24,43 +24,48 @@ public final class SAPEREMoveLSAToAgent extends SAPEREAgent {
 
     private static final long serialVersionUID = -8020706131248061313L;
     private final ILsaNode destination;
-    private final ILsaMolecule molTemplate;
+    private final ILsaMolecule moleculeTemplate;
 
     /**
      * This is the constructor that should be called from DSL. Dynamically
      * computes the destination node if an id is given.
      * 
-     * @param env
+     * @param environment
      *            the current environment
      * @param node
      *            the source node, where this action is programmed
-     * @param destId
+     * @param destinationId
      *            the destination node id
      * @param template
      *            the template LSA to match and move
      */
-    public SAPEREMoveLSAToAgent(final Environment<?, ?> env, final ILsaNode node, final int destId, final ILsaMolecule template) {
-        this(node, (ILsaNode) env.getNodeByID(destId), template);
+    public SAPEREMoveLSAToAgent(
+            final Environment<?, ?> environment,
+            final ILsaNode node,
+            final int destinationId,
+            final ILsaMolecule template
+    ) {
+        this(node, (ILsaNode) environment.getNodeByID(destinationId), template);
     }
 
     /**
      * @param node
      *            the source node, where this action is programmed
-     * @param dest
+     * @param destination
      *            the destination node, where this action will move the matched
      *            intance
      * @param template
      *            the template LSA to match and move
      */
-    public SAPEREMoveLSAToAgent(final ILsaNode node, final ILsaNode dest, final ILsaMolecule template) {
+    public SAPEREMoveLSAToAgent(final ILsaNode node, final ILsaNode destination, final ILsaMolecule template) {
         super(node, template);
-        molTemplate = template;
-        destination = dest;
+        moleculeTemplate = template;
+        this.destination = destination;
     }
 
     @Override
     public void execute() {
-        final ILsaMolecule instance = allocateVarsAndBuildLSA(molTemplate);
+        final ILsaMolecule instance = allocateVarsAndBuildLSA(moleculeTemplate);
         getNode().removeConcentration(instance);
         destination.setConcentration(instance);
     }

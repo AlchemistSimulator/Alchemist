@@ -16,10 +16,10 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Ellipse;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.OrientingPedestrian;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles;
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph;
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.jgrapht.graph.DefaultEdge;
@@ -34,7 +34,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Draws an orienting pedestrian' cognitive map.
+ * Draws an orienting node's cognitive map.
  */
 @SuppressFBWarnings("EI_EXPOSE_REP")
 public class DrawCognitiveMap extends DrawOnce {
@@ -83,10 +83,10 @@ public class DrawCognitiveMap extends DrawOnce {
         final Integer markerNodeID = getMarkerNodeID();
         if (cognitiveMap == null
                 && markerNodeID != null
-                && environment.getNodeByID(markerNodeID) instanceof OrientingPedestrian
+                && environment.getNodeByID(markerNodeID).asPropertyOrNull(OrientingProperty.class) != null
                 && environment instanceof Environment2DWithObstacles
                 && environment.makePosition(0.0, 0.0) instanceof Euclidean2DPosition) {
-            cognitiveMap = ((OrientingPedestrian) environment.getNodeByID(markerNodeID)).getCognitiveMap();
+            cognitiveMap = environment.getNodeByID(markerNodeID).asProperty(OrientingProperty.class).getCognitiveMap();
         }
     }
 

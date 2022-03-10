@@ -13,7 +13,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.hash.Hashing;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
@@ -23,6 +22,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -79,15 +79,16 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     private int hash;
     private double nbrRangeTimeout;
     private double precalcdRoutingDistance = Double.NaN;
-    private final ProtelisNode<P> node;
+    private final Node<Object> node;
     private final RandomGenerator randomGenerator;
     private final Reaction<Object> reaction;
+    private final ProtelisProperty protelisProperty;
 
     /**
      * @param environment
      *            the simulation {@link Environment}
      * @param localNode
-     *            the local {@link ProtelisNode}
+     *            the local {@link Node}
      * @param reaction
      *            the {@link Reaction} hosting the program
      * @param random
@@ -98,13 +99,14 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = INTENTIONAL)
     public AlchemistExecutionContext(
             final Environment<Object, P> environment,
-            final ProtelisNode<P> localNode,
+            final Node<Object> localNode,
             final Reaction<Object> reaction,
             final RandomGenerator random,
             final AlchemistNetworkManager networkManager) {
-        super(localNode, networkManager);
+        super(localNode.asProperty(ProtelisProperty.class), networkManager);
         this.environment = environment;
         node = localNode;
+        protelisProperty = node.asProperty(ProtelisProperty.class);
         this.reaction = reaction;
         randomGenerator = random;
     }
@@ -123,8 +125,8 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      */
     @SuppressWarnings("unchecked")
     public double distanceTo(final DeviceUID target) {
-        assert target instanceof ProtelisNode;
-        return environment.getDistanceBetweenNodes(node, (ProtelisNode<P>) target);
+        assert target instanceof ProtelisProperty;
+        return environment.getDistanceBetweenNodes(node, ((ProtelisProperty) target).getNode());
     }
 
     /**
@@ -136,7 +138,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * @return the distance
      */
     public double distanceTo(final int target) {
-        return distanceTo((ProtelisNode<?>) environment.getNodeByID(target));
+        return distanceTo(environment.getNodeByID(target).asProperty(ProtelisProperty.class));
     }
 
     @Override
@@ -174,7 +176,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public DeviceUID getDeviceUID() {
-        return node;
+        return protelisProperty;
     }
 
     /**
@@ -294,7 +296,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * Computes the distance along a map. Requires a {@link MapEnvironment}.
      * 
      * @param dest
-     *            the destination, in form of {@link ProtelisNode} ID. Non
+     *            the destination, in form of {@link Node} ID. Non
      *            integer numbers will be cast to integers by
      *            {@link Number#intValue()}.
      * @return the distance on a map

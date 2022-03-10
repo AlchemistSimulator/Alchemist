@@ -53,6 +53,13 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     T createConcentration(String s);
 
     /**
+     * Creates a new concentration object of a specific concrete type.
+     *
+     * @return a concentration of a certain concrete type
+     */
+    T createConcentration();
+
+    /**
      * @param randomGenerator
      *            the random engine
      * @param environment

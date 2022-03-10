@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment;
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
-import it.unibo.alchemist.model.interfaces.nodes.NodeWithShape;
+import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty;
 import org.jooq.lambda.function.Consumer2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +43,9 @@ public final class DrawSmartcam implements Effect {
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {
-            final Physics2DEnvironment<T> env = (Physics2DEnvironment<T>) environment;
-            drawShape(graphics, node, env, zoom, x, y);
-            drawFieldOfView(graphics, node, env, zoom, x, y);
+            final Physics2DEnvironment<T> physicsEnvironment = (Physics2DEnvironment<T>) environment;
+            drawShape(graphics, node, physicsEnvironment, zoom, x, y);
+            drawFieldOfView(graphics, node, physicsEnvironment, zoom, x, y);
         } else {
             logOnce("DrawSmartcam only works with EuclideanPhysics2DEnvironment", Logger::warn);
         }
@@ -64,8 +64,8 @@ public final class DrawSmartcam implements Effect {
             final int x,
             final int y
     ) {
-        final GeometricShape<?, ?> geometricShape = node instanceof NodeWithShape
-                ? ((NodeWithShape<T, ?, ?>) node).getShape()
+        final GeometricShape<?, ?> geometricShape = node.asPropertyOrNull(OccupiesSpaceProperty.class) != null
+                ? node.asProperty(OccupiesSpaceProperty.class).getShape()
                 : null;
         if (geometricShape instanceof AwtShapeCompatible) {
             final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));
@@ -105,8 +105,8 @@ public final class DrawSmartcam implements Effect {
             });
     }
 
-    private <T> double getRotation(final Node<T> node, final Physics2DEnvironment<T> env) {
-        final Euclidean2DPosition direction = env.getHeading(node);
+    private <T> double getRotation(final Node<T> node, final Physics2DEnvironment<T> environment) {
+        final Euclidean2DPosition direction = environment.getHeading(node);
         return Math.atan2(direction.getY(), direction.getX());
     }
 

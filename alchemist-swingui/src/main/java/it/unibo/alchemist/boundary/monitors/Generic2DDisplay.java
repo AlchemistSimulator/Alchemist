@@ -482,14 +482,14 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         return zoomManager;
     }
 
-    private void initAll(final Environment<T, P> env) {
-        wormhole = new WormholeSwing<>(env, this);
+    private void initAll(final Environment<T, P> environment) {
+        wormhole = new WormholeSwing<>(environment, this);
         wormhole.center();
         wormhole.optimalZoom();
         angleManager = new AngleManagerImpl(AngleManagerImpl.DEF_DEG_PER_PIXEL);
         zoomManager = new ExponentialZoomManager(wormhole.getZoom(), ExponentialZoomManager.DEF_BASE);
-        if (env instanceof Environment2DWithObstacles) {
-            loadObstacles(env);
+        if (environment instanceof Environment2DWithObstacles) {
+            loadObstacles(environment);
         } else {
             obstacles = null;
         }
@@ -531,8 +531,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         return realTime;
     }
 
-    private void loadObstacles(final Environment<T, P> env) {
-        obstacles = ((Environment2DWithObstacles<?, ?>) env).getObstacles();
+    private void loadObstacles(final Environment<T, P> environment) {
+        obstacles = ((Environment2DWithObstacles<?, ?>) environment).getObstacles();
     }
 
     /**
@@ -686,22 +686,22 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     /**
      * Updates parameter for correct {@code Environment} representation.
      *
-     * @param env  the {@code Environment}
+     * @param environment  the {@code Environment}
      * @param time the current {@code Time} of simulation
      */
-    private void update(final Environment<T, P> env, final Time time) {
-        if (Thread.holdsLock(env)) {
-            if (envHasMobileObstacles(env)) {
-                loadObstacles(env);
+    private void update(final Environment<T, P> environment, final Time time) {
+        if (Thread.holdsLock(environment)) {
+            if (envHasMobileObstacles(environment)) {
+                loadObstacles(environment);
             }
             lastTime = time.toDouble();
-            currentEnv = env;
+            currentEnv = environment;
             accessData();
             positions.clear();
             neighbors.clear();
-            env.getNodes().parallelStream().forEach(node -> {
-                positions.put(node, env.getPosition(node));
-                neighbors.put(node, env.getNeighborhood(node));
+            environment.getNodes().parallelStream().forEach(node -> {
+                positions.put(node, environment.getPosition(node));
+                neighbors.put(node, environment.getNeighborhood(node));
             });
             releaseData();
             repaint();
@@ -717,13 +717,14 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     /**
-     * @param env
+     * @param environment
      *            the current environment
      * @return true if env is subclass of {@link Environment2DWithObstacles}
      *         and has mobile obstacles
      */
-    protected static boolean envHasMobileObstacles(final Environment<?, ?> env) {
-        return env instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?>) env).hasMobileObstacles();
+    protected static boolean envHasMobileObstacles(final Environment<?, ?> environment) {
+        return environment instanceof Environment2DWithObstacles && ((Environment2DWithObstacles<?, ?>) environment)
+                .hasMobileObstacles();
     }
 
     /**

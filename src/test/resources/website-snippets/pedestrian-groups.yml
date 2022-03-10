@@ -11,11 +11,17 @@ variables:
 deployments:
   - type: Circle
     parameters: [10, 0, 0, 20]
-    nodes:
-      type: HomogeneousPedestrian2D
-      parameters: [*group1]
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: CircularArea
+      - type: Social
+        parameters: [*group1]
   - type: Circle
     parameters: [15, 0, 0, 20]
-    nodes:
-      type: HomogeneousPedestrian2D
-      parameters: [*group2]
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: CircularArea
+      - type: Social
+        parameters: [*group2]

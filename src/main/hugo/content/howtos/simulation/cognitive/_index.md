@@ -8,29 +8,33 @@ summary = "Agents with realistic human behavior."
 We recommend to read our [explanation of the cognitive agents](/explanation/cognitive)
 to better understand the contents of this how-to.
 
-Different kinds of pedestrians are obtainable by attaching {{% api class=NodeProperty %}}s to nodes (e.g {{%api package=model.implementations.nodes class=GenericNode %}}).
-Common properties regards abilities such as perceiving other nodes ({{% api package=model.interfaces.properties class=PerceptiveProperty %}}) and occuping space in an environment 
-({{% api package=model.interfaces.properties class=OccupiesSpaceProperty %}}), but more specific ones
-are also available as we are going to see.
-
+Different kinds of pedestrians are obtainable by attaching
+{{% api class=NodeProperty %}}s
+to nodes (e.g {{%api package=model.implementations.nodes class=GenericNode %}}).
+Common properties concern abilities such as perceiving other nodes
+({{% api package=model.interfaces.properties class=PerceptiveProperty %}})
+and occuping space in an environment 
+({{% api package=model.interfaces.properties class=OccupiesSpaceProperty %}}).
 
 ## Homogeneous Pedestrian
 
 As shown in the example below, this kind of pedestrian is obtained by attaching the
-{{% api package=model.implementations.properties class=Pedestrian %}} property
-along with some other generic ones.
+{{% api package=model.implementations.properties class=Pedestrian %}}
+property.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-pedestrian.yml" >}}
 
 ## Heterogeneous Pedestrian
 
-The age groups available are: *child*, *adult*, *elderly*;
-alternatively you can specify the exact age.
-The genders available are: *male*, *female*. 
+The age groups available are: *child*, *adult*, and *elderly*;
+alternatively, if the exact age is specified,
+they are assigned to one of the aforementioned groups automatically.
+The genders available are: *male* and *female*. 
 This informations is included in the 
-{{%api package=model.implementations.properties class=Human %}} property and used by the 
+{{%api package=model.implementations.properties class=Human %}}
+property and it is used by the 
 {{%api package=model.implementations.properties class=HeterogeneousPedestrian %}} 
-property.
+property, along with the age.
 
 {{< code path="src/test/resources/website-snippets/heterogeneous-pedestrian.yml" >}}
 

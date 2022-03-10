@@ -63,7 +63,7 @@ Be also aware that orienting pedestrians can only be placed in an
 {{% api package="model.interfaces.environments" class="EnvironmentWithGraph" %}}
 which is a type of environment providing a navigation graph.
 In order to give a node orienting capabilities enhance a node with an
-{{% api package=model.interfaces.properties class=OrientingProperty %}}
+{{% api package=model.interfaces.properties class=OrientingProperty %}}.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-orienting-pedestrian.yml" >}}
 

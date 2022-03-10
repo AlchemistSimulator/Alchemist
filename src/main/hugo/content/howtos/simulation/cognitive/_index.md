@@ -26,8 +26,9 @@ property.
 
 ## Heterogeneous Pedestrian
 
-The age groups available are: *child*, *adult*, *elderly*;
-alternatively you can specify the exact age.
+The age groups available are: *child*, *adult*, and *elderly*;
+alternatively, if the exact age is specified,
+they are assigned to one of the aforementioned groups automatically.
 The genders available are: *male*, *female*. 
 This informations is included in the 
 {{%api package=model.implementations.properties class=Human %}} property and used by the 

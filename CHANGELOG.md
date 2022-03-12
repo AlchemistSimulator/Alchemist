@@ -1,3 +1,14 @@
+### [14.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/14.0.0...14.0.1) (2022-03-12)
+
+
+### Dependency updates
+
+* **core-deps:** update dependency org.protelis:protelis-lang to v15.2.2 ([e05d0d4](https://github.com/AlchemistSimulator/Alchemist/commit/e05d0d481453515d764469b62276808bb2c50e4c))
+* **deps:** update gohugoio/hugo action to v0.94.1 ([d1e2c9d](https://github.com/AlchemistSimulator/Alchemist/commit/d1e2c9d4fad3dd20bef57ec3efb42404705084ff))
+* **deps:** update plugin kotlin-qa to v0.12.1 ([e1976a6](https://github.com/AlchemistSimulator/Alchemist/commit/e1976a6d8c31c9f293ee960dcb4e61f6b9f3f759))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.5 ([81046be](https://github.com/AlchemistSimulator/Alchemist/commit/81046be51489ee713f0e5d5bbb4286024f4ce3c8))
+* **deps:** update plugin publishoncentral to v0.7.14 ([6eddc41](https://github.com/AlchemistSimulator/Alchemist/commit/6eddc411caeb98b4216f374b5e0663240cbd567b))
+
 ## [14.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/13.0.6...14.0.0) (2022-03-10)
 
 

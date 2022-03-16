@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -16,13 +17,13 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
-import javax.annotation.Nonnull;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.tuple.Tuple2;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,10 +91,12 @@ public final class TraceLoader implements Iterable<GPSTrace> {
      *            args to use to create GPSTimeNormalizer
      * @throws IOException in case of I/O errors
      */
-    public TraceLoader(final String path,
-            final boolean cycle,
-            final String timeNormalizerClass,
-            final Object... normalizerArgs) throws IOException {
+    public TraceLoader(
+        final String path,
+        final boolean cycle,
+        final String timeNormalizerClass,
+        final Object... normalizerArgs
+    ) throws IOException {
         this(path, cycle, makeNormalizer(timeNormalizerClass, normalizerArgs));
     }
 
@@ -119,9 +122,11 @@ public final class TraceLoader implements Iterable<GPSTrace> {
      *            args to use to create GPSTimeNormalizer
      * @throws IOException in case of I/O errors
      */
-    public TraceLoader(final String path,
-            final String timeNormalizerClass,
-            final Object... normalizerArgs) throws IOException {
+    public TraceLoader(
+        final String path,
+        final String timeNormalizerClass,
+        final Object... normalizerArgs
+    ) throws IOException {
         this(path, false, timeNormalizerClass, normalizerArgs);
     }
 
@@ -164,9 +169,9 @@ public final class TraceLoader implements Iterable<GPSTrace> {
                 return fileLoader.readTrace(ResourceLoader.getResource(path));
             }  catch (FileFormatException e) {
                 throw new IllegalStateException(
-                        "Loader: " + LOADER.get(extensionFile).getClass().getSimpleName()
+                    "Loader: " + LOADER.get(extensionFile).getClass().getSimpleName()
                         + " can't load file: " + path + ", plese make sure it is a " + extensionFile + "file?",
-                        e
+                    e
                 );
             } 
         }

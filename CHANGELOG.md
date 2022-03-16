@@ -1,3 +1,22 @@
+### [14.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/14.0.1...14.0.2) (2022-03-16)
+
+
+### Bug Fixes
+
+* **maps:** loading multiple GPX files at once no longer fails complaining about non-existent files ([e00f9bb](https://github.com/AlchemistSimulator/Alchemist/commit/e00f9bbfdee5323ae9c5e0dfa4c0904b9ce0f0f0))
+
+
+### Dependency updates
+
+* **deps:** update gohugoio/hugo action to v0.94.2 ([d2d7870](https://github.com/AlchemistSimulator/Alchemist/commit/d2d7870d746e9c532ef3d567ab39758ca394e955))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to a332394 ([e488ea7](https://github.com/AlchemistSimulator/Alchemist/commit/e488ea7ab7f94660106b2993cb5bc476ce36d379))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to a33dd25 ([07355c5](https://github.com/AlchemistSimulator/Alchemist/commit/07355c512c56ebf54ad3ba0689a29c43ba75811c))
+
+
+### Style improvements
+
+* **maps:** improve format of TraceLoader.java ([288d1e9](https://github.com/AlchemistSimulator/Alchemist/commit/288d1e94db40168d18e2571e7b668d8d86b705ca))
+
 ### [14.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/14.0.0...14.0.1) (2022-03-12)
 
 

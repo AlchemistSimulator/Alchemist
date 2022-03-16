@@ -14,7 +14,6 @@ import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
 import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import org.apache.commons.io.input.BoundedInputStream;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
 import org.jooq.lambda.Unchecked;
@@ -51,8 +50,6 @@ public final class TraceLoader implements Iterable<GPSTrace> {
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))
             .collect(Collectors.toMap(Tuple2::v1, Tuple2::v2));
-    private static final int MAX_FILE_NAME_LENGTH = Byte.MAX_VALUE * 2 - 1;
-    private static final int MAX_BYTES_PER_CHAR = MAX_FILE_NAME_LENGTH * 4;
     private final boolean cyclic;
     private final ImmutableList<GPSTrace> traces;
     private static final Factory FACTORY = new FactoryBuilder()
@@ -215,8 +212,7 @@ public final class TraceLoader implements Iterable<GPSTrace> {
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {
         final InputStream resourceStream = ResourceLoader.getResourceAsStream(path);
-        final InputStream limitedResourceView = new BoundedInputStream(resourceStream,  MAX_BYTES_PER_CHAR);
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(limitedResourceView, StandardCharsets.UTF_8))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceStream, StandardCharsets.UTF_8))) {
             return op.apply(in.lines().map(line -> path + "/" + line));
         } catch (IOException e) {
             throw new IllegalArgumentException("error reading lines of: " + path, e);

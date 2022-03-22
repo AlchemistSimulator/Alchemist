@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -69,7 +69,7 @@ class MoleculeReader(
 
     private val singleColumnName: String = "$shortProp$moleculeName"
 
-    override val columnNames: List<String> = aggregators.takeIf { it.isNotEmpty() }
+    override val columnNames: List<String> = aggregators.keys.takeIf { it.isNotEmpty() }
         ?.map { "$singleColumnName[$it]" }
         ?: listOf("$singleColumnName@node-id")
 
@@ -79,9 +79,7 @@ class MoleculeReader(
         time: Time,
         step: Long
     ): Map<String, Double> {
-        fun Node<T>.extractData() = environment.incarnation
-            .map { it.getProperty(this, molecule, property) }
-            .orElseThrow { IllegalStateException("No incarnation available in the environment!") }
+        fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
         return when {
             aggregators.isEmpty() -> environment.nodes.asSequence().map { node ->
                 "$singleColumnName@${node.id}" to node.extractData()

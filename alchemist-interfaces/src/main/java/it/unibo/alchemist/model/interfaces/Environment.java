@@ -76,7 +76,8 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     /**
      * @return the {@link Incarnation} used to initialize the entities of this {@link Environment}, if it has been set.
      */
-    Optional<Incarnation<T, P>> getIncarnation();
+    @Nonnull
+    Incarnation<T, P> getIncarnation();
 
     /**
      * Get the layer associate to the given molecule. If no Layer is associated

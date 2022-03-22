@@ -9,6 +9,8 @@ environment:
 deployments:
   - type: Point
     parameters: [2, 2]
-    nodes:
-      type: HomogeneousOrientingPedestrian2D
-      parameters: [0.5]
+    properties:
+      - type: Pedestrian
+      - type: CircularArea
+      - type: Orienting2D
+        parameters: [0.5]

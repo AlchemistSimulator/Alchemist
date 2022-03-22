@@ -12,11 +12,13 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.SinglePrevalent
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A [SteeringBehavior] using [SinglePrevalent] steering strategy and accepting a collection of actions
@@ -26,8 +28,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
  * @param N type of nodes of the environment's graph.
  */
 open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads constructor(
-    env: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
-    pedestrian: Pedestrian2D<T>,
+    environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
+    node: Node<T>,
     timeDistribution: TimeDistribution<T>,
     /**
      * Tolerance angle in degrees (see [SinglePrevalent]).
@@ -36,16 +38,16 @@ open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads con
     /**
      * Alpha value for exponential smoothing (see [SinglePrevalent]).
      */
-    alpha: Double = SinglePrevalent.DEFAULT_ALPHA
+    alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
 ) : SteeringBehavior<T>(
-    env,
-    pedestrian,
+    environment,
+    node,
     timeDistribution,
     SinglePrevalent(
-        env,
-        pedestrian,
+        environment,
+        node,
         prevalent = { singleNavigationAction() },
-        maxWalk = { pedestrian.speed() / timeDistribution.rate },
+        maxWalk = { node.asProperty<T, PedestrianProperty<T>>().speed() / timeDistribution.rate },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha
     )

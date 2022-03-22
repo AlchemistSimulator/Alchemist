@@ -23,7 +23,7 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
     override fun isLocallyConsistent() = true
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>) = object : Neighborhood<T> {
 
-        override fun contains(n: Node<T>?) = n != center
+        override fun contains(node: Node<T>?) = node != center
 
         override fun getCenter() = center
 

@@ -5,10 +5,9 @@ import it.unibo.alchemist.model.interfaces.Node
 /**
  * Area inside which nodes exert an influence on each other.
  */
-interface InfluenceSphere {
-
+interface InfluenceSphere<T> {
     /**
-     * The list of nodes relevant for this sphere of influence.
+     * List of influential nodes. (e.g. nodes withing a field of view).
      */
-    fun influentialNodes(): List<Node<*>>
+    fun influentialNodes(): List<Node<T>>
 }

@@ -40,28 +40,44 @@ _reactions: &behavior
       - type: CognitiveAgentAvoidLayer
         parameters: [*exit]
 
+_homogeneous_properties: &homogeneous_properties
+  pedestrian:
+    type: Pedestrian
+  perceptive:
+    type: Perceptive2D
+  solid:
+    type: CircularArea
+
 deployments:
   - type: Circle
     parameters: [8, 0, 0, 15]
-    nodes:
-      type: HomogeneousPedestrian2D
-      parameters: [*group1]
+    properties:
+      <<: *homogeneous_properties
+      social:
+        type: Social
+        parameters: [*group1]
     programs: *behavior
   - type: Circle
     parameters: [4, 0, 0, 15]
-    nodes:
-      type: HomogeneousPedestrian2D
-      parameters: [*group2]
+    properties:
+      <<: *homogeneous_properties
+      social:
+        type: Social
+        parameters: [*group2]
     programs: *behavior
   - type: Circle
     parameters: [10, 0, 0, 15]
-    nodes:
-      type: HomogeneousPedestrian2D
-      parameters: [*group3]
+    properties:
+      <<: *homogeneous_properties
+      social:
+        type: Social
+        parameters: [*group3]
     programs: *behavior
   - type: Circle
     parameters: [2, 0, 0, 15]
-    nodes:
-      type: HomogeneousPedestrian2D
-      parameters: [*group4]
+    properties:
+      <<: *homogeneous_properties
+      social:
+        type: Social
+        parameters: [*group4]
     programs: *behavior

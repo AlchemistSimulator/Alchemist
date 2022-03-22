@@ -3,9 +3,9 @@ incarnation: protelis
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 200]
-    nodes:
-      type: CircleNode
-      parameters: [1]
+    properties:
+      - type: CircularArea
+        parameters: [1]
     programs:
       - time-distribution: 1
         type: ChemicalReaction

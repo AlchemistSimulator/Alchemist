@@ -39,9 +39,9 @@ final class TestIncarnation {
 
     private final SAPEREIncarnation<Euclidean2DPosition> incarnation = new SAPEREIncarnation<>();
     private ILsaNode node;
-    private Environment<List<ILsaMolecule>, Euclidean2DPosition> env;
-    private RandomGenerator rand;
-    private TimeDistribution<List<ILsaMolecule>> time;
+    private Environment<List<ILsaMolecule>, Euclidean2DPosition> environment;
+    private RandomGenerator randomGenerator;
+    private TimeDistribution<List<ILsaMolecule>> timeDistribution;
 
     private ILsaMolecule mkMol(final String s, final int args, final boolean ground) {
         final ILsaMolecule res = incarnation.createMolecule(s);
@@ -57,10 +57,10 @@ final class TestIncarnation {
      */
     @BeforeEach
     public void setUp() {
-        env = new Continuous2DEnvironment<>(incarnation);
-        node = new LsaNode(env);
-        rand = new MersenneTwister();
-        time = new SAPEREExponentialTime("1", rand);
+        environment = new Continuous2DEnvironment<>(incarnation);
+        node = new LsaNode(environment);
+        randomGenerator = new MersenneTwister();
+        timeDistribution = new SAPEREExponentialTime("1", randomGenerator);
     }
 
     /**
@@ -79,7 +79,9 @@ final class TestIncarnation {
     }
 
     private void testTD(final String param, final double rate, final double occurrence) {
-        final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(rand, env, node, param);
+        final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(
+                randomGenerator, environment, node, param
+        );
         assertNotNull(t0);
         if (!Double.isNaN(rate)) {
             assertEquals(rate, t0.getRate(), Double.MIN_VALUE);
@@ -115,7 +117,9 @@ final class TestIncarnation {
             final int nneighact,
             final int nallneighact
     ) {
-        final Reaction<List<ILsaMolecule>> r = incarnation.createReaction(rand, env, node, time, param);
+        final Reaction<List<ILsaMolecule>> r = incarnation.createReaction(
+                randomGenerator, environment, node, timeDistribution, param
+        );
         assertNotNull(r);
         assertEquals(ncond, r.getConditions().size());
         assertEquals(nact, r.getActions().size());
@@ -126,7 +130,7 @@ final class TestIncarnation {
 
     private void testNoR(final String param) {
         try {
-            incarnation.createReaction(rand, env, node, time, param);
+            incarnation.createReaction(randomGenerator, environment, node, timeDistribution, param);
             fail();
         } catch (IllegalArgumentException e) {
             assertFalse(e.getMessage().isEmpty());

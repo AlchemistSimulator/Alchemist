@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -13,16 +14,15 @@ import it.unibo.alchemist.ClassPathScanner;
 import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
 import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import org.apache.commons.io.input.BoundedInputStream;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
-import javax.annotation.Nonnull;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.tuple.Tuple2;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,8 +50,6 @@ public final class TraceLoader implements Iterable<GPSTrace> {
             .flatMap(l -> l.supportedExtensions().stream()
                     .map(ext -> new Tuple2<>(ext.toLowerCase(Locale.US), l)))
             .collect(Collectors.toMap(Tuple2::v1, Tuple2::v2));
-    private static final int MAX_FILE_NAME_LENGTH = Byte.MAX_VALUE * 2 - 1;
-    private static final int MAX_BYTES_PER_CHAR = MAX_FILE_NAME_LENGTH * 4;
     private final boolean cyclic;
     private final ImmutableList<GPSTrace> traces;
     private static final Factory FACTORY = new FactoryBuilder()
@@ -90,10 +88,12 @@ public final class TraceLoader implements Iterable<GPSTrace> {
      *            args to use to create GPSTimeNormalizer
      * @throws IOException in case of I/O errors
      */
-    public TraceLoader(final String path,
-            final boolean cycle,
-            final String timeNormalizerClass,
-            final Object... normalizerArgs) throws IOException {
+    public TraceLoader(
+        final String path,
+        final boolean cycle,
+        final String timeNormalizerClass,
+        final Object... normalizerArgs
+    ) throws IOException {
         this(path, cycle, makeNormalizer(timeNormalizerClass, normalizerArgs));
     }
 
@@ -119,9 +119,11 @@ public final class TraceLoader implements Iterable<GPSTrace> {
      *            args to use to create GPSTimeNormalizer
      * @throws IOException in case of I/O errors
      */
-    public TraceLoader(final String path,
-            final String timeNormalizerClass,
-            final Object... normalizerArgs) throws IOException {
+    public TraceLoader(
+        final String path,
+        final String timeNormalizerClass,
+        final Object... normalizerArgs
+    ) throws IOException {
         this(path, false, timeNormalizerClass, normalizerArgs);
     }
 
@@ -164,9 +166,9 @@ public final class TraceLoader implements Iterable<GPSTrace> {
                 return fileLoader.readTrace(ResourceLoader.getResource(path));
             }  catch (FileFormatException e) {
                 throw new IllegalStateException(
-                        "Loader: " + LOADER.get(extensionFile).getClass().getSimpleName()
+                    "Loader: " + LOADER.get(extensionFile).getClass().getSimpleName()
                         + " can't load file: " + path + ", plese make sure it is a " + extensionFile + "file?",
-                        e
+                    e
                 );
             } 
         }
@@ -210,8 +212,7 @@ public final class TraceLoader implements Iterable<GPSTrace> {
 
     private static <R> R runOnPathsStream(final String path, final Function<Stream<String>, R> op) {
         final InputStream resourceStream = ResourceLoader.getResourceAsStream(path);
-        final InputStream limitedResourceView = new BoundedInputStream(resourceStream,  MAX_BYTES_PER_CHAR);
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(limitedResourceView, StandardCharsets.UTF_8))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceStream, StandardCharsets.UTF_8))) {
             return op.apply(in.lines().map(line -> path + "/" + line));
         } catch (IOException e) {
             throw new IllegalArgumentException("error reading lines of: " + path, e);

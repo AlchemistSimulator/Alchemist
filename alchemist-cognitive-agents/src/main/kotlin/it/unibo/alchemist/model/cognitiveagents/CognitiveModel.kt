@@ -40,7 +40,7 @@ interface CognitiveModel {
     fun update(frequency: Double)
 
     /**
-     * Whether or not this pedestrian intends to escape.
+     * Whether or not this node intends to escape.
      */
     fun wantsToEscape(): Boolean = escapeIntention() > remainIntention()
 }

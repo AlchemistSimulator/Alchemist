@@ -10,5 +10,5 @@ interface GroupSteeringAction<T, P> : SteeringAction<T, P> where P : Position<P>
     /**
      * The list of pedestrians influencing this action.
      */
-    fun group(): List<Pedestrian<T, P, *>>
+    fun group(): List<Node<T>>
 }

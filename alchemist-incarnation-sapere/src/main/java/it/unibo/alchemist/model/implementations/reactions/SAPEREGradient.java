@@ -164,9 +164,9 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      * for compatibility with the YAML-based Alchemist loader. It should be
      * avoided when possible, by relying on the other constructor instead.
      * 
-     * @param env
+     * @param environment
      *            the current environment
-     * @param n
+     * @param node
      *            the node where this reaction is scheduled
      * @param sourceTemplate
      *            a template ILsaMolecule representing the source
@@ -192,27 +192,29 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      * @param gradThreshold
      *            if the value of the gradient grows above this threshold, the
      *            gradient evaporates
-     * @param td
+     * @param timeDistribution
      *            Markovian Rate
      */
-    public SAPEREGradient(final Environment<List<ILsaMolecule>, P> env,
-            final ILsaNode n,
-            final TimeDistribution<List<ILsaMolecule>> td,
+    public SAPEREGradient(final Environment<List<ILsaMolecule>, P> environment,
+            final ILsaNode node,
+            final TimeDistribution<List<ILsaMolecule>> timeDistribution,
             final String sourceTemplate,
             final String gradientTemplate,
             final int valuePosition,
             final String expression,
             final String contextTemplate,
             final double gradThreshold) {
-        this(env,
-                n,
-                new LsaMolecule(sourceTemplate),
-                new LsaMolecule(gradientTemplate),
-                valuePosition,
-                expression,
-                new LsaMolecule(contextTemplate),
-                gradThreshold,
-                td);
+        this(
+            environment,
+            node,
+            new LsaMolecule(sourceTemplate),
+            new LsaMolecule(gradientTemplate),
+            valuePosition,
+            expression,
+            new LsaMolecule(contextTemplate),
+            gradThreshold,
+            timeDistribution
+        );
     }
 
     @Override

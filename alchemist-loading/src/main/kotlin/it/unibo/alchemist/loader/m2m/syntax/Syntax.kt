@@ -37,22 +37,44 @@ internal object DocumentRoot : SyntaxElement {
     object Deployment : SyntaxElement {
         val contents by OwnName()
         val nodes by OwnName()
+        val properties by OwnName()
         val programs by OwnName()
         override val validDescriptors = setOf(
             validDescriptor {
                 mandatory(JavaType.type)
-                optional(JavaType.parameters, contents, nodes, programs)
-                forbidden(Contents.shapes)
+                optional(JavaType.parameters, contents, properties, nodes, programs)
+                forbidden(Filter.filter)
             }
         )
+        /*
+         * in:
+         *   - type: FilterType
+         *     parameters: [...]
+         */
+        object Filter : SyntaxElement {
+            const val filter = "in"
+            override val validDescriptors = setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters)
+                }
+            )
+        }
+        object Property : SyntaxElement {
+            override val validDescriptors = setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters, Filter.filter)
+                }
+            )
+        }
         object Contents : SyntaxElement {
             val molecule by OwnName()
             val concentration by OwnName()
-            const val shapes = "in"
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(molecule, concentration)
-                    optional(shapes)
+                    optional(Filter.filter)
                 }
             )
         }
@@ -64,11 +86,11 @@ internal object DocumentRoot : SyntaxElement {
             override val validDescriptors = setOf(
                 validDescriptor {
                     mandatory(JavaType.type)
-                    optional(JavaType.parameters, conditions, timeDistribution, actions)
+                    optional(JavaType.parameters, Filter.filter, conditions, timeDistribution, actions)
                 },
                 validDescriptor {
                     mandatory(program)
-                    optional(timeDistribution)
+                    optional(timeDistribution, Filter.filter)
                 }
             )
         }

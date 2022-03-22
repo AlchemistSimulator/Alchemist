@@ -11,10 +11,10 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -59,12 +59,12 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
         final List<Integer> validTargetsIds = new ArrayList<>();
         if (delta < 0) {
             neighborhood.getNeighbors().stream()
-            .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= delta)
+            .filter(n -> n.asPropertyOrNull(CellProperty.class) != null && n.getConcentration(mol) >= delta)
             .mapToInt(Node::getId)
             .forEach(validTargetsIds::add);
         } else {
             neighborhood.getNeighbors().stream()
-            .filter(n -> n instanceof CellNode && n.getConcentration(mol) >= delta)
+            .filter(n -> n.asPropertyOrNull(CellProperty.class) != null && n.getConcentration(mol) >= delta)
             .mapToInt(Node::getId)
             .forEach(validTargetsIds::add);
         }

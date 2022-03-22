@@ -10,9 +10,10 @@ package it.unibo.alchemist.protelis;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
@@ -37,7 +38,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 
     private static final long serialVersionUID = 1L;
     private final Environment<Object, ?> environment;
-    private final ProtelisNode<?> node;
+    private final Node<Object> node;
     /**
      * This reaction stores the time at which the neighbor state is read.
      */
@@ -185,24 +186,22 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     public void simulateMessageArrival(final double currentTime) {
         Objects.requireNonNull(toBeSent);
         if (!toBeSent.isEmpty()) {
-            final MessageInfo msg = new MessageInfo(currentTime, node, toBeSent);
+            final MessageInfo msg = new MessageInfo(currentTime, node.asProperty(ProtelisProperty.class), toBeSent);
             environment.getNeighborhood(node).forEach(n -> {
-                if (n instanceof ProtelisNode) {
-                    final AlchemistNetworkManager destination = ((ProtelisNode<?>) n).getNetworkManager(program);
-                    if (destination != null) {
-                        boolean packetArrives = true;
-                        if (distanceLossDistribution != null) {
-                            final var distance = environment.getDistanceBetweenNodes(node, n);
-                            final var random = program.getRandomGenerator().nextDouble();
-                            packetArrives = random > distanceLossDistribution.cumulativeProbability(distance);
-                        }
-                        if (packetArrives) {
-                            /*
-                             * The node is running the program, and the loss model actually makes the packet arrive.
-                             * Otherwise, the message is discarded
-                             */
-                            destination.receiveMessage(msg);
-                        }
+                if (n.asPropertyOrNull(ProtelisProperty.class) != null) {
+                    final AlchemistNetworkManager destination = n.asProperty(ProtelisProperty.class).getNetworkManager(program);
+                    boolean packetArrives = true;
+                    if (distanceLossDistribution != null) {
+                        final var distance = environment.getDistanceBetweenNodes(node, n);
+                        final var random = program.getRandomGenerator().nextDouble();
+                        packetArrives = random > distanceLossDistribution.cumulativeProbability(distance);
+                    }
+                    if (packetArrives) {
+                        /*
+                         * The node is running the program, and the loss model actually makes the packet arrive.
+                         * Otherwise, the message is discarded
+                         */
+                        destination.receiveMessage(msg);
                     }
                 }
             });

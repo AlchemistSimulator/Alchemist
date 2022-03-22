@@ -19,13 +19,13 @@ import kotlin.math.min
  */
 class CameraInjectVisibleNodeClosestToDistance(
     node: Node<Any>,
-    private val env: Physics2DEnvironment<Any>,
+    private val environment: Physics2DEnvironment<Any>,
     private val distance: Double,
     private val visionMolecule: Molecule,
     private val targetMolecule: Molecule
 ) : AbstractAction<Any>(node) {
     override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
-        CameraInjectVisibleNodeClosestToDistance(node, env, distance, visionMolecule, targetMolecule)
+        CameraInjectVisibleNodeClosestToDistance(node, environment, distance, visionMolecule, targetMolecule)
 
     override fun execute() {
         if (node.contains(visionMolecule)) {
@@ -42,8 +42,8 @@ class CameraInjectVisibleNodeClosestToDistance(
                     "The VisibleNode contained in visionMolecule is from a different environment"
                 }
                 @Suppress("UNCHECKED_CAST") val nodes = visibleNodes as List<VisibleNode<*, Euclidean2DPosition>>
-                val myPosition = env.getPosition(node).surroundingPointAt(
-                    versor = env.getHeading(node),
+                val myPosition = environment.getPosition(node).surroundingPointAt(
+                    versor = environment.getHeading(node),
                     distance = distance
                 )
                 nodes.map { it.position }

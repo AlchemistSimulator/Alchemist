@@ -20,13 +20,13 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  * A [NavigationStrategy] allowing to explore the environment looking for something specific whose position
  * is unknown.
  * The client can specify a list of [unknownDestinations]: these can be recognized once they're in sight,
- * but the pedestrian doesn't know their position until that moment (think e.g. of exits in an evacuation
+ * but the node doesn't know their position until that moment (think e.g. of exits in an evacuation
  * scenario). More specifically, unknown destinations can be detected if located in a room adjacent to the
- * room the pedestrian is into. Once a destination is detected, the pedestrian will reach it and stop.
+ * room the node is into. Once a destination is detected, the node will reach it and stop.
  *
  * @param T the concentration type.
- * @param L the type of landmarks of the pedestrian's cognitive map.
- * @param R the type of edges of the pedestrian's cognitive map, representing the [R]elations between landmarks.
+ * @param L the type of landmarks of the node's cognitive map.
+ * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.
  */
 open class GoalOrientedExploring<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
@@ -37,7 +37,7 @@ open class GoalOrientedExploring<T, L : Euclidean2DConvexShape, R>(
         reachUnknownDestination(newRoom, orElse = { super.inNewRoom(newRoom) })
 
     /**
-     * If one or more unknown destinations are inside [newRoom] (= the room the pedestrian is into), the closest
+     * If one or more unknown destinations are inside [newRoom] (= the room the node is into), the closest
      * one is approached. Otherwise, if one or more destinations are in a room adjacent to the current one, the
      * related doors are weighted using [weightExit] and the one with minimum weight is crossed. [orElse] is
      * executed otherwise.

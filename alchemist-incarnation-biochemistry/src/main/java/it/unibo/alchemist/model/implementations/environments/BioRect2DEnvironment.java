@@ -11,9 +11,9 @@ package it.unibo.alchemist.model.implementations.environments;
 import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,17 +94,18 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
     @Override
     @SuppressWarnings("unchecked")
     public final void moveNode(final Node<Double> node, final Euclidean2DPosition direction) {
-        if (node instanceof CellNode) {
+        if (node.asPropertyOrNull(CellProperty.class) != null) {
             super.moveNode(node, direction);
-            final CellNode<Euclidean2DPosition> nodeToMove = (CellNode<Euclidean2DPosition>) node;
+            final Node<Double> nodeToMove = node;
             final Neighborhood<Double> neigh = getNeighborhood(nodeToMove);
-            final Map<Junction, Map<CellNode<?>, Integer>> jun = nodeToMove.getJunctions();
+            final Map<Junction, Map<Node<Double>, Integer>> jun = nodeToMove
+                    .asProperty(CellProperty.class).getJunctions();
             jun.forEach((key, value) -> value.forEach((key1, value1) -> {
                 if (!neigh.contains(key1)) {
                     // there is a junction that links a node which isn't in the neighborhood after the movement
                     for (int i = 0; i < value1; i++) {
-                        nodeToMove.removeJunction(key, key1);
-                        key1.removeJunction(key.reverse(), nodeToMove);
+                        nodeToMove.asProperty(CellProperty.class).removeJunction(key, key1);
+                        key1.asProperty(CellProperty.class).removeJunction(key.reverse(), nodeToMove);
                     }
                 }
             }));

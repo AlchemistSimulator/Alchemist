@@ -14,10 +14,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.nio.file.Files;
+import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
-
-import com.google.common.io.Files;
 
 /**
  * Class that manage a temp local working directory.
@@ -31,7 +31,13 @@ public final class WorkingDirectory implements AutoCloseable {
      * Create new local temp working directory.
      */
     public WorkingDirectory() {
-        this.directory = Files.createTempDir();
+        File tryDirectory;
+        try {
+            tryDirectory = Files.createTempDirectory("alchemist").toFile();
+        } catch (IOException e) {
+            throw new IllegalStateException("An error occure while attempting to create a temporary directory", e);
+        }
+        this.directory = Objects.requireNonNull(tryDirectory);
     }
 
     /**

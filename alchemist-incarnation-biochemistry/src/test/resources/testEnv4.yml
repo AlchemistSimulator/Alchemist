@@ -16,9 +16,6 @@ _reactions: &reactions
 deployments:
   - type: Point
     parameters: [0, 0]
-    nodes:
-      type: CellNodeImpl
-      parameters: []
     programs:
       - *reactions
   - type: Point

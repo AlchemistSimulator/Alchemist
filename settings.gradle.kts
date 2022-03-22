@@ -6,8 +6,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 plugins {
-    id("com.gradle.enterprise") version "3.8.1"
-    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.0.3"
+    id("com.gradle.enterprise") version "3.9"
+    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.0.5"
 }
 
 include(
@@ -44,8 +44,6 @@ gradleEnterprise {
         publishAlways()
     }
 }
-
-enableFeaturePreview("VERSION_CATALOGS")
 
 gitHooks {
     commitMsg { conventionalCommits() }

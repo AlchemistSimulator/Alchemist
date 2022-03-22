@@ -15,17 +15,19 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.implementations.properties.Protelis;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
+import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.NodeProperty;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -35,9 +37,11 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.jetbrains.annotations.NotNull;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
@@ -77,6 +81,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(new CacheLoader<>() {
+                @NotNull
                 @Override
                 public SynchronizedVM load(@Nonnull final CacheKey key) {
                     return new SynchronizedVM(key);
@@ -84,7 +89,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             });
 
     private static List<RunProtelisProgram<?>> getIncomplete(
-            final ProtelisNode<?> protelisNode,
+            final Node<?> protelisNode,
             final List<RunProtelisProgram<?>> alreadyDone
     ) {
         return protelisNode.getReactions().stream()
@@ -106,6 +111,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 .collect(Collectors.toList());
     }
 
+    private void checkIsProtelisNode(final Node<Object> node, final String exceptionMessage) {
+        if (node == null || node.asPropertyOrNull(ProtelisProperty.class) == null) {
+            throw new IllegalArgumentException(exceptionMessage);
+        }
+    }
+
     @Override
     public Action<Object> createAction(
             final RandomGenerator randomGenerator,
@@ -116,38 +127,34 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final String additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters);
-        if (node instanceof ProtelisNode) {
-            final ProtelisNode<P> pNode = (ProtelisNode<P>) node;
-            if ("send".equalsIgnoreCase(additionalParameters)) {
-                final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
-                        .parallelStream()
-                        .flatMap(r -> r.getActions().parallelStream())
-                        .filter(a -> a instanceof SendToNeighbor)
-                        .map(c -> ((SendToNeighbor) c).getProtelisProgram())
-                        .collect(Collectors.toList());
-                final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
-                if (pList.isEmpty()) {
-                    throw new IllegalStateException("There is no program requiring a "
-                            + SendToNeighbor.class.getSimpleName() + " action");
-                }
-                if (pList.size() > 1) {
-                    throw new IllegalStateException("There are too many programs requiring a "
-                            + SendToNeighbor.class.getName() + " action: " + pList);
-                }
-                return new SendToNeighbor(pNode, reaction, pList.get(0));
-            } else {
-                try {
-                    return new RunProtelisProgram<>(environment, pNode, reaction, randomGenerator, additionalParameters);
-                } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
-                    throw new IllegalArgumentException(
-                            "Could not create the requested Protelis program: " + additionalParameters,
-                            e
-                    );
-                }
+        checkIsProtelisNode(node, "The node must have a " + ProtelisProperty.class.getSimpleName());
+        if ("send".equalsIgnoreCase(additionalParameters)) {
+            final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
+                    .parallelStream()
+                    .flatMap(r -> r.getActions().parallelStream())
+                    .filter(a -> a instanceof SendToNeighbor)
+                    .map(c -> ((SendToNeighbor) c).getProtelisProgram())
+                    .collect(Collectors.toList());
+            final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
+            if (pList.isEmpty()) {
+                throw new IllegalStateException("There is no program requiring a "
+                        + SendToNeighbor.class.getSimpleName() + " action");
+            }
+            if (pList.size() > 1) {
+                throw new IllegalStateException("There are too many programs requiring a "
+                        + SendToNeighbor.class.getName() + " action: " + pList);
+            }
+            return new SendToNeighbor(node, reaction, pList.get(0));
+        } else {
+            try {
+                return new RunProtelisProgram<>(environment, node, reaction, randomGenerator, additionalParameters);
+            } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
+                throw new IllegalArgumentException(
+                        "Could not create the requested Protelis program: " + additionalParameters,
+                        e
+                );
             }
         }
-        throw new IllegalArgumentException("The node must be an instance of " + ProtelisNode.class.getSimpleName()
-                + ", it is a " + node.getClass().getName() + " instead");
     }
 
     @Override
@@ -164,6 +171,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     @Override
+    public Object createConcentration() {
+        return null;
+    }
+
+    @Override
     public Condition<Object> createCondition(
             final RandomGenerator randomGenerator,
             final Environment<Object, P> environment,
@@ -172,35 +184,29 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Reaction<Object> reaction,
             final String additionalParameters
     ) {
-        if (node instanceof ProtelisNode) {
-            final ProtelisNode<?> pNode = (ProtelisNode<?>) node;
-            /*
-             * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
-             */
-            final List<RunProtelisProgram<?>> alreadyDone = pNode.getReactions()
-                    .stream()
-                    .flatMap(r -> r.getConditions().stream())
-                    .filter(c -> c instanceof ComputationalRoundComplete)
-                    .map(c -> ((ComputationalRoundComplete) c).getProgram())
-                    .collect(Collectors.toList());
-            final List<RunProtelisProgram<?>> pList = getIncomplete(pNode, alreadyDone);
-            if (pList.isEmpty()) {
-                throw new IllegalStateException(
-                    "There is no program requiring a " + ComputationalRoundComplete.class.getSimpleName() + " condition"
-                );
-            }
-            if (pList.size() > 1) {
-                throw new IllegalStateException(
-                    "There are too many programs requiring a " + ComputationalRoundComplete.class.getSimpleName()
-                        + " condition: " + pList
-                );
-            }
-            return new ComputationalRoundComplete(pNode, pList.get(0));
+        checkIsProtelisNode(node, "The node must have a " + ProtelisProperty.class.getSimpleName());
+        /*
+         * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
+         */
+        final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
+                .stream()
+                .flatMap(r -> r.getConditions().stream())
+                .filter(c -> c instanceof ComputationalRoundComplete)
+                .map(c -> ((ComputationalRoundComplete) c).getProgram())
+                .collect(Collectors.toList());
+        final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
+        if (pList.isEmpty()) {
+            throw new IllegalStateException(
+                "There is no program requiring a " + ComputationalRoundComplete.class.getSimpleName() + " condition"
+            );
         }
-        throw new IllegalArgumentException(
-            "The node must be an instance of " + ProtelisNode.class.getSimpleName() + ", it is a "
-                + node.getClass().getName() + " instead"
-        );
+        if (pList.size() > 1) {
+            throw new IllegalStateException(
+                "There are too many programs requiring a " + ComputationalRoundComplete.class.getSimpleName()
+                    + " condition: " + pList
+            );
+        }
+        return new ComputationalRoundComplete(node, pList.get(0));
     }
 
     @Override
@@ -214,7 +220,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Environment<Object, P> environment,
             final String parameter
     ) {
-        return new ProtelisNode<>(environment);
+        final Node<Object> node = new GenericNode<>(this, environment);
+        node.addProperty(new Protelis<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
+        return node;
     }
 
     @Override
@@ -343,9 +351,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 return "Wapper over a non-ProtelisNode for an invalid DeviceUID, meant to host local-only computation.";
             }
         };
-        private final Node<?> node;
+        private final Node<Object> node;
 
-        private DummyContext(final Node<?> node) {
+        private DummyContext(final Node<Object> node) {
             super(new ProtectedExecutionEnvironment(node), new NetworkManager() {
                 @Override
                 public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
@@ -367,10 +375,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         @SuppressFBWarnings("EI_EXPOSE_REP")
         public DeviceUID getDeviceUID() {
-            if (node instanceof ProtelisNode) {
-                return (ProtelisNode<?>) node;
-            }
-            return NO_NODE_ID;
+            final ProtelisProperty protelisProperty = node.asPropertyOrNull(ProtelisProperty.class);
+            return protelisProperty != null ? protelisProperty : NO_NODE_ID;
         }
 
         @Override
@@ -510,12 +516,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
-        public void addReaction(final Reaction<Object> r) {
+        public void addReaction(@NotNull final Reaction<Object> r) {
             notImplemented();
         }
 
         @Override
-        public boolean contains(final Molecule mol) {
+        public boolean contains(@NotNull final Molecule mol) {
             return notImplemented();
         }
 
@@ -525,10 +531,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         }
 
         @Override
-        public Object getConcentration(final Molecule mol) {
+        public Object getConcentration(@NotNull final Molecule mol) {
             return notImplemented();
         }
 
+        @NotNull
         @Override
         public Map<Molecule, Object> getContents() {
             return notImplemented();
@@ -539,28 +546,30 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             return notImplemented();
         }
 
+        @NotNull
         @Override
         public List<Reaction<Object>> getReactions() {
             return Collections.emptyList();
         }
 
         @Override
-        public void removeConcentration(final Molecule mol) {
+        public void removeConcentration(@NotNull final Molecule mol) {
             notImplemented();
         }
 
         @Override
-        public void removeReaction(final Reaction<Object> r) {
+        public void removeReaction(@NotNull final Reaction<Object> r) {
             notImplemented();
         }
 
         @Override
-        public void setConcentration(final Molecule mol, final Object c) {
+        public void setConcentration(@NotNull final Molecule mol, final Object c) {
             notImplemented();
         }
 
+        @NotNull
         @Override
-        public Node<Object> cloneNode(final Time t) {
+        public Node<Object> cloneNode(@NotNull final Time t) {
             return notImplemented();
         }
 
@@ -573,6 +582,19 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         public int hashCode() {
             return -1;
         }
+
+
+        @Override
+        public void addProperty(@NotNull final NodeProperty<Object> nodeProperty) {
+            notImplemented();
+        }
+
+        @NotNull
+        @Override
+        public List<NodeProperty<Object>> getCapabilities() {
+            return Collections.emptyList();
+        }
+
     }
 
 }

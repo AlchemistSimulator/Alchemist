@@ -8,21 +8,45 @@ summary = "Agents with realistic human behavior."
 We recommend to read our [explanation of the cognitive agents](/explanation/cognitive)
 to better understand the contents of this how-to.
 
+Different kinds of pedestrians are obtainable by attaching
+{{% api class=NodeProperty %}}s
+to nodes (e.g {{%api package=model.implementations.nodes class=GenericNode %}}).
+Common properties concern abilities such as perceiving other nodes
+({{% api package=model.interfaces.properties class=PerceptiveProperty %}})
+and occuping space in an environment 
+({{% api package=model.interfaces.properties class=OccupiesSpaceProperty %}}).
+
 ## Homogeneous Pedestrian
+
+As shown in the example below, this kind of pedestrian is obtained by attaching the
+{{% api package=model.implementations.properties class=Pedestrian %}}
+property.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-pedestrian.yml" >}}
 
 ## Heterogeneous Pedestrian
 
-The age groups available are: *child*, *adult*, *elderly*;
-alternatively you can specify the exact age.
-The genders available are: *male*, *female*.
+The age groups available are: *child*, *adult*, and *elderly*;
+alternatively, if the exact age is specified,
+they are assigned to one of the aforementioned groups automatically.
+The genders available are: *male* and *female*. 
+This informations is included in the 
+{{%api package=model.implementations.properties class=Human %}}
+property and it is used by the 
+{{%api package=model.implementations.properties class=HeterogeneousPedestrian %}} 
+property, along with the age.
 
 {{< code path="src/test/resources/website-snippets/heterogeneous-pedestrian.yml" >}}
 
 ## Cognitive Pedestrian
-Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities.
-They have an emotional state and are able to influence and be influenced by others with the same capabilities. As an example, cognitive pedestrians can perceive fear via social contagion (e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).
+Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities given by a
+{{% api package=model.interfaces.properties class=CognitiveProperty %}}.
+They have an emotional state and are able to influence and be influenced by others with the same capabilities.
+As an example, cognitive pedestrians can perceive fear via social contagion 
+(e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).
+To express how a cognitive pedestrians move, based on their emotional state, attach the
+{{% api package=model.implementations.properties class=CognitivePedestrian %}}
+property.
 
 {{< code path="src/test/resources/website-snippets/cognitive-pedestrian.yml" >}}
 
@@ -39,13 +63,14 @@ can be familiar with different portions of the environment.
 Be also aware that orienting pedestrians can only be placed in an
 {{% api package="model.interfaces.environments" class="EnvironmentWithGraph" %}}
 which is a type of environment providing a navigation graph.
+In order to give a node orienting capabilities enhance a node with an
+{{% api package=model.interfaces.properties class=OrientingProperty %}}.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-orienting-pedestrian.yml" >}}
 
 ## Cognitive orienting pedestrian
 
 These are cognitive pedestrians equipable with a given knowledge degree of the environment.
-Cognitive orienting pedestrians can be instanced providing their knowledge degree as first parameter.
 
 {{< code path="src/test/resources/website-snippets/cognitive-orienting-pedestrian.yml" >}}
 
@@ -148,17 +173,9 @@ Here's a list of all the hardcoded parameters.
 ### Physical pedestrians
 
 Physical pedestrians are capable of pushing and bumping into each other.
-Similarly to Orienting Pedestrians,
-we have
-{{% api package="model.implementations.nodes" class="HomogeneousPhysicalPedestrian2D" %}},
-and
-{{% api package="model.implementations.nodes" class="CognitivePhysicalPedestrian2D" %}}.
-
-Whatsmore, you can have a physical pedestrian capable of orienting as well:
-there are
-{{% api package="model.implementations.nodes" class="HomogeneousOrientingPhysicalPedestrian2D" %}}
-and
-{{% api package="model.implementations.nodes" class="CognitiveOrientingPhysicalPedestrian2D" %}}.
+To express those physical interactions use a
+{{% api package=model.interfaces.properties class=PhysicalPedestrian %}}
+property.
 
 ### Physical steering strategies
 
@@ -173,8 +190,7 @@ and
 {{% api package="model.implementations.reactions" class="NavigationPrioritisedSteeringWithPhysics" %}}
 are available.
 
-Here's a simple code for loading a
-{{% api package="model.implementations.nodes" class="HomogeneousPhysicalPedestrian2D" %}}
+Here's a simple code for loading a homogeneous pedestrian with physical properties
 with
 {{% api package="model.implementations.actions" class="CognitiveAgentSeek" %}}
 and

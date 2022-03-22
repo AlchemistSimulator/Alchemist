@@ -7,21 +7,21 @@
  */
 package it.unibo.alchemist.test.util;
 
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
+import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 
 /**
  * Generic node for testing purposes.
  */
-public final class TestNode extends AbstractNode<Object> {
+public final class TestNode extends GenericNode<Object> {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param env the environment
+     * @param environment the environment
      */
-    public TestNode(final Environment<?, ?> env) {
-        super(env);
+    public TestNode(final Environment<Object, ?> environment) {
+        super(environment);
     }
 
     @Override

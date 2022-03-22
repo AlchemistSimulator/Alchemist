@@ -53,8 +53,8 @@ class TestYAMLLoader {
      */
     @Test
     void testAnyRealDistribution() {
-        final Environment<?, ?> env = testNoVar("synthetic/anyrealdistribution.yml");
-        env.forEach(n -> n.forEach(r -> {
+        final Environment<?, ?> environment = testNoVar("synthetic/anyrealdistribution.yml");
+        environment.forEach(n -> n.forEach(r -> {
             assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
         }));
     }
@@ -90,8 +90,8 @@ class TestYAMLLoader {
     @Test
     <P extends Position<P>> void testLayers() {
         @SuppressWarnings("unchecked")
-        final Environment<Object, P> env = (Environment<Object, P>) testNoVar("synthetic/testlayer.yml");
-        final Set<Layer<Object, P>> layers = env.getLayers();
+        final Environment<Object, P> environment = (Environment<Object, P>) testNoVar("synthetic/testlayer.yml");
+        final Set<Layer<Object, P>> layers = environment.getLayers();
         assertFalse(layers.isEmpty());
         assertEquals(2, layers.size());
         assertEquals(2L, layers.stream()
@@ -100,11 +100,11 @@ class TestYAMLLoader {
         final Incarnation<?, ?> inc = SupportedIncarnations.get("sapere").orElseThrow(
                 () -> new IllegalStateException("No SAPERE incarnation available"));
         final Molecule a = inc.createMolecule("A");
-        assertTrue(env.getLayer(a).isPresent());
-        assertTrue(env.getLayer(a).get() instanceof StepLayer);
+        assertTrue(environment.getLayer(a).isPresent());
+        assertTrue(environment.getLayer(a).get() instanceof StepLayer);
         final Molecule b = inc.createMolecule("B");
-        assertTrue(env.getLayer(b).isPresent());
-        assertTrue(env.getLayer(b).get() instanceof StepLayer);
+        assertTrue(environment.getLayer(b).isPresent());
+        assertTrue(environment.getLayer(b).get() instanceof StepLayer);
     }
 
     /**
@@ -120,8 +120,8 @@ class TestYAMLLoader {
      */
     @Test
     void testMultipleMolecules() {
-        final Environment<?, ?> env = testNoVar("synthetic/multiplemolecule.yml");
-        env.forEach(n -> assertEquals(4, n.getMoleculeCount()));
+        final Environment<?, ?> environment = testNoVar("synthetic/multiplemolecule.yml");
+        environment.forEach(n -> assertEquals(4, n.getMoleculeCount()));
     }
 
     /**
@@ -145,9 +145,9 @@ class TestYAMLLoader {
      */
     @Test
     void testScalaVar() {
-        final Environment<Object, ?> env = testNoVar("synthetic/scalavar.yml");
-        assertNotNull(env);
-        assertEquals(env.makePosition(3, 10), env.getPosition(env.getNodeByID(0)));
+        final Environment<Object, ?> environment = testNoVar("synthetic/scalavar.yml");
+        assertNotNull(environment);
+        assertEquals(environment.makePosition(3, 10), environment.getPosition(environment.getNodeByID(0)));
     }
 
     /**
@@ -168,15 +168,16 @@ class TestYAMLLoader {
             final Map<String, Double> vars
     ) {
         assertNotNull(resource, "Missing test resource " + resource);
-        final Environment<T, P> env = LoadAlchemist.from(resource, YamlProvider.INSTANCE).<T, P>getWith(vars).getEnvironment();
-        final Simulation<T, P> sim = new Engine<>(env, 10_000);
+        final Environment<T, P> environment = LoadAlchemist.from(resource, YamlProvider.INSTANCE)
+                .<T, P>getWith(vars).getEnvironment();
+        final Simulation<T, P> sim = new Engine<>(environment, 10_000);
         sim.play();
 //        if (!java.awt.GraphicsEnvironment.isHeadless()) {
 //            it.unibo.alchemist.boundary.gui.SingleRunGUI.make(sim);
 //        }
         sim.run();
         sim.getError().ifPresent(e -> fail(e.getMessage()));
-        return env;
+        return environment;
     }
 
     private static <T> Environment<T, ?> testNoVar(final InputStream resource) {

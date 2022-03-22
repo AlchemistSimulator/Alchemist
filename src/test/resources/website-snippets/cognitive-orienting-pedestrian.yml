@@ -15,8 +15,13 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [2, 2]
-    nodes:
-      type: CognitiveOrientingPedestrian2D
-      parameters: [0.5, "adult", "male"]
+    properties:
+      - type: Human
+        parameters: ["adult", "male"]
+      - type: Perceptive2D
+      - type: CognitivePedestrian
+      - type: Cognitive2D
+      - type: Orienting2D
+        parameters: [0.5]
     programs:
       - *behavior

@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 public abstract class AbstractNeighborAction<T> extends AbstractRandomizableAction<T> {
 
     private static final long serialVersionUID = -2287346030993830896L;
-    private final Environment<T, ?> env;
+    private final Environment<T, ?> environment;
     private final Node<T> node;
 
     /**
@@ -39,7 +39,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
     ) {
         super(node, randomGenerator);
         this.node = node;
-        env = environment;
+        this.environment = environment;
     }
 
     @Override
@@ -50,7 +50,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
      */
     @Override
     public void execute() {
-        final Neighborhood<T> neighborhood = env.getNeighborhood(node);
+        final Neighborhood<T> neighborhood = environment.getNeighborhood(node);
         if (!neighborhood.isEmpty()) {
             execute(neighborhood.getNeighborByNumber(getRandomGenerator().nextInt(neighborhood.size())));
         }
@@ -73,7 +73,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
      * @return exposes the {@link Environment} to subclasses
      */
     protected final Environment<T, ?> getEnvironment() {
-        return env;
+        return environment;
     }
 
 }

@@ -1,0 +1,8 @@
+# This file is meant to be used to trick renovate into updating external tools
+name: trick-renovate
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: gohugoio/hugo@v0.95.0

@@ -32,7 +32,6 @@ import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -42,6 +41,7 @@ import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -55,9 +55,9 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.jirf.Factory;
 import org.danilopianini.jirf.FactoryBuilder;
-import javax.annotation.Nonnull;
 import org.kaikikm.threadresloader.ResourceLoader;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedHashMap;
@@ -74,7 +74,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
     private final BiochemistryIncarnation<P> incarnation;
     private final Node<Double> node;
-    private final Environment<Double, P> env;
+    private final Environment<Double, P> environment;
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
     private String reactionString;
@@ -93,7 +93,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
     ) {
         incarnation = inc;
         node = currentNode;
-        env = environment;
+        this.environment = environment;
     }
 
     /**
@@ -107,7 +107,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         parser.removeErrorListeners();
         parser.addErrorListener(new BiochemistryParseErrorListener(reactionString));
         final ParseTree tree = parser.reaction();
-        final BiochemistryDSLVisitor<P> eval = new BiochemistryDSLVisitor<>(rand, incarnation, time, node, env);
+        final BiochemistryDSLVisitor<P> eval = new BiochemistryDSLVisitor<>(rand, incarnation, time, node, environment);
         return Objects.requireNonNull(eval.visit(tree), "Unable to visit/parse " + reactionString);
     }
 
@@ -162,7 +162,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         private final Factory factory;
         private final @Nonnull RandomGenerator rand;
         private final @Nonnull Node<Double> node;
-        private final @Nonnull Environment<Double, P> env;
+        private final @Nonnull Environment<Double, P> environment;
         private final @Nonnull Reaction<Double> reaction;
         private final List<Condition<Double>> conditionList = new ArrayList<>(0);
         private final List<Action<Double>> actionList = new ArrayList<>(0);
@@ -180,8 +180,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                                        @Nonnull final Environment<Double, P> environment) {
             this.rand = rand;
             this.node = currentNode;
-            env = environment;
-            reaction = new BiochemicalReaction(node, timeDistribution, env, rand);
+            this.environment = environment;
+            reaction = new BiochemicalReaction(node, timeDistribution, this.environment, rand);
             factory = new FactoryBuilder()
                     .withAutoBoxing()
                     .withBooleanIntConversions()
@@ -244,10 +244,10 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
              * is undefined, and can lead to unwanted behavior.
              */
             if (neighborActionPresent && biomolConditionsInNeighbor.isEmpty()) { 
-                conditionList.add(new NeighborhoodPresent<>(env, node));
+                conditionList.add(new NeighborhoodPresent<>(environment, node));
             }
             if (envActionPresent && !envConditionPresent) {
-                conditionList.add(new EnvPresent(env, node));
+                conditionList.add(new EnvPresent(environment, node));
             }
             reaction.setConditions(conditionList);
             reaction.setActions(actionList);
@@ -275,8 +275,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
             for (final BiomoleculeContext b : ctx.biomolecule()) {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
-                conditionList.add(new BiomolPresentInEnv<>(env, node, biomol, concentration));
-                actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, env, rand));
+                conditionList.add(new BiomolPresentInEnv<>(environment, node, biomol, concentration));
+                actionList.add(new ChangeBiomolConcentrationInEnv(node, biomol, environment, rand));
                 envConditionPresent = true;
             }
             return reaction;
@@ -290,8 +290,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final Biomolecule biomol = createBiomolecule(b);
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInNeighbor, biomol, concentration);
-                conditionList.add(new BiomolPresentInNeighbor(env, node, biomol, concentration));
-                actionList.add(new ChangeBiomolConcentrationInNeighbor(env, node, biomol, rand, -concentration));
+                conditionList.add(new BiomolPresentInNeighbor(environment, node, biomol, concentration));
+                actionList.add(new ChangeBiomolConcentrationInNeighbor(environment, node, biomol, rand, -concentration));
             }
             return reaction;
         }
@@ -320,7 +320,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInEnv(env, node, biomol, concentration, rand));
+                    actionList.add(new ChangeBiomolConcentrationInEnv(environment, node, biomol, concentration, rand));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE));
                 }
@@ -337,7 +337,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInNeighbor(env, node, biomol, rand, concentration));
+                    actionList.add(new ChangeBiomolConcentrationInNeighbor(environment, node, biomol, rand, concentration));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE));
                 }
@@ -382,12 +382,12 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                     );
                 }
             });
-            if (node instanceof CellNode) {
-                actionList.add(new AddJunctionInCell(env, node, j, rand));
-                actionList.add(new AddJunctionInNeighbor<>(env, (CellNode<P>) node, reverseJunction(j), rand));
+            if (node.asPropertyOrNull(CellProperty.class) != null) {
+                actionList.add(new AddJunctionInCell(environment, node, j, rand));
+                actionList.add(new AddJunctionInNeighbor<>(environment, node, reverseJunction(j), rand));
             } else {
                 throw new UnsupportedOperationException(
-                        "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                        "Junctions are supported ONLY in nodes with " + CellProperty.class.getSimpleName()
                 );
             }
             return reaction;
@@ -410,12 +410,12 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 visit(context.customReactionType());
             }
             junctionList.forEach(j -> {
-                if (node instanceof CellNode) {
-                    actionList.add(new RemoveJunctionInCell(env, node, j, rand));
-                    actionList.add(new RemoveJunctionInNeighbor(env, node, reverseJunction(j), rand));
+                if (node.asPropertyOrNull(CellProperty.class) != null) {
+                    actionList.add(new RemoveJunctionInCell(environment, node, j, rand));
+                    actionList.add(new RemoveJunctionInNeighbor(environment, node, reverseJunction(j), rand));
                 } else {
                     throw new UnsupportedOperationException(
-                            "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                            "Junctions are supported ONLY in node with " + CellProperty.class.getSimpleName()
                     );
                 }
             });
@@ -445,14 +445,14 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         public Reaction<Double> visitJunctionReactionJunctionCondition(
                 final BiochemistrydslParser.JunctionReactionJunctionConditionContext context
         ) {
-            if (node instanceof CellNode) {
+            if (node.asPropertyOrNull(CellProperty.class) != null) {
                 final Junction j = createJunction(context.junction());
                 junctionList.add(j);
-                conditionList.add(new JunctionPresentInCell(env, node, j));
+                conditionList.add(new JunctionPresentInCell(environment, node, j));
                 return reaction;
             } else {
                 throw new UnsupportedOperationException(
-                        "Junctions are supported ONLY in CellNodes, not in " + node.getClass().getName()
+                        "Junctions are supported ONLY in nodes with " + CellProperty.class.getSimpleName()
                 );
             }
         }

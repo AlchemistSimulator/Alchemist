@@ -8,10 +8,10 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
      *            the reference {@link RunProtelisProgram}
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
-    public SendToNeighbor(final ProtelisNode<?> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program) {
+    public SendToNeighbor(final Node<Object> node, final Reaction<Object> reaction, final RunProtelisProgram<?> program) {
         super(node);
         this.reaction = Objects.requireNonNull(reaction);
         this.program = Objects.requireNonNull(program);
@@ -44,7 +44,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public SendToNeighbor cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node instanceof ProtelisNode) {
+        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
             final List<RunProtelisProgram<?>> possibleRefs = node.getReactions().stream()
                     .map(Reaction::getActions)
                     .flatMap(List::stream)
@@ -52,14 +52,14 @@ public final class SendToNeighbor extends AbstractAction<Object> {
                     .map(a -> (RunProtelisProgram<?>) a)
                     .collect(Collectors.toList());
             if (possibleRefs.size() == 1) {
-                return new SendToNeighbor((ProtelisNode<?>) node, this.reaction, possibleRefs.get(0));
+                return new SendToNeighbor(node, this.reaction, possibleRefs.get(0));
             }
             throw new IllegalStateException(
                     "There must be one and one only unconfigured " + RunProtelisProgram.class.getSimpleName()
             );
         }
-        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node of type "
-                + node.getClass().getSimpleName());
+        throw new IllegalStateException(getClass().getSimpleName() + " cannot get cloned on a node with a missing "
+                + ProtelisProperty.class.getSimpleName());
     }
 
     @Override
@@ -69,15 +69,10 @@ public final class SendToNeighbor extends AbstractAction<Object> {
 
     @Override
     public void execute() {
-        final AlchemistNetworkManager mgr = getNode().getNetworkManager(program);
+        final AlchemistNetworkManager mgr = getNode().asProperty(ProtelisProperty.class).getNetworkManager(program);
         Objects.requireNonNull(mgr);
         mgr.simulateMessageArrival(reaction.getTau().toDouble());
         program.prepareForComputationalCycle();
-    }
-
-    @Override
-    public ProtelisNode<?> getNode() {
-        return (ProtelisNode<?>) super.getNode();
     }
 
     /**

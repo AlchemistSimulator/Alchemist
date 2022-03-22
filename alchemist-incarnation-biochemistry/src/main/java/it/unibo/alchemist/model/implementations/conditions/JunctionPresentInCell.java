@@ -10,11 +10,12 @@ package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.CellNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  */
@@ -22,53 +23,49 @@ public final class JunctionPresentInCell extends AbstractNeighborCondition<Doubl
 
     private static final long serialVersionUID = 4213307452790768059L;
 
-    private final Junction j;
-    private final Environment<Double, ?> env;
+    private final Junction junction;
+    private final Environment<Double, ?> environment;
+    private final CellProperty<?> cell;
 
     /**
      * 
      * @param junction the junction
-     * @param n the node
-     * @param e the environment
+     * @param node the node
+     * @param environment the environment
      */
-    public JunctionPresentInCell(final Environment<Double, ?> e, final Node<Double> n, final Junction junction) {
-        super(e, n);
-        if (n instanceof CellNode) {
-            declareDependencyOn(junction);
-            j = junction;
-            env = e;
-        } else {
-            throw new UnsupportedOperationException("This Condition can be set only in CellNodes");
-        }
+    public JunctionPresentInCell(final Environment<Double, ?> environment, final Node<Double> node, final Junction junction) {
+        super(environment, node);
+        cell = node.asPropertyOrNull(CellProperty.class);
+        Objects.requireNonNull(
+                cell,
+                "This Condition can be set only in node with " + CellProperty.class.getSimpleName()
+        );
+        declareDependencyOn(junction);
+        this.junction = junction;
+        this.environment = environment;
     }
 
     @Override
     public boolean isValid() {
-        return getNode().containsJunction(j);
+        return cell.containsJunction(junction);
     }
 
     @Override
     public JunctionPresentInCell cloneCondition(final Node<Double> node, final Reaction<Double> r) {
-        return new JunctionPresentInCell(env, node, j);
+        return new JunctionPresentInCell(environment, node, junction);
     }
 
     @Override
     protected double getNeighborPropensity(final Node<Double> neighbor) {
         // the neighbor's propensity is computed as the number of junctions it has
-        //noinspection SuspiciousMethodCalls
-        return getNode().getJunctions()
-                .getOrDefault(j, Collections.emptyMap())
+        return cell.getJunctions()
+                .getOrDefault(junction, Collections.emptyMap())
                 .getOrDefault(neighbor, 0);
     }
 
     @Override
     public String toString() {
-        return "junction " +  j.toString() + " present ";
-    }
-
-    @Override
-    public CellNode<?> getNode() {
-        return (CellNode<?>) super.getNode();
+        return "junction " +  junction.toString() + " present ";
     }
 
 }

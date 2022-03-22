@@ -17,7 +17,10 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [0, 0]
-    nodes:
-      type: HomogeneousPedestrian2D
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: CircularArea
+      - type: Social
     programs:
       - *behavior

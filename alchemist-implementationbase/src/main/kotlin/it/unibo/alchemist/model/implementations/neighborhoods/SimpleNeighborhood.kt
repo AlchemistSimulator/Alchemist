@@ -27,14 +27,14 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
 ) : Neighborhood<T> {
 
     internal constructor(
-        env: Environment<T, P>,
+        environment: Environment<T, P>,
         center: Node<T>,
         neighbors: Iterable<Node<T>>
-    ) : this(env, center, ImmutableListSet.Builder<Node<T>>().addAll(neighbors).build())
+    ) : this(environment, center, ImmutableListSet.Builder<Node<T>>().addAll(neighbors).build())
 
     override fun clone() = SimpleNeighborhood(environment, center, ArrayListSet(neighbors))
 
-    override fun contains(n: Node<T>?) = neighbors.contains(n)
+    override fun contains(node: Node<T>?) = neighbors.contains(node)
 
     override fun getCenter() = center
 

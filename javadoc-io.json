@@ -145,8 +145,14 @@
     "first": "https://javadoc.io/doc/org.graphstream/gs-core/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-core/2.0/element-list"
   },
+  "org.jetbrains.kotlin/kotlin-reflect/1.6.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.6.10"
+  },
   "org.jetbrains.kotlin/kotlin-reflect/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
+  },
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.6.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.6.10"
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"
@@ -175,6 +181,10 @@
   "org.slf4j/slf4j-api/1.7.33": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/1.7.33",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/1.7.33/package-list"
+  },
+  "org.slf4j/slf4j-api/1.7.35": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/1.7.35",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/1.7.35/package-list"
   },
   "org.yaml/snakeyaml/1.30": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/1.30",

@@ -41,12 +41,14 @@ _reactions: &behavior
       - type: HeadTowardRandomDirection
 
 _nodes: &nodes
-  nodes:
-    type: CognitivePedestrian2D
-    parameters:
-      age: "adult"
-      gender: "male"
-      danger: *danger
+  properties:
+    - type: Human
+      parameters: [ "adult", "male" ]
+    - type: CognitivePedestrian
+    - type: Cognitive2D
+      parameters: [ *danger ]
+    - type: Perceptive2D
+    - type: CircularArea
   programs: *behavior
 
 deployments:

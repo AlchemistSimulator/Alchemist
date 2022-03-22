@@ -19,6 +19,9 @@ _reactions: &behavior
 deployments:
   type: Circle
   parameters: [50, 0, 0, 400]
-  nodes:
-    type: HomogeneousPedestrian2D
+  properties:
+    - type: Pedestrian
+    - type: Social
+    - type: Perceptive2D
+    - type: CircularArea
   programs: *behavior

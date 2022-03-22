@@ -9,6 +9,7 @@
 import Libs.alchemist
 import Libs.incarnation
 import Util.fetchJavadocIOForDependency
+import Util.id
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -28,8 +29,6 @@ plugins {
     alias(libs.plugins.hugo)
 }
 
-val Provider<PluginDependency>.id get() = get().pluginId
-
 allprojects {
 
     with(rootProject.libs.plugins) {
@@ -43,7 +42,6 @@ allprojects {
     apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
-    apply(plugin = "build-dashboard")
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.danilopianini.publish-on-central")
 
@@ -301,7 +299,10 @@ dependencies {
 
 val websiteDir = File(buildDir, "website")
 
-hugo { version = "0.92.0" }
+hugo {
+    version = Regex("gohugoio/hugo@v([\\.\\-\\+\\w]+)")
+        .find(file("deps-utils/action.yml").readText())!!.groups[1]!!.value
+}
 
 tasks.hugoBuild {
     outputDirectory = websiteDir
@@ -329,15 +330,20 @@ tasks {
                 "file ${index.absolutePath} existed during configuration, but has been deleted."
             }
             val version = project.version.toString()
-            val text = index.readText()
-            val devTag = "!development preview!"
-            if (text.contains(devTag)) {
-                index.writeText(text.replace(devTag, version))
-            } else {
-                if (!text.contains(version)) {
-                    logger.warn("Could not inject version $version into the website index page")
+            index.parentFile.walkTopDown()
+                .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
+                .filterNot { it.path.contains(Regex("${File.separator}(kdoc|javadoc)${File.separator}")) }
+                .forEach { page ->
+                    val text = page.readText()
+                    val devTag = "!development preview!"
+                    if (text.contains(devTag)) {
+                        page.writeText(text.replace(devTag, version))
+                    } else {
+                        if (!text.contains(version)) {
+                            logger.warn("Could not inject version $version into ${page.path}")
+                        }
+                    }
                 }
-            }
         }
     }
 }

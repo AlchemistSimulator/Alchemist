@@ -32,7 +32,7 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
     override fun <T, P : Position2D<P>> prepare(
         effect: DrawLayersValues,
         toDraw: Collection<Layer<T, P>>,
-        env: Environment<T, P>,
+        environment: Environment<T, P>,
         g: Graphics2D,
         wormhole: Wormhole2D<P>
     ) {
@@ -40,7 +40,7 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
             val maxLayerValue = toDraw.stream()
                 .filter { l -> l is BidimensionalGaussianLayer }
                 .map { l -> l as BidimensionalGaussianLayer }
-                .map { l -> l.getValue(env.makePosition(l.centerX, l.centerY)) }
+                .map { l -> l.getValue(environment.makePosition(l.centerX, l.centerY)) }
                 .max { d1, d2 -> java.lang.Double.compare(d1, d2) }
                 .orElse(minimumLayerValue)
             effect.minLayerValue = minimumLayerValue.toString()

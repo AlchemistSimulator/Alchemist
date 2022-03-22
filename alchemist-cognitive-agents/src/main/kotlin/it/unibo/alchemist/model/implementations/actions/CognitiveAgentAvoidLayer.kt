@@ -1,54 +1,54 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.AbstractCognitivePedestrian
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Pedestrian
-import it.unibo.alchemist.model.interfaces.Pedestrian2D
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
 /**
- * Move the pedestrian towards positions of the environment with a low concentration of the target molecule.
+ * Move the node towards positions of the environment with a low concentration of the target molecule.
  *
  * @param environment
- *          the environment inside which the pedestrian moves.
+ *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param pedestrian
+ * @param node
  *          the owner of this action.
  * @param targetMolecule
  *          the {@link Molecule} you want to know the concentration in the different positions of the environment.
  * @param viewDepth
- *          the depth of view of the pedestrian, defaults to infinity.
+ *          the depth of view of the node, defaults to infinity.
  */
 class CognitiveAgentAvoidLayer @JvmOverloads constructor(
     environment: Euclidean2DEnvironment<Number>,
     reaction: Reaction<Number>,
-    pedestrian: Pedestrian2D<Number>,
+    node: Node<Number>,
     targetMolecule: Molecule,
-    private val viewDepth: Double = Double.POSITIVE_INFINITY
-) : AbstractLayerAction(environment, reaction, pedestrian, targetMolecule) {
+    private val viewDepth: Double = Double.POSITIVE_INFINITY,
+) : AbstractLayerAction(environment, reaction, node, targetMolecule) {
 
     private val followScalarField = getLayerOrFail().let { layer ->
-        CognitiveAgentFollowScalarField(environment, reaction, pedestrian, layer.center()) {
+        CognitiveAgentFollowScalarField(environment, reaction, node, layer.center()) {
             /*
-             * Moves the pedestrian where the concentration is lower.
+             * Moves the node where the concentration is lower.
              */
             -layer.concentrationIn(it)
         }
     }
 
-    override fun cloneAction(n: Pedestrian2D<Number>, r: Reaction<Number>): CognitiveAgentAvoidLayer =
-        CognitiveAgentAvoidLayer(environment, r, n, targetMolecule, viewDepth)
+    override fun cloneAction(node: Node<Number>, reaction: Reaction<Number>): CognitiveAgentAvoidLayer =
+        CognitiveAgentAvoidLayer(environment, reaction, node, targetMolecule, viewDepth)
 
     /**
-     * @returns the next relative position. The pedestrian is moved only if he/she percepts the danger
+     * @returns the next relative position. The node is moved only if he/she percepts the danger
      * (either because it is in sight or due to social contagion), otherwise a zero vector is returned.
      */
     override fun nextPosition(): Euclidean2DPosition = when {
-        pedestrian.wantsToEscape() || isDangerInSight() -> followScalarField.nextPosition()
+        node.wantsToEscape() || isDangerInSight() -> followScalarField.nextPosition()
         else -> environment.origin
     }
 
@@ -58,7 +58,7 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
      */
     @Suppress("UNCHECKED_CAST")
     private fun isDangerInSight(): Boolean = getLayerOrFail().center()?.let { center ->
-        val currentPosition = environment.getPosition(pedestrian)
+        val currentPosition = environment.getPosition(node)
         /*
          * environment is euclidean, so if it has obstacles it must be an
          * EnvironmentWithObstacles<*, *, Euclidean2DPosition>. Since generic types can't be checked at runtime, this
@@ -70,7 +70,10 @@ class CognitiveAgentAvoidLayer @JvmOverloads constructor(
         center.distanceTo(currentPosition) <= viewDepth && !visualTrajectoryOccluded
     } ?: true
 
-    private fun Pedestrian<*, *, *>.wantsToEscape(): Boolean =
-        this is AbstractCognitivePedestrian<*, *, *, *> &&
-            this.danger == targetMolecule && cognitiveModel.wantsToEscape()
+    private fun <T : Number> Node<T>.wantsToEscape(): Boolean {
+        val cognitiveProperty = asPropertyOrNull<T, CognitiveProperty<T>>()
+        return cognitiveProperty != null &&
+            cognitiveProperty.danger == targetMolecule &&
+            cognitiveProperty.cognitiveModel.wantsToEscape()
+    }
 }

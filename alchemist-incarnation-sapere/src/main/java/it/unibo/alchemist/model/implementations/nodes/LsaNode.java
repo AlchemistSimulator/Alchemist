@@ -27,17 +27,17 @@ import java.util.Map;
 /**
  * This class realizes a node with LSA concentration.
  */
-public final class LsaNode extends AbstractNode<List<ILsaMolecule>> implements ILsaNode {
+public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements ILsaNode {
     private static final long serialVersionUID = -2167025208984968645L;
     private final List<ILsaMolecule> instances = new ArrayList<>();
     private static final ILsaMolecule ZEROMOL = new LsaMolecule("0");
 
     /**
-     * @param env
+     * @param environment
      *            The environment (used for safe node id computation)
      */
-    public LsaNode(final Environment<List<ILsaMolecule>, ?> env) {
-        super(env);
+    public LsaNode(final Environment<List<ILsaMolecule>, ?> environment) {
+        super(environment);
     }
 
     @Override

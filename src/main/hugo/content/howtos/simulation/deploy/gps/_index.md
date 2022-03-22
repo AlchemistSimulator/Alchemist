@@ -1,7 +1,7 @@
 +++
 title = "GPS Traces"
 weight = 6
-tags = ["deployment", "node", "nodes", "gps", "traces" "gpx"]
+tags = ["deployment", "node", "nodes", "gps", "traces", "gpx"]
 summary = "Deployment of nodes on map-based environments using GPS data."
 +++
 

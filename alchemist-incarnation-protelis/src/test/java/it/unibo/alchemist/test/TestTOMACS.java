@@ -10,8 +10,8 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,13 +33,12 @@ class TestTOMACS {
     void testCustomRetainTimeLoading() {
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
         Assertions.assertTrue(StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
-            .map(n -> (ProtelisNode<?>) n)
             .flatMap(n -> n.getReactions().stream()
                     .map(Reaction::getActions)
                     .flatMap(Collection::stream)
                     .filter(a -> a instanceof RunProtelisProgram)
                     .map(a -> (RunProtelisProgram) a)
-                    .map(n::getNetworkManager))
+                    .map(a -> n.asProperty(ProtelisProperty.class).getNetworkManager(a)))
             .mapToDouble(AlchemistNetworkManager::getRetentionTime)
             .peek(d -> Assertions.assertTrue(Double.isFinite(d)))
             .count() > 0);

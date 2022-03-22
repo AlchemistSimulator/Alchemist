@@ -7,6 +7,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.register
+import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URL
@@ -37,7 +38,7 @@ object Util {
 
     /**
      * If available, finds the URL of the documentation on javadoc.io for [dependency].
-
+     *
      * @return a [Pair] with the URL as a first element, and the packageList URL as second element.
      */
     fun Project.fetchJavadocIOForDependency(dependency: Dependency): Pair<URL, URL>? = dependency
@@ -113,4 +114,9 @@ object Util {
             }
         }
     }
+
+    /**
+     * Directly accesses the plugin id.
+     */
+    val Provider<PluginDependency>.id get() = get().pluginId
 }

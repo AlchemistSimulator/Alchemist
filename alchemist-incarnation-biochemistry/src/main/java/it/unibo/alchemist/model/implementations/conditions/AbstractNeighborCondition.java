@@ -28,7 +28,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
 
     private static final long serialVersionUID = 1133243697147282024L;
 
-    private final Environment<T, ?> env;
+    private final Environment<T, ?> environment;
 
     /**
      * 
@@ -39,7 +39,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      */
     protected AbstractNeighborCondition(final Environment<T, ?> environment, final Node<T> node) {
         super(node);
-        env = environment;
+        this.environment = environment;
     }
 
     @Override
@@ -54,7 +54,7 @@ public abstract class AbstractNeighborCondition<T> extends AbstractCondition<T> 
      * @return allows subclasses to access the environment
      */
     protected final Environment<T, ?> getEnvironment() {
-        return env;
+        return environment;
     }
 
     /**

@@ -34,7 +34,7 @@ public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPER
     private static final ILsaMolecule MOLGRAD = new LsaMolecule("grad, req, Type, Distance, Time");
     private static final ILsaMolecule MOLRESPONSE = new LsaMolecule("response, Req, Ser, MD, D");
     private static final int POS = 3;
-    private final Environment<List<ILsaMolecule>, ?> env;
+    private final Environment<List<ILsaMolecule>, ?> environment;
 
     /**
      * @param environment environment
@@ -42,13 +42,13 @@ public final class LsaAscendingGradientDist<P extends Position<P>> extends SAPER
      */
     public LsaAscendingGradientDist(final Environment<List<ILsaMolecule>, P> environment, final ILsaNode node) {
         super(environment, node, MOLRESPONSE);
-        this.env = environment;
+        this.environment = environment;
     }
 
     @Override
     public void execute() {
         double minGrad = getLSAArgumentAsDouble(getNode().getConcentration(MOLGRAD).get(0), POS);
-        final Neighborhood<List<ILsaMolecule>> neigh = env.getNeighborhood(getNode());
+        final Neighborhood<List<ILsaMolecule>> neigh = environment.getNeighborhood(getNode());
         final List<LsaNode> targetPositions = new ArrayList<>();
         for (final Node<List<ILsaMolecule>> node : neigh.getNeighbors()) {
             final LsaNode n = (LsaNode) node;

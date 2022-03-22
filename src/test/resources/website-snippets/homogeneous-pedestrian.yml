@@ -3,5 +3,8 @@ incarnation: protelis
 deployments:
   - type: Circle
     parameters: [100, 0, 0, 20]
-    nodes:
-      type: HomogeneousPedestrian2D
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: CircularArea
+      - type: Social

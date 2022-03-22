@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -8,7 +9,7 @@
 
 package it.unibo.alchemist.test
 
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.file.shouldExist
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -22,8 +23,8 @@ import it.unibo.alchemist.testsupport.loadAlchemist
 import it.unibo.alchemist.testsupport.runInCurrentThread
 import java.io.File
 
-class TestCSVExporter<T, P : Position<P>> : StringSpec({
-    "test exporting data on CSV file" {
+class TestCSVExporter<T, P : Position<P>> : FreeSpec({
+    "CSV files" - {
         val initialized: InitializedEnvironment<T, P> = loadAlchemist("testCSVExporter.yml")
         initialized.createSimulation().runInCurrentThread()
         initialized.exporters.size shouldBe 1
@@ -31,8 +32,17 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
         val outputFile = File(exporter.exportPath)
             .listFiles()
             ?.find { it.name.startsWith("00-testing_csv_export_") && it.extension == exporter.fileExtension }
-        outputFile.shouldNotBeNull()
-        outputFile.shouldExist()
+        "should exist when CSV export is enabled" {
+            outputFile.shouldNotBeNull()
+            outputFile.shouldExist()
+        }
+        "header should be like \"var1 = val1, var2 = val2\"" {
+            val fileContents = requireNotNull(outputFile).readText()
+            val match = Regex("([^\\s=,]+)\\s*=\\s*([^,\\s]+)").findAll(fileContents).toList()
+            require(match.isNotEmpty()) {
+                "Unmatched header regex in ${outputFile.absolutePath}:\n$fileContents"
+            }
+        }
     }
     "column order should replicate" {
         val initialized: InitializedEnvironment<T, P> = loadAlchemist("testCSVExportColumnAlignment.yml")
@@ -52,8 +62,8 @@ class TestCSVExporter<T, P : Position<P>> : StringSpec({
 }) {
     /* common utility functions */
     companion object {
-        fun <T, P : Position<P>> getCSVExporter(env: InitializedEnvironment<T, P>): CSVExporter<T, P> {
-            val exporter = env.exporters.first()
+        fun <T, P : Position<P>> getCSVExporter(environment: InitializedEnvironment<T, P>): CSVExporter<T, P> {
+            val exporter = environment.exporters.first()
             require(exporter is CSVExporter) {
                 "Invalid exporter type '${exporter::class.simpleName}'"
             }

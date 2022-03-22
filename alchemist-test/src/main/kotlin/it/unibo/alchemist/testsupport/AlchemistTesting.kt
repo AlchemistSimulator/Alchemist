@@ -16,6 +16,7 @@ import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -49,6 +50,16 @@ fun <T, P : Position<P>> loadAlchemist(
         "$simulationFile could not be found in the classpath"
     }
     return LoadAlchemist.from(file).getWith(variables)
+}
+
+/**
+ * Prepares an [InitializedEnvironment] given a [simulationFile] and, optionally, the [variables]' bindings.
+ */
+fun <T, P : Position<P>> loadAlchemistFromResource(simulationResource: String): Loader {
+    val file = requireNotNull(ResourceLoader.getResource(simulationResource)) {
+        "$simulationResource could not be found in the classpath"
+    }
+    return LoadAlchemist.from(file)
 }
 
 /**

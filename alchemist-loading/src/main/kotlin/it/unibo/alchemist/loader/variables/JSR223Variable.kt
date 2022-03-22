@@ -1,10 +1,23 @@
+/*
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.loader.variables
 
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import org.slf4j.LoggerFactory
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
+import javax.script.SimpleBindings
 
 /**
  * This variable loads any [JSR-233](http://archive.fo/PGdk8) language available in the classpath.
@@ -52,32 +65,47 @@ data class JSR223Variable @JvmOverloads constructor(
      * if the value can not be computed, e.g. because there are
      * unassigned required variables
      */
-    override fun getWith(variables: Map<String, Any?>): Any? = try {
-        synchronized(engine) {
-            runCatching {
-                runBlocking {
-                    withTimeout(timeout) {
-                        engine.eval(formula, variables.asBindings())
-                    }
+    override fun getWith(variables: Map<String, Any?>): Any? = synchronized(engine) {
+        runCatching {
+            runBlocking {
+                withTimeout(timeout) {
+                    engine.eval(formula, variables.asBindings())
                 }
-            }.getOrElse {
-                throw java.lang.IllegalStateException(
-                    "The evaluation of the $language script took more than ${timeout}ms, this is usually a sign that " +
-                        "something is looping. Either fix the script, " +
-                        "or allow for a longer time with the 'timeout:' key\n" +
-                        """
-                        |script:
-                        |
-                        |${formula.lines().joinToString("\n|")}
-                        |context: $variables
-                        """.trimMargin()
-                )
             }
+        }.getOrElse { cause ->
+            val whatHappened = "A $language script evaluation failed"
+            val whyHappened = when (cause) {
+                is ScriptException -> "due to an error in the script: ${cause.message}"
+                is TimeoutCancellationException -> """
+                    because it reached its ${timeout}ms timeout.
+                    This is usually a sign that something is looping.
+                    Either make the script run faster, or allow for a longer time by specifiying a different
+                    `${DocumentRoot.DependentVariable.timeout}`.
+                """.trimIndent().replace(Regex("\\R"), "")
+                else -> "for a reason unknown to Alchemist (look at the original cause)"
+            }
+            val inspection = "context: $variables\nscript:\n$formula"
+            throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection", cause)
         }
-    } catch (e: ScriptException) {
-        throw IllegalStateException("Unable to evaluate $formula with bindings: $variables", e)
     }
 
-    private fun Map<String, Any?>.asBindings(): Bindings =
-        object : Bindings, MutableMap<String, Any?> by this.toMutableMap() { }
+    private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(
+        this.takeUnless { engine::class.qualifiedName?.contains("kotlin", ignoreCase = true) == true }
+            ?: this.filter {
+                if (it.value == null) {
+                    logger.warn(
+                        "Removing variable '${it.key}' as it maps to null and Kotlin JSR223 is bugged, " +
+                            "see: https://youtrack.jetbrains.com/issue/KT-51213." +
+                            "Consider using Scala or Groovy."
+                    )
+                    false
+                } else {
+                    true
+                }
+            }
+    )
+
+    companion object {
+        private val logger by lazy { LoggerFactory.getLogger(JSR223Variable::class.java) }
+    }
 }

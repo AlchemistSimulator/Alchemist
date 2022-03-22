@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
@@ -10,28 +10,28 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 /**
  * Move the agent away from a target position. It's the opposite of [CognitiveAgentSeek].
  *
- * @param env
- *          the environment inside which the pedestrian moves.
+ * @param environment
+ *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param pedestrian
+ * @param node
  *          the owner of this action.
  * @param coords
- *          the coordinates of the position the pedestrian moves away.
+ *          the coordinates of the position the node moves away.
  */
 open class CognitiveAgentFlee<T, P, A>(
-    private val env: Environment<T, P>,
+    environment: Environment<T, P>,
     reaction: Reaction<T>,
-    pedestrian: Pedestrian<T, P, A>,
+    node: Node<T>,
     vararg coords: Double
-) : AbstractSteeringAction<T, P, A>(env, reaction, pedestrian)
+) : AbstractSteeringAction<T, P, A>(environment, reaction, node)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
-    private val danger: P = env.makePosition(*coords.toTypedArray())
+    private val danger: P = environment.makePosition(*coords.toTypedArray())
 
-    override fun cloneAction(n: Pedestrian<T, P, A>, r: Reaction<T>) =
-        CognitiveAgentFlee(env, r, n, *danger.coordinates)
+    override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFlee<T, P, A> =
+        CognitiveAgentFlee(environment, reaction, node, *danger.coordinates)
 
     override fun nextPosition(): P = (currentPosition - danger).resized(maxWalk)
 }

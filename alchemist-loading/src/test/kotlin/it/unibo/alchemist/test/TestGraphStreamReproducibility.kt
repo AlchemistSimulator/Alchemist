@@ -14,7 +14,7 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.GraphStreamSupport
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode
+import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.MersenneTwister
 
@@ -47,7 +47,7 @@ class TestGraphStreamReproducibility : FreeSpec({
                     environment.linkingRule = graphStream.linkingRule
                     graphStream.deployment.forEach {
                         environment.addNode(
-                            object : AbstractNode<Any>(environment) { override fun createT(): Any = Any() },
+                            object : GenericNode<Any>(environment) { override fun createT(): Any = Any() },
                             it
                         )
                     }

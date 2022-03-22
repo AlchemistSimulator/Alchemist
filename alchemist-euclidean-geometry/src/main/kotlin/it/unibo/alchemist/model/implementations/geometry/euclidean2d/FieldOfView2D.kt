@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 /**
  * A sphere of influence representing the sight of a node in the Euclidean world.
  *
- * @param env
+ * @param environment
  *          the environment where this sphere of influence is.
  * @param owner
  *          the node who owns this sphere of influence.
@@ -25,8 +25,8 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
  *          the amplitude of the field of view in radians.
  */
 class FieldOfView2D<T>(
-    env: Physics2DEnvironment<T>,
+    environment: Physics2DEnvironment<T>,
     owner: Node<T>,
     distance: Double,
     aperture: Double
-) : InfluenceSphere2D<T>(env, owner, env.shapeFactory.circleSector(distance, aperture, 0.0))
+) : InfluenceSphere2D<T>(environment, owner, environment.shapeFactory.circleSector(distance, aperture, 0.0))

@@ -9,15 +9,23 @@ _reactions: &behavior
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
-    nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "male"]
+    properties:
+      - type: Human
+        parameters: ["adult", "male"]
+      - type: Perceptive2D
+      - type: CognitivePedestrian
+      - type: Cognitive2D
+      - type: CircularArea
     programs:
       - *behavior
   - type: Circle
     parameters: [50, 0, 0, 20]
-    nodes:
-      type: CognitivePedestrian2D
-      parameters: ["adult", "female"]
+    properties:
+      - type: Human
+        parameters: ["adult", "female"]
+      - type: Perceptive2D
+      - type: CognitivePedestrian
+      - type: Cognitive2D
+      - type: CircularArea
     programs:
       - *behavior

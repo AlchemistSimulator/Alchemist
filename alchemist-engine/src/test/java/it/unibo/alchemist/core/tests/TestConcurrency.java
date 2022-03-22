@@ -16,11 +16,12 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
-import it.unibo.alchemist.model.implementations.nodes.AbstractNode;
+import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
@@ -44,20 +45,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TestConcurrency {
 
-    private Environment<Object, Euclidean2DPosition> env;
+    private Environment<Object, Euclidean2DPosition> environment;
 
     /**
      * Setup phase.
      */
     @BeforeEach
     public void setUp() {
-        env = new Continuous2DEnvironment<>(SupportedIncarnations.<Object, Euclidean2DPosition>get("sapere").get());
-        final Node<Object> n = new DummyNode(env);
-        env.setLinkingRule(new NoLinks<>());
+        final Incarnation<Object, Euclidean2DPosition> incarnation = SupportedIncarnations
+                .<Object, Euclidean2DPosition>get("sapere").get();
+        environment = new Continuous2DEnvironment<>(incarnation);
+        final Node<Object> n = new GenericNode<>(incarnation, environment);
+        environment.setLinkingRule(new NoLinks<>());
         final TimeDistribution<Object> td = new DiracComb<>(1);
         final Reaction<Object> r = new Event<>(n, td);
         n.addReaction(r);
-        env.addNode(n, env.makePosition(0, 0));
+        environment.addNode(n, environment.makePosition(0, 0));
     }
 
     /**
@@ -74,7 +77,7 @@ class TestConcurrency {
     )
     void testCommandInterleaving() throws InterruptedException, ExecutionException {
         final int inWaitCount = 100;
-        final Simulation<?, ?> sim = new Engine<>(env, 10);
+        final Simulation<?, ?> sim = new Engine<>(environment, 10);
         sim.pause();
         final ExecutorService container = Executors.newFixedThreadPool(inWaitCount + 1);
         container.submit(sim);
@@ -108,17 +111,6 @@ class TestConcurrency {
          * possible to reach RUNNING or PAUSED status while in STOPPED
          */
         assertEquals(Status.TERMINATED, sim.waitFor(Status.RUNNING, 100, TimeUnit.MILLISECONDS));
-    }
-
-    private static final class DummyNode extends AbstractNode<Object> {
-        private static final long serialVersionUID = 1L;
-        private DummyNode(final Environment<?, ?> env) {
-            super(env);
-        }
-        @Override
-        protected Object createT() {
-            return "";
-        }
     }
 
 }

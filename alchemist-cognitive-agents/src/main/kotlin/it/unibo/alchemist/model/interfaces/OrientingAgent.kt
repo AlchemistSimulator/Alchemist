@@ -34,7 +34,7 @@ L : ConvexGeometricShape<V, A> {
     /**
      * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the
      * percentage of environment the agent is familiar with prior to the start of the simulation (thus it does not
-     * take into account the knowledge the pedestrian will gain during it, namely the [volatileMemory]).
+     * take into account the knowledge the node will gain during it, namely the [volatileMemory]).
      */
     val knowledgeDegree: Double
 

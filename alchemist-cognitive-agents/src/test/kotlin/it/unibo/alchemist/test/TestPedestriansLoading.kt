@@ -3,12 +3,14 @@ package it.unibo.alchemist.test
 import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
-import it.unibo.alchemist.model.interfaces.Pedestrian
+import io.kotest.matchers.nulls.shouldNotBeNull
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
 
@@ -33,10 +35,8 @@ class TestPedestriansLoading<T, P, A> : StringSpec({
 
     "groups of pedestrians loading" {
         loadYamlSimulation<T, P>("groups.yml").startSimulation(
-            onceInitialized = { e ->
-                e.nodes.filterIsInstance<Pedestrian<T, P, A>>().forEach {
-                    println("${it.id} -> ${it.membershipGroup}")
-                }
+            onceInitialized = { environment ->
+                environment.nodes.forEach { it.asPropertyOrNull<T, SocialProperty<T>>().shouldNotBeNull() }
             }
         )
     }

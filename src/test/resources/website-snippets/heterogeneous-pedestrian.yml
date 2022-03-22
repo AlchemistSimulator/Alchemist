@@ -3,11 +3,17 @@ incarnation: protelis
 deployments:
   - type: Circle
     parameters: [50, 0, 0, 20]
-    nodes:
-      type: HeterogeneousPedestrian2D
-      parameters: ["elderly", "female"]
+    properties:
+      - type: Human
+        parameters: ["elderly", "female"]
+      - type: HeterogeneousPedestrian
+      - type: Perceptive2D
+      - type: CircularArea
   - type: Circle
     parameters: [50, 0, 0, 20]
-    nodes:
-      type: HeterogeneousPedestrian2D
-      parameters: ["child", "male"]
+    properties:
+      - type: Human
+        parameters: ["child", "male"]
+      - type: HeterogeneousPedestrian
+      - type: Perceptive2D
+      - type: CircularArea

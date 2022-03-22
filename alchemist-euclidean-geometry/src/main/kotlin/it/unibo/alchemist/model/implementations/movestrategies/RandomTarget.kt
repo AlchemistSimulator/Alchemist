@@ -36,14 +36,20 @@ class RandomTarget<T>(
 ) : ChangeTargetOnCollision<T, Euclidean2DPosition>(getCurrentPosition) {
 
     /**
-     * Handy constructor for Alchemist where the object to move is a [node] in the [env].
+     * Handy constructor for Alchemist where the object to move is a [node] in the [environment].
      */
     constructor(
-        env: Environment<T, Euclidean2DPosition>,
+        environment: Environment<T, Euclidean2DPosition>,
         node: Node<T>,
         directionRng: RandomGenerator,
         distanceDistribution: RealDistribution
-    ) : this(env, { env.getPosition(node) }, { x, y -> env.makePosition(x, y) }, directionRng, distanceDistribution)
+    ) : this(
+        environment,
+        { environment.getPosition(node) },
+        { x, y -> environment.makePosition(x, y) },
+        directionRng,
+        distanceDistribution,
+    )
 
     override fun chooseTarget() = with(directionRng.nextDouble(0.0, 2 * PI)) {
         val distance = distanceDistribution.sample()

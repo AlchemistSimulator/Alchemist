@@ -20,16 +20,25 @@ _reactions: &behavior
 deployments:
   - type: Point
     parameters: [70, 50]
-    nodes:
-      type: HomogeneousOrientingPedestrian2D
-      parameters: [1.0]
+    properties:
+      - type: CircularArea
+      - type: Orienting2D
+        parameters: [1.0]
+      - type: Pedestrian
+      - type: Social
     programs:
       - *behavior
   - type: Grid
     parameters: [27, 52, 56, 58, 0.5, 0.5, 0.3, 0.3]
-    nodes:
-      type: HomogeneousPedestrian2D
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: CircularArea
+      - type: Social
   - type: Grid
     parameters: [30, 40, 50, 45, 0.5, 0.5, 0.3, 0.3]
-    nodes:
-      type: HomogeneousPedestrian2D
+    properties:
+      - type: Pedestrian
+      - type: Perceptive2D
+      - type: CircularArea
+      - type: Social

@@ -1,7 +1,7 @@
 [versions]
 antlr4 = "4.9.3"
 arrow = "1.0.1"
-graphhopper = "5.0-pre3"
+graphhopper = "5.0"
 graphstream = "2.0"
 ignite = "2.12.0"
 junit = "5.8.2"

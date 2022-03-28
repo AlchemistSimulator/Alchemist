@@ -1,7 +1,7 @@
 [versions]
 antlr4 = "4.9.3"
 arrow = "1.0.1"
-graphhopper = "5.0-pre3"
+graphhopper = "5.0"
 graphstream = "2.0"
 ignite = "2.12.0"
 junit = "5.8.2"
@@ -28,7 +28,7 @@ appdirs = "net.harawata:appdirs:1.2.1"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
 caffeine = "com.github.ben-manes.caffeine:caffeine:3.0.6"
-classgraph = "io.github.classgraph:classgraph:4.8.141"
+classgraph = "io.github.classgraph:classgraph:4.8.143"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.0"
@@ -64,11 +64,11 @@ logback = "ch.qos.logback:logback-classic:1.2.11"
 mapsforge = "org.mapsforge:mapsforge-map-awt:0.17.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.0"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
-mongodb = "org.mongodb:mongodb-driver-sync:4.5.0"
+mongodb = "org.mongodb:mongodb-driver-sync:4.5.1"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.1.158"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
-quadtree = "org.danilopianini:java-quadtree:0.1.7"
+quadtree = "org.danilopianini:java-quadtree:0.1.9"
 resourceloader = "org.danilopianini:thread-inheritable-resource-loader:0.3.5"
 rtree = "com.github.davidmoten:rtree:0.9"
 scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }
@@ -100,9 +100,9 @@ testing-runtimeOnly = [ "junit-engine" ]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 hugo = "io.github.fstaudt.hugo:0.3.0"
-java-qa = "org.danilopianini.gradle-java-qa:0.21.0"
+java-qa = "org.danilopianini.gradle-java-qa:0.22.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.13.0"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.14.0"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.4"
 publishOnCentral = "org.danilopianini.publish-on-central:0.7.14"
 scalatest = "com.github.maiflai.scalatest:0.32"

@@ -2,6 +2,7 @@ baseURL = "https://alchemistsimulator.github.io/"
 canonifyURLs = true
 languageCode = "en"
 defaultContentLanguage = "en"
+timeout = "5m"
 
 title = "The Alchemist Simulator"
 theme = "hugo-theme-relearn"

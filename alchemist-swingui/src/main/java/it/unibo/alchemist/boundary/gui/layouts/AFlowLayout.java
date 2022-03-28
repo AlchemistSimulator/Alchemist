@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,6 +10,7 @@ package it.unibo.alchemist.boundary.gui.layouts;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import javax.annotation.Nullable;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -57,7 +59,7 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
                             // are justified
     private int anchor; // TOP, BOTTOM or CENTER ...where are the components
                         // positioned in an overlarge space
-    private List<Component> compOrder;
+    private final @Nullable List<Component> compOrder;
 
     /**
      * 
@@ -70,9 +72,7 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
         this.gap = hgap;
         this.alignment = alignment;
         this.anchor = anchor;
-        if (ordered) {
-            compOrder = new ArrayList<>();
-        }
+        compOrder = ordered ? new ArrayList<>() : null;
     }
 
     @Override
@@ -135,7 +135,7 @@ public abstract class AFlowLayout implements LayoutManager, Serializable {
     }
 
     /**
-     * 
+     *
      * @return true if the components are ordered
      */
     public boolean isOrdered() {

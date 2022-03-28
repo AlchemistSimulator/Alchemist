@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -35,10 +35,10 @@ public class ControlTypePopoverController implements Initializable {
     // FXML components
     @FXML
     @Nullable
-    private JFXButton panButton; // Value injected by FXMLLoader
+    private JFXButton panButton; // NOPMD Value injected by FXMLLoader
     @FXML
     @Nullable
-    private JFXButton selectButton; // Value injected by FXMLLoader
+    private JFXButton selectButton; // NOPMD Value injected by FXMLLoader
 
     /**
      * {@inheritDoc}

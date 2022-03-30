@@ -1,3 +1,39 @@
+## [15.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/14.1.0...15.0.0) (2022-03-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** remove references to "capability", use "property" instead.
+
+### Bug Fixes
+
+* **implementationbase:** make a decent node toString ([ba8da9a](https://github.com/AlchemistSimulator/Alchemist/commit/ba8da9aad7f6fc490a9a402440ed7d421262a0a9))
+
+
+### Documentation
+
+* **api:** fix dangling link to Simulation ([22d8df5](https://github.com/AlchemistSimulator/Alchemist/commit/22d8df58c4a19d167cfa0651f07b327d7f60f010))
+* **api:** fix dangling links in Node documentation ([fd38e47](https://github.com/AlchemistSimulator/Alchemist/commit/fd38e47c4a6c3619e5ecd799cb331abecdb33767))
+
+
+### Refactoring
+
+* **api:** remove redundant let call in Node ([19d39e3](https://github.com/AlchemistSimulator/Alchemist/commit/19d39e3b203a357ef35415627ba7f7a40ee28c7e))
+* **api:** remove references to "capability", use "property" instead. ([86f288a](https://github.com/AlchemistSimulator/Alchemist/commit/86f288a6af4774c9d10cc70018cc267876887484))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.4.4 ([6c39d85](https://github.com/AlchemistSimulator/Alchemist/commit/6c39d85d3c8125a25eaa95541939559b7dcf0b37))
+* **deps:** update io.kotest to v5.2.2 ([bbcf86d](https://github.com/AlchemistSimulator/Alchemist/commit/bbcf86d52f5d5cf4fb964f3fca45c85057a22505))
+
+
+### Tests
+
+* **maps:** remove hardcoded parameters in TestInSightConnection ([ab17834](https://github.com/AlchemistSimulator/Alchemist/commit/ab17834ec6982a3f4f5bb816f1b636e5af049eaf))
+* update overrides as io.kotest.core.spec.beforeTest is now a suspend function ([bba3b85](https://github.com/AlchemistSimulator/Alchemist/commit/bba3b859c312e34697f031a1688942ede03c35e4))
+* work around broken shouldNotContain call in kotest ([8a1d379](https://github.com/AlchemistSimulator/Alchemist/commit/8a1d3795bbffc3cf92695c0c874bc86a5aa1193a))
+
 ## [14.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/14.0.2...14.1.0) (2022-03-30)
 
 

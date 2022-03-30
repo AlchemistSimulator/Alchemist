@@ -101,10 +101,10 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public AlchemistNetworkManager(
-            @Nonnull final Reaction<Object> executionTime,
-            @Nonnull final RunProtelisProgram<?> program,
-            final double retentionTime,
-            @Nullable final RealDistribution distanceLossDistribution
+        @Nonnull final Reaction<Object> executionTime,
+        @Nonnull final RunProtelisProgram<?> program,
+        final double retentionTime,
+        @Nullable final RealDistribution distanceLossDistribution
     ) {
         this.environment = Objects.requireNonNull(program.getEnvironment());
         node = Objects.requireNonNull(program.getNode());

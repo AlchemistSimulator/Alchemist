@@ -22,7 +22,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
 
     private static final long serialVersionUID = -4113718948444451107L;
 
-    private final RunProtelisProgram program;
+    private final RunProtelisProgram<?> program;
 
     /**
      * @param node
@@ -30,7 +30,7 @@ public final class ComputationalRoundComplete extends AbstractCondition<Object> 
      * @param program
      *            the reference {@link RunProtelisProgram}
      */
-    public ComputationalRoundComplete(final Node<Object> node, final RunProtelisProgram program) {
+    public ComputationalRoundComplete(final Node<Object> node, final RunProtelisProgram<?> program) {
         super(node);
         this.program = program;
         declareDependencyOn(this.program.asMolecule());

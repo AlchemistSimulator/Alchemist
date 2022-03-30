@@ -161,7 +161,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
      * @return a capability of the provided type [C]
      */
     fun <C : NodeProperty<T>> asProperty(superType: KClass<C>): C =
-        asPropertyOrNull(superType).let { it } ?: throw IllegalStateException(
+        asPropertyOrNull(superType) ?: throw IllegalStateException(
             "A ${superType.simpleName} is required for node ${this.id} but is missing"
         )
 

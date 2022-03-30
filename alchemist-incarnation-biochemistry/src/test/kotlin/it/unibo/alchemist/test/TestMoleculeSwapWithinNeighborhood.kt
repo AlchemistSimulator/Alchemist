@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -23,8 +24,8 @@ import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTim
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
-import kotlin.properties.Delegates
 import org.apache.commons.math3.random.MersenneTwister
+import kotlin.properties.Delegates
 
 private const val DIRECT_REACTION = "[token] --> [token in neighbor]"
 private const val INVERSE_REACTION = "[token in neighbor] --> [token]"
@@ -55,7 +56,7 @@ class TestMoleculeSwapWithinNeighborhood : StringSpec({
         testSimulation()
     }
 }) {
-    override fun beforeTest(testCase: TestCase) {
+    override suspend fun beforeTest(testCase: TestCase) {
         environment = BioRect2DEnvironment()
         nodes = Pair(
             INCARNATION.createNode(RANDOM, environment, null),

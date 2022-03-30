@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -17,9 +17,9 @@ import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import kotlin.math.abs
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
+import kotlin.math.abs
 
 private fun Double.equalityTest(other: Double) = abs(this - other) < 0.0001
 
@@ -99,7 +99,7 @@ class TestRandomTarget : StringSpec() {
     private lateinit var distanceDistribution: DummyDistribution
     private lateinit var directionGenerator: DummyRandomGenerator
 
-    override fun beforeTest(testCase: TestCase) {
+    override suspend fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)
         currentPosition = Euclidean2DPosition(0.0, 0.0)
         distanceDistribution = DummyDistribution()

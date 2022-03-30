@@ -1,3 +1,71 @@
+## [14.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/14.0.2...14.1.0) (2022-03-30)
+
+
+### Features
+
+* **incarnation-protelis:** drop the useless and confusing hierarchy ProtelisProperty->Protelis and reify ProtelisDevice instead ([bcbebd2](https://github.com/AlchemistSimulator/Alchemist/commit/bcbebd20acb0a0815d5f74bac11f0124e4fc394f))
+
+
+### Bug Fixes
+
+* **incarnation-protelis:** annotate the parameter nullability in AlchemistNetworkManager's constructor ([40862ab](https://github.com/AlchemistSimulator/Alchemist/commit/40862ab6f40b4dd078cabd95f7423d14b3e92c75))
+* **incarnation-protelis:** call murmur3_32_fixed in AlchemistExecutionContext ([62c6f72](https://github.com/AlchemistSimulator/Alchemist/commit/62c6f720cd1a38056aa4b05be944ba7bdb68ee9b))
+* **incarnation-protelis:** fix potential deadlock on script interpretation internal to ProtelisIncarnation ([de24ad5](https://github.com/AlchemistSimulator/Alchemist/commit/de24ad50b9242e5be61f8973deb8538e4fbf524b))
+* **incarnation-protelis:** intercept all RuntimeExceptions in ProtelisIncarnation.getProperty as per API specification ([c4af3a8](https://github.com/AlchemistSimulator/Alchemist/commit/c4af3a8434664f68c99484b707029e3146a59511))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.0.6 ([f09e447](https://github.com/AlchemistSimulator/Alchemist/commit/f09e447cc5f9ab2e523474cee3aec6a867db3e14))
+* **deps:** update dependency com.graphhopper:graphhopper-core to v5.0 ([6c27a0f](https://github.com/AlchemistSimulator/Alchemist/commit/6c27a0ff49480b9470f48c4a3d301cbfcd3337c4))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.143 ([c7f7377](https://github.com/AlchemistSimulator/Alchemist/commit/c7f737738f9d025f85b843706eeb6403b7be22bb))
+* **deps:** update dependency org.danilopianini:java-quadtree to v0.1.8 ([57bdb86](https://github.com/AlchemistSimulator/Alchemist/commit/57bdb8669926ea1e3d6c2e4a042b3190df2d0bae))
+* **deps:** update dependency org.danilopianini:java-quadtree to v0.1.9 ([844d2c6](https://github.com/AlchemistSimulator/Alchemist/commit/844d2c6d5b1a6dd247d87559cc49a58ae7827c02))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.5.1 ([f349c8b](https://github.com/AlchemistSimulator/Alchemist/commit/f349c8b019be1135c6624049e420083443adda6a))
+* **deps:** update gohugoio/hugo action to v0.95.0 ([b384d5b](https://github.com/AlchemistSimulator/Alchemist/commit/b384d5b7fb64bb14faf23a021c75aa68bfa2e598))
+* **deps:** update gohugoio/hugo action to v0.96.0 ([fbf94d8](https://github.com/AlchemistSimulator/Alchemist/commit/fbf94d8b3610712c7f78d226c02879b32339456e))
+* **deps:** update plugin com.gradle.enterprise to v3.9 ([60d7c19](https://github.com/AlchemistSimulator/Alchemist/commit/60d7c19b3be581b13ebcd97c580353dd018618e7))
+* **deps:** update plugin java-qa to v0.22.0 ([f7567ce](https://github.com/AlchemistSimulator/Alchemist/commit/f7567ceddf4c8fb9cf5460a3d773f2d70313aef7))
+* **deps:** update plugin kotlin-qa to v0.13.0 ([76f6264](https://github.com/AlchemistSimulator/Alchemist/commit/76f626434047d275c2bf2447b2820b51eacc61e7))
+* **deps:** update plugin kotlin-qa to v0.14.0 ([7cc3297](https://github.com/AlchemistSimulator/Alchemist/commit/7cc32976423bb5d6238d7d232ac264707ce4cae6))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to 060070d ([fa00e85](https://github.com/AlchemistSimulator/Alchemist/commit/fa00e854b16540ea644ebf3c68ad9cbae9166c8d))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to 3ff7c80 ([5c987c6](https://github.com/AlchemistSimulator/Alchemist/commit/5c987c697e965fedd69f1cc672ecfadd871d1e88))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to 6aed264 ([83cf01e](https://github.com/AlchemistSimulator/Alchemist/commit/83cf01e8e66846f86a5ff96b77400502928cf206))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to c673a65 ([f066afc](https://github.com/AlchemistSimulator/Alchemist/commit/f066afc4c6b0baf9a6d0dcf244cd12e9c46ab3bc))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to c965260 ([bf0fb63](https://github.com/AlchemistSimulator/Alchemist/commit/bf0fb63b16b36c849da69211d15e1956342bf034))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to e92bf08 ([1da7025](https://github.com/AlchemistSimulator/Alchemist/commit/1da7025f795ccdfeb0cd870269e5ff0090fdf241))
+
+
+### General maintenance
+
+* **swingui:** make AFlowLayout.compOrder final ([601d5e1](https://github.com/AlchemistSimulator/Alchemist/commit/601d5e142ab6340bb2a3fac924f9cc79b80b6a19))
+
+
+### Build and continuous integration
+
+* **deps:** bump minimist from 1.2.5 to 1.2.6 ([b99669c](https://github.com/AlchemistSimulator/Alchemist/commit/b99669c9ffc6ea7728014cb7551c9a30cd322f38))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.7 ([53cb163](https://github.com/AlchemistSimulator/Alchemist/commit/53cb163fc4f483f5d767043952f99c3a3ebe81c2))
+* **website:** allow 5 minutes atop to build the website ([edb879e](https://github.com/AlchemistSimulator/Alchemist/commit/edb879e9c8764205e3d9017aa6ce29e3a69a11a3))
+
+
+### Style improvements
+
+* **fxui:** suppress PMD warnings on JFX field injection ([df4068e](https://github.com/AlchemistSimulator/Alchemist/commit/df4068eb9c34b57d30040d7739c34dcad6af452c))
+* **incarnation-protelis:** correctly indent AlchemistNetworkManager's constructor parameters ([fab9a4c](https://github.com/AlchemistSimulator/Alchemist/commit/fab9a4c6e0d23e057855df134ccd43a138a0ebdf))
+
+
+### Refactoring
+
+* **incarnation-protelis:** annotate the load method return as Nonnull in AlchemistExecutionContext ([2323152](https://github.com/AlchemistSimulator/Alchemist/commit/2323152cc3b7024212a00233ea535f254a08b5c3))
+* **incarnation-protelis:** avoid searching for node properties when computing the distance from a device id ([99370db](https://github.com/AlchemistSimulator/Alchemist/commit/99370db2cc3c2d45438ccd0951d845ef805b1e08))
+* **incarnation-protelis:** avoid use of raw type RunProtelisProgram in ComputationalRoundComplete ([2623f42](https://github.com/AlchemistSimulator/Alchemist/commit/2623f42ec69aa06addab2acb652ba17f37921701))
+* **incarnation-protelis:** remove redundant null check in MessageInfo ([9fc6a6b](https://github.com/AlchemistSimulator/Alchemist/commit/9fc6a6bc0847fd512a6db173f74eb8fe9170d958))
+
+
+### Documentation
+
+* **interfaces:** fix typos in the Javadoc of Incarnation ([6640ee9](https://github.com/AlchemistSimulator/Alchemist/commit/6640ee91e9b8133e011a8625d44ea56720dfc8e0))
+
 ### [14.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/14.0.1...14.0.2) (2022-03-16)
 
 

@@ -19,6 +19,7 @@ import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
 import org.protelis.vm.NetworkManager;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collections;
@@ -100,10 +101,10 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "This is intentional")
     public AlchemistNetworkManager(
-            final Reaction<Object> executionTime,
-            final RunProtelisProgram<?> program,
+            @Nonnull final Reaction<Object> executionTime,
+            @Nonnull final RunProtelisProgram<?> program,
             final double retentionTime,
-            final RealDistribution distanceLossDistribution
+            @Nullable final RealDistribution distanceLossDistribution
     ) {
         this.environment = Objects.requireNonNull(program.getEnvironment());
         node = Objects.requireNonNull(program.getNode());

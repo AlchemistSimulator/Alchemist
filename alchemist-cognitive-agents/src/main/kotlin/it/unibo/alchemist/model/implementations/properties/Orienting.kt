@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.shuffled
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
 import org.jgrapht.graph.AsWeightedGraph
@@ -27,6 +26,7 @@ import org.jgrapht.graph.DefaultEdge
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
+import it.unibo.alchemist.model.util.RandomGeneratorExtension.shuffled
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

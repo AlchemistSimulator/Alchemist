@@ -23,6 +23,7 @@ import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
@@ -239,7 +240,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
      */
     @Override
     public int hashCode() {
-        return murmur3Hash32(getColor(), getName(), getSize(), isVisible());
+        return Objects.hash(getColor(), getName(), getSize(), isVisible());
     }
 
     /**

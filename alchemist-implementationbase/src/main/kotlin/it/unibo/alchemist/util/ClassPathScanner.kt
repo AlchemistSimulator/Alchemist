@@ -1,12 +1,13 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist
+package it.unibo.alchemist.util
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.common.base.Objects
@@ -15,18 +16,6 @@ import java.io.InputStream
 import java.lang.reflect.Modifier
 import java.net.URL
 import java.util.regex.Pattern
-
-private data class ScanData(val superClass: Class<*>, val inPackages: Array<out String>) {
-
-    val hashCode = Objects.hashCode(superClass, *inPackages)
-
-    override fun equals(other: Any?) = other === this ||
-        other is ScanData && superClass == other.superClass && inPackages.contentEquals(other.inPackages)
-
-    override fun hashCode(): Int = hashCode
-
-    override fun toString(): String = "ScanData(${superClass.simpleName}, ${inPackages.asList()})"
-}
 
 /**
  * An utility class providing support for loading arbitrary subclasses available in the classpath.
@@ -91,4 +80,17 @@ object ClassPathScanner {
     @JvmStatic
     fun resourcesMatchingAsStream(regex: String, vararg inPackage: String): List<InputStream> =
         resourcesMatching(regex, *inPackage).map { it.openStream() }
+
+    private data class ScanData(val superClass: Class<*>, val inPackages: Array<out String>) {
+
+        val hashCode = Objects.hashCode(superClass, *inPackages)
+
+        override fun equals(other: Any?) = other === this ||
+            other is ScanData && superClass == other.superClass && inPackages.contentEquals(other.inPackages)
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString(): String = "ScanData(${superClass.simpleName}, ${inPackages.asList()})"
+    }
+
 }

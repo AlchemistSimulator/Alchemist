@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.cognitiveagents.impact.individual
 import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.source.toml
 import it.unibo.alchemist.model.cognitiveagents.impact.PARAMETERS_FILE
-import it.unibo.alchemist.nextDouble
+import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -13,10 +13,10 @@ import org.apache.commons.math3.random.RandomGenerator
  *          the age of the agent.
  * @param gender
  *          the gender of the agent.
- * @param rg
+ * @param randomGenerator
  *          the simulation {@link RandomGenerator}.
  */
-class Speed(age: Age, gender: Gender, rg: RandomGenerator) : Characteristic {
+class Speed(age: Age, gender: Gender, randomGenerator: RandomGenerator) : Characteristic {
 
     /**
      * The walking speed of the agent.
@@ -28,7 +28,7 @@ class Speed(age: Age, gender: Gender, rg: RandomGenerator) : Characteristic {
         age == Age.ADULT && gender == Gender.FEMALE -> adultFemale
         age == Age.ELDERLY && gender == Gender.MALE -> elderlyMale
         else -> elderlyFemale
-    } + rg.nextDouble(0.0, variance)
+    } + randomGenerator.nextDouble(0.0, variance)
 
     /**
      * The running speed of the agent.

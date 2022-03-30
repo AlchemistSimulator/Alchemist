@@ -8,7 +8,7 @@
 package it.unibo.alchemist.loader.export;
 
 import com.google.common.collect.ImmutableSet;
-import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.util.ClassPathScanner;
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
 
 import java.lang.reflect.InvocationTargetException;

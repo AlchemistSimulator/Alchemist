@@ -52,7 +52,8 @@ tasks.withType<Test> {
 }
 
 tasks.generateGrammarSource {
-    arguments = arguments + listOf("-visitor", "-package", "it.unibo.alchemist.biochemistrydsl", "-long-messages")
+    val destination = "it.unibo.alchemist.model.internal.biochemistry.dsl"
+    arguments = arguments + listOf("-visitor", "-package", destination, "-long-messages")
     tasks.sourcesJar.orNull?.dependsOn(this)
 }
 

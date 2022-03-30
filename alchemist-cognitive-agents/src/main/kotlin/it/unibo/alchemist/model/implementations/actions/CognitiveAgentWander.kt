@@ -9,8 +9,8 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
-import it.unibo.alchemist.nextDouble
-import it.unibo.alchemist.shuffled
+import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
+import it.unibo.alchemist.model.util.RandomGeneratorExtension.shuffled
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

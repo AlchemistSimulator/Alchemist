@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -26,11 +27,11 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
 import kotlin.properties.Delegates
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 private const val BIOMOLECULE_NEEDED = 5
 private const val NEIGHBORHOOD_PRESENT_REACTION = "[5 token] --> [5 token in neighbor]"
@@ -66,7 +67,7 @@ class TestNeighborhoodReactionsPropensities : StringSpec({
         testSimulation(BIOMOLECULE_IN_NEIGHBOR_REACTION)
     }
 }) {
-    override fun beforeTest(testCase: TestCase) {
+    override suspend fun beforeTest(testCase: TestCase) {
         environment = BioRect2DEnvironment()
         environment.linkingRule = LINKING_RULE
         centralNode = INCARNATION.createNode(RANDOM, environment, null)

@@ -24,11 +24,13 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * Adds a reaction to this node.
      * The reaction is added only in the node,
-     * but not in the [Simulation] scheduler, so it will never be executed.
+     * but not in the [it.unibo.alchemist.core.interfaces.Simulation] scheduler,
+     * so it will never be executed.
      * To add the reaction also in the scheduler (and start to execute it),
-     * you have to call also the method [Simulation.reactionAdded].
-     * @param r
-     * the reaction to be added
+     * you have to call also the method
+     * [it.unibo.alchemist.core.interfaces.Simulation.reactionAdded].
+     *
+     * @param reactionToAdd the reaction to be added
      */
     fun addReaction(reactionToAdd: Reaction<T>)
 

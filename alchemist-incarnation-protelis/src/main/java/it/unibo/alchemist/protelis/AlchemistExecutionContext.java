@@ -36,6 +36,7 @@ import org.protelis.vm.SpatiallyEmbeddedDevice;
 import org.protelis.vm.TimeAwareDevice;
 import org.protelis.vm.impl.AbstractExecutionContext;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -61,7 +62,8 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     private final LoadingCache<P, Double> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100)
-            .build(new CacheLoader<P, Double>() {
+            .build(new CacheLoader<>() {
+                @Nonnull
                 @Override
                 @SuppressWarnings("unchecked")
                 public Double load(@Nonnull final P dest) {

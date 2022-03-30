@@ -117,7 +117,7 @@ open class GenericNode<T> @JvmOverloads constructor(
      */
     final override fun spliterator(): Spliterator<Reaction<T>> = reactions.spliterator()
 
-    override fun toString(): String = molecules.toString()
+    override fun toString(): String = "Node$id{ properties: $properties, molecules: $molecules }"
 
     companion object {
         private const val serialVersionUID = 2496775909028222278L

@@ -198,7 +198,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = Hashing.murmur3_32().newHasher()
+            hash = Hashing.murmur3_32_fixed().newHasher()
                 .putInt(node.getId())
                 .putInt(environment.hashCode())
                 .putInt(reaction.hashCode())

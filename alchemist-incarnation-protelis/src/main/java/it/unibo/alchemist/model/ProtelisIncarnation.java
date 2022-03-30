@@ -299,8 +299,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     return 0d;
                 }
             }
-        } catch (ExecutionException e) {
-            L.error("Bug in " + getClass().getName() + ": getProperty should never fail.", e);
+        } catch (ExecutionException | RuntimeException e) { // NOPMD: we never want getProperty to fail
+            L.error(
+                "Intercepted interpreter exception when computing: \n"
+                    + property + "\n"
+                    + e.getMessage()
+            );
         }
         return Double.NaN;
     }

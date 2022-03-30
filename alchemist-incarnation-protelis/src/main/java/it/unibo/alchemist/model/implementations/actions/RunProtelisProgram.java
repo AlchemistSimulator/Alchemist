@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -10,6 +11,7 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
@@ -18,7 +20,6 @@ import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.apache.commons.math3.distribution.RealDistribution;
@@ -70,7 +71,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
         final var otherCopies = node.getReactions().stream()
             .flatMap(it -> it.getActions().stream())
             .filter(it -> it instanceof RunProtelisProgram)
-            .map(it -> ((RunProtelisProgram) it).program.getName())
+            .map(it -> ((RunProtelisProgram<?>) it).program.getName())
             .filter(programName -> programName.equals(program.getName()))
             .count();
         name = new SimpleMolecule(program.getName() + (otherCopies == 0 ? "" : "$copy" + otherCopies));
@@ -80,7 +81,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
         random = requireNonNull(randomGenerator);
         this.reaction = requireNonNull(reaction);
         networkManager = new AlchemistNetworkManager(reaction, this, retentionTime, packetLossDistance);
-        this.node.asProperty(ProtelisProperty.class).addNetworkManger(this, networkManager);
+        this.node.asProperty(ProtelisDevice.class).addNetworkManger(this, networkManager);
         executionContext = new AlchemistExecutionContext<>(environment, node, reaction, randomGenerator, networkManager);
         vm = new ProtelisVM(program, executionContext);
         this.retentionTime = retentionTime;
@@ -329,11 +330,10 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public RunProtelisProgram<P> cloneAction(final Node<Object> node, final Reaction<Object> reaction) {
-        if (node.asPropertyOrNull(ProtelisProperty.class) != null) {
+        if (node.asPropertyOrNull(ProtelisDevice.class) != null) {
             try {
-                return new RunProtelisProgram<P>(
+                return new RunProtelisProgram<>(
                     getEnvironment(),
                     node,
                     reaction,
@@ -345,7 +345,7 @@ public final class RunProtelisProgram<P extends Position<P>> implements Action<O
                 throw new IllegalStateException(e);
             }
         }
-        throw new IllegalArgumentException("The node must have an instance of " + ProtelisProperty.class.getSimpleName());
+        throw new IllegalArgumentException("The node must have an instance of " + ProtelisDevice.class.getSimpleName());
     }
 
     @Override

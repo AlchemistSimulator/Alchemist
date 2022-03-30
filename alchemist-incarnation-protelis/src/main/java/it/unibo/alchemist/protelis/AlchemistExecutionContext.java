@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -14,6 +15,7 @@ import com.google.common.hash.Hashing;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
@@ -22,11 +24,9 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.math3.random.RandomGenerator;
-import javax.annotation.Nonnull;
 import org.protelis.lang.datatype.DatatypeFactory;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Field;
@@ -46,7 +46,7 @@ import java.util.function.Function;
  */
 public final class AlchemistExecutionContext<P extends Position<P>>
         extends AbstractExecutionContext<AlchemistExecutionContext<P>>
-        implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice {
+        implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice<Number> {
 
     private static final String INTENTIONAL = "This is intentional";
     /**
@@ -65,7 +65,6 @@ public final class AlchemistExecutionContext<P extends Position<P>>
             .build(new CacheLoader<>() {
                 @Nonnull
                 @Override
-                @SuppressWarnings("unchecked")
                 public Double load(@Nonnull final P dest) {
                     if (environment instanceof MapEnvironment) {
                         if (dest instanceof GeoPosition) {
@@ -84,7 +83,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     private final Node<Object> node;
     private final RandomGenerator randomGenerator;
     private final Reaction<Object> reaction;
-    private final ProtelisProperty protelisProperty;
+    private final ProtelisDevice protelisDevice;
 
     /**
      * @param environment
@@ -105,10 +104,35 @@ public final class AlchemistExecutionContext<P extends Position<P>>
             final Reaction<Object> reaction,
             final RandomGenerator random,
             final AlchemistNetworkManager networkManager) {
-        super(localNode.asProperty(ProtelisProperty.class), networkManager);
+        this(environment, localNode, localNode.asProperty(ProtelisDevice.class), reaction, random, networkManager);
+    }
+
+    /**
+     * @param environment
+     *            the simulation {@link Environment}
+     * @param localNode
+     *            the local {@link Node}
+     * @param protelisDevice
+     *            the local {@link ProtelisDevice}
+     * @param reaction
+     *            the {@link Reaction} hosting the program
+     * @param random
+     *            the {@link RandomGenerator} for this simulation
+     * @param networkManager
+     *            the {@link AlchemistNetworkManager} to be used
+     */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = INTENTIONAL)
+    public AlchemistExecutionContext(
+            final Environment<Object, P> environment,
+            final Node<Object> localNode,
+            final ProtelisDevice protelisDevice,
+            final Reaction<Object> reaction,
+            final RandomGenerator random,
+            final AlchemistNetworkManager networkManager) {
+        super(protelisDevice, networkManager);
         this.environment = environment;
         node = localNode;
-        protelisProperty = node.asProperty(ProtelisProperty.class);
+        this.protelisDevice = protelisDevice;
         this.reaction = reaction;
         randomGenerator = random;
     }
@@ -125,10 +149,11 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      *            the target device
      * @return the distance
      */
-    @SuppressWarnings("unchecked")
     public double distanceTo(final DeviceUID target) {
-        assert target instanceof ProtelisProperty;
-        return environment.getDistanceBetweenNodes(node, ((ProtelisProperty) target).getNode());
+        if (target instanceof ProtelisDevice) {
+            return environment.getDistanceBetweenNodes(node, ((ProtelisDevice) target).getNode());
+        }
+        throw new IllegalArgumentException("Not a valid " + ProtelisDevice.class.getSimpleName() + ": " + target);
     }
 
     /**
@@ -178,7 +203,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = INTENTIONAL)
     public DeviceUID getDeviceUID() {
-        return protelisProperty;
+        return protelisDevice;
     }
 
     /**
@@ -229,7 +254,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     }
 
     @Override
-    public Field<Double> nbrLag() {
+    public Field<Number> nbrLag() {
         return buildField(time -> getCurrentTime().doubleValue() - time, getCurrentTime().doubleValue());
     }
 

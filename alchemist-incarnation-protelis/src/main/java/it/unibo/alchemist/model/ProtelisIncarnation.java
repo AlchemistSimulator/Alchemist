@@ -489,9 +489,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             if (vm.isPresent()) {
                 final ProtelisVM myVM = vm.get();
                 mutex.acquireUninterruptibly();
-                myVM.runCycle();
-                mutex.release();
-                return myVM.getCurrentValue();
+                try {
+                    myVM.runCycle();
+                    return myVM.getCurrentValue();
+                } finally {
+                    mutex.release();
+                }
             }
             if (node instanceof NoNode) {
                 return key.property;

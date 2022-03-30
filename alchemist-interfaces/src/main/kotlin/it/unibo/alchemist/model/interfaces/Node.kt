@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.interfaces
 
 import java.io.Serializable
-import java.lang.IllegalStateException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
@@ -83,9 +82,9 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     val moleculeCount: Int
 
     /**
-     * @return a list of the node's capabilities
+     * @return a list of the node's properties/capabilities
      */
-    val capabilities: List<NodeProperty<T>>
+    val properties: List<NodeProperty<T>>
 
     /**
      * This method allows to access all the reaction of the node.

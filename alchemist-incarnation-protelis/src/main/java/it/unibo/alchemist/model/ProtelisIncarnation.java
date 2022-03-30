@@ -597,7 +597,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         @NotNull
         @Override
-        public List<NodeProperty<Object>> getCapabilities() {
+        public List<NodeProperty<Object>> getProperties() {
             return Collections.emptyList();
         }
 

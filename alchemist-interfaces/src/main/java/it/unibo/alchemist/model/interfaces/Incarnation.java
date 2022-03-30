@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 public interface Incarnation<T, P extends Position<? extends P>> {
 
     /**
-     * Given an {@link Node}, an {@link Molecule} and a property expressed as
+     * Given a {@link Node}, a {@link Molecule} and a property expressed as
      * a {@link String}, returns a numeric value. If a numeric value is not
      * deducible, Double.NaN is returned.
      * 

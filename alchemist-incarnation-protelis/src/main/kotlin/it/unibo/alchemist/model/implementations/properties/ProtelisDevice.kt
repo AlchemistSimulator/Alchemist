@@ -12,32 +12,55 @@ package it.unibo.alchemist.model.implementations.properties
 import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
+import org.protelis.lang.datatype.DeviceUID
+import org.protelis.vm.ExecutionEnvironment
 
 /**
- * Base implementation of [ProtelisProperty].
+ * Base implementation of [ProtelisDevice]. Requires a Protelis [incarnation] to work.
  */
-class Protelis<P : Position<P>> @JvmOverloads constructor(
-    override val incarnation: ProtelisIncarnation<*>,
+class ProtelisDevice @JvmOverloads constructor(
+    /**
+     * A reference to the current incarnation.
+     */
+    val incarnation: ProtelisIncarnation<*>,
     override val node: Node<Any>,
     networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf()
-) : ProtelisProperty {
+) : NodeProperty<Any>, ExecutionEnvironment, DeviceUID {
 
-    override var networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = networkManagers
+    /**
+     * The node's id.
+     */
+    val id: Int get() = node.id
+
+    /**
+     * All the [AlchemistNetworkManager]s in this node.
+     */
+    var networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = networkManagers
         private set
 
-    override fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {
+    /**
+     * Adds a new [AlchemistNetworkManager].
+     *
+     * @param program
+     * the [RunProtelisProgram]
+     * @param networkManager
+     * the [AlchemistNetworkManager]
+     */
+    fun addNetworkManger(program: RunProtelisProgram<*>, networkManager: AlchemistNetworkManager) {
         networkManagers = networkManagers + (program to networkManager)
     }
 
-    override fun cloneOnNewNode(node: Node<Any>) = Protelis(incarnation, node)
-
     /**
-     * Returns true if node contains [id].
+     * Finds all the [RunProtelisProgram]s installed on this node.
      */
-    override fun has(id: String): Boolean = node.contains(incarnation.createMolecule(id))
+    fun allProtelisPrograms(): List<RunProtelisProgram<*>> = node.reactions.asSequence()
+        .flatMap { it.actions }
+        .filterIsInstance<RunProtelisProgram<*>>()
+        .toList()
+
+    override fun cloneOnNewNode(node: Node<Any>) = ProtelisDevice(incarnation, node)
 
     /**
      * Returns the value associated with [id].
@@ -48,6 +71,21 @@ class Protelis<P : Position<P>> @JvmOverloads constructor(
      * Returns the value associated with [id].
      */
     override fun get(id: String, defaultValue: Any): Any = get(id)
+
+    /**
+     * @param program
+     * the [RunProtelisProgram]
+     * @return the [AlchemistNetworkManager] for this specific
+     * [RunProtelisProgram]
+     */
+    fun getNetworkManager(program: RunProtelisProgram<*>) = requireNotNull(networkManagers[program]) {
+        "No network manager found for $program"
+    }
+
+    /**
+     * Returns true if node contains [id].
+     */
+    override fun has(id: String): Boolean = node.contains(incarnation.createMolecule(id))
 
     /**
      * Stores the value associated with [id].

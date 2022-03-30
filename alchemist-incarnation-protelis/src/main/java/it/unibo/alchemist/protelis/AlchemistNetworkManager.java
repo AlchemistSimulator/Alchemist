@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -10,10 +11,9 @@ package it.unibo.alchemist.protelis;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.CodePath;
@@ -39,7 +39,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 
     private static final long serialVersionUID = 1L;
     private final Environment<Object, ?> environment;
-    private final Node<Object> node;
+    private final ProtelisDevice device;
     /**
      * This reaction stores the time at which the neighbor state is read.
      */
@@ -107,7 +107,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
         @Nullable final RealDistribution distanceLossDistribution
     ) {
         this.environment = Objects.requireNonNull(program.getEnvironment());
-        node = Objects.requireNonNull(program.getNode());
+        device = Objects.requireNonNull(program.getNode().asProperty(ProtelisDevice.class));
         this.program = Objects.requireNonNull(program);
         this.event = Objects.requireNonNull(executionTime);
         if (retentionTime < 0) {
@@ -142,7 +142,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
                 final Iterator<MessageInfo> messagesIterator = this.messages.values().iterator();
                 final boolean retainsNeighbors = Double.isNaN(retentionTime);
                 final Set<?> neighbors = retainsNeighbors
-                        ? environment.getNeighborhood(node).getNeighbors()
+                        ? environment.getNeighborhood(device.getNode()).getNeighbors()
                         : Collections.emptySet();
                 while (messagesIterator.hasNext()) {
                     final MessageInfo message = messagesIterator.next();
@@ -187,13 +187,13 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     public void simulateMessageArrival(final double currentTime) {
         Objects.requireNonNull(toBeSent);
         if (!toBeSent.isEmpty()) {
-            final MessageInfo msg = new MessageInfo(currentTime, node.asProperty(ProtelisProperty.class), toBeSent);
-            environment.getNeighborhood(node).forEach(n -> {
-                if (n.asPropertyOrNull(ProtelisProperty.class) != null) {
-                    final AlchemistNetworkManager destination = n.asProperty(ProtelisProperty.class).getNetworkManager(program);
+            final MessageInfo msg = new MessageInfo(currentTime, device, toBeSent);
+            environment.getNeighborhood(device.getNode()).forEach(n -> {
+                if (n.asPropertyOrNull(ProtelisDevice.class) != null) {
+                    final AlchemistNetworkManager destination = n.asProperty(ProtelisDevice.class).getNetworkManager(program);
                     boolean packetArrives = true;
                     if (distanceLossDistribution != null) {
-                        final var distance = environment.getDistanceBetweenNodes(node, n);
+                        final var distance = environment.getDistanceBetweenNodes(device.getNode(), n);
                         final var random = program.getRandomGenerator().nextDouble();
                         packetArrives = random > distanceLossDistribution.cumulativeProbability(distance);
                     }

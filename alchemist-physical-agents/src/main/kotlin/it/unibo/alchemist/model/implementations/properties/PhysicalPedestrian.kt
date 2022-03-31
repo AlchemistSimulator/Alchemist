@@ -27,15 +27,15 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 /**
  * Base implementation of a pedestrian's capability to experience physical interactions.
  */
-class PhysicalPedestrian<T, P, A, F>(
+abstract class PhysicalPedestrian<T, P, A, F>(
     /**
      * The simulation's [RandomGenerator].
      */
-    private val randomGenerator: RandomGenerator,
+    randomGenerator: RandomGenerator,
     /**
      * The environment in which the pedestrian is moving.
      */
-    val environment: PhysicsEnvironment<T, P, A, F>,
+    open val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
 ) : PhysicalPedestrianProperty<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
@@ -53,9 +53,13 @@ class PhysicalPedestrian<T, P, A, F>(
         }
     }
 
+    private fun getShapeInNodePosition(node: Node<T>) = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>()
+        .shape
+        .transformed { origin(environment.getPosition(node)) }
+
     override fun repulsionForce(other: Node<T>): P {
-        val myShape = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape
-        val otherShape = other.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape
+        val myShape = getShapeInNodePosition(node)
+        val otherShape = getShapeInNodePosition(other)
         return (myShape.centroid - otherShape.centroid).let {
             val desiredDistance = myShape.radius + comfortRay + otherShape.radius
             /*
@@ -66,15 +70,7 @@ class PhysicalPedestrian<T, P, A, F>(
         }
     }
 
-    override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>) =
-        environment.getNodesWithin(comfortArea)
-            .minusElement(node)
-            .filter { it.asPropertyOrNull<T, OccupiesSpaceProperty<T, P, A>>() != null }
-            .map { repulsionForce(it) }
-            /*
-             * Discard infinitesimal forces.
-             */
-            .filter { it.magnitude > Double.MIN_VALUE }
+    abstract override fun physicalForces(environment: PhysicsEnvironment<T, P, A, F>): List<P>
 
     companion object {
         /**
@@ -87,7 +83,5 @@ class PhysicalPedestrian<T, P, A, F>(
         private const val maximumSpaceThreshold = 1.0
     }
 
-    override val comfortArea: GeometricShape<P, A> get() = environment.shapeFactory.adimensional()
-
-    override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian(randomGenerator, environment, node)
+    abstract override val comfortArea: GeometricShape<P, A>
 }

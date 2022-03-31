@@ -1,0 +1,33 @@
+incarnation: protelis
+
+environment:
+  type: ImageEnvironmentWithGraph
+  parameters: [images/square.png, 0.1, -60.0, -60.0]
+
+deployments:
+  - type: Point
+    parameters: [0.0, 0.0]
+    properties:
+      - type: Pedestrian
+      - type: PhysicalPedestrian2D
+      - type: CircularArea
+    programs:
+      - time-distribution:
+          type: DiracComb
+          parameters: [0.5]
+        type: BlendedSteeringWithPhysics
+
+  - type: Point
+    parameters: [10.0, 0.0]
+    properties:
+      - type: Pedestrian
+      - type: PhysicalPedestrian2D
+      - type: CircularArea
+    programs:
+      - time-distribution:
+          type: DiracComb
+          parameters: [1.0]
+        type: BlendedSteeringWithPhysics
+        actions:
+          - type: CognitiveAgentSeek
+            parameters: [0.0, 0.0]

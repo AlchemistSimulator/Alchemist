@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.implementations.properties
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
-import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian
+import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
@@ -37,7 +37,7 @@ class PhysicalPedestrian<T, P, A, F>(
      */
     val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
-) : PhysicalPedestrian<T, P, A, F>
+) : PhysicalPedestrianProperty<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {

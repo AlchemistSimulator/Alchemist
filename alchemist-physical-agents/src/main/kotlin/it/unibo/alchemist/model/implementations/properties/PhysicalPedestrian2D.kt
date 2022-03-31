@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2DProperty
-import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian
+import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
@@ -31,7 +31,7 @@ class PhysicalPedestrian2D<T>(
      */
     val environment: Physics2DEnvironment<T>,
     node: Node<T>,
-) : PhysicalPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> by
+) : PhysicalPedestrianProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> by
 PhysicalPedestrian(randomGenerator, environment, node),
     PhysicalPedestrian2DProperty<T> {
     override val comfortArea: Euclidean2DShape get() = environment

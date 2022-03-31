@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * A pedestrian's capability to experience physical forces.
  */
-interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
+interface PhysicalPedestrianProperty<T, P, A, F> : PhysicalProperty<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {
@@ -48,4 +48,4 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
  * A pedestrian's capability to experience physical forces in a 2D space.
  */
 interface PhysicalPedestrian2DProperty<T> :
-    PhysicalPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
+    PhysicalPedestrianProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>

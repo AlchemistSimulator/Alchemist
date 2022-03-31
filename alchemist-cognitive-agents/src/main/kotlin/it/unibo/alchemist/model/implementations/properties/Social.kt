@@ -24,4 +24,6 @@ data class Social<T> @JvmOverloads constructor(
 ) : SocialProperty<T> {
 
     override fun cloneOnNewNode(node: Node<T>) = Social(node, GenericGroup(listOf(node)))
+
+    override fun toString(): String = group.toString()
 }

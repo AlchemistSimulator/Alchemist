@@ -25,5 +25,5 @@ data class Social<T> @JvmOverloads constructor(
 
     override fun cloneOnNewNode(node: Node<T>) = Social(node, GenericGroup(listOf(node)))
 
-    override fun toString(): String = group.toString()
+    override fun toString(): String = "${this::class.simpleName}$group"
 }

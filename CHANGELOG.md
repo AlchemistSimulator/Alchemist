@@ -1,3 +1,16 @@
+### [15.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/15.0.0...15.0.1) (2022-04-01)
+
+
+### Dependency updates
+
+* **core-deps:** update dependency org.protelis:protelis-lang to v15.2.3 ([2c04fbf](https://github.com/AlchemistSimulator/Alchemist/commit/2c04fbf476e692b29a032cd04d9d4d0aaafce964))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.4.5 ([bad578e](https://github.com/AlchemistSimulator/Alchemist/commit/bad578e95d8c1b5579cf8f799ad2da267d685bfb))
+* **deps:** update dependency gradle to v7.4.2 ([911df0c](https://github.com/AlchemistSimulator/Alchemist/commit/911df0c98096e4a1702f9c046c5845bbc2f9f92f))
+* **deps:** update plugin kotlin-qa to v0.14.1 ([bdf614b](https://github.com/AlchemistSimulator/Alchemist/commit/bdf614b34155e0ad09d5f866704f2d62eac0931d))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.6 ([9090cef](https://github.com/AlchemistSimulator/Alchemist/commit/9090cefd7d0c0f5cfd68eb1474f8d489f4103150))
+* **deps:** update plugin publishoncentral to v0.7.15 ([86e8920](https://github.com/AlchemistSimulator/Alchemist/commit/86e89203cee2135f999c927276711a032ea5fad4))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to 70b4143 ([2ef69a9](https://github.com/AlchemistSimulator/Alchemist/commit/2ef69a963bb005cc28c0b3098fe4cd0eb0e5756d))
+
 ## [15.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/14.1.0...15.0.0) (2022-03-30)
 
 

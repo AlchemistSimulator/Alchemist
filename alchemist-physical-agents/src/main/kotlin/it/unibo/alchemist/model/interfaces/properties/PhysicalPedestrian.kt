@@ -47,5 +47,5 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
 /**
  * A pedestrian's capability to experience physical forces in a 2D space.
  */
-interface PhysicalPedestrian2DProperty<T> :
+interface PhysicalPedestrian2D<T> :
     PhysicalPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>

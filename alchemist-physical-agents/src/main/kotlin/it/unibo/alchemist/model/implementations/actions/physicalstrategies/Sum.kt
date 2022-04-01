@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2DProperty
+import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
@@ -28,7 +28,9 @@ class Sum<T>(
     override val nonPhysicalStrategy: SteeringStrategy<T, Euclidean2DPosition>
 ) : PhysicalSteeringStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
 
+    private val nodePhysics = node.asProperty<T, PhysicalPedestrian2D<T>>()
+
     override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition =
-        (node.asProperty<T, PhysicalPedestrian2DProperty<T>>().physicalForces(environment) + overallIntentionalForce)
+        (nodePhysics.physicalForces(environment) + overallIntentionalForce)
             .reduce { acc, p -> acc + p }
 }

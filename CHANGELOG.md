@@ -1,3 +1,16 @@
+### [15.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/15.0.1...15.0.2) (2022-04-01)
+
+
+### Bug Fixes
+
+* **physical-agents:** prepare the API for the implementation of physical interactions ([#1201](https://github.com/AlchemistSimulator/Alchemist/issues/1201)) ([6942b89](https://github.com/AlchemistSimulator/Alchemist/commit/6942b8923ec0f650506715ea47c79a9fed4c6950))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.8 ([e020d8a](https://github.com/AlchemistSimulator/Alchemist/commit/e020d8abd2a0241f73b5ba302bd6d8dbfc5d783c))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.9 ([94a01af](https://github.com/AlchemistSimulator/Alchemist/commit/94a01af5b5d7207d4129c28e791b02366a986a68))
+
 ### [15.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/15.0.0...15.0.1) (2022-04-01)
 
 

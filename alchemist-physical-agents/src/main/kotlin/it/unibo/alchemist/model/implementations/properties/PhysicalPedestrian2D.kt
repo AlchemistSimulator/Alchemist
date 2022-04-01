@@ -47,6 +47,7 @@ class PhysicalPedestrian2D<T>(
     override fun physicalForces(
         environment: PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
     ) = environment.getNodesWithin(comfortArea)
+        .asSequence()
         .minusElement(node)
         .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }
         .map { repulsionForce(it) }
@@ -54,6 +55,7 @@ class PhysicalPedestrian2D<T>(
          * Discard infinitesimal forces.
          */
         .filter { it.magnitude > Double.MIN_VALUE }
+        .toList()
 
     override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian2D(randomGenerator, environment, node)
 }

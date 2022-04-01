@@ -36,11 +36,13 @@ abstract class PhysicalPedestrian<T, P, A, F>(
      * The environment in which the pedestrian is moving.
      */
     open val environment: PhysicsEnvironment<T, P, A, F>,
-    override val node: Node<T>,
+    final override val node: Node<T>,
 ) : PhysicalPedestrian<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {
+
+    private val nodeShape by lazy { node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape }
 
     private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 
@@ -53,13 +55,9 @@ abstract class PhysicalPedestrian<T, P, A, F>(
         }
     }
 
-    private fun getShapeInNodePosition(node: Node<T>) = node.asProperty<T, OccupiesSpaceProperty<T, P, A>>()
-        .shape
-        .transformed { origin(environment.getPosition(node)) }
-
     override fun repulsionForce(other: Node<T>): P {
-        val myShape = getShapeInNodePosition(node)
-        val otherShape = getShapeInNodePosition(other)
+        val myShape = nodeShape.transformed { origin(environment.getPosition(node)) }
+        val otherShape = environment.getShape(other)
         return (myShape.centroid - otherShape.centroid).let {
             val desiredDistance = myShape.radius + comfortRay + otherShape.radius
             /*

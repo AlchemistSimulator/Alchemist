@@ -1,3 +1,10 @@
+### [15.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/15.0.3...15.0.4) (2022-04-02)
+
+
+### Dependency updates
+
+* **core-deps:** update org.protelis to v15.3.0 ([bddaaa7](https://github.com/AlchemistSimulator/Alchemist/commit/bddaaa78706dc713971343567b7383fdd40cc1b8))
+
 ### [15.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/15.0.2...15.0.3) (2022-04-02)
 
 

@@ -63,7 +63,7 @@ class PhysicalPedestrian2D<T>(
              * it is the vector leading from the center of other to the center of this node, it.magnitude is the
              * actual distance between the two nodes.
              */
-            it.normalized() * (desiredDistance - it.magnitude).coerceAtLeast(0.0) / it.magnitude
+            it.normalized() * (desiredDistance - it.magnitude).coerceAtLeast(0.0)
         }
     }
 

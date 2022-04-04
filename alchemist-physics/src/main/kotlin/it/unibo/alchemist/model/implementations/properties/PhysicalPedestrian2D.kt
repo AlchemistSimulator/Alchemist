@@ -51,7 +51,7 @@ class PhysicalPedestrian2D<T>(
 
     override val comfortArea: Euclidean2DShape get() = environment
         .shapeFactory
-        .circle(node.asProperty<T, AreaProperty<T>>().shape.radius + comfortRay)
+        .circle(nodeShape.radius + comfortRay)
         .transformed { origin(environment.getPosition(node)) }
 
     override fun repulsionForce(other: Node<T>): Euclidean2DPosition {

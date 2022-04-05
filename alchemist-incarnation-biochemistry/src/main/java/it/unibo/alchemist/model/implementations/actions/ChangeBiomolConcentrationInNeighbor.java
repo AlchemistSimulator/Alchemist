@@ -37,11 +37,13 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
      * @param environment the environment
      * @param randGen the random generator
      */
-    public ChangeBiomolConcentrationInNeighbor(final Environment<Double, ?> environment,
-            final Node<Double> node,
-            final Biomolecule biomolecule,
-            final RandomGenerator randGen,
-            final Double deltaConcentration) {
+    public ChangeBiomolConcentrationInNeighbor(
+        final Environment<Double, ?> environment,
+        final Node<Double> node,
+        final Biomolecule biomolecule,
+        final RandomGenerator randGen,
+        final Double deltaConcentration
+    ) {
         super(node, environment, randGen);
         declareDependencyTo(biomolecule);
         mol = biomolecule;

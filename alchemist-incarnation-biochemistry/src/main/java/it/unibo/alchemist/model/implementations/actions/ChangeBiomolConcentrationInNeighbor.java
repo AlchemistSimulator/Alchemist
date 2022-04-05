@@ -26,7 +26,7 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
 
     private static final long serialVersionUID = -6262967512444676061L;
 
-    private final Biomolecule mol;
+    private final Biomolecule molecule;
     private final double delta;
 
     /**
@@ -46,13 +46,13 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
     ) {
         super(node, environment, randGen);
         declareDependencyTo(biomolecule);
-        mol = biomolecule;
+        molecule = biomolecule;
         delta = deltaConcentration;
     }
 
     @Override
     public ChangeBiomolConcentrationInNeighbor cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new ChangeBiomolConcentrationInNeighbor(getEnvironment(), node, mol, getRandomGenerator(), delta);
+        return new ChangeBiomolConcentrationInNeighbor(getEnvironment(), node, molecule, getRandomGenerator(), delta);
     }
 
     @Override
@@ -61,12 +61,12 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
         final List<Integer> validTargetsIds = new ArrayList<>();
         if (delta < 0) {
             neighborhood.getNeighbors().stream()
-            .filter(n -> n.asPropertyOrNull(CellProperty.class) != null && n.getConcentration(mol) >= delta)
+            .filter(n -> n.asPropertyOrNull(CellProperty.class) != null && n.getConcentration(molecule) >= delta)
             .mapToInt(Node::getId)
             .forEach(validTargetsIds::add);
         } else {
             neighborhood.getNeighbors().stream()
-            .filter(n -> n.asPropertyOrNull(CellProperty.class) != null && n.getConcentration(mol) >= delta)
+            .filter(n -> n.asPropertyOrNull(CellProperty.class) != null && n.getConcentration(molecule) >= delta)
             .mapToInt(Node::getId)
             .forEach(validTargetsIds::add);
         }
@@ -78,15 +78,15 @@ public final class ChangeBiomolConcentrationInNeighbor extends AbstractNeighborA
 
     @Override
     public void execute(final Node<Double> targetNode) {
-        targetNode.setConcentration(mol, targetNode.getConcentration(mol) + delta);
+        targetNode.setConcentration(molecule, targetNode.getConcentration(molecule) + delta);
     }
 
     @Override
     public String toString() {
          if (delta > 0) {
-             return "add " + delta + " of " + mol + " in neighbor ";
+             return "add " + delta + " of " + molecule + " in neighbor ";
          }  else {
-             return "remove " + (-delta) + " of " + mol + " in neighbor ";
+             return "remove " + (-delta) + " of " + molecule + " in neighbor ";
          }
     }
 

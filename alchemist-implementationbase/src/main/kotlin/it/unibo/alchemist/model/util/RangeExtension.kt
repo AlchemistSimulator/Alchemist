@@ -26,8 +26,8 @@ object RangeExtension {
     /**
      * Checks whether two ranges coincide. It's a different way of checking if they're equals,
      * which doesn't depend on their actual implementation. Note that the way you obtain a range
-     * may influence the actual class used, and you can have two coincident ranges which don't
-     * result equals because of different classes.
+     * may influence the actual class used, and you can have two coincident ranges which are not
+     * equal because of different classes.
      */
     fun <T : Comparable<T>> ClosedRange<T>.coincidesWith(other: ClosedRange<T>): Boolean =
         start == other.start && endInclusive == other.endInclusive

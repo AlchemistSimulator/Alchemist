@@ -22,12 +22,18 @@ object IterableExtension {
      * using Apache random number generator.
      * More information [on Wikipedia](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
      *
-     * @param rg
+     * @param randomGenerator
      *          the simulation {@link RandomGenerator}.
      */
-    fun <R> Iterable<R>.shuffled(rg: RandomGenerator): Iterable<R> = toMutableList().apply {
+    fun <R> Iterable<R>.shuffled(randomGenerator: RandomGenerator): Iterable<R> = toMutableList().apply {
         for (i in size - 1 downTo 1) {
-            Collections.swap(this, i, rg.nextInt(i + 1))
+            Collections.swap(this, i, randomGenerator.nextInt(i + 1))
         }
     }
+
+    /**
+     * Returns a random element of the Iterable
+     */
+    fun <R> Iterable<R>.randomElement(randomGenerator: RandomGenerator): R =
+        with(toList()) { get(randomGenerator.nextInt(size)) }
 }

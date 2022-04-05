@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -11,6 +11,8 @@ package it.unibo.alchemist.wormhole.implementation
 
 import de.saring.leafletmap.LatLong
 import it.unibo.alchemist.boundary.CustomLeafletMapView
+import it.unibo.alchemist.boundary.jfx.util.JavaFXThreadUtil.runOnFXThread
+import it.unibo.alchemist.boundary.jfx.util.JavaFXThreadUtil.syncRunOnFXThread
 import it.unibo.alchemist.boundary.minus
 import it.unibo.alchemist.boundary.plus
 import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
@@ -18,8 +20,6 @@ import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
-import it.unibo.alchemist.runOnFXThread
-import it.unibo.alchemist.syncRunOnFXThread
 import javafx.scene.Node
 import java.awt.Point
 

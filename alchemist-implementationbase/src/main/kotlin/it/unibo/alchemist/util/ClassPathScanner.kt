@@ -92,5 +92,4 @@ object ClassPathScanner {
 
         override fun toString(): String = "ScanData(${superClass.simpleName}, ${inPackages.asList()})"
     }
-
 }

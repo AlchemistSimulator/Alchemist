@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
+import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 
 /**
  * A [PhysicalSteeringStrategy] performing a simple sum of the overall intentional force and the physical ones.
@@ -29,8 +30,16 @@ class Sum<T>(
 ) : PhysicalSteeringStrategy<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
 
     private val nodePhysics = node.asProperty<T, PhysicalPedestrian2D<T>>()
+    private val nodeShape = node.asProperty<T, AreaProperty<T>>().shape
 
     override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition =
         (nodePhysics.physicalForces(environment) + overallIntentionalForce)
             .reduce { acc, p -> acc + p }
+            .let {
+                environment.farthestPositionReachable(
+                    node,
+                    it,
+                    nodeShape.transformed { origin(environment.getPosition(node)) }.radius,
+                )
+            }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -19,7 +19,6 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -38,14 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class TestBiomolLayer {
 
-    private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
+    private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();
 
     /**
      * Test if cell status is correctly updated in movement.
      */
     @Test
     void testBiomolStepLayer() {
-        final Environment<Double, Euclidean2DPosition> environment = new BioRect2DEnvironment();
+        final Environment<Double, Euclidean2DPosition> environment = new BioRect2DEnvironment(INCARNATION);
         final Biomolecule b = new Biomolecule("B");
         final Layer<Double, Euclidean2DPosition> bLayer = new StepLayer<>(10_000.0, 0d);
         final MersenneTwister rand = new MersenneTwister(0);

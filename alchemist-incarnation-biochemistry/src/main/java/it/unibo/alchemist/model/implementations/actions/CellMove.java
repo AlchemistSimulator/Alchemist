@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,9 +8,9 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
@@ -18,14 +19,13 @@ import java.util.Objects;
 
 /**
  * 
- * @param <P> {@link Position} type
  */
-public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Double, P> {
+public final class CellMove extends AbstractMoveNode<Double, Euclidean2DPosition> {
 
     private static final long serialVersionUID = 1L;
     private final boolean inPercent;
     private final double delta;
-    private final CellProperty<P> cell;
+    private final CellProperty<Euclidean2DPosition> cell;
 
     /**
      * Initialize an Action that move the cell of a given space delta, which can be expressed in percent of the cell's
@@ -44,7 +44,7 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
      * @param delta the distance at which the cell will be moved.
      */
     public CellMove(
-            final Environment<Double, P> environment,
+            final Environment<Double, Euclidean2DPosition> environment,
             final Node<Double> node,
             final boolean inPercent,
             final double delta
@@ -56,8 +56,8 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
                 "CellMove can be setted only in cells."
         );
         if (inPercent) {
-            if (cell instanceof CircularCellProperty && ((CircularCellProperty<P>) cell).getRadius() != 0) {
-                this.delta = ((CircularCellProperty<P>) cell).getDiameter() * delta;
+            if (cell instanceof CircularCellProperty && ((CircularCellProperty) cell).getRadius() != 0) {
+                this.delta = ((CircularCellProperty) cell).getDiameter() * delta;
             } else {
                 throw new IllegalArgumentException(
                         "Can't set distance in percent of the cell's diameter if cell has not a diameter"
@@ -69,15 +69,15 @@ public final class CellMove<P extends Position<P>> extends AbstractMoveNode<Doub
     }
 
     @Override
-    public CellMove<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new CellMove<>(getEnvironment(), node, inPercent, delta);
+    public CellMove cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new CellMove(getEnvironment(), node, inPercent, delta);
     }
 
     @Override
-    public P getNextPosition() {
-        return getEnvironment().makePosition(
-                delta * cell.getPolarizationVersor().getCoordinate(0),
-                delta * cell.getPolarizationVersor().getCoordinate(1)
+    public Euclidean2DPosition getNextPosition() {
+        return new Euclidean2DPosition(
+            delta * cell.getPolarizationVersor().getCoordinate(0),
+            delta * cell.getPolarizationVersor().getCoordinate(1)
         );
     }
 

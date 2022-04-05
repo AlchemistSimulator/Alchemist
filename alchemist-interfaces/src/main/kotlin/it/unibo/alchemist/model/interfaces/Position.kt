@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -44,12 +45,12 @@ interface Position<P : Position<P>> : Serializable {
     /**
      * Allows to access the value of a coordinate.
      *
-     * @param dim
+     * @param dimension
      *            the dimension. E.g., in a 2-dimensional implementation, 0
      *            could be the X-axis and 1 the Y-axis
      * @return the coordinate value
      */
-    fun getCoordinate(dim: Int): Double
+    fun getCoordinate(dimension: Int): Double
 
     /**
      * @return the number of dimensions of this {@link Position}.
@@ -60,11 +61,11 @@ interface Position<P : Position<P>> : Serializable {
      * Computes the distance between this position and another compatible
      * position.
      *
-     * @param otherPosition
+     * @param other
      *            the position you want to know the distance to
      * @return the distance between this and p
      */
-    fun distanceTo(otherPosition: P): Double
+    fun distanceTo(other: P): Double
 
     /**
      * Considers both positions as vectors, and sums them.

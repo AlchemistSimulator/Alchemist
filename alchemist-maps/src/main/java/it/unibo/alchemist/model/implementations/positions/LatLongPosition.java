@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -13,8 +14,8 @@ import com.javadocmd.simplelatlng.util.LengthUnit;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import org.danilopianini.util.Hashes;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
@@ -172,11 +173,11 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double distanceTo(@Nonnull final GeoPosition otherPosition) {
-        if (otherPosition instanceof LatLongPosition) {
-            return distance(latlng, ((LatLongPosition) otherPosition).latlng, df);
+    public double distanceTo(@Nonnull final GeoPosition other) {
+        if (other instanceof LatLongPosition) {
+            return distance(latlng, ((LatLongPosition) other).latlng, df);
         }
-        return distance(latlng, new LatLng(otherPosition.getLatitude(), otherPosition.getLongitude()), df);
+        return distance(latlng, new LatLng(other.getLatitude(), other.getLongitude()), df);
     }
 
     private GeoPosition ebeOperation(final BinaryOperator<Double> op, final GeoPosition other) {
@@ -202,11 +203,11 @@ public final class LatLongPosition implements GeoPosition {
     }
 
     @Override
-    public double getCoordinate(final int dim) {
-        if (dim == 0) {
+    public double getCoordinate(final int dimension) {
+        if (dimension == 0) {
             return getLatitude();
         }
-        if (dim == 1) {
+        if (dimension == 1) {
             return getLongitude();
         }
         throw new IllegalArgumentException("Pass 1 for longitude or 0 for latitude. No other value accepted.");

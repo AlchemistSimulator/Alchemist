@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -19,6 +19,10 @@ import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import javafx.beans.property.DoubleProperty;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -27,11 +31,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-import javafx.beans.property.DoubleProperty;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
-import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} dot for each

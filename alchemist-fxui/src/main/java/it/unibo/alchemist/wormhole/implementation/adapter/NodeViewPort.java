@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -13,7 +13,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
 import javafx.scene.Node;
 
-import static it.unibo.alchemist.HashesKt.murmur3Hash32;
+import java.util.Objects;
 
 /**
  * Adapter class that adapts the JavaFX {@link Node} class to a generic ViewPort for usage in
@@ -89,6 +89,6 @@ public class NodeViewPort implements ViewPort {
      */
     @Override
     public int hashCode() {
-        return murmur3Hash32(getWidth(), getHeight());
+        return Objects.hash(getWidth(), getHeight());
     }
 }

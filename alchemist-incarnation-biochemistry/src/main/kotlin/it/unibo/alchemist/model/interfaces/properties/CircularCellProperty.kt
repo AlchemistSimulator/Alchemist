@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 
 /**
  * A node's capability to behave as a cell with a circular area.
  */
-interface CircularCellProperty<P : Position<P>> : CellProperty<P> {
+interface CircularCellProperty : CellProperty<Euclidean2DPosition> {
     /**
      * The diameter of the cell.
      */

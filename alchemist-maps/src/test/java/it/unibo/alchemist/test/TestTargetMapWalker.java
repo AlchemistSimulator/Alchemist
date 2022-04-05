@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,7 +10,7 @@ package it.unibo.alchemist.test;
 
 import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.SupportedIncarnations;
+import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.actions.TargetMapWalker;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
@@ -27,7 +28,6 @@ import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,13 +63,11 @@ class TestTargetMapWalker {
     private Reaction<Object> reaction;
 
     /**
-     * @throws ClassNotFoundException if test fails
-     * @throws IOException if test fails
      */
     @SuppressFBWarnings(value = {"DMI_HARDCODED_ABSOLUTE_FILENAME", "SIC_INNER_SHOULD_BE_STATIC_ANON"},
         justification = "It is a resource path, not an absolute pathname.")
     @BeforeEach
-    public void setUp() throws ClassNotFoundException, IOException {
+    public void setUp() {
         try {
             environment = new OSMEnvironment<>(INCARNATION, TESTMAP, true, true);
             environment.setLinkingRule(new NoLinks<>());

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,7 +8,7 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.SupportedIncarnations;
+import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
@@ -36,7 +37,7 @@ final class TestContinuous2DEnvironment {
     private static final double [] P2_2 = {2, 2};
     private static final double TOLERANCE = 1E-15;
     private static final Incarnation<Integer, Euclidean2DPosition> INCARNATION =
-            SupportedIncarnations.<Integer, Euclidean2DPosition>get("protelis").orElseThrow();
+        SupportedIncarnations.<Integer, Euclidean2DPosition>get("protelis").orElseThrow();
     private Continuous2DEnvironment<Integer> environment;
 
     /**

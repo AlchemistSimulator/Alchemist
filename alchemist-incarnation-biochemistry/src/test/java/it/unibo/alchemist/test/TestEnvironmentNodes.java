@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -18,7 +19,6 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
-import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class TestEnvironmentNodes {
 
     private static final double PRECISION = 1e-12;
-    private static final Incarnation<Double, Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
+    private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();
     private Environment<Double, Euclidean2DPosition> environment;
     private RandomGenerator rand;
 
@@ -73,7 +73,7 @@ final class TestEnvironmentNodes {
 
     @BeforeEach
     public void setUp() {
-        environment = new BioRect2DEnvironment();
+        environment = new BioRect2DEnvironment(INCARNATION);
         rand = new MersenneTwister();
     }
 
@@ -256,18 +256,18 @@ final class TestEnvironmentNodes {
      */
     @Test
     void testEnv3() {
-        final double conAInCell = (double) testNoVar("testEnv3.yml").getNodes().stream()
-                .parallel()
-                .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
-                .findAny()
-                .get()
-                .getConcentration(new Biomolecule("A"));
+        final double conAInCell = (double) TestEnvironmentNodes.<Double, Euclidean2DPosition>testNoVar("testEnv3.yml")
+            .getNodes()
+            .stream()
+            .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
+            .findAny()
+            .get()
+            .getConcentration(new Biomolecule("A"));
         final double conAInEnv = (double) testNoVar("testEnv3.yml").getNodes().stream()
-                .parallel()
-                .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
-                .findAny()
-                .get()
-                .getConcentration(new Biomolecule("A"));
+            .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
+            .findAny()
+            .get()
+            .getConcentration(new Biomolecule("A"));
         assertEquals(conAInCell, 1000, PRECISION);
         assertEquals(conAInEnv, 0, PRECISION);
     }
@@ -278,18 +278,20 @@ final class TestEnvironmentNodes {
      */
     @Test
     void testEnv4() {
-        final double conAInCell = (double) testNoVar("testEnv4.yml").getNodes().stream()
-                .parallel()
-                .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
-                .findAny()
-                .get()
-                .getConcentration(new Biomolecule("A"));
+        final double conAInCell = (double) TestEnvironmentNodes.<Double, Euclidean2DPosition>testNoVar("testEnv4.yml")
+            .getNodes()
+            .stream()
+            .parallel()
+            .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
+            .findAny()
+            .get()
+            .getConcentration(new Biomolecule("A"));
         final double conAInEnv = (double) testNoVar("testEnv4.yml").getNodes().stream()
-                .parallel()
-                .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
-                .findAny()
-                .get()
-                .getConcentration(new Biomolecule("A"));
+            .parallel()
+            .filter(n -> n.getClass().equals(EnvironmentNodeImpl.class))
+            .findAny()
+            .get()
+            .getConcentration(new Biomolecule("A"));
         assertTrue(conAInCell == 0 && conAInEnv == 0);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -73,7 +73,7 @@ pmd {
 }
 
 tasks.withType<Pmd> {
-    exclude("**/biochemistrydsl/**")
+    exclude("**/internal/biochemistry/dsl/**")
 }
 
 spotbugs {

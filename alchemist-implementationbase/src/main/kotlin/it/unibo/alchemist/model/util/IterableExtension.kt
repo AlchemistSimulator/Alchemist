@@ -32,7 +32,7 @@ object IterableExtension {
     }
 
     /**
-     * Returns a random element of the Iterable
+     * Returns a random element of the Iterable using the provided [randomGenerator].
      */
     fun <R> Iterable<R>.randomElement(randomGenerator: RandomGenerator): R =
         with(toList()) { get(randomGenerator.nextInt(size)) }

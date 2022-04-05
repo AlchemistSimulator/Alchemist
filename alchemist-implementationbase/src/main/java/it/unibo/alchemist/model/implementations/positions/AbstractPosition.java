@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.DoubleUnaryOperator;
 
 /**
  * N-dimensional position.
@@ -48,6 +48,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     }
 
     @Override
+    @Nonnull
     public final List<P> boundingBox(final double range) {
         final List<P> box = new ArrayList<>(getDimensions());
         for (int i = 0; i < getDimensions(); i++) {
@@ -58,7 +59,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
             for (int j = 0; j < coords.length; j++) {
                 coords[j] = c[j] + (i == j ? -range : range);
             }
-            box.add(unsafeConstructor(coords));
+            box.add(fromCoordinates(coords));
         }
         return box;
     }
@@ -85,12 +86,12 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     }
 
     @Override
-    public final double getCoordinate(final int dim) {
-        if (dim < 0 || dim >= c.length) {
-            throw new IllegalArgumentException(dim + "is not an allowed dimension, only values between 0 and "
+    public final double getCoordinate(final int dimension) {
+        if (dimension < 0 || dimension >= c.length) {
+            throw new IllegalArgumentException(dimension + "is not an allowed dimension, only values between 0 and "
                     + (c.length - 1) + "are allowed.");
         }
-        return c[dim];
+        return c[dimension];
     }
 
     @Override
@@ -100,7 +101,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
 
     @Override
     public final double distanceTo(@Nonnull final P other) {
-        return MathArrays.distance(c, ((AbstractPosition<P>) other).c);
+        return MathArrays.distance(c, ((AbstractPosition<?>) other).c);
     }
 
     @Override
@@ -123,7 +124,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     }
 
     private @Nonnull double[] extractInternalRepresentation(final @Nonnull P position) {
-        return ((AbstractPosition<P>) Objects.requireNonNull(position)).c;
+        return ((AbstractPosition<?>) Objects.requireNonNull(position)).c;
     }
 
     /**
@@ -140,7 +141,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     @Nonnull
     @Override
     public final P plus(@Nonnull final double[] other) {
-        return unsafeConstructor(MathArrays.ebeAdd(c, other));
+        return fromCoordinates(MathArrays.ebeAdd(c, other));
     }
 
     /**
@@ -157,37 +158,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
     @Nonnull
     @Override
     public final P minus(@Nonnull final double[] other) {
-        return unsafeConstructor(MathArrays.ebeSubtract(c, other));
-    }
-
-    /**
-     * Multiplication by a number.
-     *
-     * @param other the number
-     * @return every element times the number
-     */
-    @Nonnull
-    public final P times(final double other) {
-        return unsafelyRun(it -> it * other);
-    }
-
-    /**
-     * Division by a number.
-     *
-     * @param other the number
-     * @return every element divided by the number
-     */
-    @Nonnull
-    public final P div(final double other) {
-        return unsafelyRun(it -> it / other);
-    }
-
-    private P unsafelyRun(final DoubleUnaryOperator operation) {
-        final double[] result = Arrays.copyOf(c, c.length);
-        for (int i = 0; i < result.length; i++) {
-            result[i] = operation.applyAsDouble(result[i]);
-        }
-        return unsafeConstructor(result);
+        return fromCoordinates(MathArrays.ebeSubtract(c, other));
     }
 
     /**
@@ -198,6 +169,6 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
      *            the coordinates
      * @return a new position (with correct subtype)
      */
-    protected abstract P unsafeConstructor(double[] coordinates);
+    protected abstract P fromCoordinates(double[] coordinates);
 
 }

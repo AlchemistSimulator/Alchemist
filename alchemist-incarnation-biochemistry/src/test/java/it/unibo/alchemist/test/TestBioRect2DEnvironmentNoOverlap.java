@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,6 +12,7 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
@@ -20,8 +21,8 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment;
+import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
@@ -61,6 +62,7 @@ class TestBioRect2DEnvironmentNoOverlap {
     private static final double BIG_CELL_DIAMETER = 30;
     private static final double MEDIUM_CELL_DIAMETER = 20;
     private static final double LITTLE_CELL_DIAMETER = 10;
+    private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();
     private static final Euclidean2DPosition POSITION_TO_MOVE1 = new Euclidean2DPosition(80, 0);
     private static final Euclidean2DPosition EXPECTED_POS1 = new Euclidean2DPosition(30, 0);
     private static final Euclidean2DPosition POSITION_TO_MOVE2 = POSITION_TO_MOVE1;
@@ -128,7 +130,7 @@ class TestBioRect2DEnvironmentNoOverlap {
      */
     @BeforeEach
     void setUp() {
-        environment = new BioRect2DEnvironmentNoOverlap();
+        environment = new BioRect2DEnvironmentNoOverlap(INCARNATION);
         environment.setLinkingRule(new NoLinks<>());
         ng1 = createNode(BIG_CELL_DIAMETER);
         ng2 = createNode(BIG_CELL_DIAMETER);
@@ -781,9 +783,7 @@ class TestBioRect2DEnvironmentNoOverlap {
             }
 
             private Stream<Node<Double>> getNodes() {
-                return env.getNodes().stream()
-                        .filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null)
-                        .map(n -> (Node<Double>) n);
+                return env.getNodes().stream().filter(n -> n.asPropertyOrNull(CircularCellProperty.class) != null);
             }
 
             private boolean thereIsOverlap(final Environment<Double, Euclidean2DPosition> env) {

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,20 +9,18 @@
 
 package it.unibo.alchemist.boundary.gui.view.properties;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import javafx.beans.property.BooleanPropertyBase;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
-
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-
-import javafx.beans.property.BooleanPropertyBase;
-
-import static it.unibo.alchemist.HashesKt.murmur3Hash32;
+import java.util.Objects;
 
 /**
  * {@link javafx.beans.property.SimpleBooleanProperty} that implements also {@link Serializable}.
@@ -155,7 +153,7 @@ public class SerializableBooleanProperty extends BooleanPropertyBase implements 
      */
     @Override
     public int hashCode() {
-        return murmur3Hash32(getValue(), getName());
+        return Objects.hash(getValue(), getName());
     }
 
     /**

@@ -37,7 +37,7 @@ private const val BIOMOLECULE_NEEDED = 5
 private const val NEIGHBORHOOD_PRESENT_REACTION = "[5 token] --> [5 token in neighbor]"
 private const val JUNCTION_PRESENT_REACTION = "[5 token] + [junction A-B] --> [5 token in neighbor] + [junction A-B]"
 private const val BIOMOLECULE_IN_NEIGHBOR_REACTION = "[5 token in neighbor] --> [5 token]"
-private val INCARNATION = BiochemistryIncarnation<Euclidean2DPosition>()
+private val INCARNATION = BiochemistryIncarnation()
 private val BIOMOLECULE = INCARNATION.createMolecule("token")
 private val BIOMOLECULE_A = INCARNATION.createMolecule("A")
 private val BIOMOLECULE_B = INCARNATION.createMolecule("B")
@@ -68,7 +68,7 @@ class TestNeighborhoodReactionsPropensities : StringSpec({
     }
 }) {
     override suspend fun beforeTest(testCase: TestCase) {
-        environment = BioRect2DEnvironment()
+        environment = BioRect2DEnvironment(INCARNATION)
         environment.linkingRule = LINKING_RULE
         centralNode = INCARNATION.createNode(RANDOM, environment, null)
         centralNode.setConcentration(BIOMOLECULE, 100.0)

@@ -1,10 +1,14 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
+import it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect;
+import it.unibo.alchemist.boundary.fxui.effects.impl.DrawColoredDot;
+import it.unibo.alchemist.boundary.fxui.effects.impl.DrawDot;
+import it.unibo.alchemist.boundary.fxui.effects.impl.DrawLinks;
+import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableStringProperty;
 import org.junit.jupiter.api.Test;
 
-import static it.unibo.alchemist.boundary.gui.effects.AbstractEffect.checkBasicProperties;
-import static it.unibo.alchemist.boundary.gui.effects.AbstractEffect.checkEqualsProperties;
+import static it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect.checkBasicProperties;
+import static it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect.checkEqualsProperties;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

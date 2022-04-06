@@ -113,7 +113,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                 return true;
             }
         }
-        throw new IllegalStateException("Tried to remove missing " + matchedInstance + " from " + this.toString());
+        throw new IllegalStateException("Tried to remove missing " + matchedInstance + " from " + this);
     }
 
     @Override

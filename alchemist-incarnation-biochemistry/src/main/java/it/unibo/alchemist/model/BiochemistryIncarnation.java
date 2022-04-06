@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
- *
+ * Factory for the biochemistry incarnation entities.
  */
 public final class BiochemistryIncarnation implements Incarnation<Double, Euclidean2DPosition> {
 

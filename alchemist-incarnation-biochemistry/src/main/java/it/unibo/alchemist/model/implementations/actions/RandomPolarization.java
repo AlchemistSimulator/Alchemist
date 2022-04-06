@@ -20,7 +20,7 @@ import org.apache.commons.math3.util.FastMath;
 import java.util.Objects;
 
 /**
- *
+ * Polarizes a {@link CellProperty} in a random direction.
  */
 public final class RandomPolarization extends AbstractRandomizableAction<Double> {
 

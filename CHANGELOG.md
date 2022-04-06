@@ -1,3 +1,36 @@
+## [17.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/16.0.0...17.0.0) (2022-04-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove deprecated method Neighborhood.getNeighborByNumber
+
+### Dependency updates
+
+* **core-deps:** update plugin kotlin-jvm to v1.6.20 ([d9fb7e3](https://github.com/AlchemistSimulator/Alchemist/commit/d9fb7e372471dc154d7e30ce059558aaf0224f75))
+
+
+### Style improvements
+
+* fix indentation in ChangeBiomolConcentrationInNeighbor ([f8a60d8](https://github.com/AlchemistSimulator/Alchemist/commit/f8a60d848a29e6140f07256db1dc62c997bb9533))
+* rename field in ChangeBiomolConcentrationInNeighbor ([213be01](https://github.com/AlchemistSimulator/Alchemist/commit/213be016f39d991965f8b3f4c5d3766624e8f9fb))
+
+
+### Build and continuous integration
+
+* **loading:** replace the deprecated Kotlin compiler argument -Xopt-in with -opt-in ([e17ecb5](https://github.com/AlchemistSimulator/Alchemist/commit/e17ecb5b831895cb42432b1edf05aa9481b82da7))
+
+
+### General maintenance
+
+* annotate as deprecated methods deprecated in Apache Commons ([f516b49](https://github.com/AlchemistSimulator/Alchemist/commit/f516b496cedf1b42d20373b3f5bd2d59da823b53))
+* remove deprecated method Neighborhood.getNeighborByNumber ([a4caab4](https://github.com/AlchemistSimulator/Alchemist/commit/a4caab4824901fa1404bf858a92511a887a5ba74))
+* **sapere:** add missing @Nonnull annotations in LsaNode ([cf24663](https://github.com/AlchemistSimulator/Alchemist/commit/cf24663888e731779df2e9ce0ed7bacfc76535b5))
+* **sapere:** copy the PMD suppression on the line where it is generated ([4672f08](https://github.com/AlchemistSimulator/Alchemist/commit/4672f083d0abaca779219712623aca07f2cef679))
+* **sapere:** remove useless toString() in LsaNode ([64c86af](https://github.com/AlchemistSimulator/Alchemist/commit/64c86af2a04d26b66e748e94569b6ddc8daedc48))
+* **sapere:** rename parameter and annotate with @Nonnull ([4c29f30](https://github.com/AlchemistSimulator/Alchemist/commit/4c29f30876e569191e043eb35716ee3647e0cd5f))
+* **sapere:** rename parameter and annotate with @Nonnull ([06f6e9a](https://github.com/AlchemistSimulator/Alchemist/commit/06f6e9a1dea333bff828f7d813a5777e66a81d89))
+
 ## [16.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/15.0.4...16.0.0) (2022-04-06)
 
 

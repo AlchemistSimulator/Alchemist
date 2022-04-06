@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -54,6 +54,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         override fun probability(x: Double) = TODO()
         override fun density(x: Double) = TODO()
         override fun cumulativeProbability(x: Double) = TODO()
+        @Deprecated(message = "Deprecated in Apache Commons")
         override fun cumulativeProbability(x0: Double, x1: Double) = TODO()
         override fun inverseCumulativeProbability(p: Double) = TODO()
         override fun getNumericalVariance() = TODO()
@@ -65,7 +66,9 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
          */
         override fun getSupportLowerBound() = 0.0
         override fun getSupportUpperBound() = Double.MAX_VALUE
+        @Deprecated(message = "Deprecated in Apache Commons")
         override fun isSupportLowerBoundInclusive() = true
+        @Deprecated(message = "Deprecated in Apache Commons")
         override fun isSupportUpperBoundInclusive() = false
 
         /*

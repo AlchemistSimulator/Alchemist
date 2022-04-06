@@ -10,18 +10,18 @@
 package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.implementations.molecules.Junction
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
 import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty
 
 /**
  * Base implementation of a [CircularCellProperty].
  */
-class CircularCell<P : Position<P>> @JvmOverloads constructor(
-    environment: Environment<Double, P>,
+class CircularCell @JvmOverloads constructor(
+    environment: Environment<Double, Euclidean2DPosition>,
     override val node: Node<Double>,
     override val diameter: Double = 0.0,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : CircularCellProperty<P>, CellProperty<P> by Cell(environment, node, junctions)
+) : CircularCellProperty, CellProperty<Euclidean2DPosition> by Cell(environment, node, junctions)

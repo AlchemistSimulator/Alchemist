@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -8,14 +9,13 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.model.BiochemistryIncarnation;
-import it.unibo.alchemist.model.implementations.properties.CircularDeformableCell;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.implementations.properties.CircularDeformableCell;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
-import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellProperty;
@@ -72,14 +72,14 @@ class TestDeformableCell {
     private Node<Double> cellNode3;
     private Node<Double> cellNode4;
     private Node<Double> cellNode5;
-    private final Incarnation<Double, Euclidean2DPosition> inc = new BiochemistryIncarnation<>();
+    private final BiochemistryIncarnation incarnation = new BiochemistryIncarnation();
     private RandomGenerator rand;
     private TimeDistribution<Double> time;
 
     private Node<Double> createDeformableCell(final double maxDiameter, final double rigidity) {
-        final Node<Double> node =  new GenericNode<>(inc, environment);
+        final Node<Double> node =  new GenericNode<>(incarnation, environment);
         node.addProperty(
-            new CircularDeformableCell<>(environment, node, maxDiameter, rigidity)
+            new CircularDeformableCell(environment, node, maxDiameter, rigidity)
         );
         return node;
     }
@@ -89,7 +89,7 @@ class TestDeformableCell {
      */
     @BeforeEach
     public void setUp() {
-        environment = new BioRect2DEnvironmentNoOverlap(XMIN, XMAX, YMIN, YMAX);
+        environment = new BioRect2DEnvironmentNoOverlap(incarnation, XMIN, XMAX, YMIN, YMAX);
         environment.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
         cellNode1 = createDeformableCell(1, 1); // max rigidity
         cellNode2 = createDeformableCell(1, 0.5);
@@ -149,7 +149,7 @@ class TestDeformableCell {
     void testTensionPresent1() {
         environment.addNode(cellNode1, CELL_POS_TENSPRES1_1);
         environment.addNode(cellNode2, CELL_POS_TENSPRES1_2);
-        cellNode1.addReaction(inc.createReaction(rand, environment, cellNode1, time, "[] --> [A] if TensionPresent()"));
+        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, "[] --> [A] if TensionPresent()"));
         assertFalse(cellNode1.getReactions().isEmpty());
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
@@ -179,7 +179,7 @@ class TestDeformableCell {
     void testTensionPresent2() {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 1));
-        cellNode1.addReaction(inc.createReaction(rand, environment, cellNode1, time, "[] --> [A] if TensionPresent()"));
+        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, "[] --> [A] if TensionPresent()"));
         assertFalse(cellNode1.getReactions().isEmpty());
         assertTrue(cellNode1.getReactions().stream()
                 .findFirst()
@@ -219,7 +219,7 @@ class TestDeformableCell {
     void testTensionPolarization1() {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 1));
-        cellNode1.addReaction(inc.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
+        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
@@ -254,7 +254,7 @@ class TestDeformableCell {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 1));
         environment.addNode(cellNode2, MOVE_TO_POS_TENSPOL2_3);
-        cellNode1.addReaction(inc.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
+        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
@@ -286,7 +286,7 @@ class TestDeformableCell {
         environment.addNode(cellNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode3, new Euclidean2DPosition(-1, 1));
         environment.addNode(cellNode5, new Euclidean2DPosition(-1, -1));
-        cellNode1.addReaction(inc.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
+        cellNode1.addReaction(incarnation.createReaction(rand, environment, cellNode1, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode1.getReactions().isEmpty());
         cellNode1.getReactions().stream()
         .findFirst()
@@ -331,7 +331,7 @@ class TestDeformableCell {
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode5, new Euclidean2DPosition(-1, 0));
         environment.addNode(cellNode2, CELL_POS_TENSPOL4_1);
-        cellNode3.addReaction(inc.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
+        cellNode3.addReaction(incarnation.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()
@@ -349,7 +349,7 @@ class TestDeformableCell {
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode5, new Euclidean2DPosition(-1, 0));
         environment.addNode(cellNode2, CELL_POS_TENSPOL5_1);
-        cellNode3.addReaction(inc.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
+        cellNode3.addReaction(incarnation.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()
@@ -367,7 +367,7 @@ class TestDeformableCell {
         environment.addNode(cellNode3, new Euclidean2DPosition(0, 0));
         environment.addNode(cellNode4, CELL_POS_TENSPOL6_1);
         environment.addNode(cellNode2, CELL_POS_TENSPOL6_2);
-        cellNode3.addReaction(inc.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
+        cellNode3.addReaction(incarnation.createReaction(rand, environment, cellNode3, time, CELL_TENSION_POLARIZATION));
         assertFalse(cellNode3.getReactions().isEmpty());
         cellNode3.getReactions().stream()
         .findFirst()

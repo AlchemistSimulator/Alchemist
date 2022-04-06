@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,10 +8,10 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
 import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellProperty;
@@ -22,16 +23,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @param <P> {@link Position2D} type
+ * Models the tension polarization of {@link it.unibo.alchemist.model.implementations.properties.CircularDeformableCell}
+ * in an {@link EnvironmentSupportingDeformableCells}.
  */
-public final class CellTensionPolarization<P extends Position2D<P>> extends AbstractAction<Double> {
+public final class CellTensionPolarization extends AbstractAction<Double> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
-    private final EnvironmentSupportingDeformableCells<P> environment;
-    private final CircularDeformableCellProperty<P> deformableCell;
+    private final EnvironmentSupportingDeformableCells<Euclidean2DPosition> environment;
+    private final CircularDeformableCellProperty deformableCell;
 
     /**
      * 
@@ -39,7 +38,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
      * @param environment the environment
      */
     public CellTensionPolarization(
-            final EnvironmentSupportingDeformableCells<P> environment,
+            final EnvironmentSupportingDeformableCells<Euclidean2DPosition> environment,
             final Node<Double> node
     ) {
         super(node);
@@ -49,11 +48,11 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         );
     }
 
-    private CircularDeformableCellProperty<P> getDeformableCell(final Node<Double> node) {
+    private CircularDeformableCellProperty getDeformableCell(final Node<Double> node) {
         return node.asPropertyOrNull(CircularDeformableCellProperty.class);
     }
 
-    private CircularCellProperty<P> getCircularCell(final Node<Double> node) {
+    private CircularCellProperty getCircularCell(final Node<Double> node) {
         return node.asPropertyOrNull(CircularCellProperty.class);
     }
 
@@ -62,8 +61,8 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
     }
 
     @Override
-    public CellTensionPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new CellTensionPolarization<>(environment, node);
+    public CellTensionPolarization cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new CellTensionPolarization(environment, node);
     }
 
     @Override
@@ -75,12 +74,12 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         // declaring a variable for the node where this action is set, to have faster access
         final Node<Double> thisNode = getNode();
         // transforming each node around in a vector (Position) 
-        final List<P> pushForces = environment.getNodesWithinRange(
+        final List<Euclidean2DPosition> pushForces = environment.getNodesWithinRange(
                 thisNode,
                 environment.getMaxDiameterAmongCircularDeformableCells()).stream()
                 .parallel()
                 .filter(node -> { // only cells overlapping this cell are selected
-                    final CircularCellProperty<P> circularCell = getCircularCell(node);
+                    final CircularCellProperty circularCell = getCircularCell(node);
                     if (!Objects.isNull(circularCell)) {
                         // computing for each cell the max distance among which can't be overlapping
                         double maxDistance;
@@ -148,7 +147,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
         if (pushForces.isEmpty()) {
             deformableCell.addPolarizationVersor(environment.makePosition(0, 0));
         } else {
-            for (final P p : pushForces) {
+            for (final Euclidean2DPosition p : pushForces) {
                 resultingVersor[0] = resultingVersor[0] + p.getX();
                 resultingVersor[1] = resultingVersor[1] + p.getY();
             }
@@ -157,7 +156,7 @@ public final class CellTensionPolarization<P extends Position2D<P>> extends Abst
                 deformableCell.addPolarizationVersor(environment.makePosition(0, 0));
             } else {
                 deformableCell.addPolarizationVersor(
-                        environment.makePosition(resultingVersor[0] / module, resultingVersor[1] / module)
+                    environment.makePosition(resultingVersor[0] / module, resultingVersor[1] / module)
                 );
             }
         }

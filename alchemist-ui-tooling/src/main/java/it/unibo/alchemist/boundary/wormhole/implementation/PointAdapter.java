@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.boundary.wormhole.implementation;
 
-import it.unibo.alchemist.HashesKt;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -75,7 +75,7 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = HashesKt.murmur3Hash32(x, y);
+            hash = Objects.hash(x, y);
         }
         return hash;
     }

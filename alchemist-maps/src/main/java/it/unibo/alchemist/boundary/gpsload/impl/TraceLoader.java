@@ -10,7 +10,7 @@ package it.unibo.alchemist.boundary.gpsload.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
-import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.util.ClassPathScanner;
 import it.unibo.alchemist.boundary.gpsload.api.GPSFileLoader;
 import it.unibo.alchemist.boundary.gpsload.api.GPSTimeAlignment;
 import it.unibo.alchemist.model.interfaces.GPSTrace;

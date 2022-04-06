@@ -8,7 +8,7 @@
 package it.unibo.alchemist.boundary.monitors;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.util.ClassPathScanner;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
 import org.danilopianini.lang.CollectionWithCurrentElement;

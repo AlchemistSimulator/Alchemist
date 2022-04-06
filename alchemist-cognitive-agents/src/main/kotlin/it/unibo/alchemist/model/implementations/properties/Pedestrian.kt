@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.RunningPedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.WalkingPedestrianProperty
-import it.unibo.alchemist.nextDouble
+import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

@@ -29,7 +29,7 @@ import kotlin.properties.Delegates
 
 private const val DIRECT_REACTION = "[token] --> [token in neighbor]"
 private const val INVERSE_REACTION = "[token in neighbor] --> [token]"
-private val INCARNATION = BiochemistryIncarnation<Euclidean2DPosition>()
+private val INCARNATION = BiochemistryIncarnation()
 private val BIOMOLECULE = INCARNATION.createMolecule("token")
 private val RANDOM = MersenneTwister()
 private val TIME = ExponentialTime<Double>(1.0, RANDOM)
@@ -57,7 +57,7 @@ class TestMoleculeSwapWithinNeighborhood : StringSpec({
     }
 }) {
     override suspend fun beforeTest(testCase: TestCase) {
-        environment = BioRect2DEnvironment()
+        environment = BioRect2DEnvironment(INCARNATION)
         nodes = Pair(
             INCARNATION.createNode(RANDOM, environment, null),
             INCARNATION.createNode(RANDOM, environment, null)

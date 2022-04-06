@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.loader.m2m
 
-import it.unibo.alchemist.ClassPathScanner
+import it.unibo.alchemist.util.ClassPathScanner
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
 import org.danilopianini.jirf.InstancingImpossibleException

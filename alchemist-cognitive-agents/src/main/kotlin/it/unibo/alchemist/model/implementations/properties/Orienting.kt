@@ -13,21 +13,21 @@ import it.unibo.alchemist.model.implementations.actions.takePercentage
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.pathExists
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.shuffled
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
+import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
+import it.unibo.alchemist.model.util.IterableExtension.shuffled
+import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
 import org.jgrapht.graph.AsWeightedGraph
 import org.jgrapht.graph.DefaultEdge
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
-import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Base implementation of a node's [OrientingProperty].

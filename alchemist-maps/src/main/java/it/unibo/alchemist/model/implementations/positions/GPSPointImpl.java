@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -12,8 +13,8 @@ import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.danilopianini.util.Hashes;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -81,8 +82,8 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public double getCoordinate(final int dim) {
-        return repr.getCoordinate(dim);
+    public double getCoordinate(final int dimension) {
+        return repr.getCoordinate(dimension);
     }
 
     @Override
@@ -113,11 +114,11 @@ public final class GPSPointImpl implements GPSPoint {
     }
 
     @Override
-    public double distanceTo(final GeoPosition otherPosition) {
-        if (otherPosition instanceof GPSPointImpl) {
-            return repr.distanceTo(((GPSPointImpl) otherPosition).repr);
+    public double distanceTo(final GeoPosition other) {
+        if (other instanceof GPSPointImpl) {
+            return repr.distanceTo(((GPSPointImpl) other).repr);
         }
-        return repr.distanceTo(otherPosition);
+        return repr.distanceTo(other);
     }
 
     @Override

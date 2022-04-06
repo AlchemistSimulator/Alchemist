@@ -10,14 +10,14 @@
 package it.unibo.alchemist.model.interfaces.properties
 
 import it.unibo.alchemist.model.implementations.molecules.Junction
-import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.NodeProperty
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * A node's capability to behave as a cell.
  */
-interface CellProperty<P : Position<P>> : NodeProperty<Double> {
+interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
 
     /**
      * The map junction - node - quantity.

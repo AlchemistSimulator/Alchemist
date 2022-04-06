@@ -10,7 +10,6 @@
 package it.unibo.alchemist.loader.m2m
 
 import arrow.core.Either
-import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.export.Extractor
@@ -28,6 +27,7 @@ import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
 import it.unibo.alchemist.loader.variables.LinearVariable
 import it.unibo.alchemist.loader.variables.Variable
+import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks

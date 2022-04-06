@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -8,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.environments;
 
-import it.unibo.alchemist.SupportedIncarnations;
+import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
@@ -33,16 +34,20 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     /**
      * Builds a BioRect2DEnvironment with given bounds.
+     * @param incarnation the current {@link BiochemistryIncarnation}
      * @param minX minimum X coordinate
      * @param maxX maximum X coordinate
      * @param minY minimum Y coordinate
      * @param maxY maximum Y coordinate
      */
-    public BioRect2DEnvironment(final double minX, final double maxX, final double minY, final double maxY) {
-        super(
-            SupportedIncarnations.<Double, Euclidean2DPosition>get("biochemistry")
-                .orElseThrow(() -> new IllegalStateException())
-        );
+    public BioRect2DEnvironment(
+        final BiochemistryIncarnation incarnation,
+        final double minX,
+        final double maxX,
+        final double minY,
+        final double maxY
+    ) {
+        super(incarnation);
         if (maxX <= minX || maxY <= minY) {
             L.warn("A maximum bound for this environment is greather than the correspoding minimum bound. "
                     + "Falling back to -1, 1 for all bounds");
@@ -60,9 +65,17 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     /**
      * Builds a BioRect2DEnvironment with infinite bounds.
+     *
+     * @param incarnation the current {@link BiochemistryIncarnation}
      */
-    public BioRect2DEnvironment() {
-        this(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    public BioRect2DEnvironment(final BiochemistryIncarnation incarnation) {
+        this(
+            incarnation,
+            Double.NEGATIVE_INFINITY,
+            Double.POSITIVE_INFINITY,
+            Double.NEGATIVE_INFINITY,
+            Double.POSITIVE_INFINITY
+        );
     }
 
     @Override

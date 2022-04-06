@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -15,15 +15,15 @@ import it.unibo.alchemist.boundary.gui.utility.ResourceLoader;
 import it.unibo.alchemist.boundary.interfaces.DrawCommand;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Queue;
-import javax.annotation.Nonnull;
-
-import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * The class models a group of effects, stored as a stack. It can manage
@@ -320,7 +320,7 @@ public final class EffectStack<P extends Position2D<? extends P>> implements Eff
 
     @Override
     public int hashCode() {
-        return murmur3Hash32(effects.toString(), name, topIndex, visibility);
+        return Objects.hash(effects.toString(), name, topIndex, visibility);
     }
 
     @Override

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -24,7 +25,7 @@ public interface GeoPosition extends Position2D<GeoPosition> {
 
     @Deprecated
     @Override
-    double getCoordinate(int dim);
+    double getCoordinate(int dimension);
 
     /**
      * Adds two {@link GeoPosition}.

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -8,12 +9,6 @@
 
 package it.unibo.alchemist.model.implementations.reactions;
 
-import it.unibo.alchemist.biochemistrydsl.BiochemistrydslBaseVisitor;
-import it.unibo.alchemist.biochemistrydsl.BiochemistrydslLexer;
-import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser;
-import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser.ArgListContext;
-import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser.BiochemicalReactionRightElemContext;
-import it.unibo.alchemist.biochemistrydsl.BiochemistrydslParser.BiomoleculeContext;
 import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.actions.AddJunctionInCell;
@@ -31,6 +26,7 @@ import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell
 import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -42,6 +38,12 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;
+import it.unibo.alchemist.model.internal.biochemistry.dsl.BiochemistrydslBaseVisitor;
+import it.unibo.alchemist.model.internal.biochemistry.dsl.BiochemistrydslLexer;
+import it.unibo.alchemist.model.internal.biochemistry.dsl.BiochemistrydslParser;
+import it.unibo.alchemist.model.internal.biochemistry.dsl.BiochemistrydslParser.ArgListContext;
+import it.unibo.alchemist.model.internal.biochemistry.dsl.BiochemistrydslParser.BiochemicalReactionRightElemContext;
+import it.unibo.alchemist.model.internal.biochemistry.dsl.BiochemistrydslParser.BiomoleculeContext;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -58,6 +60,7 @@ import org.danilopianini.jirf.FactoryBuilder;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedHashMap;
@@ -72,7 +75,7 @@ import java.util.Objects;
  */
 public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
-    private final BiochemistryIncarnation<P> incarnation;
+    private final BiochemistryIncarnation incarnation;
     private final Node<Double> node;
     private final Environment<Double, P> environment;
     private RandomGenerator rand;
@@ -82,16 +85,16 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
 
     /**
      * Construct a builder for biochemical reactions.
-     * @param inc the current incarnation
+     * @param incarnation the current incarnation
      * @param currentNode the node where the reaction is placed.
      * @param environment the environment.
      */
     public BiochemicalReactionBuilder(
-            final BiochemistryIncarnation<P> inc,
+            final BiochemistryIncarnation incarnation,
             final Node<Double> currentNode,
             final Environment<Double, P> environment
     ) {
-        incarnation = inc;
+        this.incarnation = incarnation;
         node = currentNode;
         this.environment = environment;
     }
@@ -162,6 +165,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         private final Factory factory;
         private final @Nonnull RandomGenerator rand;
         private final @Nonnull Node<Double> node;
+        private final @Nullable CellProperty<Euclidean2DPosition> cell;
         private final @Nonnull Environment<Double, P> environment;
         private final @Nonnull Reaction<Double> reaction;
         private final List<Condition<Double>> conditionList = new ArrayList<>(0);
@@ -173,13 +177,16 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         private boolean envConditionPresent;
         private boolean envActionPresent;
 
-        private BiochemistryDSLVisitor(@Nonnull final RandomGenerator rand,
-                                       @Nonnull final BiochemistryIncarnation<?> incarnation,
-                                       @Nonnull final TimeDistribution<Double> timeDistribution,
-                                       @Nonnull final Node<Double> currentNode,
-                                       @Nonnull final Environment<Double, P> environment) {
+        private BiochemistryDSLVisitor(
+            @Nonnull final RandomGenerator rand,
+            @Nonnull final BiochemistryIncarnation incarnation,
+            @Nonnull final TimeDistribution<Double> timeDistribution,
+            @Nonnull final Node<Double> currentNode,
+            @Nonnull final Environment<Double, P> environment
+        ) {
             this.rand = rand;
             this.node = currentNode;
+            this.cell = node.asPropertyOrNull(CellProperty.class);
             this.environment = environment;
             reaction = new BiochemicalReaction(node, timeDistribution, this.environment, rand);
             factory = new FactoryBuilder()
@@ -382,7 +389,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                     );
                 }
             });
-            if (node.asPropertyOrNull(CellProperty.class) != null) {
+            if (cell != null) {
                 actionList.add(new AddJunctionInCell(environment, node, j, rand));
                 actionList.add(new AddJunctionInNeighbor<>(environment, node, reverseJunction(j), rand));
             } else {
@@ -410,7 +417,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 visit(context.customReactionType());
             }
             junctionList.forEach(j -> {
-                if (node.asPropertyOrNull(CellProperty.class) != null) {
+                if (cell != null) {
                     actionList.add(new RemoveJunctionInCell(environment, node, j, rand));
                     actionList.add(new RemoveJunctionInNeighbor(environment, node, reverseJunction(j), rand));
                 } else {
@@ -445,7 +452,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
         public Reaction<Double> visitJunctionReactionJunctionCondition(
                 final BiochemistrydslParser.JunctionReactionJunctionConditionContext context
         ) {
-            if (node.asPropertyOrNull(CellProperty.class) != null) {
+            if (cell != null) {
                 final Junction j = createJunction(context.junction());
                 junctionList.add(j);
                 conditionList.add(new JunctionPresentInCell(environment, node, j));

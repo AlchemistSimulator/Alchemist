@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2010-2018, Danilo Pianini and contributors listed in the main
- * project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception, as described in the file
- * LICENSE in the Alchemist distribution's top directory.
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
 package it.unibo.alchemist.boundary.monitors
@@ -12,12 +12,12 @@ package it.unibo.alchemist.boundary.monitors
 import de.saring.leafletmap.MapConfig
 import de.saring.leafletmap.ZoomControlConfig
 import it.unibo.alchemist.boundary.CustomLeafletMapView
+import it.unibo.alchemist.boundary.jfx.util.JavaFXThreadUtil
 import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager
 import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
-import it.unibo.alchemist.runOnFXThread
 import it.unibo.alchemist.wormhole.implementation.LeafletMapWormhole
 import javafx.concurrent.Worker
 import java.util.concurrent.CompletableFuture
@@ -42,7 +42,7 @@ class LeafletMapDisplay<T> : AbstractFXDisplay<T, GeoPosition>() {
         if (!mapLoading.isDone) {
             mapLoading.join()
         }
-        runOnFXThread {
+        JavaFXThreadUtil.runOnFXThread {
             map.preventWrapping()
         }
         super.init(environment)

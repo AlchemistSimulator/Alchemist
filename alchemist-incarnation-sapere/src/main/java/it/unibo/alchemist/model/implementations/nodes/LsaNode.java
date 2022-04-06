@@ -125,12 +125,12 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public void setConcentration(final Molecule mol, final List<ILsaMolecule> c) {
-        if (mol instanceof ILsaMolecule) {
-            final ILsaMolecule il = (ILsaMolecule) mol;
+    public void setConcentration(@Nonnull final Molecule molecule, final List<ILsaMolecule> c) {
+        if (molecule instanceof ILsaMolecule) {
+            final ILsaMolecule il = (ILsaMolecule) molecule;
             setConcentration(il);
         } else {
-            throw new IllegalArgumentException(mol + " is not a compatible molecule type");
+            throw new IllegalArgumentException(molecule + " is not a compatible molecule type");
         }
     }
 

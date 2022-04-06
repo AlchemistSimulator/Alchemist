@@ -139,7 +139,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
             /*
              * Considers only nodes in the direction of movement.
              */
-            .filter { desiredMovement.toVector.angleBetween(it.centroid - getHeading(node)) < Math.PI / 2 }
+            .filter { desiredMovement.toVector.angleBetween(it.centroid - currentPosition) < Math.PI / 2 }
         /*
          * If we're already colliding with someone, just return the current position.
          */

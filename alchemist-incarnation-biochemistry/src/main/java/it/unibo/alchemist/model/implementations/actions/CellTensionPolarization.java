@@ -23,13 +23,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Models the tension polarization of {@link it.unibo.alchemist.model.implementations.properties.CircularDeformableCell}
+ * in an {@link EnvironmentSupportingDeformableCells}.
  */
 public final class CellTensionPolarization extends AbstractAction<Double> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private final EnvironmentSupportingDeformableCells<Euclidean2DPosition> environment;
     private final CircularDeformableCellProperty deformableCell;

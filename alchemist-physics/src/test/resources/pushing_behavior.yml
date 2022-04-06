@@ -29,5 +29,5 @@ deployments:
           parameters: [1.0]
         type: BlendedSteeringWithPhysics
         actions:
-          - type: CognitiveAgentSeek
+          - type: CognitiveAgentSeek2D
             parameters: [0.0, 0.0]

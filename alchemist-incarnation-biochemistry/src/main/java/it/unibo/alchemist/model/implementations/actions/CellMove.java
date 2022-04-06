@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
 import java.util.Objects;
 
 /**
- * 
+ * An action moving cells (Nodes with a {@link CellProperty}) in the environment.
  */
 public final class CellMove extends AbstractMoveNode<Double, Euclidean2DPosition> {
 

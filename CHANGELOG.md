@@ -1,3 +1,27 @@
+## [16.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/15.0.4...16.0.0) (2022-04-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* begin package cleanup (#1218)
+
+### Dependency updates
+
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.7 ([90eea11](https://github.com/AlchemistSimulator/Alchemist/commit/90eea1193dd14d5766dd98bf951caf4844beab4b))
+* **deps:** update plugin publishoncentral to v0.7.16 ([449b507](https://github.com/AlchemistSimulator/Alchemist/commit/449b5074c2245a6e3ac360964dbc035f1035251a))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to 7da9dfa ([e216d39](https://github.com/AlchemistSimulator/Alchemist/commit/e216d39f2ada9d3ef5c3f1676a7889d1d39f320f))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to cadc808 ([ef34a0c](https://github.com/AlchemistSimulator/Alchemist/commit/ef34a0cfc93b6d3b040a38411fb10d49a3154410))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.10 ([8d427f3](https://github.com/AlchemistSimulator/Alchemist/commit/8d427f374fecc06454ea5998b2517dd73b4c2cca))
+
+
+### Refactoring
+
+* begin package cleanup ([#1218](https://github.com/AlchemistSimulator/Alchemist/issues/1218)) ([981ffd6](https://github.com/AlchemistSimulator/Alchemist/commit/981ffd6083f9ad5870a2e89741df55babf5438de))
+
 ### [15.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/15.0.3...15.0.4) (2022-04-02)
 
 

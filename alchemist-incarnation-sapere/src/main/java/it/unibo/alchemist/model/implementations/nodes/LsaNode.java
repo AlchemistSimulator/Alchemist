@@ -43,9 +43,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public boolean contains(final Molecule m) {
-        if (m instanceof ILsaMolecule) {
-            final ILsaMolecule toMatch = (ILsaMolecule) m;
+    public boolean contains(@Nonnull final Molecule molecule) {
+        if (molecule instanceof ILsaMolecule) {
+            final ILsaMolecule toMatch = (ILsaMolecule) molecule;
             return instances.stream().anyMatch(mol -> mol.matches(toMatch));
         }
         return false;

@@ -24,13 +24,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Models the chemotactic polarization of a {@link it.unibo.alchemist.model.implementations.properties.Cell}.
  */
 public final class ChemotacticPolarization extends AbstractAction<Double> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private final Environment<Double, Euclidean2DPosition> environment;
     private final Biomolecule biomolecule;
@@ -44,7 +41,7 @@ public final class ChemotacticPolarization extends AbstractAction<Double> {
      * @param biomolecule biomolecule's name
      * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of
      *                  the highest concentration of biomolecule in neighborhood; if it's false, the versor will be
-     *                   directed in the exactly the opposite direction.
+     *                   directed in the exactly opposite direction.
      */
     public ChemotacticPolarization(
             final Environment<Double, Euclidean2DPosition> environment,

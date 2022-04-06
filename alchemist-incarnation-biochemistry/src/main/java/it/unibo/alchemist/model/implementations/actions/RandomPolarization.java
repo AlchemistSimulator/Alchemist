@@ -34,9 +34,9 @@ public final class RandomPolarization extends AbstractRandomizableAction<Double>
      * @param random the {@link RandomGenerator}
      */
     public RandomPolarization(
-            final Environment<Double, Euclidean2DPosition> environment,
-            final Node<Double> node,
-            final RandomGenerator random
+        final Environment<Double, Euclidean2DPosition> environment,
+        final Node<Double> node,
+        final RandomGenerator random
     ) {
         super(node, random);
         this.environment = environment;

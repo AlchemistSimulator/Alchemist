@@ -298,7 +298,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 final double concentration = createConcentration(b);
                 insertInMap(biomolConditionsInNeighbor, biomol, concentration);
                 conditionList.add(new BiomolPresentInNeighbor(environment, node, biomol, concentration));
-                actionList.add(new ChangeBiomolConcentrationInNeighbor(environment, node, biomol, rand, -concentration));
+                actionList.add(new ChangeBiomolConcentrationInNeighbor(rand, environment, node, biomol, -concentration));
             }
             return reaction;
         }
@@ -344,7 +344,7 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
                 if (re.biomolecule() != null) {
                     final Biomolecule biomol = createBiomolecule(re.biomolecule());
                     final double concentration = createConcentration(re.biomolecule());
-                    actionList.add(new ChangeBiomolConcentrationInNeighbor(environment, node, biomol, rand, concentration));
+                    actionList.add(new ChangeBiomolConcentrationInNeighbor(rand, environment, node, biomol, concentration));
                 } else if (re.javaConstructor() != null) {
                     actionList.add(createObject(re.javaConstructor(), ACTIONS_PACKAGE));
                 }

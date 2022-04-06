@@ -63,7 +63,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public List<ILsaMolecule> getConcentration(final Molecule m) {
+    public List<ILsaMolecule> getConcentration(@Nonnull final Molecule m) {
         if (!(m instanceof ILsaMolecule)) {
             throw new IllegalArgumentException(m + " is not a compatible molecule type");
         }
@@ -78,6 +78,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
+    @Nonnull
     public Map<Molecule, List<ILsaMolecule>> getContents() {
         final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(instances.size(), 1.0f);
         for (final ILsaMolecule m : instances) {
@@ -135,6 +136,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return getId() + " contains: " + instances.toString();
     }

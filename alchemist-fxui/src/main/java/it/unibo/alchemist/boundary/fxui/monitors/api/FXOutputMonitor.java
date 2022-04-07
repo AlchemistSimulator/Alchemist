@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.fxui.monitors.api;
 
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.api.KeyboardActionListener;
@@ -38,14 +37,14 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
 
     /**
      * Repaints this {@link javafx.scene.canvas.Canvas}' {@link javafx.scene.canvas.GraphicsContext}
-     * by drawing all the {@link EffectFX Effect}s of each
+     * by drawing all the {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX Effect}s of each
      * {@link it.unibo.alchemist.model.interfaces.Node} of the specified
      * {@link it.unibo.alchemist.model.interfaces.Environment}.
      */
     void repaint();
 
     /**
-     * Getter method for the {@link EffectFX Effects} to draw.
+     * Getter method for the {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX Effects} to draw.
      *
      * @return the current {@code Effects} to draw
      */
@@ -54,7 +53,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     /**
      * Setter method for the effects to draw.
      * <p>
-     * All previous set {@link EffectFX Effects} are removed.
+     * All previous set {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX Effects} are removed.
      *
      * @param effects the {@code Effects} to draw
      */
@@ -62,7 +61,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
 
     /**
      * Add all the {@link EffectGroup}s in the collection to the
-     * {@link EffectFX Effects} to draw.
+     * {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX Effects} to draw.
      *
      * @param effects the {@link EffectGroup}s to draw
      * @see Collection#addAll(Collection)
@@ -71,7 +70,7 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
 
     /**
      * Add the {@link EffectGroup} in the collection to the
-     * {@link EffectFX Effects} to draw.
+     * {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX Effects} to draw.
      *
      * @param effects the {@link EffectGroup} to draw
      * @see Collection#add(Object)

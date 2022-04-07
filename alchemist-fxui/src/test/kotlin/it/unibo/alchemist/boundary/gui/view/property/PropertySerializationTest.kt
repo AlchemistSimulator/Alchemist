@@ -13,11 +13,11 @@ import com.google.common.base.Charsets
 import com.google.gson.reflect.TypeToken
 import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer
 import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory
-import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty
 import it.unibo.alchemist.boundary.fxui.properties.internal.RangedIntegerProperty
 import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableBooleanProperty
 import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableEnumProperty
 import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableStringProperty
+import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty
 import it.unibo.alchemist.test.TemporaryFile.create
 import java.io.FileReader
 import java.io.FileWriter
@@ -80,7 +80,7 @@ class PropertySerializationTester<T : Property<E>, E : Any>(
         }
     }
 
-    private fun <T> message(origin: Property<T>?, deserialized: Property<T>?): String? {
+    private fun <T> message(origin: Property<T>?, deserialized: Property<T>?): String {
         if (origin == null) {
             return "original property is null"
         }

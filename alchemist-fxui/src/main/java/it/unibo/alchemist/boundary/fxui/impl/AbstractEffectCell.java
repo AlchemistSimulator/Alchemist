@@ -11,8 +11,6 @@ package it.unibo.alchemist.boundary.fxui.impl;
 
 import com.jfoenix.controls.JFXToggleButton;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.util.SVGImages;
 import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
@@ -47,12 +45,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Abstract class that models a ListView Cell to represent {@link EffectFX}s or
- * {@link EffectGroup}s.
+ * Abstract class that models a ListView Cell to represent
+ * {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX}s or
+ * {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup}s.
  *
  * @param <T> the generic class that will be inside the cell; it should be
- *            {@link EffectFX} or
- *            {@link EffectGroup}
+ *            {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX} or
+ *            {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup}
  */
 @SuppressFBWarnings(
         value = { "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE" },

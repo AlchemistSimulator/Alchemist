@@ -14,12 +14,9 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
-import it.unibo.alchemist.boundary.fxui.monitors.impl.PlayPauseMonitor;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
-import it.unibo.alchemist.boundary.fxui.monitors.impl.AbstractNumericLabelMonitor;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -122,7 +119,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
      * {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
      *
      * @param playPauseButton the play/pause {@code Button}; should probably
-     *                        be a {@link PlayPauseMonitor}
+     *                        be a {@link it.unibo.alchemist.boundary.fxui.monitors.impl.PlayPauseMonitor}
      * @param timeLabel       the {@code Label} for the steps; should probably
      *                        be a {@link AbstractNumericLabelMonitor}
      * @param stepLabel       the {@code Label} for the time; should probably
@@ -145,7 +142,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
      *
      * @param displayMonitor  the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
      * @param playPauseButton the play/pause {@code Button}; should probably
-     *                        be a {@link PlayPauseMonitor}
+     *                        be a {@link it.unibo.alchemist.boundary.fxui.monitors.impl.PlayPauseMonitor}
      * @param timeLabel       the {@code Label} for the steps; should probably
      *                        be a {@link AbstractNumericLabelMonitor}
      * @param stepLabel       the {@code Label} for the time; should probably
@@ -337,7 +334,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
 
     /**
      * Getter method for the {@code List} of groups of
-     * {@link EffectFX effects} in the side drawer.
+     * {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX effects} in the side drawer.
      *
      * @return an {@code ObservableList} of {@code EffectGroup}
      */

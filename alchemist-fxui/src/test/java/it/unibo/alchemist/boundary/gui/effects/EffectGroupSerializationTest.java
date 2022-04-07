@@ -1,6 +1,5 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
 import it.unibo.alchemist.boundary.fxui.effects.impl.DrawColoredDot;
 import it.unibo.alchemist.boundary.fxui.effects.impl.DrawDot;
@@ -64,9 +63,9 @@ class EffectGroupSerializationTest {
      * messages.
      * 
      * @param origin
-     *            the original {@link EffectFX effect}
+     *            the original {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX effect}
      * @param deserialized
-     *            the deserialized {@link EffectFX effect}
+     *            the deserialized {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX effect}
      * @return the message of test fail
      */
     protected String getMessage(final EffectGroup<?> origin, final EffectGroup<?> deserialized) {

@@ -98,9 +98,9 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * @return true if the objects are both null or equal, false otherwise
      */
     @Contract("null, !null -> false")
-    protected static <T, P extends Property<T>> boolean checkEqualsProperties(
-            final @Nullable P prop1,
-            final @Nullable P prop2
+    public static <T, P extends Property<T>> boolean checkEqualsProperties(
+        final @Nullable P prop1,
+        final @Nullable P prop2
     ) {
         if (prop1 == null) {
             return prop2 == null;
@@ -120,9 +120,9 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      */
     @Contract("null, null -> true; null, !null -> false; !null, null -> false")
     @SuppressWarnings("unchecked")
-    protected static <T extends AbstractEffect<?>> boolean checkBasicProperties(
-            final @Nullable T anEffect,
-            final @Nullable Object otherEffect
+    public static <T extends AbstractEffect<?>> boolean checkBasicProperties(
+        final @Nullable T anEffect,
+        final @Nullable Object otherEffect
     ) {
         if (anEffect == null) {
             return otherEffect == null;

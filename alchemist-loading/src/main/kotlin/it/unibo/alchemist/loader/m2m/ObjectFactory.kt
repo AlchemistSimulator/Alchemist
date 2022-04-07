@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.loader.m2m
 
-import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.filters.CommonFilters
+import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Time

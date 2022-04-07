@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,27 +8,25 @@
  */
 package it.unibo.alchemist.test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
-import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
+import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
+import it.unibo.alchemist.model.implementations.molecules.Junction;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
-import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  */
@@ -46,11 +45,11 @@ class TestJunction {
      */
     @BeforeEach
     public void setUp() {
-        final Environment<Double, Euclidean2DPosition> environment = new BioRect2DEnvironment();
-        final Incarnation<Double, Euclidean2DPosition> inc = new BiochemistryIncarnation<>();
-        node1 = inc.createNode(new MersenneTwister(), environment, null);
-        node2 = inc.createNode(new MersenneTwister(), environment, null);
-        node3 = inc.createNode(new MersenneTwister(), environment, null);
+        final var incarnation = new BiochemistryIncarnation();
+        final Environment<Double, Euclidean2DPosition> environment = new BioRect2DEnvironment(incarnation);
+        node1 = incarnation.createNode(new MersenneTwister(), environment, null);
+        node2 = incarnation.createNode(new MersenneTwister(), environment, null);
+        node3 = incarnation.createNode(new MersenneTwister(), environment, null);
     }
 
     /**

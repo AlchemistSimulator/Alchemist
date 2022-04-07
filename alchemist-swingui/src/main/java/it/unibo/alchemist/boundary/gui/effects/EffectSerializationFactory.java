@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -17,8 +18,8 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.ClassPathScanner;
-import it.unibo.alchemist.SupportedIncarnations;
+import it.unibo.alchemist.model.api.SupportedIncarnations;
+import it.unibo.alchemist.util.ClassPathScanner;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;
 
@@ -56,7 +57,9 @@ public final class EffectSerializationFactory {
                     @Override
                     public ImmutableCollectionWithCurrentElement<?> read(final JsonReader in) throws IOException {
                         return new ImmutableCollectionWithCurrentElement<>(
-                                SupportedIncarnations.getAvailableIncarnations(), in.nextString());
+                            SupportedIncarnations.getAvailableIncarnations(),
+                            in.nextString()
+                        );
                     }
                 }
             )

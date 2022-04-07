@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.interfaces.geometry
 
 import kotlin.math.acos
@@ -20,6 +29,16 @@ interface Vector<S : Vector<S>> {
      * Implementors must guarantee that internal state is not exposed.
      */
     val coordinates: DoubleArray
+
+    /**
+     * Origin.
+     */
+    val zero: S get() = fromCoordinates(generateSequence(0.0) { it }.toList().toDoubleArray())
+
+    /**
+     * Builds a new Vector from the provided coordinates.
+     */
+    fun fromCoordinates(coordinates: DoubleArray): S
 
     /**
      * The coordinate of this vector in the specified dimension relatively to the basis

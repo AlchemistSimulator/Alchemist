@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -48,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 class TestIncarnation {
 
-    private static final BiochemistryIncarnation<Euclidean2DPosition> INCARNATION = new BiochemistryIncarnation<>();
+    private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();
     private Node<Double> node;
     private Environment<Double, Euclidean2DPosition> environment;
     private RandomGenerator rand;
@@ -64,7 +65,7 @@ class TestIncarnation {
      */
     @BeforeEach
     public void setUp() {
-        environment = new BioRect2DEnvironment();
+        environment = new BioRect2DEnvironment(INCARNATION);
         node = INCARNATION.createNode(rand, environment, null);
         rand = new MersenneTwister();
         time = new ExponentialTime<>(1, rand);

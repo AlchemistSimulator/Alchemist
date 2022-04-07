@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,13 +8,12 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.ClassPathScanner;
-import it.unibo.alchemist.SupportedIncarnations;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.providers.YamlProvider;
+import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.test.util.TestNode;
+import it.unibo.alchemist.util.ClassPathScanner;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;
 
@@ -54,9 +55,7 @@ class TestYAMLLoader {
     @Test
     void testAnyRealDistribution() {
         final Environment<?, ?> environment = testNoVar("synthetic/anyrealdistribution.yml");
-        environment.forEach(n -> n.forEach(r -> {
-            assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution);
-        }));
+        environment.forEach(n -> n.forEach(r -> assertTrue(r.getTimeDistribution() instanceof AnyRealDistribution)));
     }
 
     /**

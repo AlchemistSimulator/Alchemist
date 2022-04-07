@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.interfaces
 
 import java.io.Serializable
-import java.lang.IllegalStateException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
@@ -24,11 +23,13 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * Adds a reaction to this node.
      * The reaction is added only in the node,
-     * but not in the [Simulation] scheduler, so it will never be executed.
+     * but not in the [it.unibo.alchemist.core.interfaces.Simulation] scheduler,
+     * so it will never be executed.
      * To add the reaction also in the scheduler (and start to execute it),
-     * you have to call also the method [Simulation.reactionAdded].
-     * @param r
-     * the reaction to be added
+     * you have to call also the method
+     * [it.unibo.alchemist.core.interfaces.Simulation.reactionAdded].
+     *
+     * @param reactionToAdd the reaction to be added
      */
     fun addReaction(reactionToAdd: Reaction<T>)
 
@@ -50,7 +51,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * Tests whether a node contains a [Molecule].
      *
-     * @param mol
+     * @param molecule
      * the molecule to check
      * @return true if the molecule is present, false otherwise
      */
@@ -59,7 +60,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * Calculates the concentration of a molecule.
      *
-     * @param mol
+     * @param molecule
      * the molecule whose concentration will be returned
      * @return the concentration of the molecule
      */
@@ -81,9 +82,9 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     val moleculeCount: Int
 
     /**
-     * @return a list of the node's capabilities
+     * @return a list of the node's properties/capabilities
      */
-    val capabilities: List<NodeProperty<T>>
+    val properties: List<NodeProperty<T>>
 
     /**
      * This method allows to access all the reaction of the node.
@@ -97,29 +98,28 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     override fun equals(other: Any?): Boolean
 
     /**
-     * @param mol the molecule that should be removed
+     * @param moleculeToRemove the molecule that should be removed
      */
     fun removeConcentration(moleculeToRemove: Molecule)
 
     /**
      * Removes a reaction from this node.
      * The reaction is removed only in the node,
-     * but not in the [Simulation] scheduler,
+     * but not in the [it.unibo.alchemist.core.interfaces.Simulation] scheduler,
      * so the scheduler will continue to execute the reaction.
      * To remove the reaction also in the scheduler (and stop to execute it),
-     * you have to call also the method [Simulation.reactionRemoved].
+     * you have to call also the method [it.unibo.alchemist.core.interfaces.Simulation.reactionRemoved].
      *
-     * @param r
-     * the reaction to be removed
+     * @param reactionToRemove the reaction to be removed
      */
     fun removeReaction(reactionToRemove: Reaction<T>)
 
     /**
      * Sets the concentration of mol to c.
      *
-     * @param mol
+     * @param molecule
      * the molecule you want to set the concentration
-     * @param c
+     * @param concentration
      * the concentration you want for mol
      */
     fun setConcentration(molecule: Molecule, concentration: T)
@@ -131,7 +131,7 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     fun addProperty(nodeProperty: NodeProperty<T>)
 
     /**
-     * returns a [NodeProperty] of the provided [type] [C].
+     * returns a [NodeProperty] of the provided [superType] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
@@ -139,13 +139,13 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     fun <C : NodeProperty<T>> asPropertyOrNull(superType: Class<in C>): C? = asPropertyOrNull(superType.kotlin)
 
     /**
-     * returns a [NodeProperty] of the provided [type] [C].
+     * returns a [NodeProperty] of the provided [superType] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
     @Suppress("UNCHECKED_CAST")
-    fun <C : NodeProperty<T>> asPropertyOrNull(superType: KClass<in C>): C? = capabilities
+    fun <C : NodeProperty<T>> asPropertyOrNull(superType: KClass<in C>): C? = properties
         .asSequence()
         .mapNotNull { nodeProperty: NodeProperty<T> ->
             nodeProperty::class.distanceFrom(superType)?.let { nodeProperty to it }
@@ -154,18 +154,18 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
         ?.first as? C
 
     /**
-     * returns a [NodeProperty] of the provided [type] [C].
+     * returns a [NodeProperty] of the provided [superType] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
      */
     fun <C : NodeProperty<T>> asProperty(superType: KClass<C>): C =
-        asPropertyOrNull(superType).let { it } ?: throw IllegalStateException(
+        asPropertyOrNull(superType) ?: throw IllegalStateException(
             "A ${superType.simpleName} is required for node ${this.id} but is missing"
         )
 
     /**
-     * returns a [NodeProperty] of the provided [type] [C].
+     * returns a [NodeProperty] of the provided [superType] [C].
      * @param [C] type of capability
      * @param superType the type of capability to retrieve
      * @return a capability of the provided type [C]
@@ -174,17 +174,15 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
 
     companion object {
         /**
-         * returns a [NodeProperty] of the provided [type] [C].
+         * returns a [NodeProperty] of the provided type [C].
          * @param [C] type of capability
-         * @param superType the type of capability to retrieve
          * @return a capability of the provided type [C]
          */
         inline fun <T, reified C : NodeProperty<T>> Node<T>.asProperty(): C = asProperty(C::class)
 
         /**
-         * returns a [NodeProperty] of the provided [type] [C] or [null] if the node does not have the capabiilty.
+         * returns a [NodeProperty] of the provided type [C] or null if the node does not have a compatible property.
          * @param [C] type of capability
-         * @param superType the type of capability to retrieve
          * @return if present, a capability of the provided type [C]
          */
         inline fun <T, reified C : NodeProperty<T>> Node<T>.asPropertyOrNull(): C? = asPropertyOrNull(C::class)

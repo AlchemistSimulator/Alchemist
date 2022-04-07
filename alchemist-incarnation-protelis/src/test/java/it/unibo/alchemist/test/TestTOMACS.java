@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -10,8 +11,8 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,11 +35,11 @@ class TestTOMACS {
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
         Assertions.assertTrue(StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)
             .flatMap(n -> n.getReactions().stream()
-                    .map(Reaction::getActions)
-                    .flatMap(Collection::stream)
-                    .filter(a -> a instanceof RunProtelisProgram)
-                    .map(a -> (RunProtelisProgram) a)
-                    .map(a -> n.asProperty(ProtelisProperty.class).getNetworkManager(a)))
+                .map(Reaction::getActions)
+                .flatMap(Collection::stream)
+                .filter(a -> a instanceof RunProtelisProgram)
+                .map(a -> (RunProtelisProgram<?>) a)
+                .map(a -> n.asProperty(ProtelisDevice.class).getNetworkManager(a)))
             .mapToDouble(AlchemistNetworkManager::getRetentionTime)
             .peek(d -> Assertions.assertTrue(Double.isFinite(d)))
             .count() > 0);

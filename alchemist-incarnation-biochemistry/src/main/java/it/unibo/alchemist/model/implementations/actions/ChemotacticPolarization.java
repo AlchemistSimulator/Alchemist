@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -8,11 +9,11 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.util.FastMath;
@@ -23,18 +24,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @param <P> {@link Position2D} type
+ * Models the chemotactic polarization of a {@link it.unibo.alchemist.model.implementations.properties.Cell}.
  */
-public final class ChemotacticPolarization<P extends Position2D<P>> extends AbstractAction<Double> {
+public final class ChemotacticPolarization extends AbstractAction<Double> {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
-    private final Environment<Double, P> environment;
+    private final Environment<Double, Euclidean2DPosition> environment;
     private final Biomolecule biomolecule;
     private final boolean ascend;
-    private final CellProperty<P> cell;
+    private final CellProperty<Euclidean2DPosition> cell;
 
     /**
      * 
@@ -43,18 +41,18 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
      * @param biomolecule biomolecule's name
      * @param ascendGrad if that parameter is true, the polarization versor of the cell will be directed in direction of
      *                  the highest concentration of biomolecule in neighborhood; if it's false, the versor will be
-     *                   directed in the exactly the opposite direction.
+     *                   directed in the exactly opposite direction.
      */
     public ChemotacticPolarization(
-            final Environment<Double, P> environment,
+            final Environment<Double, Euclidean2DPosition> environment,
             final Node<Double> node,
             final Biomolecule biomolecule,
             final String ascendGrad
     ) {
         super(node);
         this.cell = Objects.requireNonNull(
-                node.asPropertyOrNull(CellProperty.class),
-                "This action can't be added to nodes with no " + CellProperty.class.getSimpleName()
+            node.asPropertyOrNull(CellProperty.class),
+            "This action can't be added to nodes with no " + CellProperty.class.getSimpleName()
         );
         this.environment = Objects.requireNonNull(environment);
         this.biomolecule = Objects.requireNonNull(biomolecule);
@@ -77,7 +75,7 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
      *                   be directed in the exactly the opposite direction.
      */
     public ChemotacticPolarization(
-            final Environment<Double, P> environment,
+            final Environment<Double, Euclidean2DPosition> environment,
             final Node<Double> node,
             final String biomolecule,
             final String ascendGrad
@@ -87,8 +85,8 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
 
 
     @Override
-    public ChemotacticPolarization<P> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new ChemotacticPolarization<>(environment, node, biomolecule.toString(), ascend ? "up" : "down");
+    public ChemotacticPolarization cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new ChemotacticPolarization(environment, node, biomolecule.toString(), ascend ? "up" : "down");
     }
 
     @Override
@@ -99,7 +97,7 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
                 .filter(n -> n instanceof EnvironmentNode && n.contains(biomolecule))
                 .collect(Collectors.toList());
         if (l.isEmpty()) {
-            cell.addPolarizationVersor(environment.makePosition(0, 0));
+            cell.addPolarizationVersor(Euclidean2DPosition.Companion.getZero());
         } else {
             final boolean isNodeOnMaxConc = environment.getPosition(l.stream()
                     .max(Comparator.comparingDouble(n -> n.getConcentration(biomolecule)))
@@ -107,7 +105,7 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
             if (isNodeOnMaxConc) {
                 cell.addPolarizationVersor(environment.makePosition(0, 0));
             } else {
-                P newPolVer = weightedAverageVectors(l, thisNode);
+                Euclidean2DPosition newPolVer = weightedAverageVectors(l, thisNode);
                 final double newPolX = newPolVer.getX();
                 final double newPolY = newPolVer.getY();
                 final double newPolVerModule = FastMath.sqrt(newPolX * newPolX + newPolY * newPolY);
@@ -126,22 +124,26 @@ public final class ChemotacticPolarization<P extends Position2D<P>> extends Abst
         }
     }
 
-    private P weightedAverageVectors(final List<Node<Double>> list, final Node<Double> thisNode) {
-        P res = environment.makePosition(0, 0);
-        final P thisNodePos = environment.getPosition(thisNode);
+    private Euclidean2DPosition weightedAverageVectors(final List<Node<Double>> list, final Node<Double> thisNode) {
+        Euclidean2DPosition res = Euclidean2DPosition.Companion.getZero();
+        final Euclidean2DPosition thisNodePos = environment.getPosition(thisNode);
         for (final Node<Double> n : list) {
-            final P nPos = environment.getPosition(n);
-            P vecTemp = environment.makePosition(
-                    nPos.getX() - thisNodePos.getX(),
-                    nPos.getY() - thisNodePos.getY());
-            final double vecTempModule = FastMath.sqrt(FastMath.pow(vecTemp.getX(), 2)
-                    + FastMath.pow(vecTemp.getY(), 2));
-            vecTemp = environment.makePosition(
+            final Euclidean2DPosition nPos = environment.getPosition(n);
+            Euclidean2DPosition vecTemp = new Euclidean2DPosition(
+                nPos.getX() - thisNodePos.getX(),
+                nPos.getY() - thisNodePos.getY()
+            );
+            final double vecTempModule = FastMath.sqrt(
+                FastMath.pow(vecTemp.getX(), 2) + FastMath.pow(vecTemp.getY(), 2)
+            );
+            vecTemp = new Euclidean2DPosition(
                     n.getConcentration(biomolecule) * (vecTemp.getX() / vecTempModule),
-                    n.getConcentration(biomolecule) * (vecTemp.getY() / vecTempModule));
-            res = environment.makePosition(
-                    res.getX() + vecTemp.getX(),
-                    res.getY() + vecTemp.getY());
+                    n.getConcentration(biomolecule) * (vecTemp.getY() / vecTempModule)
+            );
+            res = new Euclidean2DPosition(
+                res.getX() + vecTemp.getX(),
+                res.getY() + vecTemp.getY()
+            );
         }
         return res;
     }

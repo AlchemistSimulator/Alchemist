@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.util.ClassPathScanner;
 import it.unibo.alchemist.boundary.gui.effects.Effect;
 import it.unibo.alchemist.boundary.gui.effects.EffectFactory;
 import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;

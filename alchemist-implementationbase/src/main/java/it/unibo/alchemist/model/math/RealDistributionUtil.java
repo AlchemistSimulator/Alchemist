@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.math;
 
 import com.google.common.collect.ImmutableList;
-import it.unibo.alchemist.ClassPathScanner;
+import it.unibo.alchemist.util.ClassPathScanner;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 

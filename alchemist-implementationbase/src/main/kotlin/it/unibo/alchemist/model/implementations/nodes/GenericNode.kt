@@ -9,17 +9,14 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import com.google.common.collect.MapMaker
-import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.NodeProperty
+import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
-import java.util.ArrayList
 import java.util.Collections
-import java.util.LinkedHashMap
-import java.util.NoSuchElementException
 import java.util.Spliterator
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicInteger
@@ -47,7 +44,7 @@ open class GenericNode<T> @JvmOverloads constructor(
      * The node's molecules.
      */
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
-    override val capabilities: MutableList<NodeProperty<T>> = ArrayList(),
+    override val properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
 
     constructor(
@@ -59,7 +56,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     override fun cloneNode(currentTime: Time): Node<T> = GenericNode(environment).also {
-        this.capabilities.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
+        this.properties.forEach { property -> it.addProperty(property.cloneOnNewNode(it)) }
         this.contents.forEach(it::setConcentration)
         this.reactions.forEach { reaction -> it.addReaction(reaction.cloneOnNewNode(it, currentTime)) }
     }
@@ -105,12 +102,14 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     final override fun addProperty(nodeProperty: NodeProperty<T>) {
-        if (capabilities.find { it::class == nodeProperty::class } == null)
-            capabilities.add(nodeProperty)
-        else throw IllegalArgumentException(
-            "This node (${this.id}) already contains a property of type ${nodeProperty::class}," +
-                "this may lead to an inconsistent state"
-        )
+        if (properties.find { it::class == nodeProperty::class } == null) {
+            properties.add(nodeProperty)
+        } else {
+            throw IllegalArgumentException(
+                "This node (${this.id}) already contains a property of type ${nodeProperty::class}," +
+                    "this may lead to an inconsistent state"
+            )
+        }
     }
 
     /**
@@ -118,7 +117,7 @@ open class GenericNode<T> @JvmOverloads constructor(
      */
     final override fun spliterator(): Spliterator<Reaction<T>> = reactions.spliterator()
 
-    override fun toString(): String = molecules.toString()
+    override fun toString(): String = "Node$id{ properties: $properties, molecules: $molecules }"
 
     companion object {
         private const val serialVersionUID = 2496775909028222278L

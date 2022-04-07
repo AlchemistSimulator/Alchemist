@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -12,14 +12,14 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.coincidesWith
-import it.unibo.alchemist.contains
-import it.unibo.alchemist.intersect
-import it.unibo.alchemist.intersects
-import it.unibo.alchemist.intersectsBoundsExcluded
-import it.unibo.alchemist.minus
-import it.unibo.alchemist.rangeFromUnordered
-import it.unibo.alchemist.subtractAll
+import it.unibo.alchemist.model.util.RangeExtension.coincidesWith
+import it.unibo.alchemist.model.util.RangeExtension.contains
+import it.unibo.alchemist.model.util.RangeExtension.intersect
+import it.unibo.alchemist.model.util.RangeExtension.intersects
+import it.unibo.alchemist.model.util.RangeExtension.intersectsBoundsExcluded
+import it.unibo.alchemist.model.util.RangeExtension.minus
+import it.unibo.alchemist.model.util.RangeExtension.rangeFromUnordered
+import it.unibo.alchemist.model.util.RangeExtension.subtractAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -77,7 +77,7 @@ class TestRangeExtension : StringSpec({
 
     /**
      * Asserts that the collection contains exactly the [expected] elements. Instead of using
-     * equality check between ranges (i.e. == operator), [ClosedRange.coincidesWith] is used.
+     * equality check between ranges (i.e. == operator), [coincidesWith] is used.
      */
     fun <T : Comparable<T>> List<ClosedRange<T>>.shouldContainRanges(vararg expected: ClosedRange<T>) {
         expected.toMutableList().let { expectedRanges ->

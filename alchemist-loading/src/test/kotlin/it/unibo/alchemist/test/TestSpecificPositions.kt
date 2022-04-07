@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -12,9 +12,9 @@ package it.unibo.alchemist.test
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.SupportedIncarnations
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.deployments.SpecificPositions
+import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.kaikikm.threadresloader.ResourceLoader

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -15,29 +15,28 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.properties.Protelis;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.NodeProperty;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.NodeProperty;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.properties.ProtelisProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -112,7 +111,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     }
 
     private void checkIsProtelisNode(final Node<Object> node, final String exceptionMessage) {
-        if (node == null || node.asPropertyOrNull(ProtelisProperty.class) == null) {
+        if (node == null || node.asPropertyOrNull(ProtelisDevice.class) == null) {
             throw new IllegalArgumentException(exceptionMessage);
         }
     }
@@ -127,7 +126,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final String additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters);
-        checkIsProtelisNode(node, "The node must have a " + ProtelisProperty.class.getSimpleName());
+        checkIsProtelisNode(node, "The node must have a " + ProtelisDevice.class.getSimpleName());
         if ("send".equalsIgnoreCase(additionalParameters)) {
             final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
                     .parallelStream()
@@ -184,7 +183,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final Reaction<Object> reaction,
             final String additionalParameters
     ) {
-        checkIsProtelisNode(node, "The node must have a " + ProtelisProperty.class.getSimpleName());
+        checkIsProtelisNode(node, "The node must have a " + ProtelisDevice.class.getSimpleName());
         /*
          * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
          */
@@ -221,7 +220,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final String parameter
     ) {
         final Node<Object> node = new GenericNode<>(this, environment);
-        node.addProperty(new Protelis<P>((ProtelisIncarnation<?>) environment.getIncarnation(), node));
+        node.addProperty(new ProtelisDevice((ProtelisIncarnation<?>) environment.getIncarnation(), node));
         return node;
     }
 
@@ -299,8 +298,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     return 0d;
                 }
             }
-        } catch (ExecutionException e) {
-            L.error("Bug in " + getClass().getName() + ": getProperty should never fail.", e);
+        } catch (ExecutionException | RuntimeException e) { // NOPMD: we never want getProperty to fail
+            L.error(
+                "Intercepted interpreter exception when computing: \n"
+                    + property + "\n"
+                    + e.getMessage()
+            );
         }
         return Double.NaN;
     }
@@ -375,7 +378,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
         @Override
         @SuppressFBWarnings("EI_EXPOSE_REP")
         public DeviceUID getDeviceUID() {
-            final ProtelisProperty protelisProperty = node.asPropertyOrNull(ProtelisProperty.class);
+            final ProtelisDevice protelisProperty = node.asPropertyOrNull(ProtelisDevice.class);
             return protelisProperty != null ? protelisProperty : NO_NODE_ID;
         }
 
@@ -485,9 +488,12 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             if (vm.isPresent()) {
                 final ProtelisVM myVM = vm.get();
                 mutex.acquireUninterruptibly();
-                myVM.runCycle();
-                mutex.release();
-                return myVM.getCurrentValue();
+                try {
+                    myVM.runCycle();
+                    return myVM.getCurrentValue();
+                } finally {
+                    mutex.release();
+                }
             }
             if (node instanceof NoNode) {
                 return key.property;
@@ -591,7 +597,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         @NotNull
         @Override
-        public List<NodeProperty<Object>> getCapabilities() {
+        public List<NodeProperty<Object>> getProperties() {
             return Collections.emptyList();
         }
 

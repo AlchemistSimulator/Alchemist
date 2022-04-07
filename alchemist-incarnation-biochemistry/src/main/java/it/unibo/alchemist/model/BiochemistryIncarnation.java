@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -11,6 +12,7 @@ package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.properties.CircularCell;
 import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
@@ -20,16 +22,14 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
-import it.unibo.alchemist.model.interfaces.geometry.Vector;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
- * @param <P> position type, must be a {@link Vector}
+ * Factory for the biochemistry incarnation entities.
  */
-public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> implements Incarnation<Double, P> {
+public final class BiochemistryIncarnation implements Incarnation<Double, Euclidean2DPosition> {
 
     @Override
     public double getProperty(final Node<Double> node, final Molecule molecule, final String property) {
@@ -44,14 +44,14 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     @Override
     public Node<Double> createNode(
             final RandomGenerator randomGenerator,
-            final Environment<Double, P> environment,
+            final Environment<Double, Euclidean2DPosition> environment,
             final String parameter
     ) {
         final Node<Double> node = new GenericNode<>(this, environment);
         if (parameter == null || parameter.isEmpty()) {
-            node.addProperty(new CircularCell<P>(environment, node));
+            node.addProperty(new CircularCell(environment, node));
         } else {
-            node.addProperty(new CircularCell<P>(environment, node, Double.parseDouble(parameter)));
+            node.addProperty(new CircularCell(environment, node, Double.parseDouble(parameter)));
         }
         return node;
     }
@@ -59,7 +59,7 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     @Override
     public TimeDistribution<Double> createTimeDistribution(
             final RandomGenerator randomGenerator,
-            final Environment<Double, P> environment,
+            final Environment<Double, Euclidean2DPosition> environment,
             final Node<Double> node,
             final String parameter
     ) {
@@ -76,7 +76,7 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
 
     @Override
     public Reaction<Double> createReaction(final RandomGenerator randomGenerator,
-            final Environment<Double, P> environment,
+            final Environment<Double, Euclidean2DPosition> environment,
             final Node<Double> node,
             final TimeDistribution<Double> timeDistribution,
             final String parameter) {
@@ -90,7 +90,7 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     @Override
     public Condition<Double> createCondition(
             final RandomGenerator randomGenerator,
-            final Environment<Double, P> environment,
+            final Environment<Double, Euclidean2DPosition> environment,
             final Node<Double> node,
             final TimeDistribution<Double> time,
             final Reaction<Double> reaction,
@@ -102,7 +102,7 @@ public final class BiochemistryIncarnation<P extends Position<P> & Vector<P>> im
     @Override
     public Action<Double> createAction(
             final RandomGenerator randomGenerator,
-            final Environment<Double, P> environment,
+            final Environment<Double, Euclidean2DPosition> environment,
             final Node<Double> node,
             final TimeDistribution<Double> time,
             final Reaction<Double> reaction,

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -58,8 +59,6 @@ class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
         override fun add(node: Node<T>?) = this
 
         override fun iterator() = neighbors.iterator()
-
-        override fun getNeighborByNumber(num: Int) = TODO()
 
         override fun size() = environment.nodeCount - 1
     }

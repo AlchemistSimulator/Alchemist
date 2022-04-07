@@ -10,7 +10,7 @@
 package it.unibo.alchemist.loader
 
 import arrow.core.Either
-import it.unibo.alchemist.ClassPathScanner
+import it.unibo.alchemist.util.ClassPathScanner
 import it.unibo.alchemist.loader.deployments.Deployment
 import it.unibo.alchemist.model.implementations.linkingrules.OffsetGraphStreamLinkingRule
 import it.unibo.alchemist.model.interfaces.Environment

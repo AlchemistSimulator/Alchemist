@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -17,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Molecule;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,9 +43,9 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public boolean contains(final Molecule m) {
-        if (m instanceof ILsaMolecule) {
-            final ILsaMolecule toMatch = (ILsaMolecule) m;
+    public boolean contains(@Nonnull final Molecule molecule) {
+        if (molecule instanceof ILsaMolecule) {
+            final ILsaMolecule toMatch = (ILsaMolecule) molecule;
             return instances.stream().anyMatch(mol -> mol.matches(toMatch));
         }
         return false;
@@ -52,7 +54,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     @Override
     @Nullable
     protected List<ILsaMolecule> createT() { // NOPMD: this must return null, not an empty collection.
-        return null;
+        return null; // NOPMD: this must return null, not an empty collection.
     }
 
     @Override
@@ -61,7 +63,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public List<ILsaMolecule> getConcentration(final Molecule m) {
+    public List<ILsaMolecule> getConcentration(@Nonnull final Molecule m) {
         if (!(m instanceof ILsaMolecule)) {
             throw new IllegalArgumentException(m + " is not a compatible molecule type");
         }
@@ -76,6 +78,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
+    @Nonnull
     public Map<Molecule, List<ILsaMolecule>> getContents() {
         final Map<Molecule, List<ILsaMolecule>> res = new HashMap<>(instances.size(), 1.0f);
         for (final ILsaMolecule m : instances) {
@@ -110,7 +113,7 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
                 return true;
             }
         }
-        throw new IllegalStateException("Tried to remove missing " + matchedInstance + " from " + this.toString());
+        throw new IllegalStateException("Tried to remove missing " + matchedInstance + " from " + this);
     }
 
     @Override
@@ -123,16 +126,17 @@ public final class LsaNode extends GenericNode<List<ILsaMolecule>> implements IL
     }
 
     @Override
-    public void setConcentration(final Molecule mol, final List<ILsaMolecule> c) {
-        if (mol instanceof ILsaMolecule) {
-            final ILsaMolecule il = (ILsaMolecule) mol;
+    public void setConcentration(@Nonnull final Molecule molecule, final List<ILsaMolecule> c) {
+        if (molecule instanceof ILsaMolecule) {
+            final ILsaMolecule il = (ILsaMolecule) molecule;
             setConcentration(il);
         } else {
-            throw new IllegalArgumentException(mol + " is not a compatible molecule type");
+            throw new IllegalArgumentException(molecule + " is not a compatible molecule type");
         }
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return getId() + " contains: " + instances.toString();
     }

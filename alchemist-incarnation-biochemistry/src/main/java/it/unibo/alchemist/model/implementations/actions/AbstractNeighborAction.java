@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -8,13 +9,13 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import org.apache.commons.math3.random.RandomGenerator;
-
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.util.IterableExtension;
+import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Represents an action on a neighbor.
@@ -52,7 +53,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
     public void execute() {
         final Neighborhood<T> neighborhood = environment.getNeighborhood(node);
         if (!neighborhood.isEmpty()) {
-            execute(neighborhood.getNeighborByNumber(getRandomGenerator().nextInt(neighborhood.size())));
+            execute(IterableExtension.INSTANCE.randomElement(neighborhood, getRandomGenerator()));
         }
     }
 

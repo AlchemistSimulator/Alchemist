@@ -18,12 +18,12 @@ import it.unibo.alchemist.model.interfaces.Position2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Objects;
+
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
-
-import static it.unibo.alchemist.HashesKt.murmur3Hash32;
 
 /**
  * Simple effect that draws a colored dot for each {@link it.unibo.alchemist.model.interfaces.Node}.
@@ -316,14 +316,14 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
      */
     @Override
     public int hashCode() {
-        return murmur3Hash32(
-                alphaProperty(),
-                blueProperty(),
-                greenProperty(),
-                getName(),
-                redProperty(),
-                getSize(),
-                isVisible()
+        return Objects.hash(
+            alphaProperty(),
+            blueProperty(),
+            greenProperty(),
+            getName(),
+            redProperty(),
+            getSize(),
+            isVisible()
         );
     }
 

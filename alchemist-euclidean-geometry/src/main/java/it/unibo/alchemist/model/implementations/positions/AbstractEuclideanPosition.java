@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.positions;
 
 import it.unibo.alchemist.model.interfaces.geometry.Vector;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -37,8 +39,8 @@ public abstract class AbstractEuclideanPosition<P extends AbstractEuclideanPosit
     }
 
     @Override
-    public final double get(final int dim) {
-        return super.getCoordinate(dim);
+    public final double get(final int dimension) {
+        return super.getCoordinate(dimension);
     }
 
 }

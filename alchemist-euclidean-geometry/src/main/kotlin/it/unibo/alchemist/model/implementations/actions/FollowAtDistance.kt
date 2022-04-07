@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.toPosition
+import it.unibo.alchemist.model.util.AnyExtension.toPosition
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin

@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -9,8 +18,8 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
-import it.unibo.alchemist.nextDouble
-import it.unibo.alchemist.shuffled
+import it.unibo.alchemist.model.util.IterableExtension.randomElement
+import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -51,8 +60,7 @@ open class CognitiveAgentWander<T>(
     override fun nextPosition(): Euclidean2DPosition = heading()
         .resized(offset)
         .surrounding(radius)
-        .shuffled(randomGenerator)
-        .first()
+        .randomElement(randomGenerator)
         .coerceAtMost(maxWalk)
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =

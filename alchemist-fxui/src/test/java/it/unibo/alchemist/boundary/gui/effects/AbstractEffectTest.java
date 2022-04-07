@@ -1,21 +1,24 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty;
+import it.unibo.alchemist.boundary.fxui.effects.impl.DrawColoredDot;
+import it.unibo.alchemist.boundary.fxui.effects.impl.DrawDot;
+import it.unibo.alchemist.boundary.fxui.effects.impl.DrawLinks;
+import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableStringProperty;
 import org.junit.jupiter.api.Test;
 
-import static it.unibo.alchemist.boundary.gui.effects.AbstractEffect.checkBasicProperties;
-import static it.unibo.alchemist.boundary.gui.effects.AbstractEffect.checkEqualsProperties;
+import static it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect.checkBasicProperties;
+import static it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect.checkEqualsProperties;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test class for {@link AbstractEffect} static comparison methods.
+ * Test class for {@link it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect} static comparison methods.
  */
 class AbstractEffectTest {
     private static final String TEST_NAME = "Test";
 
     /**
-     * Test method to test {@link AbstractEffect#checkBasicProperties(AbstractEffect, Object)} method.
+     * Test AbstractEffect.checkBasicProperties(AbstractEffect, Object).
      */
     @Test
     void testCheckBasicProperties() {
@@ -26,9 +29,9 @@ class AbstractEffectTest {
         assertFalse(checkBasicProperties(dot2, null));
         assertTrue(checkBasicProperties(dot1, dot3));
         assertFalse(checkBasicProperties(dot2, dot3));
-        final DrawColoredDot coloredDot1 = new DrawColoredDot();
-        final DrawColoredDot coloredDot2 = new DrawColoredDot(TEST_NAME);
-        final DrawColoredDot coloredDot3 = new DrawColoredDot();
+        final var coloredDot1 = new DrawColoredDot<>();
+        final var coloredDot2 = new DrawColoredDot<>(TEST_NAME);
+        final var coloredDot3 = new DrawColoredDot<>();
         assertFalse(checkBasicProperties(coloredDot1, null));
         assertTrue(checkBasicProperties(dot2, coloredDot2));
         assertTrue(checkBasicProperties(coloredDot3, coloredDot1));

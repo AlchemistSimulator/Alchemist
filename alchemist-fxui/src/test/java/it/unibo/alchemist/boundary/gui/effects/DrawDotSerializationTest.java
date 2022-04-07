@@ -1,7 +1,8 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
+import it.unibo.alchemist.boundary.fxui.effects.impl.DrawDot;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer;
+import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
 import it.unibo.alchemist.test.TemporaryFile;
 import org.junit.jupiter.api.Test;
 

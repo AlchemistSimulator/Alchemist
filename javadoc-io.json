@@ -1,4 +1,8 @@
 {
+  "ch.qos.logback/logback-classic/1.2.11": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.2.11",
+    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.2.11/package-list"
+  },
   "com.github.ben-manes.caffeine/caffeine/3.0.5": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.0.5",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.0.5/element-list"
@@ -67,6 +71,10 @@
   },
   "com.uchuhimo/konf/1.1.2": {
     "first": "https://javadoc.io/doc/com.uchuhimo/konf/1.1.2"
+  },
+  "commons-cli/commons-cli/1.5.0": {
+    "first": "https://javadoc.io/doc/commons-cli/commons-cli/1.5.0",
+    "second": "https://javadoc.io/doc/commons-cli/commons-cli/1.5.0/package-list"
   },
   "commons-codec/commons-codec/1.15": {
     "first": "https://javadoc.io/doc/commons-codec/commons-codec/1.15",
@@ -180,11 +188,17 @@
   "org.jetbrains.kotlin/kotlin-reflect/1.6.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.6.10"
   },
+  "org.jetbrains.kotlin/kotlin-reflect/1.6.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.6.20"
+  },
   "org.jetbrains.kotlin/kotlin-reflect/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.6.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.6.10"
+  },
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.6.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.6.20"
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"

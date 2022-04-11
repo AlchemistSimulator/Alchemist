@@ -1,5 +1,5 @@
 [versions]
-antlr4 = "4.9.3"
+antlr4 = "4.10"
 arrow = "1.0.1"
 graphhopper = "5.0"
 graphstream = "2.0"

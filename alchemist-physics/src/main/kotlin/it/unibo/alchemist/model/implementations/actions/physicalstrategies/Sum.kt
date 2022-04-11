@@ -35,11 +35,4 @@ class Sum<T>(
     override fun computeNextPosition(overallIntentionalForce: Euclidean2DPosition): Euclidean2DPosition =
         (nodePhysics.physicalForces(environment) + overallIntentionalForce)
             .reduce { acc, p -> acc + p }
-            .let {
-                environment.farthestPositionReachable(
-                    node,
-                    it,
-                    nodeShape.transformed { origin(environment.getPosition(node)) }.radius,
-                )
-            }
 }

@@ -63,13 +63,13 @@ class PhysicalPedestrian2D<T>(
              * it is the vector leading from the center of other to the center of this node, it.magnitude is the
              * actual distance between the two nodes.
              */
-            it.normalized() * (desiredDistance - it.magnitude).coerceAtLeast(0.0)
+            it * (desiredDistance - it.magnitude).coerceAtLeast(0.0) / it.magnitude
         }
     }
 
     override fun physicalForces(
         environment: PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
-    ) = environment.getNodesWithin(comfortArea)
+    ) = environment.nodes
         .asSequence()
         .minusElement(node)
         .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }

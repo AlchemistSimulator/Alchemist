@@ -1,3 +1,33 @@
+### [17.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.1...17.0.2) (2022-04-15)
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v3.0.1 ([4717a29](https://github.com/AlchemistSimulator/Alchemist/commit/4717a29cbf99a686099da258e38663cd92e101cb))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.11 ([ef6919a](https://github.com/AlchemistSimulator/Alchemist/commit/ef6919a9bd67f59ec65321b1a7059e14ec8c4d9a))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.12 ([7c01690](https://github.com/AlchemistSimulator/Alchemist/commit/7c016905a3002596c26337f61c72f35e29512a51))
+
+
+### Style improvements
+
+* **test-loading:** rename a top level constant to match the pattern: [A-Z][_A-Z0-9]* ([3c22975](https://github.com/AlchemistSimulator/Alchemist/commit/3c22975077b399b8b330acca759a97ea91f3cb01))
+
+
+### Dependency updates
+
+* **core-deps:** update org.protelis to v15.3.1 ([8ea760e](https://github.com/AlchemistSimulator/Alchemist/commit/8ea760eaca49f73b31740f7db3b03064a9090682))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.6.1 ([eaff80a](https://github.com/AlchemistSimulator/Alchemist/commit/eaff80a51d8f15d6996bf0c89aab0db2ce708cd5))
+* **deps:** update gohugoio/hugo action to v0.97.0 ([4482573](https://github.com/AlchemistSimulator/Alchemist/commit/448257347067ef78b9d2db1d333924ac140578b6))
+* **deps:** update io.kotest to v5.2.3 ([0568186](https://github.com/AlchemistSimulator/Alchemist/commit/056818690ac068ef8a78932d67c32606aee6ad1a))
+* **deps:** update org.antlr to v4.10 ([ac2e0ac](https://github.com/AlchemistSimulator/Alchemist/commit/ac2e0aca6dcc82f0fcf419a096d4e7d901b950f4))
+* **deps:** update plugin dokka to v1.6.20 ([9cde5f8](https://github.com/AlchemistSimulator/Alchemist/commit/9cde5f8511e9a77a447ce17b381a362e7440bf15))
+* **deps:** update plugin kotlin-qa to v0.15.1 ([7acf248](https://github.com/AlchemistSimulator/Alchemist/commit/7acf248354ac91b4d4df86b51cd6954607e38f51))
+* **deps:** update plugin kotlin-qa to v0.16.0 ([cbe07d5](https://github.com/AlchemistSimulator/Alchemist/commit/cbe07d5edfb1ba9aa0ccec661e24361620c7ad06))
+* **deps:** update plugin multijvmtesting to v0.3.6 ([d3f143d](https://github.com/AlchemistSimulator/Alchemist/commit/d3f143dcfb460731702a4b8b55d1407899d19b26))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.8 ([3c6493f](https://github.com/AlchemistSimulator/Alchemist/commit/3c6493fa2e94d0f8d46a2f5931e6c0409ed7dc92))
+* **deps:** update plugin publishoncentral to v0.7.17 ([a648d89](https://github.com/AlchemistSimulator/Alchemist/commit/a648d89012317d6a727026724cd6a2ca9e6b241c))
+* **deps:** update src/main/hugo/themes/hugo-theme-relearn digest to 31c9c77 ([7486437](https://github.com/AlchemistSimulator/Alchemist/commit/7486437e8030a82d3db4ba97a85f25b0831b2394))
+
 ### [17.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.0...17.0.1) (2022-04-07)
 
 

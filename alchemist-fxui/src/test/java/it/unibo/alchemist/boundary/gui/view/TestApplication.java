@@ -1,6 +1,7 @@
 package it.unibo.alchemist.boundary.gui.view;
 
-import it.unibo.alchemist.boundary.gui.utility.FXResourceLoader;
+import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
+import it.unibo.alchemist.boundary.fxui.util.SingleRunApp;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -10,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import static it.unibo.alchemist.boundary.gui.view.SingleRunApp.ROOT_LAYOUT;
+import static it.unibo.alchemist.boundary.fxui.util.SingleRunApp.ROOT_LAYOUT;
 
 /**
  * Dummy {@link Application} class.

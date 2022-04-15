@@ -1,13 +1,13 @@
 [versions]
-antlr4 = "4.9.3"
+antlr4 = "4.10"
 arrow = "1.0.1"
 graphhopper = "5.0"
 graphstream = "2.0"
 ignite = "2.12.0"
 junit = "5.8.2"
 konf = "1.1.2"
-kotest = "5.2.2"
-dokka = "1.6.10"
+kotest = "5.2.3"
+dokka = "1.6.20"
 kotlin = "1.6.20"
 mockito = "4.4.0"
 protelis = "15.3.0"
@@ -57,7 +57,7 @@ junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref 
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
-kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
 logback = "ch.qos.logback:logback-classic:1.2.11"
@@ -102,9 +102,9 @@ gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 hugo = "io.github.fstaudt.hugo:0.3.0"
 java-qa = "org.danilopianini.gradle-java-qa:0.22.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.15.0"
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.5"
-publishOnCentral = "org.danilopianini.publish-on-central:0.7.16"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.15.1"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.6"
+publishOnCentral = "org.danilopianini.publish-on-central:0.7.17"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:7.1.2"
 taskTree = "com.dorongold.task-tree:2.1.0"

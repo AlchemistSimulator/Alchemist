@@ -11,13 +11,13 @@ package it.unibo.alchemist.boundary.gui.view.property
 
 import com.google.common.base.Charsets
 import com.google.gson.reflect.TypeToken
-import it.unibo.alchemist.boundary.gui.effects.json.EffectSerializer
-import it.unibo.alchemist.boundary.gui.view.properties.PropertyFactory
-import it.unibo.alchemist.boundary.gui.view.properties.RangedDoubleProperty
-import it.unibo.alchemist.boundary.gui.view.properties.RangedIntegerProperty
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableBooleanProperty
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableEnumProperty
-import it.unibo.alchemist.boundary.gui.view.properties.SerializableStringProperty
+import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer
+import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory
+import it.unibo.alchemist.boundary.fxui.properties.internal.RangedIntegerProperty
+import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableBooleanProperty
+import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableEnumProperty
+import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableStringProperty
+import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty
 import it.unibo.alchemist.test.TemporaryFile.create
 import java.io.FileReader
 import java.io.FileWriter
@@ -80,7 +80,7 @@ class PropertySerializationTester<T : Property<E>, E : Any>(
         }
     }
 
-    private fun <T> message(origin: Property<T>?, deserialized: Property<T>?): String? {
+    private fun <T> message(origin: Property<T>?, deserialized: Property<T>?): String {
         if (origin == null) {
             return "original property is null"
         }
@@ -157,7 +157,12 @@ class RangedIntegerPropertySerializationTest : PropertySerializationTest() {
     override val tester = PropertySerializationTester(
         object : TypeToken<RangedIntegerProperty>() {}.type,
         { this as RangedIntegerProperty },
-        RangedIntegerProperty(INTEGER_PROPERTY, INTEGER_INITIAL_VALUE, INTEGER_LOWER_BOUND, INTEGER_UPPER_BOUND)
+        RangedIntegerProperty(
+            INTEGER_PROPERTY,
+            INTEGER_INITIAL_VALUE,
+            INTEGER_LOWER_BOUND,
+            INTEGER_UPPER_BOUND
+        )
     )
 }
 
@@ -172,8 +177,14 @@ class SerializableBooleanPropertySerializationTest : PropertySerializationTest()
     override val tester = PropertySerializationTester(
         object : TypeToken<SerializableBooleanProperty>() {}.type,
         { this as SerializableBooleanProperty },
-        SerializableBooleanProperty(BOOLEAN_PROPERTY, true),
-        SerializableBooleanProperty(BOOLEAN_PROPERTY, false)
+        SerializableBooleanProperty(
+            BOOLEAN_PROPERTY,
+            true
+        ),
+        SerializableBooleanProperty(
+            BOOLEAN_PROPERTY,
+            false
+        )
     )
 }
 
@@ -194,7 +205,10 @@ class SerializableEnumPropertySerializationTest : PropertySerializationTest() {
     override val tester = PropertySerializationTester(
         object : TypeToken<SerializableEnumProperty<TestEnum>>() {}.type,
         { this as SerializableEnumProperty<TestEnum> },
-        SerializableEnumProperty(ENUM_PROPERTY, TestEnum.TEST)
+        SerializableEnumProperty(
+            ENUM_PROPERTY,
+            TestEnum.TEST
+        )
     )
 }
 
@@ -210,6 +224,9 @@ class SerializableStringPropertySerializationTest : PropertySerializationTest() 
     override val tester = PropertySerializationTester(
         object : TypeToken<SerializableStringProperty>() {}.type,
         { this as SerializableStringProperty },
-        SerializableStringProperty(STRING_PROPERTY, STRING_INITIAL_VALUE)
+        SerializableStringProperty(
+            STRING_PROPERTY,
+            STRING_INITIAL_VALUE
+        )
     )
 }

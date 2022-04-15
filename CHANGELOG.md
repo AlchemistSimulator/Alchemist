@@ -1,3 +1,17 @@
+### [17.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.0...17.0.1) (2022-04-07)
+
+
+### Bug Fixes
+
+* **fxui:** adhere to the new package structure ([#1221](https://github.com/AlchemistSimulator/Alchemist/issues/1221)) ([bb09ef4](https://github.com/AlchemistSimulator/Alchemist/commit/bb09ef4b8c71b2ab3f0964c0d241e8075d2f39e4))
+
+
+### Dependency updates
+
+* **deps:** update plugin kotlin-qa to v0.14.2 ([3c82837](https://github.com/AlchemistSimulator/Alchemist/commit/3c82837f662973e268b18188469dccf8a5262466))
+* **deps:** update plugin kotlin-qa to v0.15.0 ([0a36cd7](https://github.com/AlchemistSimulator/Alchemist/commit/0a36cd72a6ad0da5c6f40828af9b1eaaa07a9793))
+* **deps:** update plugin multijvmtesting to v0.3.5 ([cec160f](https://github.com/AlchemistSimulator/Alchemist/commit/cec160fc7275cec072e25793deb89010cd3eb091))
+
 ## [17.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/16.0.0...17.0.0) (2022-04-06)
 
 

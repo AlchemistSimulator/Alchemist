@@ -1,3 +1,10 @@
+### [17.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.3...17.0.4) (2022-04-19)
+
+
+### Dependency updates
+
+* **core-deps:** update plugin kotlin-jvm to v1.6.21 ([0b1503d](https://github.com/AlchemistSimulator/Alchemist/commit/0b1503d186c1e2efef5d7683e69328a4419fc0eb))
+
 ### [17.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.2...17.0.3) (2022-04-19)
 
 

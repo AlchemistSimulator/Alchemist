@@ -1,3 +1,15 @@
+### [17.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.4...17.0.5) (2022-04-20)
+
+
+### Dependency updates
+
+* **core-deps:** update org.protelis to v15.3.2 ([077efc3](https://github.com/AlchemistSimulator/Alchemist/commit/077efc36c63e6270f203a632ae8f89c2bb15ccbc))
+* **deps:** update dependency org.mockito:mockito-core to v4.5.0 ([e6491b4](https://github.com/AlchemistSimulator/Alchemist/commit/e6491b4a2901b6a4993c1e065d84caee57571aa9))
+* **deps:** update plugin com.gradle.enterprise to v3.10 ([a607c5f](https://github.com/AlchemistSimulator/Alchemist/commit/a607c5f331d9785a7392e0d574d13a89e7b30a93))
+* **deps:** update plugin kotlin-qa to v0.16.1 ([1e3f1c8](https://github.com/AlchemistSimulator/Alchemist/commit/1e3f1c8e2fde506db3b2ab57129a7b30ddee0887))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.9 ([15f3340](https://github.com/AlchemistSimulator/Alchemist/commit/15f33407f858db9076e331e79bae2c76c991a5be))
+* **deps:** update plugin publishoncentral to v0.7.18 ([6b04ca7](https://github.com/AlchemistSimulator/Alchemist/commit/6b04ca71173e0c5deff9d9c466c5b76cac726c81))
+
 ### [17.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.3...17.0.4) (2022-04-19)
 
 

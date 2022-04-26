@@ -1,3 +1,24 @@
+### [17.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.5...17.0.6) (2022-04-26)
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v3.0.2 ([cdb2d58](https://github.com/AlchemistSimulator/Alchemist/commit/cdb2d580de9a153a1007a6678f87c44f5da448ce))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.13 ([7d6901e](https://github.com/AlchemistSimulator/Alchemist/commit/7d6901e0e21b8e587eb7981b45e83b4096f4722f))
+
+
+### Dependency updates
+
+* **core-deps:** update org.protelis to v15.3.3 ([acb1c50](https://github.com/AlchemistSimulator/Alchemist/commit/acb1c50c4024cb7940a2e0afd945e3e6a9b0f243))
+* **deps:** update dependency io.arrow-kt:arrow-core to v1.1.0 ([cec298e](https://github.com/AlchemistSimulator/Alchemist/commit/cec298e243b15098395b5e9547c5965080ef023d))
+* **deps:** update dependency io.arrow-kt:arrow-core to v1.1.2 ([d6c1e05](https://github.com/AlchemistSimulator/Alchemist/commit/d6c1e055e6656e041a5556ab26be5887ae1303bd))
+* **deps:** update dependency org.mockito:mockito-core to v4.5.1 ([a0dfdaa](https://github.com/AlchemistSimulator/Alchemist/commit/a0dfdaaaa2458f3ee8b421648e1949955de79184))
+* **deps:** update plugin dokka to v1.6.21 ([b889ce7](https://github.com/AlchemistSimulator/Alchemist/commit/b889ce7473e4e814cb22e26d9d29aad4c646c21b))
+* **deps:** update plugin kotlin-qa to v0.16.2 ([0bf0fd8](https://github.com/AlchemistSimulator/Alchemist/commit/0bf0fd8984c3ead9a1533beecba39201ceab29c6))
+* **deps:** update plugin multijvmtesting to v0.3.7 ([cf9ad45](https://github.com/AlchemistSimulator/Alchemist/commit/cf9ad455ca28879ab460bf44c1bbd317adb28193))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.10 ([6aad116](https://github.com/AlchemistSimulator/Alchemist/commit/6aad116888de4a5109a34c341165e62d28912734))
+* **deps:** update plugin publishoncentral to v0.7.19 ([1bf6794](https://github.com/AlchemistSimulator/Alchemist/commit/1bf6794abd78da8c1a1a64707113ee89af6bdfad))
+
 ### [17.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.4...17.0.5) (2022-04-20)
 
 

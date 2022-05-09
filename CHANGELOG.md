@@ -1,3 +1,31 @@
+### [17.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.6...17.0.7) (2022-05-09)
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.14 ([825ae4b](https://github.com/AlchemistSimulator/Alchemist/commit/825ae4b3b4b4750a0f4b830de9467628a578179b))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v1.2.15 ([e010e38](https://github.com/AlchemistSimulator/Alchemist/commit/e010e389f4dfef9244e40c223fb323f886bb694c))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.1.0 ([e3a17d1](https://github.com/AlchemistSimulator/Alchemist/commit/e3a17d1e58d9feda6c56b726bc2ba924290badfc))
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.7.0 ([d075911](https://github.com/AlchemistSimulator/Alchemist/commit/d0759111e8f7e299442b2c8842b967358b906541))
+* **deps:** update dependency com.graphhopper:graphhopper-core to v5.3 ([56a60af](https://github.com/AlchemistSimulator/Alchemist/commit/56a60af16d05f144522c0e89c5420d66ede9913e))
+* **deps:** update dependency it.unimi.dsi:dsiutils to v2.7.1 ([a1c6b4f](https://github.com/AlchemistSimulator/Alchemist/commit/a1c6b4fdab3eaff6a705088d36d2b7e25543d0f8))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.6 ([44f1515](https://github.com/AlchemistSimulator/Alchemist/commit/44f15156aaebaa59eae625477d2480923c5231f2))
+* **deps:** update gohugoio/hugo action to v0.98.0 ([ff1bbeb](https://github.com/AlchemistSimulator/Alchemist/commit/ff1bbebcf90c0d53f12c57005c55633128eb6eb3))
+* **deps:** update io.kotest to v5.3.0 ([3e6da9b](https://github.com/AlchemistSimulator/Alchemist/commit/3e6da9bde0025018f9f0de8ad2674e857a536bab))
+* **deps:** update node.js to 16.15 ([080e087](https://github.com/AlchemistSimulator/Alchemist/commit/080e087f0e134bab30cedd64b2edb3a36f62d865))
+* **deps:** update org.apache.ignite to v2.13.0 ([1d6363c](https://github.com/AlchemistSimulator/Alchemist/commit/1d6363c2fcd49ed1ab1afe7ef9564d4c907da005))
+* **deps:** update plugin kotlin-qa to v0.17.0 ([d29bb92](https://github.com/AlchemistSimulator/Alchemist/commit/d29bb9282b91b0faffde259aa61e131c982e02e9))
+* **deps:** update plugin kotlin-qa to v0.18.0 ([7aa9934](https://github.com/AlchemistSimulator/Alchemist/commit/7aa993498fae397c290ceef1fdfa1bda46398669))
+
+
+### Documentation
+
+* **website:** remove link to flaky URL zverik.openstreetmap.ru ([54d7718](https://github.com/AlchemistSimulator/Alchemist/commit/54d77185150579cc968ba0e16db7add4bd954dae))
+
 ### [17.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.5...17.0.6) (2022-04-26)
 
 

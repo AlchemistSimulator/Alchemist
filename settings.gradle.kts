@@ -24,7 +24,7 @@ include(
     "alchemist-interfaces",
     "alchemist-loading",
     "alchemist-maps",
-    "alchemist-physical-agents",
+    "alchemist-physics",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",
     "alchemist-swingui",

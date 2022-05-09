@@ -292,7 +292,7 @@ dependencies {
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("biochemistry"))
     testRuntimeOnly(alchemist("cognitive-agents"))
-    testRuntimeOnly(alchemist("physical-agents"))
+    testRuntimeOnly(alchemist("physics"))
 }
 
 // WEBSITE

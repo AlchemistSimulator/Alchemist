@@ -22,7 +22,7 @@ The class supports deploying more nodes than there are available traces by reusi
 The great folks at [OpenStreetMap](https://openstreetmap.org) release GPS data for
 [the whole planet](https://planet.openstreetmap.org/gps/).
 As per the map information,
-[regional extracts](http://zverik.openstreetmap.ru/gps/files/extracts/index.html)
+regional extracts
 are available
 (the full data pack is otherwise larger than 50GB uncompressed).
 {{% /notice %}}

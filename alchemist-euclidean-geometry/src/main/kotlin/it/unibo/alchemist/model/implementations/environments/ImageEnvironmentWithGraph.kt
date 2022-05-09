@@ -15,12 +15,16 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.Direc
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.interfaces.Incarnation
+import it.unibo.alchemist.model.interfaces.Neighborhood
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DNavigationGraph
+import org.dyn4j.dynamics.PhysicsBody
+import org.dyn4j.world.World
 import org.kaikikm.threadresloader.ResourceLoader
 import java.awt.Color
 import java.io.File
@@ -45,6 +49,8 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D<Euclidean2DPosition>, T, ConvexPolygon, Euclidean2DPassage> {
 
     override val graph: Euclidean2DNavigationGraph
+
+    private val world: World<PhysicsBody> = World()
 
     init {
         val resource = ResourceLoader.getResourceAsStream(path)
@@ -82,4 +88,8 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
 
     private fun ConvexPolygon.mapPolygon(mapper: (Euclidean2DPosition) -> Euclidean2DPosition) =
         AwtMutableConvexPolygon(vertices().map(mapper).toMutableList())
+
+    override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
+        super.nodeAdded(node, position, neighborhood)
+    }
 }

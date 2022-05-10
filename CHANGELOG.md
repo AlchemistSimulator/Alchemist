@@ -1,3 +1,15 @@
+### [18.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.0...18.0.1) (2022-05-10)
+
+
+### Build and continuous integration
+
+* **website:** move the website off the main sources, update plugin hugo to v0.4.0 ([#1274](https://github.com/AlchemistSimulator/Alchemist/issues/1274)) ([b2dc652](https://github.com/AlchemistSimulator/Alchemist/commit/b2dc652a5a3390657db83b0c4345a2555dfb2360))
+
+
+### Documentation
+
+* **implementationbase:** remove partial and unused Javadoc comment ([587aaaf](https://github.com/AlchemistSimulator/Alchemist/commit/587aaaf73c533c21cbf9950c0c1c5b50b1591202))
+
 ## [18.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.7...18.0.0) (2022-05-10)
 
 

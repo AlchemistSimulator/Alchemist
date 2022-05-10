@@ -20,16 +20,23 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DNavigationGraph
+import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import org.dyn4j.dynamics.PhysicsBody
+import org.dyn4j.geometry.Vector2
 import org.dyn4j.world.World
 import org.kaikikm.threadresloader.ResourceLoader
 import java.awt.Color
 import java.io.File
 import javax.imageio.ImageIO
 
+private typealias PhysicalProperty2D<T> =
+    PhysicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
 /**
  * An [ImageEnvironment] providing an [Euclidean2DNavigationGraph].
  * The NaviGator algorithm is used to produce such graph (see [generateNavigationGraph]).
@@ -67,6 +74,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
             obstacles = obstacles,
             rooms = rooms
         ).map { Euclidean2DPosition(it.x * zoom + dx, (img.height - it.y) * zoom + dy) }
+        world.gravity = Vector2(0.0, 0.0)
     }
 
     private fun Euclidean2DNavigationGraph.map(
@@ -91,5 +99,13 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
 
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
+        val nodePhysics = node.asPropertyOrNull<T, PhysicalProperty2D<T>>()
+        require(nodePhysics != null && nodePhysics is PhysicsBody) {
+            "This environments require that all nodes have physical property " +
+                "and in particular are a kind of ${PhysicsBody::class.simpleName}"
+        }
+        nodePhysics.translateToOrigin()
+        nodePhysics.translate(position.x, position.y)
+        world.addBody(nodePhysics)
     }
 }

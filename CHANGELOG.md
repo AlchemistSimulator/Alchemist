@@ -1,3 +1,14 @@
+## [18.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.7...18.0.0) (2022-05-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename physical-agents module to physics
+
+### Refactoring
+
+* rename physical-agents module to physics ([fa1b10b](https://github.com/AlchemistSimulator/Alchemist/commit/fa1b10bdc9680231fe150d18e6770601aa66d05b))
+
 ### [17.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/17.0.6...17.0.7) (2022-05-09)
 
 

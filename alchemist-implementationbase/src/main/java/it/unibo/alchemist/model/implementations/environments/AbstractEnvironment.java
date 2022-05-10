@@ -252,9 +252,6 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         return getAllNodesInRange(center, range);
     }
 
-    /**
-     * This method should not get overridden in general. However, if your
-     */
     @Nonnull
     @Override
     public final P getPosition(final Node<T> node) {
@@ -264,11 +261,12 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
             if (nodeExists) {
                 throw new IllegalStateException(
                     "Node " + node + " is registered in the environment, but it has no position."
-                    + " This could be a bug in Alchemist, please open an issue report."
+                    + " This could be a bug in Alchemist, please open an issue report"
+                    + " at https://github.com/AlchemistSimulator/Alchemist/issues/new/choose"
                 );
             } else {
-                final var nodeTyoe = node.getClass().getSimpleName();
-                throw new IllegalArgumentException("Node " + node + ": " + nodeTyoe + " does not exist in the environment.");
+                final var nodeType = node.getClass().getSimpleName();
+                throw new IllegalArgumentException("Node " + node + ": " + nodeType + " does not exist in the environment.");
             }
         }
         return position;

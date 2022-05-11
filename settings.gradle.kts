@@ -6,8 +6,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 plugins {
-    id("com.gradle.enterprise") version "3.9"
-    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.0.8"
+    id("com.gradle.enterprise") version "3.10"
+    id("org.danilopianini.gradle-pre-commit-git-hooks") version "1.0.10"
 }
 
 include(
@@ -24,7 +24,7 @@ include(
     "alchemist-interfaces",
     "alchemist-loading",
     "alchemist-maps",
-    "alchemist-physical-agents",
+    "alchemist-physics",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",
     "alchemist-swingui",

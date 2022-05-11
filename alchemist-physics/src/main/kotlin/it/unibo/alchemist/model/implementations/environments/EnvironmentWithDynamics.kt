@@ -13,7 +13,6 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.properties.Physical2D
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
@@ -63,7 +62,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     override fun addNode(node: Node<T>, position: Euclidean2DPosition) {
         backingEnvironment.addNode(node, position)
         moveNodeToPosition(node, position)
-        val nodePhysics = node.asPropertyOrNull<T, PhysicalProperty2D<T>>() as Physical2D
+        val nodePhysics = node.physics
         /*
          * TODO: This should be a responsability for the Property
          */
@@ -85,8 +84,6 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         node.physics.transform = Transform().apply {
             translate(position.x, position.y)
         }
-        node.physics.translateToOrigin()
-        node.physics.translate(position.x, position.y)
     }
 
     override fun getPosition(node: Node<T>): Euclidean2DPosition = node.physics.position

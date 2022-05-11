@@ -19,8 +19,6 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
-import org.dyn4j.geometry.Circle
-import org.dyn4j.geometry.MassType
 
 /**
  * PhysicalBody
@@ -30,13 +28,7 @@ class Physical2D<T>(
 ) : PhysicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
     PhysicsBody by Body() {
 
-    private val shape = node.asProperty<T, AreaProperty<T>>().shape
-
-    init {
-        this.addFixture(Circle(shape.radius)) // TODO: Generalize
-        this.fixtures.first().restitution = 0.8 // TODO: Is it a valid coefficient?
-        this.setMass(MassType.NORMAL)
-    }
+    private val shape by lazy { node.asProperty<T, AreaProperty<T>>().shape }
 
     override fun physicalForces(
         environment: PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>

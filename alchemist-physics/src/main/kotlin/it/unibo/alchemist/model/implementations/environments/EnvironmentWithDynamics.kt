@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.implementations.properties.Physical2D
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
@@ -35,15 +36,17 @@ class EnvironmentWithDynamics<T>(
     dy: Double = 0.0,
     obstaclesColor: Int = Color.BLACK.rgb,
     roomsColor: Int = Color.BLUE.rgb
-) : Physics2DEnvironment<T> by ImageEnvironmentWithGraph(
-    incarnation,
-    path,
-    zoom,
-    dx,
-    dy,
-    obstaclesColor,
-    roomsColor,
-) {
+) : Dynamics2DEnvironment<T>,
+    Physics2DEnvironment<T> by ImageEnvironmentWithGraph(
+        incarnation,
+        path,
+        zoom,
+        dx,
+        dy,
+        obstaclesColor,
+        roomsColor,
+    ) {
+
     private val world: World<PhysicsBody> = World()
 
     init {

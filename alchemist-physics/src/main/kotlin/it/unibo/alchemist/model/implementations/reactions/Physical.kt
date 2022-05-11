@@ -13,10 +13,10 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 
 class Physical<T>(
-    private val environment: Physics2DEnvironment<T>,
+    private val environment: Dynamics2DEnvironment<T>,
     node: Node<T>,
     timeDistribution: TimeDistribution<T>,
 ) : AbstractReaction<T>(node, timeDistribution) {

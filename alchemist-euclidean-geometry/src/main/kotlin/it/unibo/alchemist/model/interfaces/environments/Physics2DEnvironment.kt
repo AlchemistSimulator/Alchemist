@@ -17,9 +17,4 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  * A [PhysicsEnvironment] using [Euclidean2DPosition]s.
  */
 interface Physics2DEnvironment<T> :
-    PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory> {
-    /**
-     *
-     */
-    fun updatePhysics(elapsedTime: Double) = Unit
-}
+    PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>

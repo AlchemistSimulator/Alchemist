@@ -15,8 +15,6 @@ import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 
@@ -28,11 +26,9 @@ class Physical2D<T>(
 ) : PhysicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
     PhysicsBody by Body() {
 
-    private val shape by lazy { node.asProperty<T, AreaProperty<T>>().shape }
-
     override fun physicalForces(
         environment: PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
-    ): List<Euclidean2DPosition> = TODO()
+    ): List<Euclidean2DPosition> = emptyList()
 
     override fun cloneOnNewNode(node: Node<T>): Physical2D<T> = Physical2D(node)
 }

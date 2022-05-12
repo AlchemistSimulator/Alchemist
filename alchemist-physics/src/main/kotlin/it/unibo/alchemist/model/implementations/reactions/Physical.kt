@@ -9,11 +9,18 @@
 
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.implementations.actions.CognitiveAgentCombineSteering
+import it.unibo.alchemist.model.implementations.actions.steeringstrategies.DistanceWeighted
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.properties.Physical2D
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
+import org.dyn4j.geometry.Vector2
 
 class Physical<T>(
     private val environment: Dynamics2DEnvironment<T>,
@@ -26,10 +33,23 @@ class Physical<T>(
         environment: Environment<T, *>?
     ) = Unit
 
+    private val nodePhysics = node.asProperty<T, Physical2D<T>>()
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Physical<T> =
         Physical(environment, node, timeDistribution)
 
     override fun getRate(): Double = timeDistribution.rate
 
-    override fun execute() = environment.updatePhysics(1 / rate)
+    private fun steerActions() = actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
+    override fun execute() {
+        (actions - steerActions()).forEach { it.execute() }
+        val velocity = CognitiveAgentCombineSteering(
+            environment,
+            this,
+            node,
+            steerActions(),
+            DistanceWeighted(environment, node),
+        ).nextPosition
+        nodePhysics.linearVelocity = Vector2(velocity.x, velocity.y)
+        environment.updatePhysics(1 / rate)
+    }
 }

@@ -72,7 +72,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     private fun addPhysicalProperties(nodePhysics: Physical2D<T>) {
         nodePhysics.addFixture(Circle(nodePhysics.node.asProperty<T, AreaProperty<T>>().shape.radius)) // TODO: Generalize
-        nodePhysics.fixtures.first().restitution = 0.8 // TODO: Is it a valid coefficient?
+        // nodePhysics.fixtures.first().restitution = 1.0 // TODO: Is it a valid coefficient?
         nodePhysics.setMass(MassType.NORMAL)
     }
 
@@ -92,4 +92,9 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         Euclidean2DPosition(this.transform.translationX, this.transform.translationY)
 
     private val Node<T>.physics get() = this.asProperty<T, PhysicalProperty2D<T>>() as Physical2D
+
+    override val origin: Euclidean2DPosition get() = backingEnvironment.origin
+
+    override fun makePosition(vararg coordinates: Double): Euclidean2DPosition =
+        backingEnvironment.makePosition(*coordinates)
 }

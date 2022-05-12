@@ -9,6 +9,6 @@
 
 package it.unibo.alchemist.model.interfaces.environments
 
-interface Dynamics2DEnvironment<T> : Physics2DEnvironment<T> {
+interface Dynamics2DEnvironment<T> : Physics2DEnvironment<T>, Euclidean2DEnvironment<T> {
     fun updatePhysics(elapsedTime: Double)
 }

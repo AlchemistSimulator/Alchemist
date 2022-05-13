@@ -43,15 +43,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     obstaclesColor: Int = Color.BLACK.rgb,
     roomsColor: Int = Color.BLUE.rgb,
     private val backingEnvironment: Physics2DEnvironment<T> = path?.let {
-        ImageEnvironmentWithGraph(
-            incarnation,
-            it,
-            zoom,
-            dx,
-            dy,
-            obstaclesColor,
-            roomsColor,
-        )
+        ImageEnvironmentWithGraph(incarnation, it, zoom, dx, dy, obstaclesColor, roomsColor)
     } ?: Continuous2DEnvironment(incarnation),
 ) : Dynamics2DEnvironment<T>,
     Physics2DEnvironment<T> by backingEnvironment {

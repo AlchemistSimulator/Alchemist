@@ -1,3 +1,12 @@
+### [18.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.1...18.0.2) (2022-05-16)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v15.4.0 ([89c3c20](https://github.com/AlchemistSimulator/Alchemist/commit/89c3c2036f1004efcbf27954ad927698cb0e9e4a))
+* **deps:** update dependency com.github.davidmoten:rtree to v0.10 ([7ede3d0](https://github.com/AlchemistSimulator/Alchemist/commit/7ede3d03b8cb628634cc1e63111b5701f4c7c189))
+* **deps:** update gohugoio/hugo action to v0.99.0 ([91c24b2](https://github.com/AlchemistSimulator/Alchemist/commit/91c24b294929b906ad58b482ac7b0c10878db6b6))
+
 ### [18.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.0...18.0.1) (2022-05-10)
 
 

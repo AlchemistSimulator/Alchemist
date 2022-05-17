@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,9 +10,11 @@ package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import org.apache.commons.math3.random.RandomGenerator
 import java.util.stream.Stream
 import java.util.stream.StreamSupport
-import org.apache.commons.math3.random.RandomGenerator
+import kotlin.math.abs
+import kotlin.math.ceil
 
 /**
  * A (possibly randomized) grid of nodes.
@@ -57,9 +60,9 @@ open class Grid @JvmOverloads constructor(
 ) : Deployment<Position<*>> {
 
     override fun stream(): Stream<Position<*>> {
-        val positions = (1 until stepCount(yStart, yEnd, yStep)).map { yn ->
+        val positions = (0 until stepCount(yStart, yEnd, yStep)).map { yn ->
             val y = yStart + yStep * yn
-            (1 until stepCount(xStart, xEnd, xStep)).map { xn ->
+            (0 until stepCount(xStart, xEnd, xStep)).map { xn ->
                 val x = xStart + xStep * xn
                 val dx = xRand * (randomGenerator.nextDouble() - 0.5) + yn * xShift % xStep
                 val dy = yRand * (randomGenerator.nextDouble() - 0.5) + xn * yShift % yStep
@@ -70,7 +73,5 @@ open class Grid @JvmOverloads constructor(
     }
 
     private fun stepCount(min: Double, max: Double, step: Double): Int =
-        Math.ceil(Math.abs((max - min) / step)).toInt().let {
-            it + if (step * it <= Math.abs(max - min)) 1 else 0
-        }
+        ceil(abs((max - min) / step)).toInt()
 }

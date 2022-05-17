@@ -14,11 +14,11 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
-import it.unibo.alchemist.util.ClassPathScanner
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.testsupport.loadAlchemist
 import it.unibo.alchemist.testsupport.loadAlchemistFromResource
+import it.unibo.alchemist.util.ClassPathScanner
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
@@ -56,7 +56,7 @@ class TestKtVariable<T, P : Position<P>> : StringSpec({
         loadAlchemist<Any, Nothing>("regression/2022-coordination-type-clash.yml") shouldNot beNull()
     }
     "test null values in bindings" {
-        val simulation = loadAlchemistFromResource<Any, Nothing>("regression/2022-coordination-null-bindings.yml")
+        val simulation = loadAlchemistFromResource("regression/2022-coordination-null-bindings.yml")
         simulation shouldNot beNull()
         val variable = simulation.variables["result"]
         variable shouldNot beNull()

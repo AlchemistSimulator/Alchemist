@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
 import org.protelis.lang.datatype.DeviceUID
+import org.protelis.lang.datatype.Field
 import org.protelis.vm.ExecutionEnvironment
 
 /**
@@ -88,10 +89,18 @@ class ProtelisDevice @JvmOverloads constructor(
     override fun has(id: String): Boolean = node.contains(incarnation.createMolecule(id))
 
     /**
-     * Stores the value associated with [id].
+     * Stores a [value] associated with [key].
      */
-    override fun put(id: String, v: Any): Boolean {
-        node.setConcentration(incarnation.createMolecule(id), v)
+    override fun put(key: String, value: Any): Boolean {
+        node.setConcentration(incarnation.createMolecule(key), value)
+        return true
+    }
+
+    /**
+     * Stores a [value] associated with [key].
+     */
+    fun putField(key: String, value: Field<*>): Boolean {
+        node.setConcentration(incarnation.createMolecule(key), value)
         return true
     }
 

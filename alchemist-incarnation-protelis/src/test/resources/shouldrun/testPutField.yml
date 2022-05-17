@@ -1,0 +1,9 @@
+incarnation: protelis
+
+deployments:
+  - type: Point
+    parameters: [0,0]
+    programs:
+      - program: |
+          env.putField("oneField", nbr(1))
+      - program: send

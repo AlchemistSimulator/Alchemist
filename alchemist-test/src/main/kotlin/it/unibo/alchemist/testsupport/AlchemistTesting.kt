@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Time
 import org.kaikikm.threadresloader.ResourceLoader
 
 /**
@@ -53,9 +54,9 @@ fun <T, P : Position<P>> loadAlchemist(
 }
 
 /**
- * Prepares an [InitializedEnvironment] given a [simulationFile] and, optionally, the [variables]' bindings.
+ * Prepares a [Loader] given a [simulationResource].
  */
-fun <T, P : Position<P>> loadAlchemistFromResource(simulationResource: String): Loader {
+fun loadAlchemistFromResource(simulationResource: String): Loader {
     val file = requireNotNull(ResourceLoader.getResource(simulationResource)) {
         "$simulationResource could not be found in the classpath"
     }
@@ -65,7 +66,10 @@ fun <T, P : Position<P>> loadAlchemistFromResource(simulationResource: String): 
 /**
  * Builds a new [Engine], adding a [GlobalExporter] with the required [it.unibo.alchemist.loader.export.Exporter]s.
  */
-fun <T, P : Position<P>> InitializedEnvironment<T, P>.createSimulation() = Engine(environment).also {
+fun <T, P : Position<P>> InitializedEnvironment<T, P>.createSimulation(
+    finalTime: Time = Time.INFINITY,
+    finalStep: Long = Long.MAX_VALUE
+) = Engine(environment, finalStep, finalTime).also {
     it.addOutputMonitor(GlobalExporter(exporters))
 }
 

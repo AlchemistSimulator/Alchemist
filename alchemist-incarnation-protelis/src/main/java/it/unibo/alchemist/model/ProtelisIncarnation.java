@@ -87,6 +87,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 }
             });
 
+    @Nonnull
     private static List<RunProtelisProgram<?>> getIncomplete(
             final Node<?> protelisNode,
             final List<RunProtelisProgram<?>> alreadyDone

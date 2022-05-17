@@ -1,3 +1,41 @@
+## [19.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.3...19.0.0) (2022-05-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **protelis-incarnation:** restore Protelis functionality after a breaking change introduced in #1073
+* **loading:** modify Grid, now the first node is deployed where the initial position of the grid is declared.
+
+### Features
+
+* **loading:** allow implementations to refer to node properties when loading ([2f33b56](https://github.com/AlchemistSimulator/Alchemist/commit/2f33b56d53b29dbd2b8b05e9c98277bbb7c36a80))
+
+
+### Bug Fixes
+
+* **incarnation-protelis:** restore the `env.putField` functionality ([49c4e3a](https://github.com/AlchemistSimulator/Alchemist/commit/49c4e3a7f984ee9f517e17f84424dfd358dbadee))
+* **loading:** modify Grid, now the first node is deployed where the initial position of the grid is declared. ([d659414](https://github.com/AlchemistSimulator/Alchemist/commit/d65941473ff83028ec40726548f55d83e464b98d))
+* **loading:** remove unused type parameters from test ([d2d218c](https://github.com/AlchemistSimulator/Alchemist/commit/d2d218cd2d186dc3b96806df99e685f43aba1bc3))
+* **protelis-incarnation:** annotate non-null returning method `SendToNeighbor.getProtelisProgram` as `@Nonnull` ([67891c1](https://github.com/AlchemistSimulator/Alchemist/commit/67891c10c21c7b97f2c5fb2f4c83a50e79f3994f))
+* **protelis-incarnation:** restore Protelis functionality after a breaking change introduced in [#1073](https://github.com/AlchemistSimulator/Alchemist/issues/1073) ([c2ca6eb](https://github.com/AlchemistSimulator/Alchemist/commit/c2ca6eb555a228432bbf1e498073ffd59a4b4f37))
+
+
+### Tests
+
+* **protelis-incarnation:** add functional regression test verifying that a simple gradient runs ([09921ba](https://github.com/AlchemistSimulator/Alchemist/commit/09921ba236b274db6cd43790432586f1670da67a))
+
+
+### General maintenance
+
+* ignore .hugo_build.lock ([52fc91c](https://github.com/AlchemistSimulator/Alchemist/commit/52fc91c84640b9af2beace29d64679f3fae96f49))
+* **protelis-incarnation:** annotate non-null returning method `ProtelisIncarnation.getIncomplete` as `@Nonnull` ([1ef0e35](https://github.com/AlchemistSimulator/Alchemist/commit/1ef0e35ed56463f5c58d17bf9d7ee732d2caa7fa))
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v15.4.2 ([af71bd9](https://github.com/AlchemistSimulator/Alchemist/commit/af71bd9b2e6f03cdd2847a0ac4baf51f4b407fca))
+* **deps:** update plugin multijvmtesting to v0.4.0 ([de55f3f](https://github.com/AlchemistSimulator/Alchemist/commit/de55f3f442c10ae9960b8cf9df6b70c05e6f647d))
+
 ### [18.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.2...18.0.3) (2022-05-16)
 
 

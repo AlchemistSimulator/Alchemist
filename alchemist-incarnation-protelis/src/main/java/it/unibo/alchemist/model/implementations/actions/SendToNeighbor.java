@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,6 +75,7 @@ public final class SendToNeighbor extends AbstractAction<Object> {
     /**
      * @return the {@link RunProtelisProgram} whose data will be sent
      */
+    @Nonnull
     public RunProtelisProgram<?> getProtelisProgram() {
         return program;
     }

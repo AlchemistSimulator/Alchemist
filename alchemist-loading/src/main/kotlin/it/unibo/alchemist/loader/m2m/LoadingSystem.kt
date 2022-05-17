@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -13,6 +13,8 @@ import it.unibo.alchemist.loader.EnvironmentAndExports
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.deployments.Deployment
 import it.unibo.alchemist.loader.export.Exporter
+import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.interfaces.Environment
@@ -20,13 +22,10 @@ import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
-import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
-import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
-import it.unibo.alchemist.model.interfaces.Node
-import java.lang.IllegalStateException
 import java.util.concurrent.Semaphore
 import java.util.function.Predicate
 
@@ -224,12 +223,14 @@ internal abstract class LoadingSystem(
             deployment.stream().forEach { position ->
                 val node = SimulationModel.visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
                 registerSingleton(node)
-                // NODE CONTENTS
-                loadContentsOnNode(incarnation, node, position, descriptor)
                 // PROPERTIES
                 loadPropertiesOnNode(node, position, descriptor)
+                node.properties.forEach { factory.registerSingleton(it) }
+                // NODE CONTENTS
+                loadContentsOnNode(incarnation, node, position, descriptor)
                 // PROGRAMS
                 loadProgramsOnNode(simulationRNG, incarnation, environment, node, position, descriptor)
+                node.properties.forEach { factory.deregisterSingleton(it) }
                 environment.addNode(node, position)
                 logger.debug("Added node {} at {}", node.id, position)
                 factory.deregisterSingleton(node)

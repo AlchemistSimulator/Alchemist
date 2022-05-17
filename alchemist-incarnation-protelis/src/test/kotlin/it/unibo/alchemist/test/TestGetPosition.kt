@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -18,21 +19,28 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
-import java.util.Optional
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.protelis.lang.datatype.DatatypeFactory
+import java.util.Optional
 
 class TestGetPosition {
     private val environment: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment(ProtelisIncarnation())
     private val randomGenerator = MersenneTwister(0)
     private val node = ProtelisIncarnation<Euclidean2DPosition>().createNode(randomGenerator, environment, null)
     private val reaction = Event(node, ExponentialTime(1.0, randomGenerator))
-    private val action = RunProtelisProgram(environment, node, reaction, randomGenerator, "self.getCoordinates()")
+    private val action = RunProtelisProgram(
+        randomGenerator,
+        environment,
+        node.asProperty(),
+        reaction,
+        "self.getCoordinates()"
+    )
 
     @BeforeEach
     fun setUp() {

@@ -1,3 +1,16 @@
+### [19.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.1...19.0.2) (2022-05-18)
+
+
+### Bug Fixes
+
+* **loading:** Fix a race condition in GraphStreamSupport, potentially sharing a (non-thread-safe) JIRF across threads. ([e232491](https://github.com/AlchemistSimulator/Alchemist/commit/e23249190279051be195b3a679efaf437b5e9af2))
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v16 ([7767356](https://github.com/AlchemistSimulator/Alchemist/commit/77673565679872a3671f9e704b64d171309bcd2b))
+* **deps:** update gohugoio/hugo action to v0.99.1 ([46ea550](https://github.com/AlchemistSimulator/Alchemist/commit/46ea55049bd480506b8c603da9433ae640480cd9))
+
 ### [19.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.0...19.0.1) (2022-05-18)
 
 

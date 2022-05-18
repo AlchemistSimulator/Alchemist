@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,12 +10,12 @@
 package it.unibo.alchemist.loader
 
 import arrow.core.Either
-import it.unibo.alchemist.util.ClassPathScanner
 import it.unibo.alchemist.loader.deployments.Deployment
 import it.unibo.alchemist.model.implementations.linkingrules.OffsetGraphStreamLinkingRule
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.util.ClassPathScanner
 import it.unimi.dsi.util.SplitMix64Random
 import org.apache.commons.math3.util.MathArrays
 import org.apache.commons.math3.util.MathArrays.ebeAdd
@@ -54,7 +54,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
             val generatorClasses = findSuitableGeneratorsFor(generatorName)
             val parameterList = parameters.toList()
             val created = generatorClasses.asSequence()
-                .map { factory.build(it, parameterList) }
+                .map { synchronized(factory) { factory.build(it, parameterList) } }
                 .map { construction ->
                     if (construction.createdObject.isPresent) {
                         Either.Right(construction.createdObject.get())

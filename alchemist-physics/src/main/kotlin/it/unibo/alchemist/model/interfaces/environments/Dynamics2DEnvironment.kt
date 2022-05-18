@@ -9,6 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.environments
 
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.Node
+
 interface Dynamics2DEnvironment<T> : Physics2DEnvironment<T>, Euclidean2DEnvironment<T> {
+
+    fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition)
+
     fun updatePhysics(elapsedTime: Double)
 }

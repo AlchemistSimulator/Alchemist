@@ -69,7 +69,7 @@ class PhysicalPedestrian2D<T>(
 
     override fun physicalForces(
         environment: PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
-    ) = environment.nodes
+    ) = environment.getNodesWithin(comfortArea)
         .asSequence()
         .minusElement(node)
         .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }

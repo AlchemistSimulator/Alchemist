@@ -20,7 +20,6 @@ import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import org.dyn4j.geometry.Vector2
 
 class Physical<T>(
     private val environment: Dynamics2DEnvironment<T>,
@@ -40,6 +39,7 @@ class Physical<T>(
     override fun getRate(): Double = timeDistribution.rate
 
     private fun steerActions() = actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
+
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
         val velocity = CognitiveAgentCombineSteering(
@@ -49,7 +49,7 @@ class Physical<T>(
             steerActions(),
             DistanceWeighted(environment, node),
         ).nextPosition
-        nodePhysics.linearVelocity = Vector2(velocity.x, velocity.y)
+        environment.setVelocity(node, velocity)
         environment.updatePhysics(1 / rate)
     }
 }

@@ -9,22 +9,19 @@
 
 package it.unibo.alchemist.model.implementations.properties
 
+import it.unibo.alchemist.model.implementations.environments.PhysicalProperty2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
-import org.dyn4j.dynamics.Body
-import org.dyn4j.dynamics.PhysicsBody
 
 /**
  * PhysicalBody
  */
 class Physical2D<T>(
     override val node: Node<T>,
-) : PhysicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
-    PhysicsBody by Body() {
+) : PhysicalProperty2D<T> {
 
     override fun physicalForces(
         environment: PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>

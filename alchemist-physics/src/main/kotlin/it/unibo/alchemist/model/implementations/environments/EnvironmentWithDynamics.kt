@@ -10,7 +10,6 @@
 package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.properties.Physical2D
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -20,6 +19,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
+import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 import org.dyn4j.geometry.Circle
 import org.dyn4j.geometry.MassType
@@ -28,7 +28,7 @@ import org.dyn4j.geometry.Vector2
 import org.dyn4j.world.World
 import java.awt.Color
 
-private typealias PhysicalProperty2D<T> =
+typealias PhysicalProperty2D<T> =
     PhysicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
 
 class EnvironmentWithDynamics<T> @JvmOverloads constructor(
@@ -55,43 +55,51 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     private val world: World<PhysicsBody> = World()
 
+    private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
+
     init {
         world.gravity = Vector2(0.0, 0.0)
     }
 
     override fun addNode(node: Node<T>, position: Euclidean2DPosition) {
         backingEnvironment.addNode(node, position)
-        moveNodeToPosition(node, position)
-        val nodePhysics = node.physics
-        /*
-         * TODO: This should be a responsability for the Property
-         */
-        addPhysicalProperties(nodePhysics)
-        world.addBody(nodePhysics)
+        addNodeBody(node)
+        moveNodeBodyToPosition(node, position)
     }
 
-    private fun addPhysicalProperties(nodePhysics: Physical2D<T>) {
-        nodePhysics.addFixture(Circle(nodePhysics.node.asProperty<T, AreaProperty<T>>().shape.radius)) // TODO: Generalize
-        // nodePhysics.fixtures.first().restitution = 1.0 // TODO: Is it a valid coefficient?
-        nodePhysics.setMass(MassType.NORMAL)
+    private fun addNodeBody(node: Node<T>) {
+        val nodeBody = Body()
+        addPhysicalProperties(nodeBody, node.asProperty<T, AreaProperty<T>>().shape.radius)
+        nodeToBody[node] = nodeBody
+        world.addBody(nodeBody)
     }
-
-    override fun updatePhysics(elapsedTime: Double) {
-        world.update(elapsedTime)
-    }
-
-    override fun moveNodeToPosition(node: Node<T>, position: Euclidean2DPosition) {
-        node.physics.transform = Transform().apply {
+    private fun moveNodeBodyToPosition(node: Node<T>, position: Euclidean2DPosition) {
+        nodeToBody[node]?.transform = Transform().apply {
             translate(position.x, position.y)
         }
     }
 
-    override fun getPosition(node: Node<T>): Euclidean2DPosition = node.physics.position
+    private fun addPhysicalProperties(body: PhysicsBody, radius: Double) {
+        body.addFixture(Circle(radius)) // TODO: Generalize
+        body.setMass(MassType.NORMAL)
+    }
 
-    private val Physical2D<*>.position get() =
+    override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) {
+        nodeToBody[node]?.linearVelocity = Vector2(velocity.x, velocity.y)
+    }
+
+    override fun updatePhysics(elapsedTime: Double) {
+        world.update(elapsedTime)
+        nodes.asSequence().forEach {
+            moveNodeToPosition(it, nodeToBody[it]?.position)
+        }
+    }
+
+    override fun getPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position
+        ?: throw IllegalArgumentException("Unable to find $node's position in the environment.")
+
+    private val PhysicsBody.position get() =
         Euclidean2DPosition(this.transform.translationX, this.transform.translationY)
-
-    private val Node<T>.physics get() = this.asProperty<T, PhysicalProperty2D<T>>() as Physical2D
 
     override val origin: Euclidean2DPosition get() = backingEnvironment.origin
 

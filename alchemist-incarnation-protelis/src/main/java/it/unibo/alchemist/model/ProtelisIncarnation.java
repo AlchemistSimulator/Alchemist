@@ -71,11 +71,17 @@ import java.util.stream.Collectors;
  */
 public final class ProtelisIncarnation<P extends Position<P>> implements Incarnation<Object, P> {
 
+    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
+
     /**
      * The name that can be used in a property to refer to the extracted value.
      */
     public static final String VALUE_TOKEN = "<value>";
-    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
+    /**
+     * Statically-referenceable instance. This incarnation *can* work as a singleton, and doing so may save some
+     * memory. However, it is not strictly a singleton (multiple instances do not do harm).
+     */
+    public static final ProtelisIncarnation<?> INSTANCE = new ProtelisIncarnation<>();
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)

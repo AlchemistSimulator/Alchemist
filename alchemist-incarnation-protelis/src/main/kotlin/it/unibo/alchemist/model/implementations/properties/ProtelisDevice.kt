@@ -25,7 +25,7 @@ class ProtelisDevice @JvmOverloads constructor(
     /**
      * A reference to the current incarnation.
      */
-    val incarnation: ProtelisIncarnation<*>,
+    val incarnation: ProtelisIncarnation<*> = ProtelisIncarnation.INSTANCE,
     override val node: Node<Any>,
     networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf()
 ) : NodeProperty<Any>, ExecutionEnvironment, DeviceUID {

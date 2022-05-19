@@ -1,3 +1,15 @@
+### [19.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.3...19.0.4) (2022-05-19)
+
+
+### Bug Fixes
+
+* **incarnation-protelis:** protelis devices are now printed with their actual id ([b6c24d8](https://github.com/AlchemistSimulator/Alchemist/commit/b6c24d8b85e5e70faa18ada29913c8ff80e8af6b))
+
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.enterprise to v3.10.1 ([3f19d1d](https://github.com/AlchemistSimulator/Alchemist/commit/3f19d1de399de945cd64b90dddb079f4a25afd60))
+
 ### [19.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.2...19.0.3) (2022-05-18)
 
 

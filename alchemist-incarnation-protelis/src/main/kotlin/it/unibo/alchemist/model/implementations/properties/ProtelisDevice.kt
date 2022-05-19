@@ -128,6 +128,8 @@ class ProtelisDevice @JvmOverloads constructor(
      */
     override fun setup() { /* Nothing to do */ }
 
+    override fun toString(): String = "PtDevice${node.id}"
+
     companion object {
         private const val serialVersionUID: Long = 1L
     }

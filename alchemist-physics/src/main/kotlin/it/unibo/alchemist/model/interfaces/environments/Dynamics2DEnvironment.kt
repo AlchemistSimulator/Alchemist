@@ -12,9 +12,18 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 
+/**
+ * An [Environment] for physical dynamics.
+ */
 interface Dynamics2DEnvironment<T> : Physics2DEnvironment<T>, Euclidean2DEnvironment<T> {
 
+    /**
+     * Set [node]'s current linear velocity.
+     */
     fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition)
 
+    /**
+     * Compute any collision response and update node positions.
+     */
     fun updatePhysics(elapsedTime: Double)
 }

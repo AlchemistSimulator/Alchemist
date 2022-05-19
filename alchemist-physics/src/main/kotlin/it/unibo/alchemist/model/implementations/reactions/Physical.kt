@@ -21,11 +21,17 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
+/**
+ * A reaction for the update of a [Dynamics2DEnvironment].
+ */
 class Physical<T>(
     private val environment: Dynamics2DEnvironment<T>,
     node: Node<T>,
     timeDistribution: TimeDistribution<T>,
 ) : AbstractReaction<T>(node, timeDistribution) {
+    /**
+     *
+     */
     override fun updateInternalStatus(
         currentTime: Time?,
         hasBeenExecuted: Boolean,
@@ -33,13 +39,23 @@ class Physical<T>(
     ) = Unit
 
     private val nodePhysics = node.asProperty<T, Physical2D<T>>()
+
+    /**
+     *
+     */
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Physical<T> =
         Physical(environment, node, timeDistribution)
 
+    /**
+     *
+     */
     override fun getRate(): Double = timeDistribution.rate
 
     private fun steerActions() = actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
+    /**
+     * Update the [environment] physical state.
+     */
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
         val velocity = CognitiveAgentCombineSteering(

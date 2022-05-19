@@ -16,7 +16,13 @@ import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 
+/**
+ * A [BlendedSteering] reaction which also considers physical interactions.
+ */
 class PhysicalBlendedSteering<T>(
+    /**
+     * The environment in which the node is moving.
+     */
     val environment: Dynamics2DEnvironment<T>,
     node: Node<T>,
     timeDistribution: TimeDistribution<T>,
@@ -25,6 +31,9 @@ class PhysicalBlendedSteering<T>(
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
         Sum(environment, node, super.steerStrategy)
 
+    /**
+     * Update the node physical state.
+     */
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
         val velocity = steerStrategy.computeNextPosition(steerActions())

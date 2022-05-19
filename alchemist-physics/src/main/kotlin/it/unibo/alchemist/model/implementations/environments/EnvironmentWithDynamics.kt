@@ -31,6 +31,9 @@ import java.awt.Color
 typealias PhysicalProperty2D<T> =
     PhysicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
 
+/**
+ * An [Environment] with collision detection and response.
+ */
 class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     incarnation: Incarnation<T, Euclidean2DPosition>,
     path: String? = null,

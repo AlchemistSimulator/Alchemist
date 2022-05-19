@@ -80,19 +80,17 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     }
 
     private fun addPhysicalProperties(body: PhysicsBody, radius: Double) {
-        body.addFixture(Circle(radius)) // TODO: Generalize
+        body.addFixture(Circle(radius))
         body.setMass(MassType.NORMAL)
     }
 
     override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) {
+        moveNodeToPosition(node, nodeToBody[node]?.position)
         nodeToBody[node]?.linearVelocity = Vector2(velocity.x, velocity.y)
     }
 
     override fun updatePhysics(elapsedTime: Double) {
         world.update(elapsedTime)
-        nodes.asSequence().forEach {
-            moveNodeToPosition(it, nodeToBody[it]?.position)
-        }
     }
 
     override fun getPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position

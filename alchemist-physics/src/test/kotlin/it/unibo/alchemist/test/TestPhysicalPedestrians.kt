@@ -10,7 +10,7 @@ import it.unibo.alchemist.testsupport.startSimulation
 class TestPhysicalPedestrians<T, P> : StringSpec({
     "node pushes away a node in the seeking target" {
         loadYamlSimulation<T, P>("pushing_behavior.yml").startSimulation(
-            steps = 300,
+            steps = 800,
             whenFinished = { environment, _, _ ->
                 environment.getPosition(environment.nodes.first()) shouldNotBe environment.makePosition(0, 0)
             }

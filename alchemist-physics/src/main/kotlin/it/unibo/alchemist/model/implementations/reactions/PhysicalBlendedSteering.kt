@@ -10,11 +10,8 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.implementations.actions.physicalstrategies.Sum
-import it.unibo.alchemist.model.implementations.environments.PhysicalProperty2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.properties.Physical2D
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -24,8 +21,6 @@ class PhysicalBlendedSteering<T>(
     node: Node<T>,
     timeDistribution: TimeDistribution<T>,
 ) : BlendedSteering<T>(environment, node, timeDistribution) {
-
-    private val nodePhysics = node.asProperty<T, PhysicalProperty2D<T>>() as Physical2D
 
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
         Sum(environment, node, super.steerStrategy)

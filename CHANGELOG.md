@@ -1,3 +1,15 @@
+## [19.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.4...19.1.0) (2022-05-19)
+
+
+### Features
+
+* **incarnation-protelis:** ProtelisDevice can now get created even when another incarnation is being used (e.g., Scafi) ([bcd4df3](https://github.com/AlchemistSimulator/Alchemist/commit/bcd4df31160a3ac41828ca6809868840007f8a7d))
+
+
+### General maintenance
+
+* **incarnation-protelis:** add a note about a pending Protelis bug ([5362d72](https://github.com/AlchemistSimulator/Alchemist/commit/5362d7232451df7942f84156519c58828579bf6d))
+
 ### [19.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.3...19.0.4) (2022-05-19)
 
 

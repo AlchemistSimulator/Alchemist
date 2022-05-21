@@ -66,6 +66,7 @@ class Physical<T>(
             DistanceWeighted(environment, node),
         ).nextPosition
         environment.setVelocity(node, velocity)
+        environment.setHeading(node, velocity.normalized())
         environment.updatePhysics(1 / rate)
     }
 }

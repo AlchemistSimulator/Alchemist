@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
 import it.unibo.alchemist.model.implementations.actions.CameraSee;
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;

@@ -13,14 +13,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.swingui.api.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.swingui.impl.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.ui.api.PointerSpeed;
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D.Mode;
+import it.unibo.alchemist.boundary.ui.api.ZoomManager;
+import it.unibo.alchemist.boundary.ui.impl.ExponentialZoomManager;
+import it.unibo.alchemist.boundary.ui.impl.PointerSpeedImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.WormholeSwing;
-import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;
-import it.unibo.alchemist.boundary.wormhole.implementation.PointerSpeedImpl;
-import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D.Mode;
-import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
@@ -77,7 +77,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
 
 /**
  * Base-class for each display able a graphically represent a 2D space

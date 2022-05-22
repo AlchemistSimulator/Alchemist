@@ -10,14 +10,15 @@
 package it.unibo.alchemist.boundary.fxui.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
+import it.unibo.alchemist.boundary.ui.api.ViewPort;
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
 import javafx.scene.Node;
 
 import java.util.Objects;
 
 /**
  * Adapter class that adapts the JavaFX {@link Node} class to a generic ViewPort for usage in
- * {@link it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D}.
+ * {@link Wormhole2D}.
  */
 public class NodeViewPort implements ViewPort {
     private Node node;

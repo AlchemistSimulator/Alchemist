@@ -1,13 +1,14 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.boundary.wormhole.implementation;
+package it.unibo.alchemist.boundary.ui.impl;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.PointerSpeed;
+import it.unibo.alchemist.boundary.ui.api.PointerSpeed;
 
 import java.awt.Point;
 

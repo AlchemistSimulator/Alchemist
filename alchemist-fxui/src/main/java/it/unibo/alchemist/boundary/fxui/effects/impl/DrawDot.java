@@ -11,12 +11,12 @@ package it.unibo.alchemist.boundary.fxui.effects.impl;
 
 import com.google.common.collect.Queues;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty;
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.ColorSerializationAdapter;
-import it.unibo.alchemist.boundary.fxui.util.ResourceLoader;
-import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory;
 import it.unibo.alchemist.boundary.fxui.api.DrawCommand;
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.ColorSerializationAdapter;
+import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory;
+import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty;
+import it.unibo.alchemist.boundary.fxui.util.ResourceLoader;
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import javafx.beans.property.DoubleProperty;

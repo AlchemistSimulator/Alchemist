@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.boundary.swingui.effects.Effect;
-import it.unibo.alchemist.boundary.swingui.effects.EffectFactory;
-import it.unibo.alchemist.boundary.swingui.effects.EffectSerializationFactory;
+import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
+import it.unibo.alchemist.boundary.swingui.effect.impl.EffectFactory;
+import it.unibo.alchemist.boundary.swingui.effect.impl.EffectSerializationFactory;
 import it.unibo.alchemist.util.ClassPathScanner;
 import org.danilopianini.io.FileUtilities;
 import org.junit.jupiter.api.Test;

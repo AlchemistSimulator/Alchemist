@@ -6,8 +6,9 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.boundary.interfaces;
+package it.unibo.alchemist.boundary.swingui.api;
 
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.boundary.swingui.effects.Effect;
 import it.unibo.alchemist.model.interfaces.Position;
 

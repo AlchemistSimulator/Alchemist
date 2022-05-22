@@ -8,11 +8,11 @@
  */
 package it.unibo.alchemist.boundary.swingui;
 
-import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
 import it.unibo.alchemist.boundary.monitors.Generic2DDisplay;
 import it.unibo.alchemist.boundary.monitors.MapDisplay;
 import it.unibo.alchemist.boundary.monitors.TimeStepMonitor;
+import it.unibo.alchemist.boundary.swingui.api.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.swingui.effects.EffectSerializationFactory;
 import it.unibo.alchemist.boundary.swingui.effects.JEffectsTab;
 import it.unibo.alchemist.core.interfaces.Simulation;

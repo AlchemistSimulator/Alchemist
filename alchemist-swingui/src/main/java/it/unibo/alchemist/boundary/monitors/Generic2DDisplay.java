@@ -10,8 +10,8 @@ package it.unibo.alchemist.boundary.monitors;
 
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.interfaces.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.l10n.LocalizedResourceBundle;
+import it.unibo.alchemist.boundary.swingui.api.Graphical2DOutputMonitor;
 import it.unibo.alchemist.boundary.swingui.effects.Effect;
 import it.unibo.alchemist.boundary.wormhole.implementation.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager;

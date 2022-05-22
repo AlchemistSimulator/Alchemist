@@ -9,7 +9,7 @@
 package it.unibo.alchemist.boundary.swingui.effects;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.interfaces.GraphicalOutputMonitor;
+import it.unibo.alchemist.boundary.swingui.api.GraphicalOutputMonitor;
 import it.unibo.alchemist.boundary.swingui.tape.JTapeFeatureStack;
 import org.danilopianini.view.ObjectModFrame;
 import org.slf4j.Logger;

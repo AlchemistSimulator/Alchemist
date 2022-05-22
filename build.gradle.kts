@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -279,7 +279,7 @@ evaluationDependsOnChildren()
 
 dependencies {
     // Depend on subprojects whose presence is necessary to run
-    listOf("interfaces", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
+    listOf("api", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
     with(libs.apache.commons) {
         implementation(cli)
         implementation(io)

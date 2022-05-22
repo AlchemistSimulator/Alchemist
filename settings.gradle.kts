@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -21,7 +22,7 @@ include(
     "alchemist-incarnation-sapere",
     "alchemist-incarnation-scafi",
     "alchemist-incarnation-biochemistry",
-    "alchemist-interfaces",
+    "alchemist-api",
     "alchemist-loading",
     "alchemist-maps",
     "alchemist-physics",

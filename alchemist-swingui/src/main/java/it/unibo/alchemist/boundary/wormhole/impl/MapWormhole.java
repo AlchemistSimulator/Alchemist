@@ -9,7 +9,7 @@
 package it.unibo.alchemist.boundary.wormhole.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
+import it.unibo.alchemist.boundary.ui.impl.PointAdapter;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
@@ -21,7 +21,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.util.function.BiFunction;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
 
 /**
  * Wormhole used for maps rendering.

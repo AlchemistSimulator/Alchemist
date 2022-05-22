@@ -9,13 +9,14 @@
 
 package it.unibo.alchemist.boundary.wormhole.impl;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.AbstractWormhole2D;
+import it.unibo.alchemist.boundary.ui.api.ViewPort;
+import it.unibo.alchemist.boundary.ui.impl.AbstractWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 
 import java.awt.Component;
 
-import static it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter.from;
+import static it.unibo.alchemist.boundary.ui.impl.PointAdapter.from;
 
 /**
  * An implementation of [AbstractWormhole2D] for Swing.
@@ -26,7 +27,7 @@ public class WormholeSwing<P extends Position2D<? extends P>> extends AbstractWo
 
     /**
      * @param environment the environment
-     * @param component the {@link it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort}
+     * @param component the {@link ViewPort}
      *   of the UI used for implementing the wormhole
      */
     public WormholeSwing(final Environment<?, P> environment, final Component component) {

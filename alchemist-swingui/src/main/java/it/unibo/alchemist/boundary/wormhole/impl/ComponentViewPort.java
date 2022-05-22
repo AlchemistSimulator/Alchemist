@@ -10,14 +10,15 @@
 package it.unibo.alchemist.boundary.wormhole.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
+import it.unibo.alchemist.boundary.ui.api.ViewPort;
+import it.unibo.alchemist.boundary.ui.impl.AbstractWormhole2D;
 
 import java.awt.Component;
 import java.util.Objects;
 
 /**
  * Adapter class that adapts the AWT {@link Component} class to a generic ViewPort for usage in
- * {@link it.unibo.alchemist.boundary.wormhole.implementation.AbstractWormhole2D}.
+ * {@link AbstractWormhole2D}.
  */
 public class ComponentViewPort implements ViewPort {
     private Component component;

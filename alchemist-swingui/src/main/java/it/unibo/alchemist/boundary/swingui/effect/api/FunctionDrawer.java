@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.swingui.effect.api;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
 

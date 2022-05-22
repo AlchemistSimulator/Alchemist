@@ -8,8 +8,8 @@
  */
 package it.unibo.alchemist.boundary.wormhole.impl;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.AbstractSlideInputManager;
-import it.unibo.alchemist.boundary.wormhole.interfaces.AngleManager;
+import it.unibo.alchemist.boundary.ui.api.AngleManager;
+import it.unibo.alchemist.boundary.ui.impl.AbstractSlideInputManager;
 
 import java.awt.Toolkit;
 

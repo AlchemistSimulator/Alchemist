@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
+import it.unibo.alchemist.boundary.ui.impl.LinearZoomManager;
 import it.unibo.alchemist.boundary.util.InitMapsForge;
 import it.unibo.alchemist.boundary.wormhole.impl.MapWormhole;
-import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.Time;

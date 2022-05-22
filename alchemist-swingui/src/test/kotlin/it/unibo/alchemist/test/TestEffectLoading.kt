@@ -20,8 +20,8 @@ import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
-import it.unibo.alchemist.boundary.gui.effects.DrawBidimensionalGaussianLayersGradient
-import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory
+import it.unibo.alchemist.boundary.swingui.effects.DrawBidimensionalGaussianLayersGradient
+import it.unibo.alchemist.boundary.swingui.effects.EffectSerializationFactory
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 

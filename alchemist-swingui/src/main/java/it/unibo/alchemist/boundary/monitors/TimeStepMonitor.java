@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -29,8 +29,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.concurrent.Semaphore;
 
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
-import static it.unibo.alchemist.boundary.gui.AlchemistSwingUI.loadScaledImage;
+import static it.unibo.alchemist.boundary.swingui.AlchemistSwingUI.DEFAULT_ICON_SIZE;
+import static it.unibo.alchemist.boundary.swingui.AlchemistSwingUI.loadScaledImage;
 
 /**
  *

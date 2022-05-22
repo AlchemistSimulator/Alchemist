@@ -38,10 +38,20 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     val comfortArea: GeometricShape<P, A>
 
     /**
+     * Rectangle of influence
+     */
+    val rectangleOfInfluence: GeometricShape<P, A>
+
+    /**
      * Computes the repulsion force caused by a node that entered the [comfortArea]. This is derived from the work
      * of [Pelechano et al](https://bit.ly/3e3C7Tb).
      */
     fun repulsionForce(other: Node<T>): P
+
+    /**
+     *
+     */
+    fun avoidanceForce(other: Node<T>): P
 }
 
 /**

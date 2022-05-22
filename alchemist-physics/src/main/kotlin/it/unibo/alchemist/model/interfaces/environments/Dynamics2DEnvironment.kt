@@ -23,6 +23,11 @@ interface Dynamics2DEnvironment<T> : Physics2DEnvironment<T>, Euclidean2DEnviron
     fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition)
 
     /**
+     * Get [node]'s current linear velocity.
+     */
+    fun getVelocity(node: Node<T>): Euclidean2DPosition
+
+    /**
      * Compute any collision response and update node positions.
      */
     fun updatePhysics(elapsedTime: Double)

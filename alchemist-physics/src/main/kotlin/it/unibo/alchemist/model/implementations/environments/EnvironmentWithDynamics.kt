@@ -84,6 +84,10 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         nodeToBody[node]?.linearVelocity = Vector2(velocity.x, velocity.y)
     }
 
+    override fun getVelocity(node: Node<T>) = nodeToBody[node]?.let {
+        Euclidean2DPosition(it.linearVelocity.x, it.linearVelocity.y)
+    } ?: this.origin
+
     override fun updatePhysics(elapsedTime: Double) {
         world.update(elapsedTime)
     }

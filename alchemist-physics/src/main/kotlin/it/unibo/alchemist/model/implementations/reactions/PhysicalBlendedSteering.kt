@@ -15,6 +15,8 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A [BlendedSteering] reaction which also considers physical interactions.
@@ -36,7 +38,9 @@ class PhysicalBlendedSteering<T>(
      */
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
-        val velocity = steerStrategy.computeNextPosition(steerActions())
+        val velocity = steerStrategy
+            .computeNextPosition(steerActions())
+            .coerceAtMost(node.asProperty<T, PedestrianProperty<T>>().speed())
         environment.setVelocity(node, velocity)
         environment.updatePhysics(1 / rate)
     }

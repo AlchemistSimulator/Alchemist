@@ -13,6 +13,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
@@ -22,6 +23,7 @@ import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -54,6 +56,14 @@ class PhysicalPedestrian2D<T>(
         .circle(nodeShape.radius + comfortRay)
         .transformed { origin(environment.getPosition(node)) }
 
+    override val rectangleOfInfluence: Euclidean2DShape get() = environment
+        .shapeFactory
+        .rectangle(3.0, 1.0)
+        .transformed {
+            rotate(environment.getHeading(node))
+            origin(node.position + environment.getHeading(node) * 1.5)
+        }
+
     override fun repulsionForce(other: Node<T>): Euclidean2DPosition {
         val myShape = nodeShape.transformed { origin(environment.getPosition(node)) }
         val otherShape = environment.getShape(other)
@@ -67,18 +77,56 @@ class PhysicalPedestrian2D<T>(
         }
     }
 
+    override fun avoidanceForce(other: Node<T>): Euclidean2DPosition =
+        if (environment is Dynamics2DEnvironment) {
+            val distanceVector = (node.position - other.position).let { Vector3D(it.x, it.y, 0.0) }
+            val velocity = environment.getVelocity(node).let { Vector3D(it.x, it.y, 0.0) }
+            println(distanceVector)
+            println(velocity)
+            val tangential = Vector3D
+                .crossProduct(distanceVector, velocity)
+                .crossProduct(distanceVector)
+                .let {
+                    println(it)
+                    Euclidean2DPosition(it.x, it.y)
+                }
+            if (tangential.magnitude > 0) {
+                val slack = environment.getDistanceBetweenNodes(node, other) - 6.0
+                val weight = if (environment.getVelocity(node).dot(environment.getVelocity(other)) > 0) 1.2 else 2.4
+                tangential * (slack * slack) * (weight)
+            } else {
+                environment.origin
+            }
+        } else {
+            environment.origin
+        }
+
+    private val Node<T>.position get() = environment.getPosition(this)
+
     override fun physicalForces(
         environment: PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
-    ) = environment.getNodesWithin(comfortArea)
-        .asSequence()
-        .minusElement(node)
-        .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }
-        .map { repulsionForce(it) }
-        /*
-         * Discard infinitesimal forces.
-         */
-        .filter { it.magnitude > Double.MIN_VALUE }
-        .toList()
+    ): List<Euclidean2DPosition> {
+        val repulsion = environment.getNodesWithin(comfortArea)
+            .asSequence()
+            .minusElement(node)
+            .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }
+            .map { repulsionForce(it) }
+            /*
+             * Discard infinitesimal forces.
+             */
+            .filter { it.magnitude > Double.MIN_VALUE }
+            .toList()
+
+        val avoidance = environment.getNodesWithin(rectangleOfInfluence)
+            .asSequence()
+            .minusElement(node)
+            .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }
+            .map { avoidanceForce(it) }
+            .filter { it.magnitude > Double.MIN_VALUE }
+            .toList()
+
+        return repulsion + avoidance
+    }
 
     override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian2D(randomGenerator, environment, node)
 

@@ -1,3 +1,16 @@
+### [19.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/19.1.0...19.1.1) (2022-05-22)
+
+
+### Build and continuous integration
+
+* **deps:** update actions/upload-artifact action to v3.1.0 ([1d9b5c3](https://github.com/AlchemistSimulator/Alchemist/commit/1d9b5c380046994bada90dcdfd688bd72dda2ceb))
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v16.1.1 ([6cee053](https://github.com/AlchemistSimulator/Alchemist/commit/6cee053eb6a9b4cac2dbe9439a5dbe14904a4287))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.4.6 ([f891a3e](https://github.com/AlchemistSimulator/Alchemist/commit/f891a3e1344dda483dff0ab26b7c65fa7886166a))
+
 ## [19.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.4...19.1.0) (2022-05-19)
 
 

@@ -26,6 +26,10 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {
+    /**
+     * Whether the pedestrian is fallen and thus an obstacle.
+     */
+    val isFallen: Boolean get() = false
 
     /**
      * The comfort ray of this pedestrian, this is added to the radius of its [shape] to obtain the [comfortArea].

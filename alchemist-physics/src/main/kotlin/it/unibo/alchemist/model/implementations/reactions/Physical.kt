@@ -30,7 +30,7 @@ class Physical<T>(
     timeDistribution: TimeDistribution<T>,
 ) : AbstractReaction<T>(node, timeDistribution) {
     /**
-     *
+     * Update the internal status of the reaction.
      */
     override fun updateInternalStatus(
         currentTime: Time?,
@@ -41,13 +41,13 @@ class Physical<T>(
     private val nodePhysics = node.asProperty<T, Physical2D<T>>()
 
     /**
-     *
+     * Clones this reaction for [node].
      */
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Physical<T> =
         Physical(environment, node, timeDistribution)
 
     /**
-     *
+     * This reaction average rate.
      */
     override fun getRate(): Double = timeDistribution.rate
 
@@ -66,7 +66,9 @@ class Physical<T>(
             DistanceWeighted(environment, node),
         ).nextPosition
         environment.setVelocity(node, velocity)
-        environment.setHeading(node, velocity.normalized())
+        if (velocity.magnitude > 0) {
+            environment.setHeading(node, velocity.normalized())
+        }
         environment.updatePhysics(1 / rate)
     }
 }

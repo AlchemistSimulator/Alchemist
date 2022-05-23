@@ -50,12 +50,28 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
      * Computes the repulsion force caused by a node that entered the [comfortArea]. This is derived from the work
      * of [Pelechano et al](https://bit.ly/3e3C7Tb).
      */
-    fun repulsionForce(other: Node<T>): P
+    fun repulse(other: Node<T>): P
 
     /**
-     *
+     * Computes the repulsion force caused by a node that entered the [rectangleOfInfluence]. This is derived from
+     * the work of [Pelechano et al](https://bit.ly/3e3C7Tb).
      */
-    fun avoidanceForce(other: Node<T>): P
+    fun avoid(other: Node<T>): P
+
+    /**
+     * Computes the total repulsion force this node is subject to.
+     */
+    fun repulsionForce(): List<P>
+
+    /**
+     * Computes the total avoidance force this node is subject to.
+     */
+    fun avoidanceForce(): List<P>
+
+    /**
+     * Computes the avoidance force from a fallen pedestrian.
+     */
+    fun fallenAgentAvoidanceForce(): List<P>
 }
 
 /**

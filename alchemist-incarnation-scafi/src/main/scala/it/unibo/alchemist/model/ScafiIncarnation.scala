@@ -7,23 +7,22 @@
  */
 package it.unibo.alchemist.model
 
-import java.util.Objects
+import it.unibo.alchemist.model.ScafiIncarnationUtils._
 import it.unibo.alchemist.model.implementations.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.implementations.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.nodes.{GenericNode, ScafiDevice, ScafiNode}
+import it.unibo.alchemist.model.implementations.nodes.{GenericNode, ScafiDevice}
 import it.unibo.alchemist.model.implementations.reactions.{ChemicalReaction, Event}
 import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, ExponentialTime}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces._
-import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
 
+import java.util.Objects
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
-import ScafiIncarnationUtils._
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   private[this] def notNull[T](t: T, name: String = "Object"): T = Objects.requireNonNull(t, s"$name must not be null")
@@ -84,7 +83,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     CachedInterpreter[AnyRef](if(doCacheValue) v else v.tail, doCacheValue).asInstanceOf[T]
   }
 
-  override def createConcentration(): T = createConcentration("")
+  override def createConcentration(): T = null.asInstanceOf[T]
 
   override def createCondition(rand: RandomGenerator, env: Environment[T, P] , node: Node[T], time: TimeDistribution[T], reaction: Reaction[T], param: String): Condition[T] = {
     if(!isScafiNode(node)) {
@@ -155,9 +154,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 }
 
 object ScafiIncarnationUtils {
-  def isScafiNode[T](node: Node[T]): Boolean = {
-    node.getProperties.asScala.exists(_.isInstanceOf[ScafiDevice[T]]) // TODO: node.asPropertyOrNull() seems to not work (in scala)
-  }
+  def isScafiNode[T](node: Node[T]): Boolean = node.asPropertyOrNull[ScafiDevice[T]](classOf[ScafiDevice[T]]) != null
 
   def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for(reaction: Reaction[T] <- node.getReactions().asScala;

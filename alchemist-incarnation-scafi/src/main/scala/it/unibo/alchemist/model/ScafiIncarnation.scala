@@ -8,11 +8,10 @@
 package it.unibo.alchemist.model
 
 import java.util.Objects
-
 import it.unibo.alchemist.model.implementations.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.implementations.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.nodes.ScafiNode
+import it.unibo.alchemist.model.implementations.nodes.{GenericNode, ScafiDevice, ScafiNode}
 import it.unibo.alchemist.model.implementations.reactions.{ChemicalReaction, Event}
 import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, ExponentialTime}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
@@ -20,6 +19,7 @@ import it.unibo.alchemist.model.interfaces._
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
+
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
@@ -51,7 +51,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     if (!isScafiNode(node)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
-    val scafiNode = node.asInstanceOf[ScafiNode[T,P]]
+    val scafiNode = node
     if(param=="send") {
       val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
       val spList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node)
@@ -113,7 +113,9 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createNode(rand: RandomGenerator, env: Environment[T, P], param: String) = {
-    new ScafiNode(env)
+    val scafiNode = new GenericNode[T](this, env)
+    scafiNode.addProperty(new ScafiDevice(scafiNode))
+    scafiNode
   }
 
   override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String): Reaction[T] = {
@@ -153,7 +155,9 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 }
 
 object ScafiIncarnationUtils {
-  def isScafiNode[T](node: Node[T]): Boolean = node.isInstanceOf[ScafiNode[_,_]]
+  def isScafiNode[T](node: Node[T]): Boolean = {
+    node.getProperties.asScala.exists(_.isInstanceOf[ScafiDevice[T]]) // TODO: node.asPropertyOrNull() seems to not work (in scala)
+  }
 
   def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
     for(reaction: Reaction[T] <- node.getReactions().asScala;

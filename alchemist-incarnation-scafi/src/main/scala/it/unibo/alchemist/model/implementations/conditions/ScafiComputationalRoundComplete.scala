@@ -18,7 +18,7 @@ final class ScafiComputationalRoundComplete[T](val node: Node[T], val program: R
   declareDependencyOn(this.program.asMolecule)
 
   override def cloneCondition(n: Node[T], r: Reaction[T]): Condition[T] = {
-    if (!n.isInstanceOf[ScafiNode[_, _]]) {
+    if (ScafiIncarnationUtils.isScafiNode(n)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + n.getClass.getSimpleName)
     }
     val possibleRefs: Iterable[RunScafiProgram[_, _]] = ScafiIncarnationUtils.allScafiProgramsFor(n)

@@ -18,7 +18,7 @@ import scala.jdk.CollectionConverters._
 
 class SendScafiMessage[T, P<:Position[P]](
   env: Environment[T, P],
-  node: ScafiNode[T, P],
+  node: Node[T],
   reaction: Reaction[T],
   val program: RunScafiProgram[T, P]
 ) extends AbstractAction[T](node) {
@@ -40,7 +40,7 @@ class SendScafiMessage[T, P<:Position[P]](
     if(!isScafiNode(n)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
-    val destinationNode = n.asInstanceOf[ScafiNode[T, P]]
+    val destinationNode = node
     val possibleRef = destinationNode.getReactions.stream()
       .flatMap { reaction => reaction.getActions.stream() }
       .filter { action => action.isInstanceOf[RunScafiProgram[_, _]] }

@@ -42,7 +42,8 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     val comfortArea: GeometricShape<P, A>
 
     /**
-     * Rectangle of influence
+     * Rectangle of influence. When a pedestrian enters this area, the node could experience a tangential
+     * avoidance force. See [avoid].
      */
     val rectangleOfInfluence: GeometricShape<P, A>
 

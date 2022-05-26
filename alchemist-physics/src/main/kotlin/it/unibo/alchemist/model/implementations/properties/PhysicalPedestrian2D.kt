@@ -61,7 +61,7 @@ class PhysicalPedestrian2D<T>(
         .rectangle(rectangleOfInfluenceDimensions.first, rectangleOfInfluenceDimensions.second)
         .transformed {
             rotate(environment.getHeading(node))
-            origin(node.position + environment.getHeading(node) * 1.5)
+            origin(node.position + environment.getHeading(node) * (rectangleOfInfluenceDimensions.first / 2.0))
         }
 
     private val Node<T>.position get() = environment.getPosition(this)
@@ -106,7 +106,7 @@ class PhysicalPedestrian2D<T>(
     }
 
     private fun avoidanceDistanceWeight(other: Node<T>): Double {
-        val weight = environment.getDistanceBetweenNodes(node, other) - (rectangleOfInfluenceDimensions.first / 2)
+        val weight = environment.getDistanceBetweenNodes(node, other) - (rectangleOfInfluenceDimensions.first / 2.0)
         return weight * weight
     }
 

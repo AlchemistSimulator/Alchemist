@@ -73,7 +73,7 @@ class PhysicalPedestrian2D<T>(
     private val Node<T>.position get() = environment.getPosition(this)
 
     override fun checkAndPossiblyFall() {
-        isFallen = shouldFall(repulsionForces())
+        isFallen = isFallen || shouldFall(repulsionForces())
     }
 
     override fun shouldFall(pushingForces: List<Euclidean2DPosition>) =
@@ -112,7 +112,7 @@ class PhysicalPedestrian2D<T>(
                 environment.getVelocity(other),
             )
             if (tangentialForce.magnitude > 0) {
-                return tangentialForce * weightFactor
+                return tangentialForce.normalized() * weightFactor
             }
         }
         return Euclidean2DPosition.zero

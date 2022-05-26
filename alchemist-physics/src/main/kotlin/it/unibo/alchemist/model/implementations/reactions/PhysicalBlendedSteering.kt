@@ -45,17 +45,19 @@ class PhysicalBlendedSteering<T>(
      */
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
+        val force = steerStrategy.computeNextPosition(steerActions())
         if (!physics.isFallen) {
-            val force = steerStrategy.computeNextPosition(steerActions())
             previouslyAppliedForce += force
-            val velocity = computeNewVelocity(force)
             physics.checkAndPossiblyFall()
+            val velocity = computeNewVelocity(force)
             environment.setVelocity(node, velocity)
             if (velocity.magnitude > 0) {
                 environment.setHeading(node, velocity.normalized())
             }
-            environment.updatePhysics(1 / rate)
+        } else {
+            environment.setVelocity(node, Euclidean2DPosition.zero)
         }
+        environment.updatePhysics(1 / rate)
     }
 
     private fun computeNewVelocity(force: Euclidean2DPosition): Euclidean2DPosition {

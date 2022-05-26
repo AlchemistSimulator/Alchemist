@@ -26,10 +26,25 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,
           F : GeometricShapeFactory<P, A> {
+
     /**
      * Whether the pedestrian is fallen and thus an obstacle.
      */
-    val isFallen: Boolean get() = false
+    val isFallen: Boolean
+
+    /**
+     * Turn this [node] into a fallen pedestrian if it [shouldFall].
+     */
+    fun checkAndPossiblyFall()
+
+    /**
+     * Determine if this pedestrian subject to [pushingForces] should fall.
+     * According to the work of [Pelechano et al](https://bit.ly/3e3C7Tb)
+     * this should append when the majority of pushing forces affecting one individual are
+     * approximately in the same direction and the sum of forces have a magnitude high
+     * enough to make it lose equilibrium.
+     */
+    fun shouldFall(pushingForces: List<P>): Boolean
 
     /**
      * The comfort ray of this pedestrian, this is added to the radius of its [shape] to obtain the [comfortArea].
@@ -62,17 +77,17 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     /**
      * Computes the total repulsion force this node is subject to.
      */
-    fun repulsionForce(): List<P>
+    fun repulsionForces(): List<P>
 
     /**
      * Computes the total avoidance force this node is subject to.
      */
-    fun avoidanceForce(): List<P>
+    fun avoidanceForces(): List<P>
 
     /**
      * Computes the avoidance force from a fallen pedestrian.
      */
-    fun fallenAgentAvoidanceForce(): List<P>
+    fun fallenAgentAvoidanceForces(): List<P>
 }
 
 /**

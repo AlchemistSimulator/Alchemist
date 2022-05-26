@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
 import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
@@ -37,6 +38,11 @@ class PhysicalPedestrian2D<T>(
     val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
 ) : PhysicalPedestrian2D<T> {
+
+    private val pedestrian by lazy { node.asProperty<T, PedestrianProperty<T>>() }
+
+    override var isFallen: Boolean = false
+        private set
 
     private val nodeShape by lazy { node.asProperty<T, AreaProperty<T>>().shape }
 
@@ -66,7 +72,14 @@ class PhysicalPedestrian2D<T>(
 
     private val Node<T>.position get() = environment.getPosition(this)
 
-    override fun repulsionForce(): List<Euclidean2DPosition> = collectForces(::repulse, comfortArea)
+    override fun checkAndPossiblyFall() {
+        isFallen = shouldFall(repulsionForces())
+    }
+
+    override fun shouldFall(pushingForces: List<Euclidean2DPosition>) =
+        pushingForces.fold(Euclidean2DPosition.zero) { acc, f -> acc + f }.magnitude > pedestrian.runningSpeed
+
+    override fun repulsionForces(): List<Euclidean2DPosition> = collectForces(::repulse, comfortArea)
 
     override fun repulse(other: Node<T>): Euclidean2DPosition {
         val myShape = nodeShape.transformed { origin(environment.getPosition(node)) }
@@ -81,7 +94,7 @@ class PhysicalPedestrian2D<T>(
         }
     }
 
-    override fun avoidanceForce() = collectForces(::avoid, rectangleOfInfluence)
+    override fun avoidanceForces() = collectForces(::avoid, rectangleOfInfluence)
 
     override fun avoid(other: Node<T>): Euclidean2DPosition {
         if (environment is Dynamics2DEnvironment) {
@@ -116,7 +129,7 @@ class PhysicalPedestrian2D<T>(
             else -> directionWeight * 2
         }
 
-    override fun fallenAgentAvoidanceForce() =
+    override fun fallenAgentAvoidanceForces() =
         collectForces(::avoid, environment.shapeFactory.circle(fallenAgentPerceptionRadius)) {
             it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
         }
@@ -136,7 +149,7 @@ class PhysicalPedestrian2D<T>(
 
     override fun physicalForces(
         environment: PhysicsEnvironment<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>,
-    ): List<Euclidean2DPosition> = avoidanceForce()
+    ): List<Euclidean2DPosition> = avoidanceForces()
 
     override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian2D(randomGenerator, environment, node)
 
@@ -144,11 +157,11 @@ class PhysicalPedestrian2D<T>(
         /**
          * Minimum value for normal state [comfortRay].
          */
-        private const val minimumSpaceTreshold = 0.1
+        private const val minimumSpaceTreshold = 0.5
         /**
          * Maximum value for normal state [comfortRay].
          */
-        private const val maximumSpaceThreshold = 1.0
+        private const val maximumSpaceThreshold = 1.5
         /**
          * Dimension of the rectangle of influence (width, height).
          */

@@ -48,10 +48,10 @@ class PhysicalBlendedSteering<T>(
         val force = steerStrategy.computeNextPosition(steerActions())
         previouslyAppliedForce += force
         val normalizedForce = if (force.magnitude > 0) force.normalized() else Euclidean2DPosition.zero
-        val fallenAgentRepulsionForce = physics.fallenAgentAvoidanceForce().total()
+        val fallenAgentAvoidanceForce = physics.fallenAgentAvoidanceForce().total()
         val repulsionForce = physics.repulsionForce().total()
         val fallenAgentAvoidancePriority = when {
-            fallenAgentRepulsionForce.magnitude > 0 -> fallenAgentAvoidanceWeight
+            fallenAgentAvoidanceForce.magnitude > 0 -> fallenAgentAvoidanceForceWeight
             else -> 0.0
         }
         /*
@@ -61,15 +61,18 @@ class PhysicalBlendedSteering<T>(
          */
         val velocityFactor = if (repulsionForce.magnitude > 0) 0.0 else 1.0
         val velocity = (normalizedForce * (1.0 - fallenAgentAvoidancePriority)) +
-            (fallenAgentRepulsionForce * fallenAgentAvoidancePriority) *
+            (fallenAgentAvoidanceForce * fallenAgentAvoidancePriority) *
             pedestrian.speed() * velocityFactor + repulsionForce
         environment.setVelocity(node, velocity)
+        if (velocity.magnitude > 0) {
+            environment.setHeading(node, velocity.normalized())
+        }
         environment.updatePhysics(1 / rate)
     }
 
     private fun List<Euclidean2DPosition>.total() = this.fold(Euclidean2DPosition.zero) { acc, f -> acc + f }
 
     companion object {
-        private const val fallenAgentAvoidanceWeight = 0.5
+        private const val fallenAgentAvoidanceForceWeight = 0.5
     }
 }

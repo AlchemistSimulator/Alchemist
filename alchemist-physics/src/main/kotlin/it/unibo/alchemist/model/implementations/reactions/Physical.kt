@@ -12,14 +12,12 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.implementations.actions.CognitiveAgentCombineSteering
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.DistanceWeighted
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.properties.Physical2D
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A reaction for the update of a [Dynamics2DEnvironment].
@@ -37,8 +35,6 @@ class Physical<T>(
         hasBeenExecuted: Boolean,
         environment: Environment<T, *>?
     ) = Unit
-
-    private val nodePhysics = node.asProperty<T, Physical2D<T>>()
 
     /**
      * Clones this reaction for [node].

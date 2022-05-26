@@ -93,7 +93,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     parameters: String
   ): Condition[T] = {
     if(!isScafiNode(node)) {
-      throw new IllegalArgumentException(s"The node must has an instance of ${classOf[ScafiDevice[_]]} as property")
+      throw new IllegalArgumentException(s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property")
     }
     val alreadyDone = ScafiIncarnationUtils
       .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])

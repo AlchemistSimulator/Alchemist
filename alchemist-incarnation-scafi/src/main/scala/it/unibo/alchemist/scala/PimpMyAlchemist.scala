@@ -15,13 +15,13 @@ import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import com.google.common.cache.CacheLoader
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-
+import it.unibo.alchemist.model.interfaces.geometry.Vector
 @SuppressFBWarnings
 object PimpMyAlchemist {
   /**
    * Wraps a Position, providing + and - operations.
    */
-  implicit class RichPosition[P <: Position[P] with it.unibo.alchemist.model.interfaces.geometry.Vector[P]](position: P) {
+  implicit class RichPosition[P <: Position[P] with Vector[P]](position: P) {
     def -(p: P) = position.minus(p)
     def +(p: P) = position.plus(p)
   }

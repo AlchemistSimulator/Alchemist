@@ -30,17 +30,16 @@ class SendScafiMessage[T, P<:Position[P]](
    * useful to support runtime creation of nodes with the same reaction
    * programming, e.g. for morphogenesis.
    *
-   * @param n
+   * @param destinationNode
    * The node where to clone this { @link Action}
    * @param r
    * The reaction to which the CURRENT action is assigned
    * @return the cloned action
    */
-  override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = {
-    if(!isScafiNode(n)) {
+  override def cloneAction(destinationNode: Node[T], r: Reaction[T]): Action[T] = {
+    if(!isScafiNode(destinationNode)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
-    val destinationNode = node
     val possibleRef = destinationNode.getReactions.stream()
       .flatMap { reaction => reaction.getActions.stream() }
       .filter { action => action.isInstanceOf[RunScafiProgram[_, _]] }

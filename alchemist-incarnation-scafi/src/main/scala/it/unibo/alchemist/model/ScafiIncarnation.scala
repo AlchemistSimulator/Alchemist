@@ -50,7 +50,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     if (!isScafiNode(node)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
-    val scafiNode = node
     if(param=="send") {
       val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
       val spList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node)
@@ -61,7 +60,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
       if (spList.size > 1) {
         throw new IllegalStateException("There are too many programs requiring a " + classOf[SendScafiMessage[T,P]].getName + " action: " + spList)
       }
-       new SendScafiMessage[T,P](env, scafiNode, reaction, spList.head)
+       new SendScafiMessage[T,P](env, node, reaction, spList.head)
     } else {
       new RunScafiProgram[T, P](
         notNull(env, "environment"),
@@ -87,8 +86,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
   override def createCondition(rand: RandomGenerator, env: Environment[T, P] , node: Node[T], time: TimeDistribution[T], reaction: Reaction[T], param: String): Condition[T] = {
     if(!isScafiNode(node)) {
-      throw new IllegalArgumentException(s"The node must be an instance of ${classOf[ScafiNode[_,_]]}"
-      + s", but it is an ${node.getClass} instead.")
+      throw new IllegalArgumentException(s"The node must has an instance of ${classOf[ScafiDevice[_]]} as property")
     }
     val alreadyDone = ScafiIncarnationUtils
       .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])

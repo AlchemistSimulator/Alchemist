@@ -34,7 +34,7 @@ final class ScafiComputationalRoundComplete[T](val node: Node[T], val program: R
 
   override def isValid = program.isComputationalCycleComplete
 
-  override def getNode = super.getNode.asInstanceOf[ScafiNode[T,_]]
+  override def getNode = super.getNode
 
   override def toString = program.asMolecule.getName + " completed round"
 }

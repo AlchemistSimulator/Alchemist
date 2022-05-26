@@ -13,5 +13,5 @@ import scala.tools.reflect.ToolBox
 object ScalaInterpreter {
   private[this] val toolbox = currentMirror.mkToolBox()
 
-  def apply[A](string: String): A = toolbox.eval(toolbox.parse(string)).asInstanceOf[A]
+  def apply[A](code: String): A = toolbox.eval(toolbox.parse(code)).asInstanceOf[A]
 }

@@ -17,7 +17,7 @@ import java.util.stream.Collectors
 import scala.jdk.CollectionConverters._
 
 class SendScafiMessage[T, P<:Position[P]](
-  env: Environment[T, P],
+  environment: Environment[T, P],
   node: Node[T],
   reaction: Reaction[T],
   val program: RunScafiProgram[T, P]
@@ -32,11 +32,11 @@ class SendScafiMessage[T, P<:Position[P]](
    *
    * @param destinationNode
    * The node where to clone this { @link Action}
-   * @param r
+   * @param reaction
    * The reaction to which the CURRENT action is assigned
    * @return the cloned action
    */
-  override def cloneAction(destinationNode: Node[T], r: Reaction[T]): Action[T] = {
+  override def cloneAction(destinationNode: Node[T], reaction: Reaction[T]): Action[T] = {
     if(!isScafiNode(destinationNode)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
@@ -46,7 +46,7 @@ class SendScafiMessage[T, P<:Position[P]](
       .map { action => action.asInstanceOf[RunScafiProgram[T, P]] }
       .collect(Collectors.toList[RunScafiProgram[T, P]])
     if (possibleRef.size() == 1) {
-      return new SendScafiMessage(env, destinationNode, reaction, possibleRef.get(0))
+      return new SendScafiMessage(environment, destinationNode, reaction, possibleRef.get(0))
     }
     throw new IllegalStateException("There must be one and one only unconfigured " + RunScafiProgram.getClass.getSimpleName)
   }
@@ -57,8 +57,8 @@ class SendScafiMessage[T, P<:Position[P]](
   override def execute(): Unit = {
     val toSend = program.getExport(node.getId).get
     for (
-      nbr <- env.getNeighborhood(node).getNeighbors.iterator().asScala;
-      action <- ScafiIncarnationUtils.allScafiProgramsFor[T, P](nbr).filter(program.getClass.isInstance(_))) {
+      neighborhood <- environment.getNeighborhood(node).getNeighbors.iterator().asScala;
+      action <- ScafiIncarnationUtils.allScafiProgramsFor[T, P](neighborhood).filter(program.getClass.isInstance(_))) {
       action.sendExport(node.getId, toSend)
     }
     program.prepareForComputationalCycle

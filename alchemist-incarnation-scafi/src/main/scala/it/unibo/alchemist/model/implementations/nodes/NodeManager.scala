@@ -16,7 +16,6 @@ trait NodeManager {
   def getOption[V](molecule: String): Option[V]
   def has(molecule: String): Boolean
   def remove(molecule: String): Unit
-
   def getOrElse[T](molecule: String, defaultValue: => T): T = getOption(molecule).getOrElse(defaultValue)
 }
 

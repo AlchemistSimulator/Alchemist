@@ -16,7 +16,7 @@ final class ScafiComputationalRoundComplete[T](val node: Node[T], val program: R
   extends AbstractCondition(node) {
   declareDependencyOn(this.program.asMolecule)
 
-  override def cloneCondition(n: Node[T], r: Reaction[T]): Condition[T] = {
+  override def cloneCondition(n: Node[T], reaction: Reaction[T]): Condition[T] = {
     if (ScafiIncarnationUtils.isScafiNode(n)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + n.getClass.getSimpleName)
     }

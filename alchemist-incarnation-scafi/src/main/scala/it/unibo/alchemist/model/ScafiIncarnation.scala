@@ -25,9 +25,9 @@ import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
 sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
-  private[this] def notNull[T](t: T, name: String = "Object"): T = Objects.requireNonNull(t, s"$name must not be null")
+  private[this] def notNull[V](value: V, name: String = "Object"): V = Objects.requireNonNull(value, s"$name must not be null")
 
-  private[this] def toDouble(v: Any): Double = v match {
+  private[this] def toDouble(value: Any): Double = value match {
     case x: Double => x
     case x: Int => x
     case x: String => java.lang.Double.parseDouble(x)
@@ -40,33 +40,33 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createAction(
-      rand: RandomGenerator,
-      env: Environment[T, P],
-      node: Node[T],
-      time: TimeDistribution[T],
-      reaction: Reaction[T],
-      param: String
+    randomGenerator: RandomGenerator,
+    environment: Environment[T, P],
+    node: Node[T],
+    time: TimeDistribution[T],
+    reaction: Reaction[T],
+    param: String
   ) = {
     if (!isScafiNode(node)) {
       throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
     }
     if(param=="send") {
       val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
-      val spList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node)
-      spList --= alreadyDone
-      if (spList.isEmpty) {
+      val scafiProgramsList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node)
+      scafiProgramsList --= alreadyDone
+      if (scafiProgramsList.isEmpty) {
         throw new IllegalStateException("There is no program requiring a " + classOf[SendScafiMessage[T,P]].getSimpleName + " action")
       }
-      if (spList.size > 1) {
-        throw new IllegalStateException("There are too many programs requiring a " + classOf[SendScafiMessage[T,P]].getName + " action: " + spList)
+      if (scafiProgramsList.size > 1) {
+        throw new IllegalStateException("There are too many programs requiring a " + classOf[SendScafiMessage[T,P]].getName + " action: " + scafiProgramsList)
       }
-       new SendScafiMessage[T,P](env, node, reaction, spList.head)
+       new SendScafiMessage[T,P](environment, node, reaction, scafiProgramsList.head)
     } else {
       new RunScafiProgram[T, P](
-        notNull(env, "environment"),
+        notNull(environment, "environment"),
         notNull(node, "node"),
         notNull(reaction, "reaction"),
-        notNull(rand, "random generator"),
+        notNull(randomGenerator, "random generator"),
         notNull(param, "action parameter"))
     }
   }
@@ -74,17 +74,24 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   /**
    * NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation
    */
-  override def createConcentration(v: String) = {
+  override def createConcentration(data: String) = {
     /*
      * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
      */
-    val doCacheValue = !v.startsWith("_");
-    CachedInterpreter[AnyRef](if(doCacheValue) v else v.tail, doCacheValue).asInstanceOf[T]
+    val doCacheValue = !data.startsWith("_");
+    CachedInterpreter[AnyRef](if(doCacheValue) data else data.tail, doCacheValue).asInstanceOf[T]
   }
 
   override def createConcentration(): T = null.asInstanceOf[T]
 
-  override def createCondition(rand: RandomGenerator, env: Environment[T, P] , node: Node[T], time: TimeDistribution[T], reaction: Reaction[T], param: String): Condition[T] = {
+  override def createCondition(
+    randomGenerator: RandomGenerator,
+    environment: Environment[T, P],
+    node: Node[T],
+    time: TimeDistribution[T],
+    reaction: Reaction[T],
+    parameters: String
+  ): Condition[T] = {
     if(!isScafiNode(node)) {
       throw new IllegalArgumentException(s"The node must has an instance of ${classOf[ScafiDevice[_]]} as property")
     }
@@ -92,53 +99,64 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
       .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])
       .map(_.asInstanceOf[ScafiComputationalRoundComplete[T]])
       .map(_.program.asInstanceOf[RunScafiProgram[T, P]])
-    val spList: mutable.Buffer[RunScafiProgram[T,P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
-    spList --= alreadyDone
-    if (spList.isEmpty) {
+    val scafiProgramList: mutable.Buffer[RunScafiProgram[T,P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
+    scafiProgramList --= alreadyDone
+    if (scafiProgramList.isEmpty) {
       throw new IllegalStateException("There is no program requiring a " +
         classOf[ScafiComputationalRoundComplete[_]].getSimpleName + " condition")
     }
-    if (spList.size > 1) {
+    if (scafiProgramList.size > 1) {
       throw new IllegalStateException("There are too many programs requiring a " +
-        classOf[ScafiComputationalRoundComplete[_]].getName + " condition: " + spList)
+        classOf[ScafiComputationalRoundComplete[_]].getName + " condition: " + scafiProgramList)
     }
-    new ScafiComputationalRoundComplete(node, spList.head)
+    new ScafiComputationalRoundComplete(node, scafiProgramList.head)
   }
 
-  override def createMolecule(s: String): SimpleMolecule = {
-    new SimpleMolecule(notNull(s, "simple molecule name"))
+  override def createMolecule(value: String): SimpleMolecule = {
+    new SimpleMolecule(notNull(value, "simple molecule name"))
   }
 
-  override def createNode(rand: RandomGenerator, env: Environment[T, P], param: String) = {
-    val scafiNode = new GenericNode[T](this, env)
+  override def createNode(randomGenerator: RandomGenerator, environment: Environment[T, P], parameters: String) = {
+    val scafiNode = new GenericNode[T](this, environment)
     scafiNode.addProperty(new ScafiDevice(scafiNode))
     scafiNode
   }
 
-  override def createReaction(rand: RandomGenerator, env: Environment[T, P], node: Node[T], time: TimeDistribution[T], param: String): Reaction[T] = {
-    val isSend = "send".equalsIgnoreCase(param)
+  override def createReaction(
+    randomGenerator: RandomGenerator,
+    environment: Environment[T, P],
+    node: Node[T],
+    time: TimeDistribution[T],
+    parameters: String
+  ): Reaction[T] = {
+    val isSend = "send".equalsIgnoreCase(parameters)
     val result: Reaction[T] =
       if (isSend) {
         new ChemicalReaction[T](Objects.requireNonNull[Node[T]](node), Objects.requireNonNull[TimeDistribution[T]](time))
       } else {
         new Event[T](node, time)
       }
-    if (param != null) {
-      result.setActions(ListBuffer[Action[T]](createAction(rand, env, node, time, result, param)).asJava)
+    if (parameters != null) {
+      result.setActions(ListBuffer[Action[T]](createAction(randomGenerator, environment, node, time, result, parameters)).asJava)
     }
     if (isSend) {
-      result.setConditions(ListBuffer[Condition[T]](createCondition(rand, env, node, time, result, null)).asJava)
+      result.setConditions(ListBuffer[Condition[T]](createCondition(randomGenerator, environment, node, time, result, null)).asJava)
     }
     result
   }
 
-  override def createTimeDistribution(rand: RandomGenerator, env: Environment[T, P], node: Node[T], param: String): TimeDistribution[T] = {
-    if (param == null) return new ExponentialTime[T](Double.PositiveInfinity, rand)
-    val frequency = toDouble(param)
+  override def createTimeDistribution(
+    randomGenerator: RandomGenerator,
+    env: Environment[T, P],
+    node: Node[T],
+    parameters: String
+  ): TimeDistribution[T] = {
+    if (parameters == null) return new ExponentialTime[T](Double.PositiveInfinity, randomGenerator)
+    val frequency = toDouble(parameters)
     if (frequency.isNaN()) {
-      throw new IllegalArgumentException(param + " is not a valid number, the time distribution could not be created.")
+      throw new IllegalArgumentException(parameters + " is not a valid number, the time distribution could not be created.")
     }
-    new DiracComb(new DoubleTime(rand.nextDouble() / frequency), frequency);
+    new DiracComb(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
   }
 
   override def getProperty(node: Node[T], molecule: Molecule, propertyName: String) = {
@@ -191,11 +209,11 @@ object CachedInterpreter {
    * When doCacheValue is true, the result of the evaluation is cached.
    * When doCacheValue is false, only the result of parsing is cached.
    */
-  def apply[A <: AnyRef](str: String, doCacheValue: Boolean = true): A =
+  def apply[A <: AnyRef](code: String, doCacheValue: Boolean = true): A =
     if(doCacheValue) {
       import scalacache.modes.sync._ // Synchronous mode
-      scalacache.caching("//VAL"+str)(None)(ScalaInterpreter[Any](str))
+      scalacache.caching("//VAL"+code)(None)(ScalaInterpreter[Any](code))
     }.asInstanceOf[A] else {
-      ScalaInterpreter(str)
+      ScalaInterpreter(code)
     }
 }

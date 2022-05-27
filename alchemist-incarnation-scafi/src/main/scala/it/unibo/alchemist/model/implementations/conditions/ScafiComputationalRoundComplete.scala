@@ -10,22 +10,26 @@ package it.unibo.alchemist.model.implementations.conditions
 
 import it.unibo.alchemist.model.ScafiIncarnationUtils
 import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
+import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
 import it.unibo.alchemist.model.interfaces.{Condition, Context, Node, Reaction}
 
-final class ScafiComputationalRoundComplete[T](val node: Node[T], val program: RunScafiProgram[_,_])
-  extends AbstractCondition(node) {
+final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_,_])
+  extends AbstractCondition(device.getNode) {
   declareDependencyOn(this.program.asMolecule)
 
-  override def cloneCondition(n: Node[T], reaction: Reaction[T]): Condition[T] = {
-    if (ScafiIncarnationUtils.isScafiNode(n)) {
-      throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + n.getClass.getSimpleName)
-    }
-    val possibleRefs: Iterable[RunScafiProgram[_, _]] = ScafiIncarnationUtils.allScafiProgramsFor(n)
-      if (possibleRefs.size == 1) {
-        new ScafiComputationalRoundComplete(n, possibleRefs.head)
-      } else {
-        throw new IllegalStateException("There must be one and one only unconfigured " + classOf[Nothing].getSimpleName)
+  override def cloneCondition(node: Node[T], reaction: Reaction[T]): Condition[T] = {
+    ScafiIncarnationUtils.runInScafiDeviceContext[T, Condition[T]](
+      node,
+      getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName,
+      device => {
+        val possibleRefs: Iterable[RunScafiProgram[_, _]] = ScafiIncarnationUtils.allScafiProgramsFor(device.getNode)
+        if (possibleRefs.size == 1) {
+          new ScafiComputationalRoundComplete(device, possibleRefs.head)
+        } else {
+          throw new IllegalStateException("There must be one and one only unconfigured " + classOf[Nothing].getSimpleName)
+        }
       }
+    )
   }
 
   override def getContext = Context.LOCAL

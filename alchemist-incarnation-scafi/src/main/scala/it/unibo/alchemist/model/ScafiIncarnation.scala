@@ -46,30 +46,31 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     time: TimeDistribution[T],
     reaction: Reaction[T],
     param: String
-  ) = {
-    if (!isScafiNode(node)) {
-      throw new IllegalStateException(getClass.getSimpleName + " cannot get cloned on a node of type " + node.getClass.getSimpleName)
-    }
-    if(param=="send") {
-      val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
-      val scafiProgramsList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node)
-      scafiProgramsList --= alreadyDone
-      if (scafiProgramsList.isEmpty) {
-        throw new IllegalStateException("There is no program requiring a " + classOf[SendScafiMessage[T,P]].getSimpleName + " action")
+  ) = runInScafiDeviceContext[T, Action[T]](
+    node,
+    message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
+    body = device => {
+      if(param=="send") {
+        val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
+        val scafiProgramsList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node)
+        scafiProgramsList --= alreadyDone
+        if (scafiProgramsList.isEmpty) {
+          throw new IllegalStateException("There is no program requiring a " + classOf[SendScafiMessage[T,P]].getSimpleName + " action")
+        }
+        if (scafiProgramsList.size > 1) {
+          throw new IllegalStateException("There are too many programs requiring a " + classOf[SendScafiMessage[T,P]].getName + " action: " + scafiProgramsList)
+        }
+        new SendScafiMessage[T,P](environment, device, reaction, scafiProgramsList.head)
+      } else {
+        new RunScafiProgram[T, P](
+          notNull(environment, "environment"),
+          notNull(node, "node"),
+          notNull(reaction, "reaction"),
+          notNull(randomGenerator, "random generator"),
+          notNull(param, "action parameter"))
       }
-      if (scafiProgramsList.size > 1) {
-        throw new IllegalStateException("There are too many programs requiring a " + classOf[SendScafiMessage[T,P]].getName + " action: " + scafiProgramsList)
-      }
-       new SendScafiMessage[T,P](environment, node, reaction, scafiProgramsList.head)
-    } else {
-      new RunScafiProgram[T, P](
-        notNull(environment, "environment"),
-        notNull(node, "node"),
-        notNull(reaction, "reaction"),
-        notNull(randomGenerator, "random generator"),
-        notNull(param, "action parameter"))
     }
-  }
+  )
 
   /**
    * NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation
@@ -91,26 +92,27 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
     time: TimeDistribution[T],
     reaction: Reaction[T],
     parameters: String
-  ): Condition[T] = {
-    if(!isScafiNode(node)) {
-      throw new IllegalArgumentException(s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property")
+  ): Condition[T] = runInScafiDeviceContext[T, Condition[T]](
+    node,
+    message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
+    device => {
+      val alreadyDone = ScafiIncarnationUtils
+        .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])
+        .map(_.asInstanceOf[ScafiComputationalRoundComplete[T]])
+        .map(_.program.asInstanceOf[RunScafiProgram[T, P]])
+      val scafiProgramList: mutable.Buffer[RunScafiProgram[T,P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
+      scafiProgramList --= alreadyDone
+      if (scafiProgramList.isEmpty) {
+        throw new IllegalStateException("There is no program requiring a " +
+          classOf[ScafiComputationalRoundComplete[_]].getSimpleName + " condition")
+      }
+      if (scafiProgramList.size > 1) {
+        throw new IllegalStateException("There are too many programs requiring a " +
+          classOf[ScafiComputationalRoundComplete[_]].getName + " condition: " + scafiProgramList)
+      }
+      new ScafiComputationalRoundComplete(device, scafiProgramList.head).asInstanceOf[Condition[T]]
     }
-    val alreadyDone = ScafiIncarnationUtils
-      .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])
-      .map(_.asInstanceOf[ScafiComputationalRoundComplete[T]])
-      .map(_.program.asInstanceOf[RunScafiProgram[T, P]])
-    val scafiProgramList: mutable.Buffer[RunScafiProgram[T,P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
-    scafiProgramList --= alreadyDone
-    if (scafiProgramList.isEmpty) {
-      throw new IllegalStateException("There is no program requiring a " +
-        classOf[ScafiComputationalRoundComplete[_]].getSimpleName + " condition")
-    }
-    if (scafiProgramList.size > 1) {
-      throw new IllegalStateException("There are too many programs requiring a " +
-        classOf[ScafiComputationalRoundComplete[_]].getName + " condition: " + scafiProgramList)
-    }
-    new ScafiComputationalRoundComplete(node, scafiProgramList.head)
-  }
+  )
 
   override def createMolecule(value: String): SimpleMolecule = {
     new SimpleMolecule(notNull(value, "simple molecule name"))
@@ -170,6 +172,15 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 }
 
 object ScafiIncarnationUtils {
+  def runInScafiDeviceContext[T, A](node: Node[T], message: String, body: ScafiDevice[T] => A): A = {
+    if(!isScafiNode(node)) {
+      throw new IllegalArgumentException(message)
+    }
+    body(node.asProperty(classOf[ScafiDevice[T]]))
+  }
+
+  def runOnlyOnScafiDevice[T, A](node: Node[T], message: String)(body: => A): A =
+    runInScafiDeviceContext(node, message, (_: ScafiDevice[T]) => body)
   def isScafiNode[T](node: Node[T]): Boolean = node.asPropertyOrNull[ScafiDevice[T]](classOf[ScafiDevice[T]]) != null
 
   def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =

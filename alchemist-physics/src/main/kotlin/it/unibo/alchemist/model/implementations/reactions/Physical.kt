@@ -37,7 +37,7 @@ class Physical<T>(
     ) = Unit
 
     /**
-     * Clones this reaction for [node].
+     * Clones this reaction into [node].
      */
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Physical<T> =
         Physical(environment, node, timeDistribution)

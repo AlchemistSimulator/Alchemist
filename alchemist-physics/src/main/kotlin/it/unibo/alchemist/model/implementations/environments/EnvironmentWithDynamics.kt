@@ -28,11 +28,18 @@ import org.dyn4j.geometry.Vector2
 import org.dyn4j.world.World
 import java.awt.Color
 
+/**
+ * PhysicalProperty in a Euclidean 2d space.
+ */
 typealias PhysicalProperty2D<T> =
     PhysicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
 
 /**
- * An [Environment] with collision detection and response.
+ * This Environment uses hooks provided by [Dynamics2DEnvironment] to update
+ * the physical world, It also applies physical properties to any added node to
+ * perform collision detection and response.
+ * If an image path is provided a backing [ImageEnvironmentWithGraph] is used, otherwise
+ * the [Continuous2DEnvironment] will be used.
  */
 class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     incarnation: Incarnation<T, Euclidean2DPosition>,

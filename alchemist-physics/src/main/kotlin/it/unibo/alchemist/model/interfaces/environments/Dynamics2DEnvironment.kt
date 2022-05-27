@@ -13,7 +13,9 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 
 /**
- * An [Environment] for physical dynamics.
+ * Any implementing Environment should take care of physical dynamics, in particular
+ * collision detection and response.
+ * This interface provides some hooks in order to be able to manage some of the node's physical state.
  */
 interface Dynamics2DEnvironment<T> : Physics2DEnvironment<T>, Euclidean2DEnvironment<T> {
 

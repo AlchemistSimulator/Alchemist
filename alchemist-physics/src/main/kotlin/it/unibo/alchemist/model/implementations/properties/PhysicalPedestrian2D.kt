@@ -82,7 +82,9 @@ class PhysicalPedestrian2D<T>(
     override fun shouldFall(pushingForces: List<Euclidean2DPosition>) =
         pushingForces.fold(Euclidean2DPosition.zero) { acc, f -> acc + f }.magnitude > pedestrian.runningSpeed
 
-    override fun repulsionForces(): List<Euclidean2DPosition> = collectForces(::repulse, comfortArea)
+    override fun repulsionForces(): List<Euclidean2DPosition> = collectForces(::repulse, comfortArea) {
+        !it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
+    }
 
     override fun repulse(other: Node<T>): Euclidean2DPosition {
         val myShape = nodeShape.transformed { origin(environment.getPosition(node)) }

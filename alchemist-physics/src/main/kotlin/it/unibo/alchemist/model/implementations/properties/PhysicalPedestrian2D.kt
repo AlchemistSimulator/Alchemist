@@ -107,7 +107,7 @@ class PhysicalPedestrian2D<T>(
                 .crossProduct(distanceVector, velocity)
                 .crossProduct(distanceVector)
                 .let {
-                    assert(it.z == 0.0) { "The cross product result should live on the 2D-plane" }
+                    check(it.z == 0.0) { "The cross product result should live on the 2D-plane" }
                     Euclidean2DPosition(it.x, it.y)
                 }
             val weightFactor = avoidanceDistanceWeight(other) * avoidanceDirectionWeight(

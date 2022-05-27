@@ -70,6 +70,9 @@ class PhysicalPedestrian2D<T>(
             origin(node.position + environment.getHeading(node) * (rectangleOfInfluenceDimensions.first / 2.0))
         }
 
+    private val fallenAgentPerceptionArea
+        get() = environment.shapeFactory.circle(fallenAgentPerceptionRadius).transformed { origin(node.position) }
+
     private val Node<T>.position get() = environment.getPosition(this)
 
     override fun checkAndPossiblyFall() {
@@ -130,7 +133,7 @@ class PhysicalPedestrian2D<T>(
         }
 
     override fun fallenAgentAvoidanceForces() =
-        collectForces(::avoid, environment.shapeFactory.circle(fallenAgentPerceptionRadius)) {
+        collectForces(::avoid, fallenAgentPerceptionArea) {
             it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
         }
 
@@ -161,7 +164,7 @@ class PhysicalPedestrian2D<T>(
         /**
          * Maximum value for normal state [comfortRay].
          */
-        private const val maximumSpaceThreshold = 1.5
+        private const val maximumSpaceThreshold = 1.0
         /**
          * Dimension of the rectangle of influence (width, height).
          */
@@ -173,6 +176,6 @@ class PhysicalPedestrian2D<T>(
         /**
          * Fallen agent perception radius.
          */
-        private const val fallenAgentPerceptionRadius = 2.0
+        private const val fallenAgentPerceptionRadius = 1.5
     }
 }

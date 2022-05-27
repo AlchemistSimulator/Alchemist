@@ -65,7 +65,7 @@ class PhysicalBlendedSteering<T>(
         var fallenAgentAvoidanceForce = physics.fallenAgentAvoidanceForces().total()
         if (fallenAgentAvoidanceForce.magnitude > 0) {
             normalizedForce *= (1.0 - fallenAgentAvoidanceForceWeight)
-            fallenAgentAvoidanceForce *= fallenAgentAvoidanceForceWeight
+            fallenAgentAvoidanceForce = fallenAgentAvoidanceForce.normalized() * fallenAgentAvoidanceForceWeight
         }
         val repulsionForce = physics.repulsionForces().total()
         /*

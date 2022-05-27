@@ -8,7 +8,7 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.interfaces.{Node}
+import it.unibo.alchemist.model.interfaces.Node
 
 trait NodeManager {
   def put[T](molecule: String, concentration: T): Unit
@@ -16,7 +16,6 @@ trait NodeManager {
   def getOption[V](molecule: String): Option[V]
   def has(molecule: String): Boolean
   def remove(molecule: String): Unit
-
   def getOrElse[T](molecule: String, defaultValue: => T): T = getOption(molecule).getOrElse(defaultValue)
 }
 

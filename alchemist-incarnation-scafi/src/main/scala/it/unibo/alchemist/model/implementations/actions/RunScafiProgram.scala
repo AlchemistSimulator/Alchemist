@@ -7,19 +7,17 @@
  */
 package it.unibo.alchemist.model.implementations.actions
 
-import java.util.concurrent.TimeUnit
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
 import it.unibo.alchemist.model.interfaces.{Time => AlchemistTime, _}
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ContextImpl, Time => ScafiTime, _}
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ContextImpl, _}
 import it.unibo.alchemist.scala.PimpMyAlchemist._
 import it.unibo.scafi.space.Point3D
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.FastMath
 import org.kaikikm.threadresloader.ResourceLoader
 
-import scala.collection.MapView
+import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Try}
 
@@ -27,57 +25,61 @@ sealed class DefaultRunScafiProgram[P <: Position[P]](
   environment: Environment[Any, P],
   node: Node[Any],
   reaction: Reaction[Any],
-  rng: RandomGenerator,
+  randomGenerator: RandomGenerator,
   programName: String,
   retentionTime: Double
-) extends RunScafiProgram[Any,P](environment, node, reaction, rng, programName, retentionTime){
+) extends RunScafiProgram[Any,P](environment, node, reaction, randomGenerator, programName, retentionTime){
 
-  def this(environment: Environment[Any, P],
-           node: Node[Any],
-           reaction: Reaction[Any],
-           rng: RandomGenerator,
-           programName: String) = {
-    this(environment, node, reaction, rng, programName, FastMath.nextUp(1.0/reaction.getTimeDistribution.getRate))
+  def this(
+    environment: Environment[Any, P],
+    node: Node[Any],
+    reaction: Reaction[Any],
+    randomGenerator: RandomGenerator,
+    programName: String
+  ) = {
+    this(environment, node, reaction, randomGenerator, programName, FastMath.nextUp(1.0/reaction.getTimeDistribution.getRate))
   }
 }
 
 sealed class RunScafiProgram[T, P <: Position[P]] (
+  environment: Environment[T, P],
+  node: Node[T],
+  reaction: Reaction[T],
+  randomGenerator: RandomGenerator,
+  programName: String,
+  retentionTime: Double
+) extends AbstractLocalAction[T](node) {
+
+  def this(
     environment: Environment[T, P],
     node: Node[T],
     reaction: Reaction[T],
-    rng: RandomGenerator,
-    programName: String,
-    retentionTime: Double
-) extends AbstractLocalAction[T](node) {
-
-  def this(environment: Environment[T, P],
-    node: Node[T],
-    reaction: Reaction[T],
-    rng: RandomGenerator,
-    programName: String) = {
-    this(environment, node, reaction, rng, programName, FastMath.nextUp(1.0/reaction.getTimeDistribution.getRate))
+    randomGenerator: RandomGenerator,
+    programName: String
+  ) = {
+    this(environment, node, reaction, randomGenerator, programName, FastMath.nextUp(1.0/reaction.getTimeDistribution.getRate))
   }
 
-  import RunScafiProgram.NBRData
+  import RunScafiProgram.NeighborData
   val program = ResourceLoader.classForName(programName).getDeclaredConstructor().newInstance().asInstanceOf[CONTEXT => EXPORT]
   val programNameMolecule = new SimpleMolecule(programName)
   lazy val nodeManager = new SimpleNodeManager(node)
-  private var nbrData: Map[ID, NBRData[P]] = Map()
+  private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
   private var completed = false
   declareDependencyTo(Dependency.EVERY_MOLECULE)
 
   def asMolecule = programNameMolecule
 
-  override def cloneAction(n: Node[T], r: Reaction[T]) = {
-    new RunScafiProgram(environment, n, r, rng, programName, retentionTime)
+  override def cloneAction(node: Node[T], reaction: Reaction[T]) = {
+    new RunScafiProgram(environment, node, reaction, randomGenerator, programName, retentionTime)
   }
 
   override def execute(): Unit = {
     import scala.jdk.CollectionConverters._
-    implicit def euclideanToPoint(p: P): Point3D = p.getDimensions match {
-      case 1 => Point3D(p.getCoordinate(0), 0, 0)
-      case 2 => Point3D(p.getCoordinate(0), p.getCoordinate(1), 0)
-      case 3 => Point3D(p.getCoordinate(0), p.getCoordinate(1), p.getCoordinate(2))
+    implicit def euclideanToPoint(point: P): Point3D = point.getDimensions match {
+      case 1 => Point3D(point.getCoordinate(0), 0, 0)
+      case 2 => Point3D(point.getCoordinate(0), point.getCoordinate(1), 0)
+      case 3 => Point3D(point.getCoordinate(0), point.getCoordinate(1), point.getCoordinate(2))
     }
     val position: P = environment.getPosition(node)
     // NB: We assume it.unibo.alchemist.model.interfaces.Time = DoubleTime
@@ -89,28 +91,28 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
       ).get
     def alchemistTimeToNanos(time: AlchemistTime): Long = (time.toDouble * 1_000_000_000).toLong
     val currentTime: Long = alchemistTimeToNanos(alchemistCurrentTime)
-    if(!nbrData.contains(node.getId)) {
-      nbrData += node.getId -> NBRData(factory.emptyExport(), position, Double.NaN)
+    if(!neighborhoodManager.contains(node.getId)) {
+      neighborhoodManager += node.getId -> NeighborData(factory.emptyExport(), position, Double.NaN)
     }
-    nbrData = nbrData.filter { case (id,data) => id==node.getId || data.executionTime >= alchemistCurrentTime - retentionTime }
-    val deltaTime: Long = currentTime - nbrData.get(node.getId).map(d => alchemistTimeToNanos(d.executionTime)).getOrElse(0L)
+    neighborhoodManager = neighborhoodManager.filter { case (id,data) => id==node.getId || data.executionTime >= alchemistCurrentTime - retentionTime }
+    val deltaTime: Long = currentTime - neighborhoodManager.get(node.getId).map(d => alchemistTimeToNanos(d.executionTime)).getOrElse(0L)
     val localSensors = node.getContents().asScala.map { case (k, v) => k.getName -> v }
 
-    val nbrSensors = scala.collection.mutable.Map[NSNS, Map[ID, Any]]()
-    val exports: Iterable[(ID,EXPORT)] = nbrData.view.mapValues { _.exportData }
-    val ctx = new ContextImpl(node.getId, exports, localSensors, Map.empty){
+    val neighborhoodSensors = scala.collection.mutable.Map[NSNS, Map[ID, Any]]()
+    val exports: Iterable[(ID,EXPORT)] = neighborhoodManager.view.mapValues { _.exportData }
+    val context = new ContextImpl(node.getId, exports, localSensors, Map.empty){
       override def nbrSense[T](nsns: NSNS)(nbr: ID): Option[T] =
-        nbrSensors.getOrElseUpdate(nsns, nsns match {
-          case NBR_LAG => nbrData.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(alchemistCurrentTime - nbr.executionTime), TimeUnit.NANOSECONDS))
+        neighborhoodSensors.getOrElseUpdate(nsns, nsns match {
+          case NBR_LAG => neighborhoodManager.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(alchemistCurrentTime - nbr.executionTime), TimeUnit.NANOSECONDS))
           /*
            * nbrDelay is estimated: it should be nbr(deltaTime), here we suppose the round frequency
            * is negligibly different between devices.
            */
-          case NBR_DELAY => nbrData.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime, TimeUnit.NANOSECONDS))
-          case NBR_RANGE => nbrData.mapValuesStrict[Double](_.position.distanceTo(position))
-          case NBR_VECTOR => nbrData.mapValuesStrict[Point3D](_.position.minus(position.getCoordinates))
-          case NBR_ALCHEMIST_LAG => nbrData.mapValuesStrict[Double](alchemistCurrentTime - _.executionTime)
-          case NBR_ALCHEMIST_DELAY => nbrData.mapValuesStrict(nbr => alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime)
+          case NBR_DELAY => neighborhoodManager.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime, TimeUnit.NANOSECONDS))
+          case NBR_RANGE => neighborhoodManager.mapValuesStrict[Double](_.position.distanceTo(position))
+          case NBR_VECTOR => neighborhoodManager.mapValuesStrict[Point3D](_.position.minus(position.getCoordinates))
+          case NBR_ALCHEMIST_LAG => neighborhoodManager.mapValuesStrict[Double](alchemistCurrentTime - _.executionTime)
+          case NBR_ALCHEMIST_DELAY => neighborhoodManager.mapValuesStrict(nbr => alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime)
         }).get(nbr).map(_.asInstanceOf[T])
 
       override def sense[T](lsns: String): Option[T] = (lsns match {
@@ -123,23 +125,23 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
         case LSNS_TIMESTAMP => Some(currentTime)
         case LSNS_TIME => Some(java.time.Instant.ofEpochMilli((alchemistCurrentTime * 1000).toLong))
         case LSNS_ALCHEMIST_NODE_MANAGER => Some(nodeManager)
-        case LSNS_ALCHEMIST_DELTA_TIME => Some(alchemistCurrentTime.minus(nbrData.get(node.getId).map(_.executionTime).getOrElse(AlchemistTime.INFINITY)))
+        case LSNS_ALCHEMIST_DELTA_TIME => Some(alchemistCurrentTime.minus(neighborhoodManager.get(node.getId).map(_.executionTime).getOrElse(AlchemistTime.INFINITY)))
         case LSNS_ALCHEMIST_ENVIRONMENT => Some(environment)
-        case LSNS_ALCHEMIST_RANDOM => Some(rng)
+        case LSNS_ALCHEMIST_RANDOM => Some(randomGenerator)
         case LSNS_ALCHEMIST_TIMESTAMP => Some(alchemistCurrentTime)
         case _ => localSensors.get(lsns)
       }).map(_.asInstanceOf[T])
     }
-    val computed = program(ctx)
+    val computed = program(context)
     node.setConcentration(programName, computed.root[T]())
-    val toSend = NBRData(computed, position, alchemistCurrentTime)
-    nbrData = nbrData + (node.getId -> toSend)
+    val toSend = NeighborData(computed, position, alchemistCurrentTime)
+    neighborhoodManager = neighborhoodManager + (node.getId -> toSend)
     completed = true
   }
 
-  def sendExport(id: ID, exportData: NBRData[P]): Unit = { nbrData += id -> exportData }
+  def sendExport(id: ID, exportData: NeighborData[P]): Unit = { neighborhoodManager += id -> exportData }
 
-  def getExport(id: ID): Option[NBRData[P]] = nbrData.get(id)
+  def getExport(id: ID): Option[NeighborData[P]] = neighborhoodManager.get(id)
 
   def isComputationalCycleComplete: Boolean = completed
 
@@ -148,9 +150,9 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
 }
 
 object RunScafiProgram {
-  case class NBRData[P <: Position[P]](exportData: EXPORT, position: P, executionTime: AlchemistTime)
+  case class NeighborData[P <: Position[P]](exportData: EXPORT, position: P, executionTime: AlchemistTime)
 
-  implicit class RichMap[K,V](m: Map[K,V]) {
-    def mapValuesStrict[T](f: V => T): Map[K,T] = m.map(tp => tp._1 -> f(tp._2))
+  implicit class RichMap[K,V](map: Map[K,V]) {
+    def mapValuesStrict[T](f: V => T): Map[K,T] = map.map(tp => tp._1 -> f(tp._2))
   }
 }

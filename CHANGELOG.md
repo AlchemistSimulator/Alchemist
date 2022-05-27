@@ -1,3 +1,22 @@
+## [19.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.1.1...19.2.0) (2022-05-27)
+
+
+### Features
+
+* **incarnation-scafi:** remove ScafiNode to support the new NodeProperty API ([#1300](https://github.com/AlchemistSimulator/Alchemist/issues/1300)) ([a17e4e4](https://github.com/AlchemistSimulator/Alchemist/commit/a17e4e4af1019764d6d1c3e1e57e35f6729bac08))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.1.1 ([6baf5dc](https://github.com/AlchemistSimulator/Alchemist/commit/6baf5dcf38fcaa0d4ba4c3be7c6e77969fa9490c))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.147 ([81cd9e7](https://github.com/AlchemistSimulator/Alchemist/commit/81cd9e7aeb45a0052748bb99dd6781d0edb462ff))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.11 ([9cc9065](https://github.com/AlchemistSimulator/Alchemist/commit/9cc9065fc151d6f912a23584c61be5fdcd6c9263))
+* **deps:** update site/themes/hugo-theme-relearn digest to 1599f8b ([098ae41](https://github.com/AlchemistSimulator/Alchemist/commit/098ae4192e364d954eac9f431474067a341e5cb1))
+* **deps:** update site/themes/hugo-theme-relearn digest to 5ef497a ([d387e7c](https://github.com/AlchemistSimulator/Alchemist/commit/d387e7c8706e39bb0c6690466bc47860a9486f9c))
+* **deps:** update site/themes/hugo-theme-relearn digest to 66360af ([962a91e](https://github.com/AlchemistSimulator/Alchemist/commit/962a91e64b184c0da5d1f50bc6283a80eff33372))
+* **deps:** update site/themes/hugo-theme-relearn digest to 85b6abb ([5603e3c](https://github.com/AlchemistSimulator/Alchemist/commit/5603e3ce95e2a75d0bd44085076875b63278b3a6))
+* **deps:** update site/themes/hugo-theme-relearn digest to f595aaa ([4de446a](https://github.com/AlchemistSimulator/Alchemist/commit/4de446a379f663b793f3921c8aa88e80e9ab5bf1))
+
 ### [19.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/19.1.0...19.1.1) (2022-05-22)
 
 

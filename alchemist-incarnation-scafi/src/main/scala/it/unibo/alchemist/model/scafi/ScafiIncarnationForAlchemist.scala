@@ -36,16 +36,16 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
   val NBR_ALCHEMIST_DELAY = "alchemistNbrDelay"
   val NBR_ALCHEMIST_LAG = "alchemistNbrLag"
 
-  class AlchemistRandomWrapper(val rg: RandomGenerator) extends Random {
-    override def nextBoolean(): Boolean = rg.nextBoolean()
-    override def nextDouble(): Double = rg.nextDouble()
-    override def nextInt(): Int = rg.nextInt()
-    override def nextInt(n: Int): Int = rg.nextInt(n)
-    override def nextFloat(): Float = rg.nextFloat()
-    override def nextLong(): Long = rg.nextLong()
-    override def nextGaussian(): Double = rg.nextGaussian()
+  class AlchemistRandomWrapper(val randomGenerator: RandomGenerator) extends Random {
+    override def nextBoolean(): Boolean = randomGenerator.nextBoolean()
+    override def nextDouble(): Double = randomGenerator.nextDouble()
+    override def nextInt(): Int = randomGenerator.nextInt()
+    override def nextInt(n: Int): Int = randomGenerator.nextInt(n)
+    override def nextFloat(): Float = randomGenerator.nextFloat()
+    override def nextLong(): Long = randomGenerator.nextLong()
+    override def nextGaussian(): Double = randomGenerator.nextGaussian()
 
-    override def clone(): AnyRef = new AlchemistRandomWrapper(rg)
+    override def clone(): AnyRef = new AlchemistRandomWrapper(randomGenerator)
   }
 
   trait ScafiAlchemistSupport { self: AggregateProgram with StandardSensors =>
@@ -68,7 +68,8 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
 
     def alchemistEnvironment = sense[Environment[Any,Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
 
-    private implicit def optionalToOption[E](p : Optional[E]) : Option[E] = if (p.isPresent) Some(p.get()) else None
+    private implicit def optionalToOption[E](optional : Optional[E]) : Option[E] =
+      if (optional.isPresent) Some(optional.get()) else None
 
     private def findInLayers[A](name : String) : Option[A] = {
       val layer : Option[Layer[Any, Position[_]]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))

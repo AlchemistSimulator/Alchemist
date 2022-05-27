@@ -16,8 +16,8 @@ deployments:
           parameters: [0.5]
         type: PhysicalBlendedSteering
 
-  - type: Point
-    parameters: [10.0, 0.0]
+  - type: Circle
+    parameters: [15, 10.0, 0.0, 5]
     properties:
       - type: Pedestrian
       - type: PhysicalPedestrian2D

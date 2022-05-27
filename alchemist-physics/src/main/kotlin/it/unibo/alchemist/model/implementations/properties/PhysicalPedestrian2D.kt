@@ -124,7 +124,7 @@ class PhysicalPedestrian2D<T>(
     }
 
     private fun avoidanceDistanceWeight(other: Node<T>): Double {
-        val weight = environment.getDistanceBetweenNodes(node, other) - (rectangleOfInfluenceDimensions.first / 2.0)
+        val weight = environment.getDistanceBetweenNodes(node, other) - rectangleOfInfluenceDimensions.first / 2.0
         return weight * weight
     }
 

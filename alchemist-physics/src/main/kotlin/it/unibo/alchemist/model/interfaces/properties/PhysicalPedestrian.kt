@@ -28,7 +28,7 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
           F : GeometricShapeFactory<P, A> {
 
     /**
-     * Whether the pedestrian is fallen and thus an obstacle.
+     * Whether the pedestrian has fallen and it is thus an obstacle.
      */
     val isFallen: Boolean
 

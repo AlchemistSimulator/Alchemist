@@ -40,7 +40,7 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     /**
      * Determine if this pedestrian subject to [pushingForces] should fall.
      * According to the work of [Pelechano et al](https://bit.ly/3e3C7Tb)
-     * this should append when the majority of pushing forces affecting one individual are
+     * this should happen when the majority of pushing forces affecting one individual are
      * approximately in the same direction and the sum of forces have a magnitude high
      * enough to make it lose equilibrium.
      */

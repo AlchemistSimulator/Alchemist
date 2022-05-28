@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.implementations.actions
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
 import it.unibo.alchemist.model.interfaces.{Time => AlchemistTime, _}
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ContextImpl, _}
 import it.unibo.alchemist.scala.PimpMyAlchemist._
 import it.unibo.scafi.space.Point3D
@@ -65,6 +66,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
   val programNameMolecule = new SimpleMolecule(programName)
   lazy val nodeManager = new SimpleNodeManager(node)
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
+  private val commonNames = new ScafiIncarnationForAlchemist.BasicStandardSensorNames { }
   private var completed = false
   declareDependencyTo(Dependency.EVERY_MOLECULE)
 
@@ -98,32 +100,32 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
     val deltaTime: Long = currentTime - neighborhoodManager.get(node.getId).map(d => alchemistTimeToNanos(d.executionTime)).getOrElse(0L)
     val localSensors = node.getContents().asScala.map { case (k, v) => k.getName -> v }
 
-    val neighborhoodSensors = scala.collection.mutable.Map[NSNS, Map[ID, Any]]()
+    val neighborhoodSensors = scala.collection.mutable.Map[CNAME, Map[ID, Any]]()
     val exports: Iterable[(ID,EXPORT)] = neighborhoodManager.view.mapValues { _.exportData }
     val context = new ContextImpl(node.getId, exports, localSensors, Map.empty){
-      override def nbrSense[T](nsns: NSNS)(nbr: ID): Option[T] =
+      override def nbrSense[T](nsns: CNAME)(nbr: ID): Option[T] =
         neighborhoodSensors.getOrElseUpdate(nsns, nsns match {
-          case NBR_LAG => neighborhoodManager.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(alchemistCurrentTime - nbr.executionTime), TimeUnit.NANOSECONDS))
+          case commonNames.NBR_LAG => neighborhoodManager.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(alchemistCurrentTime - nbr.executionTime), TimeUnit.NANOSECONDS))
           /*
            * nbrDelay is estimated: it should be nbr(deltaTime), here we suppose the round frequency
            * is negligibly different between devices.
            */
-          case NBR_DELAY => neighborhoodManager.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime, TimeUnit.NANOSECONDS))
-          case NBR_RANGE => neighborhoodManager.mapValuesStrict[Double](_.position.distanceTo(position))
-          case NBR_VECTOR => neighborhoodManager.mapValuesStrict[Point3D](_.position.minus(position.getCoordinates))
+          case commonNames.NBR_DELAY => neighborhoodManager.mapValuesStrict[FiniteDuration](nbr => FiniteDuration(alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime, TimeUnit.NANOSECONDS))
+          case commonNames.NBR_RANGE => neighborhoodManager.mapValuesStrict[Double](_.position.distanceTo(position))
+          case commonNames.NBR_VECTOR => neighborhoodManager.mapValuesStrict[Point3D](_.position.minus(position.getCoordinates))
           case NBR_ALCHEMIST_LAG => neighborhoodManager.mapValuesStrict[Double](alchemistCurrentTime - _.executionTime)
           case NBR_ALCHEMIST_DELAY => neighborhoodManager.mapValuesStrict(nbr => alchemistTimeToNanos(nbr.executionTime) + deltaTime - currentTime)
         }).get(nbr).map(_.asInstanceOf[T])
 
       override def sense[T](lsns: String): Option[T] = (lsns match {
         case LSNS_ALCHEMIST_COORDINATES => Some(position.getCoordinates)
-        case LSNS_DELTA_TIME => Some(FiniteDuration(deltaTime, TimeUnit.NANOSECONDS))
-        case LSNS_POSITION => {
+        case commonNames.LSNS_DELTA_TIME => Some(FiniteDuration(deltaTime, TimeUnit.NANOSECONDS))
+        case commonNames.LSNS_POSITION => {
           val k = position.getDimensions()
           Some(Point3D(position.getCoordinate(0), if(k>=2) position.getCoordinate(1) else 0, if(k>=3) position.getCoordinate(2) else 0))
         }
-        case LSNS_TIMESTAMP => Some(currentTime)
-        case LSNS_TIME => Some(java.time.Instant.ofEpochMilli((alchemistCurrentTime * 1000).toLong))
+        case commonNames.LSNS_TIMESTAMP => Some(currentTime)
+        case commonNames.LSNS_TIME => Some(java.time.Instant.ofEpochMilli((alchemistCurrentTime * 1000).toLong))
         case LSNS_ALCHEMIST_NODE_MANAGER => Some(nodeManager)
         case LSNS_ALCHEMIST_DELTA_TIME => Some(alchemistCurrentTime.minus(neighborhoodManager.get(node.getId).map(_.executionTime).getOrElse(AlchemistTime.INFINITY)))
         case LSNS_ALCHEMIST_ENVIRONMENT => Some(environment)

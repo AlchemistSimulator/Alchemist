@@ -21,6 +21,7 @@ import Libs.incarnation
 dependencies {
     api(alchemist("interfaces"))
     api(alchemist("implementationbase"))
+    api(libs.dyn4j)
 
     implementation(libs.boilerplate)
     implementation(libs.caffeine)

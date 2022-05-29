@@ -49,3 +49,4 @@ misc.xml
 .name
 node_modules/
 .vscode
+.hugo_build.lock

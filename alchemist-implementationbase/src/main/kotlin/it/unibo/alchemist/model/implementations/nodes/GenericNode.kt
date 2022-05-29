@@ -106,7 +106,7 @@ open class GenericNode<T> @JvmOverloads constructor(
             properties.add(nodeProperty)
         } else {
             throw IllegalArgumentException(
-                "This node (${this.id}) already contains a property of type ${nodeProperty::class}," +
+                "This node (${this.id}) already contains a property of type ${nodeProperty::class}, " +
                     "this may lead to an inconsistent state"
             )
         }

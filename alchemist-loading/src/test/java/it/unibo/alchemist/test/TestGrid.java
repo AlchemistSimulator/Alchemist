@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class TestGrid {
 
-    private static Continuous2DEnvironment environment() {
-        return new Continuous2DEnvironment<Object>(SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").get());
+    private static Continuous2DEnvironment<?> environment() {
+        return new Continuous2DEnvironment<>(SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").get());
     }
 
     private static MersenneTwister randomGenerator() {
@@ -36,7 +36,7 @@ class TestGrid {
      */
     @Test
     void testVerticalLine() {
-        test(9, 1, 9.9);
+        test(10, 1, 9.9);
         assertEquals(10L, new Grid(environment(), randomGenerator(), 0, 0, 1, 10, 1, 1, 0, 0).stream().count());
     }
 

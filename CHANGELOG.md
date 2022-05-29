@@ -1,3 +1,162 @@
+## [20.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.2.0...20.0.0) (2022-05-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **physics:** implement repulsion and avoidance forces, make falling of agent possible (#1304)
+
+### Features
+
+* **physics:** implement repulsion and avoidance forces, make falling of agent possible ([#1304](https://github.com/AlchemistSimulator/Alchemist/issues/1304)) ([319c9a8](https://github.com/AlchemistSimulator/Alchemist/commit/319c9a8f71531c5dbc44d86d0808ea6d402965ea))
+
+
+### Bug Fixes
+
+* **incarnation-scafi:** adapt Scafi module to new sensor name access (CNAME against LSNS and NSNS, common sensor names in a trait) ([7040012](https://github.com/AlchemistSimulator/Alchemist/commit/70400124cf4378f0fd072e0273f459d8616e6f8b))
+* **incarnation-scafi:** use standard sensor names instead of basic sensor names ([4c606aa](https://github.com/AlchemistSimulator/Alchemist/commit/4c606aa607f037eb5b174914b2c7a90df09f4ef6))
+
+
+### Dependency updates
+
+* **deps:** update dependency it.unibo.scafi:scafi-core_2.13 to v1 ([2c5e24f](https://github.com/AlchemistSimulator/Alchemist/commit/2c5e24f8af91a9ae51f92f6f8b96e023ef62a474))
+
+## [19.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.1.1...19.2.0) (2022-05-27)
+
+
+### Features
+
+* **incarnation-scafi:** remove ScafiNode to support the new NodeProperty API ([#1300](https://github.com/AlchemistSimulator/Alchemist/issues/1300)) ([a17e4e4](https://github.com/AlchemistSimulator/Alchemist/commit/a17e4e4af1019764d6d1c3e1e57e35f6729bac08))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.1.1 ([6baf5dc](https://github.com/AlchemistSimulator/Alchemist/commit/6baf5dcf38fcaa0d4ba4c3be7c6e77969fa9490c))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.147 ([81cd9e7](https://github.com/AlchemistSimulator/Alchemist/commit/81cd9e7aeb45a0052748bb99dd6781d0edb462ff))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.11 ([9cc9065](https://github.com/AlchemistSimulator/Alchemist/commit/9cc9065fc151d6f912a23584c61be5fdcd6c9263))
+* **deps:** update site/themes/hugo-theme-relearn digest to 1599f8b ([098ae41](https://github.com/AlchemistSimulator/Alchemist/commit/098ae4192e364d954eac9f431474067a341e5cb1))
+* **deps:** update site/themes/hugo-theme-relearn digest to 5ef497a ([d387e7c](https://github.com/AlchemistSimulator/Alchemist/commit/d387e7c8706e39bb0c6690466bc47860a9486f9c))
+* **deps:** update site/themes/hugo-theme-relearn digest to 66360af ([962a91e](https://github.com/AlchemistSimulator/Alchemist/commit/962a91e64b184c0da5d1f50bc6283a80eff33372))
+* **deps:** update site/themes/hugo-theme-relearn digest to 85b6abb ([5603e3c](https://github.com/AlchemistSimulator/Alchemist/commit/5603e3ce95e2a75d0bd44085076875b63278b3a6))
+* **deps:** update site/themes/hugo-theme-relearn digest to f595aaa ([4de446a](https://github.com/AlchemistSimulator/Alchemist/commit/4de446a379f663b793f3921c8aa88e80e9ab5bf1))
+
+### [19.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/19.1.0...19.1.1) (2022-05-22)
+
+
+### Build and continuous integration
+
+* **deps:** update actions/upload-artifact action to v3.1.0 ([1d9b5c3](https://github.com/AlchemistSimulator/Alchemist/commit/1d9b5c380046994bada90dcdfd688bd72dda2ceb))
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v16.1.1 ([6cee053](https://github.com/AlchemistSimulator/Alchemist/commit/6cee053eb6a9b4cac2dbe9439a5dbe14904a4287))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.4.6 ([f891a3e](https://github.com/AlchemistSimulator/Alchemist/commit/f891a3e1344dda483dff0ab26b7c65fa7886166a))
+
+## [19.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.4...19.1.0) (2022-05-19)
+
+
+### Features
+
+* **incarnation-protelis:** ProtelisDevice can now get created even when another incarnation is being used (e.g., Scafi) ([bcd4df3](https://github.com/AlchemistSimulator/Alchemist/commit/bcd4df31160a3ac41828ca6809868840007f8a7d))
+
+
+### General maintenance
+
+* **incarnation-protelis:** add a note about a pending Protelis bug ([5362d72](https://github.com/AlchemistSimulator/Alchemist/commit/5362d7232451df7942f84156519c58828579bf6d))
+
+### [19.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.3...19.0.4) (2022-05-19)
+
+
+### Bug Fixes
+
+* **incarnation-protelis:** protelis devices are now printed with their actual id ([b6c24d8](https://github.com/AlchemistSimulator/Alchemist/commit/b6c24d8b85e5e70faa18ada29913c8ff80e8af6b))
+
+
+### Dependency updates
+
+* **deps:** update plugin com.gradle.enterprise to v3.10.1 ([3f19d1d](https://github.com/AlchemistSimulator/Alchemist/commit/3f19d1de399de945cd64b90dddb079f4a25afd60))
+
+### [19.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.2...19.0.3) (2022-05-18)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v16.1.0 ([7ec3265](https://github.com/AlchemistSimulator/Alchemist/commit/7ec3265fc19f31cc24f910d802db139c0d050a65))
+
+### [19.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.1...19.0.2) (2022-05-18)
+
+
+### Bug Fixes
+
+* **loading:** Fix a race condition in GraphStreamSupport, potentially sharing a (non-thread-safe) JIRF across threads. ([e232491](https://github.com/AlchemistSimulator/Alchemist/commit/e23249190279051be195b3a679efaf437b5e9af2))
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v16 ([7767356](https://github.com/AlchemistSimulator/Alchemist/commit/77673565679872a3671f9e704b64d171309bcd2b))
+* **deps:** update gohugoio/hugo action to v0.99.1 ([46ea550](https://github.com/AlchemistSimulator/Alchemist/commit/46ea55049bd480506b8c603da9433ae640480cd9))
+
+### [19.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/19.0.0...19.0.1) (2022-05-18)
+
+
+### Bug Fixes
+
+* **implementationbase:** add missing space in error print of GenericNode ([7b99fb9](https://github.com/AlchemistSimulator/Alchemist/commit/7b99fb9e9c5005663ac40fd96930b9727c373d92))
+
+## [19.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.3...19.0.0) (2022-05-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **protelis-incarnation:** restore Protelis functionality after a breaking change introduced in #1073
+* **loading:** modify Grid, now the first node is deployed where the initial position of the grid is declared.
+
+### Features
+
+* **loading:** allow implementations to refer to node properties when loading ([2f33b56](https://github.com/AlchemistSimulator/Alchemist/commit/2f33b56d53b29dbd2b8b05e9c98277bbb7c36a80))
+
+
+### Bug Fixes
+
+* **incarnation-protelis:** restore the `env.putField` functionality ([49c4e3a](https://github.com/AlchemistSimulator/Alchemist/commit/49c4e3a7f984ee9f517e17f84424dfd358dbadee))
+* **loading:** modify Grid, now the first node is deployed where the initial position of the grid is declared. ([d659414](https://github.com/AlchemistSimulator/Alchemist/commit/d65941473ff83028ec40726548f55d83e464b98d))
+* **loading:** remove unused type parameters from test ([d2d218c](https://github.com/AlchemistSimulator/Alchemist/commit/d2d218cd2d186dc3b96806df99e685f43aba1bc3))
+* **protelis-incarnation:** annotate non-null returning method `SendToNeighbor.getProtelisProgram` as `@Nonnull` ([67891c1](https://github.com/AlchemistSimulator/Alchemist/commit/67891c10c21c7b97f2c5fb2f4c83a50e79f3994f))
+* **protelis-incarnation:** restore Protelis functionality after a breaking change introduced in [#1073](https://github.com/AlchemistSimulator/Alchemist/issues/1073) ([c2ca6eb](https://github.com/AlchemistSimulator/Alchemist/commit/c2ca6eb555a228432bbf1e498073ffd59a4b4f37))
+
+
+### Tests
+
+* **protelis-incarnation:** add functional regression test verifying that a simple gradient runs ([09921ba](https://github.com/AlchemistSimulator/Alchemist/commit/09921ba236b274db6cd43790432586f1670da67a))
+
+
+### General maintenance
+
+* ignore .hugo_build.lock ([52fc91c](https://github.com/AlchemistSimulator/Alchemist/commit/52fc91c84640b9af2beace29d64679f3fae96f49))
+* **protelis-incarnation:** annotate non-null returning method `ProtelisIncarnation.getIncomplete` as `@Nonnull` ([1ef0e35](https://github.com/AlchemistSimulator/Alchemist/commit/1ef0e35ed56463f5c58d17bf9d7ee732d2caa7fa))
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v15.4.2 ([af71bd9](https://github.com/AlchemistSimulator/Alchemist/commit/af71bd9b2e6f03cdd2847a0ac4baf51f4b407fca))
+* **deps:** update plugin multijvmtesting to v0.4.0 ([de55f3f](https://github.com/AlchemistSimulator/Alchemist/commit/de55f3f442c10ae9960b8cf9df6b70c05e6f647d))
+
+### [18.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.2...18.0.3) (2022-05-16)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v15.4.1 ([5adeb86](https://github.com/AlchemistSimulator/Alchemist/commit/5adeb86c674aa9d7abf2d6fa1b4d8c344ef58826))
+
+### [18.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.1...18.0.2) (2022-05-16)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v15.4.0 ([89c3c20](https://github.com/AlchemistSimulator/Alchemist/commit/89c3c2036f1004efcbf27954ad927698cb0e9e4a))
+* **deps:** update dependency com.github.davidmoten:rtree to v0.10 ([7ede3d0](https://github.com/AlchemistSimulator/Alchemist/commit/7ede3d03b8cb628634cc1e63111b5701f4c7c189))
+* **deps:** update gohugoio/hugo action to v0.99.0 ([91c24b2](https://github.com/AlchemistSimulator/Alchemist/commit/91c24b294929b906ad58b482ac7b0c10878db6b6))
+
 ### [18.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/18.0.0...18.0.1) (2022-05-10)
 
 

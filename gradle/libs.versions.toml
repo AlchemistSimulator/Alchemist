@@ -10,8 +10,8 @@ kotest = "5.3.0"
 dokka = "1.6.21"
 kotlin = "1.6.21"
 mockito = "4.5.1"
-protelis = "15.3.3"
-scafi = "0.3.3"
+protelis = "16.1.1"
+scafi = "1.1.0"
 scala = "2.13.8"
 scalacache = "0.28.0"
 
@@ -27,12 +27,13 @@ apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
 appdirs = "net.harawata:appdirs:1.2.1"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
-caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.0"
-classgraph = "io.github.classgraph:classgraph:4.8.146"
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.1"
+classgraph = "io.github.classgraph:classgraph:4.8.147"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.1"
+dyn4j = "org.dyn4j:dyn4j:4.2.1"
 dsiutils = "it.unimi.dsi:dsiutils:2.7.1"
-embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5"
+embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.6"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
@@ -70,7 +71,7 @@ protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.r
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
 quadtree = "org.danilopianini:java-quadtree:0.1.9"
 resourceloader = "org.danilopianini:thread-inheritable-resource-loader:0.3.5"
-rtree = "com.github.davidmoten:rtree:0.9"
+rtree = "com.github.davidmoten:rtree:0.10"
 scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }
 scala-compiler = { module = "org.scala-lang:scala-compiler", version.ref = "scala" }
 scala-library = { module = "org.scala-lang:scala-library", version.ref = "scala" }
@@ -103,7 +104,7 @@ hugo = "io.github.fstaudt.hugo:0.4.0"
 java-qa = "org.danilopianini.gradle-java-qa:0.22.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.18.0"
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.3.7"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.0"
 publishOnCentral = "org.danilopianini.publish-on-central:0.7.19"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:7.1.2"

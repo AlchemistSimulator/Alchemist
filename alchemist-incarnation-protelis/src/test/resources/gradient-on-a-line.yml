@@ -1,0 +1,27 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [1.5]
+
+deployments:
+  type: Grid
+  parameters: [0, 0, 4, 1, 1, 1]
+  contents:
+    in:
+      type: Circle
+      parameters: [0, 0, 0.5]
+    molecule: "source"
+    concentration: true
+  programs:
+    - time-distribution: 1
+      program: |
+        import protelis:coord:spreading
+        share (distance <- POSITIVE_INFINITY) {
+          mux (env.has("source")) {
+            0
+          } else {
+            foldMin(POSITIVE_INFINITY, distance + nbrRange())
+          }
+        }
+    - program: send

@@ -71,11 +71,17 @@ import java.util.stream.Collectors;
  */
 public final class ProtelisIncarnation<P extends Position<P>> implements Incarnation<Object, P> {
 
+    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
+
     /**
      * The name that can be used in a property to refer to the extracted value.
      */
     public static final String VALUE_TOKEN = "<value>";
-    private static final Logger L = LoggerFactory.getLogger(ProtelisIncarnation.class);
+    /**
+     * Statically-referenceable instance. This incarnation *can* work as a singleton, and doing so may save some
+     * memory. However, it is not strictly a singleton (multiple instances do not do harm).
+     */
+    public static final ProtelisIncarnation<?> INSTANCE = new ProtelisIncarnation<>();
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
@@ -87,6 +93,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 }
             });
 
+    @Nonnull
     private static List<RunProtelisProgram<?>> getIncomplete(
             final Node<?> protelisNode,
             final List<RunProtelisProgram<?>> alreadyDone
@@ -126,31 +133,36 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final String additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters);
-        checkIsProtelisNode(node, "The node must have a " + ProtelisDevice.class.getSimpleName());
+        final var device = node.asPropertyOrNull(ProtelisDevice.class);
+        if (device == null) {
+            throw new IllegalArgumentException("The node must be a " + ProtelisDevice.class.getSimpleName());
+        }
         if ("send".equalsIgnoreCase(additionalParameters)) {
             final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
-                    .parallelStream()
-                    .flatMap(r -> r.getActions().parallelStream())
+                    .stream()
+                    .flatMap(r -> r.getActions().stream())
                     .filter(a -> a instanceof SendToNeighbor)
                     .map(c -> ((SendToNeighbor) c).getProtelisProgram())
                     .collect(Collectors.toList());
             final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
             if (pList.isEmpty()) {
-                throw new IllegalStateException("There is no program requiring a "
-                        + SendToNeighbor.class.getSimpleName() + " action");
+                throw new IllegalStateException(
+                    "There is no program requiring a " + SendToNeighbor.class.getSimpleName() + " action"
+                );
             }
             if (pList.size() > 1) {
-                throw new IllegalStateException("There are too many programs requiring a "
-                        + SendToNeighbor.class.getName() + " action: " + pList);
+                throw new IllegalStateException(
+                    "There are too many programs requiring a " + SendToNeighbor.class.getName() + " action: " + pList
+                );
             }
             return new SendToNeighbor(node, reaction, pList.get(0));
         } else {
             try {
-                return new RunProtelisProgram<>(environment, node, reaction, randomGenerator, additionalParameters);
-            } catch (RuntimeException e) { // NOPMD AvoidCatchingGenericException
+                return new RunProtelisProgram<>(randomGenerator, environment, device, reaction, additionalParameters);
+            } catch (RuntimeException exception) { // NOPMD AvoidCatchingGenericException
                 throw new IllegalArgumentException(
-                        "Could not create the requested Protelis program: " + additionalParameters,
-                        e
+                    "Could not create the requested Protelis program: " + additionalParameters,
+                    exception
                 );
             }
         }
@@ -237,8 +249,8 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 ? new ChemicalReaction<>(Objects.requireNonNull(node), Objects.requireNonNull(timeDistribution))
                 : new Event<>(node, timeDistribution);
         if (parameter != null) {
-            result.setActions(Lists.newArrayList(
-                    createAction(randomGenerator, environment, node, timeDistribution, result, parameter))
+            result.setActions(
+                Lists.newArrayList(createAction(randomGenerator, environment, node, timeDistribution, result, parameter))
             );
         }
         if (isSend) {

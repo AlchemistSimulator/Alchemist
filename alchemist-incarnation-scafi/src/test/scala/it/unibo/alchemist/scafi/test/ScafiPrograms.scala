@@ -14,7 +14,7 @@ import it.unibo.scafi.space.Point3D
 
 import scala.concurrent.duration.FiniteDuration
 
-class ScafiGradientProgram extends AggregateProgram {
+class ScafiGradientProgram extends AggregateProgram with StandardSensorNames {
   override def main(): Double = gradient(sense[Boolean]("source"))
 
   def gradient(source: Boolean): Double =

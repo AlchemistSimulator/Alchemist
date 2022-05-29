@@ -185,7 +185,7 @@ Such strategies define how steering actions (which are intentional)
 are combined with physical forces
 (which are mostly unintentional).
 At present, only
-{{% api package="model.implementations.reactions" class="BlendedSteeringWithPhysics" %}}
+{{% api package="model.implementations.reactions" class="PhysicalBlendedSteering" %}}
 and
 {{% api package="model.implementations.reactions" class="NavigationPrioritisedSteeringWithPhysics" %}}
 are available.

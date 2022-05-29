@@ -29,6 +29,7 @@ dependencies {
     implementation(alchemist("maps"))
     implementation(alchemist("smartcam"))
     implementation(alchemist("cognitive-agents"))
+    implementation(alchemist("physics"))
     implementation(libs.gson.extras)
     // TODO: deprecated, must be removed
     implementation(libs.javalib.java7) {

@@ -66,7 +66,7 @@ sealed class RunScafiProgram[T, P <: Position[P]] (
   val programNameMolecule = new SimpleMolecule(programName)
   lazy val nodeManager = new SimpleNodeManager(node)
   private var neighborhoodManager: Map[ID, NeighborData[P]] = Map()
-  private val commonNames = new ScafiIncarnationForAlchemist.BasicStandardSensorNames { }
+  private val commonNames = new ScafiIncarnationForAlchemist.StandardSensorNames { }
   private var completed = false
   declareDependencyTo(Dependency.EVERY_MOLECULE)
 

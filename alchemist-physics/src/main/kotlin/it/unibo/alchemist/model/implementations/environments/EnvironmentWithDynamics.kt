@@ -146,10 +146,10 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
                     override fun next(current: Euclidean2DPosition, desired: Euclidean2DPosition) = desired
 
                     override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
-                        throw IllegalStateException("This Environment instance does not support obstacle removing")
+                        throw IllegalStateException("This Environment instance does not support obstacle removal")
 
                     override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
-                        throw IllegalStateException("This Environment instance does not support obstacle adding")
+                        throw IllegalStateException("This Environment instance does not support adding obstacles")
 
                     override fun makePosition(vararg coordinates: Double) =
                         this@asEnvironmentWithObstacles.makePosition(*coordinates)

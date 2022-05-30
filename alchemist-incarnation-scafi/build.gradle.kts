@@ -19,6 +19,7 @@ import Libs.alchemist
 plugins {
     scala
     alias(libs.plugins.scalatest)
+    alias(libs.plugins.scalafmt)
 }
 
 dependencies {

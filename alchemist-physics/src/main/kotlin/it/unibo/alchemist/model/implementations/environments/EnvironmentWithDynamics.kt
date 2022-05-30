@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
+import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
@@ -19,6 +20,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 import org.dyn4j.geometry.Circle
@@ -31,8 +33,11 @@ import java.awt.Color
 /**
  * PhysicalProperty in a Euclidean 2d space.
  */
-typealias PhysicalProperty2D<T> =
+private typealias PhysicalProperty2D<T> =
     PhysicalProperty<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
+
+private typealias PhysicsEnvironmentWithObstacles<T> =
+    EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>
 
 /**
  * This Environment uses hooks provided by [Dynamics2DEnvironment] to update
@@ -53,7 +58,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         ImageEnvironmentWithGraph(incarnation, it, zoom, dx, dy, obstaclesColor, roomsColor)
     } ?: Continuous2DEnvironment(incarnation),
 ) : Dynamics2DEnvironment<T>,
-    Physics2DEnvironment<T> by backingEnvironment {
+    PhysicsEnvironmentWithObstacles<T> by backingEnvironment.asEnvironmentWithObstacles() {
 
     private val world: World<PhysicsBody> = World()
 
@@ -86,10 +91,12 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         body.setMass(MassType.NORMAL)
     }
 
-    override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) {
-        moveNodeToPosition(node, nodeToBody[node]?.position)
-        nodeToBody[node]?.linearVelocity = Vector2(velocity.x, velocity.y)
-    }
+    override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) = nodeToBody[node]?.let {
+        moveNodeToPosition(node, it.position)
+        it.linearVelocity = Vector2(velocity.x, velocity.y)
+    } ?: throw IllegalStateException(
+        "Unable to update $node physical state. Check if it was added to this environment."
+    )
 
     override fun getVelocity(node: Node<T>) = nodeToBody[node]?.let {
         Euclidean2DPosition(it.linearVelocity.x, it.linearVelocity.y)
@@ -109,4 +116,47 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     override fun makePosition(vararg coordinates: Double): Euclidean2DPosition =
         backingEnvironment.makePosition(*coordinates)
+
+    companion object {
+
+        private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvironmentWithObstacles<T> =
+            if (this is EuclideanPhysics2DEnvironmentWithObstacles<*, T>) {
+                @Suppress("UNCHECKED_CAST")
+                this as PhysicsEnvironmentWithObstacles<T>
+            } else {
+                object : Physics2DEnvironment<T> by this, PhysicsEnvironmentWithObstacles<T> {
+                    override fun getObstaclesInRange(
+                        center: Euclidean2DPosition,
+                        range: Double,
+                    ): List<RectObstacle2D<Euclidean2DPosition>> = emptyList()
+
+                    override fun getObstaclesInRange(
+                        centerx: Double,
+                        centery: Double,
+                        range: Double,
+                    ): List<RectObstacle2D<Euclidean2DPosition>> = emptyList()
+
+                    override fun hasMobileObstacles() = false
+
+                    override val obstacles: List<RectObstacle2D<Euclidean2DPosition>>
+                        get() = emptyList()
+
+                    override fun intersectsObstacle(start: Euclidean2DPosition, end: Euclidean2DPosition) = false
+
+                    override fun next(current: Euclidean2DPosition, desired: Euclidean2DPosition) = desired
+
+                    override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
+                        throw IllegalStateException("This Environment instance does not support obstacle removing")
+
+                    override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
+                        throw IllegalStateException("This Environment instance does not support obstacle adding")
+
+                    override fun makePosition(vararg coordinates: Double) =
+                        this@asEnvironmentWithObstacles.makePosition(*coordinates)
+
+                    override val origin
+                        get() = this@asEnvironmentWithObstacles.origin
+                }
+            }
+    }
 }

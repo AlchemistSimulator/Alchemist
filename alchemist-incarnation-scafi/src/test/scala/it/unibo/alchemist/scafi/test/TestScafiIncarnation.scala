@@ -27,8 +27,7 @@ import org.scalatest.matchers.should.Matchers
 class TestScafiIncarnation extends AnyFunSuite with Matchers {
   private val INC = new ScafiIncarnation[Any, Euclidean2DPosition]
 
-  /** Tests the ability of {@link ScafiIncarnation} of properly building Alchemist entities for running Scafi.
-    */
+  /** Tests the ability of {@link ScafiIncarnation} of properly building Alchemist entities for running Scafi. */
   test("build") {
     val rng = new MersenneTwister(0)
     val env = new Continuous2DEnvironment[Any](INC)

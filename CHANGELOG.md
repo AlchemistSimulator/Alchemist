@@ -1,3 +1,25 @@
+## [20.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.2.0...20.0.0) (2022-05-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **physics:** implement repulsion and avoidance forces, make falling of agent possible (#1304)
+
+### Features
+
+* **physics:** implement repulsion and avoidance forces, make falling of agent possible ([#1304](https://github.com/AlchemistSimulator/Alchemist/issues/1304)) ([319c9a8](https://github.com/AlchemistSimulator/Alchemist/commit/319c9a8f71531c5dbc44d86d0808ea6d402965ea))
+
+
+### Bug Fixes
+
+* **incarnation-scafi:** adapt Scafi module to new sensor name access (CNAME against LSNS and NSNS, common sensor names in a trait) ([7040012](https://github.com/AlchemistSimulator/Alchemist/commit/70400124cf4378f0fd072e0273f459d8616e6f8b))
+* **incarnation-scafi:** use standard sensor names instead of basic sensor names ([4c606aa](https://github.com/AlchemistSimulator/Alchemist/commit/4c606aa607f037eb5b174914b2c7a90df09f4ef6))
+
+
+### Dependency updates
+
+* **deps:** update dependency it.unibo.scafi:scafi-core_2.13 to v1 ([2c5e24f](https://github.com/AlchemistSimulator/Alchemist/commit/2c5e24f8af91a9ae51f92f6f8b96e023ef62a474))
+
 ## [19.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.1.1...19.2.0) (2022-05-27)
 
 

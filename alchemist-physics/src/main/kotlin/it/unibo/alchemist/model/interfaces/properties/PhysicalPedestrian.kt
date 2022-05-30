@@ -28,6 +28,25 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
           F : GeometricShapeFactory<P, A> {
 
     /**
+     * Whether the pedestrian has fallen and it is thus an obstacle.
+     */
+    val isFallen: Boolean
+
+    /**
+     * Turn this [node] into a fallen pedestrian if it [shouldFall].
+     */
+    fun checkAndPossiblyFall()
+
+    /**
+     * Determines if this pedestrian subject to [pushingForces] should fall.
+     * According to the work of [Pelechano et al](https://bit.ly/3e3C7Tb)
+     * this should happen when the majority of pushing forces affecting one individual are
+     * approximately in the same direction and the sum of forces have a magnitude high
+     * enough to make it lose equilibrium.
+     */
+    fun shouldFall(pushingForces: List<P>): Boolean
+
+    /**
      * The comfort ray of this pedestrian, this is added to the radius of its [shape] to obtain the [comfortArea].
      */
     val comfortRay: Double
@@ -38,10 +57,37 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     val comfortArea: GeometricShape<P, A>
 
     /**
+     * Rectangle of influence. When a pedestrian enters this area, the node could experience a tangential
+     * avoidance force. See [avoid].
+     */
+    val rectangleOfInfluence: GeometricShape<P, A>
+
+    /**
      * Computes the repulsion force caused by a node that entered the [comfortArea]. This is derived from the work
      * of [Pelechano et al](https://bit.ly/3e3C7Tb).
      */
-    fun repulsionForce(other: Node<T>): P
+    fun repulse(other: Node<T>): P
+
+    /**
+     * Computes the repulsion force caused by a node that entered the [rectangleOfInfluence]. This is derived from
+     * the work of [Pelechano et al](https://bit.ly/3e3C7Tb).
+     */
+    fun avoid(other: Node<T>): P
+
+    /**
+     * Computes the total repulsion force this node is subject to.
+     */
+    fun repulsionForces(): List<P>
+
+    /**
+     * Computes the total avoidance force this node is subject to.
+     */
+    fun avoidanceForces(): List<P>
+
+    /**
+     * Computes the avoidance force from a fallen pedestrian.
+     */
+    fun fallenAgentAvoidanceForces(): List<P>
 }
 
 /**

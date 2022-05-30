@@ -229,7 +229,7 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
      * @param position
      *            The absolute position in which this node will be moved.
      */
-    void moveNodeToPosition(Node<T> node, P position);
+    @Nonnull void moveNodeToPosition(@Nonnull Node<T> node, @Nonnull P position);
 
     /**
      * This method allows to remove a node. If node removal is unsupported, it

@@ -10,6 +10,7 @@ package it.unibo.alchemist.core.implementations
 import it.unibo.alchemist.core.interfaces.DependencyGraph
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import java.lang.IllegalArgumentException
@@ -18,7 +19,7 @@ import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 import org.jgrapht.graph.DefaultDirectedGraph
 
-private typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
+private typealias Edge<T> = Pair<GlobalReaction<T>, GlobalReaction<T>>
 
 /**
  * This class offers an implementation of a dependency graph, namely a
@@ -30,78 +31,80 @@ private typealias Edge<T> = Pair<Reaction<T>, Reaction<T>>
  * @param <T> concentration type
  */
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
-    private val inGlobals = ArrayListSet<Reaction<T>>()
-    private val outGlobals = ArrayListSet<Reaction<T>>()
-    private val graph: DefaultDirectedGraph<Reaction<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
+    private val inGlobals = ArrayListSet<GlobalReaction<T>>()
+    private val outGlobals = ArrayListSet<GlobalReaction<T>>()
+    private val graph: DefaultDirectedGraph<GlobalReaction<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
 
-    override fun createDependencies(newReaction: Reaction<T>) {
+    override fun createDependencies(newReaction: GlobalReaction<T>) {
         val allReactions = graph.vertexSet()
-        val neighborhood by lazy { newReaction.node.neighborhood }
-        val localReactions by lazy {
-            newReaction.node.reactions.filter { allReactions.contains(it) }.asSequence()
-        }
-        val neighborhoodReactions by lazy {
-            neighborhood.asSequence()
-                .flatMap { it.reactions.asSequence() }
-                .filter { allReactions.contains(it) }
-                .toList().asSequence()
-        }
-        val extendedNeighborhoodReactions by lazy {
-            neighborhood.asSequence()
-                // Neighbors of neighbors
-                .flatMap { it.neighborhood.asSequence() }
-                // No duplicates
-                .distinct()
-                // Exclude direct neighbors
-                .filterNot { neighborhood.contains(it) }
-                .flatMap { it.reactions.asSequence() }
-                .filter { allReactions.contains(it) }
-                .toList().asSequence()
-        }
-        val inboundCandidates: Sequence<Reaction<T>> = outGlobals.asSequence() +
-            when (newReaction.inputContext) {
-                Context.LOCAL ->
-                    localReactions + neighborhoodReactions.filter { it.outputContext == Context.NEIGHBORHOOD }
-                Context.NEIGHBORHOOD ->
-                    localReactions + neighborhoodReactions +
-                        extendedNeighborhoodReactions.filter { it.outputContext == Context.NEIGHBORHOOD }
-                else -> allReactions.asSequence()
+        if (newReaction is Reaction) {
+            val neighborhood by lazy { newReaction.node.neighborhood }
+            val localReactions by lazy {
+                newReaction.node.reactions.filter { allReactions.contains(it) }.asSequence()
             }
-        val outboundCandidates: Sequence<Reaction<T>> = inGlobals.asSequence() +
-            when (newReaction.outputContext) {
-                Context.LOCAL ->
-                    localReactions + neighborhoodReactions.filter { it.inputContext == Context.NEIGHBORHOOD }
-                Context.NEIGHBORHOOD ->
-                    localReactions + neighborhoodReactions +
-                        extendedNeighborhoodReactions.filter { it.inputContext == Context.NEIGHBORHOOD }
-                else -> allReactions.asSequence()
+            val neighborhoodReactions by lazy {
+                neighborhood.asSequence()
+                    .flatMap { it.reactions.asSequence() }
+                    .filter { allReactions.contains(it) }
+                    .toList().asSequence()
             }
-        if (!graph.addVertex(newReaction)) {
-            throw IllegalArgumentException("$newReaction was already in the dependency graph")
-        }
-        inboundCandidates.filter { newReaction.dependsOn(it) }
-            .forEach { graph.addEdge(it, newReaction, Edge(it, newReaction)) }
-        outboundCandidates.filter { it.dependsOn(newReaction) }
-            .forEach { graph.addEdge(newReaction, it, Edge(newReaction, it)) }
-        if (newReaction.inputContext == Context.GLOBAL) {
-            inGlobals.add(newReaction)
-        }
-        if (newReaction.outputContext == Context.GLOBAL) {
-            outGlobals.add(newReaction)
+            val extendedNeighborhoodReactions by lazy {
+                neighborhood.asSequence()
+                    // Neighbors of neighbors
+                    .flatMap { it.neighborhood.asSequence() }
+                    // No duplicates
+                    .distinct()
+                    // Exclude direct neighbors
+                    .filterNot { neighborhood.contains(it) }
+                    .flatMap { it.reactions.asSequence() }
+                    .filter { allReactions.contains(it) }
+                    .toList().asSequence()
+            }
+            val inboundCandidates: Sequence<GlobalReaction<T>> = outGlobals.asSequence() +
+                when (newReaction.inputContext) {
+                    Context.LOCAL ->
+                        localReactions + neighborhoodReactions.filter { it.outputContext == Context.NEIGHBORHOOD }
+                    Context.NEIGHBORHOOD ->
+                        localReactions + neighborhoodReactions +
+                            extendedNeighborhoodReactions.filter { it.outputContext == Context.NEIGHBORHOOD }
+                    else -> allReactions.asSequence()
+                }
+            val outboundCandidates: Sequence<GlobalReaction<T>> = inGlobals.asSequence() +
+                when (newReaction.outputContext) {
+                    Context.LOCAL ->
+                        localReactions + neighborhoodReactions.filter { it.inputContext == Context.NEIGHBORHOOD }
+                    Context.NEIGHBORHOOD ->
+                        localReactions + neighborhoodReactions +
+                            extendedNeighborhoodReactions.filter { it.inputContext == Context.NEIGHBORHOOD }
+                    else -> allReactions.asSequence()
+                }
+            if (!graph.addVertex(newReaction)) {
+                throw IllegalArgumentException("$newReaction was already in the dependency graph")
+            }
+            inboundCandidates.filter { newReaction.dependsOn(it) }
+                .forEach { graph.addEdge(it, newReaction, Edge(it, newReaction)) }
+            outboundCandidates.filter { it.dependsOn(newReaction) }
+                .forEach { graph.addEdge(newReaction, it, Edge(newReaction, it)) }
+            if (newReaction.inputContext == Context.GLOBAL) {
+                inGlobals.add(newReaction)
+            }
+            if (newReaction.outputContext == Context.GLOBAL) {
+                outGlobals.add(newReaction)
+            }
         }
     }
 
     private val Node<T>.neighborhood
         get() = environment.getNeighborhood(this).neighbors
 
-    private fun Reaction<T>.dependsOn(other: Reaction<T>) =
+    private fun GlobalReaction<T>.dependsOn(other: GlobalReaction<T>) =
         inboundDependencies.any { inbound ->
             other.outboundDependencies.any { outbound ->
                 inbound.dependsOn(outbound) || outbound.makesDependent(inbound)
             }
         }
 
-    override fun removeDependencies(reaction: Reaction<T>) {
+    override fun removeDependencies(reaction: GlobalReaction<T>) {
         if (!graph.removeVertex(reaction)) {
             throw IllegalStateException("Inconsistent state: $reaction was not in the reaction pool.")
         }
@@ -181,7 +184,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         removeNeighborDirected(n2, n1)
     }
 
-    override fun outboundDependencies(reaction: Reaction<T>) = graph.outgoingEdgesOf(reaction).let { edges ->
+    override fun outboundDependencies(reaction: GlobalReaction<T>): ListSet<GlobalReaction<T>>? = graph.outgoingEdgesOf(reaction).let { edges ->
         edges.asSequence().map { it.second }.toCollection(ArrayListSet(edges.size))
     }
 
@@ -189,5 +192,5 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         return graph.toString()
     }
 
-    override fun globalInputContextReactions(): ListSet<Reaction<T>> = ListSets.unmodifiableListSet(inGlobals)
+    override fun globalInputContextReactions(): ListSet<GlobalReaction<T>>? = ListSets.unmodifiableListSet(inGlobals)
 }

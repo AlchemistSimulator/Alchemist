@@ -3,6 +3,7 @@ package it.unibo.alchemist.test
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
@@ -16,7 +17,7 @@ fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
         addOutputMonitor(
             object : OutputMonitor<T, P> {
                 override fun initialized(environment: Environment<T, P>) = initialized.invoke(environment)
-                override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, t: Time, s: Long) =
+                override fun stepDone(environment: Environment<T, P>, reaction: GlobalReaction<T>?, t: Time, s: Long) =
                     stepDone.invoke(environment, reaction, t, s)
                 override fun finished(environment: Environment<T, P>, t: Time, s: Long) =
                     finished.invoke(environment, t, s)

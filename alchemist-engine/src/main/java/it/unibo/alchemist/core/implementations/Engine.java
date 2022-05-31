@@ -19,6 +19,7 @@ import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GlobalReaction;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -87,7 +88,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private Thread myThread;
 
     /**
-     * Builds a simulation for a given environment. By default it uses a
+     * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
@@ -100,7 +101,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     /**
-     * Builds a simulation for a given environment. By default it uses a
+     * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
@@ -115,7 +116,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     /**
-     * Builds a simulation for a given environment. By default it uses a
+     * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
@@ -142,7 +143,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     /**
-     * Builds a simulation for a given environment. By default it uses a
+     * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
@@ -186,7 +187,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void doStep() {
-        final Reaction<T> reaction = scheduler.getNext();
+        final GlobalReaction<T> reaction = scheduler.getNext();
         if (reaction == null) {
             this.newStatus(TERMINATED);
             LOGGER.info("No more reactions.");
@@ -205,7 +206,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                  */
                 reaction.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
                 reaction.execute();
-                Set<Reaction<T>> toUpdate = dependencyGraph.outboundDependencies(reaction);
+                Set<GlobalReaction<T>> toUpdate = dependencyGraph.outboundDependencies(reaction);
                 if (!afterExecutionUpdates.isEmpty()) {
                     afterExecutionUpdates.forEach(Update::performChanges);
                     afterExecutionUpdates.clear();
@@ -359,7 +360,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         afterExecutionUpdates.add(update);
     }
 
-    private Stream<Reaction<T>> reactionsToUpdateAfterExecution() {
+    private Stream<? extends GlobalReaction<T>> reactionsToUpdateAfterExecution() {
         return afterExecutionUpdates.stream()
             .flatMap(Update::getReactionsToUpdate)
             .distinct();
@@ -368,7 +369,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private void processCommand(final CheckedRunnable command) throws Throwable {
         command.run();
         // Update all reactions before applying dependency graph updates
-        final Set<Reaction<T>> updated = new LinkedHashSet<>();
+        final Set<GlobalReaction<T>> updated = new LinkedHashSet<>();
         reactionsToUpdateAfterExecution().forEach(r -> {
             updated.add(r);
             updateReaction(r);
@@ -458,7 +459,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             @Override
             public void stepDone(
                     @Nonnull final Environment<T, P> environment,
-                    @Nullable final Reaction<T> reaction,
+                    @Nullable final GlobalReaction<T> reaction,
                     @Nonnull final Time time,
                     final long step
             ) {
@@ -491,7 +492,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         return getClass().getSimpleName() + " t: " + getTime() + ", s: " + getStep();
     }
 
-    private void updateReaction(final Reaction<T> r) {
+    private void updateReaction(final GlobalReaction<T> r) {
         final Time t = r.getTau();
         r.update(currentTime, false, environment);
         if (!r.getTau().equals(t)) {
@@ -523,7 +524,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             this.source = source;
         }
 
-        protected final Stream<Reaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
+        protected final Stream<? extends GlobalReaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
             return Stream.of(
                     source.getReactions().stream(),
                     neighborhood.getNeighbors().stream()
@@ -533,7 +534,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 .reduce(Stream.empty(), Stream::concat);
         }
 
-        public Stream<Reaction<T>> getReactionsToUpdate() {
+        public Stream<? extends GlobalReaction<T>> getReactionsToUpdate() {
             return Stream.empty();
         }
 
@@ -551,7 +552,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
 
         @Override
-        public Stream<Reaction<T>> getReactionsToUpdate() {
+        public Stream<? extends GlobalReaction<T>> getReactionsToUpdate() {
             return getReactionsRelatedTo(getSource(), environment.getNeighborhood(getSource()))
                     .filter(it -> it.getInboundDependencies().stream()
                             .anyMatch(dependency -> dependency.dependsOn(Dependency.MOVEMENT)));
@@ -598,7 +599,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
 
         @Override
-        public final Stream<Reaction<T>> getReactionsToUpdate() {
+        public final Stream<? extends GlobalReaction<T>> getReactionsToUpdate() {
             return Stream.of(actualSource);
         }
 
@@ -649,7 +650,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
 
         @Override
-        public Stream<Reaction<T>> getReactionsToUpdate() {
+        public Stream<? extends GlobalReaction<T>> getReactionsToUpdate() {
             return Stream.of(
                     Stream.concat(
                             // source, target, and all their neighbors are candidates.

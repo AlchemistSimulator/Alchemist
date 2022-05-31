@@ -525,7 +525,7 @@ internal object SimulationModel {
             }
         }
         if (conditions.isNotEmpty()) {
-            reaction.conditions = reaction.conditions + conditions
+            reaction.setConditions(reaction.conditions + conditions)
         }
         val actions = visitRecursively<Action<T>>(
             context,
@@ -538,7 +538,7 @@ internal object SimulationModel {
             }
         }
         if (actions.isNotEmpty()) {
-            reaction.actions = reaction.actions + actions
+            reaction.setActions(reaction.actions + actions)
         }
         context.factory.deregisterSingleton(reaction)
         context.factory.deregisterSingleton(timeDistribution)

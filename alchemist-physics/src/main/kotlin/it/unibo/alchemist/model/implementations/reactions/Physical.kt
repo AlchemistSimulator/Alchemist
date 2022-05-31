@@ -42,11 +42,6 @@ class Physical<T>(
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Physical<T> =
         Physical(environment, node, timeDistribution)
 
-    /**
-     * This reaction average rate.
-     */
-    override fun getRate(): Double = timeDistribution.rate
-
     private fun steerActions() = actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
     /**

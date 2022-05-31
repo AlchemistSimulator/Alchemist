@@ -66,7 +66,7 @@ import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
  */
 public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
-    private static final Logger L = LoggerFactory.getLogger(Engine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
     private static final int ALL_PERMITS = Integer.MAX_VALUE;
     private final Lock statusLock = new ReentrantLock();
     private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
@@ -132,7 +132,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         justification = "The environment is stored intentionally, and this class is final"
     )
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t) {
-        L.trace("Engine created");
+        LOGGER.trace("Engine created");
         environment = e;
         environment.setSimulation(this);
         dependencyGraph = new JGraphTDependencyGraph<>(environment);
@@ -186,44 +186,44 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void doStep() {
-        final Reaction<T> mu = scheduler.getNext();
-        if (mu == null) {
+        final Reaction<T> reaction = scheduler.getNext();
+        if (reaction == null) {
             this.newStatus(TERMINATED);
-            L.info("No more reactions.");
+            LOGGER.info("No more reactions.");
         } else {
-            final Time t = mu.getTau();
-            if (t.compareTo(currentTime) < 0) {
-                throw new IllegalStateException(mu + "\nis scheduled in the past at time " + t
+            final Time scheduledTime = reaction.getTau();
+            if (scheduledTime.compareTo(currentTime) < 0) {
+                throw new IllegalStateException(reaction + "\nis scheduled in the past at time " + scheduledTime
                         + ", current time is " + currentTime
                         + ". Problem occurred at step " + currentStep);
             }
-            currentTime = t;
-            if (mu.canExecute()) {
+            currentTime = scheduledTime;
+            if (reaction.canExecute()) {
                 /*
                  * This must be taken before execution, because the reaction
                  * might remove itself (or its node) from the environment.
                  */
-                mu.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
-                mu.execute();
-                Set<Reaction<T>> toUpdate = dependencyGraph.outboundDependencies(mu);
+                reaction.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
+                reaction.execute();
+                Set<Reaction<T>> toUpdate = dependencyGraph.outboundDependencies(reaction);
                 if (!afterExecutionUpdates.isEmpty()) {
                     afterExecutionUpdates.forEach(Update::performChanges);
                     afterExecutionUpdates.clear();
-                    toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(mu));
+                    toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(reaction));
                 }
                 toUpdate.forEach(this::updateReaction);
             }
-            mu.update(currentTime, true, environment);
-            scheduler.updateReaction(mu);
+            reaction.update(currentTime, true, environment);
+            scheduler.updateReaction(reaction);
             monitorLock.acquireUninterruptibly();
-            for (final OutputMonitor<T, P> m : monitors) {
-                m.stepDone(environment, mu, currentTime, currentStep);
+            for (final OutputMonitor<T, P> monitor : monitors) {
+                monitor.stepDone(environment, reaction, currentTime, currentStep);
             }
             monitorLock.release();
         }
         if (environment.isTerminated()) {
             newStatus(TERMINATED);
-            L.info("Termination condition reached.");
+            LOGGER.info("Termination condition reached.");
         }
         currentStep++;
     }
@@ -290,7 +290,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 nextCommand = commands.take();
                 processCommand(nextCommand);
             } catch (InterruptedException e) {
-                L.debug("Look! A spurious wakeup! :-)");
+                LOGGER.debug("Look! A spurious wakeup! :-)");
             }
         }
     }
@@ -399,7 +399,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 finalizeConstructor();
                 status = Status.READY;
                 final long currentThread = Thread.currentThread().getId();
-                L.trace("Thread {} started running.", currentThread);
+                LOGGER.trace("Thread {} started running.", currentThread);
                 monitorLock.acquireUninterruptibly();
                 for (final OutputMonitor<T, P> m : monitors) {
                     m.initialized(environment);
@@ -421,7 +421,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 }
             } catch (Throwable e) { // NOPMD: forced by CheckedRunnable
                 error = Optional.of(e);
-                L.error("The simulation engine crashed.", e);
+                LOGGER.error("The simulation engine crashed.", e);
             } finally {
                 status = TERMINATED;
                 commands.clear();
@@ -704,7 +704,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                         notTimedOut = statusReached.await(timeout, tu);
                         queueLength.getAndDecrement();
                     } catch (InterruptedException e) {
-                        L.info("Spurious wakeup?", e);
+                        LOGGER.info("Spurious wakeup?", e);
                     }
                 }
                 if (queueLength.get() == 0) {

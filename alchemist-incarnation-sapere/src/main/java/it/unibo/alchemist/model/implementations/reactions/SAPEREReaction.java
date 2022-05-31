@@ -359,12 +359,12 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     @Override
-    public void setActions(final List<Action<List<ILsaMolecule>>> actions) {
+    public void setActions(final List<? extends Action<List<ILsaMolecule>>> actions) {
         setConditionsAndActions(getConditions(), actions);
     }
 
     @Override
-    public void setConditions(final List<Condition<List<ILsaMolecule>>> conditions) {
+    public void setConditions(final List<? extends Condition<List<ILsaMolecule>>> conditions) {
         setConditionsAndActions(conditions, getActions());
     }
 

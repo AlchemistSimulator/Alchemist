@@ -263,7 +263,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param actions the actions to set
      */
     @Override
-    public void setActions(final List<Action<T>> actions) {
+    public void setActions(final List<? extends Action<T>> actions) {
         this.actions = Objects.requireNonNull(actions, "The actions list can't be null");
         setOutputContext(actions.stream().map(Action::getContext).reduce(Context.LOCAL, Context::getWider));
         outbound = computeDependencies(actions.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
@@ -276,7 +276,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param conditions the actions to set
      */
     @Override
-    public void setConditions(final List<Condition<T>> conditions) {
+    public void setConditions(final List<? extends Condition<T>> conditions) {
         this.conditions = Objects.requireNonNull(conditions, "The conditions list can't be null");
         setInputContext(conditions.stream().map(Condition::getContext).reduce(Context.LOCAL, Context::getWider));
         inbound = computeDependencies(conditions.stream().map(Condition::getInboundDependencies).flatMap(List::stream));

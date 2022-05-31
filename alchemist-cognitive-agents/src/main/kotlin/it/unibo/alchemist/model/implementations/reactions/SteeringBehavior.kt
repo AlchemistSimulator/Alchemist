@@ -37,8 +37,6 @@ open class SteeringBehavior<T>(
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
         SteeringBehavior(environment, node, timeDistribution, steerStrategy)
 
-    override fun getRate() = timeDistribution.rate
-
     override fun updateInternalStatus(
         currentTime: Time?,
         hasBeenExecuted: Boolean,

@@ -101,19 +101,19 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
             }
         }
 
-    override fun removeDependencies(r: Reaction<T>) {
-        if (!graph.removeVertex(r)) {
-            throw IllegalStateException("Inconsistent state: $r was not in the reaction pool.")
+    override fun removeDependencies(reaction: Reaction<T>) {
+        if (!graph.removeVertex(reaction)) {
+            throw IllegalStateException("Inconsistent state: $reaction was not in the reaction pool.")
         }
-        if (r.inputContext == Context.GLOBAL && !inGlobals.remove(r)) {
+        if (reaction.inputContext == Context.GLOBAL && !inGlobals.remove(reaction)) {
             throw IllegalStateException(
-                "Inconsistent state: " + r + " , with global input context, " +
+                "Inconsistent state: " + reaction + " , with global input context, " +
                     "was not in the appropriate reaction pool."
             )
         }
-        if (r.inputContext == Context.GLOBAL && !outGlobals.remove(r)) {
+        if (reaction.inputContext == Context.GLOBAL && !outGlobals.remove(reaction)) {
             throw IllegalStateException(
-                "Inconsistent state: " + r + " , with global output context, " +
+                "Inconsistent state: " + reaction + " , with global output context, " +
                     "was not in the appropriate reaction pool."
             )
         }

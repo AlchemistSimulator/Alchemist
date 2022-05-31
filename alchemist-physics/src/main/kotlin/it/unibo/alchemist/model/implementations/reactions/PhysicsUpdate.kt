@@ -40,10 +40,8 @@ class PhysicsUpdate<T>(
     override val tau: Time get() = timeDistribution.nextOccurence
 
     override var actions: List<Action<T>> = listOf()
-        private set
 
     override var conditions: List<Condition<T>> = listOf()
-        private set
 
     override fun compareTo(other: Reaction<T>): Int = tau.compareTo(other.tau)
 
@@ -54,14 +52,6 @@ class PhysicsUpdate<T>(
     }
 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit
-
-    override fun setConditions(conditions: List<Condition<T>>) {
-        this.conditions = conditions
-    }
-
-    override fun setActions(actions: List<Action<T>>) {
-        this.actions = actions
-    }
 
     override fun initializationComplete(atTime: Time, environment: Environment<T, *>) = Unit
 }

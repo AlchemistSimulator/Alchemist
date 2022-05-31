@@ -40,20 +40,16 @@ interface GlobalReaction<T> : Comparable<Reaction<T>>, Serializable {
     fun initializationComplete(atTime: Time, environment: Environment<T, *>)
 
     /**
-     * @return The list of [Action]s of the [Reaction]. There is no
-     * specification if the list will be a copy of the internal list or
-     * a reference. It will depend on implementations. Please be careful
-     * when you modify this list.
+     *  The list of [Action]s of the [Reaction].
+     *  Please be careful when you modify this list.
      */
-    val actions: List<Action<T>>
+    var actions: List<Action<T>>
 
     /**
-     * @return The list of [Condition]s of the [Reaction]. There is
-     * no specification if the list will be a copy of the internal list
-     * or a reference. It will depend on implementations. Please be
-     * careful when you modify this list.
+     * The list of [Condition]s of the [Reaction].
+     * Please be careful when you modify this list.
      */
-    val conditions: List<Condition<T>>
+    var conditions: List<Condition<T>>
 
     /**
      * @return The list of [Dependency] whose concentration may change after the
@@ -101,24 +97,6 @@ interface GlobalReaction<T> : Comparable<Reaction<T>>, Serializable {
      * @return the [TimeDistribution] for this [Reaction]
      */
     val timeDistribution: TimeDistribution<T>
-
-    /**
-     * Sets the [Action]s list. Some implementations may not allow to
-     * change it at runtime.
-     *
-     * @param actions
-     * the list of actions for this reaction
-     */
-    fun setActions(actions: List<Action<T>>)
-
-    /**
-     * Sets the [Condition]s list. Some implementations may not allow to
-     * change it at runtime.
-     *
-     * @param conditions
-     * the list of conditions for this action
-     */
-    fun setConditions(conditions: List<Condition<T>>)
 
     /**
      * Updates the scheduling of this reaction.

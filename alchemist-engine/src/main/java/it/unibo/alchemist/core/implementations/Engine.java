@@ -346,12 +346,12 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public void reactionAdded(final Reaction<T> reactionToAdd) {
+    public void reactionAdded(final GlobalReaction<T> reactionToAdd) {
         reactionChanged(new ReactionAddition(reactionToAdd));
     }
 
     @Override
-    public void reactionRemoved(final Reaction<T> reactionToRemove) {
+    public void reactionRemoved(final GlobalReaction<T> reactionToRemove) {
         reactionChanged(new ReactionRemoval(reactionToRemove));
     }
 
@@ -476,7 +476,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         commands.add(r);
     }
 
-    private void scheduleReaction(final Reaction<T> r) {
+    private void scheduleReaction(final GlobalReaction<T> r) {
         dependencyGraph.createDependencies(r);
         r.initializationComplete(currentTime, environment);
         scheduler.addReaction(r);
@@ -524,7 +524,10 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             this.source = source;
         }
 
-        protected final Stream<? extends GlobalReaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
+        protected final Stream<? extends GlobalReaction<T>> getReactionsRelatedTo(
+            final Node<T> source,
+            final Neighborhood<T> neighborhood
+        ) {
             return Stream.of(
                     source.getReactions().stream(),
                     neighborhood.getNeighbors().stream()
@@ -591,10 +594,15 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     private abstract class UpdateOnReaction extends Update {
 
-        private final Reaction<T> actualSource;
+        private final GlobalReaction<T> actualSource;
 
         private UpdateOnReaction(final Reaction<T> source) {
             super(source.getNode());
+            actualSource = source;
+        }
+
+        private UpdateOnReaction(final GlobalReaction<T> source) {
+            super(null);
             actualSource = source;
         }
 
@@ -606,14 +614,14 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         @Override
         public abstract void performChanges();
 
-        protected Reaction<T> getSourceReaction() {
+        protected GlobalReaction<T> getSourceReaction() {
             return actualSource;
         }
     }
 
     private final class ReactionRemoval extends UpdateOnReaction {
 
-        private ReactionRemoval(final Reaction<T> source) {
+        private ReactionRemoval(final GlobalReaction<T> source) {
             super(source);
         }
 
@@ -626,7 +634,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     private final class ReactionAddition extends UpdateOnReaction {
 
-        private ReactionAddition(final Reaction<T> source) {
+        private ReactionAddition(final GlobalReaction<T> source) {
             super(source);
         }
 

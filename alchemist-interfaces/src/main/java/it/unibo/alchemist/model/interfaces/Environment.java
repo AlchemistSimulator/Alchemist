@@ -37,6 +37,20 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     void addLayer(Molecule m, Layer<T, P> l);
 
     /**
+     * Add a {@link GlobalReaction} to the {@link Environment}.
+     *
+     * @param reaction the {@link GlobalReaction}
+     *
+     * @throws IllegalStateException if both input and output {@link Context} aren't GLOBAL.
+     */
+    void addGlobalReaction(GlobalReaction<T> reaction);
+
+    /**
+     * Get the {@link Environment}'s global reactions.
+     */
+    ListSet<GlobalReaction<T>> getGlobalReactions();
+
+    /**
      * This method allows to add a new node to this environment. The environment
      * is responsible to call the right method of the simulation in order to
      * ensure that the reaction is properly scheduled.

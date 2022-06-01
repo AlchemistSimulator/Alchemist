@@ -13,7 +13,6 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import it.unibo.alchemist.core.interfaces.Scheduler;
 import it.unibo.alchemist.model.interfaces.GlobalReaction;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
 import java.util.ArrayList;

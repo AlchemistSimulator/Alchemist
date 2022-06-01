@@ -1,3 +1,19 @@
+## [20.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/20.0.0...20.0.1) (2022-05-30)
+
+
+### Bug Fixes
+
+* **physics:** display obstacles when using EnvironmentWithDynamics ([#1312](https://github.com/AlchemistSimulator/Alchemist/issues/1312)) ([f646934](https://github.com/AlchemistSimulator/Alchemist/commit/f6469349b5f44ca19f1253b594cded58e0fc6414))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.6.2 ([93b2853](https://github.com/AlchemistSimulator/Alchemist/commit/93b28531006192cfb006667bdf6442a962925596))
+* **deps:** update dependency org.mockito:mockito-core to v4.6.0 ([975edd1](https://github.com/AlchemistSimulator/Alchemist/commit/975edd1d3ad7b26ecdeac18501f4d93b1329cf01))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.7 ([f0fff28](https://github.com/AlchemistSimulator/Alchemist/commit/f0fff283a677103136e8a7b9d66e392630ccf7ff))
+* **deps:** update plugin kotlin-qa to v0.19.0 ([5b1d904](https://github.com/AlchemistSimulator/Alchemist/commit/5b1d9047872447e24b27db3f135b153fd75d9dac))
+* **deps:** update site/themes/hugo-theme-relearn digest to 368e417 ([1a59be4](https://github.com/AlchemistSimulator/Alchemist/commit/1a59be4ca1c6f366491a0a081597e8598cb597bb))
+
 ## [20.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/19.2.0...20.0.0) (2022-05-29)
 
 

@@ -19,17 +19,18 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
+import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListSet
-import org.danilopianini.util.ListSets
 
 class PhysicsUpdate<T>(
     val environment: Dynamics2DEnvironment<T>,
     override val timeDistribution: TimeDistribution<T>,
 ) : GlobalReaction<T> {
 
-    override val outboundDependencies: ListSet<out Dependency> get() = ListSets.emptyListSet()
+    override val outboundDependencies: ListSet<out Dependency> = ListSet.of(Dependency.EVERYTHING)
 
-    override val inboundDependencies: ListSet<out Dependency> get() = ListSets.emptyListSet()
+    override val inboundDependencies: ListSet<out Dependency> = ListSet.of(Dependency.MOVEMENT)
+        get() = ImmutableListSet.copyOf(field)
 
     override val inputContext: Context get() = Context.GLOBAL
 

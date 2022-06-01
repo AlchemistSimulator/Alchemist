@@ -9,7 +9,6 @@
 package it.unibo.alchemist.core.interfaces;
 
 import it.unibo.alchemist.model.interfaces.GlobalReaction;
-import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * The type which describes the concentration of a molecule

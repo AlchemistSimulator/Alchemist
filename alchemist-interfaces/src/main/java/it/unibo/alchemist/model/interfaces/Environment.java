@@ -46,7 +46,9 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     void addGlobalReaction(GlobalReaction<T> reaction);
 
     /**
-     * Get the {@link Environment}'s global reactions.
+     * Get the {@link Environment}'s {@link GlobalReaction}s.
+     *
+     * @return the list of {@link GlobalReaction}s in this {@link Environment}.
      */
     ListSet<GlobalReaction<T>> getGlobalReactions();
 

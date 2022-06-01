@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import it.unibo.alchemist.model.interfaces.GlobalReaction;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;

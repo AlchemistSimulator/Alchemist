@@ -201,5 +201,5 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         return graph.toString()
     }
 
-    override fun globalInputContextReactions(): ListSet<GlobalReaction<T>>? = ListSets.unmodifiableListSet(inGlobals)
+    override fun globalInputContextReactions(): ListSet<GlobalReaction<T>> = ListSets.unmodifiableListSet(inGlobals)
 }

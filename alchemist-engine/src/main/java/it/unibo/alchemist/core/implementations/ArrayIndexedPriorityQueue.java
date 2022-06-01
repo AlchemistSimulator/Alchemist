@@ -48,9 +48,9 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         updateEffectively(reaction, index);
     }
 
-    private void down(final GlobalReaction<T> r, final int i) {
-        int index = i;
-        final Time newTime = r.getTau();
+    private void down(final GlobalReaction<T> reaction, final int reactionIndex) {
+        int index = reactionIndex;
+        final Time newTime = reaction.getTau();
         while (true) {
             int minIndex = 2 * index + 1;
             if (minIndex > tree.size() - 1) {
@@ -68,7 +68,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
                 }
             }
             if (newTime.compareTo(minTime) > 0) {
-                swap(index, r, minIndex, min);
+                swap(index, reaction, minIndex, min);
                 index = minIndex;
             } else {
                 return;
@@ -78,20 +78,20 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     @Override
     public GlobalReaction<T> getNext() {
-        GlobalReaction<T> res = null;
+        GlobalReaction<T> result = null;
         if (!tree.isEmpty()) {
-            res = tree.get(0);
+            result = tree.get(0);
         }
-        return res;
+        return result;
     }
 
     @Override
-    public void removeReaction(final GlobalReaction<T> r) {
-        final int index = indexes.get(r);
+    public void removeReaction(final GlobalReaction<T> reaction) {
+        final int index = indexes.get(reaction);
         final int last = tree.size() - 1;
         if (index == last) {
             tree.remove(index);
-            indexes.remove(r);
+            indexes.remove(reaction);
             times.remove(index);
         } else {
             final GlobalReaction<T> swapped = tree.get(last);
@@ -100,7 +100,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
             times.set(index, swapped.getTau());
             tree.remove(last);
             times.remove(last);
-            indexes.remove(r);
+            indexes.remove(reaction);
             updateEffectively(swapped, index);
         }
     }
@@ -135,8 +135,8 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         return sb.toString();
     }
 
-    private boolean up(final GlobalReaction<T> reaction, final int i) {
-        int index = i;
+    private boolean up(final GlobalReaction<T> reaction, final int reactionIndex) {
+        int index = reactionIndex;
         int parentIndex = getParent(index);
         final Time newTime = reaction.getTau();
         if (parentIndex == -1) {

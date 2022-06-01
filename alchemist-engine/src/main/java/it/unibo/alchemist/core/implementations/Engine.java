@@ -469,17 +469,17 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public void schedule(final CheckedRunnable r) {
+    public void schedule(final CheckedRunnable runnable) {
         if (getStatus().equals(TERMINATED)) {
             throw new IllegalStateException("This simulation is terminated and can not get resumed.");
         }
-        commands.add(r);
+        commands.add(runnable);
     }
 
-    private void scheduleReaction(final GlobalReaction<T> r) {
-        dependencyGraph.createDependencies(r);
-        r.initializationComplete(currentTime, environment);
-        scheduler.addReaction(r);
+    private void scheduleReaction(final GlobalReaction<T> reaction) {
+        dependencyGraph.createDependencies(reaction);
+        reaction.initializationComplete(currentTime, environment);
+        scheduler.addReaction(reaction);
     }
 
     @Override

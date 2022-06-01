@@ -52,14 +52,10 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
             }
         }
         val neighborhoodReactions by lazy {
-            if (newReaction is Reaction) {
-                newReaction.node.neighborhood.asSequence()
-                    .flatMap { it.reactions.asSequence() }
-                    .filter { allReactions.contains(it) }
-                    .toList().asSequence()
-            } else {
-                emptySequence()
-            }
+            neighborhood.asSequence()
+                .flatMap { it.reactions.asSequence() }
+                .filter { allReactions.contains(it) }
+                .toList().asSequence()
         }
         val extendedNeighborhoodReactions by lazy {
             neighborhood.asSequence()

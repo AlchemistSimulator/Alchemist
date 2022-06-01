@@ -102,6 +102,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addGlobalReaction(final GlobalReaction<T> reaction) {
         if (reaction.getInputContext() != Context.GLOBAL && reaction.getOutputContext() != Context.GLOBAL) {
@@ -110,6 +113,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         ifEngineAvailable(simulation -> simulation.reactionAdded(reaction));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ListSet<GlobalReaction<T>> getGlobalReactions() {
         return ListSets.unmodifiableListSet(globalReactions);

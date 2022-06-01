@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.wormhole.impl;
 
-import it.unibo.alchemist.boundary.ui.api.ViewPort;
 import it.unibo.alchemist.boundary.ui.impl.AbstractWormhole2D;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position2D;
@@ -27,7 +26,7 @@ public class WormholeSwing<P extends Position2D<? extends P>> extends AbstractWo
 
     /**
      * @param environment the environment
-     * @param component the {@link ViewPort}
+     * @param component the {@link it.unibo.alchemist.boundary.ui.api.ViewPort}
      *   of the UI used for implementing the wormhole
      */
     public WormholeSwing(final Environment<?, P> environment, final Component component) {

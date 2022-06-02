@@ -1,3 +1,63 @@
+## [21.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/20.0.1...21.0.0) (2022-06-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor all packages in alchemist-ui-toooling
+* rename module alchemist-interfaces into alchemist-api
+* **swingui:** refactor all classes in swingui
+* **swingui:** drop unused class "JOutputMonitorRepresentation"
+* **swingui:** drop unused class "ClassItem"
+* **swingui:** move the swingui api into a better-named package
+* **swingui:** rename gui to swingui
+
+### Bug Fixes
+
+* **swingui:** support legacy package names for the deserialization of effects ([ae08ae9](https://github.com/AlchemistSimulator/Alchemist/commit/ae08ae9a37c82804c0ce554971fa7cfc1279c23e))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.codehaus.groovy:groovy-jsr223 to v3.0.11 ([6882f41](https://github.com/AlchemistSimulator/Alchemist/commit/6882f41d158736952cb54729bab0f4c66a612018))
+* **deps:** update gohugoio/hugo action to v0.100.0 ([1fc2ba1](https://github.com/AlchemistSimulator/Alchemist/commit/1fc2ba1874ec2d4464037d799e8bcba95e84a417))
+* **deps:** update gohugoio/hugo action to v0.100.1 ([acb3b03](https://github.com/AlchemistSimulator/Alchemist/commit/acb3b03bf574158a9271d381a187ae28f279b276))
+* **deps:** update site/themes/hugo-theme-relearn digest to 4dbe1bf ([aed676e](https://github.com/AlchemistSimulator/Alchemist/commit/aed676e373b2a4ae789184bf3c9b3af2e33e0d24))
+
+
+### Build and continuous integration
+
+* **deps:** update [secure]/build-check-deploy-gradle-action action to v1.2.16 ([682e12b](https://github.com/AlchemistSimulator/Alchemist/commit/682e12bb7910aba234158b8f65ba7344f11aac95))
+* **deps:** update [secure]/build-check-deploy-gradle-action action to v2 ([b100251](https://github.com/AlchemistSimulator/Alchemist/commit/b1002517271fe544cf213cf326436522a63a325e))
+* overwrite the git hooks when updates are available ([b271dae](https://github.com/AlchemistSimulator/Alchemist/commit/b271daeb97bb63899ad97670b0f746a69ab97677))
+
+
+### Refactoring
+
+* refactor all packages in alchemist-ui-toooling ([4ec7afd](https://github.com/AlchemistSimulator/Alchemist/commit/4ec7afdd17e06e7c2c52b627135f9b2be9a4a4c7))
+* rename module alchemist-interfaces into alchemist-api ([3fbc169](https://github.com/AlchemistSimulator/Alchemist/commit/3fbc1697583472e9ef8fa237b7c72476ea5ed0d2))
+* **swingui:** drop unused class "ClassItem" ([6b37ba4](https://github.com/AlchemistSimulator/Alchemist/commit/6b37ba4f6f8ed4dce3740f3d5fa1aebbcf4adb59))
+* **swingui:** drop unused class "JOutputMonitorRepresentation" ([7cd6f63](https://github.com/AlchemistSimulator/Alchemist/commit/7cd6f631f59f1ad0b58e7e5778f8ad8bc4d5e261))
+* **swingui:** move the swingui api into a better-named package ([9e82a5f](https://github.com/AlchemistSimulator/Alchemist/commit/9e82a5f4307b8d5982372aee0711666ef305db10))
+* **swingui:** refactor all classes in swingui ([f340502](https://github.com/AlchemistSimulator/Alchemist/commit/f34050224050cafd04a718d900d580ce1147f7e1))
+* **swingui:** rename gui to swingui ([58d4703](https://github.com/AlchemistSimulator/Alchemist/commit/58d470357fc1de9983f344563cb778ac184b722d))
+
+
+### Style improvements
+
+* **fxui:** remove unused imports ([e5023b7](https://github.com/AlchemistSimulator/Alchemist/commit/e5023b711afd401fd4a5d268c27f8398d5f2da0f))
+* **swingui:** remove unused imports ([5ea7e52](https://github.com/AlchemistSimulator/Alchemist/commit/5ea7e52d26cbe3bc51bc38a14aabef2891270088))
+
+
+### Documentation
+
+* **website:** update reference to refactored class DrawNavigationGraph ([50f9b55](https://github.com/AlchemistSimulator/Alchemist/commit/50f9b55b4bd3767808f23591aee1aaa5c6e65655))
+
+
+### General maintenance
+
+* refresh javadoc-io.json ([f28cdb8](https://github.com/AlchemistSimulator/Alchemist/commit/f28cdb83164b869b858e476f6614bdf0e2db861c))
+* update javadoc-io.json ([fd51a72](https://github.com/AlchemistSimulator/Alchemist/commit/fd51a729294352469df012b10a9657286e339b15))
+
 ## [20.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/20.0.0...20.0.1) (2022-05-30)
 
 

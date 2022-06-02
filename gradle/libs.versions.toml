@@ -9,7 +9,7 @@ konf = "1.1.2"
 kotest = "5.3.0"
 dokka = "1.6.21"
 kotlin = "1.6.21"
-mockito = "4.5.1"
+mockito = "4.6.0"
 protelis = "16.1.1"
 scafi = "1.1.0"
 scala = "2.13.8"
@@ -37,7 +37,7 @@ embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.6"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
-groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.10"
+groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.11"
 gson = "com.google.code.gson:gson:2.9.0"
 gson-extras = "org.danilopianini:gson-extras:0.6.0"
 guava = "com.google.guava:guava:31.1-jre"
@@ -58,7 +58,7 @@ junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref 
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
-kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
+kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2"
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
 logback = "ch.qos.logback:logback-classic:1.2.11"
@@ -103,7 +103,7 @@ gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 hugo = "io.github.fstaudt.hugo:0.4.0"
 java-qa = "org.danilopianini.gradle-java-qa:0.22.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.18.0"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.19.0"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.0"
 publishOnCentral = "org.danilopianini.publish-on-central:0.7.19"
 scalatest = "com.github.maiflai.scalatest:0.32"

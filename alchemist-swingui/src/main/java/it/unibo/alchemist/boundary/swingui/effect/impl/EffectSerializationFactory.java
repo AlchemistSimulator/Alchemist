@@ -92,10 +92,20 @@ public final class EffectSerializationFactory {
         List.of(Effect.class, LayerToFunctionMapper.class).forEach(clazz -> {
             @SuppressWarnings("unchecked")
             final var runtimeAdapterFactory = (RuntimeTypeAdapterFactory<Serializable>) RuntimeTypeAdapterFactory.of(clazz);
+            @SuppressWarnings("unchecked")
+            final var legacyRuntimeAdapterFactory = (RuntimeTypeAdapterFactory<Serializable>) RuntimeTypeAdapterFactory.of(clazz);
             ClassPathScanner
                 .subTypesOf(clazz, clazz.getPackageName(), "it.unibo.alchemist")
-                .forEach(subtype -> runtimeAdapterFactory.registerSubtype(subtype, subtype.toString()));
+                .forEach(subtype -> {
+                    runtimeAdapterFactory.registerSubtype(subtype, subtype.toString());
+                    // Legacy effects support
+                    legacyRuntimeAdapterFactory.registerSubtype(
+                        subtype,
+                        "class it.unibo.alchemist.boundary.gui.effects." + subtype.getSimpleName()
+                    );
+                });
             builder.registerTypeAdapterFactory(runtimeAdapterFactory);
+            builder.registerTypeAdapterFactory(legacyRuntimeAdapterFactory);
         });
         GSON = builder.create();
     }

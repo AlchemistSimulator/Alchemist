@@ -50,5 +50,5 @@ gitHooks {
     preCommit {
         tasks("ktlintCheck")
     }
-    createHooks()
+    createHooks(overwriteExisting = true)
 }

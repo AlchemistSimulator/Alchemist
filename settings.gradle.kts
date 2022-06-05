@@ -50,6 +50,7 @@ gitHooks {
     commitMsg { conventionalCommits() }
     preCommit {
         tasks("ktlintCheck")
+        tasks("checkScalafmt")
     }
     createHooks(overwriteExisting = true)
 }

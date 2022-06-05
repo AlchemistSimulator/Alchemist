@@ -8,13 +8,6 @@
 
 package it.unibo.alchemist.scafi.test
 
-/**
- * ***************************************************************************** Copyright (C) 2010-2018, Danilo Pianini
- * and contributors listed in the main project's alchemist/build.gradle file.
- *
- * This file is part of Alchemist, and is distributed under the terms of the GNU General Public License, with a linking
- * exception, as described in the file LICENSE in the Alchemist distribution's top directory.
- */
 import it.unibo.alchemist.model.ScafiIncarnation
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

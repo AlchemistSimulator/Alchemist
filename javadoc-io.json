@@ -15,11 +15,19 @@
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.0",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.0/element-list"
   },
+  "com.github.ben-manes.caffeine/caffeine/3.1.1": {
+    "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.1",
+    "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.1/element-list"
+  },
   "com.github.cb372/scalacache-core_2.13/0.28.0": {
     "first": "https://javadoc.io/doc/com.github.cb372/scalacache-core_2.13/0.28.0"
   },
   "com.github.cb372/scalacache-guava_2.13/0.28.0": {
     "first": "https://javadoc.io/doc/com.github.cb372/scalacache-guava_2.13/0.28.0"
+  },
+  "com.github.davidmoten/rtree/0.10": {
+    "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.10",
+    "second": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.10/package-list"
   },
   "com.github.davidmoten/rtree/0.8.7": {
     "first": "https://javadoc.io/doc/com.github.davidmoten/rtree/0.8.7",
@@ -116,6 +124,10 @@
   "io.github.classgraph/classgraph/4.8.146": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.146",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.146/package-list"
+  },
+  "io.github.classgraph/classgraph/4.8.147": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.147",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.147/package-list"
   },
   "io.jenetics/jpx/2.3.0": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
@@ -245,6 +257,9 @@
   },
   "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.6.1": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.6.1"
+  },
+  "org.jetbrains.kotlinx/kotlinx-coroutines-core/1.6.2": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlinx/kotlinx-coroutines-core/1.6.2"
   },
   "org.jgrapht/jgrapht-core/1.5.1": {
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1",

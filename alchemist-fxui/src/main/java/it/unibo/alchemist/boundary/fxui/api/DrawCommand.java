@@ -9,11 +9,12 @@
 
 package it.unibo.alchemist.boundary.fxui.api;
 
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D;
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
 import it.unibo.alchemist.model.interfaces.Position2D;
+import javafx.scene.canvas.GraphicsContext;
+
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Functional interface that models a command for

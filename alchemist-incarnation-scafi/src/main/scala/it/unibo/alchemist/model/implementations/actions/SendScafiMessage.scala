@@ -26,16 +26,17 @@ class SendScafiMessage[T, P <: Position[P]](
   assert(reaction != null, "Reaction cannot be null")
   assert(program != null, "Program cannot be null")
 
-  /** This method allows to clone this action on a new node. It may result useful to support runtime creation of nodes
-    * with the same reaction programming, e.g. for morphogenesis.
-    *
-    * @param destinationNode
-    *   The node where to clone this { @link Action}
-    * @param reaction
-    *   The reaction to which the CURRENT action is assigned
-    * @return
-    *   the cloned action
-    */
+  /**
+   * This method allows to clone this action on a new node. It may result useful to support runtime creation of nodes
+   * with the same reaction programming, e.g. for morphogenesis.
+   *
+   * @param destinationNode
+   *   The node where to clone this { @link Action}
+   * @param reaction
+   *   The reaction to which the CURRENT action is assigned
+   * @return
+   *   the cloned action
+   */
   override def cloneAction(destinationNode: Node[T], reaction: Reaction[T]): Action[T] =
     runInScafiDeviceContext[T, Action[T]](
       node = destinationNode,

@@ -86,9 +86,10 @@ object ScafiIncarnationForAlchemist
       findInLayers[A](name).get
   }
 
-  /** Typical adjustment that needs to be performed when using Alchemist environments with positions of type
-    * [[Euclidean2DPosition]] to properly adapt values and types to ScaFi standard sensors.
-    */
+  /**
+   * Typical adjustment that needs to be performed when using Alchemist environments with positions of type
+   * [[Euclidean2DPosition]] to properly adapt values and types to ScaFi standard sensors.
+   */
   trait AlchemistEuclidean2DPosition { self: AggregateProgram with ScafiAlchemistSupport with StandardSensors =>
     override def currentPosition(): Point3D = {
       val pos = sense[Euclidean2DPosition](LSNS_POSITION)

@@ -239,9 +239,10 @@ object CachedInterpreter {
     .build[String, Entry[Any]]
   implicit private val scalaCache: Cache[Any] = GuavaCache(underlyingGuavaCache: GCache[String, Entry[Any]])
 
-  /** Evaluates str using Scala reflection. When doCacheValue is true, the result of the evaluation is cached. When
-    * doCacheValue is false, only the result of parsing is cached.
-    */
+  /**
+   * Evaluates str using Scala reflection. When doCacheValue is true, the result of the evaluation is cached. When
+   * doCacheValue is false, only the result of parsing is cached.
+   */
   def apply[A <: AnyRef](code: String, doCacheValue: Boolean = true): A =
     if (doCacheValue) {
       import scalacache.modes.sync._ // Synchronous mode

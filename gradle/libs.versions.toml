@@ -11,7 +11,7 @@ dokka = "1.6.21"
 kotlin = "1.6.21"
 mockito = "4.6.1"
 protelis = "16.1.1"
-scafi = "1.1.0"
+scafi = "1.1.3"
 scala = "2.13.8"
 scalacache = "0.28.0"
 

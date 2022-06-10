@@ -74,5 +74,5 @@ public interface Condition<T> extends Serializable {
      * registering the status of the simulated world for future comparisons.
      * Defaults to an empty implementation.
      */
-    default void reactionReady() { };
+    default void reactionReady() { }
 }

@@ -6,6 +6,7 @@ on:
       - 'autodelivery**'
       - 'bump-**'
       - 'renovate/**'
+      - 'dependabot/**'
     paths-ignore:
       - 'CHANGELOG.md'
       - 'renovate.json'

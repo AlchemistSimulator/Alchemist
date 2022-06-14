@@ -18,7 +18,7 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
@@ -71,7 +71,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private final Map<Molecule, Layer<T, P>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
 
-    private final ListSet<GlobalReaction<T>> globalReactions = new ArrayListSet<>();
+    private final ListSet<Actionable<T>> actionables = new ArrayListSet<>();
     private final ListSet<Node<T>> nodes = new ArrayListSet<>();
     private final TIntObjectHashMap<P> nodeToPos = new TIntObjectHashMap<>();
     private final SpatialIndex<Node<T>> spatialIndex;
@@ -106,7 +106,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * {@inheritDoc}
      */
     @Override
-    public void addGlobalReaction(final GlobalReaction<T> reaction) {
+    public void addGlobalReaction(final Actionable<T> reaction) {
         if (reaction.getInputContext() != Context.GLOBAL && reaction.getOutputContext() != Context.GLOBAL) {
             throw new IllegalStateException("Input and Output contex of the reaction must be GLOBAL");
         }
@@ -117,8 +117,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * {@inheritDoc}
      */
     @Override
-    public ListSet<GlobalReaction<T>> getGlobalReactions() {
-        return ListSets.unmodifiableListSet(globalReactions);
+    public ListSet<Actionable<T>> getGlobalReactions() {
+        return ListSets.unmodifiableListSet(actionables);
     }
 
     @Override

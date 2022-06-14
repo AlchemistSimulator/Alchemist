@@ -25,7 +25,7 @@ import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
@@ -644,7 +644,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     @Override
     public final void stepDone(
             @Nonnull final Environment<T, P> environment,
-            final GlobalReaction<T> reaction,
+            final Actionable<T> reaction,
             @Nonnull final Time time,
             final long step
     ) {

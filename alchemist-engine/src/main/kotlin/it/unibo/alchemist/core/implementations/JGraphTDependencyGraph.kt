@@ -10,7 +10,7 @@ package it.unibo.alchemist.core.implementations
 import it.unibo.alchemist.core.interfaces.DependencyGraph
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import java.lang.IllegalArgumentException
@@ -19,7 +19,7 @@ import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
 import org.jgrapht.graph.DefaultDirectedGraph
 
-private typealias Edge<T> = Pair<GlobalReaction<T>, GlobalReaction<T>>
+private typealias Edge<T> = Pair<Actionable<T>, Actionable<T>>
 
 /**
  * This class offers an implementation of a dependency graph, namely a
@@ -31,11 +31,11 @@ private typealias Edge<T> = Pair<GlobalReaction<T>, GlobalReaction<T>>
  * @param <T> concentration type
  */
 class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
-    private val inGlobals = ArrayListSet<GlobalReaction<T>>()
-    private val outGlobals = ArrayListSet<GlobalReaction<T>>()
-    private val graph: DefaultDirectedGraph<GlobalReaction<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
+    private val inGlobals = ArrayListSet<Actionable<T>>()
+    private val outGlobals = ArrayListSet<Actionable<T>>()
+    private val graph: DefaultDirectedGraph<Actionable<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
 
-    override fun createDependencies(newReaction: GlobalReaction<T>) {
+    override fun createDependencies(newReaction: Actionable<T>) {
         val allReactions = graph.vertexSet()
         val neighborhood by lazy {
             if (newReaction is Reaction) {
@@ -71,8 +71,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         }
         val getCandidates: (
             context: Context,
-            (GlobalReaction<T>) -> Boolean,
-        ) -> Sequence<GlobalReaction<T>> = { context, reactionsFilter ->
+            (Actionable<T>) -> Boolean,
+        ) -> Sequence<Actionable<T>> = { context, reactionsFilter ->
             when (context) {
                 Context.LOCAL -> localReactions + neighborhoodReactions.filter(reactionsFilter)
                 Context.NEIGHBORHOOD ->
@@ -80,11 +80,11 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 else -> allReactions.asSequence()
             }
         }
-        val inboundCandidates: Sequence<GlobalReaction<T>> =
+        val inboundCandidates: Sequence<Actionable<T>> =
             outGlobals.asSequence() + getCandidates(newReaction.inputContext) {
                 it.outputContext == Context.NEIGHBORHOOD
             }
-        val outboundCandidates: Sequence<GlobalReaction<T>> =
+        val outboundCandidates: Sequence<Actionable<T>> =
             inGlobals.asSequence() + getCandidates(newReaction.outputContext) {
                 it.inputContext == Context.NEIGHBORHOOD
             }
@@ -106,14 +106,14 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     private val Node<T>.neighborhood
         get() = environment.getNeighborhood(this).neighbors
 
-    private fun GlobalReaction<T>.dependsOn(other: GlobalReaction<T>) =
+    private fun Actionable<T>.dependsOn(other: Actionable<T>) =
         inboundDependencies.any { inbound ->
             other.outboundDependencies.any { outbound ->
                 inbound.dependsOn(outbound) || outbound.makesDependent(inbound)
             }
         }
 
-    override fun removeDependencies(reaction: GlobalReaction<T>) {
+    override fun removeDependencies(reaction: Actionable<T>) {
         if (!graph.removeVertex(reaction)) {
             throw IllegalStateException("Inconsistent state: $reaction was not in the reaction pool.")
         }
@@ -193,7 +193,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         removeNeighborDirected(n2, n1)
     }
 
-    override fun outboundDependencies(reaction: GlobalReaction<T>): ListSet<GlobalReaction<T>>? =
+    override fun outboundDependencies(reaction: Actionable<T>): ListSet<Actionable<T>>? =
         graph.outgoingEdgesOf(reaction).let { edges ->
             edges.asSequence().map { it.second }.toCollection(ArrayListSet(edges.size))
         }
@@ -202,5 +202,5 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         return graph.toString()
     }
 
-    override fun globalInputContextReactions(): ListSet<GlobalReaction<T>> = ListSets.unmodifiableListSet(inGlobals)
+    override fun globalInputContextReactions(): ListSet<Actionable<T>> = ListSets.unmodifiableListSet(inGlobals)
 }

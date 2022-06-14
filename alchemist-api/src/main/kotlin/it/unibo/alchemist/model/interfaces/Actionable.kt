@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.interfaces
 import org.danilopianini.util.ListSet
 import java.io.Serializable
 
-interface GlobalReaction<T> : Comparable<Reaction<T>>, Serializable {
+interface Actionable<T> : Comparable<Reaction<T>>, Serializable {
 
     /**
      * @return true if the reaction can be executed (namely, all the conditions

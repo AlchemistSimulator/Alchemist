@@ -13,7 +13,7 @@ import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.StatUtil
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
@@ -75,7 +75,7 @@ class MoleculeReader(
 
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: GlobalReaction<T>?,
+        reaction: Actionable<T>?,
         time: Time,
         step: Long
     ): Map<String, Double> {

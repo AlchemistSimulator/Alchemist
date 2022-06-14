@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Dependency
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
@@ -25,7 +25,7 @@ import org.danilopianini.util.ListSet
 class PhysicsUpdate<T>(
     val environment: Dynamics2DEnvironment<T>,
     override val timeDistribution: TimeDistribution<T>,
-) : GlobalReaction<T> {
+) : Actionable<T> {
 
     override val outboundDependencies: ListSet<out Dependency> = ListSet.of(Dependency.EVERYTHING)
 

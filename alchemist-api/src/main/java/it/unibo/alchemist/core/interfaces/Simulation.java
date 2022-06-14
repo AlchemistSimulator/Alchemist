@@ -12,7 +12,7 @@ package it.unibo.alchemist.core.interfaces;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
@@ -180,7 +180,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * To do that call also the method {@link Node#addReaction(Reaction)}.
      * @param reactionToAdd the reaction to add
      */
-    void reactionAdded(GlobalReaction<T> reactionToAdd);
+    void reactionAdded(Actionable<T> reactionToAdd);
 
     /**
      * Removes a reaction during the simulation from the scheduler and stop to execute it.
@@ -188,7 +188,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * To do that call also the method {@link Node#removeReaction(Reaction)}.
      * @param reactionToRemove the reaction to remove
      */
-    void reactionRemoved(GlobalReaction<T> reactionToRemove);
+    void reactionRemoved(Actionable<T> reactionToRemove);
 
     /**
      * Removes an {@link OutputMonitor} to this simulation. If the

@@ -17,7 +17,7 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
 import java.lang.ref.WeakReference;
@@ -130,7 +130,7 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
     @Override
     public void stepDone(
         final Environment<T, P> environment,
-        final GlobalReaction<T> reaction,
+        final Actionable<T> reaction,
         @Nonnull final Time time,
         final long step
     ) {

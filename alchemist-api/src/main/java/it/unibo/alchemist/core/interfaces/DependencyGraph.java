@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.core.interfaces;
 
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Node;
 import org.danilopianini.util.ListSet;
 
@@ -40,7 +40,7 @@ public interface DependencyGraph<T> {
      *
      * @param reactionHandler the reaction handler whose dependencies should be calculated.
      */
-    void createDependencies(GlobalReaction<T> reactionHandler);
+    void createDependencies(Actionable<T> reactionHandler);
 
     /**
      * This method removes all the dependencies (both in and out dependencies) for a
@@ -49,7 +49,7 @@ public interface DependencyGraph<T> {
      *
      * @param reactionHandler the reaction handler whose dependencies will be deleted.
      */
-    void removeDependencies(GlobalReaction<T> reactionHandler);
+    void removeDependencies(Actionable<T> reactionHandler);
 
     /**
      * Given two nodes, the engine assumes they are no longer neighbors and deletes
@@ -68,10 +68,10 @@ public interface DependencyGraph<T> {
      * @param reaction the input reaction
      * @return the set of reactions that may be influenced by the provided reaction
      */
-    ListSet<GlobalReaction<T>> outboundDependencies(GlobalReaction<T> reaction);
+    ListSet<Actionable<T>> outboundDependencies(Actionable<T> reaction);
 
     /**
      * @return the set of all reactions with a {@link it.unibo.alchemist.model.interfaces.Context#GLOBAL} input context
      */
-    ListSet<GlobalReaction<T>> globalInputContextReactions();
+    ListSet<Actionable<T>> globalInputContextReactions();
 }

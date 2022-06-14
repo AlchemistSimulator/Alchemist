@@ -15,7 +15,7 @@ package it.unibo.alchemist.model.interfaces
  * A generic reaction. Every reaction in the system must implement
  * this interface.
 </T> */
-interface Reaction<T> : GlobalReaction<T> {
+interface Reaction<T> : Actionable<T> {
 
     override val inputContext: Context
 

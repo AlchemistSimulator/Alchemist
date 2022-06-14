@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.fxui.monitors.impl;
 
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -50,7 +50,7 @@ public class FXStepMonitor<T, P extends Position<? extends P>> extends AbstractN
     @Override
     public void stepDone(
             @Nonnull final Environment<T, P> environment,
-            final GlobalReaction<T> reaction,
+            final Actionable<T> reaction,
             @Nonnull final Time time,
             final long step
     ) {

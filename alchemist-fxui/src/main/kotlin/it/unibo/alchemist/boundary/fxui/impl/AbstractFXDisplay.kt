@@ -24,7 +24,7 @@ import it.unibo.alchemist.boundary.ui.impl.ExponentialZoomManager
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Time
@@ -136,7 +136,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> :
         stepDone(environment, null, DoubleTime(), 0)
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: GlobalReaction<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         update(environment, time)
     }
 

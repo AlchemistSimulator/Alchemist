@@ -12,7 +12,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -78,7 +78,7 @@ public final class NodeTracker<T, P extends Position<? extends P>> extends JPane
     @Override
     public void stepDone(
         @Nonnull final Environment<T, P> environment,
-        final GlobalReaction<T> reaction,
+        final Actionable<T> reaction,
         @Nonnull final Time time,
         final long step
     ) {

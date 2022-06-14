@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.core.interfaces;
 
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 
 /**
  * The type which describes the concentration of a molecule
@@ -27,14 +27,14 @@ public interface Scheduler<T> {
      * @param reaction
      *            the reaction to be added
      */
-    void addReaction(GlobalReaction<T> reaction);
+    void addReaction(Actionable<T> reaction);
 
     /**
      * Allows to access the next reaction to be executed.
      * 
      * @return the next reaction to be executed
      */
-    GlobalReaction<T> getNext();
+    Actionable<T> getNext();
 
     /**
      * Removes a reaction from the structure. If the reaction is not present,
@@ -43,7 +43,7 @@ public interface Scheduler<T> {
      * @param reaction
      *            the reaction to be removed
      */
-    void removeReaction(GlobalReaction<T> reaction);
+    void removeReaction(Actionable<T> reaction);
 
     /**
      * Notifies the structure that the reaction r has changed. The whole
@@ -52,6 +52,6 @@ public interface Scheduler<T> {
      * @param reaction
      *            the reaction which has changed
      */
-    void updateReaction(GlobalReaction<T> reaction);
+    void updateReaction(Actionable<T> reaction);
 
 }

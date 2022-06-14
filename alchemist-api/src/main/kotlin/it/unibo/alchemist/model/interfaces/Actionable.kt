@@ -12,7 +12,10 @@ package it.unibo.alchemist.model.interfaces
 import org.danilopianini.util.ListSet
 import java.io.Serializable
 
-interface Actionable<T> : Comparable<Reaction<T>>, Serializable {
+/**
+ * A time-distributed entity with [inboundDependencies], [outboundDependencies] and an execution strategy.
+ */
+sealed interface Actionable<T> : Comparable<Actionable<T>>, Serializable {
 
     /**
      * @return true if the reaction can be executed (namely, all the conditions
@@ -62,20 +65,6 @@ interface Actionable<T> : Comparable<Reaction<T>>, Serializable {
      * execution of the [Reaction].
      */
     val inboundDependencies: ListSet<out Dependency>
-
-    /**
-     * @return The widest [Context] among [Condition]s, namely the
-     * smallest [Context] in which the [Reaction] can read
-     * informations.
-     */
-    val inputContext: Context get() = Context.GLOBAL
-
-    /**
-     * @return The widest [Context] among [Action]s, namely the
-     * smallest context in which the [Reaction] can do
-     * modifications.
-     */
-    val outputContext: Context get() = Context.GLOBAL
 
     /**
      * Returns the speed of this [Reaction]. It is an average number, and

@@ -17,9 +17,19 @@ package it.unibo.alchemist.model.interfaces
 </T> */
 interface Reaction<T> : Actionable<T> {
 
-    override val inputContext: Context
+    /**
+     * The widest [Context] among [Condition]s, namely the
+     * smallest [Context] in which the [Reaction] can read
+     * informations.
+     */
+    val inputContext: Context
 
-    override val outputContext: Context
+    /**
+     * The widest [Context] among [Action]s, namely the
+     * smallest context in which the [Reaction] can do
+     * modifications.
+     */
+    val outputContext: Context
 
     /**
      * @return The [Node] in which this [Reaction] executes.

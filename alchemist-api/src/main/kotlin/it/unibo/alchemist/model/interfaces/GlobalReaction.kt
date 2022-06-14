@@ -12,4 +12,4 @@ package it.unibo.alchemist.model.interfaces
 /**
  * A reaction with a GLOBAL input and output Context.
  */
-interface GlobalReaction<T> : Actionable<T>
+interface GlobalReaction<T> : Actionable<T>, Comparable<GlobalReaction<T>>

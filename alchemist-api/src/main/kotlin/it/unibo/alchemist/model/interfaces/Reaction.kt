@@ -15,7 +15,7 @@ package it.unibo.alchemist.model.interfaces
  * A generic reaction. Every reaction in the system must implement
  * this interface.
 </T> */
-interface Reaction<T> : Actionable<T> {
+interface Reaction<T> : Actionable<T>, Comparable<Reaction<T>> {
 
     /**
      * The widest [Context] among [Condition]s, namely the

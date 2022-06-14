@@ -69,17 +69,16 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 .filter { allReactions.contains(it) }
                 .toList().asSequence()
         }
-        val getCandidates: (
-            context: Context,
-            (Actionable<T>) -> Boolean,
-        ) -> Sequence<Actionable<T>> = { context, reactionsFilter ->
-            when (context) {
-                Context.LOCAL -> localReactions + neighborhoodReactions.filter(reactionsFilter)
-                Context.NEIGHBORHOOD ->
-                    localReactions + neighborhoodReactions + extendedNeighborhoodReactions.filter(reactionsFilter)
-                else -> allReactions.asSequence()
+        val getCandidates: (context: Context, (Reaction<T>) -> Boolean) -> Sequence<Actionable<T>> =
+            { context, reactionsFilter ->
+                when (context) {
+                    Context.LOCAL -> localReactions + neighborhoodReactions.filter(reactionsFilter)
+                    Context.NEIGHBORHOOD ->
+                        localReactions + neighborhoodReactions + extendedNeighborhoodReactions.filter(reactionsFilter)
+                    else -> allReactions.asSequence()
+                }
             }
-        }
+
         val inboundCandidates: Sequence<Actionable<T>> =
             outGlobals.asSequence() + getCandidates(newReaction.inputContext) {
                 it.outputContext == Context.NEIGHBORHOOD
@@ -101,6 +100,16 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         if (newReaction.outputContext == Context.GLOBAL) {
             outGlobals.add(newReaction)
         }
+    }
+
+    private val Actionable<T>.inputContext get() = when (this) {
+        is Reaction -> this.inputContext
+        else -> Context.GLOBAL
+    }
+
+    private val Actionable<T>.outputContext get() = when (this) {
+        is Reaction -> this.outputContext
+        else -> Context.GLOBAL
     }
 
     private val Node<T>.neighborhood

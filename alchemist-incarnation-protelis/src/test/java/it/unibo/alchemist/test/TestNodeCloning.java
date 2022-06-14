@@ -17,7 +17,7 @@ import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GlobalReaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -97,7 +97,7 @@ class TestNodeCloning<P extends Position<P>> {
             @Override
             public void stepDone(
                     @Nonnull final Environment<Object, P> environment,
-                    final GlobalReaction<Object> reaction,
+                    final Actionable<Object> reaction,
                     @Nonnull final Time time,
                     final long step
             ) {

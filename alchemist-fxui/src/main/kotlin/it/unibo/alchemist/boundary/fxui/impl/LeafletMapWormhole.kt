@@ -10,12 +10,12 @@
 package it.unibo.alchemist.boundary.fxui.impl
 
 import de.saring.leafletmap.LatLong
-import it.unibo.alchemist.boundary.fxui.util.PointExtension.minus
-import it.unibo.alchemist.boundary.fxui.util.PointExtension.plus
 import it.unibo.alchemist.boundary.fxui.util.JavaFXThreadUtil.runOnFXThread
 import it.unibo.alchemist.boundary.fxui.util.JavaFXThreadUtil.syncRunOnFXThread
-import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
+import it.unibo.alchemist.boundary.fxui.util.PointExtension.minus
+import it.unibo.alchemist.boundary.fxui.util.PointExtension.plus
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D
+import it.unibo.alchemist.boundary.ui.impl.PointAdapter
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition

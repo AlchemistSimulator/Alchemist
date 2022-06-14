@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.interfaces.Reaction;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -14,7 +15,6 @@ import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  * Moves the node randomly.

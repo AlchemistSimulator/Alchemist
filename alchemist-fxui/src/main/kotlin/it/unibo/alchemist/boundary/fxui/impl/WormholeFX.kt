@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.fxui.impl
 
-import it.unibo.alchemist.boundary.wormhole.implementation.AbstractWormhole2D
-import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter
+import it.unibo.alchemist.boundary.ui.impl.AbstractWormhole2D
+import it.unibo.alchemist.boundary.ui.impl.PointAdapter
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position2D
 import javafx.scene.Node

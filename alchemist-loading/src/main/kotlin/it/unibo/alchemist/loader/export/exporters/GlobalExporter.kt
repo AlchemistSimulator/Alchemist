@@ -12,7 +12,7 @@ package it.unibo.alchemist.loader.export.exporters
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 
@@ -32,7 +32,7 @@ class GlobalExporter<T, P : Position<P>>(
         }
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: GlobalReaction<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         exporters.forEach {
             it.update(environment, reaction, time, step)
         }

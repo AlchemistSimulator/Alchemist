@@ -10,7 +10,7 @@
 package it.unibo.alchemist.loader.export
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
@@ -47,7 +47,7 @@ interface Extractor<out E : Any> {
      */
     fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: GlobalReaction<T>?,
+        reaction: Actionable<T>?,
         time: Time,
         step: Long,
     ): Map<String, E>

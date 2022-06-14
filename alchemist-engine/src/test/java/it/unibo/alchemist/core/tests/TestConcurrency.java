@@ -24,7 +24,6 @@ import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

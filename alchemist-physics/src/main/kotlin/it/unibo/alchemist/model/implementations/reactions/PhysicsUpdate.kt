@@ -11,11 +11,9 @@ package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Condition
-import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Dependency
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GlobalReaction
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -32,10 +30,6 @@ class PhysicsUpdate<T>(
     override val inboundDependencies: ListSet<out Dependency> = ListSet.of(Dependency.MOVEMENT)
         get() = ImmutableListSet.copyOf(field)
 
-    override val inputContext: Context get() = Context.GLOBAL
-
-    override val outputContext: Context = Context.GLOBAL
-
     override val rate: Double get() = timeDistribution.rate
 
     override val tau: Time get() = timeDistribution.nextOccurence
@@ -44,7 +38,7 @@ class PhysicsUpdate<T>(
 
     override var conditions: List<Condition<T>> = listOf()
 
-    override fun compareTo(other: Reaction<T>): Int = tau.compareTo(other.tau)
+    override fun compareTo(other: GlobalReaction<T>): Int = tau.compareTo(other.tau)
 
     override fun canExecute(): Boolean = conditions.all { it.isValid }
 

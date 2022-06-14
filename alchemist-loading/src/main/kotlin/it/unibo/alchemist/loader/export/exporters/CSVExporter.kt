@@ -12,7 +12,7 @@ package it.unibo.alchemist.loader.export.exporters
 import com.google.common.base.Charsets
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 import org.slf4j.LoggerFactory
@@ -84,7 +84,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
         exportData(environment, null, DoubleTime(), 0)
     }
 
-    override fun exportData(environment: Environment<T, P>, reaction: GlobalReaction<T>?, time: Time, step: Long) {
+    override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         with(outputPrintStream) {
             dataExtractors.forEach { extractor ->
                 val data = extractor.extractData(environment, reaction, time, step)

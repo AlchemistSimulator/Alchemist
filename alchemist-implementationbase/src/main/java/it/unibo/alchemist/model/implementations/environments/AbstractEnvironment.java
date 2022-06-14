@@ -16,7 +16,6 @@ import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.api.SupportedIncarnations;
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GlobalReaction;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -107,9 +106,6 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      */
     @Override
     public void addGlobalReaction(final GlobalReaction<T> reaction) {
-        if (reaction.getInputContext() != Context.GLOBAL && reaction.getOutputContext() != Context.GLOBAL) {
-            throw new IllegalStateException("Input and Output contex of the reaction must be GLOBAL");
-        }
         ifEngineAvailable(simulation -> simulation.reactionAdded(reaction));
     }
 

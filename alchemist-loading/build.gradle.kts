@@ -19,7 +19,7 @@ import Libs.incarnation
  */
 dependencies {
     api(alchemist("implementationbase"))
-    api(alchemist("interfaces"))
+    api(alchemist("api"))
 
     implementation(alchemist("euclidean-geometry"))
     implementation(libs.apache.commons.lang3)

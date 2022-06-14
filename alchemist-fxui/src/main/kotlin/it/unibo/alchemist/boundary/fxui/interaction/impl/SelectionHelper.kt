@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.boundary.fxui.interaction.impl
 
-import it.unibo.alchemist.boundary.fxui.util.RectangleExtension.intersectingNodes
 import it.unibo.alchemist.boundary.fxui.util.PointExtension.makeRectangleWith
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
+import it.unibo.alchemist.boundary.fxui.util.RectangleExtension.intersectingNodes
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import javafx.scene.shape.Rectangle

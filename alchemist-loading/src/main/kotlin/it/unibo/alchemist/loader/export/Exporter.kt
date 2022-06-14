@@ -10,7 +10,7 @@
 package it.unibo.alchemist.loader.export
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 
@@ -46,7 +46,7 @@ interface Exporter<T, P : Position<P>> {
      * Main method used by exporters to export data.
      * This method is called at each step of the simulation.
      */
-    fun update(environment: Environment<T, P>, reaction: GlobalReaction<T>?, time: Time, step: Long)
+    fun update(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long)
 
     /**
      * Close the export environment.

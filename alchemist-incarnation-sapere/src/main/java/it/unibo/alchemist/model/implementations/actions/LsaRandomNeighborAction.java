@@ -8,6 +8,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -18,7 +19,6 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Route;
 
 import java.util.List;

@@ -1,3 +1,15 @@
+## [21.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.1...21.0.2) (2022-06-14)
+
+
+### Dependency updates
+
+* **core-deps:** update dependency org.jetbrains.kotlin.jvm to v1.7.0 ([326c29c](https://github.com/AlchemistSimulator/Alchemist/commit/326c29c7d239920b33669c680c040cecc4a8f691))
+* **deps:** update kotest to v5.3.1 ([fa71ef8](https://github.com/AlchemistSimulator/Alchemist/commit/fa71ef8c3e9c8638cc2935f3602a4ee654c357c4))
+* **deps:** update plugin kotlin-qa to v0.19.1 ([6ca4987](https://github.com/AlchemistSimulator/Alchemist/commit/6ca4987110b0505ff7fd96926e670b750f1c310e))
+* **deps:** update plugin publishoncentral to v0.8.3 ([e618044](https://github.com/AlchemistSimulator/Alchemist/commit/e618044bbed4d18da0d9e2db63280fc355b535c4))
+* **deps:** update site/themes/hugo-theme-relearn digest to 5991d32 ([2e9a625](https://github.com/AlchemistSimulator/Alchemist/commit/2e9a6259f9ea2ee062762925fc8cbce567822e1b))
+* **deps:** update site/themes/hugo-theme-relearn digest to b154db1 ([7217c03](https://github.com/AlchemistSimulator/Alchemist/commit/7217c0397ed261863c4fc5f4f06edd4d342929a7))
+
 ## [21.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.0...21.0.1) (2022-06-11)
 
 

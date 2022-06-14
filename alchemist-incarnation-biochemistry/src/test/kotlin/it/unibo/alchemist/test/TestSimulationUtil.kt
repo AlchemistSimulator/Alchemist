@@ -5,12 +5,11 @@ import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 
 fun <T, P : Position<out P>> Environment<T, P>.startSimulation(
     initialized: (e: Environment<T, P>) -> Unit,
-    stepDone: (e: Environment<T, P>, r: Reaction<T>?, t: Time, s: Long) -> Unit,
+    stepDone: (e: Environment<T, P>, r: Actionable<T>?, t: Time, s: Long) -> Unit,
     finished: (e: Environment<T, P>, t: Time, s: Long) -> Unit
 ) {
     with(Engine(this, Time.INFINITY)) {

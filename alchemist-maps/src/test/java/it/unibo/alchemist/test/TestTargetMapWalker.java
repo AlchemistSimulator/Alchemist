@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

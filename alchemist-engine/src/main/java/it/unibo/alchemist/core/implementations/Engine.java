@@ -85,7 +85,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private Optional<Throwable> error = Optional.empty();
     private Time currentTime = Time.ZERO;
     private long currentStep;
-    private Thread myThread;
+    private Thread simulationThread;
 
     /**
      * Builds a simulation for a given environment. By default, it uses a
@@ -165,7 +165,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void checkCaller() {
-        if (!Thread.currentThread().equals(myThread)) {
+        if (!Thread.currentThread().equals(simulationThread)) {
             throw new IllegalMonitorStateException("This method must get called from the simulation thread.");
         }
     }
@@ -396,7 +396,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     public void run() {
         synchronized (environment) {
             try {
-                myThread = Thread.currentThread();
+                simulationThread = Thread.currentThread();
                 finalizeConstructor();
                 status = Status.READY;
                 final long currentThread = Thread.currentThread().getId();

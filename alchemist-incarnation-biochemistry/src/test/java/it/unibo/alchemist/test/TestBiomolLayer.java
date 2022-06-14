@@ -23,7 +23,6 @@ import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;

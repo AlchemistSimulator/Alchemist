@@ -13,8 +13,8 @@ import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
 import it.unibo.alchemist.model.interfaces.{Condition, Context, Node, Reaction}
 
-final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_,_])
-  extends AbstractCondition(device.getNode) {
+final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_, _])
+    extends AbstractCondition(device.getNode) {
   declareDependencyOn(this.program.asMolecule)
 
   override def cloneCondition(node: Node[T], reaction: Reaction[T]): Condition[T] = {
@@ -26,7 +26,9 @@ final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val p
         if (possibleRefs.size == 1) {
           new ScafiComputationalRoundComplete(device, possibleRefs.head)
         } else {
-          throw new IllegalStateException("There must be one and one only unconfigured " + classOf[Nothing].getSimpleName)
+          throw new IllegalStateException(
+            "There must be one and one only unconfigured " + classOf[Nothing].getSimpleName
+          )
         }
       }
     )

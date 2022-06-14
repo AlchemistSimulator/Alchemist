@@ -18,22 +18,23 @@ class ScafiGradientProgram extends AggregateProgram with StandardSensorNames {
   override def main(): Double = gradient(sense[Boolean]("source"))
 
   def gradient(source: Boolean): Double =
-    rep(Double.PositiveInfinity){
-      distance => mux(source) { 0.0 } {
-        foldhood(Double.PositiveInfinity)(Math.min)(nbr{distance}+nbrvar[Double](NBR_RANGE))
+    rep(Double.PositiveInfinity) { distance =>
+      mux(source)(0.0) {
+        foldhood(Double.PositiveInfinity)(Math.min)(nbr(distance) + nbrvar[Double](NBR_RANGE))
       }
     }
 }
 
-class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport
-  with FieldUtils {
+class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils {
   import ScafiEnvProgram._
 
   override def main(): Any = {
-    node.put("number2", node.get[Int]("number")+100)
+    node.put("number2", node.get[Int]("number") + 100)
 
     val itimestamp: java.time.Instant = currentTime()
-    val deltaManual = java.time.Instant.ofEpochMilli(rep((itimestamp,0L))(old => (itimestamp, itimestamp.toEpochMilli - old._1.toEpochMilli))._2)
+    val deltaManual = java.time.Instant.ofEpochMilli(
+      rep((itimestamp, 0L))(old => (itimestamp, itimestamp.toEpochMilli - old._1.toEpochMilli))._2
+    )
     val delta: FiniteDuration = deltaTime()
     val nbrLagField = excludingSelf.reifyField(nbrLag()).values.headOption
     val nbrRangeField = excludingSelf.reifyField(nbrRange()).values.headOption
@@ -48,7 +49,8 @@ class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAl
     node.put(MOL_NBR_RANGE, nbrRangeField)
     node.put(MOL_NBR_VECTOR, nbrVectorField)
 
-    node.put("out",
+    node.put(
+      "out",
       // Local sensors
       s"CONTENTS: ${mid()}: \nrandomgen nextdouble " + randomGenerator().nextDouble() +
         "\nalchemistenv getdimensions " + alchemistEnvironment.getDimensions +
@@ -81,5 +83,5 @@ object ScafiEnvProgram {
 
 object MyMain extends App {
   val program = new ScafiGradientProgram()
-  program.round(new ContextImpl(1, Map(), Map("source"->true), Map("nbrRange" -> Map(1 -> 0))))
+  program.round(new ContextImpl(1, Map(), Map("source" -> true), Map("nbrRange" -> Map(1 -> 0))))
 }

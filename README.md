@@ -1,4 +1,4 @@
-| [![Alchemist logo](/src/main/hugo/static/images/logo.svg)](https://alchemistsimulator.github.io/)  | [![Alchemist logo](/src/main/hugo/static/images/logo-text-path.svg)](https://alchemistsimulator.github.io/)  |
+| [![Alchemist logo](/site/static/images/logo.svg)](https://alchemistsimulator.github.io/)  | [![Alchemist logo](/site/static/images/logo-text-path.svg)](https://alchemistsimulator.github.io/)  |
 |---|---|
 
 

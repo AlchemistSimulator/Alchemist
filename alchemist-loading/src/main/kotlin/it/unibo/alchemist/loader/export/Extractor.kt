@@ -45,7 +45,12 @@ interface Extractor<out E : Any> {
      *      - be iterable in predictable order
      *      (namely, implement [SortedMap] or extend [LinkedHashMap]).
      */
-    fun <T> extractData(environment: Environment<T, *>, reaction: GlobalReaction<T>?, time: Time, step: Long): Map<String, E>
+    fun <T> extractData(
+        environment: Environment<T, *>,
+        reaction: GlobalReaction<T>?,
+        time: Time,
+        step: Long,
+    ): Map<String, E>
 
     /**
      * @return the name of the properties that this [Extractor] can

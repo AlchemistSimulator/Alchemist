@@ -31,7 +31,8 @@ class PhysicsUpdate<T>(
     override val timeDistribution: TimeDistribution<T>,
 ) : GlobalReaction<T> {
 
-    override val outboundDependencies: ListSet<out Dependency> = ListSet.of(Dependency.EVERYTHING)
+    override val outboundDependencies: ListSet<out Dependency> = ListSet.of()
+        get() = ImmutableListSet.copyOf(field)
 
     override val inboundDependencies: ListSet<out Dependency> = ListSet.of(Dependency.MOVEMENT)
         get() = ImmutableListSet.copyOf(field)

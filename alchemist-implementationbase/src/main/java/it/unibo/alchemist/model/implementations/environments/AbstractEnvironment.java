@@ -106,6 +106,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      */
     @Override
     public void addGlobalReaction(final GlobalReaction<T> reaction) {
+        globalReactions.add(reaction);
         ifEngineAvailable(simulation -> simulation.reactionAdded(reaction));
     }
 

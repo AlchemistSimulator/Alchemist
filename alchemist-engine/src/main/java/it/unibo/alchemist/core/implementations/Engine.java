@@ -230,6 +230,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void finalizeConstructor() {
+        this.environment.getGlobalReactions().forEach(this::reactionAdded);
         for (final Node<T> n : environment) {
             for (final Reaction<T> r : n.getReactions()) {
                 scheduleReaction(r);

@@ -42,7 +42,7 @@ class PhysicalBlendedSteering<T>(
         Sum(environment, node, super.steerStrategy)
 
     init {
-        addOutboundDependency(Dependency.MOVEMENT)
+        addInboundDependency(Dependency.MOVEMENT)
     }
 
     /**
@@ -62,6 +62,7 @@ class PhysicalBlendedSteering<T>(
         } else {
             environment.setVelocity(node, Euclidean2DPosition.zero)
         }
+        environment.updatePhysics(1 / rate)
     }
 
     private fun computeNewVelocity(force: Euclidean2DPosition): Euclidean2DPosition {

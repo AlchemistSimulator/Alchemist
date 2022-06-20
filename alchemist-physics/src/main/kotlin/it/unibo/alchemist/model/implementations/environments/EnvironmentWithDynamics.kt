@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.implementations.environments
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
-import it.unibo.alchemist.model.implementations.timedistributions.DiracComb
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -68,7 +67,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     init {
         world.gravity = Vector2(0.0, 0.0)
-        addGlobalReaction(PhysicsUpdate(this, DiracComb(1.0)))
+        addGlobalReaction(PhysicsUpdate(this))
     }
 
     override fun addNode(node: Node<T>, position: Euclidean2DPosition) {

@@ -9,13 +9,15 @@
 
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.implementations.PhysicsDependency
+import it.unibo.alchemist.model.implementations.timedistributions.DiracComb
 import it.unibo.alchemist.model.interfaces.Action
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Dependency
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Time
-import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListSet
@@ -28,13 +30,14 @@ class PhysicsUpdate<T>(
      * The environment to update.
      */
     val environment: Dynamics2DEnvironment<T>,
-    override val timeDistribution: TimeDistribution<T>,
 ) : GlobalReaction<T> {
 
-    override val outboundDependencies: ListSet<out Dependency> = ListSet.of()
+    override val timeDistribution: DiracComb<T> = DiracComb(1.0)
+
+    override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency.PHYSICS)
         get() = ImmutableListSet.copyOf(field)
 
-    override val inboundDependencies: ListSet<out Dependency> = ListSet.of(Dependency.MOVEMENT)
+    override val inboundDependencies: ListSet<out Dependency> = ListSet.of()
         get() = ImmutableListSet.copyOf(field)
 
     override val rate: Double get() = timeDistribution.rate
@@ -45,12 +48,13 @@ class PhysicsUpdate<T>(
 
     override var conditions: List<Condition<T>> = listOf()
 
-    override fun compareTo(other: GlobalReaction<T>): Int = tau.compareTo(other.tau)
+    override fun compareTo(other: Actionable<T>): Int = tau.compareTo(other.tau)
 
     override fun canExecute(): Boolean = conditions.all { it.isValid }
 
     override fun execute() {
         environment.updatePhysics(1 / rate)
+        timeDistribution.update(timeDistribution.nextOccurence, true, 1.0, environment)
     }
 
     override fun update(currentTime: Time, hasBeenExecuted: Boolean, environment: Environment<T, *>) = Unit

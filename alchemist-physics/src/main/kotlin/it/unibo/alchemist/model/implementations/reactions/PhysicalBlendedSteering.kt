@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.implementations.PhysicsDependency
 import it.unibo.alchemist.model.implementations.actions.physicalstrategies.Sum
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Dependency
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.TimeDistribution
@@ -42,7 +42,7 @@ class PhysicalBlendedSteering<T>(
         Sum(environment, node, super.steerStrategy)
 
     init {
-        addInboundDependency(Dependency.MOVEMENT)
+        addOutboundDependency(PhysicsDependency.PHYSICS)
     }
 
     /**
@@ -62,7 +62,6 @@ class PhysicalBlendedSteering<T>(
         } else {
             environment.setVelocity(node, Euclidean2DPosition.zero)
         }
-        environment.updatePhysics(1 / rate)
     }
 
     private fun computeNewVelocity(force: Euclidean2DPosition): Euclidean2DPosition {

@@ -187,38 +187,38 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void doStep() {
-        final Actionable<T> reaction = scheduler.getNext();
-        if (reaction == null) {
+        final Actionable<T> nextEvent = scheduler.getNext();
+        if (nextEvent == null) {
             this.newStatus(TERMINATED);
             LOGGER.info("No more reactions.");
         } else {
-            final Time scheduledTime = reaction.getTau();
+            final Time scheduledTime = nextEvent.getTau();
             if (scheduledTime.compareTo(currentTime) < 0) {
-                throw new IllegalStateException(reaction + "\nis scheduled in the past at time " + scheduledTime
+                throw new IllegalStateException(nextEvent + "\nis scheduled in the past at time " + scheduledTime
                         + ", current time is " + currentTime
                         + ". Problem occurred at step " + currentStep);
             }
             currentTime = scheduledTime;
-            if (reaction.canExecute()) {
+            if (nextEvent.canExecute()) {
                 /*
                  * This must be taken before execution, because the reaction
                  * might remove itself (or its node) from the environment.
                  */
-                reaction.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
-                reaction.execute();
-                Set<Actionable<T>> toUpdate = dependencyGraph.outboundDependencies(reaction);
+                nextEvent.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
+                nextEvent.execute();
+                Set<Actionable<T>> toUpdate = dependencyGraph.outboundDependencies(nextEvent);
                 if (!afterExecutionUpdates.isEmpty()) {
                     afterExecutionUpdates.forEach(Update::performChanges);
                     afterExecutionUpdates.clear();
-                    toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(reaction));
+                    toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(nextEvent));
                 }
                 toUpdate.forEach(this::updateReaction);
             }
-            reaction.update(currentTime, true, environment);
-            scheduler.updateReaction(reaction);
+            nextEvent.update(currentTime, true, environment);
+            scheduler.updateReaction(nextEvent);
             monitorLock.acquireUninterruptibly();
             for (final OutputMonitor<T, P> monitor : monitors) {
-                monitor.stepDone(environment, reaction, currentTime, currentStep);
+                monitor.stepDone(environment, nextEvent, currentTime, currentStep);
             }
             monitorLock.release();
         }

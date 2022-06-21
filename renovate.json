@@ -13,12 +13,21 @@
       "semanticCommitScope": "api-deps"
     },
     {
+      "description": "Dokka updates should have type docs",
+      "matchPackageNames": [
+        "org.jetbrains.dokka",
+      ],
+      "semanticCommitType": "docs"
+    },
+    {
       "description": "Trigger a patch update on some dependencies",
       "matchPackageNames": [
-        "it.unibo.scafi:scafi-core_2.13",
         "org.jetbrains.kotlin.jvm",
         "org.protelis:protelis-interpreter",
         "org.protelis:protelis-lang"
+      ],
+      "matchPackagePrefixes": [
+        "it.unibo.scafi"
       ],
       "semanticCommitScope": "core-deps"
     }

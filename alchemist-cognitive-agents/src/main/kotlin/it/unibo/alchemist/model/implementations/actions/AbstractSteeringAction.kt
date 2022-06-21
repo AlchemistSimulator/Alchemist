@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A [SteeringAction] in a vector space. The implementation of [nextPosition] is left to subclasses.
@@ -33,13 +32,12 @@ abstract class AbstractSteeringAction<T, P, A>(
      * The owner of this action.
      */
     node: Node<T>,
+    private val pedestrian: PedestrianProperty<T>,
 ) : AbstractMoveNode<T, P>(environment, node),
     SteeringAction<T, P>
     where P : Position<P>,
           P : Vector<P>,
           A : GeometricTransformation<P> {
-
-    private val pedestrian = node.asProperty<T, PedestrianProperty<T>>()
 
     /**
      * The maximum distance the node can walk, this is a length.

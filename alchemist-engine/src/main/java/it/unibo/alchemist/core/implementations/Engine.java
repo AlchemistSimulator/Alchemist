@@ -521,104 +521,91 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     // CHECKSTYLE: FinalClassCheck OFF
     private class Update {
-        private final Node<T> source;
 
-        private Update(final Node<T> source) {
-            this.source = source;
+        public void performChanges() { }
+
+        public Stream<? extends Actionable<T>> getReactionsToUpdate() {
+            return Stream.empty();
+        }
+    }
+
+    private final class Movement extends Update {
+
+        private final @Nonnull Node<T> sourceNode;
+
+        private Movement(final @Nonnull Node<T> sourceNode) {
+            this.sourceNode = sourceNode;
         }
 
-        protected final Stream<? extends Actionable<T>> getReactionsRelatedTo(
+        @Override
+        public Stream<? extends Actionable<T>> getReactionsToUpdate() {
+            return getReactionsRelatedTo(this.sourceNode, environment.getNeighborhood(this.sourceNode))
+                .filter(it ->
+                    it.getInboundDependencies().stream()
+                        .anyMatch(dependency -> dependency.dependsOn(Dependency.MOVEMENT))
+                );
+        }
+
+        private Stream<? extends Actionable<T>> getReactionsRelatedTo(
             final Node<T> source,
             final Neighborhood<T> neighborhood
         ) {
             return Stream.of(
                     source.getReactions().stream(),
                     neighborhood.getNeighbors().stream()
-                            .flatMap(node -> node.getReactions().stream())
-                            .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
+                        .flatMap(node -> node.getReactions().stream())
+                        .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
                     dependencyGraph.globalInputContextReactions().stream())
                 .reduce(Stream.empty(), Stream::concat);
         }
-
-        public Stream<? extends Actionable<T>> getReactionsToUpdate() {
-            return Stream.empty();
-        }
-
-        public void performChanges() { }
-
-        protected final Node<T> getSource() {
-            return source;
-        }
-    }
-
-    private final class Movement extends Update {
-
-        private Movement(final Node<T> source) {
-            super(source);
-        }
-
-        @Override
-        public Stream<? extends Actionable<T>> getReactionsToUpdate() {
-            return getReactionsRelatedTo(getSource(), environment.getNeighborhood(getSource()))
-                    .filter(it -> it.getInboundDependencies().stream()
-                            .anyMatch(dependency -> dependency.dependsOn(Dependency.MOVEMENT)));
-        }
-
     }
 
     private class UpdateOnNode extends Update {
 
         private final Function<Reaction<T>, Update> reactionLevelOperation;
 
-        private UpdateOnNode(final Node<T> source, final Function<Reaction<T>, Update> reactionLevelOperation) {
-            super(source);
+        private final Node<T> sourceNode;
+
+        private UpdateOnNode(final Node<T> sourceNode, final Function<Reaction<T>, Update> reactionLevelOperation) {
+            this.sourceNode = sourceNode;
             this.reactionLevelOperation = reactionLevelOperation;
         }
 
         @Override
         public final void performChanges() {
-            getSource().getReactions().stream()
+            this.sourceNode.getReactions().stream()
                     .map(reactionLevelOperation)
                     .forEach(Update::performChanges);
         }
     }
 
     private final class NodeRemoval extends UpdateOnNode {
-        private NodeRemoval(final Node<T> source) {
-            super(source, ReactionRemoval::new);
+        private NodeRemoval(final Node<T> sourceNode) {
+            super(sourceNode, ReactionRemoval::new);
         }
     }
 
     private final class NodeAddition extends UpdateOnNode {
-        private NodeAddition(final Node<T> source) {
-            super(source, ReactionAddition::new);
+        private NodeAddition(final Node<T> sourceNode) {
+            super(sourceNode, ReactionAddition::new);
         }
     }
 
     private abstract class UpdateOnReaction extends Update {
 
-        private final Actionable<T> actualSource;
+        private final Actionable<T> sourceActionable;
 
-        private UpdateOnReaction(final Reaction<T> source) {
-            super(source.getNode());
-            actualSource = source;
-        }
-
-        private UpdateOnReaction(final Actionable<T> source) {
-            super(null);
-            actualSource = source;
+        private UpdateOnReaction(final Actionable<T> sourceActionable) {
+            this.sourceActionable = sourceActionable;
         }
 
         @Override
         public final Stream<? extends Actionable<T>> getReactionsToUpdate() {
-            return Stream.of(actualSource);
+            return Stream.of(sourceActionable);
         }
 
-        @Override
-        public abstract void performChanges();
-
         protected Actionable<T> getSourceReaction() {
-            return actualSource;
+            return sourceActionable;
         }
     }
 
@@ -649,24 +636,27 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     private class NeighborhoodChanged extends Update {
 
-        private final Node<T> target;
+        private final Node<T> sourceNode;
+        private final Node<T> targetNode;
 
-        private NeighborhoodChanged(final Node<T> source, final Node<T> target) {
-            super(source);
-            this.target = target;
+        private NeighborhoodChanged(final Node<T> sourceNode, final Node<T> targetNode) {
+            this.sourceNode = sourceNode;
+            this.targetNode = targetNode;
         }
 
-        public Node<T> getTarget() {
-            return target;
+        public Node<T> getTargetNode() {
+            return targetNode;
         }
+
+        public Node<T> getSourceNode() { return sourceNode; }
 
         @Override
         public Stream<? extends Actionable<T>> getReactionsToUpdate() {
             return Stream.of(
                     Stream.concat(
                             // source, target, and all their neighbors are candidates.
-                            Stream.of(getSource(), target),
-                            Stream.of(environment.getNeighborhood(getSource()), environment.getNeighborhood(getTarget()))
+                            Stream.of(sourceNode, targetNode),
+                            Stream.of(environment.getNeighborhood(sourceNode), environment.getNeighborhood(getTargetNode()))
                                     .flatMap(it -> it.getNeighbors().stream()))
                             .distinct()
                             .flatMap(it -> it.getReactions().stream())
@@ -685,7 +675,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
         @Override
         public void performChanges() {
-            dependencyGraph.addNeighbor(getSource(), getTarget());
+            dependencyGraph.addNeighbor(getSourceNode(), getTargetNode());
         }
     }
 
@@ -697,7 +687,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
         @Override
         public void performChanges() {
-            dependencyGraph.removeNeighbor(getSource(), getTarget());
+            dependencyGraph.removeNeighbor(getSourceNode(), getTargetNode());
         }
     }
 

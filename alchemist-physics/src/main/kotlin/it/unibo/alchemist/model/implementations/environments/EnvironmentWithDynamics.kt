@@ -93,6 +93,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
                 nodeToBody[it]?.isEnabled = false
             }
     }
+
     private fun moveNodeBodyToPosition(node: Node<T>, position: Euclidean2DPosition) {
         nodeToBody[node]?.transform = Transform().apply {
             translate(position.x, position.y)

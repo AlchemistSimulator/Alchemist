@@ -177,9 +177,6 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * Checks if a node doesn't overlap with any other node in the environment (see [overlappingNodes]). If the
      * node is shapeless, true is returned.
      */
-//    private fun Node<T>.canFit(position: Euclidean2DPosition): Boolean =
-//        getShape(this) != adimensional || overlappingNodes(position).isEmpty()
-
     private fun Node<T>.canFitIn(position: Euclidean2DPosition): Boolean =
         asPropertyOrNull<T, AreaProperty<T>>() != null || overlappingNodes(position).isEmpty()
 

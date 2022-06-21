@@ -30,7 +30,7 @@ class PhysicsUpdate<T> @JvmOverloads constructor(
      * The environment to update.
      */
     val environment: Dynamics2DEnvironment<T>,
-    updateRate: Double = 10.0,
+    updateRate: Double = 1.0,
 ) : GlobalReaction<T> {
 
     override val timeDistribution: DiracComb<T> = DiracComb(updateRate)

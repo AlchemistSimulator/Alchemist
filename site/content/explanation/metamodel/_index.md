@@ -32,7 +32,7 @@ The world of Alchemist is composed of the following entities:
         1. Where the nodes are in the space - i.e. their *position*
         2. The distance between two *nodes*
         3. Optionally, support for moving *nodes*
-* **Linking rule', 'LinkingRule**
+* **Linking rule**
     * A function of the current status of the environment that associates to each *node* a *neighborhood*
 * **Neighborhood**
     * An entity composed by a *node* (centre) and a set of *nodes* (neighbors)

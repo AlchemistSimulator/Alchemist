@@ -57,6 +57,8 @@ class PhysicalPedestrian2D<T>(
         }
     }
 
+    private val fallenPedestrianListerners: MutableList<(Node<T>) -> Unit> = mutableListOf()
+
     override val comfortArea: Euclidean2DShape get() = environment
         .shapeFactory
         .circle(nodeShape.radius + comfortRay)
@@ -76,7 +78,10 @@ class PhysicalPedestrian2D<T>(
     private val Node<T>.position get() = environment.getPosition(this)
 
     override fun checkAndPossiblyFall() {
-        isFallen = isFallen || shouldFall(repulsionForces())
+        if (!isFallen && shouldFall(repulsionForces())) {
+            isFallen = true
+            fallenPedestrianListerners.forEach { it.invoke(node) }
+        }
     }
 
     override fun shouldFall(pushingForces: List<Euclidean2DPosition>) =
@@ -138,6 +143,14 @@ class PhysicalPedestrian2D<T>(
         collectForces(::avoid, fallenAgentPerceptionArea) {
             it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
         }
+
+    override fun removeFallenPedestrianListener(listener: (Node<T>) -> Unit) {
+        fallenPedestrianListerners.remove(listener)
+    }
+
+    override fun addFallenPedestrianListener(listener: (Node<T>) -> Unit) {
+        fallenPedestrianListerners.add(listener)
+    }
 
     private fun collectForces(
         force: (node: Node<T>) -> Euclidean2DPosition,

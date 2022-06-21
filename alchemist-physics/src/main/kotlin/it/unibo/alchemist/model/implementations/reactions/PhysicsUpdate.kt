@@ -30,7 +30,7 @@ class PhysicsUpdate<T> @JvmOverloads constructor(
      * The environment to update.
      */
     val environment: Dynamics2DEnvironment<T>,
-    updateRate: Double = 1.0
+    updateRate: Double = 1.0,
 ) : GlobalReaction<T> {
 
     override val timeDistribution: DiracComb<T> = DiracComb(updateRate)
@@ -54,7 +54,7 @@ class PhysicsUpdate<T> @JvmOverloads constructor(
     override fun canExecute(): Boolean = conditions.all { it.isValid }
 
     override fun execute() {
-        environment.updatePhysics(1 / rate)
+        // environment.updatePhysics(0 * (1 / rate))
         timeDistribution.update(timeDistribution.nextOccurence, true, 1.0, environment)
     }
 

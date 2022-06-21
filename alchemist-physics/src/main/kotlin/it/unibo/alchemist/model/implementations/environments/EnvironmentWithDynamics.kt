@@ -22,6 +22,7 @@ import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
+import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 import org.dyn4j.geometry.Circle
@@ -81,6 +82,16 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         addPhysicalProperties(nodeBody, node.asProperty<T, AreaProperty<T>>().shape.radius)
         nodeToBody[node] = nodeBody
         world.addBody(nodeBody)
+        node.asProperty<T, PhysicalPedestrian2D<T>>()
+            .addFallenPedestrianListener {
+                /*
+                 * This disables collision response with the falling agent, as
+                 * overlapping is allowed in this case.
+                 * Agents approaching a falling agent will be subject to a
+                 * proper avoidance force. see the PhysicalPedestrian interface.
+                 */
+                nodeToBody[it]?.isEnabled = false
+            }
     }
     private fun moveNodeBodyToPosition(node: Node<T>, position: Euclidean2DPosition) {
         nodeToBody[node]?.transform = Transform().apply {

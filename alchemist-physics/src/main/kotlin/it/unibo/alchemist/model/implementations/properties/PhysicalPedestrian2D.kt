@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.properties
 
+import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
@@ -48,8 +49,9 @@ class PhysicalPedestrian2D<T>(
 
     private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 
+    private val cognitiveModel = node.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel
+
     override val comfortRay: Double get() {
-        val cognitiveModel = node.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel
         return if (cognitiveModel?.wantsToEscape() == true) {
             desiredSpaceTreshold / 3
         } else {
@@ -159,7 +161,7 @@ class PhysicalPedestrian2D<T>(
     ) = environment.getNodesWithin(influenceArea)
         .asSequence()
         .minusElement(node)
-        .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }
+        .filter { environment.getShape(it) !is AdimensionalShape }
         .filter(nodeFilter)
         .map(force)
         .filter { it.magnitude > Double.MIN_VALUE }

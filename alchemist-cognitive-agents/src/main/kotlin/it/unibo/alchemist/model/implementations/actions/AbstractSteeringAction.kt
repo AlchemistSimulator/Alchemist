@@ -39,10 +39,12 @@ abstract class AbstractSteeringAction<T, P, A>(
           P : Vector<P>,
           A : GeometricTransformation<P> {
 
+    private val pedestrian = node.asProperty<T, PedestrianProperty<T>>()
+
     /**
      * The maximum distance the node can walk, this is a length.
      */
-    open val maxWalk: Double get() = node.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
+    open val maxWalk: Double get() = pedestrian.speed() / reaction.rate
 
     /**
      * @return The next position where to move, in absolute or relative coordinates depending on the

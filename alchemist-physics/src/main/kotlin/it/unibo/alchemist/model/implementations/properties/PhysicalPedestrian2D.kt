@@ -82,7 +82,7 @@ class PhysicalPedestrian2D<T>(
     override fun checkAndPossiblyFall() {
         if (!isFallen && shouldFall(repulsionForces())) {
             isFallen = true
-            fallenAgentListeners.forEach { it.invoke(node) }
+            fallenAgentListeners.forEach { hasFallen -> hasFallen(node) }
         }
     }
 

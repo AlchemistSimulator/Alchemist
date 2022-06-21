@@ -92,12 +92,12 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     /**
      * Adds a listener to be called when [node] falls.
      */
-    fun addFallenPedestrianListener(listener: (Node<T>) -> Unit)
+    fun addFallenAgentListener(listener: (Node<T>) -> Unit)
 
     /**
-     * Removes the falling pedestrian [listener].
+     * Removes the fallen agent [listener].
      */
-    fun removeFallenPedestrianListener(listener: (Node<T>) -> Unit)
+    fun removeFallenAgentListener(listener: (Node<T>) -> Unit)
 }
 
 /**

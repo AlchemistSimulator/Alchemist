@@ -59,7 +59,7 @@ class PhysicalPedestrian2D<T>(
         }
     }
 
-    private val fallenAgentListeners: MutableList<(Node<T>) -> Unit> = mutableListOf()
+    private var fallenAgentListeners: List<(Node<T>) -> Unit> = listOf()
 
     override val comfortArea: Euclidean2DShape get() = environment
         .shapeFactory
@@ -147,7 +147,7 @@ class PhysicalPedestrian2D<T>(
         }
 
     override fun onFall(listener: (Node<T>) -> Unit) {
-        fallenAgentListeners.add(listener)
+        fallenAgentListeners += listener
     }
 
     private fun collectForces(

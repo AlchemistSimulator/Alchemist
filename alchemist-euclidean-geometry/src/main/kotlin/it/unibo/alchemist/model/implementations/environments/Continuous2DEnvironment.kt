@@ -50,9 +50,10 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0
 
-    private val shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape> = Caffeine.newBuilder().weakKeys().build { node ->
-        node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional
-    }
+    private val shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape> =
+        Caffeine.newBuilder().weakKeys().build { node ->
+            node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional
+        }
 
     override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> = when {
         shape.diameter + largestShapeDiameter <= 0 -> emptyList()

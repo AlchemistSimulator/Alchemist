@@ -13,6 +13,13 @@
       "semanticCommitScope": "api-deps"
     },
     {
+      "description": "Dokka updates should have type docs",
+      "matchPackageNames": [
+        "org.jetbrains.dokka",
+      ],
+      "semanticCommitType": "docs"
+    },
+    {
       "description": "Trigger a patch update on some dependencies",
       "matchPackageNames": [
         "org.jetbrains.kotlin.jvm",

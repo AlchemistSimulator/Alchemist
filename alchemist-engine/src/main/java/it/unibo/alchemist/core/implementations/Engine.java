@@ -194,9 +194,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         } else {
             final Time scheduledTime = nextEvent.getTau();
             if (scheduledTime.compareTo(currentTime) < 0) {
-                throw new IllegalStateException(nextEvent + "\nis scheduled in the past at time " + scheduledTime
+                throw new IllegalStateException(
+                    nextEvent + " is scheduled in the past at time " + scheduledTime
                         + ", current time is " + currentTime
-                        + ". Problem occurred at step " + currentStep);
+                        + ". Problem occurred at step " + currentStep
+                );
             }
             currentTime = scheduledTime;
             if (nextEvent.canExecute()) {

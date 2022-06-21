@@ -42,7 +42,7 @@ class PhysicalBlendedSteering<T>(
         Sum(environment, node, super.steerStrategy)
 
     init {
-        addOutboundDependency(PhysicsDependency.PHYSICS)
+        addInboundDependency(PhysicsDependency)
     }
 
     /**

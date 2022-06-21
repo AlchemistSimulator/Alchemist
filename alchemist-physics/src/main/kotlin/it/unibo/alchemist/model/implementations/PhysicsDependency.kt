@@ -12,14 +12,8 @@ package it.unibo.alchemist.model.implementations
 import it.unibo.alchemist.model.interfaces.Dependency
 
 /**
- * Dependencies within a physical simulations.
+ * A dependency on updates of the physics engine.
  */
-enum class PhysicsDependency : Dependency {
-
-    /**
-     * A dependency on any physical update in the world.
-     */
-    PHYSICS;
-
+object PhysicsDependency : Dependency {
     override fun toString(): String = "Physics Update"
 }

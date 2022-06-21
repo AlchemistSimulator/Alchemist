@@ -35,7 +35,7 @@ class PhysicsUpdate<T> @JvmOverloads constructor(
 
     override val timeDistribution: DiracComb<T> = DiracComb(updateRate)
 
-    override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency.PHYSICS)
+    override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency)
         get() = ImmutableListSet.copyOf(field)
 
     override val inboundDependencies: ListSet<out Dependency> = ListSet.of()

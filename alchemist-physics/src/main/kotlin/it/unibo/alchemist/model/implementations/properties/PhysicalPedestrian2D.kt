@@ -150,7 +150,7 @@ class PhysicalPedestrian2D<T>(
         fallenAgentListerners.remove(listener)
     }
 
-    override fun addFallenAgentListener(listener: (Node<T>) -> Unit) {
+    override fun onFall(listener: (Node<T>) -> Unit) {
         fallenAgentListerners.add(listener)
     }
 

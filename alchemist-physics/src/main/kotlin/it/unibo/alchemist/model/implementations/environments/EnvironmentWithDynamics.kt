@@ -83,7 +83,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         nodeToBody[node] = nodeBody
         world.addBody(nodeBody)
         node.asProperty<T, PhysicalPedestrian2D<T>>()
-            .addFallenAgentListener {
+            .onFall {
                 /*
                  * This disables collision response with the falling agent, as
                  * overlapping is allowed in this case.

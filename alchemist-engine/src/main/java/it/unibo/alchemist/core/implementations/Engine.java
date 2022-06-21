@@ -648,7 +648,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             return targetNode;
         }
 
-        public Node<T> getSourceNode() { return sourceNode; }
+        public Node<T> getSourceNode() {
+            return sourceNode;
+        }
 
         @Override
         public Stream<? extends Actionable<T>> getReactionsToUpdate() {

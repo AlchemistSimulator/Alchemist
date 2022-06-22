@@ -1,3 +1,10 @@
+## [21.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.3...21.0.4) (2022-06-22)
+
+
+### Bug Fixes
+
+* **release:** fix broken publish command ([9a47b5d](https://github.com/AlchemistSimulator/Alchemist/commit/9a47b5d19b5324c6efb9bfdb441b279870081c79))
+
 ## [21.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.2...21.0.3) (2022-06-21)
 
 

@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWi
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * A [NavigationAction] using [RouteFollowing] navigation strategy.
@@ -28,9 +29,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
 class CognitiveAgentFollowRoute<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    node: Node<T>,
-    vararg route: Number
-) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, node) {
+    override val pedestrian: PedestrianProperty<T>,
+    vararg route: Number,
+) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
 
     init {
         strategy = RouteFollowing(this, route.toPositions(environment))

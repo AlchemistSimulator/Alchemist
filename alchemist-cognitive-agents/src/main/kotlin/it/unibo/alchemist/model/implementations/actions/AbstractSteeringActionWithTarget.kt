@@ -8,6 +8,7 @@ import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * A [SteeringActionWithTarget] in a vector space.
@@ -22,9 +23,9 @@ import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrateg
 abstract class AbstractSteeringActionWithTarget<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     private val targetSelectionStrategy: TargetSelectionStrategy<T, P>,
-) : AbstractSteeringAction<T, P, A>(environment, reaction, node),
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     SteeringActionWithTarget<T, P>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
@@ -32,9 +33,9 @@ abstract class AbstractSteeringActionWithTarget<T, P, A>(
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
-        node: Node<T>,
+        pedestrian: PedestrianProperty<T>,
         target: P,
-    ) : this(environment, reaction, node, TargetSelectionStrategy { target })
+    ) : this(environment, reaction, pedestrian, TargetSelectionStrategy { target })
 
     override fun target(): P = targetSelectionStrategy.target
 

@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A [SteeringAction] in a vector space. The implementation of [nextPosition] is left to subclasses.
@@ -29,11 +30,10 @@ abstract class AbstractSteeringAction<T, P, A>(
      */
     protected open val reaction: Reaction<T>,
     /**
-     * The owner of this action.
+     * The pedestrian property of the owner of this action.
      */
-    node: Node<T>,
-    private val pedestrian: PedestrianProperty<T>,
-) : AbstractMoveNode<T, P>(environment, node),
+    protected open val pedestrian: PedestrianProperty<T>,
+) : AbstractMoveNode<T, P>(environment, pedestrian.node),
     SteeringAction<T, P>
     where P : Position<P>,
           P : Vector<P>,
@@ -73,4 +73,9 @@ abstract class AbstractSteeringAction<T, P, A>(
         require(node is N) { "Incompatible node type. Required ${N::class}, found ${node::class}" }
         return builder(node)
     }
+
+    /**
+     * Get the pedestrian property. This can be useful when cloning actions this actions.
+     */
+    protected val Node<T>.pedestrianProperty get() = this.asProperty<T, PedestrianProperty<T>>()
 }

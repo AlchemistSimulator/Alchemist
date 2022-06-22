@@ -24,6 +24,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
 import org.jgrapht.Graphs
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * A [NavigationAction] using [DestinationReaching] navigation strategy.
@@ -37,9 +38,9 @@ import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     vararg destinations: Number,
-) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, node) {
+) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
 
     /**
      * Infers if a [destination] is known by the [navigatingNode] (see [Pursuing]). A destination is considered

@@ -8,6 +8,8 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * Reaction representing the steering behavior of a pedestrian.
@@ -23,10 +25,13 @@ import it.unibo.alchemist.model.interfaces.TimeDistribution
  */
 open class SteeringBehavior<T>(
     private val environment: Environment<T, Euclidean2DPosition>,
-    node: Node<T>,
+    /**
+     * The pedestrian property of the owner of this reaction.
+     */
+    protected open val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
     open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>
-) : AbstractReaction<T>(node, timeDistribution) {
+) : AbstractReaction<T>(pedestrian.node, timeDistribution) {
 
     /**
      * The list of steering actions in this reaction.
@@ -35,7 +40,7 @@ open class SteeringBehavior<T>(
         actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
-        SteeringBehavior(environment, node, timeDistribution, steerStrategy)
+        SteeringBehavior(environment, node.pedestrianProperty, timeDistribution, steerStrategy)
 
     override fun updateInternalStatus(
         currentTime: Time?,
@@ -45,6 +50,8 @@ open class SteeringBehavior<T>(
 
     override fun execute() {
         (actions - steerActions()).forEach { it.execute() }
-        CognitiveAgentCombineSteering(environment, this, node, steerActions(), steerStrategy).execute()
+        CognitiveAgentCombineSteering(environment, this, pedestrian, steerActions(), steerStrategy).execute()
     }
+
+    protected val Node<T>.pedestrianProperty get() = asProperty<T, PedestrianProperty<T>>()
 }

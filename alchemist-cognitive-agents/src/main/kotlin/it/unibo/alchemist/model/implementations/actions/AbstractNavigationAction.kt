@@ -29,6 +29,7 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * An abstract [NavigationAction], taking care of properly moving the node in the
@@ -45,8 +46,8 @@ import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
     override val environment: EnvironmentWithGraph<*, T, P, A, N, E>,
     override val reaction: Reaction<T>,
-    node: Node<T>,
-) : AbstractSteeringAction<T, P, A>(environment, reaction, node),
+    override val pedestrian: PedestrianProperty<T>,
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     NavigationAction<T, P, A, L, R, N, E>
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P>,

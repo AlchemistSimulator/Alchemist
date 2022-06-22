@@ -1,3 +1,35 @@
+## [21.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.2...21.0.3) (2022-06-21)
+
+
+### Dependency updates
+
+* **deps:** update dependency it.unibo.scafi:scafi-core_2.13 to v1.1.5 ([a01351b](https://github.com/AlchemistSimulator/Alchemist/commit/a01351bf8eceee009fe7329d649cf7508eb31741))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.6.3 ([db8f039](https://github.com/AlchemistSimulator/Alchemist/commit/db8f039925c7e8a519b921e807046af6779690e8))
+* **deps:** update dependency org.mapsforge:mapsforge-map-awt to v0.18.0 ([e921c90](https://github.com/AlchemistSimulator/Alchemist/commit/e921c903e4f5872f3e240ce76d2bfe92ad96d0a3))
+* **deps:** update gohugoio/hugo action to v0.101.0 ([386d8e4](https://github.com/AlchemistSimulator/Alchemist/commit/386d8e482f33271ea384c73e7959643872e904dd))
+* **deps:** update plugin multijvmtesting to v0.4.3 ([d276cb0](https://github.com/AlchemistSimulator/Alchemist/commit/d276cb026e132d9cd8e5a2f94a5a7d9db2ae0e34))
+* **deps:** update plugin publishoncentral to v1 ([43bb168](https://github.com/AlchemistSimulator/Alchemist/commit/43bb16834ddd02872d1af9cc116c2abd8a44b39c))
+* **deps:** update site/themes/hugo-theme-relearn digest to 46d2e17 ([33d312e](https://github.com/AlchemistSimulator/Alchemist/commit/33d312ed42e95d76679416e11f11baaf0d3914cc))
+
+
+### General maintenance
+
+* **release:** trigger a minor update on scafi-core updates ([fa26efa](https://github.com/AlchemistSimulator/Alchemist/commit/fa26efa928b3818ec2e5fcb278e500dc9e971789))
+* **renovate:** make Dokka updates generate docs-typed commits ([eabd046](https://github.com/AlchemistSimulator/Alchemist/commit/eabd046a20a285111da2f7259508a33efa36d4a3))
+* **renovate:** prefer prefix match to name match for scafi updates ([521bba8](https://github.com/AlchemistSimulator/Alchemist/commit/521bba86b0039a71f9b4ba729f6fabfddd8f2e37))
+
+
+### Documentation
+
+* **website:** fix broken link to "edit this page" ([a89d29b](https://github.com/AlchemistSimulator/Alchemist/commit/a89d29b9e9172e3dc2f9907177325c5a518afc06))
+* **website:** fix typo ([45998c6](https://github.com/AlchemistSimulator/Alchemist/commit/45998c630c2955a94a7582d5582f5c528e502784))
+
+
+### Build and continuous integration
+
+* **deps:** bump semantic-release from 19.0.2 to 19.0.3 ([f55f226](https://github.com/AlchemistSimulator/Alchemist/commit/f55f2261735167c7b3bcbc37797bd29595f4c4cd))
+* fix broken task names for the new version of publish-on-central ([f3e6f88](https://github.com/AlchemistSimulator/Alchemist/commit/f3e6f88e3d81c0fac6dc95c4184dbfe36ca5deba))
+
 ## [21.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.1...21.0.2) (2022-06-14)
 
 

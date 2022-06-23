@@ -9,8 +9,7 @@ jobs:
   update-javadoc-io-cache:
     runs-on: ubuntu-latest
     concurrency:
-      # This job must never interleave with the release task
-      group: release
+      group: javadoc-io
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
@@ -24,7 +23,7 @@ jobs:
               git config user.name 'Danilo Pianini [bot]'
               git config user.email 'danilo.pianini@gmail.com'
               git add javadoc-io.json
-              git commit -m 'chore(build): update the Javadoc.io cache [skip ci]'
+              git commit -m 'chore(build): update the Javadoc.io cache'
               git push
             fi
           should-run-codecov: false

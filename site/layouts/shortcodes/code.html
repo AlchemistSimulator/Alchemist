@@ -1,4 +1,5 @@
-{{- $path := .Get "path" | default "README.md" | printf "alchemist/%s" -}}
+{{- $root := .Get "root" | default "alchemist" -}}
+{{- $path := .Get "path" | default "README.md" | printf "%s/%s" $root -}}
 {{- $content := readFile $path | htmlUnescape -}}
 {{- $content := split $content "\n" -}}
 {{- $start := .Get "from" | default "1" | int | add -1 }}
@@ -17,7 +18,16 @@
             )
         )
     ) -}}
-    <div class="expand">
+    <!--
+  ~ Copyright (C) 2010-2022, Danilo Pianini and contributors
+  ~ listed, for each module, in the respective subproject's build.gradle.kts file.
+  ~
+  ~ This file is part of Alchemist, and is distributed under the terms of the
+  ~ GNU General Public License, with a linking exception,
+  ~ as described in the file LICENSE in the Alchemist distribution's top directory.
+  -->
+
+<div class="expand">
         <a class="expand-label" onclick="$t=$(this); if($t.parent('.expand-expanded.expand-marked').length){ $t.next().css('display','none') }else if($t.parent('.expand-marked').length){ $t.next().css('display','block') }else{ $t.next('.expand-content').slideToggle(100); } $t.parent().toggleClass('expand-expanded');">
             <span class="fas fa-chevron-down"></span>
             <span class="fas fa-chevron-right"></span>

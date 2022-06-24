@@ -103,6 +103,10 @@ public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {
     @Override
     public void initialized(@Nonnull final Environment<T, GeoPosition> environment) {
         super.initialized(environment);
+        // Remove the MapView default listeners (otherwise, the map view uses its drag effect)
+        Arrays.stream(mapView.getMouseListeners()).forEach(mapView::removeMouseListener);
+        Arrays.stream(mapView.getMouseMotionListeners()).forEach(mapView::removeMouseMotionListener);
+        // Add the listeners implemented in generic (otherwise, no events are handled when users interact with the map)
         Arrays.stream(getMouseListeners()).forEach(mapView::addMouseListener);
         Arrays.stream(getMouseMotionListeners()).forEach(mapView::addMouseMotionListener);
         setWormhole(new MapWormhole(environment, this, mapView.getModel().mapViewPosition));

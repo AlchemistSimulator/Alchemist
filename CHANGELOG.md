@@ -1,3 +1,27 @@
+## [21.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.4...21.0.5) (2022-06-24)
+
+
+### Build and continuous integration
+
+* create a workflow that maintains the javadoc.io link cache ([f8153ce](https://github.com/AlchemistSimulator/Alchemist/commit/f8153cec1e0d902d88ce89c77562664f01246bb7))
+* do not skip builds after cache updates, and run them in parallel with releases ([5e96b56](https://github.com/AlchemistSimulator/Alchemist/commit/5e96b56dbbf17d914da303c9248f8aee9644b810))
+* run ktlintCheck and checkScalafmt in a single shot when committing [skip ci] ([58c68fa](https://github.com/AlchemistSimulator/Alchemist/commit/58c68fa672cc2706629406c7295998426ae563fb))
+* **website:** add means to import any file from the website ([ec50d9c](https://github.com/AlchemistSimulator/Alchemist/commit/ec50d9ceb494eb533d1e51bcac9b011bc185108d))
+* **website:** import the scafi tutorial so that it can be versioned rather than linked ([77844cc](https://github.com/AlchemistSimulator/Alchemist/commit/77844cc78e2678423a22716aa5dbb519fd50e611))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache [skip ci] ([3fb0d74](https://github.com/AlchemistSimulator/Alchemist/commit/3fb0d7438a85562fd59f7ff997dc96ea365fddde))
+* **build:** use Kotlin's forEach in place of Java's ([da3dd73](https://github.com/AlchemistSimulator/Alchemist/commit/da3dd73ca6790f86d779654480d9d6afee943d63))
+
+
+### Dependency updates
+
+* **core-deps:** update dependency it.unibo.scafi:scafi-core_2.13 to v1.1.6 ([ba8509d](https://github.com/AlchemistSimulator/Alchemist/commit/ba8509d8d8ec9f82450e2da49c6cc2ef7e0862dd))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0968920 ([b5e20a9](https://github.com/AlchemistSimulator/Alchemist/commit/b5e20a91da4f582b0e7d6782dfd84621499f0cd8))
+* **deps:** update site/themes/hugo-theme-relearn digest to 3b97db4 ([c9fda57](https://github.com/AlchemistSimulator/Alchemist/commit/c9fda5730f77768fb5d299effb8a8a1fdfaa9100))
+
 ## [21.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.3...21.0.4) (2022-06-22)
 
 

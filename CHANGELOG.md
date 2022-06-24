@@ -1,3 +1,10 @@
+## [21.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.5...21.0.6) (2022-06-24)
+
+
+### Bug Fixes
+
+* **alchemist-swingui:** avoid map dragging when selection mode is enabled ([#1373](https://github.com/AlchemistSimulator/Alchemist/issues/1373)) ([54bae81](https://github.com/AlchemistSimulator/Alchemist/commit/54bae81c0641fb8c7e8671f912e9424333db20bd))
+
 ## [21.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.4...21.0.5) (2022-06-24)
 
 

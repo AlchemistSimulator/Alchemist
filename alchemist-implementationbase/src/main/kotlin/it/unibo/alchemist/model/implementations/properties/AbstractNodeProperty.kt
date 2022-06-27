@@ -10,16 +10,15 @@
 package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.PerceptiveProperty
-import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
+import it.unibo.alchemist.model.interfaces.NodeProperty
+import kotlin.reflect.jvm.jvmName
 
 /**
- * Base implementation of a pedestrian's capability to influence each other.
+ *
  */
-data class Perceptive<T> (
-    override val node: Node<T>,
-    override val fieldOfView: InfluenceSphere<T>,
-) : AbstractNodeProperty<T>(node), PerceptiveProperty<T> {
+abstract class AbstractNodeProperty<T>(
+    override val node: Node<T>
+) : NodeProperty<T> {
 
-    override fun cloneOnNewNode(node: Node<T>) = Perceptive(node, fieldOfView)
+    override fun toString(): String = with(this::class) { simpleName ?: qualifiedName ?: jvmName }
 }

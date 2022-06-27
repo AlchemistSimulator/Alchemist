@@ -284,7 +284,7 @@ internal abstract class LoadingSystem(
         /*
          * Contextualize dual operation.
          */
-        private inline fun <T> decontextualize(target: T) = factory.deregisterSingleton(target)
+        private inline fun <reified T> decontextualize(target: T) = factory.deregisterSingleton(target)
         private inline fun <reified T, reified R> registerImplicit(noinline translator: (T) -> R) =
             factory.registerImplicit(T::class.java, R::class.java, translator)
         private fun Map<*, *>.getOrEmpty(key: String) = get(key) ?: emptyList<Any>()

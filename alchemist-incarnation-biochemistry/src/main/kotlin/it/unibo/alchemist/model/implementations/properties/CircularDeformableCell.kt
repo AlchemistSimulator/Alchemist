@@ -37,4 +37,6 @@ class CircularDeformableCell @JvmOverloads constructor(
             "deformability must be between 0 and 1"
         }
     }
+
+    override fun toString() = "CircularDeformableCell${node.id}"
 }

@@ -21,4 +21,6 @@ data class RunningPedestrian<T> @JvmOverloads constructor(
     override val runningSpeed: Double = Speed.default * 3
 ) : RunningPedestrianProperty<T> {
     override fun cloneOnNewNode(node: Node<T>) = RunningPedestrian(node, runningSpeed)
+
+    override fun toString() = "RunningPedestrian${node.id}"
 }

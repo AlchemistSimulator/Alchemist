@@ -45,4 +45,6 @@ where P : Position<P>,
     }
 
     override fun cloneOnNewNode(node: Node<T>) = Cognitive(environment, node, danger)
+
+    override fun toString() = "Cognitive${node.id}"
 }

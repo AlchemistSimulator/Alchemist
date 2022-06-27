@@ -35,4 +35,6 @@ open class Pedestrian<T> @JvmOverloads constructor(
     override fun speed(): Double = randomGenerator.nextDouble(walkingSpeed, runningSpeed)
 
     override fun cloneOnNewNode(node: Node<T>) = Pedestrian(randomGenerator, node, walkingSpeed, runningSpeed)
+
+    override fun toString() = "Pedestrian${node.id}"
 }

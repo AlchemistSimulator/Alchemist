@@ -39,4 +39,6 @@ class Cell @JvmOverloads constructor(
     }
 
     override fun cloneOnNewNode(node: Node<Double>) = Cell(environment, node)
+
+    override fun toString() = "Cell${node.id}"
 }

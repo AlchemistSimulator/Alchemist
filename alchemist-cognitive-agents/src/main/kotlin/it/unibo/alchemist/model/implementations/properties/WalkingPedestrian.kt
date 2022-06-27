@@ -22,4 +22,6 @@ data class WalkingPedestrian<T> @JvmOverloads constructor(
 ) : WalkingPedestrianProperty<T> {
 
     override fun cloneOnNewNode(node: Node<T>) = WalkingPedestrian(node, walkingSpeed)
+
+    override fun toString() = "WalkingPedestrian${node.id}"
 }

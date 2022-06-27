@@ -38,4 +38,6 @@ class RectangularArea<T>(
     override val shape: Euclidean2DShape = environment.shapeFactory.rectangle(width, height)
 
     override fun cloneOnNewNode(node: Node<T>) = RectangularArea(environment, node, width, height)
+
+    override fun toString() = "RectangularArea${node.id}"
 }

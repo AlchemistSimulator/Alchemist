@@ -31,4 +31,6 @@ class CircularArea<T> @JvmOverloads constructor(
     override val shape: Euclidean2DShape = environment.shapeFactory.circle(radius)
 
     override fun cloneOnNewNode(node: Node<T>) = CircularArea(environment, node, shape.radius)
+
+    override fun toString() = "CircularArea${node.id}"
 }

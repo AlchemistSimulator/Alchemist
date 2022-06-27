@@ -49,4 +49,6 @@ class Human<T> @JvmOverloads constructor(
         compliance,
         helpAttitude,
     )
+
+    override fun toString() = "Human${node.id}"
 }

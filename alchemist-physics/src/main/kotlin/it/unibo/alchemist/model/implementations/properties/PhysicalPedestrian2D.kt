@@ -158,6 +158,8 @@ class PhysicalPedestrian2D<T>(
 
     override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian2D(randomGenerator, environment, node)
 
+    override fun toString() = "PhysicalPedestrian${node.id}"
+
     companion object {
         /**
          * Minimum value for normal state [comfortRay] (in meters).

@@ -22,4 +22,6 @@ data class Perceptive<T> (
 ) : PerceptiveProperty<T> {
 
     override fun cloneOnNewNode(node: Node<T>) = Perceptive(node, fieldOfView)
+
+    override fun toString() = "Perception${node.id}"
 }

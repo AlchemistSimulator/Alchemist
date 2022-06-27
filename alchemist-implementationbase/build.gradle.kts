@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -18,7 +18,7 @@ import Libs.alchemist
  */
 
 dependencies {
-    api(alchemist("interfaces"))
+    api(alchemist("api"))
     api(libs.apache.commons.math3)
     api(libs.apache.commons.lang3)
     api(libs.quadtree)

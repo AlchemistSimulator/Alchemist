@@ -6,6 +6,7 @@ on:
       - 'autodelivery**'
       - 'bump-**'
       - 'renovate/**'
+      - 'dependabot/**'
     paths-ignore:
       - 'CHANGELOG.md'
       - 'renovate.json'
@@ -27,7 +28,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.15
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
         with:
           build-command: true
           check-command: |
@@ -49,7 +50,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.15
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
         with:
           build-command: |
             ./gradlew shadowJar --parallel || ./gradlew shadowJar --parallel
@@ -62,18 +63,28 @@ jobs:
   test-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    if: contains(github.repository, 'AlchemistSimulator/Alchemist') && contains('push workflow_dispatch', github.event_name)
     concurrency:
       group: ${{ github.workflow }}-test-deploy-${{ github.event.number || github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.15
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+        with:
+          build-command: true
+          check-command: |
+            ./gradlew tasks | grep releaseStagingRepositoryOnMavenCentral
+            ./gradlew tasks | grep closeStagingRepositoryOnMavenCentral
+          java-version: 11
+          should-run-codecov: false
+          should-deploy: false
+          should-validate-wrapper: false
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+        if: contains(github.repository, 'AlchemistSimulator/Alchemist') && contains('push workflow_dispatch', github.event_name)
         with:
           build-command: true
           check-command: true
-          deploy-command: ./gradlew closeKotlinMavenOnMavenCentralNexus --parallel
+          deploy-command: ./gradlew publishAllPublicationsToMavenCentralRepository closeStagingRepositoryOnMavenCentral --parallel
           java-version: 11
           should-run-codecov: false
           should-deploy: true
@@ -91,7 +102,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.15
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
         with:
           build-command: |
             ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
@@ -149,7 +160,7 @@ jobs:
         uses: actions/download-artifact@v3.0.0
         with:
           name: website
-      - uses: DanySK/build-check-deploy-gradle-action@1.2.15
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
         with:
           java-version: 11
           build-command: |
@@ -175,3 +186,19 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
+  ci-success:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - build-website
+      - release
+      - test-deploy
+      - test-shadowjar
+    if: >-
+      always() && (
+        contains(join(needs.*.result, ','), 'failure')
+        || !contains(join(needs.*.result, ','), 'cancelled')
+      )
+    steps:
+      - name: Verify that there were no failures
+        run: ${{ !contains(join(needs.*.result, ','), 'failure') }}

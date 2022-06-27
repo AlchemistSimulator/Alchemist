@@ -12,8 +12,8 @@ package it.unibo.alchemist.boundary.fxui.impl
 import de.saring.leafletmap.MapConfig
 import de.saring.leafletmap.ZoomControlConfig
 import it.unibo.alchemist.boundary.fxui.util.JavaFXThreadUtil
-import it.unibo.alchemist.boundary.wormhole.implementation.LinearZoomManager
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D
+import it.unibo.alchemist.boundary.ui.impl.LinearZoomManager
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition

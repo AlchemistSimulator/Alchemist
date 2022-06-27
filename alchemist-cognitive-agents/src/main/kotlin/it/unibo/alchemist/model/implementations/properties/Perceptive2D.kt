@@ -36,8 +36,6 @@ class Perceptive2D<T> @JvmOverloads constructor(
         FieldOfView2D(environment, node, defaultFieldOfViewDepth, defaultFieldOfViewAperture),
     )
 
-    override fun toString() = "2DPerception${node.id}"
-
     companion object {
         /**
          * Default aperture of pedestrian's [fieldOfView].

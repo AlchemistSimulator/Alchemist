@@ -72,6 +72,4 @@ class Orienting2D<T, N : ConvexPolygon> @JvmOverloads constructor(
         minSide,
         maxSide,
     )
-
-    override fun toString() = "2DOrienting${node.id}"
 }

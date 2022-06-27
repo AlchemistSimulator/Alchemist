@@ -28,7 +28,8 @@ open class Pedestrian<T> @JvmOverloads constructor(
     override val node: Node<T>,
     override val walkingSpeed: Double = Speed.default,
     override val runningSpeed: Double = Speed.default * 3,
-) : PedestrianProperty<T>,
+) : AbstractNodeProperty<T>(node),
+    PedestrianProperty<T>,
     WalkingPedestrianProperty<T> by WalkingPedestrian(node, walkingSpeed),
     RunningPedestrianProperty<T> by RunningPedestrian(node, runningSpeed) {
 
@@ -36,5 +37,5 @@ open class Pedestrian<T> @JvmOverloads constructor(
 
     override fun cloneOnNewNode(node: Node<T>) = Pedestrian(randomGenerator, node, walkingSpeed, runningSpeed)
 
-    override fun toString() = "Pedestrian${node.id}"
+    override fun toString() = "${super.toString()}[walkingSpeed=$walkingSpeed, runningSpeed=$runningSpeed]"
 }

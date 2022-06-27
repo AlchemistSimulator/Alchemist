@@ -26,7 +26,7 @@ class Cell @JvmOverloads constructor(
     val environment: Environment<Double, Euclidean2DPosition>,
     override val node: Node<Double>,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : CellProperty<Euclidean2DPosition> {
+) : AbstractNodeProperty<Double>(node), CellProperty<Euclidean2DPosition> {
 
     override var polarizationVersor: Euclidean2DPosition = Euclidean2DPosition.zero
 
@@ -39,6 +39,4 @@ class Cell @JvmOverloads constructor(
     }
 
     override fun cloneOnNewNode(node: Node<Double>) = Cell(environment, node)
-
-    override fun toString() = "Cell${node.id}"
 }

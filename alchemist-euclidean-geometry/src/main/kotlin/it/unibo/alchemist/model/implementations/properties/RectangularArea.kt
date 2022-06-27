@@ -33,11 +33,11 @@ class RectangularArea<T>(
      * The rectangle height.
      */
     val height: Double,
-) : OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+) : AbstractNodeProperty<T>(node), OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
 
     override val shape: Euclidean2DShape = environment.shapeFactory.rectangle(width, height)
 
     override fun cloneOnNewNode(node: Node<T>) = RectangularArea(environment, node, width, height)
 
-    override fun toString() = "RectangularArea${node.id}"
+    override fun toString() = "${super.toString()}[width=$width, height=$height]"
 }

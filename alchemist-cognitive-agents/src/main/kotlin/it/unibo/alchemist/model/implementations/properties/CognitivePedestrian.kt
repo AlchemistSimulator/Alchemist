@@ -33,6 +33,4 @@ class CognitivePedestrian<T, S, A>(
             walkingSpeed * minOf(cognitiveModel.remainIntention(), 1.0)
         }
     }
-
-    override fun toString() = "CognitivePedestrian${node.id}"
 }

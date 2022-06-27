@@ -24,7 +24,7 @@ class CognitivePedestrian<T, S, A>(
 ) : HeterogeneousPedestrian<T, S, A>(randomGenerator, node)
     where S : Vector<S>, A : GeometricTransformation<S> {
 
-    private val cognitiveModel = node.asProperty<T, CognitiveProperty<T>>().cognitiveModel
+    private val cognitiveModel by lazy { node.asProperty<T, CognitiveProperty<T>>().cognitiveModel }
 
     override fun speed(): Double {
         return if (cognitiveModel.wantsToEscape()) {

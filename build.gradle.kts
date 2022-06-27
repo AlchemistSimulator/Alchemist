@@ -178,7 +178,7 @@ allprojects {
                 .map { it to File(projectDir, it) }
                 .toMap()
                 .filterValues { it.exists() }
-                .forEach { path, file ->
+                .forEach { (path, file) ->
                     sourceLink {
                         localDirectory.set(file)
                         val project = if (project == rootProject) "" else project.name

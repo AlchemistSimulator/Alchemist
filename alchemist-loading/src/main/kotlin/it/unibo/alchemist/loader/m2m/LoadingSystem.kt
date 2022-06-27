@@ -233,7 +233,7 @@ internal abstract class LoadingSystem(
                 node.properties.forEach { decontextualize(it) }
                 environment.addNode(node, position)
                 logger.debug("Added node {} at {}", node.id, position)
-                factory.deregisterSingleton(node)
+                decontextualize(node)
             }
         }
 

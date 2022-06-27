@@ -1,3 +1,19 @@
+## [21.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.6...21.0.7) (2022-06-27)
+
+
+### Bug Fixes
+
+* add toString() to all NodeProperties ([#1377](https://github.com/AlchemistSimulator/Alchemist/issues/1377)) ([dab4ec3](https://github.com/AlchemistSimulator/Alchemist/commit/dab4ec3bbac6bc5dee42959feaed94664d5cace5))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0a8351b ([790f682](https://github.com/AlchemistSimulator/Alchemist/commit/790f682f99f66cdb25512b9946a85c0960d261d3))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b01ca38 ([e8c4a22](https://github.com/AlchemistSimulator/Alchemist/commit/e8c4a22dafbf43ca8bc1f05d8c0938650521eddc))
+* **deps:** update kotest to v5.3.2 ([b54d712](https://github.com/AlchemistSimulator/Alchemist/commit/b54d7126164f7dd97cd4414c3b94b87daed2a2d2))
+* **deps:** update site/themes/hugo-theme-relearn digest to 2b032a3 ([0ac150d](https://github.com/AlchemistSimulator/Alchemist/commit/0ac150d003bce496064955b9565c76ca7c934d05))
+* **deps:** update site/themes/hugo-theme-relearn digest to e09d84f ([d258c77](https://github.com/AlchemistSimulator/Alchemist/commit/d258c77fa679181eef9e1a5007086600b06640dd))
+
 ## [21.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.5...21.0.6) (2022-06-24)
 
 

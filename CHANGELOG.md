@@ -1,3 +1,15 @@
+## [21.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.7...21.0.8) (2022-06-28)
+
+
+### Bug Fixes
+
+* **alchemist-loading:** fix properties singleton registration ([#1379](https://github.com/AlchemistSimulator/Alchemist/issues/1379)) ([0aa373b](https://github.com/AlchemistSimulator/Alchemist/commit/0aa373b7cb6725d401e4b9d3b62bf037f6912358))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.7.1 ([7fca6ac](https://github.com/AlchemistSimulator/Alchemist/commit/7fca6ac349726acd5fd37a51abc26ebad80f4339))
+
 ## [21.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.6...21.0.7) (2022-06-27)
 
 

@@ -38,7 +38,7 @@ class PhysicalPedestrian2D<T>(
      */
     val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
-) : PhysicalPedestrian2D<T> {
+) : AbstractNodeProperty<T>(node), PhysicalPedestrian2D<T> {
 
     private val pedestrian by lazy { node.asProperty<T, PedestrianProperty<T>>() }
 
@@ -168,6 +168,9 @@ class PhysicalPedestrian2D<T>(
     ): List<Euclidean2DPosition> = avoidanceForces()
 
     override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian2D(randomGenerator, environment, node)
+
+    override fun toString() = "${super.toString()}[desiredSpaceThreshold=$desiredSpaceTreshold, " +
+        "comfortRay=$comfortRay, isFallen=$isFallen]"
 
     companion object {
         /**

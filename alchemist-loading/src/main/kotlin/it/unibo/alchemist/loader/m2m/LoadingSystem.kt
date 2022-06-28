@@ -75,14 +75,14 @@ internal abstract class LoadingSystem(
             setCurrentRandomGenerator(simulationRNG)
             // INCARNATION
             val incarnation = SimulationModel.visitIncarnation<P, T>(root[DocumentRoot.incarnation])
-            registerSingleton(incarnation)
+            contextualize(incarnation)
             registerImplicit<String, Molecule>(incarnation::createMolecule)
             registerImplicit<String, Any?>(incarnation::createConcentration)
             // ENVIRONMENT
             val environment: Environment<T, P> =
                 SimulationModel.visitEnvironment(incarnation, context, root[DocumentRoot.environment])
             logger.info("Created environment: {}", environment)
-            registerSingleton(environment)
+            contextualize(environment)
             // LAYERS
             val layers: List<Pair<Molecule, Layer<T, P>>> =
                 SimulationModel.visitLayers(incarnation, context, root[DocumentRoot.layers])
@@ -101,7 +101,7 @@ internal abstract class LoadingSystem(
             val linkingRule =
                 SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.linkingRule))
             environment.linkingRule = linkingRule
-            registerSingleton(linkingRule)
+            contextualize(linkingRule)
             // DISPLACEMENTS
             setCurrentRandomGenerator(scenarioRNG)
             val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
@@ -218,22 +218,22 @@ internal abstract class LoadingSystem(
                     else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
                 }
                 environment.linkingRule = composedLinkingRule
-                registerSingleton<LinkingRule<T, P>>(composedLinkingRule)
+                contextualize<LinkingRule<T, P>>(composedLinkingRule)
             }
             deployment.stream().forEach { position ->
                 val node = SimulationModel.visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
-                registerSingleton(node)
+                contextualize(node)
                 // PROPERTIES
                 loadPropertiesOnNode(node, position, descriptor)
-                node.properties.forEach { factory.registerSingleton(it) }
+                node.properties.forEach { contextualize(it) }
                 // NODE CONTENTS
                 loadContentsOnNode(incarnation, node, position, descriptor)
                 // PROGRAMS
                 loadProgramsOnNode(simulationRNG, incarnation, environment, node, position, descriptor)
-                node.properties.forEach { factory.deregisterSingleton(it) }
+                node.properties.forEach { decontextualize(it) }
                 environment.addNode(node, position)
                 logger.debug("Added node {} at {}", node.id, position)
-                factory.deregisterSingleton(node)
+                decontextualize(node)
             }
         }
 
@@ -277,7 +277,14 @@ internal abstract class LoadingSystem(
 
         private val factory: Factory get() = context.factory
 
-        private inline fun <reified T> registerSingleton(target: T) = factory.registerSingleton(T::class.java, target)
+        /*
+         * Use this method to register a singleton that should be suitable for any superclass in its hierarchy.
+         */
+        private inline fun <reified T> contextualize(target: T) = factory.registerSingleton(T::class.java, target)
+        /*
+         * Contextualize dual operation.
+         */
+        private inline fun <reified T> decontextualize(target: T) = factory.deregisterSingleton(target)
         private inline fun <reified T, reified R> registerImplicit(noinline translator: (T) -> R) =
             factory.registerImplicit(T::class.java, R::class.java, translator)
         private fun Map<*, *>.getOrEmpty(key: String) = get(key) ?: emptyList<Any>()

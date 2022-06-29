@@ -28,7 +28,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           build-command: true
           check-command: |
@@ -50,7 +50,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           build-command: |
             ./gradlew shadowJar --parallel || ./gradlew shadowJar --parallel
@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           build-command: true
           check-command: |
@@ -79,7 +79,7 @@ jobs:
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         if: contains(github.repository, 'AlchemistSimulator/Alchemist') && contains('push workflow_dispatch', github.event_name)
         with:
           build-command: true
@@ -102,7 +102,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           build-command: |
             ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
@@ -160,7 +160,7 @@ jobs:
         uses: actions/download-artifact@v3.0.0
         with:
           name: website
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           java-version: 11
           build-command: |

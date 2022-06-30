@@ -1,3 +1,26 @@
+## [21.0.9](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.8...21.0.9) (2022-06-30)
+
+
+### Bug Fixes
+
+* **release:** release via renewed publish-on-central ([1d26f4d](https://github.com/AlchemistSimulator/Alchemist/commit/1d26f4d23d672f55d6d61ee3fd8761303fa758bb))
+* **release:** release via renewed publish-on-central ([0e9c3ef](https://github.com/AlchemistSimulator/Alchemist/commit/0e9c3efff8ea741dfe484471bde9a4f632a2b198))
+
+
+### Dependency updates
+
+* **deps:** update dependency it.unimi.dsi:dsiutils to v2.7.2 ([94f15c9](https://github.com/AlchemistSimulator/Alchemist/commit/94f15c914e16253a68ba793afc97c8f4169118e4))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([cbc75fb](https://github.com/AlchemistSimulator/Alchemist/commit/cbc75fbf8ac1b11ab0ef658f3ee1537ae39764fa))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.0.3 ([580fbf9](https://github.com/AlchemistSimulator/Alchemist/commit/580fbf94d20b39e016c1653d734926dd41642125))
+
 ## [21.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.7...21.0.8) (2022-06-28)
 
 

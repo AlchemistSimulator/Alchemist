@@ -1,17 +1,6 @@
-name: CI
+name: CI/CD Process
 on:
-  push:
-    tags: '*'
-    branches-ignore:
-      - 'autodelivery**'
-      - 'bump-**'
-      - 'renovate/**'
-      - 'dependabot/**'
-    paths-ignore:
-      - 'CHANGELOG.md'
-      - 'renovate.json'
-      - '.gitignore'
-  pull_request:
+  workflow_call:
   workflow_dispatch:
 
 jobs:
@@ -80,7 +69,7 @@ jobs:
           should-deploy: false
           should-validate-wrapper: false
       - uses: DanySK/build-check-deploy-gradle-action@2.0.3
-        if: contains(github.repository, 'AlchemistSimulator/Alchemist') && contains('push workflow_dispatch', github.event_name)
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         with:
           build-command: true
           check-command: true
@@ -137,9 +126,7 @@ jobs:
       - test-deploy
       - test-shadowjar
     runs-on: ubuntu-latest
-    if: >-
-      contains('push workflow_dispatch', github.event_name)
-      && contains(github.repository, 'AlchemistSimulator/Alchemist')
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.2
@@ -185,7 +172,7 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-  ci-success:
+  success:
     runs-on: ubuntu-latest
     needs:
       - build

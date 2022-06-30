@@ -15,7 +15,7 @@ git -C build/website/ add . || exit 1
 git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 2
 git -C build/website/ push || exit 3
 ./gradlew shadowJar --parallel || ./gradlew shadowJar --parallel || exit 4
-./gradlew uploadKotlin close --parallel || exit 5
+./gradlew uploadKotlin release --parallel || ./gradlew uploadKotlin release --parallel || ./gradlew uploadKotlin release --parallel exit 5
 ./gradlew publishKotlinOSSRHPublicationToGithubRepository --continue || true
 `
 var config = require('semantic-release-preconfigured-conventional-commits');

@@ -84,7 +84,7 @@ jobs:
         with:
           build-command: true
           check-command: true
-          deploy-command: ./gradlew publishAllPublicationsToMavenCentralRepository closeStagingRepositoryOnMavenCentral --parallel
+          deploy-command: ./gradlew uploadKotlin close --parallel
           java-version: 11
           should-run-codecov: false
           should-deploy: true

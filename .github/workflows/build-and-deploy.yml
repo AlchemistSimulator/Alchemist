@@ -119,7 +119,6 @@ jobs:
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
-          github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website

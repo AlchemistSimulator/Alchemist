@@ -1,17 +1,6 @@
-name: CI
+name: CI/CD Process
 on:
-  push:
-    tags: '*'
-    branches-ignore:
-      - 'autodelivery**'
-      - 'bump-**'
-      - 'renovate/**'
-      - 'dependabot/**'
-    paths-ignore:
-      - 'CHANGELOG.md'
-      - 'renovate.json'
-      - '.gitignore'
-  pull_request:
+  workflow_call:
   workflow_dispatch:
 
 jobs:
@@ -28,7 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           build-command: true
           check-command: |
@@ -50,7 +39,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           build-command: |
             ./gradlew shadowJar --parallel || ./gradlew shadowJar --parallel
@@ -69,7 +58,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           build-command: true
           check-command: |
@@ -79,12 +68,15 @@ jobs:
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
-        if: contains(github.repository, 'AlchemistSimulator/Alchemist') && contains('push workflow_dispatch', github.event_name)
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         with:
           build-command: true
           check-command: true
-          deploy-command: ./gradlew publishAllPublicationsToMavenCentralRepository closeStagingRepositoryOnMavenCentral --parallel
+          deploy-command: >-
+            ./gradlew uploadKotlin close --parallel ||
+            ./gradlew uploadKotlin close --parallel ||
+            ./gradlew uploadKotlin close --parallel
           java-version: 11
           should-run-codecov: false
           should-deploy: true
@@ -102,7 +94,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           build-command: |
             ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
@@ -119,7 +111,6 @@ jobs:
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false
-          github-token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Tar files
         run: tar -cvf website.tar build/website
       - name: Upload website
@@ -138,9 +129,7 @@ jobs:
       - test-deploy
       - test-shadowjar
     runs-on: ubuntu-latest
-    if: >-
-      contains('push workflow_dispatch', github.event_name)
-      && contains(github.repository, 'AlchemistSimulator/Alchemist')
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.2
@@ -160,7 +149,7 @@ jobs:
         uses: actions/download-artifact@v3.0.0
         with:
           name: website
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.0.3
         with:
           java-version: 11
           build-command: |
@@ -186,7 +175,7 @@ jobs:
           maven-central-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
-  ci-success:
+  success:
     runs-on: ubuntu-latest
     needs:
       - build

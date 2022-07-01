@@ -177,15 +177,17 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * Checks if a node doesn't overlap with any other node in the environment (see [overlappingNodes]). If the
      * node is shapeless, true is returned.
      */
-    private fun Node<T>.canFitIn(position: Euclidean2DPosition): Boolean =
-        asPropertyOrNull<T, AreaProperty<T>>() != null || overlappingNodes(position).isEmpty()
+    private fun Node<T>.canFitIn(position: Euclidean2DPosition): Boolean {
+        val nodeShape = asPropertyOrNull<T, AreaProperty<T>>()?.shape
+        return nodeShape == null || overlappingNodes(nodeShape, position).isEmpty()
+    }
 
     /**
      * @returns the nodes in this environment whose shape intersects this node's shape. The [position] of this
      * node must be specified as it may not have been added in the environment yet.
      */
-    private fun Node<T>.overlappingNodes(position: Euclidean2DPosition): Nodes<T> =
-        getNodesWithin(shapeFactory.requireCompatible(getShape(this)).transformed { origin(position) })
+    private fun Node<T>.overlappingNodes(nodeShape: Euclidean2DShape, position: Euclidean2DPosition): Nodes<T> =
+        getNodesWithin(shapeFactory.requireCompatible(nodeShape).transformed { origin(position) })
             .minusElement(this)
 }
 

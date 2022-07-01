@@ -1,0 +1,14 @@
+incarnation: protelis
+
+layers:
+  - type: ConstantLayer
+    parameters: [ 20.0 ]
+    molecule: temperature
+
+deployments:
+  - type: Point
+    parameters: [0,0]
+    programs:
+      - program: |
+          env.get("temperature")
+      - program: send

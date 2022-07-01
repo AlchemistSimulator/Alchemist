@@ -11,24 +11,26 @@ package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.NodeProperty
+import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.lang.datatype.Field
 import org.protelis.vm.ExecutionEnvironment
 
 /**
- * Base implementation of [ProtelisDevice]. Requires a Protelis [incarnation] to work.
+ * Base implementation of [ProtelisDevice]. Requires an [environment] to work.
  */
-class ProtelisDevice @JvmOverloads constructor(
-    /**
-     * A reference to the current incarnation.
-     */
-    val incarnation: ProtelisIncarnation<*> = ProtelisIncarnation.INSTANCE,
+class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
+    val environment: Environment<Any, P>,
     override val node: Node<Any>,
     networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf()
 ) : NodeProperty<Any>, ExecutionEnvironment, DeviceUID {
+
+    private val incarnation: ProtelisIncarnation<*> =
+        environment.incarnation as? ProtelisIncarnation<P> ?: ProtelisIncarnation.INSTANCE
 
     /**
      * The node's id.
@@ -61,12 +63,21 @@ class ProtelisDevice @JvmOverloads constructor(
         .filterIsInstance<RunProtelisProgram<*>>()
         .toList()
 
-    override fun cloneOnNewNode(node: Node<Any>) = ProtelisDevice(incarnation, node)
+    override fun cloneOnNewNode(node: Node<Any>) = ProtelisDevice(environment, node)
 
     /**
      * Returns the value associated with [id].
      */
-    override fun get(id: String): Any = node.getConcentration(incarnation.createMolecule(id))
+    override fun get(id: String): Any = incarnation.createMolecule(id).let { molecule ->
+        when {
+            node.contains(molecule) -> node.getConcentration(molecule)
+            else -> environment.getLayer(molecule).map { it.getValue(environment.getPosition(node)) }.orElseThrow {
+                IllegalArgumentException(
+                    "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
+                )
+            }
+        }
+    }
 
     /**
      * Returns the value associated with [id].

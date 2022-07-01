@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.distribution.RealDistribution
@@ -34,6 +35,10 @@ class AlchemistNetworkManager @JvmOverloads constructor(
      */
     val event: Reaction<Any>,
     /**
+     * The [ProtelisDevice] required to run Protelis.
+     */
+    val device: ProtelisDevice<*> = event.node.asProperty(),
+    /**
      * The action this network manager is associated with.
      */
     val program: RunProtelisProgram<*>,
@@ -47,8 +52,8 @@ class AlchemistNetworkManager @JvmOverloads constructor(
      */
     val distanceLossDistribution: RealDistribution? = null,
 ) : NetworkManager, Serializable {
+
     private val environment: Environment<Any, *> = Objects.requireNonNull(program.environment)
-    private val device: ProtelisDevice = Objects.requireNonNull(program.node.asProperty(ProtelisDevice::class.java))
     private val messages: MutableMap<DeviceUID, MessageInfo> = LinkedHashMap()
     private var toBeSent: Map<CodePath, Any> = emptyMap()
     private var neighborState = ImmutableMap.of<DeviceUID, Map<CodePath, Any>>()
@@ -76,7 +81,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
                 val neighbors: Set<DeviceUID> = emptySet<DeviceUID>().takeUnless { retainsNeighbors }
                     ?: environment.getNeighborhood(device.node)
                         .neighbors
-                        .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice>() }
+                        .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
                         .toSet()
                 while (messagesIterator.hasNext()) {
                     val message = messagesIterator.next()
@@ -112,22 +117,24 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     fun simulateMessageArrival(currentTime: Double) {
         if (toBeSent.isNotEmpty()) {
             val msg = MessageInfo(currentTime, device, toBeSent)
-            environment.getNeighborhood(device.node).mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice>() }.forEach {
-                val destination = it.getNetworkManager(program)
-                var packetArrives = true
-                if (distanceLossDistribution != null) {
-                    val distance = environment.getDistanceBetweenNodes(device.node, it.node)
-                    val random = program.randomGenerator.nextDouble()
-                    packetArrives = random > distanceLossDistribution.cumulativeProbability(distance)
+            environment.getNeighborhood(device.node)
+                .mapNotNull { it.asPropertyOrNull<Any, ProtelisDevice<*>>() }
+                .forEach { neighborDevice ->
+                    val destination = neighborDevice.getNetworkManager(program)
+                    var packetArrives = true
+                    if (distanceLossDistribution != null) {
+                        val distance = environment.getDistanceBetweenNodes(device.node, neighborDevice.node)
+                        val random = program.randomGenerator.nextDouble()
+                        packetArrives = random > distanceLossDistribution.cumulativeProbability(distance)
+                    }
+                    if (packetArrives) {
+                        /*
+                         * The node is running the program, and the loss model actually makes the packet arrive.
+                         * Otherwise, the message is discarded
+                         */
+                        destination.receiveMessage(msg)
+                    }
                 }
-                if (packetArrives) {
-                    /*
-                     * The node is running the program, and the loss model actually makes the packet arrive.
-                     * Otherwise, the message is discarded
-                     */
-                    destination.receiveMessage(msg)
-                }
-            }
             toBeSent = emptyMap()
         }
     }

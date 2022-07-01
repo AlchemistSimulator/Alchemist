@@ -232,7 +232,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
             final String parameter
     ) {
         final Node<Object> node = new GenericNode<>(this, environment);
-        node.addProperty(new ProtelisDevice((ProtelisIncarnation<?>) environment.getIncarnation(), node));
+        node.addProperty(new ProtelisDevice<>(environment, node));
         return node;
     }
 

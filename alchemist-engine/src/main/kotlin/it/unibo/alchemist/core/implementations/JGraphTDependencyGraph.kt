@@ -181,9 +181,14 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         removeNeighborDirected(n2, n1)
     }
 
-    override fun outboundDependencies(reaction: Reaction<T>) = graph.outgoingEdgesOf(reaction).let { edges ->
-        edges.asSequence().map { it.second }.toCollection(ArrayListSet(edges.size))
-    }
+    override fun outboundDependencies(reaction: Reaction<T>) =
+        if (graph.containsVertex(reaction)) {
+            graph.outgoingEdgesOf(reaction).let { edges ->
+                edges.asSequence().map { it.second }.toCollection(ArrayListSet(edges.size))
+            }
+        } else {
+            ListSet.of()
+        }
 
     override fun toString(): String {
         return graph.toString()

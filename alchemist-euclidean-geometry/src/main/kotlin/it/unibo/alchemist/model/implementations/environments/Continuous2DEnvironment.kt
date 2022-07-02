@@ -48,6 +48,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0
 
+    @Transient
     private val shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape> =
         Caffeine.newBuilder().weakKeys().build { node ->
             node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional

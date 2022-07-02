@@ -107,7 +107,10 @@ jobs:
             # https://github.com/Kotlin/dokka/issues/2323
             # Once everything gets fixed, lychee could simply run on '/lychee/**/*.html'
             FILES="$(find build/website/ -name '*.html' | grep -v /kdoc/ | grep -v /javadoc/ | sed -e 's#^build##')"
-            docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 429,503
+            CHECK_LINKS='docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 429,503'
+            for i in 1 2 3 4 5; do
+              $(echo $CHECK_LINKS) && break || sleep 30
+            done
           should-run-codecov: false
           should-deploy: false
           should-validate-wrapper: false

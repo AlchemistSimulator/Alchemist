@@ -1,3 +1,49 @@
+## [22.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.9...22.0.0) (2022-07-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** skip expensive type-graph search operations when possible
+
+### Bug Fixes
+
+* **incarnation-protelis:** access layers when accessing variables not present in the environment before giving up. ([64835c2](https://github.com/AlchemistSimulator/Alchemist/commit/64835c22074d753ad3154c85437e8245386bf40c))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([48d579b](https://github.com/AlchemistSimulator/Alchemist/commit/48d579be2b22bcfe321fb57c31244560bf0aec50))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.javadocmd:simplelatlng to v1.4.0 ([caf52f5](https://github.com/AlchemistSimulator/Alchemist/commit/caf52f5c527a221a3e011dc6f8695333de418a9f))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0129fa5 ([7f34418](https://github.com/AlchemistSimulator/Alchemist/commit/7f344189f1f275599ac056993a2215791e641e92))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 1607c34 ([d89c4c5](https://github.com/AlchemistSimulator/Alchemist/commit/d89c4c55a98fd6bbe00fd2b3d37ac8ff9eda25ea))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 510a34f ([91fce5a](https://github.com/AlchemistSimulator/Alchemist/commit/91fce5a3e6de9d39132f90076cb7a15457f64191))
+* **deps:** update plugin publishoncentral to v2.0.2 ([c802d64](https://github.com/AlchemistSimulator/Alchemist/commit/c802d641abccbc81547e74a0f9da964d8772b478))
+
+
+### Performance improvements
+
+* **api:** skip expensive type-graph search operations when possible ([8f4ab1a](https://github.com/AlchemistSimulator/Alchemist/commit/8f4ab1a2bd070e7c81e6036c40ea2ef9c3335a72))
+
+
+### Tests
+
+* **incarnation-protelis:** check that env.get("layer name") never returns null, fails if no layer is available ([#1381](https://github.com/AlchemistSimulator/Alchemist/issues/1381)) ([ece3f31](https://github.com/AlchemistSimulator/Alchemist/commit/ece3f3175f555239b93ee3692dec8a10d8c10f70))
+
+
+### Build and continuous integration
+
+* create a dispatcher workflow triggering only one CI/CD workflow per update on non-default branches with open PRs ([36649fb](https://github.com/AlchemistSimulator/Alchemist/commit/36649fb83a1b40c51acc28d06138f1f608b287d4))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.0 ([5a1da08](https://github.com/AlchemistSimulator/Alchemist/commit/5a1da080a8b16b21a4dbf7884c4a8fd58e6cfa5c))
+* increase resilience by running the deployment thrice in case of failures ([4c3f739](https://github.com/AlchemistSimulator/Alchemist/commit/4c3f739c8c83e21f3ec76925e47fde76f85ec7b8))
+* remove unused token ([3398280](https://github.com/AlchemistSimulator/Alchemist/commit/3398280f3aaf0ce219ad1ff9b7fa1f08641c69d4))
+* rename ci-guard.yml into dispatcher.yml ([5a632d8](https://github.com/AlchemistSimulator/Alchemist/commit/5a632d8d2244ad3e200ebb5086c80a69a4309bd6))
+* retry the link-checking five times to reduce the amount of spurious network errors ([7d4d33a](https://github.com/AlchemistSimulator/Alchemist/commit/7d4d33acded9d7f98371ac49e2d0e27084fc3983))
+* **website:** ignore errors 500 and 502 from external websites ([7364ae7](https://github.com/AlchemistSimulator/Alchemist/commit/7364ae7b74ad1579ec2f8be8fb3ea5c42b0a55c6))
+
 ## [21.0.9](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.8...21.0.9) (2022-06-30)
 
 

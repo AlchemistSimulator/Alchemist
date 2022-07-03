@@ -84,7 +84,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     TimeDistribution<T> createTimeDistribution(
             RandomGenerator randomGenerator,
             Environment<T, P> environment,
-            Node<T> node,
             @Nullable String parameter
     );
 

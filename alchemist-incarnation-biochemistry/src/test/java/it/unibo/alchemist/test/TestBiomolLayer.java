@@ -53,7 +53,7 @@ class TestBiomolLayer {
         final Molecule a = new Biomolecule("A");
         final Reaction<Double> underTest = INCARNATION.createReaction(
             rand, environment, cellNode,
-            INCARNATION.createTimeDistribution(rand, environment, cellNode, "1"),
+            INCARNATION.createTimeDistribution(rand, environment, "1"),
             "[B in env] --> [A]"
         );
         cellNode.addReaction(underTest);

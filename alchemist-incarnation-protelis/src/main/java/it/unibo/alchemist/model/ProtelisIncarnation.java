@@ -265,7 +265,6 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     public TimeDistribution<Object> createTimeDistribution(
         final RandomGenerator randomGenerator,
         final Environment<Object, P> environment,
-        final Node<Object> node,
         final String parameter
     ) {
         if (parameter == null) {

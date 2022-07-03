@@ -80,7 +80,7 @@ final class TestIncarnation {
 
     private void testTD(final String param, final double rate, final double occurrence) {
         final TimeDistribution<List<ILsaMolecule>> t0 = incarnation.createTimeDistribution(
-                randomGenerator, environment, node, param
+                randomGenerator, environment, param
         );
         assertNotNull(t0);
         if (!Double.isNaN(rate)) {

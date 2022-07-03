@@ -94,6 +94,18 @@ internal object DocumentRoot : SyntaxElement {
                 }
             )
         }
+
+        object GlobalProgram : SyntaxElement {
+            val actions by OwnName()
+            val conditions by OwnName()
+            const val timeDistribution = "time-distribution"
+            override val validDescriptors = setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters, actions, conditions, timeDistribution)
+                }
+            )
+        }
     }
 
     object Export : SyntaxElement {

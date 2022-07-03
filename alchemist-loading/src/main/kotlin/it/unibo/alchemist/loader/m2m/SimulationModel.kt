@@ -36,6 +36,7 @@ import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.LinkingRule
@@ -48,6 +49,7 @@ import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Layer as LayerSyntax
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.formula as formulaKey
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.language as languageKey
@@ -490,6 +492,50 @@ internal object SimulationModel {
             ?.getOrThrow()
             ?: cantBuildWith<RandomGenerator>(root)
 
+    fun <T, P : Position<P>> visitGlobalProgram(
+        simulationRNG: RandomGenerator,
+        incarnation: Incarnation<T, P>,
+        environment: Environment<T, P>,
+        context: Context,
+        program: Map<*, *>,
+    ): Result<GlobalReaction<T>>? = if (GlobalProgramSyntax.validateDescriptor(program)) {
+        val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
+            incarnation,
+            simulationRNG,
+            environment,
+            context,
+            program[ProgramSyntax.timeDistribution]
+        )
+        context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
+        val reaction: GlobalReaction<T> = visitGlobalReaction(context, program)
+        context.factory.registerSingleton(GlobalReaction::class.java, reaction)
+        val conditions = visitRecursively<Condition<T>>(
+            context,
+            program[ProgramSyntax.conditions] ?: emptyList<Any>(),
+            JavaType,
+        ) {
+            visitBuilding<Condition<T>>(context, it)
+        }
+        if (conditions.isNotEmpty()) {
+            reaction.conditions = reaction.conditions + conditions
+        }
+        val actions = visitRecursively<Action<T>>(
+            context,
+            program[ProgramSyntax.actions] ?: emptyList<Any>(),
+            JavaType,
+        ) {
+            visitBuilding<Action<T>>(context, it)
+        }
+        if (actions.isNotEmpty()) {
+            reaction.actions = reaction.actions + actions
+        }
+        context.factory.deregisterSingleton(reaction)
+        context.factory.deregisterSingleton(timeDistribution)
+        Result.success(reaction)
+    } else {
+        null
+    }
+
     fun <T, P : Position<P>> visitProgram(
         simulationRNG: RandomGenerator,
         incarnation: Incarnation<T, P>,
@@ -508,6 +554,7 @@ internal object SimulationModel {
         context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
         val reaction: Reaction<T> =
             visitReaction(simulationRNG, incarnation, environment, node, timeDistribution, context, program)
+
         context.factory.registerSingleton(Reaction::class.java, reaction)
         fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
             makeWith(simulationRNG, environment, node, timeDistribution, reaction, parameter?.toString())
@@ -545,6 +592,16 @@ internal object SimulationModel {
     } else {
         null
     }
+
+    private fun <T> loadActionableConditions(context: Context, root: Any?, syntax: SyntaxElement?) =
+        visitRecursively<Condition<T>>(context, root, syntax) {
+            visitBuilding<Condition<T>>(context, it)
+        }
+
+    private fun <T> visitGlobalReaction(
+        context: Context,
+        root: Map<*, *>,
+    ) = visitBuilding<GlobalReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<GlobalReaction<T>>(root)
 
     private fun <P : Position<P>, T> visitReaction(
         simulationRNG: RandomGenerator,

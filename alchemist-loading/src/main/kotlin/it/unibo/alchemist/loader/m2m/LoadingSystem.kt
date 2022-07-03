@@ -83,6 +83,8 @@ internal abstract class LoadingSystem(
                 SimulationModel.visitEnvironment(incarnation, context, root[DocumentRoot.environment])
             logger.info("Created environment: {}", environment)
             contextualize(environment)
+            // GLOBAL PROGRAMS
+            loadGlobalProgramsOnEnvironment(simulationRNG, incarnation, environment, root[DocumentRoot.environment])
             // LAYERS
             val layers: List<Pair<Molecule, Layer<T, P>>> =
                 SimulationModel.visitLayers(incarnation, context, root[DocumentRoot.layers])
@@ -138,6 +140,32 @@ internal abstract class LoadingSystem(
             }
             exporters.forEach { it.bindVariables(variableValues) }
             return EnvironmentAndExports(environment, exporters)
+        }
+
+        private fun <T, P : Position<P>> loadGlobalProgramsOnEnvironment(
+            randomGenerator: RandomGenerator,
+            incarnation: Incarnation<T, P>,
+            environment: Environment<T, P>,
+            descriptor: Any?,
+        ) {
+            descriptor as Map<*, *>
+            val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Environment.globalPrograms)
+            val globalPrograms = SimulationModel.visitRecursively(
+                context,
+                programDescriptor,
+                DocumentRoot.Environment.GlobalProgram,
+            ) { program ->
+                requireNotNull(program) {
+                    "null is not a valid program in $descriptor. ${DocumentRoot.Environment.GlobalProgram.guide}"
+                }
+                (program as? Map<*, *>)?.let {
+                    SimulationModel.visitGlobalProgram(randomGenerator, incarnation, environment, context, it)
+                        ?.onSuccess { reaction ->
+                            environment.addGlobalReaction(reaction)
+                        }
+                }
+            }
+            logger.debug("Global programs: {}", globalPrograms)
         }
 
         private fun <T, P : Position<P>> loadContentsOnNode(

@@ -94,20 +94,7 @@ internal object DocumentRoot : SyntaxElement {
                 }
             )
         }
-
-        object GlobalProgram : SyntaxElement {
-            val actions by OwnName()
-            val conditions by OwnName()
-            const val timeDistribution = "time-distribution"
-            override val validDescriptors = setOf(
-                validDescriptor {
-                    mandatory(JavaType.type)
-                    optional(JavaType.parameters, actions, conditions, timeDistribution)
-                }
-            )
-        }
     }
-
     object Export : SyntaxElement {
         val data by OwnName()
         override val validDescriptors = setOf(
@@ -128,7 +115,26 @@ internal object DocumentRoot : SyntaxElement {
             )
         }
     }
-
+    object Environment : SyntaxElement {
+        val globalPrograms = "global-programs"
+        object GlobalProgram : SyntaxElement {
+            val actions by OwnName()
+            val conditions by OwnName()
+            const val timeDistribution = "time-distribution"
+            override val validDescriptors = setOf(
+                validDescriptor {
+                    mandatory(JavaType.type)
+                    optional(JavaType.parameters, actions, conditions, timeDistribution)
+                }
+            )
+        }
+        override val validDescriptors = setOf(
+            validDescriptor {
+                mandatory(JavaType.type)
+                optional(JavaType.parameters, globalPrograms)
+            }
+        )
+    }
     object Layer : SyntaxElement {
         val molecule by OwnName()
         override val validDescriptors = setOf(

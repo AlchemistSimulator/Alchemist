@@ -10,7 +10,7 @@
 package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.matchers.collections.shouldHaveAtMostSize
+import io.kotest.matchers.collections.shouldHaveSize
 import it.unibo.alchemist.loader.LoadAlchemist
 import org.kaikikm.threadresloader.ResourceLoader
 
@@ -19,6 +19,6 @@ class TestGlobalReactionLoading : FreeSpec({
         val environment = LoadAlchemist.from(ResourceLoader.getResource("testGlobalReactionLoading.yml"))
             .getDefault<Nothing, Nothing>()
             .environment
-        environment.globalReactions shouldHaveAtMostSize 1
+        environment.globalReactions shouldHaveSize 1
     }
 })

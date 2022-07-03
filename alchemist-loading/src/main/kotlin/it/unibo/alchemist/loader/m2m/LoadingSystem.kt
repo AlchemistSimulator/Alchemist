@@ -148,8 +148,8 @@ internal abstract class LoadingSystem(
             environment: Environment<T, P>,
             descriptor: Any?,
         ) {
-            descriptor as Map<*, *>
-            val programDescriptor = descriptor.getOrEmpty(DocumentRoot.Environment.globalPrograms)
+            descriptor as Map<*, *>?
+            val programDescriptor = descriptor?.getOrEmpty(DocumentRoot.Environment.globalPrograms)
             val globalPrograms = SimulationModel.visitRecursively(
                 context,
                 programDescriptor,

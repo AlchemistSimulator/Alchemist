@@ -75,8 +75,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the random engine
      * @param environment
      *            the environment that will host this object
-     * @param node
-     *            the node that will host this object
      * @param parameter
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}

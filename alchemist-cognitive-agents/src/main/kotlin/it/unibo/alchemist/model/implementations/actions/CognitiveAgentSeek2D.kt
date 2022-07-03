@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * [CognitiveAgentSeek] behavior in a bidimensional environment, delegated to [CognitiveAgentFollowScalarField]
@@ -19,12 +20,12 @@ open class CognitiveAgentSeek2D<T, P, A>(
      */
     protected val environment: EuclideanEnvironment<T, P>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     /**
      * The position the node wants to reach.
      */
     private val target: P
-) : AbstractSteeringAction<T, P, A>(environment, reaction, node),
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     SteeringActionWithTarget<T, P>
     where P : Position2D<P>, P : Vector2D<P>,
           A : GeometricTransformation<P> {
@@ -32,12 +33,12 @@ open class CognitiveAgentSeek2D<T, P, A>(
     constructor(
         environment: EuclideanEnvironment<T, P>,
         reaction: Reaction<T>,
-        node: Node<T>,
+        pedestrian: PedestrianProperty<T>,
         x: Number,
         y: Number,
-    ) : this(environment, reaction, node, environment.makePosition(x, y))
+    ) : this(environment, reaction, pedestrian, environment.makePosition(x, y))
 
-    private val followScalarField = CognitiveAgentFollowScalarField(environment, reaction, node, target) {
+    private val followScalarField = CognitiveAgentFollowScalarField(environment, reaction, pedestrian, target) {
         -it.distanceTo(target)
     }
 
@@ -46,5 +47,5 @@ open class CognitiveAgentSeek2D<T, P, A>(
     override fun nextPosition(): P = followScalarField.nextPosition()
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeek2D<T, P, A> =
-        CognitiveAgentSeek2D(environment, reaction, node, target)
+        CognitiveAgentSeek2D(environment, reaction, node.pedestrianProperty, target)
 }

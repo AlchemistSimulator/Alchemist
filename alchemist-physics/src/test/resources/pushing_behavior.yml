@@ -13,11 +13,11 @@ deployments:
     programs:
       - time-distribution:
           type: DiracComb
-          parameters: [0.5]
+          parameters: [1.0]
         type: PhysicalBlendedSteering
 
   - type: Circle
-    parameters: [15, 10.0, 0.0, 5]
+    parameters: [30, 10.0, 0.0, 5]
     properties:
       - type: Pedestrian
       - type: PhysicalPedestrian2D
@@ -28,5 +28,5 @@ deployments:
           parameters: [1.0]
         type: PhysicalBlendedSteering
         actions:
-          - type: CognitiveAgentSeek2D
+          - type: CognitiveAgentSeek
             parameters: [0.0, 0.0]

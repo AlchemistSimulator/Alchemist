@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.core.interfaces;
 
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 
 /**
  * The type which describes the concentration of a molecule
@@ -24,34 +24,34 @@ public interface Scheduler<T> {
     /**
      * Adds a reaction to the data structure.
      * 
-     * @param r
+     * @param reaction
      *            the reaction to be added
      */
-    void addReaction(Reaction<T> r);
+    void addReaction(Actionable<T> reaction);
 
     /**
      * Allows to access the next reaction to be executed.
      * 
      * @return the next reaction to be executed
      */
-    Reaction<T> getNext();
+    Actionable<T> getNext();
 
     /**
      * Removes a reaction from the structure. If the reaction is not present,
      * nothing is done and an Exception is thrown.
      * 
-     * @param r
+     * @param reaction
      *            the reaction to be removed
      */
-    void removeReaction(Reaction<T> r);
+    void removeReaction(Actionable<T> reaction);
 
     /**
      * Notifies the structure that the reaction r has changed. The whole
      * structure will be rearranged to ensure consistency.
      * 
-     * @param r
+     * @param reaction
      *            the reaction which has changed
      */
-    void updateReaction(Reaction<T> r);
+    void updateReaction(Actionable<T> reaction);
 
 }

@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -73,7 +74,7 @@ class TestBiomolLayer {
             @Override
             public void stepDone(
                     final Environment<Double, Euclidean2DPosition> environment,
-                    final Reaction<Double> reaction,
+                    final Actionable<Double> reaction,
                     @Nonnull final Time time,
                     final long step
             ) {

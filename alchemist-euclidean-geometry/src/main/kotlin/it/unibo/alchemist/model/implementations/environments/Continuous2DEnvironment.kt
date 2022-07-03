@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
@@ -22,10 +24,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
-import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 
 /**
  * Implementation of [Physics2DEnvironment].
@@ -48,6 +48,12 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     private val nodeToHeading = mutableMapOf<Node<T>, Euclidean2DPosition>()
     private var largestShapeDiameter: Double = 0.0
 
+    @Transient
+    private val shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape> =
+        Caffeine.newBuilder().weakKeys().build { node ->
+            node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional
+        }
+
     override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> = when {
         shape.diameter + largestShapeDiameter <= 0 -> emptyList()
         else ->
@@ -61,11 +67,10 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
         nodeToHeading[node] = direction
     }
 
-    override fun getShape(node: Node<T>): Euclidean2DShape =
-        node.asPropertyOrNull<T, AreaProperty<T>>()?.shape?.transformed {
-            origin(getPosition(node))
-            rotate(getHeading(node))
-        } ?: adimensional
+    override fun getShape(node: Node<T>): Euclidean2DShape = shapefulNodes[node].transformed {
+        origin(getPosition(node))
+        rotate(getHeading(node))
+    }
 
     /**
      * Keeps track of the largest diameter of the shapes. Throws an [IllegalStateException] if the [node] can't fit
@@ -73,36 +78,34 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      */
     override fun nodeAdded(node: Node<T>, position: Euclidean2DPosition, neighborhood: Neighborhood<T>) {
         super.nodeAdded(node, position, neighborhood)
-        val occupiesSpace = node.asPropertyOrNull<T, OccupiesSpaceProperty<T, *, *>>()
-        check(node.canFit(position)) {
-            "node in $position overlaps with nodes in ${node.overlappingNodes(position).map { getPosition(it) }}."
-        }
-        if (occupiesSpace != null && occupiesSpace.shape.diameter > largestShapeDiameter) {
-            largestShapeDiameter = occupiesSpace.shape.diameter
+        val shape = getShape(node)
+        if (shape != adimensional && shape.diameter > largestShapeDiameter) {
+            largestShapeDiameter = shape.diameter
         }
     }
 
     /**
      * {@inheritDoc}.
      */
-    override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) =
-        super.nodeRemoved(node, neighborhood).also {
-            nodeToHeading.remove(node)
-            val occupiesSpaceProperty = node.asPropertyOrNull<T, OccupiesSpaceProperty<T, *, *>>()
-            if (occupiesSpaceProperty != null && largestShapeDiameter <= occupiesSpaceProperty.shape.diameter) {
-                largestShapeDiameter = nodes.asSequence()
-                    .mapNotNull { it.asPropertyOrNull<T, OccupiesSpaceProperty<T, *, *>>() }
-                    .map { it.shape.diameter }
-                    .maxOrNull() ?: 0.0
-            }
+    override fun nodeRemoved(node: Node<T>, neighborhood: Neighborhood<T>) {
+        super.nodeRemoved(node, neighborhood)
+        nodeToHeading.remove(node)
+        val occupiesSpaceProperty = node.asPropertyOrNull<T, AreaProperty<T>>()
+        if (occupiesSpaceProperty != null && largestShapeDiameter <= occupiesSpaceProperty.shape.diameter) {
+            largestShapeDiameter = nodes.asSequence()
+                .filter { getShape(it) != adimensional }
+                .map { getShape(it) }
+                .map { it.diameter }
+                .maxOrNull() ?: 0.0
         }
+    }
 
     /**
      * Moves the [node] to the [farthestPositionReachable] towards the desired [newPosition]. If the node is shapeless,
      * it is simply moved to [newPosition].
      */
     override fun moveNodeToPosition(node: Node<T>, newPosition: Euclidean2DPosition) =
-        if (node.asPropertyOrNull<T, AreaProperty<T>>() != null) {
+        if (getShape(node) != adimensional) {
             super.moveNodeToPosition(node, farthestPositionReachable(node, newPosition))
         } else {
             super.moveNodeToPosition(node, newPosition)
@@ -112,7 +115,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * A node should be added only if it doesn't collide with already existing nodes and fits in the environment's
      * limits.
      */
-    override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean = node.canFit(position)
+    override fun nodeShouldBeAdded(node: Node<T>, position: Euclidean2DPosition): Boolean = node.canFitIn(position)
 
     /**
      * Creates an euclidean position from the given coordinates.
@@ -159,7 +162,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * Such segment should connect the [node]'s current position and its desired position.
      */
     private fun nodesOnPath(node: Node<T>, desiredMovement: Segment2D<*>): Nodes<T> =
-        with(node.asProperty<T, OccupiesSpaceProperty<T, *, *>>().shape) {
+        with(getShape(node)) {
             shapeFactory.rectangle(desiredMovement.length + diameter, diameter)
                 .transformed {
                     desiredMovement.midPoint.let { origin(it.x, it.y) }
@@ -167,7 +170,6 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
                 }
                 .let { movementArea ->
                     getNodesWithin(movementArea)
-                        .filter { it.asPropertyOrNull<T, OccupiesSpaceProperty<T, *, *>>() != null }
                         .minusElement(node)
                 }
         }
@@ -176,19 +178,18 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
      * Checks if a node doesn't overlap with any other node in the environment (see [overlappingNodes]). If the
      * node is shapeless, true is returned.
      */
-    private fun Node<T>.canFit(position: Euclidean2DPosition): Boolean =
-        asPropertyOrNull<T, AreaProperty<T>>() == null || overlappingNodes(position).isEmpty()
+    private fun Node<T>.canFitIn(position: Euclidean2DPosition): Boolean {
+        val nodeShape = asPropertyOrNull<T, AreaProperty<T>>()?.shape
+        return nodeShape == null || overlappingNodes(nodeShape, position).isEmpty()
+    }
 
     /**
      * @returns the nodes in this environment whose shape intersects this node's shape. The [position] of this
      * node must be specified as it may not have been added in the environment yet.
      */
-    private fun Node<T>.overlappingNodes(position: Euclidean2DPosition): Nodes<T> {
-        val shape = asProperty<T, AreaProperty<T>>().shape
-        return getNodesWithin(shapeFactory.requireCompatible(shape).transformed { origin(position) })
-            .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }
+    private fun Node<T>.overlappingNodes(nodeShape: Euclidean2DShape, position: Euclidean2DPosition): Nodes<T> =
+        getNodesWithin(shapeFactory.requireCompatible(nodeShape).transformed { origin(position) })
             .minusElement(this)
-    }
 }
 
 private typealias Nodes<T> = List<Node<T>>

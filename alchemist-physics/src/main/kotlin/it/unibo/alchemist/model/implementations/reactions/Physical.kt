@@ -18,15 +18,17 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A reaction for the update of a [Dynamics2DEnvironment].
  */
 class Physical<T>(
     private val environment: Dynamics2DEnvironment<T>,
-    node: Node<T>,
+    private val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
-) : AbstractReaction<T>(node, timeDistribution) {
+) : AbstractReaction<T>(pedestrian.node, timeDistribution) {
     /**
      * Update the internal status of the reaction.
      */
@@ -40,12 +42,7 @@ class Physical<T>(
      * Clones this reaction into [node].
      */
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time): Physical<T> =
-        Physical(environment, node, timeDistribution)
-
-    /**
-     * This reaction average rate.
-     */
-    override fun getRate(): Double = timeDistribution.rate
+        Physical(environment, node.asProperty(), timeDistribution)
 
     private fun steerActions() = actions.filterIsInstance<SteeringAction<T, Euclidean2DPosition>>()
 
@@ -57,7 +54,7 @@ class Physical<T>(
         val velocity = CognitiveAgentCombineSteering(
             environment,
             this,
-            node,
+            pedestrian,
             steerActions(),
             DistanceWeighted(environment, node),
         ).nextPosition

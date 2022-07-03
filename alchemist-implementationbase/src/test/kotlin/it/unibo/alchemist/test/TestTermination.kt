@@ -15,7 +15,7 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Time
 import org.kaikikm.threadresloader.ResourceLoader
 
@@ -31,7 +31,7 @@ class TestTermination : FreeSpec(
                 override fun initialized(environment: Environment<Nothing, Nothing>) = Unit
                 override fun stepDone(
                     environment: Environment<Nothing, Nothing>,
-                    reaction: Reaction<Nothing>?,
+                    reaction: Actionable<Nothing>?,
                     time: Time,
                     step: Long
                 ) {

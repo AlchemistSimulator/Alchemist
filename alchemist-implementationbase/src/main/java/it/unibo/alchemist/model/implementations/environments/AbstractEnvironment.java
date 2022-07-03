@@ -17,6 +17,7 @@ import gnu.trove.set.hash.TIntHashSet;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.GlobalReaction;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Layer;
 import it.unibo.alchemist.model.interfaces.LinkingRule;
@@ -68,6 +69,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     private static final long serialVersionUID = 0L;
     private final Map<Molecule, Layer<T, P>> layers = new LinkedHashMap<>();
     private final TIntObjectHashMap<Neighborhood<T>> neighCache = new TIntObjectHashMap<>();
+
+    private final ListSet<GlobalReaction<T>> globalReactions = new ArrayListSet<>();
     private final ListSet<Node<T>> nodes = new ArrayListSet<>();
     private final TIntObjectHashMap<P> nodeToPos = new TIntObjectHashMap<>();
     private final SpatialIndex<Node<T>> spatialIndex;
@@ -96,6 +99,23 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         if (layers.put(m, l) != null) {
             throw new IllegalStateException("Two layers have been associated to " + m);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addGlobalReaction(final GlobalReaction<T> reaction) {
+        globalReactions.add(reaction);
+        ifEngineAvailable(simulation -> simulation.reactionAdded(reaction));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ListSet<GlobalReaction<T>> getGlobalReactions() {
+        return ListSets.unmodifiableListSet(globalReactions);
     }
 
     @Override

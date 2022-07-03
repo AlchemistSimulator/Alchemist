@@ -9,8 +9,8 @@
 package it.unibo.alchemist.boundary.interfaces;
 
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
 import javax.annotation.Nonnull;
@@ -77,7 +77,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      */
     default void stepDone(
         @Nonnull final Environment<T, P> environment,
-        @Nullable final Reaction<T> reaction,
+        @Nullable final Actionable<T> reaction,
         @Nonnull final Time time,
         final long step
     ) { }

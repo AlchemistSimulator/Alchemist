@@ -14,8 +14,8 @@ import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.exporters.AbstractExporter.Companion.DEFAULT_INTERVAL
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
@@ -86,7 +86,7 @@ abstract class AbstractExporter<T, P : Position<P>> (
      *  Converts the division of the current time and the interval to Long in order to export data only
      *  when the difference between steps is as big as the sampling interval.
      */
-    final override fun update(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
+    final override fun update(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         val curSample: Long = (time.toDouble() / samplingInterval).toLong()
         if (curSample > count) {
             count = curSample
@@ -97,5 +97,5 @@ abstract class AbstractExporter<T, P : Position<P>> (
     /**
      * Delegates the concrete implementation of this method to his subclasses.
      */
-    abstract fun exportData(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long)
+    abstract fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long)
 }

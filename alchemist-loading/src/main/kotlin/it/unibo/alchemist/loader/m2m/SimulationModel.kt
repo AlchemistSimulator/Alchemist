@@ -593,11 +593,6 @@ internal object SimulationModel {
         null
     }
 
-    private fun <T> loadActionableConditions(context: Context, root: Any?, syntax: SyntaxElement?) =
-        visitRecursively<Condition<T>>(context, root, syntax) {
-            visitBuilding<Condition<T>>(context, it)
-        }
-
     private fun <T> visitGlobalReaction(
         context: Context,
         root: Map<*, *>,

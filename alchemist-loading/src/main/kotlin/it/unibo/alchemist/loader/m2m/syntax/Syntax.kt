@@ -116,7 +116,7 @@ internal object DocumentRoot : SyntaxElement {
         }
     }
     object Environment : SyntaxElement {
-        val globalPrograms = "global-programs"
+        const val globalPrograms = "global-programs"
         object GlobalProgram : SyntaxElement {
             val actions by OwnName()
             val conditions by OwnName()
@@ -130,7 +130,6 @@ internal object DocumentRoot : SyntaxElement {
         }
         override val validDescriptors = setOf(
             validDescriptor {
-                mandatory(JavaType.type)
                 optional(JavaType.parameters, globalPrograms)
             }
         )

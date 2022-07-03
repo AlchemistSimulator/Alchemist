@@ -84,7 +84,7 @@ internal abstract class LoadingSystem(
             logger.info("Created environment: {}", environment)
             contextualize(environment)
             // GLOBAL PROGRAMS
-            loadGlobalProgramsOnEnvironment(simulationRNG, incarnation, environment, root[DocumentRoot.environment])
+            loadGlobalProgramsOnEnvironment(simulationRNG, incarnation, environment, root)
             // LAYERS
             val layers: List<Pair<Molecule, Layer<T, P>>> =
                 SimulationModel.visitLayers(incarnation, context, root[DocumentRoot.layers])
@@ -146,26 +146,28 @@ internal abstract class LoadingSystem(
             randomGenerator: RandomGenerator,
             incarnation: Incarnation<T, P>,
             environment: Environment<T, P>,
-            descriptor: Any?,
+            descriptor: Map<*, *>,
         ) {
-            descriptor as Map<*, *>?
-            val programDescriptor = descriptor?.getOrEmpty(DocumentRoot.Environment.globalPrograms)
-            val globalPrograms = SimulationModel.visitRecursively(
-                context,
-                programDescriptor,
-                DocumentRoot.Environment.GlobalProgram,
-            ) { program ->
-                requireNotNull(program) {
-                    "null is not a valid program in $descriptor. ${DocumentRoot.Environment.GlobalProgram.guide}"
+            val environmentDescriptor = descriptor[DocumentRoot.environment]
+            if (environmentDescriptor is Map<*, *>) {
+                val programDescriptor = environmentDescriptor.getOrEmpty(DocumentRoot.Environment.globalPrograms)
+                val globalPrograms = SimulationModel.visitRecursively(
+                    context,
+                    programDescriptor,
+                    DocumentRoot.Environment.GlobalProgram,
+                ) { program ->
+                    requireNotNull(program) {
+                        "null is not a valid program in $descriptor. ${DocumentRoot.Environment.GlobalProgram.guide}"
+                    }
+                    (program as? Map<*, *>)?.let {
+                        SimulationModel.visitGlobalProgram(randomGenerator, incarnation, environment, context, it)
+                            ?.onSuccess { reaction ->
+                                environment.addGlobalReaction(reaction)
+                            }
+                    }
                 }
-                (program as? Map<*, *>)?.let {
-                    SimulationModel.visitGlobalProgram(randomGenerator, incarnation, environment, context, it)
-                        ?.onSuccess { reaction ->
-                            environment.addGlobalReaction(reaction)
-                        }
-                }
+                logger.debug("Global programs: {}", globalPrograms)
             }
-            logger.debug("Global programs: {}", globalPrograms)
         }
 
         private fun <T, P : Position<P>> loadContentsOnNode(

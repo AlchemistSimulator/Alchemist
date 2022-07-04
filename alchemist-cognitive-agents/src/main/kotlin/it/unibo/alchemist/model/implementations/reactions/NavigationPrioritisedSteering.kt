@@ -12,13 +12,11 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.SinglePrevalent
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A [SteeringBehavior] using [SinglePrevalent] steering strategy and accepting a collection of actions
@@ -29,7 +27,7 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
  */
 open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads constructor(
     environment: Euclidean2DEnvironmentWithGraph<*, T, N, *>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
     /**
      * Tolerance angle in degrees (see [SinglePrevalent]).
@@ -41,13 +39,13 @@ open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads con
     alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
 ) : SteeringBehavior<T>(
     environment,
-    node,
+    pedestrian,
     timeDistribution,
     SinglePrevalent(
         environment,
-        node,
+        pedestrian.node,
         prevalent = { singleNavigationAction() },
-        maxWalk = { node.asProperty<T, PedestrianProperty<T>>().speed() / timeDistribution.rate },
+        maxWalk = { pedestrian.speed() / timeDistribution.rate },
         toleranceAngle = Math.toRadians(toleranceAngle),
         alpha = alpha
     )

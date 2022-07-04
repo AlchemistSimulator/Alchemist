@@ -19,8 +19,8 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
@@ -59,7 +59,7 @@ class TestGetPosition {
                 override fun initialized(environment: Environment<Any, Euclidean2DPosition>) = Unit
                 override fun stepDone(
                     environment: Environment<Any, Euclidean2DPosition>,
-                    reaction: Reaction<Any>?,
+                    reaction: Actionable<Any>?,
                     time: Time,
                     step: Long
                 ) {

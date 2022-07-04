@@ -14,8 +14,8 @@ import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import org.kaikikm.threadresloader.ResourceLoader
@@ -35,7 +35,7 @@ import java.lang.IllegalStateException
  */
 fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
     onceInitialized: (EuclideanEnvironment<T, P>) -> Unit = { },
-    atEachStep: (EuclideanEnvironment<T, P>, Reaction<T>?, Time, Long) -> Unit = { _, _, _, _ -> },
+    atEachStep: (EuclideanEnvironment<T, P>, Actionable<T>?, Time, Long) -> Unit = { _, _, _, _ -> },
     whenFinished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
     steps: Long = 10000
 ) where P : Position<P>, P : Vector<P> =
@@ -47,7 +47,7 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
                     checkForErrors()
                     onceInitialized(this@startSimulation)
                 }
-                override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, t: Time, s: Long) {
+                override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, t: Time, s: Long) {
                     checkForErrors()
                     atEachStep(this@startSimulation, reaction, t, s)
                 }

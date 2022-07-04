@@ -12,7 +12,7 @@ import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import it.unibo.alchemist.core.interfaces.Scheduler;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Time;
 
 import java.util.ArrayList;
@@ -27,10 +27,10 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private static final long serialVersionUID = 8064379974084348391L;
 
-    private final TObjectIntMap<Reaction<T>> indexes =
+    private final TObjectIntMap<Actionable<T>> indexes =
             new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
     private final List<Time> times = new ArrayList<>();
-    private final List<Reaction<T>> tree = new ArrayList<>();
+    private final List<Actionable<T>> tree = new ArrayList<>();
 
     private static int getParent(final int i) {
         if (i == 0) {
@@ -40,24 +40,24 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     }
 
     @Override
-    public void addReaction(final Reaction<T> r) {
-        tree.add(r);
-        times.add(r.getTau());
+    public void addReaction(final Actionable<T> reaction) {
+        tree.add(reaction);
+        times.add(reaction.getTau());
         final int index = tree.size() - 1;
-        indexes.put(r, index);
-        updateEffectively(r, index);
+        indexes.put(reaction, index);
+        updateEffectively(reaction, index);
     }
 
-    private void down(final Reaction<T> r, final int i) {
-        int index = i;
-        final Time newTime = r.getTau();
+    private void down(final Actionable<T> reaction, final int reactionIndex) {
+        int index = reactionIndex;
+        final Time newTime = reaction.getTau();
         while (true) {
             int minIndex = 2 * index + 1;
             if (minIndex > tree.size() - 1) {
                 return;
             }
             Time minTime = times.get(minIndex);
-            Reaction<T> min = tree.get(minIndex);
+            Actionable<T> min = tree.get(minIndex);
             final int right = minIndex + 1;
             if (right < tree.size()) {
                 final Time rr = times.get(right);
@@ -68,7 +68,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
                 }
             }
             if (newTime.compareTo(minTime) > 0) {
-                swap(index, r, minIndex, min);
+                swap(index, reaction, minIndex, min);
                 index = minIndex;
             } else {
                 return;
@@ -77,35 +77,35 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
     }
 
     @Override
-    public Reaction<T> getNext() {
-        Reaction<T> res = null;
+    public Actionable<T> getNext() {
+        Actionable<T> result = null;
         if (!tree.isEmpty()) {
-            res = tree.get(0);
+            result = tree.get(0);
         }
-        return res;
+        return result;
     }
 
     @Override
-    public void removeReaction(final Reaction<T> r) {
-        final int index = indexes.get(r);
+    public void removeReaction(final Actionable<T> reaction) {
+        final int index = indexes.get(reaction);
         final int last = tree.size() - 1;
         if (index == last) {
             tree.remove(index);
-            indexes.remove(r);
+            indexes.remove(reaction);
             times.remove(index);
         } else {
-            final Reaction<T> swapped = tree.get(last);
+            final Actionable<T> swapped = tree.get(last);
             indexes.put(swapped, index);
             tree.set(index, swapped);
             times.set(index, swapped.getTau());
             tree.remove(last);
             times.remove(last);
-            indexes.remove(r);
+            indexes.remove(reaction);
             updateEffectively(swapped, index);
         }
     }
 
-    private void swap(final int i1, final Reaction<T> r1, final int i2, final Reaction<T> r2) {
+    private void swap(final int i1, final Actionable<T> r1, final int i2, final Actionable<T> r2) {
         indexes.put(r1, i2);
         indexes.put(r2, i1);
         tree.set(i1, r2);
@@ -135,19 +135,19 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         return sb.toString();
     }
 
-    private boolean up(final Reaction<T> r, final int i) {
-        int index = i;
+    private boolean up(final Actionable<T> reaction, final int reactionIndex) {
+        int index = reactionIndex;
         int parentIndex = getParent(index);
-        final Time newTime = r.getTau();
+        final Time newTime = reaction.getTau();
         if (parentIndex == -1) {
             return false;
         } else {
-            Reaction<T> parent = tree.get(parentIndex);
+            Actionable<T> parent = tree.get(parentIndex);
             if (newTime.compareTo(times.get(parentIndex)) >= 0) {
                 return false;
             } else {
                 do {
-                    swap(index, r, parentIndex, parent);
+                    swap(index, reaction, parentIndex, parent);
                     index = parentIndex;
                     parentIndex = getParent(index);
                     if (parentIndex == -1) {
@@ -160,18 +160,18 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    private void updateEffectively(final Reaction<T> r, final int index) {
-        if (!up(r, index)) {
-            down(r, index);
+    private void updateEffectively(final Actionable<T> reaction, final int index) {
+        if (!up(reaction, index)) {
+            down(reaction, index);
         }
     }
 
     @Override
-    public void updateReaction(final Reaction<T> r) {
-        final int index = indexes.get(r);
+    public void updateReaction(final Actionable<T> reaction) {
+        final int index = indexes.get(reaction);
         if (index != indexes.getNoEntryValue()) {
-            times.set(index, r.getTau());
-            updateEffectively(r, index);
+            times.set(index, reaction.getTau());
+            updateEffectively(reaction, index);
         }
     }
 

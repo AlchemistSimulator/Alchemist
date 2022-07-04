@@ -30,11 +30,11 @@ import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 open class CognitiveAgentArrive<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     protected val decelerationRadius: Double,
     protected val arrivalTolerance: Double,
     protected val target: P,
-) : AbstractSteeringActionWithTarget<T, P, A>(environment, reaction, node, target)
+) : AbstractSteeringActionWithTarget<T, P, A>(environment, reaction, pedestrian, target)
     where P : Position<P>,
           P : Vector<P>,
           A : GeometricTransformation<P> {
@@ -42,14 +42,14 @@ open class CognitiveAgentArrive<T, P, A>(
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
-        node: Node<T>,
+        pedestrian: PedestrianProperty<T>,
         decelerationRadius: Double,
         arrivalTolerance: Double,
         vararg coordinates: Number,
     ) : this(
         environment,
         reaction,
-        node,
+        pedestrian,
         decelerationRadius,
         arrivalTolerance,
         environment.makePosition(*coordinates),
@@ -64,5 +64,12 @@ open class CognitiveAgentArrive<T, P, A>(
     }
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentArrive<T, P, A> =
-        CognitiveAgentArrive(environment, reaction, node, decelerationRadius, arrivalTolerance, target)
+        CognitiveAgentArrive(
+            environment,
+            reaction,
+            node.pedestrianProperty,
+            decelerationRadius,
+            arrivalTolerance,
+            target
+        )
 }

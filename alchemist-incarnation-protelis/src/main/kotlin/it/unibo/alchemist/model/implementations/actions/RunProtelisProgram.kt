@@ -49,7 +49,7 @@ import java.io.ObjectInputStream
 class RunProtelisProgram<P : Position<P>> private constructor(
     val randomGenerator: RandomGenerator,
     val environment: Environment<Any, P>,
-    val device: ProtelisDevice,
+    val device: ProtelisDevice<P>,
     val reaction: Reaction<Any>,
     val originalProgram: String,
     val program: ProtelisProgram,
@@ -60,7 +60,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     @JvmOverloads constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
-        device: ProtelisDevice,
+        device: ProtelisDevice<P>,
         reaction: Reaction<Any>,
         program: ProtelisProgram,
         retentionTime: Double = Double.NaN,
@@ -78,7 +78,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     @JvmOverloads constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
-        device: ProtelisDevice,
+        device: ProtelisDevice<P>,
         reaction: Reaction<Any>,
         program: ProtelisProgram,
         retentionTime: Double = Double.NaN,
@@ -102,7 +102,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     @JvmOverloads constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
-        device: ProtelisDevice,
+        device: ProtelisDevice<P>,
         reaction: Reaction<Any>,
         program: String,
         retentionTime: Double = Double.NaN
@@ -120,7 +120,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     @JvmOverloads constructor(
         randomGenerator: RandomGenerator,
         environment: Environment<Any, P>,
-        device: ProtelisDevice,
+        device: ProtelisDevice<P>,
         reaction: Reaction<Any>,
         program: String,
         retentionTime: Double = Double.NaN,
@@ -161,7 +161,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         .count()
         .let { otherCopies -> SimpleMolecule(program.name + if (otherCopies == 0) "" else "\$copy$otherCopies") }
 
-    private val networkManager = AlchemistNetworkManager(reaction, this, retentionTime, packetLossDistance)
+    private val networkManager = AlchemistNetworkManager(reaction, device, this, retentionTime, packetLossDistance)
 
     /**
      * Provides an access to the underlying [org.protelis.vm.ExecutionContext].

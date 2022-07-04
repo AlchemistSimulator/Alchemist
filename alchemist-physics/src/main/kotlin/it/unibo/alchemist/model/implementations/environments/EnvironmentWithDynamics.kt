@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -21,6 +22,7 @@ import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
+import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 import org.dyn4j.geometry.Circle
@@ -66,6 +68,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     init {
         world.gravity = Vector2(0.0, 0.0)
+        addGlobalReaction(PhysicsUpdate(this))
     }
 
     override fun addNode(node: Node<T>, position: Euclidean2DPosition) {
@@ -79,7 +82,18 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         addPhysicalProperties(nodeBody, node.asProperty<T, AreaProperty<T>>().shape.radius)
         nodeToBody[node] = nodeBody
         world.addBody(nodeBody)
+        node.asProperty<T, PhysicalPedestrian2D<T>>()
+            .onFall {
+                /*
+                 * This disables collision response with the falling agent, as
+                 * overlapping is allowed in this case.
+                 * Agents approaching a falling agent will be subject to a
+                 * proper avoidance force. see the PhysicalPedestrian interface.
+                 */
+                nodeToBody[it]?.isEnabled = false
+            }
     }
+
     private fun moveNodeBodyToPosition(node: Node<T>, position: Euclidean2DPosition) {
         nodeToBody[node]?.transform = Transform().apply {
             translate(position.x, position.y)

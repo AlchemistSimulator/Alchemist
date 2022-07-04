@@ -12,9 +12,9 @@ package it.unibo.alchemist.loader.export.extractors
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.StatUtil
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
 
@@ -60,7 +60,7 @@ class MeanSquaredError<T> @JvmOverloads constructor(
 
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Reaction<T>?,
+        reaction: Actionable<T>?,
         time: Time,
         step: Long
     ): Map<String, Double> {

@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.implementations.PhysicsDependency
 import it.unibo.alchemist.model.implementations.actions.physicalstrategies.Sum
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -27,18 +27,20 @@ class PhysicalBlendedSteering<T>(
      * The environment in which the node is moving.
      */
     val environment: Dynamics2DEnvironment<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
-) : BlendedSteering<T>(environment, node, timeDistribution) {
+) : BlendedSteering<T>(environment, pedestrian, timeDistribution) {
 
     private var previouslyAppliedForce = Euclidean2DPosition.zero
-
-    private val pedestrian = node.asProperty<T, PedestrianProperty<T>>()
 
     private val physics = node.asProperty<T, PhysicalPedestrian2D<T>>()
 
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =
         Sum(environment, node, super.steerStrategy)
+
+    init {
+        addInboundDependency(PhysicsDependency)
+    }
 
     /**
      * Update the node physical state.
@@ -57,7 +59,6 @@ class PhysicalBlendedSteering<T>(
         } else {
             environment.setVelocity(node, Euclidean2DPosition.zero)
         }
-        environment.updatePhysics(1 / rate)
     }
 
     private fun computeNewVelocity(force: Euclidean2DPosition): Euclidean2DPosition {

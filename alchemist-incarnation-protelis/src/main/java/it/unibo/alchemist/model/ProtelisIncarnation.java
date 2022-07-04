@@ -179,10 +179,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     "There are too many programs requiring a " + SendToNeighbor.class.getName() + " action: " + pList
                 );
             }
-            return new SendToNeighbor(node, (Reaction<Object>) reaction, pList.get(0));
+            return new SendToNeighbor(node, reaction, pList.get(0));
         } else {
             try {
-                return new RunProtelisProgram<>(randomGenerator, environment, device, (Reaction<Object>) reaction, additionalParameters);
+                return new RunProtelisProgram<>(randomGenerator, environment, device, reaction, additionalParameters);
             } catch (RuntimeException exception) { // NOPMD AvoidCatchingGenericException
                 throw new IllegalArgumentException(
                     "Could not create the requested Protelis program: " + additionalParameters,

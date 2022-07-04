@@ -162,6 +162,11 @@ class TestYAMLLoader {
         assertEquals(dependencies.get(0), "dependencies_test.txt");
     }
 
+    @Test
+    void testMaxAliases() {
+        testNoVar("yamlAliases/aliases.yml");
+    }
+
     private static <T, P extends Position<P>> Environment<T, P> testLoading(
             final InputStream resource,
             final Map<String, Double> vars

@@ -164,7 +164,7 @@ class TestYAMLLoader {
 
     @Test
     void testMaxAliases() {
-        testNoVar("yamlAliases/aliases.yml");
+        assertFalse(testNoVar("yamlAliases/aliases.yml").getNodes().isEmpty());
     }
 
     private static <T, P extends Position<P>> Environment<T, P> testLoading(

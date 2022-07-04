@@ -27,6 +27,7 @@ import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -125,12 +126,35 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public Action<Object> createAction(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final Node<Object> node,
-            final TimeDistribution<Object> time,
-            final Reaction<Object> reaction,
-            final String additionalParameters
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final TimeDistribution<Object> time,
+        final Actionable<Object> actionable,
+        final String additionalParameters
+    ) {
+        if (actionable instanceof Reaction) {
+            return createAction(
+                randomGenerator,
+                environment,
+                node,
+                time,
+                (Reaction<Object>) actionable,
+                additionalParameters
+            );
+        }
+        throw new IllegalArgumentException(
+            "The provided actionable must be an instance of " + Reaction.class.getSimpleName()
+        );
+    }
+    @Override
+    public Action<Object> createAction(
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final TimeDistribution<Object> time,
+        final Reaction<Object> reaction,
+        final String additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters);
         final var device = node.asPropertyOrNull(ProtelisDevice.class);
@@ -155,10 +179,10 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                     "There are too many programs requiring a " + SendToNeighbor.class.getName() + " action: " + pList
                 );
             }
-            return new SendToNeighbor(node, reaction, pList.get(0));
+            return new SendToNeighbor(node, (Reaction<Object>) reaction, pList.get(0));
         } else {
             try {
-                return new RunProtelisProgram<>(randomGenerator, environment, device, reaction, additionalParameters);
+                return new RunProtelisProgram<>(randomGenerator, environment, device, (Reaction<Object>) reaction, additionalParameters);
             } catch (RuntimeException exception) { // NOPMD AvoidCatchingGenericException
                 throw new IllegalArgumentException(
                     "Could not create the requested Protelis program: " + additionalParameters,
@@ -188,12 +212,35 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public Condition<Object> createCondition(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final Node<Object> node,
-            final TimeDistribution<Object> time,
-            final Reaction<Object> reaction,
-            final String additionalParameters
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final TimeDistribution<Object> time,
+        final Actionable<Object> actionable,
+        final String additionalParameters
+    ) {
+        if (actionable instanceof Reaction) {
+            return createCondition(
+                randomGenerator,
+                environment,
+                node,
+                time,
+                (Reaction<Object>) actionable,
+                additionalParameters
+            );
+        }
+        throw new IllegalArgumentException(
+            "The provided actionable should be an instance of " + Actionable.class.getSimpleName()
+        );
+    }
+    @Override
+    public Condition<Object> createCondition(
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final TimeDistribution<Object> time,
+        final Reaction<Object> reaction,
+        final String additionalParameters
     ) {
         checkIsProtelisNode(node, "The node must have a " + ProtelisDevice.class.getSimpleName());
         /*
@@ -227,9 +274,9 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public Node<Object> createNode(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final String parameter
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final String parameter
     ) {
         final Node<Object> node = new GenericNode<>(this, environment);
         node.addProperty(new ProtelisDevice<>(environment, node));
@@ -238,11 +285,11 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public Reaction<Object> createReaction(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final Node<Object> node,
-            final TimeDistribution<Object> timeDistribution,
-            final String parameter
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final TimeDistribution<Object> timeDistribution,
+        final String parameter
     ) {
         final boolean isSend = "send".equalsIgnoreCase(parameter);
         final Reaction<Object> result = isSend

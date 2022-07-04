@@ -18,12 +18,14 @@ import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import java.util.concurrent.Semaphore
@@ -160,9 +162,11 @@ internal abstract class LoadingSystem(
                         "null is not a valid program in $descriptor. ${DocumentRoot.Environment.GlobalProgram.guide}"
                     }
                     (program as? Map<*, *>)?.let {
-                        SimulationModel.visitGlobalProgram(randomGenerator, incarnation, environment, context, it)
-                            ?.onSuccess { reaction ->
-                                environment.addGlobalReaction(reaction)
+                        SimulationModel.visitProgram(randomGenerator, incarnation, environment, null, context, it)
+                            ?.onSuccess { (_, actionable) ->
+                                if (actionable is GlobalReaction) {
+                                    environment.addGlobalReaction(actionable)
+                                }
                             }
                     }
                 }
@@ -215,9 +219,9 @@ internal abstract class LoadingSystem(
                 }
                 (program as? Map<*, *>)?.let {
                     SimulationModel.visitProgram(randomGenerator, incarnation, environment, node, context, it)
-                        ?.onSuccess { (filters, reaction) ->
-                            if (filters.isEmpty() || filters.any { shape -> nodePosition in shape }) {
-                                node.addReaction(reaction)
+                        ?.onSuccess { (filters, actionable) ->
+                            if (actionable is Reaction && (filters.isEmpty() || filters.any { shape -> nodePosition in shape })) {
+                                node.addReaction(actionable)
                             }
                         }
                 }

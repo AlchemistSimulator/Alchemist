@@ -255,24 +255,6 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
         }
         return new LsaStandardCondition(createMolecule(additionalParameters), (LsaNode) node);
     }
-    @Override
-    public Condition<List<ILsaMolecule>> createCondition(
-        final RandomGenerator randomGenerator,
-        final Environment<List<ILsaMolecule>, P> environment,
-        final Node<List<ILsaMolecule>> node,
-        final TimeDistribution<List<ILsaMolecule>> time,
-        final Reaction<List<ILsaMolecule>> reaction,
-        final String additionalParameters
-    ) {
-        return createCondition(
-            randomGenerator,
-            environment,
-            node,
-            time,
-            (Actionable<List<ILsaMolecule>>) reaction,
-            additionalParameters
-        );
-    }
 
     @Override
     public Action<List<ILsaMolecule>> createAction(
@@ -299,25 +281,6 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
             );
         }
         return new LsaStandardAction(createMolecule(additionalParameters), (LsaNode) node, randomGenerator);
-    }
-
-    @Override
-    public Action<List<ILsaMolecule>> createAction(
-        final RandomGenerator randomGenerator,
-        final Environment<List<ILsaMolecule>, P> environment,
-        final Node<List<ILsaMolecule>> node,
-        final TimeDistribution<List<ILsaMolecule>> time,
-        final Reaction<List<ILsaMolecule>> reaction,
-        final String additionalParameters
-    ) {
-        return createAction(
-            randomGenerator,
-            environment,
-            node,
-            time,
-            (Actionable<List<ILsaMolecule>>) reaction,
-            additionalParameters
-        );
     }
 
     @Override

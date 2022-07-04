@@ -99,24 +99,6 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     ) {
         return null;
     }
-    @Override
-    public Condition<Double> createCondition(
-        final RandomGenerator randomGenerator,
-        final Environment<Double, Euclidean2DPosition> environment,
-        final Node<Double> node,
-        final TimeDistribution<Double> time,
-        final Reaction<Double> reaction,
-        final String additionalParameters
-    ) {
-        return createCondition(
-            randomGenerator,
-            environment,
-            node,
-            time,
-            (Actionable<Double>) reaction,
-            additionalParameters
-        );
-    }
 
     @Override
     public Action<Double> createAction(
@@ -128,25 +110,6 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
         final String additionalParameters
     ) {
         return null;
-    }
-
-    @Override
-    public Action<Double> createAction(
-        final RandomGenerator randomGenerator,
-        final Environment<Double, Euclidean2DPosition> environment,
-        final Node<Double> node,
-        final TimeDistribution<Double> time,
-        final Reaction<Double> reaction,
-        final String additionalParameters
-    ) {
-        return createAction(
-            randomGenerator,
-            environment,
-            node,
-            time,
-            (Actionable<Double>) reaction,
-            additionalParameters
-        );
     }
 
     @Override

@@ -116,30 +116,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @param environment
      *            the environment that will host this object
      * @param node
-     *            the node that will host this object
-     * @param time
-     *            the time distribution of the reaction
-     * @param reaction
-     *            the reaction hosting this object
-     * @param additionalParameters
-     *            a {@link String} describing the object
-     * @return a new {@link Condition}
-     */
-    Condition<T> createCondition(
-        RandomGenerator randomGenerator,
-        Environment<T, P> environment,
-        Node<T> node,
-        TimeDistribution<T> time,
-        Reaction<T> reaction,
-        String additionalParameters
-    );
-
-    /**
-     * @param randomGenerator
-     *            the random engine
-     * @param environment
-     *            the environment that will host this object
-     * @param node
      *            the node that will host this object. If it is `null` the actionable
      *            will not belong to a {@link Node}
      * @param time
@@ -156,30 +132,6 @@ public interface Incarnation<T, P extends Position<? extends P>> {
         @Nullable Node<T> node,
         TimeDistribution<T> time,
         Actionable<T> actionable,
-        String additionalParameters
-    );
-
-    /**
-     * @param randomGenerator
-     *            the random engine
-     * @param environment
-     *            the environment that will host this object
-     * @param node
-     *            the node that will host this object
-     * @param time
-     *            the time distribution of the reaction
-     * @param reaction
-     *            the reaction hosting this object
-     * @param additionalParameters
-     *            a {@link String} describing the object
-     * @return a new {@link Action}
-     */
-    Action<T> createAction(
-        RandomGenerator randomGenerator,
-        Environment<T, P> environment,
-        Node<T> node,
-        TimeDistribution<T> time,
-        Reaction<T> reaction,
         String additionalParameters
     );
 

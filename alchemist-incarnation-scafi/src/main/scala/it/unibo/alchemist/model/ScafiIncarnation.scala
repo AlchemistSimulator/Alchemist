@@ -82,15 +82,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
     }
   )
 
-  override def createAction(
-      randomGenerator: RandomGenerator,
-      environment: Environment[T, P],
-      node: Node[T],
-      time: TimeDistribution[T],
-      reaction: Reaction[T],
-      param: String
-  ) = createAction(randomGenerator, environment, node, time, reaction.asInstanceOf[Actionable[T]], param)
-
   /** NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation */
   override def createConcentration(data: String) = {
     /*
@@ -133,22 +124,6 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
       }
       new ScafiComputationalRoundComplete(device, scafiProgramList.head).asInstanceOf[Condition[T]]
     }
-  )
-
-  override def createCondition(
-      randomGenerator: RandomGenerator,
-      environment: Environment[T, P],
-      node: Node[T],
-      time: TimeDistribution[T],
-      reaction: Reaction[T],
-      parameters: String
-  ): Condition[T] = createCondition(
-    randomGenerator,
-    environment,
-    node,
-    time,
-    reaction.asInstanceOf[Actionable[T]],
-    parameters
   )
 
   override def createMolecule(value: String): SimpleMolecule =

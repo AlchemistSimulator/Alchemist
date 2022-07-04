@@ -117,7 +117,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     } ?: this.origin
 
     override fun updatePhysics(elapsedTime: Double) {
-        world.update(elapsedTime)
+        world.update(elapsedTime, Int.MAX_VALUE)
     }
 
     override fun getPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position

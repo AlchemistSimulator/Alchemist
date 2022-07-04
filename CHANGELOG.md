@@ -1,3 +1,20 @@
+## [24.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/23.0.0...24.0.0) (2022-07-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **loading:** add support for loading global reactions from configuration files (#1398)
+
+### Features
+
+* **loading:** add support for loading global reactions from configuration files ([#1398](https://github.com/AlchemistSimulator/Alchemist/issues/1398)) ([fcea601](https://github.com/AlchemistSimulator/Alchemist/commit/fcea6015a3617c0fa343abf230214bcd600cfcae))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 8e04692 ([15019b5](https://github.com/AlchemistSimulator/Alchemist/commit/15019b548d03ff96b1f2ff0efe31398f2e697803))
+* **deps:** update site/themes/hugo-theme-relearn digest to d071d2d ([4ba52ba](https://github.com/AlchemistSimulator/Alchemist/commit/4ba52baff1d0c0cc8f7e898fae4dee3796ee8ff2))
+
 ## [23.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/22.0.0...23.0.0) (2022-07-03)
 
 

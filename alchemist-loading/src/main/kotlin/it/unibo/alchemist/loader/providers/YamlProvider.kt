@@ -41,8 +41,7 @@ object YamlProvider : AlchemistModelProvider {
         return this
     }
 
-    private fun LoaderOptions.withMaxAliasesForCollections(n: Int = Int.MAX_VALUE): LoaderOptions {
-        this.maxAliasesForCollections = n
-        return this
+    private fun LoaderOptions.withMaxAliasesForCollections(maxAliases: Int = Int.MAX_VALUE) = apply {
+        this.maxAliasesForCollections = maxAliases
     }
 }

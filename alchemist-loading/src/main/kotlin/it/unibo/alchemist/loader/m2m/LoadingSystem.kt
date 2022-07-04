@@ -220,7 +220,10 @@ internal abstract class LoadingSystem(
                 (program as? Map<*, *>)?.let {
                     SimulationModel.visitProgram(randomGenerator, incarnation, environment, node, context, it)
                         ?.onSuccess { (filters, actionable) ->
-                            if (actionable is Reaction && (filters.isEmpty() || filters.any { shape -> nodePosition in shape })) {
+                            if (
+                                actionable is Reaction &&
+                                (filters.isEmpty() || filters.any { shape -> nodePosition in shape })
+                            ) {
                                 node.addReaction(actionable)
                             }
                         }

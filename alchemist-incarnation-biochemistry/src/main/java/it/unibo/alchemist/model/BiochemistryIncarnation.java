@@ -60,6 +60,7 @@ public final class BiochemistryIncarnation implements Incarnation<Double, Euclid
     public TimeDistribution<Double> createTimeDistribution(
             final RandomGenerator randomGenerator,
             final Environment<Double, Euclidean2DPosition> environment,
+            final Node<Double> node,
             final String parameter
     ) {
         if (parameter == null || parameter.isEmpty()) {

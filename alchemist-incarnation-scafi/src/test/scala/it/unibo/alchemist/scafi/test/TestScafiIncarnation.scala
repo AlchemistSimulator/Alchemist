@@ -28,7 +28,7 @@ class TestScafiIncarnation extends AnyFunSuite with Matchers {
     val node = INC.createNode(rng, env, null)
     assertNotNull(node)
 
-    val standard = INC.createTimeDistribution(rng, env, "3")
+    val standard = INC.createTimeDistribution(rng, env, node, "3")
     assertNotNull(standard)
     standard.getRate shouldEqual 3d
 

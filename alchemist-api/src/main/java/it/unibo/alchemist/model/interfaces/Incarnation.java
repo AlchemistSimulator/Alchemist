@@ -75,6 +75,9 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      *            the random engine
      * @param environment
      *            the environment that will host this object
+     * @param node
+     *            the node that will host this object. If it is `null` the related reaction
+     *            will not belong to a {@link Node}
      * @param parameter
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
@@ -82,6 +85,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     TimeDistribution<T> createTimeDistribution(
             RandomGenerator randomGenerator,
             Environment<T, P> environment,
+            @Nullable Node<T> node,
             @Nullable String parameter
     );
 

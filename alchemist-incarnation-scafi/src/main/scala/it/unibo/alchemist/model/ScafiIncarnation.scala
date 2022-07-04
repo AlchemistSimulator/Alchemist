@@ -167,7 +167,8 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
 
   override def createTimeDistribution(
       randomGenerator: RandomGenerator,
-      env: Environment[T, P],
+      environment: Environment[T, P],
+      node: Node[T],
       parameters: String
   ): TimeDistribution[T] = {
     if (parameters == null) return new ExponentialTime[T](Double.PositiveInfinity, randomGenerator)

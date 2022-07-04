@@ -503,6 +503,7 @@ internal object SimulationModel {
             incarnation,
             simulationRNG,
             environment,
+            null,
             context,
             program[ProgramSyntax.timeDistribution]
         )
@@ -548,6 +549,7 @@ internal object SimulationModel {
             incarnation,
             simulationRNG,
             environment,
+            node,
             context,
             program[ProgramSyntax.timeDistribution]
         )
@@ -655,12 +657,13 @@ internal object SimulationModel {
         incarnation: Incarnation<T, P>,
         simulationRNG: RandomGenerator,
         environment: Environment<T, P>,
+        node: Node<T>?,
         context: Context,
         root: Any?,
     ) = when (root) {
         is Map<*, *> -> visitBuilding<TimeDistribution<T>>(context, root)?.getOrThrow()
             ?: cantBuildWith<TimeDistribution<T>>(root)
-        else -> incarnation.createTimeDistribution(simulationRNG, environment, root?.toString())
+        else -> incarnation.createTimeDistribution(simulationRNG, environment, node, root?.toString())
     }
 
     fun visitVariables(context: Context, root: Any?): Map<String, Variable<*>> = visitNamedRecursively(

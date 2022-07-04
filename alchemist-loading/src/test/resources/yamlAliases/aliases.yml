@@ -8,13 +8,10 @@ _node: &node
   - type: Point
     parameters: [0, 0]
 
-_nodes: &nodes
-  [*node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
-   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node]
-
-_many_nodes: &many
-  [*nodes, *nodes, *nodes, *nodes, *nodes, *nodes, *nodes, *nodes, *nodes, *nodes,
-   *nodes, *nodes, *nodes, *nodes, *nodes, *nodes, *nodes, *nodes, *nodes, *nodes]
-
 deployments:
-  [*many, *many, *many, *many, *many, *many, *many, *many, *many, *many, *many]
+  [*node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node]

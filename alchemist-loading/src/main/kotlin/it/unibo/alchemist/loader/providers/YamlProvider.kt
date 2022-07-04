@@ -25,11 +25,14 @@ object YamlProvider : AlchemistModelProvider {
 
     override val fileExtensions: Regex = "[yY][aA]?[mM][lL]".toRegex()
 
-    override fun from(input: String): Map<String, Any> = Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: String): Map<String, Any> =
+        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: Reader): Map<String, Any> = Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: Reader): Map<String, Any> =
+        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: InputStream): Map<String, Any> = Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: InputStream): Map<String, Any> =
+        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
     override fun from(input: URL): Map<String, Any> =
         Yaml(loaderOptions).load<Map<String, Any>>(input.openStream()).checkNotNull(input)

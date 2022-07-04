@@ -154,13 +154,20 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 }
                 if (pList.size() > 1) {
                     throw new IllegalStateException(
-                        "There are too many programs requiring a " + SendToNeighbor.class.getName() + " action: " + pList
+                        "There are too many programs requiring a " + SendToNeighbor.class.getName()
+                            + " action: " + pList
                     );
                 }
                 return new SendToNeighbor(node, (Reaction<Object>) actionable, pList.get(0));
             } else {
                 try {
-                    return new RunProtelisProgram<>(randomGenerator, environment, device, (Reaction<Object>) actionable, additionalParameters);
+                    return new RunProtelisProgram<>(
+                        randomGenerator,
+                        environment,
+                        device,
+                        (Reaction<Object>) actionable,
+                        additionalParameters
+                    );
                 } catch (RuntimeException exception) { // NOPMD AvoidCatchingGenericException
                     throw new IllegalArgumentException(
                         "Could not create the requested Protelis program: " + additionalParameters,
@@ -261,12 +268,22 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 : new Event<>(node, timeDistribution);
         if (parameter != null) {
             result.setActions(
-                Lists.newArrayList(createAction(randomGenerator, environment, node, timeDistribution, result, parameter))
+                Lists.newArrayList(
+                    createAction(randomGenerator, environment, node, timeDistribution, result, parameter)
+                )
             );
         }
         if (isSend) {
-            result.setConditions(Lists.newArrayList(
-                    createCondition(randomGenerator, environment, node, timeDistribution, result, null))
+            result.setConditions(
+                Lists.newArrayList(createCondition(
+                    randomGenerator,
+                    environment,
+                    node,
+                    timeDistribution,
+                    result,
+                    null
+                    )
+                )
             );
         }
         return result;

@@ -1,3 +1,10 @@
+## [24.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.1...24.0.2) (2022-07-05)
+
+
+### Bug Fixes
+
+* **physics:** make engine aware of obstacles ([3dc8e1d](https://github.com/AlchemistSimulator/Alchemist/commit/3dc8e1d71735b4c8ef109ed148ec2580b8bc7747))
+
 ## [24.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.0...24.0.1) (2022-07-05)
 
 

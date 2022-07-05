@@ -1,0 +1,21 @@
+incarnation: protelis
+
+environment:
+  type: EnvironmentWithDynamics
+  parameters: [../square.png, 0.1, -60.0, -60.0]
+
+deployments:
+  - type: Rectangle
+    parameters: [100, -30.0, -30.0, 60.0, 60.0]
+    properties:
+      - type: Pedestrian
+      - type: PhysicalPedestrian2D
+      - type: CircularArea
+    programs:
+      - time-distribution:
+          type: DiracComb
+          parameters: [1.0]
+        type: PhysicalBlendedSteering
+        actions:
+          - type: CognitiveAgentFlee
+            parameters: [0.0, 0.0]

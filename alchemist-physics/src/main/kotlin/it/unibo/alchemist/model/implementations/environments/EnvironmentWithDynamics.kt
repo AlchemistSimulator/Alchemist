@@ -27,6 +27,7 @@ import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 import org.dyn4j.geometry.Circle
 import org.dyn4j.geometry.MassType
+import org.dyn4j.geometry.Rectangle
 import org.dyn4j.geometry.Transform
 import org.dyn4j.geometry.Vector2
 import org.dyn4j.world.World
@@ -67,9 +68,25 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
 
     init {
-        world.gravity = Vector2(0.0, 0.0)
+        world.gravity = World.ZERO_GRAVITY
         addGlobalReaction(PhysicsUpdate(this))
+        obstacles.forEach { obstacle ->
+            addObstacleToWorld(obstacle)
+        }
     }
+
+    private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {
+        val obstacleBody = Body()
+        obstacleBody.addFixture(Rectangle(obstacle.width, obstacle.height))
+        obstacleBody.setMass(MassType.INFINITE)
+        obstacleBody.transform = Transform().apply {
+            translate(obstacle.center)
+        }
+        world.addBody(obstacleBody)
+    }
+
+    private val RectObstacle2D<Euclidean2DPosition>.center get() =
+        Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
 
     override fun addNode(node: Node<T>, position: Euclidean2DPosition) {
         backingEnvironment.addNode(node, position)

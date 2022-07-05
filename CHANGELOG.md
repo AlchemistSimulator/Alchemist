@@ -1,3 +1,44 @@
+## [24.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.1...24.0.2) (2022-07-05)
+
+
+### Bug Fixes
+
+* **physics:** make engine aware of obstacles ([3dc8e1d](https://github.com/AlchemistSimulator/Alchemist/commit/3dc8e1d71735b4c8ef109ed148ec2580b8bc7747))
+
+## [24.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.0...24.0.1) (2022-07-05)
+
+
+### Bug Fixes
+
+* **physics:** fix physics update rate ([d412a58](https://github.com/AlchemistSimulator/Alchemist/commit/d412a580300862f56fb5a3e0e8972502c8e1900a))
+
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.148 ([b3034f6](https://github.com/AlchemistSimulator/Alchemist/commit/b3034f662fa353c94312bcb1f7aa84ecc2997e95))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([e16bb50](https://github.com/AlchemistSimulator/Alchemist/commit/e16bb506112c1cc3efb6c586f92969bc1538aed3))
+
+## [24.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/23.0.0...24.0.0) (2022-07-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **loading:** add support for loading global reactions from configuration files (#1398)
+
+### Features
+
+* **loading:** add support for loading global reactions from configuration files ([#1398](https://github.com/AlchemistSimulator/Alchemist/issues/1398)) ([fcea601](https://github.com/AlchemistSimulator/Alchemist/commit/fcea6015a3617c0fa343abf230214bcd600cfcae))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 8e04692 ([15019b5](https://github.com/AlchemistSimulator/Alchemist/commit/15019b548d03ff96b1f2ff0efe31398f2e697803))
+* **deps:** update site/themes/hugo-theme-relearn digest to d071d2d ([4ba52ba](https://github.com/AlchemistSimulator/Alchemist/commit/4ba52baff1d0c0cc8f7e898fae4dee3796ee8ff2))
+
 ## [23.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/22.0.0...23.0.0) (2022-07-03)
 
 

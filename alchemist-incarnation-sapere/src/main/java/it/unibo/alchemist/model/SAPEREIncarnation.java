@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.implementations.reactions.SAPEREReaction;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPEREExponentialTime;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
@@ -241,12 +242,12 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
 
     @Override
     public Condition<List<ILsaMolecule>> createCondition(
-            final RandomGenerator randomGenerator,
-            final Environment<List<ILsaMolecule>, P> environment,
-            final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> time,
-            final Reaction<List<ILsaMolecule>> reaction,
-            final String additionalParameters
+        final RandomGenerator randomGenerator,
+        final Environment<List<ILsaMolecule>, P> environment,
+        final Node<List<ILsaMolecule>> node,
+        final TimeDistribution<List<ILsaMolecule>> time,
+        final Actionable<List<ILsaMolecule>> reaction,
+        final String additionalParameters
     ) {
         Objects.requireNonNull(additionalParameters, "The condition can't be null. Reaction:" + reaction);
         if (additionalParameters.startsWith("+")) {
@@ -257,26 +258,26 @@ public final class SAPEREIncarnation<P extends Position<? extends P>>
 
     @Override
     public Action<List<ILsaMolecule>> createAction(
-            final RandomGenerator randomGenerator,
-            final Environment<List<ILsaMolecule>, P> environment,
-            final Node<List<ILsaMolecule>> node,
-            final TimeDistribution<List<ILsaMolecule>> time,
-            final Reaction<List<ILsaMolecule>> reaction,
-            final String additionalParameters
+        final RandomGenerator randomGenerator,
+        final Environment<List<ILsaMolecule>, P> environment,
+        final Node<List<ILsaMolecule>> node,
+        final TimeDistribution<List<ILsaMolecule>> time,
+        final Actionable<List<ILsaMolecule>> actionable,
+        final String additionalParameters
     ) {
         if (additionalParameters.startsWith("+")) {
             return new LsaRandomNeighborAction(
-                    (LsaNode) node,
-                    createMolecule(additionalParameters.substring(1)),
-                    environment,
-                    randomGenerator
+                (LsaNode) node,
+                createMolecule(additionalParameters.substring(1)),
+                environment,
+                randomGenerator
             );
         }
         if (additionalParameters.startsWith("*")) {
             return new LsaAllNeighborsAction(
-                    (LsaNode) node,
-                    createMolecule(additionalParameters.substring(1)),
-                    environment
+                (LsaNode) node,
+                createMolecule(additionalParameters.substring(1)),
+                environment
             );
         }
         return new LsaStandardAction(createMolecule(additionalParameters), (LsaNode) node, randomGenerator);

@@ -2,7 +2,7 @@ incarnation: protelis
 
 environment:
   type: EnvironmentWithDynamics
-  parameters: [../square.png, 0.1, -60.0, -60.0]
+  parameters: [images/square.png, 0.1, -60.0, -60.0]
 
 deployments:
   - type: Rectangle

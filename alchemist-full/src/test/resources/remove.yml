@@ -1,0 +1,13 @@
+incarnation: scafi
+
+_remover: &remover
+  - time-distribution: 1
+    type: Event
+    actions:
+      - type: RemoveNode
+
+deployments:
+  type: Grid
+  parameters: [-1, -1, 1, 1, 0.5, 0.5, 0.25, 0.25]
+  programs:
+    - *remover

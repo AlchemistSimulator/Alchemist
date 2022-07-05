@@ -33,9 +33,11 @@ import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Action
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.LinkingRule
@@ -48,6 +50,7 @@ import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Layer as LayerSyntax
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.formula as formulaKey
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.language as languageKey
@@ -58,7 +61,7 @@ import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.timeo
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>, TimeDistribution<T>, Reaction<T>, String?) -> R
+    (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -494,73 +497,76 @@ internal object SimulationModel {
         simulationRNG: RandomGenerator,
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
-        node: Node<T>,
+        node: Node<T>?,
         context: Context,
-        program: Map<*, *>
-    ): Result<Pair<List<Filter<P>>, Reaction<T>>>? = if (ProgramSyntax.validateDescriptor(program)) {
-        val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
-            incarnation,
-            simulationRNG,
-            environment,
-            node,
-            context,
-            program[ProgramSyntax.timeDistribution]
-        )
-        context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
-        val reaction: Reaction<T> =
-            visitReaction(simulationRNG, incarnation, environment, node, timeDistribution, context, program)
-        context.factory.registerSingleton(Reaction::class.java, reaction)
-        fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
-            makeWith(simulationRNG, environment, node, timeDistribution, reaction, parameter?.toString())
-        }
-        val filters = visitFilter<P>(context, program)
-        val conditions = visitRecursively<Condition<T>>(
-            context,
-            program[ProgramSyntax.conditions] ?: emptyList<Any>(),
-            JavaType,
-        ) {
-            when (it) {
-                is CharSequence? -> create<Condition<T>>(it, incarnation::createCondition)
-                else -> visitBuilding<Condition<T>>(context, it)
-            }
-        }
-        if (conditions.isNotEmpty()) {
-            reaction.conditions = reaction.conditions + conditions
-        }
-        val actions = visitRecursively<Action<T>>(
-            context,
-            program[ProgramSyntax.actions] ?: emptyList<Any>(),
-            JavaType,
-        ) {
-            when (it) {
-                is CharSequence? -> create<Action<T>>(it, incarnation::createAction)
-                else -> visitBuilding<Action<T>>(context, it)
-            }
-        }
-        if (actions.isNotEmpty()) {
-            reaction.actions = reaction.actions + actions
-        }
-        context.factory.deregisterSingleton(reaction)
-        context.factory.deregisterSingleton(timeDistribution)
-        Result.success(Pair(filters, reaction))
-    } else {
-        null
-    }
+        program: Map<*, *>,
+    ): Result<Pair<List<Filter<P>>, Actionable<T>>>? =
+        if (ProgramSyntax.validateDescriptor(program) || GlobalProgramSyntax.validateDescriptor(program)) {
+            val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
+                incarnation,
+                simulationRNG,
+                environment,
+                node,
+                context,
+                program[ProgramSyntax.timeDistribution]
+            )
+            context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
+            val actionable: Actionable<T> =
+                visitActionable(simulationRNG, incarnation, environment, node, timeDistribution, context, program)
 
-    private fun <P : Position<P>, T> visitReaction(
+            context.factory.registerSingleton(Actionable::class.java, actionable)
+            fun <R> create(parameter: Any?, makeWith: ReactionComponentFunction<T, P, R>): Result<R> = runCatching {
+                makeWith(simulationRNG, environment, node, timeDistribution, actionable, parameter?.toString())
+            }
+            val filters = visitFilter<P>(context, program)
+            val conditions = visitRecursively<Condition<T>>(
+                context,
+                program[ProgramSyntax.conditions] ?: emptyList<Any>(),
+                JavaType,
+            ) {
+                when (it) {
+                    is CharSequence? -> create<Condition<T>>(it, incarnation::createCondition)
+                    else -> visitBuilding<Condition<T>>(context, it)
+                }
+            }
+            if (conditions.isNotEmpty()) {
+                actionable.conditions = actionable.conditions + conditions
+            }
+            val actions = visitRecursively<Action<T>>(
+                context,
+                program[ProgramSyntax.actions] ?: emptyList<Any>(),
+                JavaType,
+            ) {
+                when (it) {
+                    is CharSequence? -> create<Action<T>>(it, incarnation::createAction)
+                    else -> visitBuilding<Action<T>>(context, it)
+                }
+            }
+            if (actions.isNotEmpty()) {
+                actionable.actions = actionable.actions + actions
+            }
+            context.factory.deregisterSingleton(actionable)
+            context.factory.deregisterSingleton(timeDistribution)
+            Result.success(Pair(filters, actionable))
+        } else {
+            null
+        }
+
+    private fun <P : Position<P>, T> visitActionable(
         simulationRNG: RandomGenerator,
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
-        node: Node<T>,
+        node: Node<T>?,
         timeDistribution: TimeDistribution<T>,
         context: Context,
-        root: Map<*, *>
+        root: Map<*, *>,
     ) = if (root.containsKey(ProgramSyntax.program)) {
         val programDescriptor = root[ProgramSyntax.program]?.toString()
         incarnation.createReaction(simulationRNG, environment, node, timeDistribution, programDescriptor)
+    } else if (node != null) {
+        visitBuilding<Reaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<Reaction<T>>(root)
     } else {
-        visitBuilding<Reaction<T>>(context, root)?.getOrThrow()
-            ?: cantBuildWith<Reaction<T>>(root)
+        visitBuilding<GlobalReaction<T>>(context, root)?.getOrThrow() ?: cantBuildWith<GlobalReaction<T>>(root)
     }
 
     fun visitSeeds(context: Context, root: Any?): Seeds =
@@ -604,7 +610,7 @@ internal object SimulationModel {
         incarnation: Incarnation<T, P>,
         simulationRNG: RandomGenerator,
         environment: Environment<T, P>,
-        node: Node<T>,
+        node: Node<T>?,
         context: Context,
         root: Any?,
     ) = when (root) {

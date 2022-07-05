@@ -1,3 +1,20 @@
+## [24.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.0...24.0.1) (2022-07-05)
+
+
+### Bug Fixes
+
+* **physics:** fix physics update rate ([d412a58](https://github.com/AlchemistSimulator/Alchemist/commit/d412a580300862f56fb5a3e0e8972502c8e1900a))
+
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.148 ([b3034f6](https://github.com/AlchemistSimulator/Alchemist/commit/b3034f662fa353c94312bcb1f7aa84ecc2997e95))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([e16bb50](https://github.com/AlchemistSimulator/Alchemist/commit/e16bb506112c1cc3efb6c586f92969bc1538aed3))
+
 ## [24.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/23.0.0...24.0.0) (2022-07-04)
 
 

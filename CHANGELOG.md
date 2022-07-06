@@ -1,3 +1,31 @@
+## [24.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.3...24.0.4) (2022-07-06)
+
+
+### Bug Fixes
+
+* **physics:** disable Dyn4j's "at-rest" detection, fixing movement for physical particles that stopped in the past ([#1406](https://github.com/AlchemistSimulator/Alchemist/issues/1406)) ([6dc8ed6](https://github.com/AlchemistSimulator/Alchemist/commit/6dc8ed6c42fccc673b3ef4a6cc24d7e607e1c518))
+
+
+### Tests
+
+* **physics:** test obstacles on physics engine ([#1403](https://github.com/AlchemistSimulator/Alchemist/issues/1403)) ([8012170](https://github.com/AlchemistSimulator/Alchemist/commit/8012170b3f8c3050fa0a5fd51c780b8a1881d432))
+
+
+### Build and continuous integration
+
+* improve fork detection ([#1405](https://github.com/AlchemistSimulator/Alchemist/issues/1405)) ([14f828f](https://github.com/AlchemistSimulator/Alchemist/commit/14f828fa0c7fa7c006b044917a162e4bd5e1b551))
+
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.149 ([ee74e53](https://github.com/AlchemistSimulator/Alchemist/commit/ee74e531dcddaf2f13688813b191ebf2bece29d4))
+* **deps:** update site/themes/hugo-theme-relearn digest to ab5e73a ([107a0ec](https://github.com/AlchemistSimulator/Alchemist/commit/107a0ec0e61cbca86f5192cee8fa5a992c679be4))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([7484f8b](https://github.com/AlchemistSimulator/Alchemist/commit/7484f8b3f9c4f109fb8855483b035f9aede9a08b))
+
 ## [24.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.2...24.0.3) (2022-07-05)
 
 

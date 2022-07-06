@@ -153,10 +153,8 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         /*
          * Make world and environment position consistent
          */
-        nodes.forEach {
-            nodeToBody[it]?.let { body ->
-                moveNodeToPosition(it, body.position)
-            }
+        nodeToBody.forEach { (node, body) ->
+            moveNodeToPosition(node, body.position)
         }
     }
 

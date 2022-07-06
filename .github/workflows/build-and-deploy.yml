@@ -3,14 +3,6 @@ on:
   workflow_call:
   workflow_dispatch:
 
-env:
-  CAN_ACCESS_SECRETS: >-
-    !github.event.repository.fork
-    && (
-      github.event_name != 'pull_request'
-      || github.event.pull_request.head.repo.full_name == github.repository
-    )
-
 jobs:
   # Runs all tests
   build:
@@ -59,7 +51,12 @@ jobs:
   # Performs a dry-deployment if credentials are available
   test-deploy:
     runs-on: ubuntu-latest
-    if: ${{ env.CAN_ACCESS_SECRETS }}
+    if: >-
+      !github.event.repository.fork
+      && (
+        github.event_name != 'pull_request'
+        || github.event.pull_request.head.repo.full_name == github.repository
+      )
     timeout-minutes: 120
     concurrency:
       group: ${{ github.workflow }}-test-deploy-${{ github.event.number || github.ref }}
@@ -130,7 +127,12 @@ jobs:
       - test-deploy
       - test-shadowjar
     runs-on: ubuntu-latest
-    if: ${{ env.CAN_ACCESS_SECRETS }}
+    if: >-
+      !github.event.repository.fork
+      && (
+        github.event_name != 'pull_request'
+        || github.event.pull_request.head.repo.full_name == github.repository
+      )
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.2

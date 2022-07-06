@@ -119,7 +119,7 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
     }
 
     @Override
-    public final void addNode(final Node<T> node, final P p) {
+    public final boolean addNode(final Node<T> node, final P p) {
         if (nodeShouldBeAdded(node, p)) {
             final P actualPosition = computeActualInsertionPosition(node, p);
             setPosition(node, actualPosition);
@@ -141,7 +141,9 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
              * Call the subclass method.
              */
             nodeAdded(node, p, getNeighborhood(node));
+            return true;
         }
+        return false;
     }
 
     @Override

@@ -135,6 +135,9 @@
   "io.github.classgraph/classgraph/4.8.148": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.148"
   },
+  "io.github.classgraph/classgraph/4.8.149": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.149"
+  },
   "io.jenetics/jpx/2.3.0": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0/element-list"

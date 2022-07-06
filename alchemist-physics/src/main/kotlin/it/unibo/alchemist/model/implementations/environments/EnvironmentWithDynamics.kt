@@ -69,6 +69,17 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     init {
         world.gravity = World.ZERO_GRAVITY
+        /*
+         * This flag is defaulted to true. The engine automatically detects
+         * whether a node body stops (its linear velocity is below a certain threshold)
+         * and eventually puts it at rest. This means tha in future world.update() calls,
+         * the at-rest node will not be considered for the environment update.
+         * We do not want this because we always need no move each node, even if the movement is mimimal,
+         * in order to progress their cognitive perception for example.
+         *
+         * For further references: https://dyn4j.org/pages/advanced.html
+         */
+        world.settings.isAtRestDetectionEnabled = false
         addGlobalReaction(PhysicsUpdate(this))
         obstacles.forEach { obstacle ->
             addObstacleToWorld(obstacle)
@@ -117,13 +128,17 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         }
     }
 
+    override fun moveNode(node: Node<T>, direction: Euclidean2DPosition) {
+        backingEnvironment.moveNode(node, direction)
+        moveNodeBodyToPosition(node, backingEnvironment.getPosition(node))
+    }
+
     private fun addPhysicalProperties(body: PhysicsBody, radius: Double) {
         body.addFixture(Circle(radius))
         body.setMass(MassType.NORMAL)
     }
 
     override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) = nodeToBody[node]?.let {
-        moveNodeToPosition(node, it.position)
         it.linearVelocity = Vector2(velocity.x, velocity.y)
     } ?: throw IllegalStateException(
         "Unable to update $node physical state. Check if it was added to this environment."
@@ -135,6 +150,14 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     override fun updatePhysics(elapsedTime: Double) {
         world.update(elapsedTime, Int.MAX_VALUE)
+        /*
+         * Make world and environment position consistent
+         */
+        nodes.forEach {
+            nodeToBody[it]?.let { body ->
+                moveNodeToPosition(it, body.position)
+            }
+        }
     }
 
     override fun getPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position

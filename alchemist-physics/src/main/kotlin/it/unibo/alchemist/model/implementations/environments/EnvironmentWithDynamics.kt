@@ -99,10 +99,13 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     private val RectObstacle2D<Euclidean2DPosition>.center get() =
         Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
 
-    override fun addNode(node: Node<T>, position: Euclidean2DPosition) {
-        backingEnvironment.addNode(node, position)
-        addNodeBody(node)
-        moveNodeBodyToPosition(node, position)
+    override fun addNode(node: Node<T>, position: Euclidean2DPosition): Boolean {
+        if (backingEnvironment.addNode(node, position)) {
+            addNodeBody(node)
+            moveNodeBodyToPosition(node, position)
+            return true
+        }
+        return false
     }
 
     private fun addNodeBody(node: Node<T>) {

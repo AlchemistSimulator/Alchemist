@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import org.apache.commons.math3.util.FastMath
 
 private typealias AbstractNavigationAction2D<T, L, R, N, E> =
@@ -34,7 +35,7 @@ private typealias AbstractNavigationAction2D<T, L, R, N, E> =
 open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
     override val environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     /**
      * When crossing [Euclidean2DPassage]s, the node is pushed away from the wall of
      * a quantity equal to (this factor * the width of the passage). This is performed to prevent
@@ -44,7 +45,7 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
 ) : AbstractNavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>(
     environment,
     reaction,
-    node
+    pedestrian,
 ) {
 
     companion object {
@@ -94,11 +95,16 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
 
     override fun nextPosition(): Euclidean2DPosition {
         update()
-        return CognitiveAgentSeek2D(environment, reaction, navigatingNode, desiredPosition).nextPosition
+        return CognitiveAgentSeek2D(environment, reaction, pedestrian, desiredPosition).nextPosition
     }
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentNavigationAction2D<T, L, R> {
-        val clone = CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, node, wallRepulsionFactor)
+        val clone = CognitiveAgentNavigationAction2D<T, L, R>(
+            environment,
+            reaction,
+            node.pedestrianProperty,
+            wallRepulsionFactor
+        )
         clone.strategy = this.strategy
         return clone
     }

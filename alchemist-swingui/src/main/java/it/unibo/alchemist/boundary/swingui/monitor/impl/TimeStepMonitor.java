@@ -12,8 +12,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 
 import javax.annotation.Nonnull;
@@ -110,7 +110,7 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     @Override
     public void stepDone(
             @Nonnull final Environment<T, P> environment,
-            final Reaction<T> reaction,
+            final Actionable<T> reaction,
             @Nonnull final Time curTime,
             final long curStep
     ) {

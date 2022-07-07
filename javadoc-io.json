@@ -77,6 +77,9 @@
     "first": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.3.1",
     "second": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.3.1/package-list"
   },
+  "com.javadocmd/simplelatlng/1.4.0": {
+    "first": "https://javadoc.io/doc/com.javadocmd/simplelatlng/1.4.0"
+  },
   "com.jfoenix/jfoenix/9.0.10": {
     "first": "https://javadoc.io/doc/com.jfoenix/jfoenix/9.0.10",
     "second": "https://javadoc.io/doc/com.jfoenix/jfoenix/9.0.10/package-list"
@@ -129,6 +132,12 @@
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.147",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.147/package-list"
   },
+  "io.github.classgraph/classgraph/4.8.148": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.148"
+  },
+  "io.github.classgraph/classgraph/4.8.149": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.149"
+  },
   "io.jenetics/jpx/2.3.0": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0/element-list"
@@ -144,6 +153,9 @@
   "it.unimi.dsi/dsiutils/2.7.1": {
     "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.1",
     "second": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.1/element-list"
+  },
+  "it.unimi.dsi/dsiutils/2.7.2": {
+    "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.2"
   },
   "net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.1.158": {
     "first": "https://javadoc.io/doc/net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.1.158"
@@ -244,6 +256,9 @@
   "org.jetbrains.kotlin/kotlin-reflect/1.7.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.7.0"
   },
+  "org.jetbrains.kotlin/kotlin-reflect/1.7.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.7.10"
+  },
   "org.jetbrains.kotlin/kotlin-reflect/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
   },
@@ -258,6 +273,9 @@
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.7.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.7.0"
+  },
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.7.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.7.10"
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"

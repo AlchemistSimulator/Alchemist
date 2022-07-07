@@ -25,10 +25,15 @@ class CircularArea<T> @JvmOverloads constructor(
      */
     val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
-    radius: Double = 0.3,
-) : OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
+    /**
+     * The radius of this circular area.
+     */
+    val radius: Double = 0.3,
+) : AbstractNodeProperty<T>(node), OccupiesSpaceProperty<T, Euclidean2DPosition, Euclidean2DTransformation> {
 
     override val shape: Euclidean2DShape = environment.shapeFactory.circle(radius)
 
     override fun cloneOnNewNode(node: Node<T>) = CircularArea(environment, node, shape.radius)
+
+    override fun toString() = "${super.toString()}[radius=$radius]"
 }

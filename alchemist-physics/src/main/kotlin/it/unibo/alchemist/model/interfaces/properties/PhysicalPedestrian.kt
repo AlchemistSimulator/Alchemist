@@ -9,15 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
  * A pedestrian's capability to experience physical forces.
@@ -88,10 +85,9 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
      * Computes the avoidance force from a fallen pedestrian.
      */
     fun fallenAgentAvoidanceForces(): List<P>
-}
 
-/**
- * A pedestrian's capability to experience physical forces in a 2D space.
- */
-interface PhysicalPedestrian2D<T> :
-    PhysicalPedestrian<T, Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>
+    /**
+     * Adds a listener to be called when [node] falls.
+     */
+    fun onFall(listener: (Node<T>) -> Unit)
+}

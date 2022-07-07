@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.properties
 
+import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
@@ -37,7 +38,7 @@ class PhysicalPedestrian2D<T>(
      */
     val environment: Physics2DEnvironment<T>,
     override val node: Node<T>,
-) : PhysicalPedestrian2D<T> {
+) : AbstractNodeProperty<T>(node), PhysicalPedestrian2D<T> {
 
     private val pedestrian by lazy { node.asProperty<T, PedestrianProperty<T>>() }
 
@@ -48,14 +49,17 @@ class PhysicalPedestrian2D<T>(
 
     private val desiredSpaceTreshold: Double = randomGenerator.nextDouble(minimumSpaceTreshold, maximumSpaceThreshold)
 
+    private val cognitiveModel = node.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel
+
     override val comfortRay: Double get() {
-        val cognitiveModel = node.asPropertyOrNull<T, CognitiveProperty<T>>()?.cognitiveModel
         return if (cognitiveModel?.wantsToEscape() == true) {
             desiredSpaceTreshold / 3
         } else {
             desiredSpaceTreshold
         }
     }
+
+    private var fallenAgentListeners: List<(Node<T>) -> Unit> = listOf()
 
     override val comfortArea: Euclidean2DShape get() = environment
         .shapeFactory
@@ -76,7 +80,10 @@ class PhysicalPedestrian2D<T>(
     private val Node<T>.position get() = environment.getPosition(this)
 
     override fun checkAndPossiblyFall() {
-        isFallen = isFallen || shouldFall(repulsionForces())
+        if (!isFallen && shouldFall(repulsionForces())) {
+            isFallen = true
+            fallenAgentListeners.forEach { hasFallen -> hasFallen(node) }
+        }
     }
 
     override fun shouldFall(pushingForces: List<Euclidean2DPosition>) =
@@ -139,6 +146,10 @@ class PhysicalPedestrian2D<T>(
             it.asProperty<T, PhysicalPedestrian2D<T>>().isFallen
         }
 
+    override fun onFall(listener: (Node<T>) -> Unit) {
+        fallenAgentListeners += listener
+    }
+
     private fun collectForces(
         force: (node: Node<T>) -> Euclidean2DPosition,
         influenceArea: Euclidean2DShape,
@@ -146,7 +157,7 @@ class PhysicalPedestrian2D<T>(
     ) = environment.getNodesWithin(influenceArea)
         .asSequence()
         .minusElement(node)
-        .filter { it.asPropertyOrNull<T, AreaProperty<T>>() != null }
+        .filter { environment.getShape(it) !is AdimensionalShape }
         .filter(nodeFilter)
         .map(force)
         .filter { it.magnitude > Double.MIN_VALUE }
@@ -157,6 +168,9 @@ class PhysicalPedestrian2D<T>(
     ): List<Euclidean2DPosition> = avoidanceForces()
 
     override fun cloneOnNewNode(node: Node<T>) = PhysicalPedestrian2D(randomGenerator, environment, node)
+
+    override fun toString() = "${super.toString()}[desiredSpaceThreshold=$desiredSpaceTreshold, " +
+        "comfortRay=$comfortRay, isFallen=$isFallen]"
 
     companion object {
         /**

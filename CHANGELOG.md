@@ -1,3 +1,205 @@
+## [24.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.4...24.0.5) (2022-07-07)
+
+
+### Dependency updates
+
+* **core-deps:** update dependency org.jetbrains.kotlin.jvm to v1.7.10 ([72039e8](https://github.com/AlchemistSimulator/Alchemist/commit/72039e88bcb125b68f5a2a5411c56cc7a258199d))
+* **deps:** update plugin multijvmtesting to v0.4.5 ([353a3d4](https://github.com/AlchemistSimulator/Alchemist/commit/353a3d44c87c04e6462474b5791e1819d4baccec))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([da6b164](https://github.com/AlchemistSimulator/Alchemist/commit/da6b1648bbb499e69c1bc7787bfceda90c939c36))
+
+## [24.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.3...24.0.4) (2022-07-06)
+
+
+### Bug Fixes
+
+* **physics:** disable Dyn4j's "at-rest" detection, fixing movement for physical particles that stopped in the past ([#1406](https://github.com/AlchemistSimulator/Alchemist/issues/1406)) ([6dc8ed6](https://github.com/AlchemistSimulator/Alchemist/commit/6dc8ed6c42fccc673b3ef4a6cc24d7e607e1c518))
+
+
+### Tests
+
+* **physics:** test obstacles on physics engine ([#1403](https://github.com/AlchemistSimulator/Alchemist/issues/1403)) ([8012170](https://github.com/AlchemistSimulator/Alchemist/commit/8012170b3f8c3050fa0a5fd51c780b8a1881d432))
+
+
+### Build and continuous integration
+
+* improve fork detection ([#1405](https://github.com/AlchemistSimulator/Alchemist/issues/1405)) ([14f828f](https://github.com/AlchemistSimulator/Alchemist/commit/14f828fa0c7fa7c006b044917a162e4bd5e1b551))
+
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.149 ([ee74e53](https://github.com/AlchemistSimulator/Alchemist/commit/ee74e531dcddaf2f13688813b191ebf2bece29d4))
+* **deps:** update site/themes/hugo-theme-relearn digest to ab5e73a ([107a0ec](https://github.com/AlchemistSimulator/Alchemist/commit/107a0ec0e61cbca86f5192cee8fa5a992c679be4))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([7484f8b](https://github.com/AlchemistSimulator/Alchemist/commit/7484f8b3f9c4f109fb8855483b035f9aede9a08b))
+
+## [24.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.2...24.0.3) (2022-07-05)
+
+
+### Bug Fixes
+
+* remove node action should work ([#1384](https://github.com/AlchemistSimulator/Alchemist/issues/1384)) ([a1f14e8](https://github.com/AlchemistSimulator/Alchemist/commit/a1f14e890c26c8ca241226fe36787b5b3dd2c4e4))
+
+## [24.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.1...24.0.2) (2022-07-05)
+
+
+### Bug Fixes
+
+* **physics:** make engine aware of obstacles ([3dc8e1d](https://github.com/AlchemistSimulator/Alchemist/commit/3dc8e1d71735b4c8ef109ed148ec2580b8bc7747))
+
+## [24.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.0...24.0.1) (2022-07-05)
+
+
+### Bug Fixes
+
+* **physics:** fix physics update rate ([d412a58](https://github.com/AlchemistSimulator/Alchemist/commit/d412a580300862f56fb5a3e0e8972502c8e1900a))
+
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.148 ([b3034f6](https://github.com/AlchemistSimulator/Alchemist/commit/b3034f662fa353c94312bcb1f7aa84ecc2997e95))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([e16bb50](https://github.com/AlchemistSimulator/Alchemist/commit/e16bb506112c1cc3efb6c586f92969bc1538aed3))
+
+## [24.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/23.0.0...24.0.0) (2022-07-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **loading:** add support for loading global reactions from configuration files (#1398)
+
+### Features
+
+* **loading:** add support for loading global reactions from configuration files ([#1398](https://github.com/AlchemistSimulator/Alchemist/issues/1398)) ([fcea601](https://github.com/AlchemistSimulator/Alchemist/commit/fcea6015a3617c0fa343abf230214bcd600cfcae))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 8e04692 ([15019b5](https://github.com/AlchemistSimulator/Alchemist/commit/15019b548d03ff96b1f2ff0efe31398f2e697803))
+* **deps:** update site/themes/hugo-theme-relearn digest to d071d2d ([4ba52ba](https://github.com/AlchemistSimulator/Alchemist/commit/4ba52baff1d0c0cc8f7e898fae4dee3796ee8ff2))
+
+## [23.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/22.0.0...23.0.0) (2022-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** add global reactions (#1318)
+
+### Features
+
+* **api:** add global reactions ([#1318](https://github.com/AlchemistSimulator/Alchemist/issues/1318)) ([2beec96](https://github.com/AlchemistSimulator/Alchemist/commit/2beec96cf1cb3b9d986b8355b571bce167c0250f))
+
+
+### Dependency updates
+
+* **deps:** update plugin multijvmtesting to v0.4.4 ([97b5b52](https://github.com/AlchemistSimulator/Alchemist/commit/97b5b5237a549eb0b72b302791209e6e37eb6c5a))
+
+## [22.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.9...22.0.0) (2022-07-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** skip expensive type-graph search operations when possible
+
+### Bug Fixes
+
+* **incarnation-protelis:** access layers when accessing variables not present in the environment before giving up. ([64835c2](https://github.com/AlchemistSimulator/Alchemist/commit/64835c22074d753ad3154c85437e8245386bf40c))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([48d579b](https://github.com/AlchemistSimulator/Alchemist/commit/48d579be2b22bcfe321fb57c31244560bf0aec50))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.javadocmd:simplelatlng to v1.4.0 ([caf52f5](https://github.com/AlchemistSimulator/Alchemist/commit/caf52f5c527a221a3e011dc6f8695333de418a9f))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0129fa5 ([7f34418](https://github.com/AlchemistSimulator/Alchemist/commit/7f344189f1f275599ac056993a2215791e641e92))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 1607c34 ([d89c4c5](https://github.com/AlchemistSimulator/Alchemist/commit/d89c4c55a98fd6bbe00fd2b3d37ac8ff9eda25ea))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 510a34f ([91fce5a](https://github.com/AlchemistSimulator/Alchemist/commit/91fce5a3e6de9d39132f90076cb7a15457f64191))
+* **deps:** update plugin publishoncentral to v2.0.2 ([c802d64](https://github.com/AlchemistSimulator/Alchemist/commit/c802d641abccbc81547e74a0f9da964d8772b478))
+
+
+### Performance improvements
+
+* **api:** skip expensive type-graph search operations when possible ([8f4ab1a](https://github.com/AlchemistSimulator/Alchemist/commit/8f4ab1a2bd070e7c81e6036c40ea2ef9c3335a72))
+
+
+### Tests
+
+* **incarnation-protelis:** check that env.get("layer name") never returns null, fails if no layer is available ([#1381](https://github.com/AlchemistSimulator/Alchemist/issues/1381)) ([ece3f31](https://github.com/AlchemistSimulator/Alchemist/commit/ece3f3175f555239b93ee3692dec8a10d8c10f70))
+
+
+### Build and continuous integration
+
+* create a dispatcher workflow triggering only one CI/CD workflow per update on non-default branches with open PRs ([36649fb](https://github.com/AlchemistSimulator/Alchemist/commit/36649fb83a1b40c51acc28d06138f1f608b287d4))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.0 ([5a1da08](https://github.com/AlchemistSimulator/Alchemist/commit/5a1da080a8b16b21a4dbf7884c4a8fd58e6cfa5c))
+* increase resilience by running the deployment thrice in case of failures ([4c3f739](https://github.com/AlchemistSimulator/Alchemist/commit/4c3f739c8c83e21f3ec76925e47fde76f85ec7b8))
+* remove unused token ([3398280](https://github.com/AlchemistSimulator/Alchemist/commit/3398280f3aaf0ce219ad1ff9b7fa1f08641c69d4))
+* rename ci-guard.yml into dispatcher.yml ([5a632d8](https://github.com/AlchemistSimulator/Alchemist/commit/5a632d8d2244ad3e200ebb5086c80a69a4309bd6))
+* retry the link-checking five times to reduce the amount of spurious network errors ([7d4d33a](https://github.com/AlchemistSimulator/Alchemist/commit/7d4d33acded9d7f98371ac49e2d0e27084fc3983))
+* **website:** ignore errors 500 and 502 from external websites ([7364ae7](https://github.com/AlchemistSimulator/Alchemist/commit/7364ae7b74ad1579ec2f8be8fb3ea5c42b0a55c6))
+
+## [21.0.9](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.8...21.0.9) (2022-06-30)
+
+
+### Bug Fixes
+
+* **release:** release via renewed publish-on-central ([1d26f4d](https://github.com/AlchemistSimulator/Alchemist/commit/1d26f4d23d672f55d6d61ee3fd8761303fa758bb))
+* **release:** release via renewed publish-on-central ([0e9c3ef](https://github.com/AlchemistSimulator/Alchemist/commit/0e9c3efff8ea741dfe484471bde9a4f632a2b198))
+
+
+### Dependency updates
+
+* **deps:** update dependency it.unimi.dsi:dsiutils to v2.7.2 ([94f15c9](https://github.com/AlchemistSimulator/Alchemist/commit/94f15c914e16253a68ba793afc97c8f4169118e4))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([cbc75fb](https://github.com/AlchemistSimulator/Alchemist/commit/cbc75fbf8ac1b11ab0ef658f3ee1537ae39764fa))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.0.3 ([580fbf9](https://github.com/AlchemistSimulator/Alchemist/commit/580fbf94d20b39e016c1653d734926dd41642125))
+
+## [21.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.7...21.0.8) (2022-06-28)
+
+
+### Bug Fixes
+
+* **alchemist-loading:** fix properties singleton registration ([#1379](https://github.com/AlchemistSimulator/Alchemist/issues/1379)) ([0aa373b](https://github.com/AlchemistSimulator/Alchemist/commit/0aa373b7cb6725d401e4b9d3b62bf037f6912358))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.spotbugs:spotbugs-annotations to v4.7.1 ([7fca6ac](https://github.com/AlchemistSimulator/Alchemist/commit/7fca6ac349726acd5fd37a51abc26ebad80f4339))
+
+## [21.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.6...21.0.7) (2022-06-27)
+
+
+### Bug Fixes
+
+* add toString() to all NodeProperties ([#1377](https://github.com/AlchemistSimulator/Alchemist/issues/1377)) ([dab4ec3](https://github.com/AlchemistSimulator/Alchemist/commit/dab4ec3bbac6bc5dee42959feaed94664d5cace5))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0a8351b ([790f682](https://github.com/AlchemistSimulator/Alchemist/commit/790f682f99f66cdb25512b9946a85c0960d261d3))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b01ca38 ([e8c4a22](https://github.com/AlchemistSimulator/Alchemist/commit/e8c4a22dafbf43ca8bc1f05d8c0938650521eddc))
+* **deps:** update kotest to v5.3.2 ([b54d712](https://github.com/AlchemistSimulator/Alchemist/commit/b54d7126164f7dd97cd4414c3b94b87daed2a2d2))
+* **deps:** update site/themes/hugo-theme-relearn digest to 2b032a3 ([0ac150d](https://github.com/AlchemistSimulator/Alchemist/commit/0ac150d003bce496064955b9565c76ca7c934d05))
+* **deps:** update site/themes/hugo-theme-relearn digest to e09d84f ([d258c77](https://github.com/AlchemistSimulator/Alchemist/commit/d258c77fa679181eef9e1a5007086600b06640dd))
+
 ## [21.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/21.0.5...21.0.6) (2022-06-24)
 
 

@@ -11,6 +11,7 @@ package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -21,10 +22,12 @@ import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
+import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 import org.dyn4j.geometry.Circle
 import org.dyn4j.geometry.MassType
+import org.dyn4j.geometry.Rectangle
 import org.dyn4j.geometry.Transform
 import org.dyn4j.geometry.Vector2
 import org.dyn4j.world.World
@@ -65,13 +68,44 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
 
     init {
-        world.gravity = Vector2(0.0, 0.0)
+        world.gravity = World.ZERO_GRAVITY
+        /*
+         * This flag is defaulted to true. The engine automatically detects
+         * whether a node body stops (its linear velocity is below a certain threshold)
+         * and eventually puts it at rest. This means tha in future world.update() calls,
+         * the at-rest node will not be considered for the environment update.
+         * We do not want this because we always need no move each node, even if the movement is mimimal,
+         * in order to progress their cognitive perception for example.
+         *
+         * For further references: https://dyn4j.org/pages/advanced.html
+         */
+        world.settings.isAtRestDetectionEnabled = false
+        addGlobalReaction(PhysicsUpdate(this))
+        obstacles.forEach { obstacle ->
+            addObstacleToWorld(obstacle)
+        }
     }
 
-    override fun addNode(node: Node<T>, position: Euclidean2DPosition) {
-        backingEnvironment.addNode(node, position)
-        addNodeBody(node)
-        moveNodeBodyToPosition(node, position)
+    private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {
+        val obstacleBody = Body()
+        obstacleBody.addFixture(Rectangle(obstacle.width, obstacle.height))
+        obstacleBody.setMass(MassType.INFINITE)
+        obstacleBody.transform = Transform().apply {
+            translate(obstacle.center)
+        }
+        world.addBody(obstacleBody)
+    }
+
+    private val RectObstacle2D<Euclidean2DPosition>.center get() =
+        Vector2(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2)
+
+    override fun addNode(node: Node<T>, position: Euclidean2DPosition): Boolean {
+        if (backingEnvironment.addNode(node, position)) {
+            addNodeBody(node)
+            moveNodeBodyToPosition(node, position)
+            return true
+        }
+        return false
     }
 
     private fun addNodeBody(node: Node<T>) {
@@ -79,11 +113,27 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         addPhysicalProperties(nodeBody, node.asProperty<T, AreaProperty<T>>().shape.radius)
         nodeToBody[node] = nodeBody
         world.addBody(nodeBody)
+        node.asProperty<T, PhysicalPedestrian2D<T>>()
+            .onFall {
+                /*
+                 * This disables collision response with the falling agent, as
+                 * overlapping is allowed in this case.
+                 * Agents approaching a falling agent will be subject to a
+                 * proper avoidance force. see the PhysicalPedestrian interface.
+                 */
+                nodeToBody[it]?.isEnabled = false
+            }
     }
+
     private fun moveNodeBodyToPosition(node: Node<T>, position: Euclidean2DPosition) {
         nodeToBody[node]?.transform = Transform().apply {
             translate(position.x, position.y)
         }
+    }
+
+    override fun moveNode(node: Node<T>, direction: Euclidean2DPosition) {
+        backingEnvironment.moveNode(node, direction)
+        moveNodeBodyToPosition(node, backingEnvironment.getPosition(node))
     }
 
     private fun addPhysicalProperties(body: PhysicsBody, radius: Double) {
@@ -92,7 +142,6 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     }
 
     override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) = nodeToBody[node]?.let {
-        moveNodeToPosition(node, it.position)
         it.linearVelocity = Vector2(velocity.x, velocity.y)
     } ?: throw IllegalStateException(
         "Unable to update $node physical state. Check if it was added to this environment."
@@ -103,7 +152,13 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     } ?: this.origin
 
     override fun updatePhysics(elapsedTime: Double) {
-        world.update(elapsedTime)
+        world.update(elapsedTime, Int.MAX_VALUE)
+        /*
+         * Make world and environment position consistent
+         */
+        nodeToBody.forEach { (node, body) ->
+            moveNodeToPosition(node, body.position)
+        }
     }
 
     override fun getPosition(node: Node<T>): Euclidean2DPosition = nodeToBody[node]?.position

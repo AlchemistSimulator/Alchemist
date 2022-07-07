@@ -30,10 +30,10 @@ abstract class AbstractSteeringAction<T, P, A>(
      */
     protected open val reaction: Reaction<T>,
     /**
-     * The owner of this action.
+     * The pedestrian property of the owner of this action.
      */
-    node: Node<T>,
-) : AbstractMoveNode<T, P>(environment, node),
+    protected open val pedestrian: PedestrianProperty<T>,
+) : AbstractMoveNode<T, P>(environment, pedestrian.node),
     SteeringAction<T, P>
     where P : Position<P>,
           P : Vector<P>,
@@ -42,7 +42,7 @@ abstract class AbstractSteeringAction<T, P, A>(
     /**
      * The maximum distance the node can walk, this is a length.
      */
-    open val maxWalk: Double get() = node.asProperty<T, PedestrianProperty<T>>().speed() / reaction.rate
+    open val maxWalk: Double get() = pedestrian.speed() / reaction.rate
 
     /**
      * @return The next position where to move, in absolute or relative coordinates depending on the
@@ -73,4 +73,9 @@ abstract class AbstractSteeringAction<T, P, A>(
         require(node is N) { "Incompatible node type. Required ${N::class}, found ${node::class}" }
         return builder(node)
     }
+
+    /**
+     * Get the pedestrian property. This can be useful when cloning actions this actions.
+     */
+    protected val Node<T>.pedestrianProperty get() = this.asProperty<T, PedestrianProperty<T>>()
 }

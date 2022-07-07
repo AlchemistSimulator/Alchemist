@@ -27,6 +27,7 @@ import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
@@ -125,47 +126,59 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public Action<Object> createAction(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final Node<Object> node,
-            final TimeDistribution<Object> time,
-            final Reaction<Object> reaction,
-            final String additionalParameters
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final TimeDistribution<Object> time,
+        final Actionable<Object> actionable,
+        final String additionalParameters
     ) {
-        Objects.requireNonNull(additionalParameters);
-        final var device = node.asPropertyOrNull(ProtelisDevice.class);
-        if (device == null) {
-            throw new IllegalArgumentException("The node must be a " + ProtelisDevice.class.getSimpleName());
-        }
-        if ("send".equalsIgnoreCase(additionalParameters)) {
-            final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
+        if (actionable instanceof Reaction) {
+            Objects.requireNonNull(additionalParameters);
+            final var device = node.asPropertyOrNull(ProtelisDevice.class);
+            if (device == null) {
+                throw new IllegalArgumentException("The node must be a " + ProtelisDevice.class.getSimpleName());
+            }
+            if ("send".equalsIgnoreCase(additionalParameters)) {
+                final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
                     .stream()
                     .flatMap(r -> r.getActions().stream())
                     .filter(a -> a instanceof SendToNeighbor)
                     .map(c -> ((SendToNeighbor) c).getProtelisProgram())
                     .collect(Collectors.toList());
-            final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
-            if (pList.isEmpty()) {
-                throw new IllegalStateException(
-                    "There is no program requiring a " + SendToNeighbor.class.getSimpleName() + " action"
-                );
-            }
-            if (pList.size() > 1) {
-                throw new IllegalStateException(
-                    "There are too many programs requiring a " + SendToNeighbor.class.getName() + " action: " + pList
-                );
-            }
-            return new SendToNeighbor(node, reaction, pList.get(0));
-        } else {
-            try {
-                return new RunProtelisProgram<>(randomGenerator, environment, device, reaction, additionalParameters);
-            } catch (RuntimeException exception) { // NOPMD AvoidCatchingGenericException
-                throw new IllegalArgumentException(
-                    "Could not create the requested Protelis program: " + additionalParameters,
-                    exception
-                );
+                final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
+                if (pList.isEmpty()) {
+                    throw new IllegalStateException(
+                        "There is no program requiring a " + SendToNeighbor.class.getSimpleName() + " action"
+                    );
+                }
+                if (pList.size() > 1) {
+                    throw new IllegalStateException(
+                        "There are too many programs requiring a " + SendToNeighbor.class.getName()
+                            + " action: " + pList
+                    );
+                }
+                return new SendToNeighbor(node, (Reaction<Object>) actionable, pList.get(0));
+            } else {
+                try {
+                    return new RunProtelisProgram<>(
+                        randomGenerator,
+                        environment,
+                        device,
+                        (Reaction<Object>) actionable,
+                        additionalParameters
+                    );
+                } catch (RuntimeException exception) { // NOPMD AvoidCatchingGenericException
+                    throw new IllegalArgumentException(
+                        "Could not create the requested Protelis program: " + additionalParameters,
+                        exception
+                    );
+                }
             }
         }
+        throw new IllegalArgumentException(
+            "The provided actionable must be an instance of " + Reaction.class.getSimpleName()
+        );
     }
 
     @Override
@@ -188,36 +201,41 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public Condition<Object> createCondition(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final Node<Object> node,
-            final TimeDistribution<Object> time,
-            final Reaction<Object> reaction,
-            final String additionalParameters
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final TimeDistribution<Object> time,
+        final Actionable<Object> actionable,
+        final String additionalParameters
     ) {
-        checkIsProtelisNode(node, "The node must have a " + ProtelisDevice.class.getSimpleName());
-        /*
-         * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
-         */
-        final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
+        if (actionable instanceof Reaction) {
+            checkIsProtelisNode(node, "The node must have a " + ProtelisDevice.class.getSimpleName());
+            /*
+             * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
+             */
+            final List<RunProtelisProgram<?>> alreadyDone = node.getReactions()
                 .stream()
                 .flatMap(r -> r.getConditions().stream())
                 .filter(c -> c instanceof ComputationalRoundComplete)
                 .map(c -> ((ComputationalRoundComplete) c).getProgram())
                 .collect(Collectors.toList());
-        final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
-        if (pList.isEmpty()) {
-            throw new IllegalStateException(
-                "There is no program requiring a " + ComputationalRoundComplete.class.getSimpleName() + " condition"
-            );
+            final List<RunProtelisProgram<?>> pList = getIncomplete(node, alreadyDone);
+            if (pList.isEmpty()) {
+                throw new IllegalStateException(
+                    "There is no program requiring a " + ComputationalRoundComplete.class.getSimpleName() + " condition"
+                );
+            }
+            if (pList.size() > 1) {
+                throw new IllegalStateException(
+                    "There are too many programs requiring a " + ComputationalRoundComplete.class.getSimpleName()
+                        + " condition: " + pList
+                );
+            }
+            return new ComputationalRoundComplete(node, pList.get(0));
         }
-        if (pList.size() > 1) {
-            throw new IllegalStateException(
-                "There are too many programs requiring a " + ComputationalRoundComplete.class.getSimpleName()
-                    + " condition: " + pList
-            );
-        }
-        return new ComputationalRoundComplete(node, pList.get(0));
+        throw new IllegalArgumentException(
+            "The provided actionable should be an instance of " + Reaction.class.getSimpleName()
+        );
     }
 
     @Override
@@ -227,22 +245,22 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
     @Override
     public Node<Object> createNode(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final String parameter
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final String parameter
     ) {
         final Node<Object> node = new GenericNode<>(this, environment);
-        node.addProperty(new ProtelisDevice((ProtelisIncarnation<?>) environment.getIncarnation(), node));
+        node.addProperty(new ProtelisDevice<>(environment, node));
         return node;
     }
 
     @Override
     public Reaction<Object> createReaction(
-            final RandomGenerator randomGenerator,
-            final Environment<Object, P> environment,
-            final Node<Object> node,
-            final TimeDistribution<Object> timeDistribution,
-            final String parameter
+        final RandomGenerator randomGenerator,
+        final Environment<Object, P> environment,
+        final Node<Object> node,
+        final TimeDistribution<Object> timeDistribution,
+        final String parameter
     ) {
         final boolean isSend = "send".equalsIgnoreCase(parameter);
         final Reaction<Object> result = isSend
@@ -250,12 +268,22 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 : new Event<>(node, timeDistribution);
         if (parameter != null) {
             result.setActions(
-                Lists.newArrayList(createAction(randomGenerator, environment, node, timeDistribution, result, parameter))
+                Lists.newArrayList(
+                    createAction(randomGenerator, environment, node, timeDistribution, result, parameter)
+                )
             );
         }
         if (isSend) {
-            result.setConditions(Lists.newArrayList(
-                    createCondition(randomGenerator, environment, node, timeDistribution, result, null))
+            result.setConditions(
+                Lists.newArrayList(createCondition(
+                    randomGenerator,
+                    environment,
+                    node,
+                    timeDistribution,
+                    result,
+                    null
+                    )
+                )
             );
         }
         return result;

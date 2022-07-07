@@ -8,6 +8,7 @@ import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * Combination of multiple steering actions.
@@ -24,15 +25,15 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 class CognitiveAgentCombineSteering<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     private val actions: List<SteeringAction<T, P>>,
     private val steerStrategy: SteeringStrategy<T, P>
-) : AbstractSteeringAction<T, P, A>(environment, reaction, node)
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentCombineSteering<T, P, A> =
-        CognitiveAgentCombineSteering(environment, reaction, node, actions, steerStrategy)
+        CognitiveAgentCombineSteering(environment, reaction, node.pedestrianProperty, actions, steerStrategy)
 
     override fun nextPosition(): P = steerStrategy.computeNextPosition(actions).coerceAtMost(maxWalk)
 }

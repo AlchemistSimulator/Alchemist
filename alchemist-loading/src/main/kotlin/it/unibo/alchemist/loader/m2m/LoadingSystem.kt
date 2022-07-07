@@ -18,12 +18,14 @@ import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import java.util.concurrent.Semaphore
@@ -75,14 +77,16 @@ internal abstract class LoadingSystem(
             setCurrentRandomGenerator(simulationRNG)
             // INCARNATION
             val incarnation = SimulationModel.visitIncarnation<P, T>(root[DocumentRoot.incarnation])
-            registerSingleton(incarnation)
+            contextualize(incarnation)
             registerImplicit<String, Molecule>(incarnation::createMolecule)
             registerImplicit<String, Any?>(incarnation::createConcentration)
             // ENVIRONMENT
             val environment: Environment<T, P> =
                 SimulationModel.visitEnvironment(incarnation, context, root[DocumentRoot.environment])
             logger.info("Created environment: {}", environment)
-            registerSingleton(environment)
+            contextualize(environment)
+            // GLOBAL PROGRAMS
+            loadGlobalProgramsOnEnvironment(simulationRNG, incarnation, environment, root)
             // LAYERS
             val layers: List<Pair<Molecule, Layer<T, P>>> =
                 SimulationModel.visitLayers(incarnation, context, root[DocumentRoot.layers])
@@ -101,7 +105,7 @@ internal abstract class LoadingSystem(
             val linkingRule =
                 SimulationModel.visitLinkingRule<P, T>(context, root.getOrEmptyMap(DocumentRoot.linkingRule))
             environment.linkingRule = linkingRule
-            registerSingleton(linkingRule)
+            contextualize(linkingRule)
             // DISPLACEMENTS
             setCurrentRandomGenerator(scenarioRNG)
             val displacementsSource = root.getOrEmpty(DocumentRoot.deployments)
@@ -138,6 +142,36 @@ internal abstract class LoadingSystem(
             }
             exporters.forEach { it.bindVariables(variableValues) }
             return EnvironmentAndExports(environment, exporters)
+        }
+
+        private fun <T, P : Position<P>> loadGlobalProgramsOnEnvironment(
+            randomGenerator: RandomGenerator,
+            incarnation: Incarnation<T, P>,
+            environment: Environment<T, P>,
+            descriptor: Map<*, *>,
+        ) {
+            val environmentDescriptor = descriptor[DocumentRoot.environment]
+            if (environmentDescriptor is Map<*, *>) {
+                val programDescriptor = environmentDescriptor.getOrEmpty(DocumentRoot.Environment.globalPrograms)
+                val globalPrograms = SimulationModel.visitRecursively(
+                    context,
+                    programDescriptor,
+                    DocumentRoot.Environment.GlobalProgram,
+                ) { program ->
+                    requireNotNull(program) {
+                        "null is not a valid program in $descriptor. ${DocumentRoot.Environment.GlobalProgram.guide}"
+                    }
+                    (program as? Map<*, *>)?.let {
+                        SimulationModel.visitProgram(randomGenerator, incarnation, environment, null, context, it)
+                            ?.onSuccess { (_, actionable) ->
+                                if (actionable is GlobalReaction) {
+                                    environment.addGlobalReaction(actionable)
+                                }
+                            }
+                    }
+                }
+                logger.debug("Global programs: {}", globalPrograms)
+            }
         }
 
         private fun <T, P : Position<P>> loadContentsOnNode(
@@ -185,9 +219,12 @@ internal abstract class LoadingSystem(
                 }
                 (program as? Map<*, *>)?.let {
                     SimulationModel.visitProgram(randomGenerator, incarnation, environment, node, context, it)
-                        ?.onSuccess { (filters, reaction) ->
-                            if (filters.isEmpty() || filters.any { shape -> nodePosition in shape }) {
-                                node.addReaction(reaction)
+                        ?.onSuccess { (filters, actionable) ->
+                            if (
+                                actionable is Reaction &&
+                                (filters.isEmpty() || filters.any { shape -> nodePosition in shape })
+                            ) {
+                                node.addReaction(actionable)
                             }
                         }
                 }
@@ -218,22 +255,22 @@ internal abstract class LoadingSystem(
                     else -> CombinedLinkingRule(listOf(linkingRule, newLinkingRule))
                 }
                 environment.linkingRule = composedLinkingRule
-                registerSingleton<LinkingRule<T, P>>(composedLinkingRule)
+                contextualize<LinkingRule<T, P>>(composedLinkingRule)
             }
             deployment.stream().forEach { position ->
                 val node = SimulationModel.visitNode(simulationRNG, incarnation, environment, context, nodeDescriptor)
-                registerSingleton(node)
+                contextualize(node)
                 // PROPERTIES
                 loadPropertiesOnNode(node, position, descriptor)
-                node.properties.forEach { factory.registerSingleton(it) }
+                node.properties.forEach { contextualize(it) }
                 // NODE CONTENTS
                 loadContentsOnNode(incarnation, node, position, descriptor)
                 // PROGRAMS
                 loadProgramsOnNode(simulationRNG, incarnation, environment, node, position, descriptor)
-                node.properties.forEach { factory.deregisterSingleton(it) }
+                node.properties.forEach { decontextualize(it) }
                 environment.addNode(node, position)
                 logger.debug("Added node {} at {}", node.id, position)
-                factory.deregisterSingleton(node)
+                decontextualize(node)
             }
         }
 
@@ -277,7 +314,14 @@ internal abstract class LoadingSystem(
 
         private val factory: Factory get() = context.factory
 
-        private inline fun <reified T> registerSingleton(target: T) = factory.registerSingleton(T::class.java, target)
+        /*
+         * Use this method to register a singleton that should be suitable for any superclass in its hierarchy.
+         */
+        private inline fun <reified T> contextualize(target: T) = factory.registerSingleton(T::class.java, target)
+        /*
+         * Contextualize dual operation.
+         */
+        private inline fun <reified T> decontextualize(target: T) = factory.deregisterSingleton(target)
         private inline fun <reified T, reified R> registerImplicit(noinline translator: (T) -> R) =
             factory.registerImplicit(T::class.java, R::class.java, translator)
         private fun Map<*, *>.getOrEmpty(key: String) = get(key) ?: emptyList<Any>()

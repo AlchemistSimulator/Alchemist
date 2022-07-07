@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * Move the node towards the target position as fast as possible.
@@ -20,19 +21,19 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
 open class CognitiveAgentSeek<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     target: P
-) : CognitiveAgentArrive<T, P, A>(environment, reaction, node, 0.0, 0.0, target)
+) : CognitiveAgentArrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {
 
     constructor(
         environment: Environment<T, P>,
         reaction: Reaction<T>,
-        node: Node<T>,
+        pedestrian: PedestrianProperty<T>,
         vararg coordinates: Number
-    ) : this(environment, reaction, node, environment.makePosition(*coordinates))
+    ) : this(environment, reaction, pedestrian, environment.makePosition(*coordinates))
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentSeek<T, P, A> =
-        CognitiveAgentSeek(environment, reaction, node, target)
+        CognitiveAgentSeek(environment, reaction, node.pedestrianProperty, target)
 }

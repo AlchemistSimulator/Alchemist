@@ -8,8 +8,8 @@
  */
 package it.unibo.alchemist.core.interfaces;
 
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import org.danilopianini.util.ListSet;
 
 /**
@@ -38,20 +38,18 @@ public interface DependencyGraph<T> {
      * the existing reactions map: this method assumes that all the dependencies
      * among the existing reactions are correct and up to date.
      *
-     * @param rh
-     *            the reaction handler whose dependencies should be calculated.
+     * @param reactionHandler the reaction handler whose dependencies should be calculated.
      */
-    void createDependencies(Reaction<T> rh);
+    void createDependencies(Actionable<T> reactionHandler);
 
     /**
      * This method removes all the dependencies (both in and out dependencies) for a
      * given reaction handler. This method is meant to be used in order to keep the
      * dependencies clean when removing a reaction.
      *
-     * @param rh
-     *            the reaction handler whose dependencies will be deleted.
+     * @param reactionHandler the reaction handler whose dependencies will be deleted.
      */
-    void removeDependencies(Reaction<T> rh);
+    void removeDependencies(Actionable<T> reactionHandler);
 
     /**
      * Given two nodes, the engine assumes they are no longer neighbors and deletes
@@ -68,15 +66,12 @@ public interface DependencyGraph<T> {
      * Returns the set of reactions that may be influenced by the provided reaction.
      *
      * @param reaction the input reaction
-     *
      * @return the set of reactions that may be influenced by the provided reaction
-     *
      */
-    ListSet<Reaction<T>> outboundDependencies(Reaction<T> reaction);
+    ListSet<Actionable<T>> outboundDependencies(Actionable<T> reaction);
 
     /**
-     *
      * @return the set of all reactions with a {@link it.unibo.alchemist.model.interfaces.Context#GLOBAL} input context
      */
-    ListSet<Reaction<T>> globalInputContextReactions();
+    ListSet<Actionable<T>> globalInputContextReactions();
 }

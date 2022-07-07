@@ -76,7 +76,8 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @param environment
      *            the environment that will host this object
      * @param node
-     *            the node that will host this object
+     *            the node that will host this object. If it is `null` the related reaction
+     *            will not belong to a {@link Node}
      * @param parameter
      *            a {@link String} describing the object
      * @return a new {@link TimeDistribution}
@@ -84,7 +85,7 @@ public interface Incarnation<T, P extends Position<? extends P>> {
     TimeDistribution<T> createTimeDistribution(
             RandomGenerator randomGenerator,
             Environment<T, P> environment,
-            Node<T> node,
+            @Nullable Node<T> node,
             @Nullable String parameter
     );
 
@@ -115,22 +116,23 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @param environment
      *            the environment that will host this object
      * @param node
-     *            the node that will host this object
+     *            the node that will host this object. If it is `null` the actionable
+     *            will not belong to a {@link Node}
      * @param time
      *            the time distribution of the reaction
-     * @param reaction
-     *            the reaction hosting this object
+     * @param actionable
+     *            the actionable hosting this object
      * @param additionalParameters
      *            a {@link String} describing the object
      * @return a new {@link Condition}
      */
     Condition<T> createCondition(
-            RandomGenerator randomGenerator,
-            Environment<T, P> environment,
-            Node<T> node,
-            TimeDistribution<T> time,
-            Reaction<T> reaction,
-            String additionalParameters
+        RandomGenerator randomGenerator,
+        Environment<T, P> environment,
+        @Nullable Node<T> node,
+        TimeDistribution<T> time,
+        Actionable<T> actionable,
+        String additionalParameters
     );
 
     /**
@@ -139,22 +141,22 @@ public interface Incarnation<T, P extends Position<? extends P>> {
      * @param environment
      *            the environment that will host this object
      * @param node
-     *            the node that will host this object
+     *            the node that will host this object. If it is `null` the actionable
+     *            will not belong to a {@link Node}
      * @param time
      *            the time distribution of the reaction
-     * @param reaction
-     *            the reaction hosting this object
+     * @param actionable
+     *            the actionable hosting this object
      * @param additionalParameters
      *            a {@link String} describing the object
      * @return a new {@link Action}
      */
     Action<T> createAction(
-            RandomGenerator randomGenerator,
-            Environment<T, P> environment,
-            Node<T> node,
-            TimeDistribution<T> time,
-            Reaction<T> reaction,
-            String additionalParameters
+        RandomGenerator randomGenerator,
+        Environment<T, P> environment,
+        @Nullable Node<T> node,
+        TimeDistribution<T> time,
+        Actionable<T> actionable,
+        String additionalParameters
     );
-
 }

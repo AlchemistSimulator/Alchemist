@@ -15,7 +15,7 @@ jobs:
         uses: danysk/action-checkout@0.2.1
         with:
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.0.2
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.0
         with:
           build-command: ./gradlew dokkaHtml --parallel
           check-command: |

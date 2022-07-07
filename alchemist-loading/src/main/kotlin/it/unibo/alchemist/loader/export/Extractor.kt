@@ -10,7 +10,7 @@
 package it.unibo.alchemist.loader.export
 
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
@@ -45,7 +45,12 @@ interface Extractor<out E : Any> {
      *      - be iterable in predictable order
      *      (namely, implement [SortedMap] or extend [LinkedHashMap]).
      */
-    fun <T> extractData(environment: Environment<T, *>, reaction: Reaction<T>?, time: Time, step: Long): Map<String, E>
+    fun <T> extractData(
+        environment: Environment<T, *>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Map<String, E>
 
     /**
      * @return the name of the properties that this [Extractor] can

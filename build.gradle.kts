@@ -32,18 +32,16 @@ plugins {
 allprojects {
 
     with(rootProject.libs.plugins) {
+        apply(plugin = dokka.id)
+        apply(plugin = gitSemVer.id)
         apply(plugin = java.qa.id)
         apply(plugin = multiJvmTesting.id)
+        apply(plugin = kotlin.jvm.id)
         apply(plugin = kotlin.qa.id)
-        apply(plugin = taskTree.id)
+        apply(plugin = publishOnCentral.id)
         apply(plugin = shadowJar.id)
+        apply(plugin = taskTree.id)
     }
-
-    apply(plugin = "org.danilopianini.git-sensitive-semantic-versioning")
-    apply(plugin = "java-library")
-    apply(plugin = "kotlin")
-    apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "org.danilopianini.publish-on-central")
 
     multiJvm {
         jvmVersionForCompilation.set(11)

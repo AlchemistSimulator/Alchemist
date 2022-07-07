@@ -1,3 +1,16 @@
+## [24.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.4...24.0.5) (2022-07-07)
+
+
+### Dependency updates
+
+* **core-deps:** update dependency org.jetbrains.kotlin.jvm to v1.7.10 ([72039e8](https://github.com/AlchemistSimulator/Alchemist/commit/72039e88bcb125b68f5a2a5411c56cc7a258199d))
+* **deps:** update plugin multijvmtesting to v0.4.5 ([353a3d4](https://github.com/AlchemistSimulator/Alchemist/commit/353a3d44c87c04e6462474b5791e1819d4baccec))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([da6b164](https://github.com/AlchemistSimulator/Alchemist/commit/da6b1648bbb499e69c1bc7787bfceda90c939c36))
+
 ## [24.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.3...24.0.4) (2022-07-06)
 
 

@@ -1,3 +1,19 @@
+## [24.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.5...24.0.6) (2022-07-08)
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v16.4.0 ([f1daa34](https://github.com/AlchemistSimulator/Alchemist/commit/f1daa34790c1708a2e842ee3fa06274b41ca5b79))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.9 ([9bba0f7](https://github.com/AlchemistSimulator/Alchemist/commit/9bba0f7d49cc186f1141f4d89c8fb5db5c5ef19a))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 493524e ([14d69bc](https://github.com/AlchemistSimulator/Alchemist/commit/14d69bc737491a9d32e17c20ebe769f9cd6d8f16))
+* **deps:** update external-resources/learning-scafi-alchemist digest to e7f6568 ([e48ac22](https://github.com/AlchemistSimulator/Alchemist/commit/e48ac228bb45925d5cbcd95eabc7662e027ba43b))
+* **deps:** update node.js to 16.16 ([192437c](https://github.com/AlchemistSimulator/Alchemist/commit/192437c6fe87ac2986dfed26e0b1fdab675c907e))
+* **deps:** update plugin multijvmtesting to v0.4.6 ([71eae9a](https://github.com/AlchemistSimulator/Alchemist/commit/71eae9ab42987d07dc3bc0467b1ddd627e8eb3ad))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.14 ([79e3546](https://github.com/AlchemistSimulator/Alchemist/commit/79e3546b4d7de83db3bc8d4d8c014158ce35a260))
+* **deps:** update plugin publishoncentral to v2.0.3 ([27bf6c4](https://github.com/AlchemistSimulator/Alchemist/commit/27bf6c4d6ac2a2f0e16197182c5f1ae81533fc58))
+* **deps:** update site/themes/hugo-theme-relearn digest to a74ec4d ([19da09a](https://github.com/AlchemistSimulator/Alchemist/commit/19da09a909479ff91e9d241fe12ba0ee385abfc0))
+* **deps:** update site/themes/hugo-theme-relearn digest to e1e3ef0 ([c3d3170](https://github.com/AlchemistSimulator/Alchemist/commit/c3d31704b9ecde0a6145be6e39a6c8ca54c76435))
+
 ## [24.0.5](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.4...24.0.5) (2022-07-07)
 
 

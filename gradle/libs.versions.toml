@@ -69,7 +69,7 @@ mongodb = "org.mongodb:mongodb-driver-sync:4.6.1"
 oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.1.158"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
-quadtree = "org.danilopianini:java-quadtree:0.1.9"
+quadtree = "org.danilopianini:java-quadtree:0.2.0"
 resourceloader = "org.danilopianini:thread-inheritable-resource-loader:0.3.5"
 rtree = "com.github.davidmoten:rtree:0.10"
 scafi-core = { module = "it.unibo.scafi:scafi-core_2.13", version.ref = "scafi" }

@@ -1,3 +1,10 @@
+## [24.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.6...24.0.7) (2022-07-08)
+
+
+### Bug Fixes
+
+* **loading:** disable aliases limit in YAML, allowing for richer simulation descriptors and less duplication ([#1422](https://github.com/AlchemistSimulator/Alchemist/issues/1422)) ([6480392](https://github.com/AlchemistSimulator/Alchemist/commit/6480392aa68975bd1654803353f651bdfa412b2a))
+
 ## [24.0.6](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.5...24.0.6) (2022-07-08)
 
 

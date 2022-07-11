@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.1
         with:
           build-command: true
           check-command: |
@@ -39,7 +39,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.1
         with:
           build-command: |
             ./gradlew shadowJar --parallel || ./gradlew shadowJar --parallel
@@ -64,7 +64,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.1
         with:
           build-command: true
           check-command: true
@@ -89,7 +89,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.1
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.1
         with:
           build-command: |
             ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
@@ -152,7 +152,7 @@ jobs:
         uses: actions/download-artifact@v3.0.0
         with:
           name: website
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.0
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.1
         with:
           java-version: 11
           build-command: |

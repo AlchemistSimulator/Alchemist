@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.Dependency
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListSet
@@ -30,12 +31,12 @@ class PhysicsUpdate<T>(
      * The environment to update.
      */
     val environment: Dynamics2DEnvironment<T>,
-    override val timeDistribution: DiracComb<T>,
+    override val timeDistribution: TimeDistribution<T>,
 ) : GlobalReaction<T> {
 
-    @JvmOverloads constructor(
+    constructor(
         environment: Dynamics2DEnvironment<T>,
-        updateRate: Double = 1.0,
+        updateRate: Double,
     ) : this(environment, DiracComb(updateRate))
 
     override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency)

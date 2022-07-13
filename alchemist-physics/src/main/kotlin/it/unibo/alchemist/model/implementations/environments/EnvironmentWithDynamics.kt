@@ -68,7 +68,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
 
-    private var physicsUpdate = PhysicsUpdate(this)
+    private var physicsUpdate = PhysicsUpdate(this, 1.0)
 
     init {
         world.gravity = World.ZERO_GRAVITY

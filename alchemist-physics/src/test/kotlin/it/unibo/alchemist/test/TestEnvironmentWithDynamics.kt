@@ -10,6 +10,7 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.Vector
@@ -43,6 +44,8 @@ class TestEnvironmentWithDynamics<T, P> : StringSpec({
     "Customize rate with time-distribution" {
         val environment = loadYamlSimulation<T, P>("testCustomizeGlobalReactionRate3.yml")
         environment.globalReactions.size shouldBe 1
-        environment.globalReactions.first().rate shouldBe 0.5
+        val globalReaction = environment.globalReactions.first()
+        globalReaction.timeDistribution::class shouldBe ExponentialTime::class
+        globalReaction.rate shouldBe 0.5
     }
 }) where P : Position<P>, P : Vector<P>

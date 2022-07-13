@@ -25,15 +25,18 @@ import org.danilopianini.util.ListSet
 /**
  * A global Reaction responsible for updating the physics of an [Dynamics2DEnvironment].
  */
-class PhysicsUpdate<T> @JvmOverloads constructor(
+class PhysicsUpdate<T>(
     /**
      * The environment to update.
      */
     val environment: Dynamics2DEnvironment<T>,
-    updateRate: Double = 1.0,
+    override val timeDistribution: DiracComb<T>,
 ) : GlobalReaction<T> {
 
-    override val timeDistribution: DiracComb<T> = DiracComb(updateRate)
+    @JvmOverloads constructor(
+        environment: Dynamics2DEnvironment<T>,
+        updateRate: Double = 1.0,
+    ) : this(environment, DiracComb(updateRate))
 
     override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency)
         get() = ImmutableListSet.copyOf(field)

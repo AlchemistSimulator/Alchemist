@@ -38,18 +38,25 @@ public interface Environment<T, P extends Position<? extends P>> extends Seriali
     void addLayer(Molecule m, Layer<T, P> l);
 
     /**
-     * Add a {@link Actionable} to the {@link Environment}.
+     * Add a {@link GlobalReaction} to the {@link Environment}.
      *
-     * @param reaction the {@link Actionable}
+     * @param reaction the {@link GlobalReaction} to add.
      *
-     * @throws IllegalStateException if both input and output {@link Context} aren't GLOBAL.
      */
     void addGlobalReaction(GlobalReaction<T> reaction);
 
     /**
-     * Get the {@link Environment}'s {@link Actionable}s.
+     * Remove a {@link GlobalReaction} from the {@link Environment}.
      *
-     * @return the list of {@link Actionable}s in this {@link Environment}.
+     * @param reaction {@link GlobalReaction} to remove.
+     *
+     */
+    void removeGlobalReaction(GlobalReaction<T> reaction);
+
+    /**
+     * Get the {@link Environment}'s {@link GlobalReaction}s.
+     *
+     * @return the list of {@link GlobalReaction}s in this {@link Environment}.
      */
     ListSet<GlobalReaction<T>> getGlobalReactions();
 

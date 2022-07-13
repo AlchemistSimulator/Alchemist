@@ -12,6 +12,7 @@ package it.unibo.alchemist.model.implementations.environments
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
+import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -67,6 +68,10 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     private val nodeToBody: MutableMap<Node<T>, PhysicsBody> = mutableMapOf()
 
+    private var physicsUpdate = PhysicsUpdate(this, 1.0)
+
+    private var physicsUpdateHasBeenOverriden: Boolean
+
     init {
         world.gravity = World.ZERO_GRAVITY
         /*
@@ -80,10 +85,23 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
          * For further references: https://dyn4j.org/pages/advanced.html
          */
         world.settings.isAtRestDetectionEnabled = false
-        addGlobalReaction(PhysicsUpdate(this))
+        addGlobalReaction(physicsUpdate)
+        physicsUpdateHasBeenOverriden = false
         obstacles.forEach { obstacle ->
             addObstacleToWorld(obstacle)
         }
+    }
+
+    override fun addGlobalReaction(reaction: GlobalReaction<T>) {
+        if (reaction is PhysicsUpdate) {
+            if (physicsUpdateHasBeenOverriden) {
+                throw IllegalArgumentException("${PhysicsUpdate::class.simpleName} reaction had been already overriden")
+            }
+            removeGlobalReaction(physicsUpdate)
+            physicsUpdateHasBeenOverriden = true
+            physicsUpdate = reaction
+        }
+        backingEnvironment.addGlobalReaction(reaction)
     }
 
     private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {

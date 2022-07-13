@@ -95,7 +95,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     override fun addGlobalReaction(reaction: GlobalReaction<T>) {
         if (reaction is PhysicsUpdate) {
             if (physicsUpdateHasBeenOverriden) {
-                throw IllegalArgumentException("Physics Update had been already overriden")
+                throw IllegalArgumentException("${PhysicsUpdate::class.simpleName} reaction had been already overriden")
             }
             removeGlobalReaction(physicsUpdate)
             physicsUpdateHasBeenOverriden = true

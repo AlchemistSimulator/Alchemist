@@ -1,3 +1,21 @@
+## [24.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.8...24.1.0) (2022-07-13)
+
+
+### Features
+
+* **physics:** allow physics update rate customization ([#1434](https://github.com/AlchemistSimulator/Alchemist/issues/1434)) ([ea27953](https://github.com/AlchemistSimulator/Alchemist/commit/ea2795329eadce25478416836d3ca384499d1bea))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.6.4 ([1a21d67](https://github.com/AlchemistSimulator/Alchemist/commit/1a21d67a6edb53f75caaf1e52fbea4391622e505))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.15 ([d16a61a](https://github.com/AlchemistSimulator/Alchemist/commit/d16a61a7253e7283427cd99614c64c9fa64324aa))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([3e74b18](https://github.com/AlchemistSimulator/Alchemist/commit/3e74b18a6c58bb5386d5aba3fc94eff5a7590edb))
+
 ## [24.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.7...24.0.8) (2022-07-13)
 
 

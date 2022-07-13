@@ -127,7 +127,7 @@ internal object DocumentRoot : SyntaxElement {
                     optional(JavaType.parameters, actions, conditions, timeDistribution)
                 }
             )
-            override fun toString(): String = this::class.java.canonicalName
+            override fun toString(): String = this::class.simpleName ?: this.javaClass.canonicalName
         }
         override val validDescriptors = setOf(
             validDescriptor {

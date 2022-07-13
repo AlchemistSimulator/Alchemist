@@ -36,7 +36,7 @@ class PhysicsUpdate<T>(
 
     constructor(
         environment: Dynamics2DEnvironment<T>,
-        updateRate: Double,
+        updateRate: Double = 30.0,
     ) : this(environment, DiracComb(updateRate))
 
     override val outboundDependencies: ListSet<out Dependency> = ListSet.of(PhysicsDependency)

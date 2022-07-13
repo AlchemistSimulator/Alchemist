@@ -70,6 +70,8 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     private var physicsUpdate = PhysicsUpdate(this, 1.0)
 
+    private var physicsUpdateHasBeenOverriden: Boolean
+
     init {
         world.gravity = World.ZERO_GRAVITY
         /*
@@ -84,6 +86,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
          */
         world.settings.isAtRestDetectionEnabled = false
         addGlobalReaction(physicsUpdate)
+        physicsUpdateHasBeenOverriden = false
         obstacles.forEach { obstacle ->
             addObstacleToWorld(obstacle)
         }
@@ -91,7 +94,11 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     override fun addGlobalReaction(reaction: GlobalReaction<T>) {
         if (reaction is PhysicsUpdate) {
+            if (physicsUpdateHasBeenOverriden) {
+                throw IllegalArgumentException("Physics Update had been already overriden")
+            }
             removeGlobalReaction(physicsUpdate)
+            physicsUpdateHasBeenOverriden = true
             physicsUpdate = reaction
         }
         backingEnvironment.addGlobalReaction(reaction)

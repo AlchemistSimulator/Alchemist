@@ -8,8 +8,13 @@
  */
 package it.unibo.alchemist.test
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.api.SupportedIncarnations
+import it.unibo.alchemist.model.implementations.environments.EnvironmentWithDynamics
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
@@ -47,5 +52,15 @@ class TestEnvironmentWithDynamics<T, P> : StringSpec({
         val globalReaction = environment.globalReactions.first()
         globalReaction.timeDistribution::class shouldBe ExponentialTime::class
         globalReaction.rate shouldBe 0.5
+    }
+    "PhysicsUpdate can be overriden only once" {
+        val environment = EnvironmentWithDynamics(
+            SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow()
+        )
+        environment.addGlobalReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>, 2.0))
+        shouldThrow<IllegalArgumentException> {
+            environment.addGlobalReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>))
+        }
+        environment.globalReactions.first().rate shouldBe 2.0
     }
 }) where P : Position<P>, P : Vector<P>

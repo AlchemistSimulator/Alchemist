@@ -1,0 +1,9 @@
+incarnation: protelis
+
+environment:
+  type: EnvironmentWithDynamics
+  global-programs:
+    - time-distribution:
+        type: DiracComb
+        parameters: [0.5]
+      type: PhysicsUpdate

@@ -58,7 +58,7 @@ junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref 
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
-kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3"
+kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
 logback = "ch.qos.logback:logback-classic:1.2.11"

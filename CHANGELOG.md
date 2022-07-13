@@ -1,3 +1,33 @@
+## [24.0.8](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.7...24.0.8) (2022-07-13)
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.1 ([5549fd2](https://github.com/AlchemistSimulator/Alchemist/commit/5549fd245718dbc3c1c15b7b3b23fc5265c413e1))
+
+
+### General maintenance
+
+* **build:** remove call to VersionCatalog.findDependency(String) as the method has been deprecated and is scheduled to be removed in Gradle 8.0; replaced with findLibrary(String). ([#1425](https://github.com/AlchemistSimulator/Alchemist/issues/1425)) ([b764829](https://github.com/AlchemistSimulator/Alchemist/commit/b764829054426877a7738621a85ab63231176782))
+
+
+### Documentation
+
+* **deps:** update dependency org.jetbrains.dokka to v1.7.10 ([06c0eff](https://github.com/AlchemistSimulator/Alchemist/commit/06c0eff438c68bbb2f0c1e451327d4826f619ab7))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini:java-quadtree to v0.2.0 ([071ab8c](https://github.com/AlchemistSimulator/Alchemist/commit/071ab8c22774f07c56bdbbb313ed94f4eba1d9b7))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0389851 ([231f444](https://github.com/AlchemistSimulator/Alchemist/commit/231f444f33fff86759693d444822eec1588e84b6))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 73b0640 ([78849f7](https://github.com/AlchemistSimulator/Alchemist/commit/78849f7187a93e8dc57e7d68b1b6d9351235773c))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 7ba6cb4 ([c087c41](https://github.com/AlchemistSimulator/Alchemist/commit/c087c4151b66c0bc9daf1a56565f6998a287ee5e))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 870b933 ([5cdc92d](https://github.com/AlchemistSimulator/Alchemist/commit/5cdc92d298d12d40d363338de7af669f9cb2d2e2))
+* **deps:** update plugin com.gradle.enterprise to v3.10.3 ([e847d83](https://github.com/AlchemistSimulator/Alchemist/commit/e847d83f873ae207a1acd17a7a5d40f9d13b9c04))
+* **deps:** update plugin kotlin-qa to v0.20.3 ([2832b26](https://github.com/AlchemistSimulator/Alchemist/commit/2832b26eb6a9e3eb41d1c83850ad8c45a17f8655))
+* **deps:** update plugin multijvmtesting to v0.4.8 ([1dc0c21](https://github.com/AlchemistSimulator/Alchemist/commit/1dc0c211b227b566cd754b59ce557877934feb1f))
+* **deps:** update plugin publishoncentral to v2.0.4 ([69e7049](https://github.com/AlchemistSimulator/Alchemist/commit/69e70497458610e95a554dcc1f9e1db5bbb4a756))
+
 ## [24.0.7](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.6...24.0.7) (2022-07-08)
 
 

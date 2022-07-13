@@ -90,13 +90,11 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     }
 
     override fun addGlobalReaction(reaction: GlobalReaction<T>) {
-        if (reaction !is PhysicsUpdate) {
-            backingEnvironment.addGlobalReaction(reaction)
-        } else {
+        if (reaction is PhysicsUpdate) {
             removeGlobalReaction(physicsUpdate)
             physicsUpdate = reaction
-            backingEnvironment.addGlobalReaction(physicsUpdate)
         }
+        backingEnvironment.addGlobalReaction(reaction)
     }
 
     private fun addObstacleToWorld(obstacle: RectObstacle2D<Euclidean2DPosition>) {

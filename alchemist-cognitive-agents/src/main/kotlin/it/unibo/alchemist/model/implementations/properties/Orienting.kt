@@ -46,7 +46,7 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
      * them).
      */
     private val minArea: Double = 10.0,
-) : OrientingProperty<T, P, A, L, N, DefaultEdge>
+) : AbstractNodeProperty<T>(node), OrientingProperty<T, P, A, L, N, DefaultEdge>
     where P : Position<P>,
           P : Vector<P>,
           A : GeometricTransformation<P>,
@@ -107,4 +107,6 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
      * returned landmark must contain at least one of them.
      */
     abstract override fun createLandmarkIn(area: N): L
+
+    override fun toString() = "${super.toString()}[knoledgeDegree=$knowledgeDegree]"
 }

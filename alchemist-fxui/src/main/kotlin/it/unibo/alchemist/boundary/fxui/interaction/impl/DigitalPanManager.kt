@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.boundary.fxui.interaction.impl
 
-import it.unibo.alchemist.boundary.fxui.util.PointExtension.plus
 import it.unibo.alchemist.boundary.fxui.interaction.api.Direction2D
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
+import it.unibo.alchemist.boundary.fxui.util.PointExtension.plus
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.model.interfaces.Position2D
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer

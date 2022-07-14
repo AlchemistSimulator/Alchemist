@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * Moves the node where the given scalar field is higher.
@@ -24,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 class CognitiveAgentFollowScalarField<T, P, A>(
     environment: Environment<T, P>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     /**
      * The position of either maximum or minimum value of the scalar field, can be null if such a position doesn't
      * exist or isn't known. Its use is explained in [nextPosition].
@@ -34,7 +35,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
      * A function mapping each position to a scalar value (= the scalar field).
      */
     private val valueIn: (P) -> Double,
-) : AbstractSteeringAction<T, P, A>(environment, reaction, node)
+) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position2D<P>, P : Vector2D<P>,
           A : GeometricTransformation<P> {
 
@@ -62,7 +63,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
     }
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
-        CognitiveAgentFollowScalarField(environment, reaction, node, center, valueIn)
+        CognitiveAgentFollowScalarField(environment, reaction, node.pedestrianProperty, center, valueIn)
 
     private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
         if (environment is EnvironmentWithObstacles<*, T, P>) map {

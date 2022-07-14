@@ -19,6 +19,7 @@ import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -66,7 +67,7 @@ import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
  */
 public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
-    private static final Logger L = LoggerFactory.getLogger(Engine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
     private static final int ALL_PERMITS = Integer.MAX_VALUE;
     private final Lock statusLock = new ReentrantLock();
     private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
@@ -84,10 +85,10 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private Optional<Throwable> error = Optional.empty();
     private Time currentTime = Time.ZERO;
     private long currentStep;
-    private Thread myThread;
+    private Thread simulationThread;
 
     /**
-     * Builds a simulation for a given environment. By default it uses a
+     * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
@@ -100,7 +101,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     /**
-     * Builds a simulation for a given environment. By default it uses a
+     * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
@@ -115,7 +116,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     /**
-     * Builds a simulation for a given environment. By default it uses a
+     * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
@@ -132,7 +133,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         justification = "The environment is stored intentionally, and this class is final"
     )
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t) {
-        L.trace("Engine created");
+        LOGGER.trace("Engine created");
         environment = e;
         environment.setSimulation(this);
         dependencyGraph = new JGraphTDependencyGraph<>(environment);
@@ -142,7 +143,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     /**
-     * Builds a simulation for a given environment. By default it uses a
+     * Builds a simulation for a given environment. By default, it uses a
      * DependencyGraph and an IndexedPriorityQueue internally. If you want to
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
@@ -164,7 +165,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void checkCaller() {
-        if (!Thread.currentThread().equals(myThread)) {
+        if (!Thread.currentThread().equals(simulationThread)) {
             throw new IllegalMonitorStateException("This method must get called from the simulation thread.");
         }
     }
@@ -186,49 +187,52 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     private void doStep() {
-        final Reaction<T> mu = scheduler.getNext();
-        if (mu == null) {
+        final Actionable<T> nextEvent = scheduler.getNext();
+        if (nextEvent == null) {
             this.newStatus(TERMINATED);
-            L.info("No more reactions.");
+            LOGGER.info("No more reactions.");
         } else {
-            final Time t = mu.getTau();
-            if (t.compareTo(currentTime) < 0) {
-                throw new IllegalStateException(mu + "\nis scheduled in the past at time " + t
+            final Time scheduledTime = nextEvent.getTau();
+            if (scheduledTime.compareTo(currentTime) < 0) {
+                throw new IllegalStateException(
+                    nextEvent + " is scheduled in the past at time " + scheduledTime
                         + ", current time is " + currentTime
-                        + ". Problem occurred at step " + currentStep);
+                        + ". Problem occurred at step " + currentStep
+                );
             }
-            currentTime = t;
-            if (mu.canExecute()) {
+            currentTime = scheduledTime;
+            if (nextEvent.canExecute()) {
                 /*
                  * This must be taken before execution, because the reaction
                  * might remove itself (or its node) from the environment.
                  */
-                mu.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
-                mu.execute();
-                Set<Reaction<T>> toUpdate = dependencyGraph.outboundDependencies(mu);
+                nextEvent.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
+                nextEvent.execute();
+                Set<Actionable<T>> toUpdate = dependencyGraph.outboundDependencies(nextEvent);
                 if (!afterExecutionUpdates.isEmpty()) {
                     afterExecutionUpdates.forEach(Update::performChanges);
                     afterExecutionUpdates.clear();
-                    toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(mu));
+                    toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(nextEvent));
                 }
                 toUpdate.forEach(this::updateReaction);
             }
-            mu.update(currentTime, true, environment);
-            scheduler.updateReaction(mu);
+            nextEvent.update(currentTime, true, environment);
+            scheduler.updateReaction(nextEvent);
             monitorLock.acquireUninterruptibly();
-            for (final OutputMonitor<T, P> m : monitors) {
-                m.stepDone(environment, mu, currentTime, currentStep);
+            for (final OutputMonitor<T, P> monitor : monitors) {
+                monitor.stepDone(environment, nextEvent, currentTime, currentStep);
             }
             monitorLock.release();
         }
         if (environment.isTerminated()) {
             newStatus(TERMINATED);
-            L.info("Termination condition reached.");
+            LOGGER.info("Termination condition reached.");
         }
         currentStep++;
     }
 
     private void finalizeConstructor() {
+        this.environment.getGlobalReactions().forEach(this::reactionAdded);
         for (final Node<T> n : environment) {
             for (final Reaction<T> r : n.getReactions()) {
                 scheduleReaction(r);
@@ -290,7 +294,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 nextCommand = commands.take();
                 processCommand(nextCommand);
             } catch (InterruptedException e) {
-                L.debug("Look! A spurious wakeup! :-)");
+                LOGGER.debug("Look! A spurious wakeup! :-)");
             }
         }
     }
@@ -345,12 +349,12 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public void reactionAdded(final Reaction<T> reactionToAdd) {
+    public void reactionAdded(final Actionable<T> reactionToAdd) {
         reactionChanged(new ReactionAddition(reactionToAdd));
     }
 
     @Override
-    public void reactionRemoved(final Reaction<T> reactionToRemove) {
+    public void reactionRemoved(final Actionable<T> reactionToRemove) {
         reactionChanged(new ReactionRemoval(reactionToRemove));
     }
 
@@ -359,7 +363,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         afterExecutionUpdates.add(update);
     }
 
-    private Stream<Reaction<T>> reactionsToUpdateAfterExecution() {
+    private Stream<? extends Actionable<T>> reactionsToUpdateAfterExecution() {
         return afterExecutionUpdates.stream()
             .flatMap(Update::getReactionsToUpdate)
             .distinct();
@@ -368,7 +372,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private void processCommand(final CheckedRunnable command) throws Throwable {
         command.run();
         // Update all reactions before applying dependency graph updates
-        final Set<Reaction<T>> updated = new LinkedHashSet<>();
+        final Set<Actionable<T>> updated = new LinkedHashSet<>();
         reactionsToUpdateAfterExecution().forEach(r -> {
             updated.add(r);
             updateReaction(r);
@@ -395,11 +399,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     public void run() {
         synchronized (environment) {
             try {
-                myThread = Thread.currentThread();
+                simulationThread = Thread.currentThread();
                 finalizeConstructor();
                 status = Status.READY;
                 final long currentThread = Thread.currentThread().getId();
-                L.trace("Thread {} started running.", currentThread);
+                LOGGER.trace("Thread {} started running.", currentThread);
                 monitorLock.acquireUninterruptibly();
                 for (final OutputMonitor<T, P> m : monitors) {
                     m.initialized(environment);
@@ -421,7 +425,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 }
             } catch (Throwable e) { // NOPMD: forced by CheckedRunnable
                 error = Optional.of(e);
-                L.error("The simulation engine crashed.", e);
+                LOGGER.error("The simulation engine crashed.", e);
             } finally {
                 status = TERMINATED;
                 commands.clear();
@@ -458,7 +462,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             @Override
             public void stepDone(
                     @Nonnull final Environment<T, P> environment,
-                    @Nullable final Reaction<T> reaction,
+                    @Nullable final Actionable<T> reaction,
                     @Nonnull final Time time,
                     final long step
             ) {
@@ -468,17 +472,17 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public void schedule(final CheckedRunnable r) {
+    public void schedule(final CheckedRunnable runnable) {
         if (getStatus().equals(TERMINATED)) {
             throw new IllegalStateException("This simulation is terminated and can not get resumed.");
         }
-        commands.add(r);
+        commands.add(runnable);
     }
 
-    private void scheduleReaction(final Reaction<T> r) {
-        dependencyGraph.createDependencies(r);
-        r.initializationComplete(currentTime, environment);
-        scheduler.addReaction(r);
+    private void scheduleReaction(final Actionable<T> reaction) {
+        dependencyGraph.createDependencies(reaction);
+        reaction.initializationComplete(currentTime, environment);
+        scheduler.addReaction(reaction);
     }
 
     @Override
@@ -491,7 +495,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         return getClass().getSimpleName() + " t: " + getTime() + ", s: " + getStep();
     }
 
-    private void updateReaction(final Reaction<T> r) {
+    private void updateReaction(final Actionable<T> r) {
         final Time t = r.getTau();
         r.update(currentTime, false, environment);
         if (!r.getTau().equals(t)) {
@@ -517,102 +521,97 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     // CHECKSTYLE: FinalClassCheck OFF
     private class Update {
-        private final Node<T> source;
-
-        private Update(final Node<T> source) {
-            this.source = source;
-        }
-
-        protected final Stream<Reaction<T>> getReactionsRelatedTo(final Node<T> source, final Neighborhood<T> neighborhood) {
-            return Stream.of(
-                    source.getReactions().stream(),
-                    neighborhood.getNeighbors().stream()
-                            .flatMap(node -> node.getReactions().stream())
-                            .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
-                    dependencyGraph.globalInputContextReactions().stream())
-                .reduce(Stream.empty(), Stream::concat);
-        }
-
-        public Stream<Reaction<T>> getReactionsToUpdate() {
-            return Stream.empty();
-        }
 
         public void performChanges() { }
 
-        protected final Node<T> getSource() {
-            return source;
+        public Stream<? extends Actionable<T>> getReactionsToUpdate() {
+            return Stream.empty();
         }
     }
 
     private final class Movement extends Update {
 
-        private Movement(final Node<T> source) {
-            super(source);
+        private final @Nonnull Node<T> sourceNode;
+
+        private Movement(final @Nonnull Node<T> sourceNode) {
+            this.sourceNode = sourceNode;
         }
 
         @Override
-        public Stream<Reaction<T>> getReactionsToUpdate() {
-            return getReactionsRelatedTo(getSource(), environment.getNeighborhood(getSource()))
-                    .filter(it -> it.getInboundDependencies().stream()
-                            .anyMatch(dependency -> dependency.dependsOn(Dependency.MOVEMENT)));
+        public Stream<? extends Actionable<T>> getReactionsToUpdate() {
+            return getReactionsRelatedTo(this.sourceNode, environment.getNeighborhood(this.sourceNode))
+                .filter(it ->
+                    it.getInboundDependencies().stream()
+                        .anyMatch(dependency -> dependency.dependsOn(Dependency.MOVEMENT))
+                );
         }
 
+        private Stream<? extends Actionable<T>> getReactionsRelatedTo(
+            final Node<T> source,
+            final Neighborhood<T> neighborhood
+        ) {
+            return Stream.of(
+                    source.getReactions().stream(),
+                    neighborhood.getNeighbors().stream()
+                        .flatMap(node -> node.getReactions().stream())
+                        .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
+                    dependencyGraph.globalInputContextReactions().stream())
+                .reduce(Stream.empty(), Stream::concat);
+        }
     }
 
     private class UpdateOnNode extends Update {
 
         private final Function<Reaction<T>, Update> reactionLevelOperation;
 
-        private UpdateOnNode(final Node<T> source, final Function<Reaction<T>, Update> reactionLevelOperation) {
-            super(source);
+        private final Node<T> sourceNode;
+
+        private UpdateOnNode(final Node<T> sourceNode, final Function<Reaction<T>, Update> reactionLevelOperation) {
+            this.sourceNode = sourceNode;
             this.reactionLevelOperation = reactionLevelOperation;
         }
 
         @Override
         public final void performChanges() {
-            getSource().getReactions().stream()
+            this.sourceNode.getReactions().stream()
                     .map(reactionLevelOperation)
                     .forEach(Update::performChanges);
         }
     }
 
     private final class NodeRemoval extends UpdateOnNode {
-        private NodeRemoval(final Node<T> source) {
-            super(source, ReactionRemoval::new);
+        private NodeRemoval(final Node<T> sourceNode) {
+            super(sourceNode, ReactionRemoval::new);
         }
     }
 
     private final class NodeAddition extends UpdateOnNode {
-        private NodeAddition(final Node<T> source) {
-            super(source, ReactionAddition::new);
+        private NodeAddition(final Node<T> sourceNode) {
+            super(sourceNode, ReactionAddition::new);
         }
     }
 
     private abstract class UpdateOnReaction extends Update {
 
-        private final Reaction<T> actualSource;
+        private final Actionable<T> sourceActionable;
 
-        private UpdateOnReaction(final Reaction<T> source) {
-            super(source.getNode());
-            actualSource = source;
+        private UpdateOnReaction(final Actionable<T> sourceActionable) {
+            this.sourceActionable = sourceActionable;
         }
 
         @Override
-        public final Stream<Reaction<T>> getReactionsToUpdate() {
-            return Stream.of(actualSource);
+        public final Stream<? extends Actionable<T>> getReactionsToUpdate() {
+            return Stream.of(sourceActionable);
         }
 
-        @Override
-        public abstract void performChanges();
-
-        protected Reaction<T> getSourceReaction() {
-            return actualSource;
+        protected Actionable<T> getSourceReaction() {
+            return sourceActionable;
         }
     }
 
     private final class ReactionRemoval extends UpdateOnReaction {
 
-        private ReactionRemoval(final Reaction<T> source) {
+        private ReactionRemoval(final Actionable<T> source) {
             super(source);
         }
 
@@ -625,7 +624,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     private final class ReactionAddition extends UpdateOnReaction {
 
-        private ReactionAddition(final Reaction<T> source) {
+        private ReactionAddition(final Actionable<T> source) {
             super(source);
         }
 
@@ -637,24 +636,29 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     private class NeighborhoodChanged extends Update {
 
-        private final Node<T> target;
+        private final Node<T> sourceNode;
+        private final Node<T> targetNode;
 
-        private NeighborhoodChanged(final Node<T> source, final Node<T> target) {
-            super(source);
-            this.target = target;
+        private NeighborhoodChanged(final Node<T> sourceNode, final Node<T> targetNode) {
+            this.sourceNode = sourceNode;
+            this.targetNode = targetNode;
         }
 
-        public Node<T> getTarget() {
-            return target;
+        public Node<T> getTargetNode() {
+            return targetNode;
+        }
+
+        public Node<T> getSourceNode() {
+            return sourceNode;
         }
 
         @Override
-        public Stream<Reaction<T>> getReactionsToUpdate() {
+        public Stream<? extends Actionable<T>> getReactionsToUpdate() {
             return Stream.of(
                     Stream.concat(
                             // source, target, and all their neighbors are candidates.
-                            Stream.of(getSource(), target),
-                            Stream.of(environment.getNeighborhood(getSource()), environment.getNeighborhood(getTarget()))
+                            Stream.of(sourceNode, targetNode),
+                            Stream.of(environment.getNeighborhood(sourceNode), environment.getNeighborhood(getTargetNode()))
                                     .flatMap(it -> it.getNeighbors().stream()))
                             .distinct()
                             .flatMap(it -> it.getReactions().stream())
@@ -673,7 +677,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
         @Override
         public void performChanges() {
-            dependencyGraph.addNeighbor(getSource(), getTarget());
+            dependencyGraph.addNeighbor(getSourceNode(), getTargetNode());
         }
     }
 
@@ -685,7 +689,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
         @Override
         public void performChanges() {
-            dependencyGraph.removeNeighbor(getSource(), getTarget());
+            dependencyGraph.removeNeighbor(getSourceNode(), getTargetNode());
         }
     }
 
@@ -704,7 +708,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                         notTimedOut = statusReached.await(timeout, tu);
                         queueLength.getAndDecrement();
                     } catch (InterruptedException e) {
-                        L.info("Spurious wakeup?", e);
+                        LOGGER.info("Spurious wakeup?", e);
                     }
                 }
                 if (queueLength.get() == 0) {

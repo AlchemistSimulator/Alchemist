@@ -18,8 +18,8 @@ import it.unibo.alchemist.model.interfaces.ILsaCondition;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
 
+import it.unibo.alchemist.model.interfaces.Reaction;
 import org.danilopianini.lang.HashString;
 
 import java.util.ArrayList;

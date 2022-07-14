@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.boundary.wormhole.implementation.AbstractWormhole2D;
-import it.unibo.alchemist.boundary.wormhole.implementation.PointAdapter;
-import it.unibo.alchemist.boundary.wormhole.interfaces.ViewPort;
+import it.unibo.alchemist.boundary.ui.api.ViewPort;
+import it.unibo.alchemist.boundary.ui.impl.AbstractWormhole2D;
+import it.unibo.alchemist.boundary.ui.impl.PointAdapter;
 import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;

@@ -11,7 +11,7 @@ package it.unibo.alchemist.test
 
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
@@ -23,7 +23,7 @@ class ExtractorColumnAligned : Extractor<Int> {
     override val columnNames = listOf("d", "c", "b", "a")
     override fun <T> extractData(
         environment: Environment<T, *>,
-        reaction: Reaction<T>?,
+        reaction: Actionable<T>?,
         time: Time,
         step: Long
     ): Map<String, Int> {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -19,7 +19,7 @@ import Libs.incarnation
  */
 
 dependencies {
-    api(project(":alchemist-interfaces"))
+    api(alchemist("api"))
 
     implementation(libs.jgrapht.core)
     implementation(libs.guava)

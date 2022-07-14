@@ -18,9 +18,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 @SuppressFBWarnings
 object PimpMyAlchemist {
-  /**
-   * Wraps a Position, providing + and - operations.
-   */
+  /** Wraps a Position, providing + and - operations. */
   implicit class RichPosition[P <: Position[P] with Vector[P]](position: P) {
     def -(p: P) = position.minus(p)
     def +(p: P) = position.plus(p)
@@ -31,5 +29,5 @@ object PimpMyAlchemist {
   implicit def double2Time(time: Double): Time = new DoubleTime(time)
   implicit def molecule2String(molecule: Molecule): String = molecule.toString
   implicit def string2Molecule(str: String): Molecule = new SimpleMolecule(str)
-  implicit def function2CacheLoader[F, T](f: F => T) = { new CacheLoader[F, T] { def load(key: F) = f(key) } }
+  implicit def function2CacheLoader[F, T](f: F => T) = new CacheLoader[F, T] { def load(key: F) = f(key) }
 }

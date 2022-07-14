@@ -20,15 +20,16 @@ import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
-import it.unibo.alchemist.boundary.gui.effects.DrawBidimensionalGaussianLayersGradient
-import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory
+import it.unibo.alchemist.boundary.swingui.effect.impl.DrawBidimensionalGaussianLayersGradient
+import it.unibo.alchemist.boundary.swingui.effect.impl.EffectSerializationFactory
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 
 class TestEffectLoading : StringSpec(
     {
         "effects with layers should be (de)serializable" {
-            val target = DrawBidimensionalGaussianLayersGradient()
+            val target =
+                DrawBidimensionalGaussianLayersGradient()
             val tempFile = tempfile()
             EffectSerializationFactory.effectToFile(tempFile, target)
             println(tempFile.readText())

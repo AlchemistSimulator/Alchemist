@@ -22,9 +22,7 @@ focused on the Scafi incarnation.
 The tutorial can be found on [GitHub](https://github.com/scafi/learning-scafi-alchemist).
 The `README.md` file of the project explains the use and the steps to follow.
 
-{{% expand "Show README.md" %}}
-{{< github owner="scafi" repo="learning-scafi-alchemist" highlight="false" >}}
-{{% /expand %}}
+{{% import "alchemist/external-resources/learning-scafi-alchemist/README.md" %}}
 
 {{% notice note %}}
 Something went wrong along the line? Drop us an

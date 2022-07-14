@@ -10,23 +10,23 @@
 package it.unibo.alchemist.boundary.fxui.impl
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import it.unibo.alchemist.boundary.fxui.util.CanvasExtension.clear
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup
-import it.unibo.alchemist.boundary.fxui.util.DataFormatFactory
-import it.unibo.alchemist.boundary.fxui.interaction.impl.BaseInteractionManager
-import it.unibo.alchemist.boundary.fxui.interaction.api.InteractionManager
 import it.unibo.alchemist.boundary.fxui.api.DrawCommand
-import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor
+import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup
+import it.unibo.alchemist.boundary.fxui.interaction.api.InteractionManager
+import it.unibo.alchemist.boundary.fxui.interaction.impl.BaseInteractionManager
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.api.KeyboardActionListener
-import it.unibo.alchemist.boundary.wormhole.implementation.ExponentialZoomManager
-import it.unibo.alchemist.boundary.wormhole.interfaces.Wormhole2D
-import it.unibo.alchemist.boundary.wormhole.interfaces.ZoomManager
+import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor
+import it.unibo.alchemist.boundary.fxui.util.CanvasExtension.clear
+import it.unibo.alchemist.boundary.fxui.util.DataFormatFactory
+import it.unibo.alchemist.boundary.ui.api.Wormhole2D
+import it.unibo.alchemist.boundary.ui.api.ZoomManager
+import it.unibo.alchemist.boundary.ui.impl.ExponentialZoomManager
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
@@ -136,7 +136,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> :
         stepDone(environment, null, DoubleTime(), 0)
     }
 
-    override fun stepDone(environment: Environment<T, P>, reaction: Reaction<T>?, time: Time, step: Long) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         update(environment, time)
     }
 
@@ -176,7 +176,10 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> :
      * @returns the zoom manager.
      */
     protected open fun createZoomManager(wormhole: Wormhole2D<P>): ZoomManager =
-        ExponentialZoomManager(wormhole.zoom, ExponentialZoomManager.DEF_BASE)
+        ExponentialZoomManager(
+            wormhole.zoom,
+            ExponentialZoomManager.DEF_BASE
+        )
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         update(environment, time)

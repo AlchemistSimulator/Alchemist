@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -84,11 +84,11 @@ allprojects {
 
     // COMPILE
 
-    tasks.withType<JavaCompile> {
+    tasks.withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
     }
 
-    tasks.withType<KotlinCompile> {
+    tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs = listOf("-Xjvm-default=all") // Enable default methods in Kt interfaces
@@ -97,7 +97,7 @@ allprojects {
 
     // TEST AND COVERAGE
 
-    tasks.withType<Test> {
+    tasks.withType<Test>().configureEach {
         testLogging {
             events("passed", "skipped", "failed", "standardError")
             exceptionFormat = TestExceptionFormat.FULL
@@ -157,7 +157,7 @@ allprojects {
         }
     }
 
-    tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
+    tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
         reports {
             create("html") { enabled = true }
         }
@@ -165,12 +165,12 @@ allprojects {
 
     // PUBLISHING
 
-    tasks.withType<Javadoc> {
+    tasks.withType<Javadoc>().configureEach {
         // Disable Javadoc, use Dokka.
         enabled = false
     }
 
-    tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
+    tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
         dokkaSourceSets.configureEach {
             jdkVersion.set(multiJvm.jvmVersionForCompilation)
             listOf("kotlin", "java")
@@ -178,7 +178,7 @@ allprojects {
                 .map { it to File(projectDir, it) }
                 .toMap()
                 .filterValues { it.exists() }
-                .forEach { path, file ->
+                .forEach { (path, file) ->
                     sourceLink {
                         localDirectory.set(file)
                         val project = if (project == rootProject) "" else project.name
@@ -222,23 +222,21 @@ allprojects {
             password.set(System.getenv("GITHUB_TOKEN"))
         }
     }
-    publishing.publications {
-        withType<MavenPublication> {
-            pom {
-                developers {
-                    developer {
-                        name.set("Danilo Pianini")
-                        email.set("danilo.pianini@unibo.it")
-                        url.set("http://www.danilopianini.org")
-                        roles.set(mutableSetOf("architect", "developer"))
-                    }
+    publishing.publications.withType<MavenPublication>().configureEach {
+        pom {
+            developers {
+                developer {
+                    name.set("Danilo Pianini")
+                    email.set("danilo.pianini@unibo.it")
+                    url.set("http://www.danilopianini.org")
+                    roles.set(mutableSetOf("architect", "developer"))
                 }
             }
         }
     }
 
     // Shadow Jar
-    tasks.withType<ShadowJar> {
+    tasks.withType<ShadowJar>() {
         manifest {
             attributes(
                 mapOf(
@@ -279,7 +277,7 @@ evaluationDependsOnChildren()
 
 dependencies {
     // Depend on subprojects whose presence is necessary to run
-    listOf("interfaces", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
+    listOf("api", "engine", "loading").forEach { api(alchemist(it)) } // Execution requirements
     with(libs.apache.commons) {
         implementation(cli)
         implementation(io)

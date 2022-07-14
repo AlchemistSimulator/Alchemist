@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.util.IterableExtension.randomElement
 import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
@@ -40,15 +41,15 @@ import org.apache.commons.math3.random.RandomGenerator
 open class CognitiveAgentWander<T>(
     private val environment: Physics2DEnvironment<T>,
     reaction: Reaction<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     protected val randomGenerator: RandomGenerator,
     protected val offset: Double,
     protected val radius: Double,
 ) : AbstractSteeringActionWithTarget<T, Euclidean2DPosition, Euclidean2DTransformation>(
     environment,
     reaction,
-    node,
-    TargetSelectionStrategy { randomGenerator.position(environment) }
+    pedestrian,
+    TargetSelectionStrategy { randomGenerator.position(environment) },
 ) {
 
     private val heading by lazy {
@@ -64,7 +65,7 @@ open class CognitiveAgentWander<T>(
         .coerceAtMost(maxWalk)
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
-        CognitiveAgentWander(environment, reaction, node, randomGenerator, offset, radius)
+        CognitiveAgentWander(environment, reaction, node.pedestrianProperty, randomGenerator, offset, radius)
 }
 
 /**

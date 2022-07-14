@@ -24,4 +24,9 @@ class CircularCell @JvmOverloads constructor(
     override val node: Node<Double>,
     override val diameter: Double = 0.0,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : CircularCellProperty, CellProperty<Euclidean2DPosition> by Cell(environment, node, junctions)
+) : AbstractNodeProperty<Double>(node),
+    CircularCellProperty,
+    CellProperty<Euclidean2DPosition> by Cell(environment, node, junctions) {
+
+    override fun toString() = "${super.toString()}[diameter=$diameter]"
+}

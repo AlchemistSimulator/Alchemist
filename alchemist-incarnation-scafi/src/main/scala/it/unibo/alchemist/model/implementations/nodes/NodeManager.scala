@@ -20,11 +20,12 @@ trait NodeManager {
 }
 
 class SimpleNodeManager[T](val node: Node[T]) extends NodeManager {
-  override def put[V](molecule: String, concentration: V): Unit = node.setConcentration(new SimpleMolecule(molecule), concentration.asInstanceOf[T])
+  override def put[V](molecule: String, concentration: V): Unit =
+    node.setConcentration(new SimpleMolecule(molecule), concentration.asInstanceOf[T])
 
   override def get[V](molecule: String): V = node.getConcentration(new SimpleMolecule(molecule)).asInstanceOf[V]
 
-  override def getOption[V](molecule: String): Option[V] = if(has(molecule)) Some[V](get(molecule)) else None
+  override def getOption[V](molecule: String): Option[V] = if (has(molecule)) Some[V](get(molecule)) else None
 
   override def has(molecule: String): Boolean = node.contains(new SimpleMolecule(molecule))
 

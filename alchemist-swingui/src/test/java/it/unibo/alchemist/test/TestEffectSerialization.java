@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,10 +8,10 @@
  */
 package it.unibo.alchemist.test;
 
+import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
+import it.unibo.alchemist.boundary.swingui.effect.impl.EffectFactory;
+import it.unibo.alchemist.boundary.swingui.effect.impl.EffectSerializationFactory;
 import it.unibo.alchemist.util.ClassPathScanner;
-import it.unibo.alchemist.boundary.gui.effects.Effect;
-import it.unibo.alchemist.boundary.gui.effects.EffectFactory;
-import it.unibo.alchemist.boundary.gui.effects.EffectSerializationFactory;
 import org.danilopianini.io.FileUtilities;
 import org.junit.jupiter.api.Test;
 

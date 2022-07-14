@@ -22,8 +22,8 @@ import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.Time
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
@@ -44,7 +44,7 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
                 override fun initialized(environment: Environment<T, P>) = checkForErrors()
                 override fun stepDone(
                     environment: Environment<T, P>,
-                    reaction: Reaction<T>?,
+                    reaction: Actionable<T>?,
                     time: Time,
                     step: Long
                 ) = checkForErrors()

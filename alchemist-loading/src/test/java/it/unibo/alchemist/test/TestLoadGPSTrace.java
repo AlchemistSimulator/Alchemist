@@ -16,8 +16,8 @@ import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
@@ -124,7 +124,7 @@ class TestLoadGPSTrace {
 
             @Override
             public void stepDone(
-                @Nonnull final Environment<T, GeoPosition> environment, final Reaction<T> r,
+                @Nonnull final Environment<T, GeoPosition> environment, final Actionable<T> r,
                 @Nonnull final Time time,
                 final long step
             ) { }

@@ -22,10 +22,13 @@ import org.apache.commons.math3.random.RandomGenerator
 
 import scala.util.{Random, Success, Try}
 
-object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
-  with StandardLibrary with BasicTimeAbstraction with BasicSpatialAbstraction {
+object ScafiIncarnationForAlchemist
+    extends BasicAbstractIncarnation
+    with StandardLibrary
+    with BasicTimeAbstraction
+    with BasicSpatialAbstraction {
   override type P = Point3D
-  override implicit val idBounded = Builtins.Bounded.of_i
+  implicit override val idBounded = Builtins.Bounded.of_i
 
   val LSNS_ALCHEMIST_NODE_MANAGER = "manager"
   val LSNS_ALCHEMIST_ENVIRONMENT = "environment"
@@ -53,10 +56,9 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
 
     def alchemistCoordinates = sense[Array[Double]](LSNS_ALCHEMIST_COORDINATES)
 
-
     def alchemistDeltaTime(whenNan: Double = Double.NaN): Double = {
       val dt = sense[DoubleTime](LSNS_ALCHEMIST_DELTA_TIME).toDouble
-      if(dt.isNaN) whenNan else dt
+      if (dt.isNaN) whenNan else dt
     }
 
     def alchemistTimestamp = sense[it.unibo.alchemist.model.interfaces.Time](LSNS_ALCHEMIST_TIMESTAMP)
@@ -66,27 +68,27 @@ object ScafiIncarnationForAlchemist extends BasicAbstractIncarnation
     override def randomGenerator(): Random = randomGen
     override def nextRandom(): Double = alchemistRandomGen.nextDouble()
 
-    def alchemistEnvironment = sense[Environment[Any,Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
+    def alchemistEnvironment = sense[Environment[Any, Position[_]]](LSNS_ALCHEMIST_ENVIRONMENT)
 
-    private implicit def optionalToOption[E](optional : Optional[E]) : Option[E] =
+    implicit private def optionalToOption[E](optional: Optional[E]): Option[E] =
       if (optional.isPresent) Some(optional.get()) else None
 
-    private def findInLayers[A](name : String) : Option[A] = {
-      val layer : Option[Layer[Any, Position[_]]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
+    private def findInLayers[A](name: String): Option[A] = {
+      val layer: Option[Layer[Any, Position[_]]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
       val node = alchemistEnvironment.getNodeByID(mid())
-      layer.map(l => l.getValue(alchemistEnvironment.getPosition(node)))
+      layer
+        .map(l => l.getValue(alchemistEnvironment.getPosition(node)))
         .map(value => Try(value.asInstanceOf[A]))
         .collect { case Success(value) => value }
     }
 
-    def senseEnvData[A](name: String): A = {
+    def senseEnvData[A](name: String): A =
       findInLayers[A](name).get
-    }
   }
 
   /**
-   * Typical adjustment that needs to be performed when using Alchemist environments with positions of type [[Euclidean2DPosition]]
-   * to properly adapt values and types to ScaFi standard sensors.
+   * Typical adjustment that needs to be performed when using Alchemist environments with positions of type
+   * [[Euclidean2DPosition]] to properly adapt values and types to ScaFi standard sensors.
    */
   trait AlchemistEuclidean2DPosition { self: AggregateProgram with ScafiAlchemistSupport with StandardSensors =>
     override def currentPosition(): Point3D = {

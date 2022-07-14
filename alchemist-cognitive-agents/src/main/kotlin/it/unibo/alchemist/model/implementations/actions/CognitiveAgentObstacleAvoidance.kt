@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.interfaces.Obstacle2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * Move the agent avoiding potential obstacles in its path.
@@ -23,13 +24,13 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 class CognitiveAgentObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
     private val environment: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
-    node: Node<T>,
+    override val pedestrian: PedestrianProperty<T>,
     private val proximityRange: Double,
-) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, node) {
+) : AbstractSteeringAction<T, Euclidean2DPosition, Euclidean2DTransformation>(environment, reaction, pedestrian) {
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentObstacleAvoidance<W, T> =
         if (reaction is SteeringBehavior<T>)
-            CognitiveAgentObstacleAvoidance(environment, reaction, node, proximityRange)
+            CognitiveAgentObstacleAvoidance(environment, reaction, node.pedestrianProperty, proximityRange)
         else throw IllegalArgumentException("steering behavior needed but found ${this.reaction}")
 
     override fun nextPosition(): Euclidean2DPosition = target().let { target ->

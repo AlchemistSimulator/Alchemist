@@ -25,7 +25,8 @@ class CircularDeformableCell @JvmOverloads constructor(
     override val maximumDiameter: Double,
     override val rigidity: Double,
     override val junctions: MutableMap<Junction, MutableMap<Node<Double>, Int>> = LinkedHashMap(),
-) : CircularDeformableCellProperty,
+) : AbstractNodeProperty<Double>(node),
+    CircularDeformableCellProperty,
     CircularCellProperty by CircularCell(
         environment,
         node,
@@ -37,4 +38,6 @@ class CircularDeformableCell @JvmOverloads constructor(
             "deformability must be between 0 and 1"
         }
     }
+
+    override fun toString() = "${super.toString()}[maximumDiameter=$maximumDiameter, rigidity=$rigidity]"
 }

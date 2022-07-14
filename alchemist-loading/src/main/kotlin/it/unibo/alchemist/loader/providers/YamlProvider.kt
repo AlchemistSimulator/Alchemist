@@ -10,6 +10,7 @@
 package it.unibo.alchemist.loader.providers
 
 import it.unibo.alchemist.loader.AlchemistModelProvider
+import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.InputStream
 import java.io.Reader
@@ -20,21 +21,30 @@ import java.net.URL
  */
 object YamlProvider : AlchemistModelProvider {
 
+    private val loaderOptions: LoaderOptions = LoaderOptions().withMaxAliasesForCollections()
+
     override val fileExtensions: Regex = "[yY][aA]?[mM][lL]".toRegex()
 
-    override fun from(input: String): Map<String, Any> = Yaml().load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: String): Map<String, Any> =
+        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: Reader): Map<String, Any> = Yaml().load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: Reader): Map<String, Any> =
+        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
-    override fun from(input: InputStream): Map<String, Any> = Yaml().load<Map<String, Any>>(input).checkNotNull(input)
+    override fun from(input: InputStream): Map<String, Any> =
+        Yaml(loaderOptions).load<Map<String, Any>>(input).checkNotNull(input)
 
     override fun from(input: URL): Map<String, Any> =
-        Yaml().load<Map<String, Any>>(input.openStream()).checkNotNull(input)
+        Yaml(loaderOptions).load<Map<String, Any>>(input.openStream()).checkNotNull(input)
 
     private inline fun <reified T> T?.checkNotNull(input: Any): T {
         require(this != null) {
             "The Alchemist YAML parser for $input could not load anything: maybe the YAML resource is an empty file?"
         }
         return this
+    }
+
+    private fun LoaderOptions.withMaxAliasesForCollections(maxAliases: Int = Int.MAX_VALUE) = apply {
+        this.maxAliasesForCollections = maxAliases
     }
 }

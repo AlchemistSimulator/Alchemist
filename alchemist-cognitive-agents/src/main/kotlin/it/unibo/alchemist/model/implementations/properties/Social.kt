@@ -21,9 +21,9 @@ import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 data class Social<T> @JvmOverloads constructor(
     override val node: Node<T>,
     override val group: Group<T> = Alone(node),
-) : SocialProperty<T> {
+) : AbstractNodeProperty<T>(node), SocialProperty<T> {
 
     override fun cloneOnNewNode(node: Node<T>) = Social(node, GenericGroup(listOf(node)))
 
-    override fun toString(): String = "${this::class.simpleName}$group"
+    override fun toString(): String = "${super.toString()}$group"
 }

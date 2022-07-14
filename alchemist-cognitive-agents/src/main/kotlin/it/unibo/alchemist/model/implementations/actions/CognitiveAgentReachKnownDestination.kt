@@ -13,12 +13,12 @@ import it.unibo.alchemist.model.implementations.actions.navigationstrategies.Kno
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.math.lazyMutable
 import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**
  * A [NavigationAction] using [KnownDestinationReaching] navigation strategy.
@@ -30,9 +30,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
 class CognitiveAgentReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
     environment: Euclidean2DEnvironmentWithGraph<*, T, ConvexPolygon, Euclidean2DPassage>,
     reaction: Reaction<T>,
-    node: Node<T>,
-    vararg destinations: Number
-) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, node) {
+    override val pedestrian: PedestrianProperty<T>,
+    vararg destinations: Number,
+) : CognitiveAgentNavigationAction2D<T, L, R>(environment, reaction, pedestrian) {
 
     override var strategy: NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> by lazyMutable {
         KnownDestinationReaching(this, destinations.toPositions(environment))

@@ -24,8 +24,9 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
-sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
-  private[this] def notNull[V](value: V, name: String = "Object"): V = Objects.requireNonNull(value, s"$name must not be null")
+sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P] {
+  private[this] def notNull[V](value: V, name: String = "Object"): V =
+    Objects.requireNonNull(value, s"$name must not be null")
 
   private[this] def toDouble(value: Any): Double = value match {
     case x: Double => x
@@ -40,58 +41,65 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createAction(
-    randomGenerator: RandomGenerator,
-    environment: Environment[T, P],
-    node: Node[T],
-    time: TimeDistribution[T],
-    reaction: Reaction[T],
-    param: String
-  ) = runInScafiDeviceContext[T, Action[T]](
+      randomGenerator: RandomGenerator,
+      environment: Environment[T, P],
+      node: Node[T],
+      time: TimeDistribution[T],
+      reaction: Actionable[T],
+      param: String
+  ): Action[T] = runInScafiDeviceContext[T, Action[T]](
     node,
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
     body = device => {
-      if(param=="send") {
-        val alreadyDone = ScafiIncarnationUtils.allActions[T,P,SendScafiMessage[T,P]](node, classOf[SendScafiMessage[T,P]]).map(_.program)
-        val scafiProgramsList = ScafiIncarnationUtils.allScafiProgramsFor[T,P](node)
+      if (param == "send") {
+        val alreadyDone = ScafiIncarnationUtils
+          .allActions[T, P, SendScafiMessage[T, P]](node, classOf[SendScafiMessage[T, P]])
+          .map(_.program)
+        val scafiProgramsList = ScafiIncarnationUtils.allScafiProgramsFor[T, P](node)
         scafiProgramsList --= alreadyDone
         if (scafiProgramsList.isEmpty) {
-          throw new IllegalStateException("There is no program requiring a " + classOf[SendScafiMessage[T,P]].getSimpleName + " action")
+          throw new IllegalStateException(
+            "There is no program requiring a " + classOf[SendScafiMessage[T, P]].getSimpleName + " action"
+          )
         }
         if (scafiProgramsList.size > 1) {
-          throw new IllegalStateException("There are too many programs requiring a " + classOf[SendScafiMessage[T,P]].getName + " action: " + scafiProgramsList)
+          throw new IllegalStateException(
+            "There are too many programs requiring a " + classOf[
+              SendScafiMessage[T, P]
+            ].getName + " action: " + scafiProgramsList
+          )
         }
-        new SendScafiMessage[T,P](environment, device, reaction, scafiProgramsList.head)
+        new SendScafiMessage[T, P](environment, device, reaction.asInstanceOf[Reaction[T]], scafiProgramsList.head)
       } else {
         new RunScafiProgram[T, P](
           notNull(environment, "environment"),
           notNull(node, "node"),
-          notNull(reaction, "reaction"),
+          notNull(reaction.asInstanceOf[Reaction[T]], "reaction"),
           notNull(randomGenerator, "random generator"),
-          notNull(param, "action parameter"))
+          notNull(param, "action parameter")
+        )
       }
     }
   )
 
-  /**
-   * NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation
-   */
+  /** NOTE: String v may be prefixed by "_" symbol to avoid caching the value resulting from its interpretation */
   override def createConcentration(data: String) = {
     /*
      * TODO: support double-try parse in case of strings (to avoid "\"string\"" in the YAML file)
      */
     val doCacheValue = !data.startsWith("_");
-    CachedInterpreter[AnyRef](if(doCacheValue) data else data.tail, doCacheValue).asInstanceOf[T]
+    CachedInterpreter[AnyRef](if (doCacheValue) data else data.tail, doCacheValue).asInstanceOf[T]
   }
 
   override def createConcentration(): T = null.asInstanceOf[T]
 
   override def createCondition(
-    randomGenerator: RandomGenerator,
-    environment: Environment[T, P],
-    node: Node[T],
-    time: TimeDistribution[T],
-    reaction: Reaction[T],
-    parameters: String
+      randomGenerator: RandomGenerator,
+      environment: Environment[T, P],
+      node: Node[T],
+      time: TimeDistribution[T],
+      reaction: Actionable[T],
+      parameters: String
   ): Condition[T] = runInScafiDeviceContext[T, Condition[T]](
     node,
     message = s"The node must have a ${classOf[ScafiDevice[_]].getSimpleName} property",
@@ -100,23 +108,26 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
         .allConditionsFor(node, classOf[ScafiComputationalRoundComplete[T]])
         .map(_.asInstanceOf[ScafiComputationalRoundComplete[T]])
         .map(_.program.asInstanceOf[RunScafiProgram[T, P]])
-      val scafiProgramList: mutable.Buffer[RunScafiProgram[T,P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
+      val scafiProgramList: mutable.Buffer[RunScafiProgram[T, P]] = ScafiIncarnationUtils.allScafiProgramsFor(node)
       scafiProgramList --= alreadyDone
       if (scafiProgramList.isEmpty) {
-        throw new IllegalStateException("There is no program requiring a " +
-          classOf[ScafiComputationalRoundComplete[_]].getSimpleName + " condition")
+        throw new IllegalStateException(
+          "There is no program requiring a " +
+            classOf[ScafiComputationalRoundComplete[_]].getSimpleName + " condition"
+        )
       }
       if (scafiProgramList.size > 1) {
-        throw new IllegalStateException("There are too many programs requiring a " +
-          classOf[ScafiComputationalRoundComplete[_]].getName + " condition: " + scafiProgramList)
+        throw new IllegalStateException(
+          "There are too many programs requiring a " +
+            classOf[ScafiComputationalRoundComplete[_]].getName + " condition: " + scafiProgramList
+        )
       }
       new ScafiComputationalRoundComplete(device, scafiProgramList.head).asInstanceOf[Condition[T]]
     }
   )
 
-  override def createMolecule(value: String): SimpleMolecule = {
+  override def createMolecule(value: String): SimpleMolecule =
     new SimpleMolecule(notNull(value, "simple molecule name"))
-  }
 
   override def createNode(randomGenerator: RandomGenerator, environment: Environment[T, P], parameters: String) = {
     val scafiNode = new GenericNode[T](this, environment)
@@ -125,38 +136,47 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
   }
 
   override def createReaction(
-    randomGenerator: RandomGenerator,
-    environment: Environment[T, P],
-    node: Node[T],
-    time: TimeDistribution[T],
-    parameters: String
+      randomGenerator: RandomGenerator,
+      environment: Environment[T, P],
+      node: Node[T],
+      time: TimeDistribution[T],
+      parameters: String
   ): Reaction[T] = {
     val isSend = "send".equalsIgnoreCase(parameters)
     val result: Reaction[T] =
       if (isSend) {
-        new ChemicalReaction[T](Objects.requireNonNull[Node[T]](node), Objects.requireNonNull[TimeDistribution[T]](time))
+        new ChemicalReaction[T](
+          Objects.requireNonNull[Node[T]](node),
+          Objects.requireNonNull[TimeDistribution[T]](time)
+        )
       } else {
         new Event[T](node, time)
       }
     if (parameters != null) {
-      result.setActions(ListBuffer[Action[T]](createAction(randomGenerator, environment, node, time, result, parameters)).asJava)
+      result.setActions(
+        ListBuffer[Action[T]](createAction(randomGenerator, environment, node, time, result, parameters)).asJava
+      )
     }
     if (isSend) {
-      result.setConditions(ListBuffer[Condition[T]](createCondition(randomGenerator, environment, node, time, result, null)).asJava)
+      result.setConditions(
+        ListBuffer[Condition[T]](createCondition(randomGenerator, environment, node, time, result, null)).asJava
+      )
     }
     result
   }
 
   override def createTimeDistribution(
-    randomGenerator: RandomGenerator,
-    env: Environment[T, P],
-    node: Node[T],
-    parameters: String
+      randomGenerator: RandomGenerator,
+      environment: Environment[T, P],
+      node: Node[T],
+      parameters: String
   ): TimeDistribution[T] = {
     if (parameters == null) return new ExponentialTime[T](Double.PositiveInfinity, randomGenerator)
     val frequency = toDouble(parameters)
     if (frequency.isNaN()) {
-      throw new IllegalArgumentException(parameters + " is not a valid number, the time distribution could not be created.")
+      throw new IllegalArgumentException(
+        parameters + " is not a valid number, the time distribution could not be created."
+      )
     }
     new DiracComb(new DoubleTime(randomGenerator.nextDouble() / frequency), frequency);
   }
@@ -173,7 +193,7 @@ sealed class ScafiIncarnation[T, P <: Position[P]] extends Incarnation[T, P]{
 
 object ScafiIncarnationUtils {
   def runInScafiDeviceContext[T, A](node: Node[T], message: String, body: ScafiDevice[T] => A): A = {
-    if(!isScafiNode(node)) {
+    if (!isScafiNode(node)) {
       throw new IllegalArgumentException(message)
     }
     body(node.asProperty(classOf[ScafiDevice[T]]))
@@ -183,23 +203,26 @@ object ScafiIncarnationUtils {
     runInScafiDeviceContext(node, message, (_: ScafiDevice[T]) => body)
   def isScafiNode[T](node: Node[T]): Boolean = node.asPropertyOrNull[ScafiDevice[T]](classOf[ScafiDevice[T]]) != null
 
-  def allActions[T,P<:Position[P],C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
-    for(reaction: Reaction[T] <- node.getReactions().asScala;
-        action: Action[T] <- reaction.getActions().asScala; if klass.isInstance(action))
-      yield action.asInstanceOf[C]
+  def allActions[T, P <: Position[P], C](node: Node[T], klass: Class[C]): mutable.Buffer[C] =
+    for {
+      reaction: Reaction[T] <- node.getReactions().asScala
+      action: Action[T] <- reaction.getActions().asScala if klass.isInstance(action)
+    } yield action.asInstanceOf[C]
 
-  def allScafiProgramsFor[T,P<:Position[P]](node: Node[T]) =
-    allActions[T,P,RunScafiProgram[T,P]](node, classOf[RunScafiProgram[T,P]])
+  def allScafiProgramsFor[T, P <: Position[P]](node: Node[T]) =
+    allActions[T, P, RunScafiProgram[T, P]](node, classOf[RunScafiProgram[T, P]])
 
   def allConditionsFor[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Condition[T]] =
-    for(reaction <- node.getReactions.asScala;
-        condition <- reaction.getConditions.asScala; if conditionClass.isInstance(condition))
-      yield condition
+    for {
+      reaction <- node.getReactions.asScala
+      condition <- reaction.getConditions.asScala if conditionClass.isInstance(condition)
+    } yield condition
 
   def inboundDependencies[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] =
-    for(c <- allConditionsFor(node, conditionClass);
-        dep <- c.getInboundDependencies.iterator().asScala)
-      yield dep
+    for {
+      c <- allConditionsFor(node, conditionClass)
+      dep <- c.getInboundDependencies.iterator().asScala
+    } yield dep
 
   def allCompletedScafiProgram[T](node: Node[T], conditionClass: Class[_]): mutable.Buffer[Dependency] =
     inboundDependencies(node, classOf[ScafiComputationalRoundComplete[T]])
@@ -210,21 +233,22 @@ object CachedInterpreter {
   import com.google.common.cache.{CacheBuilder, Cache => GCache}
   import scalacache.guava.GuavaCache
   import scalacache.{Cache, Entry}
-  private val underlyingGuavaCache: GCache[String, Entry[Any]] = CacheBuilder.newBuilder()
+  private val underlyingGuavaCache: GCache[String, Entry[Any]] = CacheBuilder
+    .newBuilder()
     .maximumSize(1000L)
     .build[String, Entry[Any]]
-  private implicit val scalaCache: Cache[Any] = GuavaCache(underlyingGuavaCache:GCache[String,Entry[Any]])
+  implicit private val scalaCache: Cache[Any] = GuavaCache(underlyingGuavaCache: GCache[String, Entry[Any]])
 
   /**
-   * Evaluates str using Scala reflection.
-   * When doCacheValue is true, the result of the evaluation is cached.
-   * When doCacheValue is false, only the result of parsing is cached.
+   * Evaluates str using Scala reflection. When doCacheValue is true, the result of the evaluation is cached. When
+   * doCacheValue is false, only the result of parsing is cached.
    */
   def apply[A <: AnyRef](code: String, doCacheValue: Boolean = true): A =
-    if(doCacheValue) {
+    if (doCacheValue) {
       import scalacache.modes.sync._ // Synchronous mode
-      scalacache.caching("//VAL"+code)(None)(ScalaInterpreter[Any](code))
-    }.asInstanceOf[A] else {
+      scalacache.caching("//VAL" + code)(None)(ScalaInterpreter[Any](code))
+    }.asInstanceOf[A]
+    else {
       ScalaInterpreter(code)
     }
 }

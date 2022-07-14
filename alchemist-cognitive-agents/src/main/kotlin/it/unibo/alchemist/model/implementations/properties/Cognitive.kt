@@ -29,7 +29,7 @@ data class Cognitive<T, P, A, F> @JvmOverloads constructor(
     private val environment: PhysicsEnvironment<T, P, A, F>,
     override val node: Node<T>,
     override val danger: Molecule? = null,
-) : CognitiveProperty<T>
+) : AbstractNodeProperty<T>(node), CognitiveProperty<T>
 where P : Position<P>,
       P : Vector<P>,
       A : GeometricTransformation<P>,
@@ -45,4 +45,6 @@ where P : Position<P>,
     }
 
     override fun cloneOnNewNode(node: Node<T>) = Cognitive(environment, node, danger)
+
+    override fun toString() = "${super.toString()}[dangerMolecule=$danger]"
 }

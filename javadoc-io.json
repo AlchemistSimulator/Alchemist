@@ -323,6 +323,9 @@
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.6.1",
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.6.1/element-list"
   },
+  "org.mongodb/mongodb-driver-sync/4.7.0": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.7.0"
+  },
   "org.scala-lang/scala-compiler/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.8"
   },

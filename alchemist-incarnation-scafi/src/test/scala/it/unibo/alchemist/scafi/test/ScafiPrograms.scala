@@ -24,14 +24,14 @@ class ScafiGradientProgram extends AggregateProgram with StandardSensorNames {
       }
     }
 }
-
+/* program used to check if the incarnation can handle two different programs */
 class ProgramMultiA extends AggregateProgram {
   override def main(): Set[ID] =
     rep(Set(mid()))(
       local => foldhood(local)(_ ++ _)(nbr(local))
     )
 }
-
+/* note that the output and the nbr use different data, therefore, if the programs are mismanaged, an alignment problem should emerge */
 class ProgramMultiB extends AggregateProgram {
   override def main(): Double =
     rep(mid())(

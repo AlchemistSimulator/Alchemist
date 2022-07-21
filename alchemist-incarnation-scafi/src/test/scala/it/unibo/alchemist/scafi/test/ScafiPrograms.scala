@@ -25,6 +25,19 @@ class ScafiGradientProgram extends AggregateProgram with StandardSensorNames {
     }
 }
 
+class ProgramMultiA extends AggregateProgram {
+  override def main(): Set[ID] =
+    rep(Set(mid()))(
+      local => foldhood(local)(_ ++ _)(nbr(local))
+    )
+}
+
+class ProgramMultiB extends AggregateProgram {
+  override def main(): Double =
+    rep(mid())(
+      local => foldhood(local)(_ + _)(nbr(local))
+    )
+}
 class ScafiEnvProgram extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils {
   import ScafiEnvProgram._
 

@@ -4,22 +4,45 @@ network-model:
 
 incarnation: scafi
 
-_pool: &program
+_programA: &programA
   - time-distribution: 0.5 # DiracComb: the parameter (rate) tells how many events should happen per time out
     type: Event
     actions:
       - type: RunScafiProgram
-        parameters: [it.unibo.alchemist.scafi.test.ScafiEnvProgram]
+        parameters: [it.unibo.alchemist.scafi.test.ProgramMultiB]
+  - program: send
+
+_programB: &programB
+  - time-distribution: 0.5 # DiracComb: the parameter (rate) tells how many events should happen per time out
+    type: Event
+    actions:
+      - type: RunScafiProgram
+        parameters: [it.unibo.alchemist.scafi.test.ProgramMultiA]
   - program: send
 
 deployments:
-  - type: Point
-    parameters: [4,4]
+  - type: Rectangle
+    parameters: [ 20, 0, 0, 10, 10 ]
     programs:
-      - *program
-      - *program
+      - *programA
+      - *programB
     contents:
+      - molecule: source
+        concentration: false
       - molecule: number
         concentration: 77
       - molecule: number2
         concentration: 0
+  - type: Point
+    parameters: [ 2, 2 ]
+    programs:
+      - *programA
+      - *programB
+    contents:
+      - molecule: source
+        concentration: true
+      - molecule: number
+        concentration: 77
+      - molecule: number2
+        concentration: 0
+

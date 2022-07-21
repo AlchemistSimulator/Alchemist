@@ -64,6 +64,7 @@ class SendScafiMessage[T, P <: Position[P]](
     for {
       neighborhood <- environment.getNeighborhood(device.getNode).getNeighbors.iterator().asScala
       action <- ScafiIncarnationUtils.allScafiProgramsFor[T, P](neighborhood).filter(program.getClass.isInstance(_))
+      if action.programNameMolecule == program.programNameMolecule
     } action.sendExport(device.getNode.getId, toSend)
     program.prepareForComputationalCycle
   }

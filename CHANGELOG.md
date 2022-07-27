@@ -1,3 +1,44 @@
+## [24.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.0...24.1.1) (2022-07-27)
+
+
+### Bug Fixes
+
+* align RunProgramExport in Send action following the program name ([#1452](https://github.com/AlchemistSimulator/Alchemist/issues/1452)) ([b7c7e97](https://github.com/AlchemistSimulator/Alchemist/commit/b7c7e973ce4eb9ba2fde9a9d46212f13b5b864d7))
+* **deps:** update junit5 monorepo to v5.9.0 ([fb11a70](https://github.com/AlchemistSimulator/Alchemist/commit/fb11a70a7c03009db36c220a6bb3af2f673057f8))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.2 ([628eb07](https://github.com/AlchemistSimulator/Alchemist/commit/628eb07dc47dc71a6886605c198c44004917c097))
+* enforce kotlin warnings as errors in buildSrc ([#946](https://github.com/AlchemistSimulator/Alchemist/issues/946)) ([166bf87](https://github.com/AlchemistSimulator/Alchemist/commit/166bf8788bbe88946a98f0896fa7d4e30af56902))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([78d591b](https://github.com/AlchemistSimulator/Alchemist/commit/78d591bd038b77306795a9cdaf2ca86c4d5e1255))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.4.7 ([39d3d8b](https://github.com/AlchemistSimulator/Alchemist/commit/39d3d8bd8288faf5d38339ce2a374c4aaf9e6d37))
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.4.8 ([5c06f2d](https://github.com/AlchemistSimulator/Alchemist/commit/5c06f2d955d02dc768dd9de829930bfbffffbba8))
+* **deps:** update dependency gradle to v7.5 ([a5b5238](https://github.com/AlchemistSimulator/Alchemist/commit/a5b52383daf242f64e9c07b0847c2e94a4dafe78))
+* **deps:** update dependency org.codehaus.groovy:groovy-jsr223 to v3.0.12 ([cfff233](https://github.com/AlchemistSimulator/Alchemist/commit/cfff233d8fea54d139bab8a38013d86efcd59317))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.7.0 ([a972593](https://github.com/AlchemistSimulator/Alchemist/commit/a972593430ebdb19e63f84b2d789ab67e94641f1))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 29ddef9 ([d2a693a](https://github.com/AlchemistSimulator/Alchemist/commit/d2a693ae2f0627c7ca03ec8670fd968624d5b023))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 51738c3 ([fd78784](https://github.com/AlchemistSimulator/Alchemist/commit/fd78784d7a8057ee65474343d9389f26c02bca80))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 9536a13 ([d47695f](https://github.com/AlchemistSimulator/Alchemist/commit/d47695f5647ef5604a8c3a02a0255c89a6b59c0a))
+* **deps:** update external-resources/learning-scafi-alchemist digest to bdb0ec2 ([5483fe4](https://github.com/AlchemistSimulator/Alchemist/commit/5483fe429037b716f84ee14f03b681d5f4af3f29))
+* **deps:** update kotest to v5.4.0 ([0678ce2](https://github.com/AlchemistSimulator/Alchemist/commit/0678ce2c0177b1cb0e14c6b1f458545eade3c41a))
+* **deps:** update plugin kotlin-qa to v0.20.4 ([df1a9a6](https://github.com/AlchemistSimulator/Alchemist/commit/df1a9a6272f57d3b52c8fa4744f70137fb64ceac))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.16 ([6423882](https://github.com/AlchemistSimulator/Alchemist/commit/642388250437dfc91ffcc99cfc7e6f274671223b))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.17 ([9226f32](https://github.com/AlchemistSimulator/Alchemist/commit/9226f32cf8387b7595ecc6eb8beb993f6f17b691))
+* **deps:** update plugin publishoncentral to v2.0.5 ([2277525](https://github.com/AlchemistSimulator/Alchemist/commit/2277525a6be2e4a10056b216eedcfc36187aa04b))
+* **deps:** update site/themes/hugo-theme-relearn digest to 4fa8856 ([3e982ec](https://github.com/AlchemistSimulator/Alchemist/commit/3e982ec03940fe4b37267f70a9b08ef2a20f1ea6))
+* **deps:** update site/themes/hugo-theme-relearn digest to 5f2e3fe ([28f159a](https://github.com/AlchemistSimulator/Alchemist/commit/28f159a049394d7b68dec5bbd0d949202c37834b))
+* **deps:** update site/themes/hugo-theme-relearn digest to 6ae8b4f ([968aebd](https://github.com/AlchemistSimulator/Alchemist/commit/968aebdc720d6b06e57f329f46e6e93d520e2443))
+* **deps:** update site/themes/hugo-theme-relearn digest to 9f15ea3 ([e27aebf](https://github.com/AlchemistSimulator/Alchemist/commit/e27aebf08dfdd8c9ad73a262b21628b024991662))
+
 ## [24.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/24.0.8...24.1.0) (2022-07-13)
 
 

@@ -1,3 +1,42 @@
+## [24.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.1...24.1.2) (2022-07-28)
+
+
+### Bug Fixes
+
+* **biochemistry:** honor @Nonnull annotations in BiochemicalReaction ([ec570ef](https://github.com/AlchemistSimulator/Alchemist/commit/ec570eff6cd120b8e5cfad7486fb39bd096eec54))
+* **implementationbase:** honor @Nonnull annotations in AbstractReaction ([aafd6e9](https://github.com/AlchemistSimulator/Alchemist/commit/aafd6e97846a2d076855d0827df2216682524ff7))
+* **implementationbase:** honor @Nonnull annotations in BiochemicalReaction ([b2b8ba2](https://github.com/AlchemistSimulator/Alchemist/commit/b2b8ba20c50a1dc67730588668e54a377ca4468a))
+* **implementationbase:** honor @Nonnull annotations in ChemicalReaction ([7314a60](https://github.com/AlchemistSimulator/Alchemist/commit/7314a6006c80ec04c1644a357d600e52f3b6f526))
+* **incarnation-biochemistry:** fail-fast when `ChangeBiomolConcentrationInCell` is provided a void change (`deltaConcentration` is `0`) ([19d1a2b](https://github.com/AlchemistSimulator/Alchemist/commit/19d1a2be632c365617e3af9598930ec9ce51b200))
+* **incarnation-sapere:** drop unused methods in SAPEREReaction ([edac8d3](https://github.com/AlchemistSimulator/Alchemist/commit/edac8d3553ef3074bbf8b1f4e89b4d19623ba3ed))
+* **incarnation-sapere:** honor @Nonnull annotations in SAPEREGradient ([f63b039](https://github.com/AlchemistSimulator/Alchemist/commit/f63b03907e900fb7652ad9ec0febabaf83b00f6f))
+* **incarnation-sapere:** honor @Nonnull annotations in SAPEREReaction ([b02f909](https://github.com/AlchemistSimulator/Alchemist/commit/b02f90941df0b287c00293243802f607ea5ffa51))
+* **incarnation-sapere:** reduce visibility of SAPEREReaction internally used methods ([6fd96c7](https://github.com/AlchemistSimulator/Alchemist/commit/6fd96c70a126b5deff9fd90040ceda2ca5383d9c))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to c2b2ee4 ([05bf5cf](https://github.com/AlchemistSimulator/Alchemist/commit/05bf5cfb6cc315ecc5a03f8da130735834fcb687))
+* **deps:** update site/themes/hugo-theme-relearn digest to ff67228 ([3157575](https://github.com/AlchemistSimulator/Alchemist/commit/315757523ba18f80f92b8be52283fa0f2afc7545))
+
+
+### Build and continuous integration
+
+* **Mergify:** configuration update ([bb0e02c](https://github.com/AlchemistSimulator/Alchemist/commit/bb0e02ca0c37ea77be368641d2d0f0cdd94aae7d))
+
+
+### Style improvements
+
+* **incarnation-biochemistry:** fix the indentation in TestDSL ([6a35ebe](https://github.com/AlchemistSimulator/Alchemist/commit/6a35ebe2c124b2b0e586a3f551e5b0059dd80462))
+* **incarnation-sapere:** drop useless cast in SAPEREReaction ([4e6a86f](https://github.com/AlchemistSimulator/Alchemist/commit/4e6a86f03e08bd3969812c2efcb79a3c1cdfee39))
+
+
+### General maintenance
+
+* ignore Idea's Kotlinc configuration ([5b6afc6](https://github.com/AlchemistSimulator/Alchemist/commit/5b6afc67d36c9666b44092bb8c137f0f1a3b5fa4))
+* **implementationbase:** remove useless call to toString() ([0a6fa8e](https://github.com/AlchemistSimulator/Alchemist/commit/0a6fa8efdbaba2d9d2449a57375ef48b05d57194))
+* **incarnation-biochemistry:** update copyright header in ChangeBiomolConcentrationInCell ([1a60f7e](https://github.com/AlchemistSimulator/Alchemist/commit/1a60f7e0995171ba95e0f300e5cc730afc86c138))
+
 ## [24.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.0...24.1.1) (2022-07-27)
 
 

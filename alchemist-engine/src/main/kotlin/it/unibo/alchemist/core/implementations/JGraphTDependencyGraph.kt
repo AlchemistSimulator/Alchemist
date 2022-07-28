@@ -72,30 +72,34 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 .toList()
                 .asSequence()
         }
-        val getCandidates: (context: Context, (Reaction<T>) -> Boolean) -> Sequence<Actionable<T>> =
-            { context, reactionsFilter ->
-                when (context) {
-                    Context.LOCAL -> localReactions + neighborhoodReactions.filter(reactionsFilter)
-                    Context.NEIGHBORHOOD ->
-                        localReactions + neighborhoodReactions + extendedNeighborhoodReactions.filter(reactionsFilter)
-                    else -> allReactions.asSequence()
-                }
-            }
-
-        val inboundCandidates: Sequence<Actionable<T>> =
-            outGlobals.asSequence() + getCandidates(newReaction.inputContext) {
-                it.outputContext == Context.NEIGHBORHOOD
-            }
-        val outboundCandidates: Sequence<Actionable<T>> =
-            inGlobals.asSequence() + getCandidates(newReaction.outputContext) {
-                it.inputContext == Context.NEIGHBORHOOD
-            }
-        if (!graph.addVertex(newReaction)) {
-            throw IllegalArgumentException("$newReaction was already in the dependency graph")
+        fun Context.candidates(
+            oppositeGlobal: Sequence<Actionable<T>>,
+            oppositeContext: Actionable<T>.() -> Context,
+        ): Sequence<Actionable<T>> = when (this) {
+            Context.LOCAL ->
+                oppositeGlobal +
+                    localReactions +
+                    neighborhoodReactions.filter { it.oppositeContext() == Context.NEIGHBORHOOD }
+            Context.NEIGHBORHOOD ->
+                oppositeGlobal +
+                    localReactions +
+                    neighborhoodReactions +
+                    extendedNeighborhoodReactions.filter { it.oppositeContext() == Context.NEIGHBORHOOD }
+            Context.GLOBAL ->
+                allReactions.asSequence()
         }
-        inboundCandidates.filter { newReaction.dependsOn(it) }
+        val inboundCandidates: Sequence<Actionable<T>> =
+            newReaction.inputContext.candidates(outGlobals.asSequence()) { outputContext }
+        val outboundCandidates: Sequence<Actionable<T>> =
+            newReaction.outputContext.candidates(inGlobals.asSequence()) { inputContext }
+        check(graph.addVertex(newReaction)) {
+            "$newReaction was already in the dependency graph"
+        }
+        inboundCandidates
+            .filter { newReaction.dependsOn(it) }
             .forEach { graph.addEdge(it, newReaction, Edge(it, newReaction)) }
-        outboundCandidates.filter { it.dependsOn(newReaction) }
+        outboundCandidates
+            .filter { it.dependsOn(newReaction) }
             .forEach { graph.addEdge(newReaction, it, Edge(newReaction, it)) }
         if (newReaction.inputContext == Context.GLOBAL) {
             inGlobals.add(newReaction)

@@ -14,7 +14,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.api.SupportedIncarnations;
+import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
@@ -23,9 +23,6 @@ import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,20 +43,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TestConcurrency {
 
-    private Environment<Object, Euclidean2DPosition> environment;
+    private Environment<Double, Euclidean2DPosition> environment;
 
     /**
      * Setup phase.
      */
     @BeforeEach
     public void setUp() {
-        final Incarnation<Object, Euclidean2DPosition> incarnation =
-            SupportedIncarnations.<Object, Euclidean2DPosition>get("sapere").get();
+        final Incarnation<Double, Euclidean2DPosition> incarnation = new BiochemistryIncarnation();
         environment = new Continuous2DEnvironment<>(incarnation);
-        final Node<Object> n = new GenericNode<>(incarnation, environment);
+        final var n = new GenericNode<>(incarnation, environment);
         environment.setLinkingRule(new NoLinks<>());
-        final TimeDistribution<Object> td = new DiracComb<>(1);
-        final Reaction<Object> r = new Event<>(n, td);
+        final var td = new DiracComb<Double>(1);
+        final var r = new Event<>(n, td);
         n.addReaction(r);
         environment.addNode(n, environment.makePosition(0, 0));
     }

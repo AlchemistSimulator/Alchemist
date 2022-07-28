@@ -27,6 +27,7 @@ import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -36,8 +37,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * The type which describes the concentration of a molecule
- * 
+ * The type which describes the concentration of a molecule.
  * This class offers a partial implementation of Reaction. In particular, it
  * allows to write new reaction specifying only which distribution time to adopt
  * 
@@ -140,6 +140,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      *
      * @return the list of {@link Action}s.
      */
+    @Nonnull
     @Override
     public List<Action<T>> getActions() {
         return Collections.unmodifiableList(actions);
@@ -151,26 +152,31 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      *
      * @return the list of {@link Condition}s.
      */
+    @Nonnull
     @Override
     public List<Condition<T>> getConditions() {
         return Collections.unmodifiableList(conditions);
     }
 
+    @Nonnull
     @Override
     public final ListSet<Dependency> getOutboundDependencies() {
         return optionallyImmodifiableView(outbound);
     }
 
+    @Nonnull
     @Override
     public final ListSet<Dependency> getInboundDependencies() {
         return optionallyImmodifiableView(inbound);
     }
 
+    @Nonnull
     @Override
     public final Context getInputContext() {
         return incontext;
     }
 
+    @Nonnull
     @Override
     public final Context getOutputContext() {
         return outcontext;
@@ -192,11 +198,13 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
         return getClass().getSimpleName();
     }
 
+    @Nonnull
     @Override
     public final Time getTau() {
         return timeDistribution.getNextOccurence();
     }
 
+    @Nonnull
     @Override
     public final TimeDistribution<T> getTimeDistribution() {
         return timeDistribution;
@@ -208,7 +216,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
     }
 
     @Override
-    public void initializationComplete(final Time atTime, final Environment<T, ?> environment) { }
+    public void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) { }
 
     /**
      * This method provides facility to clone reactions. Given a constructor in
@@ -265,7 +273,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param actions the actions to set
      */
     @Override
-    public void setActions(final List<? extends Action<T>> actions) {
+    public void setActions(@Nonnull final List<? extends Action<T>> actions) {
         this.actions = Objects.requireNonNull(actions, "The actions list can't be null");
         setOutputContext(actions.stream().map(Action::getContext).reduce(Context.LOCAL, Context::getWider));
         outbound = computeDependencies(actions.stream().map(Action::getOutboundDependencies).flatMap(List::stream));
@@ -278,7 +286,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
      * @param conditions the actions to set
      */
     @Override
-    public void setConditions(final List<? extends Condition<T>> conditions) {
+    public void setConditions(@Nonnull final List<? extends Condition<T>> conditions) {
         this.conditions = Objects.requireNonNull(conditions, "The conditions list can't be null");
         setInputContext(conditions.stream().map(Condition::getContext).reduce(Context.LOCAL, Context::getWider));
         inbound = computeDependencies(conditions.stream().map(Condition::getInboundDependencies).flatMap(List::stream));
@@ -326,9 +334,9 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
 
     @Override
     public final void update(
-            final Time currentTime,
-            final boolean hasBeenExecuted,
-            final Environment<T, ?> environment
+        @Nonnull final Time currentTime,
+        final boolean hasBeenExecuted,
+        @Nonnull final Environment<T, ?> environment
     ) {
         updateInternalStatus(currentTime, hasBeenExecuted, environment);
         timeDistribution.update(currentTime, hasBeenExecuted, getRate(), environment);
@@ -353,6 +361,7 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
             Environment<T, ?> environment
     );
 
+    @Nonnull
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "This is intentional")
     public final Node<T> getNode() {

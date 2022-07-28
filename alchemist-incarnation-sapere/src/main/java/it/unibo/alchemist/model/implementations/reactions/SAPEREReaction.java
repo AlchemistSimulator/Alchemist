@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,17 +8,16 @@
  */
 package it.unibo.alchemist.model.implementations.reactions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import it.unibo.alchemist.model.interfaces.Dependency;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.model.implementations.actions.LsaStandardAction;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPERETimeDistribution;
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
+import it.unibo.alchemist.model.interfaces.Context;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaAction;
 import it.unibo.alchemist.model.interfaces.ILsaCondition;
@@ -25,14 +25,15 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ArrayListSet;
 import org.danilopianini.util.ListSet;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -124,8 +125,12 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         this.environment = environment;
     }
 
+    @Nonnull
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> node, final Time currentTime) {
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(
+        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final Time currentTime
+    ) {
         final var timeDistributionClone = timeDistribution.cloneOnNewNode(node, currentTime);
         final SAPEREReaction res = new SAPEREReaction(environment, (ILsaNode) node, rng, timeDistributionClone);
         final ArrayList<Condition<List<ILsaMolecule>>> c = new ArrayList<>();
@@ -245,7 +250,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     /**
      * @return the local {@link Node} as {@link ILsaNode}
      */
-    protected ILsaNode getLsaNode() {
+    private ILsaNode getLsaNode() {
         return (ILsaNode) super.getNode();
     }
 
@@ -343,28 +348,13 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         return numericRate() ? Double.toString(getTimeDistribution().getRate()) : timeDistribution.getRateEquation().toString();
     }
 
-    /**
-     * @return the aggregated propensity of all the possible instances of this
-     *         reaction
-     */
-    protected double getTotalPropensity() {
-        return totalPropensity;
-    }
-
-    /**
-     * @return the list of nodes which are valid for this reaction
-     */
-    protected List<ILsaNode> getValidNodes() {
-        return validNodes;
-    }
-
     @Override
-    public void setActions(final List<? extends Action<List<ILsaMolecule>>> actions) {
+    public void setActions(@Nonnull final List<? extends Action<List<ILsaMolecule>>> actions) {
         setConditionsAndActions(getConditions(), actions);
     }
 
     @Override
-    public void setConditions(final List<? extends Condition<List<ILsaMolecule>>> conditions) {
+    public void setConditions(@Nonnull final List<? extends Condition<List<ILsaMolecule>>> conditions) {
         setConditionsAndActions(conditions, getActions());
     }
 
@@ -419,49 +409,6 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         screen(outboundDependencies);
         inboundDependencies.forEach(this::addInboundDependency);
         outboundDependencies.forEach(this::addOutboundDependency);
-    }
-
-    /**
-     * @param pm
-     *            the list of all possible matches
-     */
-    protected void setPossibleMatches(final List<Map<HashString, ITreeNode<?>>> pm) {
-        this.possibleMatches = pm;
-    }
-
-    /**
-     * @param possibleRemoved
-     *            the list of molecules which would be removed for each node if
-     *            the corresponding match would be chosen
-     */
-    protected void setPossibleRemove(final List<Map<ILsaNode, List<ILsaMolecule>>> possibleRemoved) {
-        this.possibleRemove = possibleRemoved;
-    }
-
-    /**
-     * @param p
-     *            the list of the propensities computed for each match
-     *            combination
-     */
-    protected void setPropensities(final List<Double> p) {
-        this.propensities = p;
-    }
-
-    /**
-     * @param tp
-     *            the aggregated propensity of all the possible instances of
-     *            this reaction
-     */
-    protected void setTotalPropensity(final double tp) {
-        this.totalPropensity = tp;
-    }
-
-    /**
-     * @param valid
-     *            the list of nodes which are valid for this reaction
-     */
-    protected void setValidNodes(final List<ILsaNode> valid) {
-        this.validNodes = valid;
     }
 
 }

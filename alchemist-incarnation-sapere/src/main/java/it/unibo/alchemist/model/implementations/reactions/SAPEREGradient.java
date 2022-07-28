@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -37,6 +38,7 @@ import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -249,8 +251,12 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         return createdFromSource;
     }
 
+    @Nonnull
     @Override
-    public Reaction<List<ILsaMolecule>> cloneOnNewNode(final Node<List<ILsaMolecule>> node, final Time currentTime) {
+    public Reaction<List<ILsaMolecule>> cloneOnNewNode(
+        @Nonnull final Node<List<ILsaMolecule>> node,
+        @Nonnull final Time currentTime
+    ) {
         throw new UnsupportedOperationException();
     }
 
@@ -320,11 +326,13 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
         gradientsFound.forEach(grad -> getLsaNode().setConcentration(grad));
     }
 
+    @Nonnull
     @Override
     public List<Action<List<ILsaMolecule>>> getActions() {
         return fakeacts;
     }
 
+    @Nonnull
     @Override
     public List<Condition<List<ILsaMolecule>>> getConditions() {
         return fakeconds;

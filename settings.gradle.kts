@@ -24,6 +24,7 @@ include(
     "alchemist-incarnation-biochemistry",
     "alchemist-api",
     "alchemist-loading",
+    "alchemist-maintenance-tooling",
     "alchemist-maps",
     "alchemist-physics",
     "alchemist-sapere-mathexp",

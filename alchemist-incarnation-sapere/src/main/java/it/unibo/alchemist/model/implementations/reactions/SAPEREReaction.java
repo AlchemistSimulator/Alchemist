@@ -43,8 +43,7 @@ import java.util.Objects;
 
 /**
  * This class realizes a reaction with Lsa concentrations.
- * 
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
@@ -241,39 +240,10 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     }
 
     /**
-     * @return the current environment
-     */
-    protected Environment<List<ILsaMolecule>, ?> getEnvironment() {
-        return environment;
-    }
-
-    /**
      * @return the local {@link Node} as {@link ILsaNode}
      */
     private ILsaNode getLsaNode() {
         return (ILsaNode) super.getNode();
-    }
-
-    /**
-     * @return the list of all possible matches
-     */
-    protected List<Map<HashString, ITreeNode<?>>> getPossibleMatches() {
-        return possibleMatches;
-    }
-
-    /**
-     * @return the list of molecules which would be removed for each node if the
-     *         corresponding match would be chosen
-     */
-    protected List<Map<ILsaNode, List<ILsaMolecule>>> getPossibleRemove() {
-        return possibleRemove;
-    }
-
-    /**
-     * @return the list of the propensities computed for each match combination
-     */
-    protected List<Double> getPropensities() {
-        return propensities;
     }
 
     @Override

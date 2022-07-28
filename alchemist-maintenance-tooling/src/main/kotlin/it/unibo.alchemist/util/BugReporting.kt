@@ -23,7 +23,7 @@ object BugReporting {
         message: String,
         debugInformation: Map<String, Any?>
     ): Nothing {
-        throw IllegalStateException(
+        error(
             """
                 $message
                 

@@ -34,6 +34,11 @@ public final class ChangeBiomolConcentrationInCell extends AbstractActionOnSingl
             final double deltaConcentration
     ) {
         super(node, biomolecule);
+        if (deltaConcentration == 0) {
+            throw new IllegalArgumentException(
+                "Changing the concentration of '" + biomolecule + "' of 0 in node " + node.getId() + "makes no sense"
+            );
+        }
         this.deltaC = deltaConcentration;
     }
 

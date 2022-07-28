@@ -114,6 +114,15 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
      * {@inheritDoc}
      */
     @Override
+    public void removeGlobalReaction(final GlobalReaction<T> reaction) {
+        globalReactions.remove(reaction);
+        ifEngineAvailable(simulation -> simulation.reactionRemoved(reaction));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ListSet<GlobalReaction<T>> getGlobalReactions() {
         return ListSets.unmodifiableListSet(globalReactions);
     }

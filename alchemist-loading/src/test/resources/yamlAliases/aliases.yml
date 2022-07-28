@@ -1,0 +1,17 @@
+incarnation: protelis
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [5]
+
+_node: &node
+  - type: Point
+    parameters: [0, 0]
+
+deployments:
+  [*node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node,
+   *node, *node, *node, *node, *node, *node, *node, *node, *node, *node]

@@ -39,41 +39,49 @@ class TestDSL {
         parser.removeErrorListeners(); // default error listener log on the console and not throwing any error
         parser.addErrorListener(new BaseErrorListener() {
             @Override
-            public void syntaxError(final Recognizer<?, ?> recognizer,
-                    final Object offendingSymbol, 
-                    final int line,
-                    final int charPositionInLine,
-                    final String msg,
-                    final RecognitionException e) {
+            public void syntaxError(
+                final Recognizer<?, ?> recognizer,
+                final Object offendingSymbol,
+                final int line,
+                final int charPositionInLine,
+                final String msg,
+                final RecognitionException e
+            ) {
                 throw new BiochemistryParseException("Error in " + reaction + "\n" + msg);
             }
             @Override
-            public void reportAmbiguity(final Parser recognizer,
-                    final DFA dfa,
-                    final int startIndex,
-                    final int stopIndex,
-                    final boolean exact,
-                    final BitSet ambigAlts,
-                    final ATNConfigSet configs) {
+            public void reportAmbiguity(
+                final Parser recognizer,
+                final DFA dfa,
+                final int startIndex,
+                final int stopIndex,
+                final boolean exact,
+                final BitSet ambigAlts,
+                final ATNConfigSet configs
+            ) {
                 throw new BiochemistryParseException("report ambiguity");
             }
             @Override
-            public void reportAttemptingFullContext(final Parser recognizer,
-                    final DFA dfa,
-                    final int startIndex,
-                    final int stopIndex,
-                    final BitSet conflictingAlts,
-                    final ATNConfigSet configs) {
+            public void reportAttemptingFullContext(
+                final Parser recognizer,
+                final DFA dfa,
+                final int startIndex,
+                final int stopIndex,
+                final BitSet conflictingAlts,
+                final ATNConfigSet configs
+            ) {
                 throw new BiochemistryParseException("report attempting full context");
             }
 
             @Override
-            public void reportContextSensitivity(final Parser recognizer,
-                    final DFA dfa,
-                    final int startIndex,
-                    final int stopIndex,
-                    final int prediction,
-                    final ATNConfigSet configs) {
+            public void reportContextSensitivity(
+                final Parser recognizer,
+                final DFA dfa,
+                final int startIndex,
+                final int stopIndex,
+                final int prediction,
+                final ATNConfigSet configs
+            ) {
                 throw new BiochemistryParseException("report context sensitivity");
             }
         });

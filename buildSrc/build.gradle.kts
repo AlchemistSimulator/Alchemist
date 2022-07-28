@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    id("org.danilopianini.gradle-kotlin-qa") version "0.19.1"
+    id("org.danilopianini.gradle-kotlin-qa") version "0.20.4"
 }
 
 repositories {
@@ -10,12 +10,6 @@ repositories {
 
 with(extensions.getByType<VersionCatalogsExtension>().named("libs")) {
     dependencies {
-        implementation(findDependency("gson").get())
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        allWarningsAsErrors = false
+        implementation(findLibrary("gson").get())
     }
 }

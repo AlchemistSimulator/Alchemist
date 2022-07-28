@@ -32,6 +32,7 @@ buildProfile/
 .idea/runConfigurations.xml
 .idea/shelf
 .idea/checkstyle-idea.xml
+/.idea/kotlinc.xml
 
 # MacOS
 .DS_Store

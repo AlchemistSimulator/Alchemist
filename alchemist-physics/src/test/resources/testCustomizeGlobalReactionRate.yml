@@ -1,0 +1,7 @@
+incarnation: protelis
+
+environment:
+  type: EnvironmentWithDynamics
+  global-programs:
+    - type: PhysicsUpdate
+      parameters: [1.5]

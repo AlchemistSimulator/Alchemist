@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
-import java.lang.IllegalArgumentException
+import it.unibo.alchemist.util.BugReporting
 import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.ListSet
 import org.danilopianini.util.ListSets
@@ -185,14 +185,22 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         removeNeighborDirected(n2, n1)
     }
 
-    override fun outboundDependencies(reaction: Actionable<T>?): ListSet<Actionable<T>>? =
-        if (graph.containsVertex(reaction)) {
-            graph.outgoingEdgesOf(reaction).let { edges ->
-                edges.asSequence().map { it.second }.toCollection(ArrayListSet(edges.size))
-            }
-        } else {
-            ListSet.of()
+    override fun outboundDependencies(reaction: Actionable<T>?): ListSet<Actionable<T>> {
+        require(graph.containsVertex(reaction)) {
+            BugReporting.reportBug(
+                "Reaction does not exists in the dependency graph.",
+                mapOf(
+                    "graph" to graph,
+                    "incarnation" to environment.incarnation,
+                    "environment" to environment,
+                    "reaction" to reaction,
+                )
+            )
         }
+        return graph.outgoingEdgesOf(reaction).let { edges ->
+            edges.asSequence().map { it.second }.toCollection(ArrayListSet(edges.size))
+        }
+    }
 
     override fun toString(): String {
         return graph.toString()

@@ -149,14 +149,14 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
     /**
      * @return the inner {@link Action} list, cast
      */
-    protected List<ILsaAction> getSAPEREActions() {
+    private List<ILsaAction> getSAPEREActions() {
         return (List<ILsaAction>) (List<? extends Action<List<ILsaMolecule>>>) getActions();
     }
 
     /**
      * @return the inner {@link Condition} list, cast
      */
-    protected List<ILsaCondition> getSAPEREConditions() {
+    private List<ILsaCondition> getSAPEREConditions() {
         return (List<ILsaCondition>) (List<? extends Condition<List<ILsaMolecule>>>) getConditions();
     }
 

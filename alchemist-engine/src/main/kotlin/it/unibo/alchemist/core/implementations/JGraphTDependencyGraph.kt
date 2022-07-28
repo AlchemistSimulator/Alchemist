@@ -64,8 +64,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 .flatMap { it.neighborhood.asSequence() }
                 // No duplicates
                 .distinct()
-                // Exclude direct neighbors
-                .filterNot { neighborhood.contains(it) }
+                // Exclude self and direct neighbors
+                .filterNot { it == newReaction.node || it in neighborhood }
                 .flatMap { it.reactions.asSequence() }
                 .filter { allReactions.contains(it) }
                 .toList()

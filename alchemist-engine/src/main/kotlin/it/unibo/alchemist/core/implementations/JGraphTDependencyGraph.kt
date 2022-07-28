@@ -138,7 +138,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
             // All the non-global reactions of the new neighbor
             n2NonGlobalReactions +
                 // Plus all the reactions of the new neighbor's neighbors with neighborhood output
-                (n2.neighborhood - n1.neighborhood).asSequence()
+                (n2.neighborhood - setOf(n1) - n1.neighborhood).asSequence()
                     .flatMap { it.reactions.asSequence() }
                     .filter { it.outputContext == Context.NEIGHBORHOOD }
         }

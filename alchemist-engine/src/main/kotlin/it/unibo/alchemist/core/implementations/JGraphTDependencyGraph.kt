@@ -68,7 +68,8 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 .filterNot { neighborhood.contains(it) }
                 .flatMap { it.reactions.asSequence() }
                 .filter { allReactions.contains(it) }
-                .toList().asSequence()
+                .toList()
+                .asSequence()
         }
         val getCandidates: (context: Context, (Reaction<T>) -> Boolean) -> Sequence<Actionable<T>> =
             { context, reactionsFilter ->

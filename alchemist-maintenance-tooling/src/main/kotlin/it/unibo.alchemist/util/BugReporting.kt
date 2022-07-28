@@ -19,9 +19,10 @@ object BugReporting {
      * as well as instructions on how to report the bug.
      */
     @JvmStatic
+    @JvmOverloads
     fun reportBug(
         message: String,
-        debugInformation: Map<String, Any?>
+        debugInformation: Map<String, Any?> = mapOf()
     ): Nothing {
         error(
             """

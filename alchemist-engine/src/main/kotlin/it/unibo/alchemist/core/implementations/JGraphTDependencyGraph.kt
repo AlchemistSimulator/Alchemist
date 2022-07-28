@@ -104,26 +104,6 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         }
     }
 
-    private val Actionable<T>.inputContext get() = when (this) {
-        is Reaction -> this.inputContext
-        else -> Context.GLOBAL
-    }
-
-    private val Actionable<T>.outputContext get() = when (this) {
-        is Reaction -> this.outputContext
-        else -> Context.GLOBAL
-    }
-
-    private val Node<T>.neighborhood
-        get() = environment.getNeighborhood(this).neighbors
-
-    private fun Actionable<T>.dependsOn(other: Actionable<T>) =
-        inboundDependencies.any { inbound ->
-            other.outboundDependencies.any { outbound ->
-                inbound.dependsOn(outbound) || outbound.makesDependent(inbound)
-            }
-        }
-
     override fun removeDependencies(reaction: Actionable<T>) {
         if (!graph.removeVertex(reaction)) {
             throw IllegalStateException("Inconsistent state: $reaction was not in the reaction pool.")
@@ -218,4 +198,27 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     }
 
     override fun globalInputContextReactions(): ListSet<Actionable<T>> = ListSets.unmodifiableListSet(inGlobals)
+
+    private val Actionable<T>.node: Node<T> get() = checkNotNull(this as? Reaction).node
+
+    private fun Actionable<T>.dependsOn(other: Actionable<T>) =
+        inboundDependencies.any { inbound ->
+            other.outboundDependencies.any { outbound ->
+                inbound.dependsOn(outbound) || outbound.makesDependent(inbound)
+            }
+        }
+
+    private val Node<T>.neighborhood get() = environment.getNeighborhood(this).neighbors
+
+    companion object {
+        private val Actionable<*>.inputContext get() = when (this) {
+            is Reaction -> inputContext
+            else -> Context.GLOBAL
+        }
+
+        private val Actionable<*>.outputContext get() = when (this) {
+            is Reaction -> outputContext
+            else -> Context.GLOBAL
+        }
+    }
 }

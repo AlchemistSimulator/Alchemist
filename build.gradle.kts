@@ -91,7 +91,10 @@ allprojects {
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xjvm-default=all") // Enable default methods in Kt interfaces
+            freeCompilerArgs = listOf(
+                "-Xjvm-default=all", // Enable default methods in Kt interfaces
+                "-Xcontext-receivers", // Enable context receivers
+            )
         }
     }
 

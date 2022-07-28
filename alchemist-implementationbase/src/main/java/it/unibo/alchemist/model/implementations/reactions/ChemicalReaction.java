@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -12,6 +13,8 @@ import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
 import it.unibo.alchemist.model.interfaces.TimeDistribution;
+
+import javax.annotation.Nonnull;
 
 /**
  * 
@@ -36,13 +39,14 @@ public class ChemicalReaction<T> extends AbstractReaction<T> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public ChemicalReaction<T> cloneOnNewNode(final Node<T> node, final Time currentTime) {
+    public ChemicalReaction<T> cloneOnNewNode(@Nonnull final Node<T> node, @Nonnull final Time currentTime) {
         return makeClone(() -> new ChemicalReaction<>(node, getTimeDistribution().cloneOnNewNode(node, currentTime)));
     }
 
     @Override
-    public final void initializationComplete(final Time atTime, final Environment<T, ?> environment) {
+    public final void initializationComplete(@Nonnull final Time atTime, @Nonnull final Environment<T, ?> environment) {
         update(atTime, true, environment);
     }
 

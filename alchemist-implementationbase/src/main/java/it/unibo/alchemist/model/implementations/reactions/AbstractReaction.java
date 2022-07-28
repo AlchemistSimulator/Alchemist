@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -314,11 +315,11 @@ public abstract class AbstractReaction<T> implements Reaction<T> {
             .append('@')
             .append(getTau())
             .append(':')
-            .append(getConditions().toString())
+            .append(getConditions())
             .append('-')
             .append(getRateAsString())
             .append("->")
-            .append(getActions().toString());
+            .append(getActions());
         stringLength = tot.length();
         return tot.toString();
     }

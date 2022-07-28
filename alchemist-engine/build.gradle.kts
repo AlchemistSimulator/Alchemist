@@ -21,6 +21,7 @@ import Libs.incarnation
 dependencies {
     api(alchemist("api"))
 
+    implementation(alchemist("maintenance-tooling"))
     implementation(libs.jgrapht.core)
     implementation(libs.guava)
     implementation(libs.trove4j)

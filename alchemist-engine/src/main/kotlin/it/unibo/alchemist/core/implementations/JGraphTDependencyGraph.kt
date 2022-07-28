@@ -160,23 +160,31 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
         addNeighborDirected(n2, n1)
     }
 
+    /**
+     * Remove edges linking reactions in [n1] that could have influenced reactions in [n2].
+     * - reactions of n1 with output local may have influenced those with input neighborhood in [n2]
+     * - reactions of n1 with output neighborhood may have influenced those with input local or neighborhood in [n2]
+     *   plus those with input neighborhood in the n2's neighborhood that is no longer part of [n1] neighborhood
+     * - reactions with global output are unmodified
+     */
     private fun removeNeighborDirected(n1: Node<T>, n2: Node<T>) {
-        val n2NonGlobalReactions by lazy { n2.reactions.filterNot { it.outputContext == Context.GLOBAL } }
-        val n2NeighborhoodReactions by lazy { n2NonGlobalReactions.filter { it.outputContext == Context.NEIGHBORHOOD } }
-        val neighborInputInfluencers by lazy {
+        val n2NonGlobalReactions by lazy { n2.reactions.filterNot { it.inputContext == Context.GLOBAL } }
+        val n2NeighborhoodReactions by lazy { n2NonGlobalReactions.filter { it.inputContext == Context.NEIGHBORHOOD } }
+        val neighborOutputInfluencers by lazy {
             // All the non-global reactions of the old neighbor
             n2NonGlobalReactions +
                 // Plus all the reactions of the new neighbor's neighbors with neighborhood output
-                (n2.neighborhood - n1.neighborhood - n1.neighborhood.flatMap { it.neighborhood }).asSequence()
+                (n2.neighborhood - setOf(n1) - n1.neighborhood - n1.neighborhood.flatMap { it.neighborhood }.toSet())
+                    .asSequence()
                     .flatMap { it.reactions.asSequence() }
-                    .filter { it.outputContext == Context.NEIGHBORHOOD }
+                    .filter { it.inputContext == Context.NEIGHBORHOOD }
                     .toList()
         }
         n1.reactions.forEach { reaction ->
-            when (reaction.inputContext) {
-                // Local-reading reactions can be only influenced by the new neighbor's neighborhood reactions
+            when (reaction.outputContext) {
+                // Local-reading reactions may have been influenced only by the ex neighbor neigh-writing reactions
                 Context.LOCAL -> n2NeighborhoodReactions
-                Context.NEIGHBORHOOD -> neighborInputInfluencers
+                Context.NEIGHBORHOOD -> neighborOutputInfluencers
                 else -> emptyList()
             }.asSequence()
                 .filter { reaction.dependsOn(it) }

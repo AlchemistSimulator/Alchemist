@@ -132,7 +132,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                     "was not in the appropriate reaction pool."
             )
         }
-        if (reaction.inputContext == Context.GLOBAL && !outGlobals.remove(reaction)) {
+        if (reaction.outputContext == Context.GLOBAL && !outGlobals.remove(reaction)) {
             throw IllegalStateException(
                 "Inconsistent state: " + reaction + " , with global output context, " +
                     "was not in the appropriate reaction pool."

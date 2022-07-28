@@ -332,8 +332,8 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
             final List<? extends Condition<List<ILsaMolecule>>> c,
             final List<? extends Action<List<ILsaMolecule>>> a
     ) {
-        super.setConditions((List<Condition<List<ILsaMolecule>>>) c);
-        super.setActions((List<Action<List<ILsaMolecule>>>) a);
+        super.setConditions(c);
+        super.setActions(a);
         modifiesOnlyLocally = getOutputContext() == Context.LOCAL;
         /*
          * The following optimization only makes sense if the reaction acts

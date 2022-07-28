@@ -9,9 +9,9 @@
 package it.unibo.alchemist.core.implementations
 
 import it.unibo.alchemist.core.interfaces.DependencyGraph
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Context
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Reaction
 import java.lang.IllegalArgumentException

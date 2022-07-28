@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -20,6 +21,7 @@ import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
         random = randomGenerator;
     }
 
+    @Nonnull
     @Override
     public BiochemicalReaction cloneOnNewNode(final Node<Double> node, final Time currentTime) {
         return new BiochemicalReaction(node, getTimeDistribution().cloneOnNewNode(node, currentTime), environment, random);
@@ -118,7 +121,7 @@ public final class BiochemicalReaction extends ChemicalReaction<Double> {
     }
 
     @Override
-    public void setConditions(final List<? extends Condition<Double>> conditions) {
+    public void setConditions(@Nonnull final List<? extends Condition<Double>> conditions) {
         super.setConditions(conditions);
         neighborConditionsPresent = conditions.stream().anyMatch(it -> it instanceof AbstractNeighborCondition);
     }

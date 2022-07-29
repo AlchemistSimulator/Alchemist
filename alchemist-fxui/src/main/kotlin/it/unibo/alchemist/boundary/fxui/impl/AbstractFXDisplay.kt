@@ -22,9 +22,9 @@ import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.boundary.ui.api.ZoomManager
 import it.unibo.alchemist.boundary.ui.impl.ExponentialZoomManager
 import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Concentration
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.model.interfaces.Time
@@ -213,7 +213,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> :
                 .collect(Collectors.toCollection { ConcurrentLinkedQueue<() -> Unit>() })
             repaint()
         } else {
-            throw IllegalStateException("Only the simulation thread can dictate GUI updates")
+            error("Only the simulation thread can dictate GUI updates")
         }
     }
 

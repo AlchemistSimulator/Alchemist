@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -10,11 +10,12 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph
 
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
+import it.unibo.alchemist.util.BugReporting
 
 /**
  * Defines a passage between two [ConvexPolygon]s in an euclidean bidimensional space. The passage is oriented, which
@@ -86,6 +87,6 @@ data class Euclidean2DPassage(
     private fun <V : Vector2D<V>> linesIntersectionOrFail(segment1: Segment2D<V>, segment2: Segment2D<V>): V =
         when (val intersection = segment1.toLine().intersect(segment2.toLine())) {
             is Intersection2D.SinglePoint -> intersection.point
-            else -> throw IllegalStateException("Bug in geometric engine, found in ${this::class.qualifiedName}")
+            else -> BugReporting.reportBug("Bug in geometric engine, found in ${this::class.qualifiedName}")
         }
 }

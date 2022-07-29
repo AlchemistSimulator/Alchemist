@@ -12,6 +12,7 @@ plugins {
 }
 
 include(
+    "alchemist-api",
     "alchemist-cognitive-agents",
     "alchemist-engine",
     "alchemist-euclidean-geometry",
@@ -22,8 +23,8 @@ include(
     "alchemist-incarnation-sapere",
     "alchemist-incarnation-scafi",
     "alchemist-incarnation-biochemistry",
-    "alchemist-api",
     "alchemist-loading",
+    "alchemist-maintenance-tooling",
     "alchemist-maps",
     "alchemist-physics",
     "alchemist-sapere-mathexp",

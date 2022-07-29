@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -16,10 +16,10 @@ import it.unibo.alchemist.core.interfaces.DependencyGraph;
 import it.unibo.alchemist.core.interfaces.Scheduler;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
+import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
@@ -574,8 +574,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         @Override
         public final void performChanges() {
             this.sourceNode.getReactions().stream()
-                    .map(reactionLevelOperation)
-                    .forEach(Update::performChanges);
+                .map(reactionLevelOperation)
+                .forEach(Update::performChanges);
         }
     }
 

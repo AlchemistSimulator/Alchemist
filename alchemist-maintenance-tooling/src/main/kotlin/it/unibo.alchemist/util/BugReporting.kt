@@ -19,20 +19,21 @@ object BugReporting {
      * as well as instructions on how to report the bug.
      */
     @JvmStatic
+    @JvmOverloads
     fun reportBug(
         message: String,
-        debugInformation: Map<String, Any?>
+        debugInformation: Map<String, Any?> = mapOf()
     ): Nothing {
-        throw IllegalStateException(
-            """
-                $message
+        error(
+            message +
+                """
                 
                 This is most likely a bug in in Alchemist. Please, open a report at:
                     --> https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
                 attaching the following information and the full stacktrace:
                 
-                ${debugInformation.debugReport()}
-            """.trimIndent()
+                """.trimIndent() +
+                debugInformation.debugReport()
         )
     }
 

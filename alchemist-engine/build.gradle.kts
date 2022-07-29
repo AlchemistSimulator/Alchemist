@@ -21,13 +21,15 @@ import Libs.incarnation
 dependencies {
     api(alchemist("api"))
 
+    implementation(alchemist("maintenance-tooling"))
     implementation(libs.jgrapht.core)
     implementation(libs.guava)
     implementation(libs.trove4j)
 
-    testImplementation(alchemist("implementationbase"))
     testImplementation(alchemist("euclidean-geometry"))
-    testRuntimeOnly(incarnation("sapere"))
+    testImplementation(alchemist("implementationbase"))
+    testImplementation(alchemist("loading"))
+    testImplementation(incarnation("biochemistry"))
 }
 
 publishing.publications {
@@ -49,5 +51,15 @@ publishing.publications {
                 }
             }
         }
+    }
+}
+
+tasks.compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = listOf(
+            "-Xjvm-default=all", // Enable default methods in Kt interfaces
+            // Context receivers are being used when testing
+            "-Xcontext-receivers", // Enable context receivers
+        )
     }
 }

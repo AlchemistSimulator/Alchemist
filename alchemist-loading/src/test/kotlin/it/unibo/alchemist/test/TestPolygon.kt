@@ -17,27 +17,25 @@ import it.unibo.alchemist.loader.deployments.Polygon
 import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position2D
 import org.apache.commons.math3.random.MersenneTwister
 
 private const val DEPLOYMENT_SIZE = 10_000
 private fun <P : Position2D<P>> incarnation() = SupportedIncarnations.get<Any, P>("sapere").get()
 class TestPolygon : StringSpec({
-    "test deployment on 2D space" {
-        val environment = Continuous2DEnvironment<Any>(incarnation())
+    fun <T, P : Position2D<P>>Environment<T, P>.runTestWithCoordinates() {
         val randomGenerator = MersenneTwister(0)
-        val displacement = Polygon(environment, randomGenerator, DEPLOYMENT_SIZE, points)
+        val displacement = Polygon(this, randomGenerator, DEPLOYMENT_SIZE, points)
         displacement.stream().count() shouldBe DEPLOYMENT_SIZE
-        val displacementPoints = Polygon(environment, randomGenerator, DEPLOYMENT_SIZE, pointsPair)
+        val displacementPoints = Polygon(this, randomGenerator, DEPLOYMENT_SIZE, pointsPair)
         displacementPoints.stream().count() shouldBe DEPLOYMENT_SIZE
     }
+    "test deployment on 2D space" {
+        Continuous2DEnvironment<Any>(incarnation()).runTestWithCoordinates()
+    }
     "test deployment on Venice lagoon" {
-        val environment = OSMEnvironment<Any>(incarnation(), "venezia.pbf")
-        val randomGenerator = MersenneTwister(0)
-        val displacement = Polygon(environment, randomGenerator, DEPLOYMENT_SIZE, points)
-        displacement.stream().count() shouldBe DEPLOYMENT_SIZE
-        val displacementPoints = Polygon(environment, randomGenerator, DEPLOYMENT_SIZE, pointsPair)
-        displacementPoints.stream().count() shouldBe DEPLOYMENT_SIZE
+        OSMEnvironment(incarnation(), "venezia.pbf").runTestWithCoordinates()
     }
 }) {
     companion object {
@@ -77,6 +75,7 @@ class TestPolygon : StringSpec({
             """,
             object : TypeToken<List<List<Double>>>() {}.type
         ).map { listOf(it[1], it[0]) }
+
         val pointsPair = points.map { Pair(it[1], it[0]) }
     }
 }

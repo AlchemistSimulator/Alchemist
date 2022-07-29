@@ -50,8 +50,8 @@ internal abstract class LoadingSystem(
         ): EnvironmentAndExports<T, P> {
             try {
                 mutex.acquireUninterruptibly()
-                if (consumed) {
-                    throw IllegalStateException("This loader has already been consumed! This is a bug in Alchemist")
+                check(!consumed) {
+                    "This loader has already been consumed! This is a bug in Alchemist"
                 }
                 consumed = true
             } finally {

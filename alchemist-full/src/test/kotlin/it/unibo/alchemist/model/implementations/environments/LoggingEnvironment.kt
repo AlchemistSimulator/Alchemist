@@ -7,9 +7,8 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.environments.it.unibo.alchemist.model.implementations.environments
+package it.unibo.alchemist.model.implementations.environments
 
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Incarnation
 import org.slf4j.LoggerFactory

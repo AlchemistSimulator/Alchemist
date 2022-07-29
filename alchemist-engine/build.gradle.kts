@@ -53,3 +53,13 @@ publishing.publications {
         }
     }
 }
+
+tasks.compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = listOf(
+            "-Xjvm-default=all", // Enable default methods in Kt interfaces
+            // Context receivers are being used when testing
+            "-Xcontext-receivers", // Enable context receivers
+        )
+    }
+}

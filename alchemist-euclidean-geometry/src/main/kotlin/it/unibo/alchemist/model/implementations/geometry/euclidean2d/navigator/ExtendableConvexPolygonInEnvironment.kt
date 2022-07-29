@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -12,17 +12,16 @@ package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigator.ExtendableConvexPolygon
 import java.awt.Shape
-import java.awt.geom.Point2D
 import java.awt.geom.Line2D
-import java.lang.IllegalStateException
+import java.awt.geom.Point2D
 
 /**
  * An [ExtendableConvexPolygon] located inside an environment with obstacles.
@@ -167,14 +166,16 @@ class ExtendableConvexPolygonInEnvironment(
         if (normals[index] == null) {
             normals[index] = computeNormal(index, edge)
         }
-        val normal = normals[index] ?: throw IllegalStateException("internal error: no normal found")
+        val normal = checkNotNull(normals[index]) { "internal error: no normal found" }
         cacheGrowthDirection(index, normal)
         val toMovementVector: (Euclidean2DPosition?).() -> Euclidean2DPosition = {
-            this?.let {
+            requireNotNull(this) {
+                "internal error: no growth direction found"
+            }.let {
                 val length = findLength(it, normal, step)
                 require(length.isFinite()) { "internal error: invalid length" }
                 it.resized(length)
-            } ?: throw IllegalStateException("internal error: no growth direction found")
+            }
         }
         val firstMovement = growthDirections[index]?.first.toMovementVector()
         val secondMovement = growthDirections[index]?.second.toMovementVector()
@@ -294,7 +295,7 @@ class ExtendableConvexPolygonInEnvironment(
             intrudingVertex = getEdge(index).second
             growthDirection = growthDirections[index]?.second
         }
-        growthDirection ?: throw IllegalStateException("no growth direction found")
+        checkNotNull(growthDirection) { "no growth direction found" }
         /*
          * a segment going from the old position of the intruding vertex to the new one
          */

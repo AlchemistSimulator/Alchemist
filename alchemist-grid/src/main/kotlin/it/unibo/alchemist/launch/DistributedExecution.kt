@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -39,7 +39,7 @@ object DistributedExecution : SimulationLauncher() {
         val simConfigs = loader.variables.cartesianProductOf(parameters.variables).map(::SimulationConfigImpl)
         val simulationSet = SimulationSetImpl(simulationConfig, simConfigs)
         val cluster = ClusterImpl(
-            Paths.get(parameters.distributed ?: throw IllegalStateException("No remote configuration file "))
+            Paths.get(requireNotNull(parameters.distributed) { "No remote configuration file " })
         )
         cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)
     }

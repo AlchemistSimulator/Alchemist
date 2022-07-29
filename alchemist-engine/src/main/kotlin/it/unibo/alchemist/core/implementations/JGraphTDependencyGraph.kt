@@ -35,6 +35,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     private val inGlobals = ArrayListSet<Actionable<T>>()
     private val outGlobals = ArrayListSet<Actionable<T>>()
     private val graph: DefaultDirectedGraph<Actionable<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)
+    private val runtimeRemovalCache = mutableSetOf<Actionable<T>>()
 
     override fun createDependencies(newReaction: Actionable<T>) {
         val allReactions = graph.vertexSet()
@@ -110,21 +111,24 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     }
 
     override fun removeDependencies(reaction: Actionable<T>) {
-        if (!graph.removeVertex(reaction)) {
-            throw IllegalStateException("Inconsistent state: $reaction was not in the reaction pool.")
-        }
-        if (reaction.inputContext == Context.GLOBAL && !inGlobals.remove(reaction)) {
-            throw IllegalStateException(
-                "Inconsistent state: " + reaction + " , with global input context, " +
-                    "was not in the appropriate reaction pool."
+        check(graph.removeVertex(reaction)) {
+            BugReporting.reportBug(
+                "Reaction does not exists in the dependency graph.",
+                mapOf(
+                    "reaction" to reaction,
+                    "graph" to graph,
+                    "incarnation" to environment.incarnation,
+                    "environment" to environment,
+                )
             )
         }
-        if (reaction.outputContext == Context.GLOBAL && !outGlobals.remove(reaction)) {
-            throw IllegalStateException(
-                "Inconsistent state: " + reaction + " , with global output context, " +
-                    "was not in the appropriate reaction pool."
-            )
+        check(reaction.inputContext != Context.GLOBAL || inGlobals.remove(reaction)) {
+            "Inconsistent state: $reaction, with global input context, was not in the appropriate pool."
         }
+        check(reaction.outputContext != Context.GLOBAL || !outGlobals.remove(reaction)) {
+            "Inconsistent state: $reaction, with global output context, was not in the appropriate pool."
+        }
+        runtimeRemovalCache += reaction
     }
 
     private fun addNeighborDirected(n1: Node<T>, n2: Node<T>) {
@@ -198,9 +202,15 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
     }
 
     override fun outboundDependencies(reaction: Actionable<T>?): ListSet<Actionable<T>> {
-        require(graph.containsVertex(reaction)) {
+        if (graph.containsVertex(reaction)) {
+            return graph.outgoingEdgesOf(reaction).let { edges ->
+                edges.mapTo(ArrayListSet(edges.size)) { it.second }
+            }
+        }
+        require(runtimeRemovalCache.remove(reaction)) {
             BugReporting.reportBug(
-                "Reaction does not exists in the dependency graph.",
+                "A reaction that is being updated does not exists in the dependency graph, " +
+                    "nor has been scheduled for removal.",
                 mapOf(
                     "graph" to graph,
                     "incarnation" to environment.incarnation,
@@ -209,14 +219,10 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                 )
             )
         }
-        return graph.outgoingEdgesOf(reaction).let { edges ->
-            edges.asSequence().map { it.second }.toCollection(ArrayListSet(edges.size))
-        }
+        return ListSets.emptyListSet()
     }
 
-    override fun toString(): String {
-        return graph.toString()
-    }
+    override fun toString() = graph.toString()
 
     override fun globalInputContextReactions(): ListSet<Actionable<T>> = ListSets.unmodifiableListSet(inGlobals)
 

@@ -18,6 +18,8 @@ private typealias DoublePair = Pair<Double, Double>
  */
 object HelpAttitudeSpec : ConfigSpec() {
 
+    // CPD-OFF
+
     /**
      * Adult males' help attitudes.
      */
@@ -161,4 +163,6 @@ object HelpAttitudeSpec : ConfigSpec() {
          */
         val elderlyFemale by required<DoublePair>()
     }
+
+    // CPD-ON
 }

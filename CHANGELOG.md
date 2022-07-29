@@ -1,3 +1,10 @@
+## [24.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.2...24.1.3) (2022-07-29)
+
+
+### Bug Fixes
+
+* **deps:** update kotest to v5.4.1 ([53866e6](https://github.com/AlchemistSimulator/Alchemist/commit/53866e6dd06937071d09883a377e1ff9536ca0a2))
+
 ## [24.1.2](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.1...24.1.2) (2022-07-28)
 
 

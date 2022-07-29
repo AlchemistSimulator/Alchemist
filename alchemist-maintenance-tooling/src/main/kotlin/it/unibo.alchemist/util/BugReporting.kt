@@ -25,15 +25,15 @@ object BugReporting {
         debugInformation: Map<String, Any?> = mapOf()
     ): Nothing {
         error(
-            """
-                $message
+            message +
+                """
                 
                 This is most likely a bug in in Alchemist. Please, open a report at:
                     --> https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
                 attaching the following information and the full stacktrace:
                 
-                ${debugInformation.debugReport()}
-            """.trimIndent()
+                """.trimIndent() +
+                debugInformation.debugReport()
         )
     }
 

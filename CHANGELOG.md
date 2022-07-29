@@ -1,3 +1,59 @@
+## [24.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.3...24.1.4) (2022-07-29)
+
+
+### Bug Fixes
+
+* **engine:** cleanup the candidate selection in JGraphTDependencyGraph ([f385672](https://github.com/AlchemistSimulator/Alchemist/commit/f385672c28eb3fdeacbe8a6bb6ffa9b8f703dcce))
+* **engine:** exclude the local node from neighbors' neighbors in JGraphTDependencyGraph ([0a9ec54](https://github.com/AlchemistSimulator/Alchemist/commit/0a9ec54e6b0bb2d387d9df56e513b13f1be34339))
+* **engine:** exclude the local node from the added neighbor reactions ([3b31c32](https://github.com/AlchemistSimulator/Alchemist/commit/3b31c32e451988c89eb8eabb73575541768441d0))
+* **engine:** fix bug with global output context reaction removal in the dependency graph ([fc24e3c](https://github.com/AlchemistSimulator/Alchemist/commit/fc24e3cc985af5ba41fd9a29513af11a577ee649))
+* **engine:** fix the dependency cleanup on neighbor removal ([2ca2cc9](https://github.com/AlchemistSimulator/Alchemist/commit/2ca2cc9094dbfdf0e9b0f9a377a71ca709a206c9))
+* **engine:** improve support for reaction removal, run consistency checks to intercept double removals and other bugs ([5e2ea4f](https://github.com/AlchemistSimulator/Alchemist/commit/5e2ea4ffcbb1f72153d23959ec561e4e0c46f673))
+* **maintenance-tooling:** improve bug reporting console output ([17f3313](https://github.com/AlchemistSimulator/Alchemist/commit/17f331330d93d4c396a110870ea105aed57ae542))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to e62739e ([027b869](https://github.com/AlchemistSimulator/Alchemist/commit/027b8692187eb100bd19352841057597beab2ee8))
+* **deps:** update plugin multijvmtesting to v0.4.9 ([65cd57b](https://github.com/AlchemistSimulator/Alchemist/commit/65cd57b3769385f427e4bcc4da128e2d6b58ba1a))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.18 ([8b49ab2](https://github.com/AlchemistSimulator/Alchemist/commit/8b49ab2e5433415b9e74c841d837555ae24360f3))
+
+
+### General maintenance
+
+* **build:** move the bug reporting tooling in a separate module ([e64d6ef](https://github.com/AlchemistSimulator/Alchemist/commit/e64d6effb794fc936b70a8c071ad972b7a210cff))
+* **build:** reorder included modules alphabetically ([39b6ab5](https://github.com/AlchemistSimulator/Alchemist/commit/39b6ab5993cb496e725d19c0da5058443d5b883e))
+* **engine:** move local extension methods to the bottom of the file ([a6f0ac6](https://github.com/AlchemistSimulator/Alchemist/commit/a6f0ac67e54f0187ed8eb187b0f56ac91dc3d57f))
+* **engine:** sort imports in JGraphTDependencyGraph ([6a57977](https://github.com/AlchemistSimulator/Alchemist/commit/6a579771749dbf8dc274703fc99727195f517612))
+* **engine:** update the copyright header in JGraphTDependencyGraph ([b064175](https://github.com/AlchemistSimulator/Alchemist/commit/b06417541e9c04823fc929fe01946b844a8990e1))
+* **engine:** use the bug reporting infrastructure instead of throwing exceptions ([eb1ae4a](https://github.com/AlchemistSimulator/Alchemist/commit/eb1ae4a0def80adec6227cdbafa7dc0ba9b0d830))
+* **incarnation-biochemistry:** improve (shorten) `ChangeBiomolConcentrationInCell.toString` ([0393869](https://github.com/AlchemistSimulator/Alchemist/commit/0393869a18bc45ff01be58f6350761bddd448cd5))
+* **maintenance-tooling:** make the debug information optional ([2b6f603](https://github.com/AlchemistSimulator/Alchemist/commit/2b6f603f8fd4bee37fda4d15cb118bc5ec6b0e81))
+
+
+### Style improvements
+
+* **engine:** improve format coherence in JGraphTDependencyGraph ([775fa7e](https://github.com/AlchemistSimulator/Alchemist/commit/775fa7ea400523958ce04ee507af97b41b020dfa))
+* **engine:** improve format coherence in JGraphTDependencyGraph ([5d67f30](https://github.com/AlchemistSimulator/Alchemist/commit/5d67f304250275def989cac5b96828fd9de9aa63))
+* **engine:** improve indentation ([d06ef1f](https://github.com/AlchemistSimulator/Alchemist/commit/d06ef1f0a7b4f5e8baf57a38c43140ed06af7df1))
+* **maintenance-tooling:** prefer error over throwing ([84cc816](https://github.com/AlchemistSimulator/Alchemist/commit/84cc816bc75224f75f0014d4eacaf83cb2424ace))
+
+
+### Build and continuous integration
+
+* enable context receivers only where strictly necessary, as they break kotlin scripting interpretation ([8bc8904](https://github.com/AlchemistSimulator/Alchemist/commit/8bc89048fff7cd81267348a841d1ff8229b1bf82))
+* enable support for Kotlin's context receivers ([7f35bc2](https://github.com/AlchemistSimulator/Alchemist/commit/7f35bc266b7c2dd7d2c3c14bcd6542961a62b143))
+* **Mergify:** configuration update ([ad5fe10](https://github.com/AlchemistSimulator/Alchemist/commit/ad5fe103025f775a504424dd93a01b10327e41af))
+* **Mergify:** do not run the check suite on Mergify updates ([16089e9](https://github.com/AlchemistSimulator/Alchemist/commit/16089e9394ee0635341da3a93f47d1c0c2a539e9))
+* remove deprecated feature preview ([5a1fac6](https://github.com/AlchemistSimulator/Alchemist/commit/5a1fac6a4287ec4928f0943d4ebc1c78926c9481))
+
+
+### Tests
+
+* **engine:** add minimal testing support for the dependency graph ([f49e9a7](https://github.com/AlchemistSimulator/Alchemist/commit/f49e9a73bb615ea38e05176bef5cc71d3bd548cf))
+* **engine:** do not use Kotlin's assert ([20b0de5](https://github.com/AlchemistSimulator/Alchemist/commit/20b0de5422ab9223f0b6a92cec5818fa1ad09f09))
+* **engine:** use the biochemistry incarnation to test the Engine command concurrency ([97fe3c8](https://github.com/AlchemistSimulator/Alchemist/commit/97fe3c8496d9d125697d60c5ed7bf34b650f8e90))
+
 ## [24.1.3](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.2...24.1.3) (2022-07-29)
 
 

@@ -13,3 +13,13 @@ pull_request_rules:
       - -conflict
     actions:
       update:
+  - name: ask to resolve conflict
+    conditions:
+      - conflict
+    actions:
+      comment:
+        message: |
+          Hi @{{author}}! :wave:
+          I could not help but notice that this pull request has conflicts. :confounded:
+          Could you fix it? :wrench:
+          Thank you! :pray:

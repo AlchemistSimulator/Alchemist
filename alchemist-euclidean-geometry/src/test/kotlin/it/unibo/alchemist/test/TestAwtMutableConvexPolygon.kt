@@ -1,3 +1,12 @@
+/*
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 package it.unibo.alchemist.test
 
 import io.kotest.assertions.throwables.shouldNotThrow
@@ -5,15 +14,30 @@ import io.kotest.assertions.throwables.shouldThrow
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.lang.IllegalArgumentException
 
 /**
  * Tests the creation of [AwtMutableConvexPolygon]s, the addition, removal and movement of vertices,
  * and the replacement of edges.
  */
 class TestAwtMutableConvexPolygon {
+
+    lateinit var polygon: AwtMutableConvexPolygon
+
+    @BeforeEach
+    fun setUp() {
+        polygon = AwtMutableConvexPolygon(
+            mutableListOf(
+                Euclidean2DPosition(0.0, 0.0),
+                Euclidean2DPosition(1.0, 0.0),
+                Euclidean2DPosition(1.0, 1.0),
+                Euclidean2DPosition(0.0, 1.0)
+            )
+        )
+    }
 
     @Test
     fun testCreation() {
@@ -61,80 +85,56 @@ class TestAwtMutableConvexPolygon {
                 Euclidean2DPosition(0.0, 0.0),
                 Euclidean2DPosition(1.0, 0.0),
                 Euclidean2DPosition(1.0, 1.0),
-                Euclidean2DPosition(0.0, 1.0)
+                Euclidean2DPosition(0.0, 1.0),
             )
         )
-        Assertions.assertEquals(true, p.addVertex(2, 1.5, 0.5))
-        Assertions.assertEquals(true, p.removeVertex(2))
-        Assertions.assertEquals(false, p.addVertex(2, 0.5, 0.5))
+        assertTrue(p.addVertex(2, 1.5, 0.5))
+        assertTrue(p.removeVertex(2))
+        assertFalse(p.addVertex(2, 0.5, 0.5))
     }
 
     @Test
     fun testRemoveVertex() {
-        val p = AwtMutableConvexPolygon(
-            mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(1.0, 0.0),
-                Euclidean2DPosition(1.0, 1.0),
-                Euclidean2DPosition(0.0, 1.0)
-            )
-        )
-        Assertions.assertEquals(true, p.removeVertex(2))
-        Assertions.assertEquals(false, p.removeVertex(2))
-        Assertions.assertEquals(true, p.addVertex(0, 0.0, 0.0))
-        Assertions.assertEquals(true, p.addVertex(0, 0.0, 0.0))
-        Assertions.assertEquals(false, p.removeVertex(4))
-        Assertions.assertEquals(true, p.removeVertex(2))
-        Assertions.assertEquals(true, p.removeVertex(1))
-        Assertions.assertEquals(false, p.removeVertex(0))
+        assertTrue(polygon.removeVertex(2))
+        assertFalse(polygon.removeVertex(2))
+        assertTrue(polygon.addVertex(0, 0.0, 0.0))
+        assertTrue(polygon.addVertex(0, 0.0, 0.0))
+        assertFalse(polygon.removeVertex(4))
+        assertTrue(polygon.removeVertex(2))
+        assertTrue(polygon.removeVertex(1))
+        assertFalse(polygon.removeVertex(0))
     }
 
     @Test
     fun testMoveVertex() {
-        val p = AwtMutableConvexPolygon(
-            mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(1.0, 0.0),
-                Euclidean2DPosition(1.0, 1.0),
-                Euclidean2DPosition(0.0, 1.0)
-            )
-        )
-        Assertions.assertEquals(true, p.moveVertex(2, 3.0, 3.0))
-        Assertions.assertEquals(false, p.moveVertex(2, -3.0, -3.0))
-        Assertions.assertEquals(false, p.moveVertex(1, 0.5, 1.5))
+        assertTrue(polygon.moveVertex(2, 3.0, 3.0))
+        assertFalse(polygon.moveVertex(2, -3.0, -3.0))
+        assertFalse(polygon.moveVertex(1, 0.5, 1.5))
     }
 
     @Test
     fun testReplaceEdge() {
-        var p = AwtMutableConvexPolygon(
-            mutableListOf(
-                Euclidean2DPosition(0.0, 0.0),
-                Euclidean2DPosition(1.0, 0.0),
-                Euclidean2DPosition(1.0, 1.0),
-                Euclidean2DPosition(0.0, 1.0)
-            )
-        )
         var newEdge = Segment2DImpl(
             Euclidean2DPosition(1.5, -0.5),
             Euclidean2DPosition(1.5, 1.5)
         )
-        Assertions.assertEquals(true, p.replaceEdge(1, newEdge))
+        assertTrue(polygon.replaceEdge(1, newEdge))
         newEdge = Segment2DImpl(
             Euclidean2DPosition(1.5, 1.5),
             Euclidean2DPosition(1.5, -0.5)
         )
-        Assertions.assertEquals(false, p.replaceEdge(1, newEdge))
+        assertFalse(polygon.replaceEdge(1, newEdge))
         newEdge = Segment2DImpl(
             Euclidean2DPosition(0.5, 0.3),
             Euclidean2DPosition(0.5, 0.6)
         )
-        Assertions.assertEquals(true, p.replaceEdge(1, newEdge))
+        assertTrue(polygon.replaceEdge(1, newEdge))
         newEdge = Segment2DImpl(
             Euclidean2DPosition(0.5, 0.3),
             Euclidean2DPosition(0.5, 0.6)
         )
-        Assertions.assertEquals(true, p.replaceEdge(1, newEdge))
-        p = AwtMutableConvexPolygon(
+        assertTrue(polygon.replaceEdge(1, newEdge))
+        polygon = AwtMutableConvexPolygon(
             mutableListOf(
                 Euclidean2DPosition(0.0, 0.0),
                 Euclidean2DPosition(3.0, 0.0),
@@ -148,6 +148,6 @@ class TestAwtMutableConvexPolygon {
             Euclidean2DPosition(-0.5, 1.0),
             Euclidean2DPosition(-0.5, 2.0)
         )
-        Assertions.assertEquals(false, p.replaceEdge(1, newEdge))
+        assertFalse(polygon.replaceEdge(1, newEdge))
     }
 }

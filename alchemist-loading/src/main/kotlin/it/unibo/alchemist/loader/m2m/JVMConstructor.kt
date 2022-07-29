@@ -252,11 +252,9 @@ sealed class JVMConstructor(val typeName: String) {
                     }
                 }
                 when (possibleMappings.size) {
-                    0 -> throw IllegalStateException("Could not build parameter #$index defined as $parameter")
+                    0 -> error("Could not build parameter #$index defined as $parameter")
                     1 -> possibleMappings.first()
-                    else -> throw IllegalStateException(
-                        "Ambiguous parameter #$index $parameter, multiple options match: $possibleMappings"
-                    )
+                    else -> error("Ambiguous parameter #$index $parameter, multiple options match: $possibleMappings")
                 }
             } else {
                 parameter

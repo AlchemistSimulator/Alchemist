@@ -132,9 +132,9 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
      * @return a new {@link WeibullDistribution}
      */
     protected static WeibullDistribution weibullFromMean(
-            final double mean,
-            final double deviation,
-            final RandomGenerator random
+        final double mean,
+        final double deviation,
+        final RandomGenerator random
     ) {
         final double t = FastMath.log((deviation * deviation) / (mean * mean) + 1);
         double kmin = 0, kmax = 1;
@@ -154,10 +154,10 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
         final double shapeParameter = 1 / k;
         final double scaleParameter = mean / FastMath.exp(Gamma.logGamma(1 + k));
         return new WeibullDistribution(
-                random,
-                shapeParameter,
-                scaleParameter,
-                WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY
+            random,
+            shapeParameter,
+            scaleParameter,
+            WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY
         );
     }
 

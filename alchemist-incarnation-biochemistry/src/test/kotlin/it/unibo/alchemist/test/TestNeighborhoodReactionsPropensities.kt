@@ -111,7 +111,7 @@ private val Container.expectedPropensity: Matcher<Container>
                 is NeighborhoodPresent -> node.neighborhoodPresentPropensity
                 is JunctionPresentInCell -> node.junctionPresentPropensity
                 is BiomolPresentInNeighbor -> node.biomoleculeInNeighborPropensity
-                else -> throw IllegalStateException("Unknown neighbor condition")
+                else -> error("Unknown neighbor condition")
             }
             return MatcherResult(
                 expectedPropensity == propensity,

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,24 +9,23 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.ARRIVED
+import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.CROSSING_DOOR
+import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_CROSSING_POINT_1
+import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_CROSSING_POINT_2
+import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_FINAL
+import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.NEW_ROOM
+import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.START
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
-import java.lang.IllegalStateException
-import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.START
-import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.NEW_ROOM
-import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_CROSSING_POINT_1
-import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_CROSSING_POINT_2
-import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.CROSSING_DOOR
-import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_FINAL
-import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.ARRIVED
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -116,8 +115,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * @returns the non-null value of a nullable variable or throws an [IllegalStateException] with a meaningful
      * message.
      */
-    protected fun <T> T?.orFail(): T =
-        this ?: throw IllegalStateException("internal error: variable must be defined in $state")
+    protected fun <T> T?.orFail(): T = checkNotNull(this) { "internal error: variable must be defined in $state" }
 
     /**
      * Updates [pedestrianPosition] and [currentRoom], this can be costly.

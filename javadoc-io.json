@@ -326,6 +326,9 @@
   "org.mongodb/mongodb-driver-sync/4.7.0": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.7.0"
   },
+  "org.mongodb/mongodb-driver-sync/4.7.1": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.7.1"
+  },
   "org.scala-lang/scala-compiler/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.8"
   },

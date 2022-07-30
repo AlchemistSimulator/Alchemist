@@ -42,7 +42,7 @@ public abstract class AbstractPosition<P extends Position<P>> implements Positio
         if (copy) {
             c = Arrays.copyOf(coordinates, coordinates.length);
         } else {
-            c = coordinates;
+            c = coordinates; // NOPMD: stored directly by purpose
         }
         org.apache.commons.math3.util.MathUtils.checkFinite(c);
     }

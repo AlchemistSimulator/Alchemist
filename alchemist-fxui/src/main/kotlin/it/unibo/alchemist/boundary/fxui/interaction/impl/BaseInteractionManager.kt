@@ -17,6 +17,8 @@ import it.unibo.alchemist.boundary.fxui.interaction.keyboard.api.KeyboardActionL
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.impl.ActionOnKey
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.impl.KeyboardEventDispatcher
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.impl.SimpleKeyboardEventDispatcher
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.util.ActionFromKey
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.util.Keybinds
 import it.unibo.alchemist.boundary.fxui.interaction.mouse.api.ActionOnMouse
 import it.unibo.alchemist.boundary.fxui.interaction.mouse.impl.DynamicMouseEventDispatcher
 import it.unibo.alchemist.boundary.fxui.interaction.mouse.impl.MouseButtonTriggerAction
@@ -29,8 +31,6 @@ import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.boundary.ui.api.ZoomManager
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.core.interfaces.Status
-import it.unibo.alchemist.input.ActionFromKey
-import it.unibo.alchemist.input.Keybinds
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D

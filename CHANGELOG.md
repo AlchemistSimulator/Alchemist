@@ -1,3 +1,59 @@
+## [24.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.4...24.1.5) (2022-07-30)
+
+
+### Bug Fixes
+
+* **fxui:** fix the package declaration of `Keybinds` ([54eb771](https://github.com/AlchemistSimulator/Alchemist/commit/54eb771dbf288764c6af8f8f2054ba74e805e32a))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to d19c37e ([f1a1fd3](https://github.com/AlchemistSimulator/Alchemist/commit/f1a1fd37513b7d02c13cd1f070bbbdbea24c8802))
+* **deps:** update plugin kotlin-qa to v0.22.1 ([0b55afe](https://github.com/AlchemistSimulator/Alchemist/commit/0b55afe4e702fddd63b8c814766a657937e2ced1))
+* **deps:** update site/themes/hugo-theme-relearn digest to 1f7df3e ([7d1bca5](https://github.com/AlchemistSimulator/Alchemist/commit/7d1bca545400ef87110b388ae0919bd5e1949561))
+
+
+### Tests
+
+* **api:** fix wrong file location of TestStatus ([0304c81](https://github.com/AlchemistSimulator/Alchemist/commit/0304c81ba202b59256a12b1e805b0a3ccd8fa1a5))
+
+
+### General maintenance
+
+* **maintenance-tooling:** fix wrong file location of `BugReporting` ([1dd2e1a](https://github.com/AlchemistSimulator/Alchemist/commit/1dd2e1a8b8fb8956d071f9e8ff59ec38a5191196))
+
+
+### Style improvements
+
+* **cognitive-agents:** disable CPD on HelpAttitudeSpec ([46ccc7a](https://github.com/AlchemistSimulator/Alchemist/commit/46ccc7a57624138fa788234008f3efc0d45ae0bc))
+* **cognitive-agents:** reduce duplication via type alias ([75c33d8](https://github.com/AlchemistSimulator/Alchemist/commit/75c33d8cd3de51bbde738fa2bad002c7f5c10672))
+* **cognitive-agents:** use check() or error() instead of throwing `IllegalArgumentException`s ([4d1a784](https://github.com/AlchemistSimulator/Alchemist/commit/4d1a784ae2bfeef5a9f69ce36c146ab238b4245e))
+* **engine:** use check() or error() instead of throwing `IllegalStateException`s ([c428e2a](https://github.com/AlchemistSimulator/Alchemist/commit/c428e2a8f80b92a5d34ffbe6b73ce98a01d73406))
+* **euclidean-geometry:** reduce duplication in TestAwtMutableConvexPolygon ([8431c9f](https://github.com/AlchemistSimulator/Alchemist/commit/8431c9f4bd02317a9c2b0c25d2d94778c51e8585))
+* explicitly report bugs in Euclidean2DPassage ([e3f1573](https://github.com/AlchemistSimulator/Alchemist/commit/e3f1573f6b3b3ee9d14b435ca02b07b3fe977b22))
+* fix package declaration of LoggingEnvironment ([b4a2bd0](https://github.com/AlchemistSimulator/Alchemist/commit/b4a2bd03d8c7bdedaf9111637328a7ae49590a22))
+* **incarnation-biochemistry:** use check() or error() instead of throwing `IllegalStateException`s ([756267f](https://github.com/AlchemistSimulator/Alchemist/commit/756267fae2dab048d146d70af3831aa2887ac48d))
+* **loading:** reduce duplication in TestPolygon ([4524a16](https://github.com/AlchemistSimulator/Alchemist/commit/4524a16ebf99c63130861a936c50f19b1a1e95ba))
+* **maps:** use check() or error() instead of throwing `IllegalStateException`s ([f269e8d](https://github.com/AlchemistSimulator/Alchemist/commit/f269e8dd59394251c651a25b242df882db367819))
+* **physics:** use check() or error() instead of throwing `IllegalStateException`s ([edd04da](https://github.com/AlchemistSimulator/Alchemist/commit/edd04da66834f35a0c64d202feddf3f2a2bcd9e6))
+* **test:** use check() or error() instead of throwing `IllegalStateException`s ([eb9daa2](https://github.com/AlchemistSimulator/Alchemist/commit/eb9daa20436e1d4ad2fe410607033b18d48c21ad))
+* use check() instead of throwing an IllegalArgumentException in AbstractNavigationAction ([3f2eab1](https://github.com/AlchemistSimulator/Alchemist/commit/3f2eab1c4b13f30f2c5d4f040263b58a97546401))
+* use check() instead of throwing an IllegalArgumentException in ExtendableConvexPolygonInEnvironment ([46e29b8](https://github.com/AlchemistSimulator/Alchemist/commit/46e29b820b41304376a2a6389e16ce165674eace))
+* use check() instead of throwing an IllegalArgumentException in Launcher ([6643923](https://github.com/AlchemistSimulator/Alchemist/commit/66439237772aa2685ed9220a81889dadd803ab02))
+* use check() instead of throwing an IllegalArgumentException in Pursuing ([dd15029](https://github.com/AlchemistSimulator/Alchemist/commit/dd15029089ba08f115c1117f1ae6915a95517566))
+* use check() instead of throwing an IllegalStateException in AfterTime ([8a77fa2](https://github.com/AlchemistSimulator/Alchemist/commit/8a77fa21c71eeb743decd86aa94ea558970c215c))
+* use check() instead of throwing an IllegalStateException in AnalogPanHelper ([b4d88f1](https://github.com/AlchemistSimulator/Alchemist/commit/b4d88f119b87b9481a643929a2e0b8117734c0b7))
+* use check() instead of throwing an IllegalStateException in Family ([c626ee0](https://github.com/AlchemistSimulator/Alchemist/commit/c626ee0f6b0ada6061ad0b7d63a662c5a3400038))
+* use check() instead of throwing an IllegalStateException in LoadingSystem ([8ccfcb4](https://github.com/AlchemistSimulator/Alchemist/commit/8ccfcb48f438d97196e816187a672eecca7860f8))
+* use check() or error() instead of throwing `IllegalStateException`s ([7fd3cb0](https://github.com/AlchemistSimulator/Alchemist/commit/7fd3cb03aa37bcfcc95002c186814f7e319a2d52))
+* use error() instead of throwing an IllegalArgumentException in Alchemist ([088e086](https://github.com/AlchemistSimulator/Alchemist/commit/088e086022bf7439c2984701b7e589d68c38a47f))
+* use error() instead of throwing an IllegalStateException in AbstractFXDisplay ([f1097ac](https://github.com/AlchemistSimulator/Alchemist/commit/f1097ac51985f6360cfd6f48a24fbb75b9c20ab8))
+* use error() instead of throwing an IllegalStateException in LoadingSystem ([a8a2c95](https://github.com/AlchemistSimulator/Alchemist/commit/a8a2c95d8acda713702b6f3940fac1101b9fac1e))
+* use require() instead of throwing an IllegalArgumentException in AbstractConvexPolygon ([ca8d13b](https://github.com/AlchemistSimulator/Alchemist/commit/ca8d13bbb20820373cda6770748304e2db5eb0fd))
+* use require() instead of throwing an IllegalArgumentException in DistributedExecution ([7bd8db3](https://github.com/AlchemistSimulator/Alchemist/commit/7bd8db339f2235dcad120a5cb26e3f3d06e30099))
+* use require() instead of throwing an IllegalArgumentException in Euclidean2DEnvironment ([bc441fe](https://github.com/AlchemistSimulator/Alchemist/commit/bc441fed9925676918877e9c5fc43edbcd06a786))
+* use require() instead of throwing an IllegalArgumentException in LazyMutable ([7e6dff5](https://github.com/AlchemistSimulator/Alchemist/commit/7e6dff5b90e46ca10a83db265c53fa4181a414e0))
+
 ## [24.1.4](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.3...24.1.4) (2022-07-29)
 
 

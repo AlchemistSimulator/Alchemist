@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -23,9 +23,8 @@ class TestOutputMonitorFailures : FreeSpec(
             "initialization" {
                 runTest(
                     object : OutputMonitor<Nothing, Euclidean2DPosition> {
-                        override fun initialized(environment: Environment<Nothing, Euclidean2DPosition>) {
-                            throw IllegalStateException("initialization failure")
-                        }
+                        override fun initialized(environment: Environment<Nothing, Euclidean2DPosition>) =
+                            error("initialization failure")
                     }
                 )
             }
@@ -36,9 +35,7 @@ class TestOutputMonitorFailures : FreeSpec(
                             environment: Environment<Nothing, Euclidean2DPosition>,
                             time: Time,
                             step: Long
-                        ) {
-                            throw IllegalStateException("termination failure")
-                        }
+                        ) = error("termination failure")
                     }
                 )
             }

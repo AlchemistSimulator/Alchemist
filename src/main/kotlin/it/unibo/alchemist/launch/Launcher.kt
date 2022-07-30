@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -35,18 +35,15 @@ interface Launcher : (AlchemistExecutionOptions) -> Unit {
      */
     override fun invoke(parameters: AlchemistExecutionOptions) {
         val validation = validate(parameters)
-        if (validation is Validation.OK) {
-            when (val priority = validation.priority) {
-                is Priority.High -> logger.warn("{} selected because {}", this, priority.reason)
-                is Priority.Fallback -> logger.warn("{} selected because {}", this, priority.warning)
-                else -> Unit
-            }
-            launch(parameters)
-        } else {
-            throw IllegalStateException(
-                "Cannot launch $name without a suitable configuration file: $validation"
-            )
+        check(validation is Validation.OK) {
+            "Cannot launch $name without a suitable configuration file: $validation"
         }
+        when (val priority = validation.priority) {
+            is Priority.High -> logger.warn("{} selected because {}", this, priority.reason)
+            is Priority.Fallback -> logger.warn("{} selected because {}", this, priority.warning)
+            else -> Unit
+        }
+        launch(parameters)
     }
 
     /**

@@ -15,15 +15,15 @@ import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.interfaces.GlobalReaction
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
-import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
+import it.unibo.alchemist.model.interfaces.properties.PhysicalProperty
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
 import org.dyn4j.geometry.Circle
@@ -159,11 +159,9 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         body.setMass(MassType.NORMAL)
     }
 
-    override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) = nodeToBody[node]?.let {
-        it.linearVelocity = Vector2(velocity.x, velocity.y)
-    } ?: throw IllegalStateException(
-        "Unable to update $node physical state. Check if it was added to this environment."
-    )
+    override fun setVelocity(node: Node<T>, velocity: Euclidean2DPosition) =
+        nodeToBody[node]?.let { it.linearVelocity = Vector2(velocity.x, velocity.y) }
+            ?: error("Unable to update $node physical state. Check if it was added to this environment.")
 
     override fun getVelocity(node: Node<T>) = nodeToBody[node]?.let {
         Euclidean2DPosition(it.linearVelocity.x, it.linearVelocity.y)
@@ -219,10 +217,10 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
                     override fun next(current: Euclidean2DPosition, desired: Euclidean2DPosition) = desired
 
                     override fun removeObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
-                        throw IllegalStateException("This Environment instance does not support obstacle removal")
+                        error("This Environment instance does not support obstacle removal")
 
                     override fun addObstacle(obstacle: RectObstacle2D<Euclidean2DPosition>) =
-                        throw IllegalStateException("This Environment instance does not support adding obstacles")
+                        error("This Environment instance does not support adding obstacles")
 
                     override fun makePosition(vararg coordinates: Double) =
                         this@asEnvironmentWithObstacles.makePosition(*coordinates)

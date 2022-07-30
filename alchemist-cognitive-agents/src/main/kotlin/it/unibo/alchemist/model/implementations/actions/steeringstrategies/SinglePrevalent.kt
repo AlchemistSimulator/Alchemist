@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.NavigationAction
+import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
@@ -104,9 +104,8 @@ class SinglePrevalent<T, N : ConvexPolygon>(
         with(actions.prevalent()) {
             val prevalentForce = this.nextPosition()
             val leadsOutsideCurrentRoom: Euclidean2DPosition.() -> Boolean = {
-                (currentRoom ?: throw IllegalStateException("currentRoom should be defined")).let { currRoom ->
-                    !currRoom.containsBoundaryIncluded(pedestrianPosition + this)
-                }
+                checkNotNull(currentRoom) { "currentRoom should be defined" }
+                    .let { !it.containsBoundaryIncluded(pedestrianPosition + this) }
             }
             if (prevalentForce == environment.origin ||
                 currentRoom == null ||

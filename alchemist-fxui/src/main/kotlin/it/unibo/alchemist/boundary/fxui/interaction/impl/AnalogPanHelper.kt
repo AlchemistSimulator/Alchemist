@@ -32,10 +32,11 @@ class AnalogPanHelper(private var current: Point) {
      * @param next the destination point
      * @param view the position of the view
      */
-    fun update(next: Point, view: Point): Point = if (valid) {
-        (view + next - current).also { current = next }
-    } else {
-        throw IllegalStateException("Unable to pan after finalizing the PanHelper")
+    fun update(next: Point, view: Point): Point {
+        check(valid) {
+            "Unable to pan after finalizing the PanHelper"
+        }
+        return (view + next - current).also { current = next }
     }
 
     /**

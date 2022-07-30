@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -16,7 +16,6 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
 import java.awt.Shape
-import java.lang.IllegalStateException
 import kotlin.math.min
 
 /**
@@ -55,6 +54,11 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
     override fun isAdjacentTo(other: ConvexPolygon): Boolean = !intersects(other.asAwtShape()) &&
         (other.vertices().any { liesOnBoundary(it) } || vertices().any { other.liesOnBoundary(it) })
 
+    override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> =
+        requireNotNull(
+            edges().minWithOrNull(compareBy({ it.distanceTo(segment) }, { it.minCumulativeDistanceTo(segment) }))
+        ) { "no edge found" }
+
     override fun intersects(segment: Segment2D<Euclidean2DPosition>): Boolean {
         if (containsBoundaryExcluded(segment.first) || containsBoundaryExcluded(segment.second)) {
             return true
@@ -70,11 +74,6 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
             .distinct()
         return intersections.none { it is Intersection2D.InfinitePoints } && intersectionPoints.count() > 1
     }
-
-    override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> = edges()
-        .minWithOrNull(compareBy({ it.distanceTo(segment) }, { it.minCumulativeDistanceTo(segment) }))
-        ?: throw IllegalStateException("no edge found")
-
     override fun toString(): String = javaClass.simpleName + vertices()
 
     /**

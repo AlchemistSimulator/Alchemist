@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -144,7 +144,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                         .onFailure { logger.warn("Directory structure $folder could not be created", it) }
                         .isSuccess
                 }
-            } ?: throw IllegalStateException("No writeable path was found.")
+            } ?: error("No writeable path was found.")
         }
 
         @Synchronized

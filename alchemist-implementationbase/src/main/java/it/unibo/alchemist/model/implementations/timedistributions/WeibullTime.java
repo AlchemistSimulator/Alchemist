@@ -131,6 +131,7 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
      *            the random generator
      * @return a new {@link WeibullDistribution}
      */
+    @SuppressFBWarnings("FL_FLOATS_AS_LOOP_COUNTERS")
     protected static WeibullDistribution weibullFromMean(
         final double mean,
         final double deviation,

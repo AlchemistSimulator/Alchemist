@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -41,13 +41,11 @@ abstract class SimulationLauncher : AbstractLauncher() {
     }
 
     final override fun launch(parameters: AlchemistExecutionOptions) = with(parameters) {
-        if (configuration == null) {
-            throw IllegalStateException("Invalid configuration $configuration")
-        }
+        checkNotNull(configuration) { "Invalid configuration $configuration" }
         val loader = LoadAlchemist.from(
             ResourceLoader.getResource(configuration)
                 ?: File(configuration).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
-                ?: throw IllegalStateException("No classpath resource or file $configuration was found")
+                ?: error("No classpath resource or file $configuration was found")
         )
         launch(loader, parameters)
     }

@@ -1,13 +1,13 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.input
+package it.unibo.alchemist.boundary.fxui.interaction.keyboard.util
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -15,14 +15,14 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
-import java.util.Optional
 import javafx.scene.input.KeyCode
 import org.kaikikm.threadresloader.ResourceLoader
 import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 import java.lang.reflect.Type
+import java.util.Optional
 
 /**
  * Actions which can be bound to a key on the keyboard.

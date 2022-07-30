@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.fxui.impl
 
-import it.unibo.alchemist.input.ActionFromKey
-import it.unibo.alchemist.input.Keybinds
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.util.ActionFromKey
+import it.unibo.alchemist.boundary.fxui.interaction.keyboard.util.Keybinds
 import javafx.beans.property.Property
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections

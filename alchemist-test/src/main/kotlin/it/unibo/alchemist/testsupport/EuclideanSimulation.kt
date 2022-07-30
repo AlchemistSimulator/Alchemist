@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -12,14 +12,13 @@ package it.unibo.alchemist.testsupport
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
-import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.geometry.Vector
 import org.kaikikm.threadresloader.ResourceLoader
-import java.lang.IllegalStateException
 
 /**
  * Run the simulation this environment owns.
@@ -75,4 +74,4 @@ fun <T, P> loadYamlSimulation(
     vars: Map<String, Double> = emptyMap()
 ): EuclideanEnvironment<T, P> where P : Position<P>, P : Vector<P> =
     LoadAlchemist.from(ResourceLoader.getResource(resource)).getWith<T, P>(vars).environment
-        .let { it as? EuclideanEnvironment } ?: throw IllegalStateException("Illegal kind of environment")
+        .let { it as? EuclideanEnvironment } ?: error("Illegal kind of environment")

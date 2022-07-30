@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -29,7 +30,7 @@ public interface Variable<V extends Serializable> extends Serializable, Iterable
      */
     default long steps() {
         return stream().count();
-    };
+    }
 
     /**
      * @return the default value for this {@link Variable}

@@ -69,6 +69,7 @@ public class FollowTarget<T, P extends Position<P>> implements TargetSelectionSt
     }
 
     @SuppressWarnings("unchecked")
+    @SuppressFBWarnings("FL_FLOATS_AS_LOOP_COUNTERS") // false positive
     @Override
     public final P getTarget() {
         final Optional<T> optt = Optional.ofNullable(node.getConcentration(track));
@@ -103,7 +104,7 @@ public class FollowTarget<T, P extends Position<P>> implements TargetSelectionSt
                 }
             } else {
                 final Matcher m = FLOAT_PATTERN
-                        .matcher(conc instanceof CharSequence ? (CharSequence) conc : conc.toString());
+                    .matcher(conc instanceof CharSequence ? (CharSequence) conc : conc.toString());
                 while (Double.isNaN(y) && m.find()) {
                     final String val = m.group();
                     /*

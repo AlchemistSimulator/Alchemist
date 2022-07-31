@@ -162,9 +162,9 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         super();
         if (!"true".equals(System.getProperty(OPENGL))) {
             L.warn(
-                    "OpenGL acceleration appears to be disabled on this system. "
-                            + "This may impact performance negatively. "
-                            + "Please enable it with -D" + OPENGL + "=true"
+                "OpenGL acceleration appears to be disabled on this system. "
+                    + "This may impact performance negatively. "
+                    + "Please enable it with -D" + OPENGL + "=true"
             );
         }
         setStep(step);

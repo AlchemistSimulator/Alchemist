@@ -158,6 +158,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      *
      * @param step number of steps to let pass without re-drawing
      */
+    @SuppressFBWarnings("MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR")
     public Generic2DDisplay(final int step) {
         super();
         if (!"true".equals(System.getProperty(OPENGL))) {

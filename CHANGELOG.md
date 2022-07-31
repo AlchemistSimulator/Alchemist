@@ -1,3 +1,47 @@
+## [24.1.6](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.5...24.1.6) (2022-07-31)
+
+
+### Dependency updates
+
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.7.1 ([c086aa7](https://github.com/AlchemistSimulator/Alchemist/commit/c086aa7e21d1d09cfe9f2f79a6bcbf4e6b909489))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b3e13df ([5c86cc0](https://github.com/AlchemistSimulator/Alchemist/commit/5c86cc0a0da85c14754c760e2119198c9e487c27))
+* **deps:** update plugin java-qa to v0.26.0 ([4fb920b](https://github.com/AlchemistSimulator/Alchemist/commit/4fb920b539db7116b459dea01b7dc4dd05afeaa9))
+* **deps:** update plugin kotlin-qa to v0.23.0 ([9a9d12f](https://github.com/AlchemistSimulator/Alchemist/commit/9a9d12f5aebac7b9c78c734bee3fee635e8e7dc6))
+* **deps:** update plugin org.danilopianini.gradle-java-qa to 0.31.1 ([b4b851e](https://github.com/AlchemistSimulator/Alchemist/commit/b4b851ed3d0a80ba112099adf90c16dcbe8aaa6c))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([d9e071f](https://github.com/AlchemistSimulator/Alchemist/commit/d9e071ff2aab74bf5f6c20b72c3bb0fe9c35e916))
+* **implementationbase:** organize imports in `SupportedIncarnations` ([3824681](https://github.com/AlchemistSimulator/Alchemist/commit/3824681dd693603cdcd18a7be21e757f86b5c4b6))
+* **implementationbase:** update copyright header in `AbstractEnvironment` ([4f7199e](https://github.com/AlchemistSimulator/Alchemist/commit/4f7199e8d532eb5f4e008f1f8a781936cbc0f946))
+
+
+### Documentation
+
+* **swingui:** fix typo in comment ([1198958](https://github.com/AlchemistSimulator/Alchemist/commit/119895890ff39d78cb7ff328b6e16a0a4e251f93))
+
+
+### Style improvements
+
+* **api:** remove unnecessary semicolon ([a4ba746](https://github.com/AlchemistSimulator/Alchemist/commit/a4ba746f6390325e1dc0a5b5c1958ae9b13e5963))
+* **implementationbase:** improve indentation in `AbstractEnvironment` ([4fc2be0](https://github.com/AlchemistSimulator/Alchemist/commit/4fc2be036a124ec459359ff7c87c076ab271bb8b))
+* **implementationbase:** improve indentation in WeibullTime ([4441229](https://github.com/AlchemistSimulator/Alchemist/commit/44412293ff7350db116ffdcdb4ea1a6abbf5c7c7))
+* **implementationbase:** organize imports in `WeibullTime` ([98fe54e](https://github.com/AlchemistSimulator/Alchemist/commit/98fe54ed107a61039c927bb2473f910c951cb8bd))
+* **implementationbase:** sort imports in `FollowTarget` ([4bced5b](https://github.com/AlchemistSimulator/Alchemist/commit/4bced5bdb81003d034623d4dbff5e81fa5377d3b))
+* **implementationbase:** suppress false positive `FL_FLOATS_AS_LOOP_COUNTERS` in `FollowTarget` ([48699d7](https://github.com/AlchemistSimulator/Alchemist/commit/48699d7db18845e16616abd11912de7b72004df8))
+* **implementationbase:** suppress warning FL_FLOATS_AS_LOOP_COUNTERS in WeibullTime, it's a false positive ([c357086](https://github.com/AlchemistSimulator/Alchemist/commit/c3570869f75f2e60e8c6407d42d3a5657622e9ab))
+* **implementationbase:** update copyright header in `FollowTarget` ([7074e8e](https://github.com/AlchemistSimulator/Alchemist/commit/7074e8e3bc48d418f1e83cf639323337d324d766))
+* **implementationbase:** update copyright header in `WeibullTime` ([f4c179d](https://github.com/AlchemistSimulator/Alchemist/commit/f4c179db7ea4765bea5f0d612fa4ebce7f13b516))
+* **incarnation-protelis:** improve indentation in AlchemistExecutionContext ([59fff3d](https://github.com/AlchemistSimulator/Alchemist/commit/59fff3dd7633c3273413b4b43c18c7579e1da350))
+* **incarnation-protelis:** improve indentation in ProtelisIncarnation ([98ba24a](https://github.com/AlchemistSimulator/Alchemist/commit/98ba24add94507fc1327e13e12ca9f9866ca30b5))
+* **loading:** remove useless semicolon in `Variable` ([204ce94](https://github.com/AlchemistSimulator/Alchemist/commit/204ce94436247855e7e701f1fad0511eff9e7dea))
+* **pmd:** suppress warning on direct array store in AbstractPosition, it's done by purpose ([39058b3](https://github.com/AlchemistSimulator/Alchemist/commit/39058b32afc82d0ce3b60d314801d950917f2a26))
+* **spotbugs:** suppress false positive FL_FLOATS_AS_LOOP_COUNTERS ([2f87bfa](https://github.com/AlchemistSimulator/Alchemist/commit/2f87bfa96c41fbb546fc7046b86e3450502130e8))
+* **swingui:** improve indentation in `Generic2DDisplay` ([849b6ce](https://github.com/AlchemistSimulator/Alchemist/commit/849b6cea56446149afb9e0b912c64b5ef0163054))
+* **swingui:** sort imports in `Generic2DDisplay` ([2ff4b22](https://github.com/AlchemistSimulator/Alchemist/commit/2ff4b223fbe94beaa53ec19ac8d8cdd555415a2a))
+* **swingui:** suppress false positive `MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR` in `Generic2DDisplay` ([d8a1799](https://github.com/AlchemistSimulator/Alchemist/commit/d8a1799027d7d685569e15316a32e6394632ce71))
+
 ## [24.1.5](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.4...24.1.5) (2022-07-30)
 
 

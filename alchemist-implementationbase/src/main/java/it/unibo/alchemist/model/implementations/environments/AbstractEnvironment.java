@@ -194,8 +194,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         }
         if (cache == null) {
             cache = Caffeine.newBuilder()
-                    .maximumSize(1000)
-                    .build(pair -> runQuery(pair.left, pair.right));
+                .maximumSize(1000)
+                .build(pair -> runQuery(pair.left, pair.right));
         }
         return cache.get(new ImmutablePair<>(center, range));
     }

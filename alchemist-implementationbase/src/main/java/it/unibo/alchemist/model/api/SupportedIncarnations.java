@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.model.api;
 
-import it.unibo.alchemist.util.ClassPathScanner;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.util.ClassPathScanner;
 import org.jooq.lambda.Unchecked;
 
 import java.util.Collections;

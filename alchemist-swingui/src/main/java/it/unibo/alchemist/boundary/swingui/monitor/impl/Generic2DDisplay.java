@@ -24,8 +24,8 @@ import it.unibo.alchemist.boundary.wormhole.impl.WormholeSwing;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Actionable;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Neighborhood;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
@@ -147,7 +147,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private Set<Node<T>> selectedNodes = new HashSet<>();
 
     /**
-     * Initializes a new display with out redrawing the first step.
+     * Initializes a new display without redrawing the first step.
      */
     public Generic2DDisplay() {
         this(1);
@@ -158,13 +158,14 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      *
      * @param step number of steps to let pass without re-drawing
      */
+    @SuppressFBWarnings("MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR")
     public Generic2DDisplay(final int step) {
         super();
         if (!"true".equals(System.getProperty(OPENGL))) {
             L.warn(
-                    "OpenGL acceleration appears to be disabled on this system. "
-                            + "This may impact performance negatively. "
-                            + "Please enable it with -D" + OPENGL + "=true"
+                "OpenGL acceleration appears to be disabled on this system. "
+                    + "This may impact performance negatively. "
+                    + "Please enable it with -D" + OPENGL + "=true"
             );
         }
         setStep(step);

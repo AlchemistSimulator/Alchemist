@@ -83,16 +83,17 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
      * memory. However, it is not strictly a singleton (multiple instances do not do harm).
      */
     public static final ProtelisIncarnation<?> INSTANCE = new ProtelisIncarnation<>();
+
     private final LoadingCache<CacheKey, SynchronizedVM> cache = CacheBuilder
-            .newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build(new CacheLoader<>() {
-                @NotNull
-                @Override
-                public SynchronizedVM load(@Nonnull final CacheKey key) {
-                    return new SynchronizedVM(key);
-                }
-            });
+        .newBuilder()
+        .expireAfterAccess(10, TimeUnit.MINUTES)
+        .build(new CacheLoader<>() {
+            @NotNull
+            @Override
+            public SynchronizedVM load(@Nonnull final CacheKey key) {
+                return new SynchronizedVM(key);
+            }
+        });
 
     @Nonnull
     private static List<RunProtelisProgram<?>> getIncomplete(

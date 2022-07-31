@@ -1,17 +1,12 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 package it.unibo.alchemist.model.implementations.movestrategies.target;
-
-import static org.danilopianini.util.regex.Patterns.FLOAT_PATTERN;
-
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.regex.Matcher;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Environment;
@@ -20,6 +15,12 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
+
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.regex.Matcher;
+
+import static org.danilopianini.util.regex.Patterns.FLOAT_PATTERN;
 
 /**
  * This strategy reads the value of a "target" molecule and tries to interpret
@@ -69,6 +70,7 @@ public class FollowTarget<T, P extends Position<P>> implements TargetSelectionSt
     }
 
     @SuppressWarnings("unchecked")
+    @SuppressFBWarnings("FL_FLOATS_AS_LOOP_COUNTERS") // false positive
     @Override
     public final P getTarget() {
         final Optional<T> optt = Optional.ofNullable(node.getConcentration(track));
@@ -103,7 +105,7 @@ public class FollowTarget<T, P extends Position<P>> implements TargetSelectionSt
                 }
             } else {
                 final Matcher m = FLOAT_PATTERN
-                        .matcher(conc instanceof CharSequence ? (CharSequence) conc : conc.toString());
+                    .matcher(conc instanceof CharSequence ? (CharSequence) conc : conc.toString());
                 while (Double.isNaN(y) && m.find()) {
                     final String val = m.group();
                     /*

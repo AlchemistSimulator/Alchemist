@@ -45,8 +45,8 @@ import java.util.function.Function;
  * @param <P> position type
  */
 public final class AlchemistExecutionContext<P extends Position<P>>
-        extends AbstractExecutionContext<AlchemistExecutionContext<P>>
-        implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice<Number> {
+    extends AbstractExecutionContext<AlchemistExecutionContext<P>>
+    implements SpatiallyEmbeddedDevice<Double>, LocalizedDevice, TimeAwareDevice<Number> {
 
     private static final String INTENTIONAL = "This is intentional";
     /**
@@ -59,23 +59,24 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      * It only makes sense in case the environment is a {@link MapEnvironment}
      */
     public static final Molecule APPROXIMATE_NBR_RANGE = new SimpleMolecule("APPROXIMATE_NBR_RANGE");
+
     private final LoadingCache<P, Double> cache = CacheBuilder.newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .maximumSize(100)
-            .build(new CacheLoader<>() {
-                @Nonnull
-                @Override
-                public Double load(@Nonnull final P dest) {
-                    if (environment instanceof MapEnvironment) {
-                        if (dest instanceof GeoPosition) {
-                            return ((MapEnvironment<Object, ?, ?>) environment).computeRoute(node, (GeoPosition) dest).length();
-                        } else {
-                            throw new IllegalStateException("Illegal position type: " + dest.getClass() + " " + dest);
-                        }
-                    }
-                    return getDevicePosition().distanceTo(dest);
+        .expireAfterAccess(10, TimeUnit.MINUTES)
+        .maximumSize(100)
+        .build(new CacheLoader<>() {
+            @Nonnull
+            @Override
+            public Double load(@Nonnull final P dest) {
+            if (environment instanceof MapEnvironment) {
+                if (dest instanceof GeoPosition) {
+                    return ((MapEnvironment<Object, ?, ?>) environment).computeRoute(node, (GeoPosition) dest).length();
+                } else {
+                    throw new IllegalStateException("Illegal position type: " + dest.getClass() + " " + dest);
                 }
-            });
+            }
+            return getDevicePosition().distanceTo(dest);
+        }
+    });
     private final Environment<Object, P> environment;
     private int hash;
     private double nbrRangeTimeout;

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -14,13 +14,12 @@ import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
 import com.github.davidmoten.rtree.internal.EntryDefault;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithObstacles;
 
 import javax.annotation.Nonnull;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -116,7 +115,7 @@ public class Continuous2DObstacles<T>
     }
 
     @Override
-    @SuppressFBWarnings("FE_FLOATING_POINT_EQUALITY")
+    @SuppressFBWarnings({ "FE_FLOATING_POINT_EQUALITY", "FL_FLOATS_AS_LOOP_COUNTERS" })
     public final Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         final List<RectObstacle2D<Euclidean2DPosition>> l = query(ox, oy, nx, ny, TOLERANCE_MULTIPLIER);
         if (l.isEmpty()) {

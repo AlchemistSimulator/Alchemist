@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -194,8 +195,8 @@ public abstract class AbstractEnvironment<T, P extends Position<P>> implements E
         }
         if (cache == null) {
             cache = Caffeine.newBuilder()
-                    .maximumSize(1000)
-                    .build(pair -> runQuery(pair.left, pair.right));
+                .maximumSize(1000)
+                .build(pair -> runQuery(pair.left, pair.right));
         }
         return cache.get(new ImmutablePair<>(center, range));
     }

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,16 +8,15 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
-import it.unibo.alchemist.model.interfaces.Node;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.special.Gamma;
-import org.apache.commons.math3.distribution.WeibullDistribution;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Time;
+import org.apache.commons.math3.distribution.WeibullDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.special.Gamma;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Weibull distributed events.
@@ -131,10 +131,11 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
      *            the random generator
      * @return a new {@link WeibullDistribution}
      */
+    @SuppressFBWarnings("FL_FLOATS_AS_LOOP_COUNTERS")
     protected static WeibullDistribution weibullFromMean(
-            final double mean,
-            final double deviation,
-            final RandomGenerator random
+        final double mean,
+        final double deviation,
+        final RandomGenerator random
     ) {
         final double t = FastMath.log((deviation * deviation) / (mean * mean) + 1);
         double kmin = 0, kmax = 1;
@@ -154,10 +155,10 @@ public class WeibullTime<T> extends AbstractDistribution<T> {
         final double shapeParameter = 1 / k;
         final double scaleParameter = mean / FastMath.exp(Gamma.logGamma(1 + k));
         return new WeibullDistribution(
-                random,
-                shapeParameter,
-                scaleParameter,
-                WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY
+            random,
+            shapeParameter,
+            scaleParameter,
+            WeibullDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY
         );
     }
 

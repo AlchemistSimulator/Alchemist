@@ -147,7 +147,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private Set<Node<T>> selectedNodes = new HashSet<>();
 
     /**
-     * Initializes a new display with out redrawing the first step.
+     * Initializes a new display without redrawing the first step.
      */
     public Generic2DDisplay() {
         this(1);

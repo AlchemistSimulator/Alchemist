@@ -220,6 +220,10 @@
     "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/0.6.0",
     "second": "https://javadoc.io/doc/org.danilopianini/gson-extras/0.6.0/package-list"
   },
+  "org.danilopianini/gson-extras/1.0.0": {
+    "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/1.0.0",
+    "second": "https://javadoc.io/doc/org.danilopianini/gson-extras/1.0.0/package-list"
+  },
   "org.danilopianini/javalib-java7/0.6.1": {
     "first": "https://javadoc.io/doc/org.danilopianini/javalib-java7/0.6.1",
     "second": "https://javadoc.io/doc/org.danilopianini/javalib-java7/0.6.1/package-list"

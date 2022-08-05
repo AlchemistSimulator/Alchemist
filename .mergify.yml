@@ -6,13 +6,22 @@ pull_request_rules:
       - -conflict
     actions:
       rebase:
-  - name: Auto-merge if appropriately labeled
+  - name: Auto-update with merge if appropriately labeled
     conditions:
       - label=auto-update-merge
       - -draft
       - -conflict
     actions:
       update:
+  - name: rebase-merge working updates
+    conditions:
+      - author=renovate[bot]
+      - label=dependencies
+      - -draft
+      - -conflict
+    actions:
+      merge:
+        method: rebase
   - name: ask to resolve conflict
     conditions:
       - conflict

@@ -1,0 +1,18 @@
+incarnation: protelis
+
+environment:
+  type: EnvironmentWithDynamics
+  parameteres: [planimetry.png]
+  global-programs:
+    - time-distribution:
+        type: ExponentialTime
+        parameters: [0.5]
+      type: PhysicsUpdate
+
+deployments:
+  - type: Point
+    parameters: [0, 0]
+    properties:
+      - type: Pedestrian
+      - type: PhysicalPedestrian2D
+      - type: CircularArea

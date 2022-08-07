@@ -1,0 +1,5 @@
+incarnation: protelis
+
+environment:
+  type: EnvironmentWithDynamics
+  parameters: [planimentry.png]

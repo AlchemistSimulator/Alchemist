@@ -6,17 +6,6 @@ environment:
     path: planimetry.png
     zoom: 0.05
 
-_reactions: &behavior
-  - time-distribution:
-      type: DiracComb
-      parameters: [1.0]
-    type: PhysicalBlendedSteering
-    actions:
-      - type: CognitiveAgentSeek
-        parameters: [1000, 500]
-      - type: CognitiveAgentFlee
-        parameters: [500, -500]
-
 deployments:
   - type: Point
     parameters: [2, 2]
@@ -27,4 +16,12 @@ deployments:
       - type: CircularArea
       - type: Social
     programs:
-      - *behavior
+      - time-distribution:
+          type: DiracComb
+          parameters: [1.0]
+        type: PhysicalBlendedSteering
+        actions:
+          - type: CognitiveAgentSeek
+            parameters: [1000, 500]
+          - type: CognitiveAgentFlee
+            parameters: [500, -500]

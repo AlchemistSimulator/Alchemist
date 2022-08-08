@@ -1,7 +1,7 @@
 +++
-title = "Physics Engine"
+title = "Simulate Physical Interactions"
 weight = 5
-tags = ["physics", "engine", "pedestrian"]
+tags = ["physics", "interaction", "pedestrian"]
 summary = "Physical interaction between nodes"
 +++
 

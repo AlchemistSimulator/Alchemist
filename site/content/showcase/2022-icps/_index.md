@@ -56,7 +56,7 @@ To run a realistic setup, we used an existing amusement park:
 [Mirabilandia](https://www.mirabilandia.it/en).
 Thus, the simulated environment is a real-world map featuring existing paths.
 
-After setting the [_OpenStreetMap_](https://www.openstreetmap.org/#map=18/44.33785/12.26386) environment, it is essential to deploy nodes on the map. In the current
+After setting the [_OpenStreetMap_ environment](../../howtos/simulation/environment/maps/), it is essential to deploy nodes on the map. In the current
 simulation, the elements that are represented by nodes are:
 
 * **Visitors**, as single individuals or groups; the key point here is that a node should correspond to one or more people using a single wearable device that tracks and guides its

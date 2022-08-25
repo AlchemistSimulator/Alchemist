@@ -56,7 +56,7 @@ To run a realistic setup, we used an existing amusement park:
 [Mirabilandia](https://www.mirabilandia.it/en).
 Thus, the simulated environment is a real-world map featuring existing paths.
 
-After setting the _OpenStreetMap_ environment, it is essential to deploy nodes on the map. In the current
+After setting the [_OpenStreetMap_](https://www.openstreetmap.org/#map=18/44.33785/12.26386) environment, it is essential to deploy nodes on the map. In the current
 simulation, the elements that are represented by nodes are:
 
 * **Visitors**, as single individuals or groups; the key point here is that a node should correspond to one or more people using a single wearable device that tracks and guides its
@@ -78,3 +78,10 @@ this, the project develops and compares two types of simulations with different 
 
 ![image](mira1.gif)
 ![image](mira2.gif)
+
+## Results
+
+The outcomes of the experiment showed that the _situated recommendation system_ behaves differently depending on the number of visitors. In particular, the expected result is obtained with a lower number of visitors, such as 500. On the other hand, with an higher number, that is 3000 visitors, the average waiting time per attraction increases significantly when using the _situated recommendations_. The following plots show the average waiting time per attraction, that is the time every visitor waits in a queue before attending the attraction, respectively with 500 and 3000 visitors.
+
+![image](result1.png)
+![image](result2.png)

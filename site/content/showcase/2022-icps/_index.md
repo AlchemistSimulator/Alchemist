@@ -11,34 +11,50 @@ Experiment publicly available at [https://github.com/ICPS-MicroCity/amusement-pa
 
 ## Notes
 
-This project was developed for the _Intelligent Cyber-Physical Systems_ course. If you want to have a look at the project, please check the [ICPS-MicroCity organization](https://github.com/ICPS-MicroCity).
+This project was developed for the _Intelligent Cyber-Physical Systems_ course.
+If you want to have a look at the project, please check the [ICPS-MicroCity organization](https://github.com/ICPS-MicroCity).
 
 ## Abstract
 
-The aim of this simulation is to determine whether
-a situated recommendation system can positively affect the visitor flow in an amusement park or
-not. Since the desired system does not exist, and it would be too costly to implement just for
-the sake of a proof of concept, the only way to validate the latter theory is through a simulation.
+The aim of this simulation is to determine whether or not a situated recommendation system can positively affect the visitor flow in an amusement park.
+Since the desired system does not exist,
+and it would be too costly to implement just for the sake of a proof of concept,
+we performed our validation via a simulation.
 
-Amusement parks surely represent a popular form of entertainment for people of all ages and
-with different interests. Inside, they offer a large set of attractions that may vary depending on the type of amusement park. For instance, they may be roller-coasters, carousels, water slides and many others. This is one of the reasons why, specially during holiday times, these
-parks attract a considerable amount of visitors and tend to be significantly crowded. Although
-this is greatly profitable for the parks themselves, unfortunately it is not the ideal situation for
-the visitors as chances are that they will have to spend most of their time waiting in a queue.
-This situation becomes even more unattractive for large groups of visitors, such as families with
-children, or under unpleasant weather conditions, such as rain or summer heat. In order to
-improve the overall visitors’ experience, the situated recommendation system could suggest
+Amusement parks are a popular form of entertainment for people with diverse ages and interests.
+As such,
+they offer several attractions,
+depending on the park target and theme,
+which may include roller-coasters, carousels, and water slides, and so on.
+This is one of the reasons why,
+especially during holidays,
+these parks attract a considerable amount of visitors and tend to be significantly crowded.
+Excessive crowding may result in situations far from ideal for visitors,
+as chances are that they will have to spend most of their time waiting in queue.
+This situation becomes even more unattractive for large groups of visitors,
+such as families with children,
+or in case of unpleasant weather conditions,
+such as rain or summer heat.
+Ultimately, a bad experience with the park may reflect into bad reviews,
+and hurt the business.
+In order to improve the overall visitors’ experience,
+the situated recommendation system could suggest
 the most suitable attractions for them.
 
-In this scenario, it could be useful to recommend the most suitable attraction to visitors
-depending on their physical location, tracked by their personal wearable device, or on their
-interests. The recommendations may concern the nearest attraction that suits the visitor’s preferences or an attraction with a short queue (compared to the average queue of the attraction,
-or compared to the queues of other attractions). This mechanism could be referred as **situated recommendation**.
+In this scenario,
+it could be useful to recommend the most suitable attraction to visitors
+depending on their physical location
+(as tracked by their personal wearable device)
+and/or on their interests.
+The recommendations may point to the nearest attraction that suits the visitor’s preferences or to an attraction with a short queue
+(compared to the usual queue for the same game or to the queues of other attractions).
+This mechanism could be referred as **situated recommendation**.
 
 ## Experiment description
 
-The simulation concerns an existing geographical location, that is the Mirabilandia amusement park. For this reason, the environment of the simulation must be a map featuring existing paths
-in the real world.
+To run a realistic setup, we used an existing amusement park:
+[Mirabilandia](https://www.mirabilandia.it/en).
+Thus, the simulated environment is a real-world map featuring existing paths.
 
 After setting the _OpenStreetMap_ environment, it is essential to deploy nodes on the map. In the current
 simulation, the elements that are represented by nodes are:

@@ -3,6 +3,10 @@
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.2.11",
     "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.2.11/package-list"
   },
+  "ch.qos.logback/logback-classic/1.4.0": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.0",
+    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.0/element-list"
+  },
   "com.github.ben-manes.caffeine/caffeine/3.0.5": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.0.5",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.0.5/element-list"

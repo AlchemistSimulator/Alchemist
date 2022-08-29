@@ -44,7 +44,7 @@ obstacles.
 
 ## Results
 
-<!-- Simulation video -->
+{{< youtube owrbB-F12oQ >}}
 
 After executing the simulation we can observe how fear is spread amoung the crowd (social contagion). 
 Fleeing pedestrian who have directly witnessed the danger are pushing the other who have not directly seen the danger.

@@ -1,3 +1,10 @@
+## [24.1.9](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.8...24.1.9) (2022-09-02)
+
+
+### Documentation
+
+* **website:** Add the Turin's stampede simulation showcase ([#1504](https://github.com/AlchemistSimulator/Alchemist/issues/1504)) ([1ea83fb](https://github.com/AlchemistSimulator/Alchemist/commit/1ea83fbc04926675f1bf9b64958fea9289f9211c))
+
 ## [24.1.8](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.7...24.1.8) (2022-09-02)
 
 

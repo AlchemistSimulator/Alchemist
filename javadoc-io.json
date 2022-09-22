@@ -351,8 +351,14 @@
   "org.scala-lang/scala-compiler/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.8"
   },
+  "org.scala-lang/scala-compiler/2.13.9": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.9"
+  },
   "org.scala-lang/scala-library/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.8"
+  },
+  "org.scala-lang/scala-library/2.13.9": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.9"
   },
   "org.slf4j/slf4j-api/1.7.33": {
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/1.7.33",

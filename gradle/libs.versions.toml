@@ -12,7 +12,7 @@ kotlin = "1.7.10"
 mockito = "4.8.0"
 protelis = "16.4.0"
 scafi = "1.1.6"
-scala = "2.13.8"
+scala = "2.13.9"
 scalacache = "0.28.0"
 
 [libraries]

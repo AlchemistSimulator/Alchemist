@@ -380,6 +380,10 @@
     "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.1",
     "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.1/element-list"
   },
+  "org.slf4j/slf4j-api/2.0.2": {
+    "first": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.2",
+    "second": "https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.2/element-list"
+  },
   "org.yaml/snakeyaml/1.30": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/1.30",
     "second": "https://javadoc.io/doc/org.yaml/snakeyaml/1.30/package-list"

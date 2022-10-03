@@ -13,7 +13,7 @@
       "semanticCommitScope": "api-deps"
     },
     {
-      "description": "Dokka updates should have type docs",
+      "description": "Some updates should have type docs",
       "matchPackageNames": [
         "org.jetbrains.dokka"
       ],
@@ -30,6 +30,11 @@
         "it.unibo.scafi"
       ],
       "semanticCommitScope": "core-deps"
+    },
+    {
+      "description": "Updates to to the site should have type docs",
+      "matchPaths": ["site/*"],
+      "semanticCommitType": "docs"
     }
   ]
 }

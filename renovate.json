@@ -15,7 +15,7 @@
     {
       "description": "Dokka updates should have type docs",
       "matchPackageNames": [
-        "org.jetbrains.dokka",
+        "org.jetbrains.dokka"
       ],
       "semanticCommitType": "docs"
     },

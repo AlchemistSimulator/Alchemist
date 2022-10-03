@@ -278,6 +278,9 @@
   "org.jetbrains.kotlin/kotlin-reflect/1.7.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.7.10"
   },
+  "org.jetbrains.kotlin/kotlin-reflect/1.7.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.7.20"
+  },
   "org.jetbrains.kotlin/kotlin-reflect/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
   },
@@ -295,6 +298,9 @@
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.7.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.7.10"
+  },
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.7.20": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.7.20"
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"

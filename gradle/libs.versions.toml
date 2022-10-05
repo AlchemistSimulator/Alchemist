@@ -103,7 +103,7 @@ gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 hugo = "io.github.fstaudt.hugo:0.4.0"
 java-qa = "org.danilopianini.gradle-java-qa:0.36.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.25.0"
+kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.25.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.9"
 publishOnCentral = "org.danilopianini.publish-on-central:2.0.6"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"

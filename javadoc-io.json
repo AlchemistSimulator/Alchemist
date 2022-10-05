@@ -405,5 +405,9 @@
   "org.yaml/snakeyaml/1.32": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/1.32",
     "second": "https://javadoc.io/doc/org.yaml/snakeyaml/1.32/package-list"
+  },
+  "org.yaml/snakeyaml/1.33": {
+    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/1.33",
+    "second": "https://javadoc.io/doc/org.yaml/snakeyaml/1.33/package-list"
   }
 }

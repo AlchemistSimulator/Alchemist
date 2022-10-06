@@ -15,6 +15,10 @@
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.2",
     "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.2/element-list"
   },
+  "ch.qos.logback/logback-classic/1.4.3": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.3",
+    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.3/element-list"
+  },
   "com.github.ben-manes.caffeine/caffeine/3.0.5": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.0.5",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.0.5/element-list"

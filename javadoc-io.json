@@ -210,6 +210,9 @@
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.13.0",
     "second": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.13.0/package-list"
   },
+  "org.apache.ignite/ignite-indexing/2.14.0": {
+    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.14.0"
+  },
   "org.apache.ignite/ignite-spring/2.12.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.12.0",
     "second": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.12.0/package-list"
@@ -217,6 +220,9 @@
   "org.apache.ignite/ignite-spring/2.13.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.13.0",
     "second": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.13.0/package-list"
+  },
+  "org.apache.ignite/ignite-spring/2.14.0": {
+    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-spring/2.14.0"
   },
   "org.controlsfx/controlsfx/11.1.1": {
     "first": "https://javadoc.io/doc/org.controlsfx/controlsfx/11.1.1",

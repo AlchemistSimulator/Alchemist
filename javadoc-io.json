@@ -372,11 +372,17 @@
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.7.2",
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.7.2/element-list"
   },
+  "org.scala-lang/scala-compiler/2.13.10": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.10"
+  },
   "org.scala-lang/scala-compiler/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.8"
   },
   "org.scala-lang/scala-compiler/2.13.9": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.9"
+  },
+  "org.scala-lang/scala-library/2.13.10": {
+    "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.10"
   },
   "org.scala-lang/scala-library/2.13.8": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-library/2.13.8"

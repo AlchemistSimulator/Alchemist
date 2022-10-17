@@ -105,7 +105,7 @@ java-qa = "org.danilopianini.gradle-java-qa:0.37.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.26.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.9"
-publishOnCentral = "org.danilopianini.publish-on-central:2.0.7"
+publishOnCentral = "org.danilopianini.publish-on-central:2.0.8"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:7.1.2"

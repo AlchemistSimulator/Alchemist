@@ -149,7 +149,7 @@ jobs:
           repository: AlchemistSimulator/alchemistsimulator.github.io
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Download website artifact
-        uses: actions/download-artifact@v3.0.0
+        uses: actions/download-artifact@v3.0.1
         with:
           name: website
       - uses: DanySK/build-check-deploy-gradle-action@2.1.12

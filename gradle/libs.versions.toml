@@ -66,7 +66,7 @@ mapsforge = "org.mapsforge:mapsforge-map-awt:0.18.0"
 miglayout-swing = "com.miglayout:miglayout-swing:11.0"
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mongodb = "org.mongodb:mongodb-driver-sync:4.7.2"
-oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.1.158"
+oxygen-icons = "net.anwiba.commons.swing.icons:org.oxygen.oxygen-icons:4.13.0-1.2.50"
 protelis-interpreter = { module = "org.protelis:protelis-interpreter", version.ref = "protelis" }
 protelis-lang = { module = "org.protelis:protelis-lang", version.ref = "protelis" }
 quadtree = "org.danilopianini:java-quadtree:0.2.0"

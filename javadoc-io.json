@@ -65,6 +65,10 @@
     "first": "https://javadoc.io/doc/com.github.jiconfont/jiconfont-javafx/1.0.0",
     "second": "https://javadoc.io/doc/com.github.jiconfont/jiconfont-javafx/1.0.0/package-list"
   },
+  "com.google.code.gson/gson/2.10": {
+    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.10",
+    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.10/element-list"
+  },
   "com.google.code.gson/gson/2.8.9": {
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.8.9",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.8.9/element-list"

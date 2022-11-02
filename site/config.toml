@@ -50,7 +50,7 @@ relativeURLs = true
 
   [[Languages.en.menu.shortcuts]]
     name = "<i class='fab fa-youtube'></i> YouTube channel"
-    url = "https://www.youtube.com/channel/UC0o4FQEhRC6fWLLxxfPByKw"
+    url = "https://youtube.com/@alchemistsimulator"
     weight = 20
 
   [[Languages.en.menu.shortcuts]]

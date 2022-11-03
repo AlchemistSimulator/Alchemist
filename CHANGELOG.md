@@ -1,3 +1,10 @@
+## [24.1.13](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.12...24.1.13) (2022-11-02)
+
+
+### Bug Fixes
+
+* adjust padding in menu footer ([38a0d38](https://github.com/AlchemistSimulator/Alchemist/commit/38a0d38a61909e86fddafd06bb931f7090103056))
+
 ## [24.1.12](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.11...24.1.12) (2022-11-02)
 
 

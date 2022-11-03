@@ -7,31 +7,33 @@ tags = ["experiment", "maps", "export", "scafi"]
 hidden = true
 +++
 
-<!-- Scientific publication: [https://doi.org/10.1016/j.compeleceng.2021.107580](https://doi.org/10.1016/j.compeleceng.2021.107580) -->
+Scientific publication: *TO APPEAR*
 
 Experiment publicly available at [https://github.com/cric96/experiment-2022-ieee-decentralised-system](https://github.com/cric96/experiment-2022-ieee-decentralised-system)
 
 ## Abstract
+
 The Internet of Things and edge computing are fostering a future of ecosystems
 hosting complex decentralized computations, deeply integrated with our very dynamic
 environments. Digitalized buildings, communities of people, and cities will be the
-next-generation “hardware and platform”, counting myriads of interconnected devices, on top of
+next-generation "hardware and platform", counting myriads of interconnected devices, on top of
 which intrinsically-distributed computational processes will run and self-organize. They will
 spontaneously spawn, diffuse to pertinent logical/physical regions, cooperate and compete,
 opportunistically summon required resources, collect and analyze data, compute results, trigger
 distributed actions, and eventually decay.
 How would a programming model for such ecosystems look like? Based on research findings on
-self-adaptive/self-organizing systems, this paper proposes design abstractions based on
-“dynamic decentralization domains”: regions of space opportunistically formed to support
+self-adaptive/self-organizing systems, the paper proposes design abstractions based on
+"dynamic decentralization domains": regions of space opportunistically formed to support
 situated recognition and action. We embody the approach into a Scala application program
 interface (API) enacting distributed execution and show its applicability in a case study of
 environmental monitoring.
+
 ## Experiment description
 
 In the simulation presented in the paper 
 we want to monitor the rain intensity to pre-alert the public
-safety organizations close to areas at a risk of
-floods.
+safety organizations close to areas at a risk of floods.
+
 The tracked phenomenon is spatially and
 temporally hard to predict with fine-enough grain
 (data from the NOAA1 has, at best, zip-code gran-
@@ -43,7 +45,8 @@ on the rain intensity in surroundings and
 not just on the specific spot (e.g., coastal zones
 with a steep elevation profiles could suffer floods
 even with light rain, if the close-by higher-altitude
-zone is being hit hard). Pre-defining areas (using
+zone is being hit hard).
+Pre-defining areas (using
 pre-existing altimetric and structural knowledge)
 helps, but this strategy misses out on essential
 information: how the underlying phenomenon is
@@ -55,7 +58,7 @@ This approach is practical whenever there are
 phenomena with non-strictly-local effects, irregularly shaped in space, and/or hard-to-predict a
 fine grain.
 
-For the simulutaion of rain intensity, we used 
+For the simulation of rain intensity, we used 
 open data of [Toronto](https://bit.ly/3QciJ9i), 
 featuring 50 water gauges samples taken in 2021. 
 To stress-test our proposed approach with a denser

@@ -80,7 +80,7 @@ scalacache-guava = { module = "com.github.cb372:scalacache-guava_2.13", version.
 scalatest = "org.scalatest:scalatest_2.13:3.3.0-SNAP3"
 scalatest-plusjunit = "org.scalatestplus:scalatestplus-junit_2.13:1.0.0-SNAP9"
 simplelatlng = "com.javadocmd:simplelatlng:1.4.0"
-slf4j = "org.slf4j:slf4j-api:2.0.3"
+slf4j = "org.slf4j:slf4j-api:2.0.4"
 snakeyaml = "org.yaml:snakeyaml:1.33"
 spotbugs-annotations = "com.github.spotbugs:spotbugs-annotations:4.7.3"
 svgsalamander = "guru.nidi.com.kitfox:svgSalamander:1.1.3"

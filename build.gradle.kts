@@ -6,11 +6,13 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
+
 import Libs.alchemist
 import Libs.incarnation
 import Util.fetchJavadocIOForDependency
 import Util.id
 import Util.testShadowJar
+import Util.isMultiplatform
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -20,6 +22,7 @@ plugins {
     alias(libs.plugins.dokka)
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.java.qa)
+    alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.qa)
     alias(libs.plugins.multiJvmTesting)
@@ -32,11 +35,15 @@ plugins {
 allprojects {
 
     with(rootProject.libs.plugins) {
+        if (project.isMultiplatform) {
+            apply(plugin = kotlin.multiplatform.id)
+        } else {
+            apply(plugin = kotlin.jvm.id)
+        }
         apply(plugin = dokka.id)
         apply(plugin = gitSemVer.id)
         apply(plugin = java.qa.id)
         apply(plugin = multiJvmTesting.id)
-        apply(plugin = kotlin.jvm.id)
         apply(plugin = kotlin.qa.id)
         apply(plugin = publishOnCentral.id)
         apply(plugin = shadowJar.id)
@@ -60,23 +67,56 @@ allprojects {
         }
     }
 
-    dependencies {
-        with(rootProject.libs) {
-            compileOnly(spotbugs.annotations)
-            implementation(resourceloader)
-            implementation(slf4j)
-            implementation(kotlin("stdlib-jdk8"))
-            implementation(kotlin("reflect"))
-            testCompileOnly(spotbugs.annotations)
-            // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt + Alchemist testing tooling
-            testImplementation(bundles.testing.compile)
-            testImplementation(alchemist("test"))
-            // Test runtime: Junit engine
-            testRuntimeOnly(bundles.testing.runtimeOnly)
-            // executable jar packaging
+    if (!project.isMultiplatform) {
+        dependencies {
+            with(rootProject.libs) {
+                compileOnly(spotbugs.annotations)
+                implementation(resourceloader)
+                implementation(slf4j)
+                implementation(kotlin("stdlib-jdk8"))
+                implementation(kotlin("reflect"))
+                testCompileOnly(spotbugs.annotations)
+                // Test implementation: JUnit 5 + Kotest + Mockito + Mockito-Kt + Alchemist testing tooling
+                testImplementation(bundles.testing.compile)
+                testImplementation(alchemist("test"))
+                // Test runtime: Junit engine
+                testRuntimeOnly(bundles.testing.runtimeOnly)
+                // executable jar packaging
+            }
+            if ("incarnation" in project.name) {
+                runtimeOnly(rootProject)
+            }
         }
-        if ("incarnation" in project.name) {
-            runtimeOnly(rootProject)
+
+        tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+            dokkaSourceSets.configureEach {
+                jdkVersion.set(multiJvm.jvmVersionForCompilation)
+                listOf("kotlin", "java")
+                    .map { "src/main/$it" }
+                    .map { it to File(projectDir, it) }
+                    .toMap()
+                    .filterValues { it.exists() }
+                    .forEach { (path, file) ->
+                        sourceLink {
+                            localDirectory.set(file)
+                            val project = if (project == rootProject) "" else project.name
+                            val url = "https://github.com/AlchemistSimulator/Alchemist/blob/master/$project/$path"
+                            remoteUrl.set(uri(url).toURL())
+                            remoteLineSuffix.set("#L")
+                        }
+                    }
+                configurations.implementation.get().dependencies.forEach { dep ->
+                    val javadocIOURLs = fetchJavadocIOForDependency(dep)
+                    if (javadocIOURLs != null) {
+                        val (javadoc, packageList) = javadocIOURLs
+                        externalDocumentationLink {
+                            url.set(javadoc)
+                            packageListUrl.set(packageList)
+                        }
+                    }
+                }
+            }
+            failOnWarning.set(true)
         }
     }
 
@@ -172,37 +212,6 @@ allprojects {
         enabled = false
     }
 
-    tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
-        dokkaSourceSets.configureEach {
-            jdkVersion.set(multiJvm.jvmVersionForCompilation)
-            listOf("kotlin", "java")
-                .map { "src/main/$it" }
-                .map { it to File(projectDir, it) }
-                .toMap()
-                .filterValues { it.exists() }
-                .forEach { (path, file) ->
-                    sourceLink {
-                        localDirectory.set(file)
-                        val project = if (project == rootProject) "" else project.name
-                        val url = "https://github.com/AlchemistSimulator/Alchemist/blob/master/$project/$path"
-                        remoteUrl.set(uri(url).toURL())
-                        remoteLineSuffix.set("#L")
-                    }
-                }
-            configurations.implementation.get().dependencies.forEach { dep ->
-                val javadocIOURLs = fetchJavadocIOForDependency(dep)
-                if (javadocIOURLs != null) {
-                    val (javadoc, packageList) = javadocIOURLs
-                    externalDocumentationLink {
-                        url.set(javadoc)
-                        packageListUrl.set(packageList)
-                    }
-                }
-            }
-        }
-        failOnWarning.set(true)
-    }
-
     if (System.getenv("CI") == true.toString()) {
         signing {
             val signingKey: String? by project
@@ -238,7 +247,7 @@ allprojects {
     }
 
     // Shadow Jar
-    tasks.withType<ShadowJar>() {
+    tasks.withType<ShadowJar> {
         manifest {
             attributes(
                 mapOf(

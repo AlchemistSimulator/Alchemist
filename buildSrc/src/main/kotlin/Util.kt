@@ -119,4 +119,11 @@ object Util {
      * Directly accesses the plugin id.
      */
     val Provider<PluginDependency>.id get() = get().pluginId
+
+    /**
+     * Checks if the project contains a property with key "multiplatform" and if its value is true.
+     * @return true if the property exists and it is true, false otherwhise.
+     */
+    val Project.isMultiplatform get() =
+        this.hasProperty("multiplatform") && this.property("multiplatform") == "true"
 }

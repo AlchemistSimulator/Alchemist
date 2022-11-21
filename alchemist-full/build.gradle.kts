@@ -1,5 +1,3 @@
-import Libs.alchemist
-
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main(project"s alchemist/build.gradle file.
  *
@@ -7,13 +5,17 @@ import Libs.alchemist
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
+
+import Libs.alchemist
+import Util.isMultiplatform
+
 plugins {
     application
 }
 
 dependencies {
     runtimeOnly(rootProject)
-    rootProject.subprojects.filterNot { it == project }.forEach {
+    rootProject.subprojects.filterNot { it == project || it.isMultiplatform }.forEach {
         runtimeOnly(it)
     }
     testImplementation(rootProject)

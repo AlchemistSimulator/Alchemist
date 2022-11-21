@@ -23,3 +23,7 @@ dependencies {
 application {
     mainClass.set("it.unibo.alchemist.Alchemist")
 }
+
+tasks.withType<AbstractArchiveTask> {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}

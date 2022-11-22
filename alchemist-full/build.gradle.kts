@@ -15,8 +15,12 @@ plugins {
 
 dependencies {
     runtimeOnly(rootProject)
-    rootProject.subprojects.filterNot { it == project || it.isMultiplatform }.forEach {
-        runtimeOnly(it)
+    rootProject.subprojects.filterNot { it == project }.forEach {
+        if (it.isMultiplatform) {
+            runtimeOnly(project(path = ":${it.name}", configuration = "default"))
+        } else {
+            runtimeOnly(it)
+        }
     }
     testImplementation(rootProject)
     testImplementation(alchemist("euclidean-geometry"))

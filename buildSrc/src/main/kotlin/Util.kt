@@ -121,9 +121,10 @@ object Util {
     val Provider<PluginDependency>.id get() = get().pluginId
 
     /**
-     * Checks if the project contains a property with key "multiplatform" and if its value is true.
-     * @return true if the property exists and it is true, false otherwhise.
+     *  Check if the project contains at least one of the multiplatform most common sourceSets,
+     *  if so, assume it is a multiplatform project.
      */
-    val Project.isMultiplatform get() =
-        this.hasProperty("multiplatform") && this.property("multiplatform") == "true"
+    val Project.isMultiplatform get() = listOf("common", "jvm", "js", "native").any {
+        projectDir.resolve("src/${it}Main").exists()
+    }
 }

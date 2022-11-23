@@ -102,6 +102,7 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 hugo = "io.github.fstaudt.hugo:0.4.0"
 java-qa = "org.danilopianini.gradle-java-qa:0.40.0"
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.27.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.9"

@@ -1,5 +1,3 @@
-import Libs.alchemist
-
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main(project"s alchemist/build.gradle file.
  *
@@ -7,6 +5,10 @@ import Libs.alchemist
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution"s top directory.
  */
+
+import Libs.alchemist
+import Util.isMultiplatform
+
 plugins {
     application
 }
@@ -14,7 +16,11 @@ plugins {
 dependencies {
     runtimeOnly(rootProject)
     rootProject.subprojects.filterNot { it == project }.forEach {
-        runtimeOnly(it)
+        if (it.isMultiplatform) {
+            runtimeOnly(project(path = ":${it.name}", configuration = "default"))
+        } else {
+            runtimeOnly(it)
+        }
     }
     testImplementation(rootProject)
     testImplementation(alchemist("euclidean-geometry"))
@@ -22,4 +28,8 @@ dependencies {
 
 application {
     mainClass.set("it.unibo.alchemist.Alchemist")
+}
+
+tasks.withType<AbstractArchiveTask> {
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }

@@ -10,7 +10,6 @@
 import Libs.alchemist
 import Libs.incarnation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
@@ -89,16 +88,6 @@ application {
 
 tasks.getByName<JavaExec>("run") {
     classpath(tasks.getByName<Jar>("shadowJar"))
-}
-
-tasks.dokkaJavadoc {
-    enabled = false
-}
-
-tasks.withType<JavadocJar>().configureEach {
-    val dokka = tasks.dokkaHtml.get()
-    dependsOn(dokka)
-    from(dokka.outputDirectory)
 }
 
 /**

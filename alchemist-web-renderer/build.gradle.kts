@@ -119,8 +119,8 @@ registerShadowJar()
 publishing.publications {
     withType<MavenPublication> {
         pom {
-            developers {
-                developer {
+            contributors {
+                contributor {
                     name.set("Angelo Filaseta")
                     email.set("angelo.filaseta@studio.unibo.it")
                 }

@@ -33,3 +33,16 @@ application {
 tasks.withType<AbstractArchiveTask> {
     duplicatesStrategy = DuplicatesStrategy.WARN
 }
+
+publishing.publications {
+    withType<MavenPublication> {
+        pom {
+            contributors {
+                contributor {
+                    name.set("Angelo Filaseta")
+                    email.set("angelo.filaseta@studio.unibo.it")
+                }
+            }
+        }
+    }
+}

@@ -22,6 +22,7 @@ out/
 uiDesigner.xml
 buildProfile/
 *.iml
+.idea/artifacts/
 .idea/libraries/
 .idea/workspace.xml
 .idea/codeStyleSettings.xml

@@ -334,6 +334,10 @@ tasks.hugoBuild {
 }
 
 tasks {
+    dokkaJavadocCollector {
+        removeChildTasks(subprojects.filter { it.isMultiplatform })
+    }
+
     mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlCollector)
         .mapValues { it.value.get() }
         .forEach { (folder, task) ->

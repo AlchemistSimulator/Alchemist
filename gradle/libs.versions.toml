@@ -29,7 +29,7 @@ apache-commons-math3 = "org.apache.commons:commons-math3:3.6.1"
 appdirs = "net.harawata:appdirs:1.2.1"
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 boilerplate = "org.danilopianini:boilerplate:0.2.2"
-caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.1"
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.2"
 classgraph = "io.github.classgraph:classgraph:4.8.151"
 conrec = "org.danilopianini:conrec:0.1.0"
 controlsfx = "org.controlsfx:controlsfx:11.1.2"
@@ -142,7 +142,7 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.27.1"
-multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.9"
+multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.13"
 publishOnCentral = "org.danilopianini.publish-on-central:2.0.9"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"

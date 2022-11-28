@@ -7,10 +7,12 @@ ignite = "2.14.0"
 junit = "5.9.1"
 konf = "1.1.2"
 kotest = "5.5.4"
+ktor = "2.1.3"
 dokka = "1.7.20"
 kotlin = "1.7.21"
 mockito = "4.9.0"
 protelis = "16.4.0"
+react = "18.2.0-pre.392"
 scafi = "1.1.6"
 scala = "2.13.10"
 scalacache = "0.28.0"
@@ -56,9 +58,30 @@ jpx = "io.jenetics:jpx:2.3.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
+kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
+kotlin-react = { module = "org.jetbrains.kotlin-wrappers:kotlin-react", version.ref = "react" }
+kotlin-react-dom = { module = "org.jetbrains.kotlin-wrappers:kotlin-react-dom", version.ref = "react" }
+kotlin-wrappers-bom = "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:1.0.0-pre.354"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization = { module = "io.ktor:ktor-serialization", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-compression = { module = "io.ktor:ktor-server-compression", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+ktor-server-core-jvm = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 leafletmap = "org.danilopianini:de.saring.leafletmap:1.0.5"
 listset = "org.danilopianini:listset:0.3.9"
 logback = "ch.qos.logback:logback-classic:1.4.5"
@@ -83,6 +106,7 @@ simplelatlng = "com.javadocmd:simplelatlng:1.4.0"
 slf4j = "org.slf4j:slf4j-api:2.0.5"
 snakeyaml = "org.yaml:snakeyaml:1.33"
 spotbugs-annotations = "com.github.spotbugs:spotbugs-annotations:4.7.3"
+redux-kotlin-threadsafe = "org.reduxkotlin:redux-kotlin-threadsafe:0.5.5"
 svgsalamander = "guru.nidi.com.kitfox:svgSalamander:1.1.3"
 tornadofx = "no.tornado:tornadofx:2.0.0-SNAPSHOT"
 trove4j = "net.sf.trove4j:trove4j:3.0.3"
@@ -90,6 +114,17 @@ trove4j = "net.sf.trove4j:trove4j:3.0.3"
 [bundles]
 graphhopper = [ "graphhopper-core" ]
 jiconfont = [ "jiconfont-javafx", "jiconfont-materialDesignIcons" ]
+kotlin-react = [ "kotlin-react", "kotlin-react-dom" ]
+ktor-client = [ "ktor-client-js", "ktor-client-content-negotiation", "ktor-serialization-kotlinx-json" ]
+ktor-server = [
+    "ktor-serialization",
+    "ktor-serialization-kotlinx-json",
+    "ktor-server-compression",
+    "ktor-server-content-negotiation",
+    "ktor-server-cors",
+    "ktor-server-core-jvm",
+    "ktor-server-netty"
+]
 protelis = [ "protelis-interpreter", "protelis-lang" ]
 scala = [ "scala-compiler", "scala-library" ]
 scalacache = [ "scalacache-core", "scalacache-guava" ]
@@ -102,8 +137,10 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning:0.3.0"
 hugo = "io.github.fstaudt.hugo:0.4.0"
 java-qa = "org.danilopianini.gradle-java-qa:0.40.0"
+kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.27.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.13"
 publishOnCentral = "org.danilopianini.publish-on-central:2.0.9"

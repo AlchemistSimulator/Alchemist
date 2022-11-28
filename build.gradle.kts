@@ -14,6 +14,7 @@ import Util.id
 import Util.testShadowJar
 import Util.isMultiplatform
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -67,6 +68,8 @@ allprojects {
         }
     }
 
+    // JVM PROJECTS CONFIGURATIONS
+
     if (!project.isMultiplatform) {
         dependencies {
             with(rootProject.libs) {
@@ -117,6 +120,19 @@ allprojects {
                 }
             }
             failOnWarning.set(true)
+        }
+    }
+
+    // MULTIPLATFORM PROJECTS CONFIGURATIONS
+
+    if (project.isMultiplatform) {
+        tasks.dokkaJavadoc {
+            enabled = false
+        }
+        tasks.withType<JavadocJar>().configureEach {
+            val dokka = tasks.dokkaHtml.get()
+            dependsOn(dokka)
+            from(dokka.outputDirectory)
         }
     }
 
@@ -318,6 +334,10 @@ tasks.hugoBuild {
 }
 
 tasks {
+    dokkaJavadocCollector {
+        removeChildTasks(subprojects.filter { it.isMultiplatform })
+    }
+
     mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlCollector)
         .mapValues { it.value.get() }
         .forEach { (folder, task) ->

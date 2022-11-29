@@ -17,6 +17,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo 'github.event_name = ${{ github.event_name }}'
+          echo 'github.event.pull_request.head.repo.full_name = ${{ github.event.pull_request.head.repo.full_name }}'
+          echo 'github.repository = ${{ github.repository }}'
+          echo 'github.head_ref = ${{ github.head_ref }}'
   dispatcher:
     runs-on: ubuntu-latest
     # This filter blocks all pull-request builds that also have a branch build.

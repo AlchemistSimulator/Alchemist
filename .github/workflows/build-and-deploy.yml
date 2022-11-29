@@ -27,7 +27,7 @@ jobs:
             publishKotlinOSSRHPublicationToGithubRepository
             release
             shadowJar
-            uploadKotlin
+            uploadKotlinOSSRH uploadKotlinMultiplatform
             taskTree
           check-command: |
             ./gradlew build --parallel || ./gradlew build --parallel
@@ -56,9 +56,9 @@ jobs:
           build-command: true
           check-command: true
           deploy-command: >-
-            ./gradlew uploadKotlin close --parallel ||
-            ./gradlew uploadKotlin close --parallel ||
-            ./gradlew uploadKotlin close --parallel
+            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform close --parallel ||
+            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform close --parallel ||
+            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform close --parallel
           java-version: 11
           should-run-codecov: false
           should-deploy: true

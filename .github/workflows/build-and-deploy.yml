@@ -119,8 +119,9 @@ jobs:
   # Performs a release if needed
   release:
     concurrency:
-      # Only one release job at a time. Strictly sequential.
-      group: release
+      # Only one release job at a time per branch, as only master releases.
+      # Strictly sequential.
+      group: release-${{ github.event.number || github.ref }}
     needs:
       - build
       - build-website

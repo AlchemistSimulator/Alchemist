@@ -1,7 +1,10 @@
 name: CI/CD
 on:
   push:
+    # Disables the branch builds for some branches,
+    # the dispatcher for PRs should get triggered anyway
     branches-ignore:
+      # Dependabot branch builds disabled as they do not access secrets
       - 'dependabot/**'
     paths-ignore:
       - '.gitignore'
@@ -16,6 +19,13 @@ on:
 jobs:
   dispatcher:
     runs-on: ubuntu-latest
+    # This filter blocks all pull-request builds that also have a branch build.
+    # Called workflows inherit the event, so, internally the workflow can distinguish.
+    # If the event is not a pull request, then the build should run
+    # (it is either a branch push or a dispatched workflow).
+    # If the pull request comes from another repo, then the build should run.
+    # If the pull request is from a dependabot branch, it should run, as
+    # the dispatcher is disabled for dependabot branch builds.
     if: >-
       github.event_name != 'pull_request'
       || github.event.pull_request.head.repo.full_name != github.repository

@@ -20,15 +20,17 @@ jobs:
       - uses: DanySK/build-check-deploy-gradle-action@2.1.14
         with:
           # check that all tasks used in subsequent phases are there
-          build-command: >
-            ./gradlew
-            build clean close
-            hugoBuild
-            publishKotlinOSSRHPublicationToGithubRepository
-            release
-            shadowJar
-            uploadKotlinOSSRH uploadKotlinMultiplatform
+          build-command: |
+            COMMAND="./gradlew \
+            build clean close \
+            hugoBuild \
+            publishKotlinOSSRHPublicationToGithubRepository \
+            release \
+            shadowJar \
+            uploadKotlinOSSRH uploadKotlinMultiplatform \
             --dry-run
+            "
+            eval $COMMAND || eval $COMMAND
           check-command: |
             ./gradlew build --parallel || ./gradlew build --parallel
           clean-command: |

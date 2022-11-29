@@ -28,7 +28,7 @@ jobs:
             release
             shadowJar
             uploadKotlinOSSRH uploadKotlinMultiplatform
-            taskTree
+            --dry-run
           check-command: |
             ./gradlew build --parallel || ./gradlew build --parallel
           clean-command: |

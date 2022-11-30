@@ -78,13 +78,11 @@ open class Polygon<P : Position2D<out P>>(
     protected val isOnMaps by lazy { environment.makePosition(0, 0) is GeoPosition }
 
     init {
-        if (points.size < 3) {
-            throw IllegalArgumentException(
-                "At least three points are required for a polygonal deployment (provided: ${points.size}: $points)"
-            )
+        require(points.size > 3) {
+            "At least three points are required for a polygonal deployment (provided: ${points.size}: $points)"
         }
-        if (!polygon.isPolygonal) {
-            throw IllegalArgumentException("The provided points ($points) do not supply a valid polygon")
+        require(polygon.isPolygonal) {
+            "The provided points ($points) do not supply a valid polygon"
         }
         bounds = polygon.bounds2D
     }

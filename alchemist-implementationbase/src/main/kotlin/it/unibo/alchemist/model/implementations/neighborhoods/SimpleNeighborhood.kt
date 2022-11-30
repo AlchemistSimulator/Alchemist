@@ -78,8 +78,11 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
         }
     )
 
-    override fun remove(node: Node<T>) = if (this.contains(node)) {
-        SimpleNeighborhood(
+    override fun remove(node: Node<T>): Neighborhood<T> {
+        require(node in this) {
+            "$node not in $this"
+        }
+        return SimpleNeighborhood(
             environment,
             center,
             Iterable {
@@ -109,7 +112,5 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
                 }
             }
         )
-    } else {
-        throw IllegalArgumentException("$node not in $this")
     }
 }

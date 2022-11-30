@@ -57,11 +57,10 @@ class CustomLeafletMapView : LeafletMapView() {
      * Set the zoom to the given value without animating.
      */
     fun setZoomWithoutAnimating(zoom: Int) {
-        if (zoom !in ZOOM_RANGE) {
-            throw IllegalArgumentException("Zoom value was $zoom, not between $ZOOM_RANGE")
-        } else {
-            execScript("myMap.setZoom($zoom, { animate: false });")
+        require(zoom in ZOOM_RANGE) {
+            "Zoom value was $zoom, not in $ZOOM_RANGE"
         }
+        execScript("myMap.setZoom($zoom, { animate: false });")
     }
 
     /**

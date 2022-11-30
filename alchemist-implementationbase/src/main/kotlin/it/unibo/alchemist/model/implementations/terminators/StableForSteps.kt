@@ -50,8 +50,8 @@ class StableForSteps<T>(
     private var contents = makeTable<T>(0)
 
     init {
-        if (checkInterval <= 0 || equalIntervals <= 0) {
-            throw IllegalArgumentException("The intervals must be strictly positive")
+        require(checkInterval > 0 && equalIntervals > 0) {
+            "The intervals must be strictly positive"
         }
     }
 

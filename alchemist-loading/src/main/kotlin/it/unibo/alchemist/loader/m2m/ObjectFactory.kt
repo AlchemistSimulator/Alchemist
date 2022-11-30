@@ -84,7 +84,7 @@ internal object ObjectFactory {
             if (it.size == 2) {
                 Pair(it[0], it[1])
             } else {
-                throw IllegalArgumentException("Only a two argument list can be converted to a Pair. Provided: $it")
+                error("Only a two argument list can be converted to a Pair. Provided: $it")
             }
         }
         factory.registerImplicit(Pair::class.java, CommonsMathPair::class.java) { CommonsMathPair(it.first, it.second) }
@@ -99,7 +99,7 @@ internal object ObjectFactory {
                 val (a, b, c) = it
                 Triple(a, b, c)
             } else {
-                throw IllegalArgumentException("Only a two argument list can be converted to a Pair. Provided: $it")
+                error("Only a two argument list can be converted to a Pair. Provided: $it")
             }
         }
         factory.registerImplicit(Triple::class.java, CommonsLangTriple::class.java) { (first, second, third) ->

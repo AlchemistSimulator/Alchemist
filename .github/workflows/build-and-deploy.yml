@@ -27,7 +27,7 @@ jobs:
             publishKotlinOSSRHPublicationToGithubRepository \
             release \
             shadowJar \
-            uploadKotlinOSSRH uploadKotlinMultiplatform \
+            uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs \
             --dry-run
             "
             eval $COMMAND || eval $COMMAND
@@ -58,9 +58,9 @@ jobs:
           build-command: true
           check-command: true
           deploy-command: >-
-            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform close --parallel ||
-            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform close --parallel ||
-            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform close --parallel
+            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel ||
+            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel ||
+            ./gradlew uploadKotlinOSSRH uploadKotlinMultiplatform uploadJvm uploadJs close --parallel
           java-version: 11
           should-run-codecov: false
           should-deploy: true

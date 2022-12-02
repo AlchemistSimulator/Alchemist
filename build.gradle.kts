@@ -134,6 +134,15 @@ allprojects {
             dependsOn(dokka)
             from(dokka.outputDirectory)
         }
+        publishing {
+            publications {
+                publications.withType<MavenPublication>().configureEach {
+                    if ("OSSRH" !in name) {
+                        artifact(tasks.javadocJar)
+                    }
+                }
+            }
+        }
     }
 
     // COMPILE

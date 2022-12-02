@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.implementations.reactions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import it.unibo.alchemist.model.implementations.actions.LsaStandardAction;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPERETimeDistribution;
 import it.unibo.alchemist.model.interfaces.Action;
@@ -40,6 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Stream.concat;
 
 /**
  * This class realizes a reaction with Lsa concentrations.
@@ -341,40 +343,11 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
          * molecules will end up.
          */
         final ListSet<Dependency> inboundDependencies = new ArrayListSet<>(getInboundDependencies());
-        final ListSet<Dependency> outboundDependencies = new ArrayListSet<>(getOutboundDependencies());
-        if (getInputContext() == Context.LOCAL && modifiesOnlyLocally) {
-            /*
-             * Moreover, since there is no control over the personalised agents,
-             * it's required to check that all the actions are the standard
-             * manipulations.
-             */
-            boolean allStandard = true;
-            for (final Action<List<ILsaMolecule>> act : getActions()) {
-                if (!(act instanceof LsaStandardAction)) {
-                    allStandard = false;
-                    break;
-                }
-            }
-            if (allStandard) {
-                for (final Dependency m : inboundDependencies) {
-                    /*
-                     * For each influencing molecule:
-                     * 
-                     * If it appears identically on both sides of the reaction,
-                     * then it can be ignored when calculating the dependencies
-                     * 
-                     * If there are some molecules on the left side which are
-                     * not on the right side, they should be added (they will be
-                     * removed)
-                     */
-                    if (outboundDependencies.contains(m)) {
-                        outboundDependencies.remove(m);
-                    } else {
-                        outboundDependencies.add(m);
-                    }
-                }
-            }
-        }
+        // The condition semantics implies removal of the matched conditions for ILsaMolecules
+        final List<Dependency> outboundDependencies = concat(
+            getOutboundDependencies().stream(),
+            inboundDependencies.stream().filter(it -> it instanceof ILsaMolecule)
+        ).distinct().collect(Collectors.toList());
         screen(inboundDependencies);
         screen(outboundDependencies);
         inboundDependencies.forEach(this::addInboundDependency);

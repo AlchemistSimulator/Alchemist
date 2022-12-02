@@ -97,8 +97,12 @@ public class LsaStandardCondition extends LsaAbstractCondition {
              * 3 - After two, other valid matches are found. In this case, a new
              * entry in matchesList and newSpaces should be created.
              */
-            final List<ILsaMolecule> otherMatches = calculateMatches(partialInstance, dups,
-                    node.getLsaSpace(), alreadyRemovedInThisNode);
+            final List<ILsaMolecule> otherMatches = calculateMatches(
+                partialInstance,
+                dups,
+                node.getLsaSpace(),
+                alreadyRemovedInThisNode
+            );
             if (otherMatches.isEmpty()) {
                 retrieved.remove(i);
                 matchesList.remove(i);

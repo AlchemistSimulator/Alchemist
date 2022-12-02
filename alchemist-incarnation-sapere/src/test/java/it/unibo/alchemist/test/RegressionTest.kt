@@ -32,7 +32,7 @@ class RegressionTest : StringSpec(
             twoOutGoingDependencies.outboundDependencies.size shouldBe 2
             loadAlchemistFromResource("it/unibo/alchemist/regressions/bug1718.yml")
                 .getDefault<Any, Nothing>()
-                .createSimulation()
+                .createSimulation(finalStep = 100)
                 .runInCurrentThread()
                 .error
                 .ifPresent { throw it }

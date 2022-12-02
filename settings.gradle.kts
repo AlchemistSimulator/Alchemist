@@ -51,7 +51,7 @@ gradleEnterprise {
 gitHooks {
     commitMsg { conventionalCommits() }
     preCommit {
-        tasks("ktlintCheck", "checkScalafmt")
+        tasks("ktlintCheck", "checkScalafmt", "--parallel")
     }
     createHooks(overwriteExisting = true)
 }

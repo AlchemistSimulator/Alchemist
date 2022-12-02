@@ -59,9 +59,10 @@ public class LsaStandardCondition extends LsaAbstractCondition {
      */
     @Override
     public boolean filter(
-            final List<Map<HashString, ITreeNode<?>>> matchesList,
-            final List<ILsaNode> validNodes,
-            final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved) {
+        final List<Map<HashString, ITreeNode<?>>> matchesList,
+        final List<ILsaNode> validNodes,
+        final List<Map<ILsaNode, List<ILsaMolecule>>> retrieved
+    ) {
         final ILsaNode node = getNode();
         if (matchesList.isEmpty()) {
             /*

@@ -38,13 +38,13 @@ open class GenericNode<T> @JvmOverloads constructor(
      * The environment in which the node is places.
      */
     val environment: Environment<T, *>,
-    override val id: Int = idFromEnv(environment),
-    override val reactions: MutableList<Reaction<T>> = ArrayList(),
+    final override val id: Int = idFromEnv(environment),
+    final override val reactions: MutableList<Reaction<T>> = ArrayList(),
     /**
      * The node's molecules.
      */
     val molecules: MutableMap<Molecule, T> = LinkedHashMap(),
-    override val properties: MutableList<NodeProperty<T>> = ArrayList(),
+    final override val properties: MutableList<NodeProperty<T>> = ArrayList(),
 ) : Node<T> {
 
     constructor(

@@ -20,10 +20,11 @@ import Libs.alchemist
 
 dependencies {
     api(alchemist("api"))
-    implementation(alchemist("engine"))
+    api(alchemist("engine"))
+    api(alchemist("loading"))
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
-    implementation(alchemist("loading"))
+    testImplementation(alchemist("test"))
 }
 
 publishing.publications {

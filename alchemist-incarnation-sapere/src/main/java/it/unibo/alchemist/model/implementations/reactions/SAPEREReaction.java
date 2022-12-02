@@ -337,7 +337,7 @@ public final class SAPEREReaction extends AbstractReaction<List<ILsaMolecule>> {
         modifiesOnlyLocally = getOutputContext() == Context.LOCAL;
         /*
          * The following optimization only makes sense if the reaction acts
-         * locally. Otherwise there is no control on where the modified
+         * locally. Otherwise, there is no control on where the modified
          * molecules will end up.
          */
         final ListSet<Dependency> inboundDependencies = new ArrayListSet<>(getInboundDependencies());

@@ -1,0 +1,22 @@
+incarnation: sapere
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [0.5]
+
+deployments:
+  type: Point
+  parameters: [0, 0]
+  contents:
+    - in:
+        type: Rectangle
+        parameters: [-0.5, -0.5, 1, 1]
+      molecule: token
+  programs:
+    - time-distribution: 1
+      program: "{token} --> {firing}"
+    - program: "{firing} --> +{token}"
+    - time-distribution:
+        type: DiracComb
+        parameters: [10]
+      program: "{token} --> *{aaa}"

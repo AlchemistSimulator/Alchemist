@@ -128,3 +128,13 @@ publishing.publications {
         }
     }
 }
+
+publishing {
+    publications {
+        publications.withType<MavenPublication>().configureEach {
+            if ("OSSRH" !in name) {
+                artifact(tasks.javadocJar)
+            }
+        }
+    }
+}

@@ -1,3 +1,46 @@
+## [25.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.16...25.0.0) (2022-12-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **implementationbase:** finalize overrides of `id`, `reactions`, and `properties` in `GenericNode`
+
+### Bug Fixes
+
+* **sapere:** drop the left-right same-dependency optimization as it potentially introduces issues. Fixes [#1718](https://github.com/AlchemistSimulator/Alchemist/issues/1718) ([95789d6](https://github.com/AlchemistSimulator/Alchemist/commit/95789d6ca784008cfbc3add4a5c91b705034fa06))
+
+
+### Build and continuous integration
+
+* run pre-commit checks in parallel ([dbb47aa](https://github.com/AlchemistSimulator/Alchemist/commit/dbb47aaf005b2d94b606416d7f78152151ae8152))
+* **test:** expose the exported types from `alchemist-loading` and `alchemist-engine` ([835c198](https://github.com/AlchemistSimulator/Alchemist/commit/835c198c63873e0e7a3e8c632bf004c5aac11414))
+
+
+### Dependency updates
+
+* **deps:** update site/themes/hugo-theme-relearn digest to 41582f6 ([ed16b46](https://github.com/AlchemistSimulator/Alchemist/commit/ed16b46a57d8cf298f173fccad4eb6c995748990))
+
+
+### Style improvements
+
+* **sapere:** format function call ([c66f9e6](https://github.com/AlchemistSimulator/Alchemist/commit/c66f9e6c68e5ffb4677620984dc634f453cf453c))
+* **sapere:** format function parameters ([f03e351](https://github.com/AlchemistSimulator/Alchemist/commit/f03e351b52299f2f5fa88a44f8d8114cd60d49a7))
+
+
+### General maintenance
+
+* **implementationbase:** finalize overrides of `id`, `reactions`, and `properties` in `GenericNode` ([c1a29fc](https://github.com/AlchemistSimulator/Alchemist/commit/c1a29fcdd3982c3ecca00f7eb6b1b809bf8df6c8))
+* **sapere:** add missing comma in comment ([cdc2a60](https://github.com/AlchemistSimulator/Alchemist/commit/cdc2a60f514f6aff07736ad545f2992e846f171a))
+* **sapere:** improve the string-ified version of `DiracComb` ([198877d](https://github.com/AlchemistSimulator/Alchemist/commit/198877d97eff0f56242f827e5fea7b5940226f60))
+* **sapere:** update the copyright header ([f407ec7](https://github.com/AlchemistSimulator/Alchemist/commit/f407ec7c041908ffe1bd01e8bc310d2a4007d6a8))
+
+
+### Tests
+
+* **sapere:** create a minimal reproduction example of bug [#1718](https://github.com/AlchemistSimulator/Alchemist/issues/1718) ([40c616b](https://github.com/AlchemistSimulator/Alchemist/commit/40c616bf1efee420e91b62b666949a93e25a4a0f))
+* **sapere:** limit the test length to prevent loops once [#1718](https://github.com/AlchemistSimulator/Alchemist/issues/1718) is fixed ([aa6e384](https://github.com/AlchemistSimulator/Alchemist/commit/aa6e384809a01a666add14196663e71fa8fae6fc))
+* **sapere:** quickly intercept regression described in [#1718](https://github.com/AlchemistSimulator/Alchemist/issues/1718) and rename the test accordingly ([51a970a](https://github.com/AlchemistSimulator/Alchemist/commit/51a970a65e04e2b70863196d1708cfbe1237dd83))
+
 ## [24.1.16](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.15...24.1.16) (2022-12-02)
 
 

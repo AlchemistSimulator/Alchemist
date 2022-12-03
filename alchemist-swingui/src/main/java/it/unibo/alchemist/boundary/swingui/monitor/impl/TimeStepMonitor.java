@@ -11,8 +11,8 @@ package it.unibo.alchemist.boundary.swingui.monitor.impl;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Actionable;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Time;
 
@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static it.unibo.alchemist.boundary.swingui.impl.AlchemistSwingUI.DEFAULT_ICON_SIZE;
 import static it.unibo.alchemist.boundary.swingui.impl.AlchemistSwingUI.loadScaledImage;
@@ -47,31 +47,12 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     private static final int BORDER = 10, WIDTH = 200, HEIGHT = DEFAULT_ICON_SIZE + BORDER;
     private static final byte ICON_SIZE = DEFAULT_ICON_SIZE / 2;
     private boolean isFinished;
-    private volatile boolean needsUpdate = true;
     private final JLabel s;
-    private long step;
+    private volatile long step;
     private final JLabel t;
-    private Time time = new DoubleTime();
-    private Updater updater;
+    private volatile Time time = new DoubleTime();
 
-    private class Updater implements Runnable {
-        private volatile boolean updaterAlive = true;
-        private final Semaphore mutex = new Semaphore(0);
-        @Override
-        public void run() {
-            do {
-                mutex.acquireUninterruptibly();
-                mutex.drainPermits();
-                scheduleUpdate();
-            } while (updaterAlive);
-        }
-        public void stop() {
-            updaterAlive = false;
-        }
-        public void update() {
-            mutex.release();
-        }
-    }
+    private final AtomicBoolean updateIsScheduled = new AtomicBoolean(false);
 
     /**
      * Constructor.
@@ -96,15 +77,14 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
     public void finished(@Nonnull final Environment<T, P> environment, @Nonnull final Time tt, final long cs) {
         isFinished = true;
         stepDone(environment, null, tt, cs);
-        updater.stop();
-        updater.update();
-        updater = null;
+        scheduleUpdate();
     }
 
     @Override
     public void initialized(@Nonnull final Environment<T, P> environment) {
         isFinished = false;
         stepDone(environment, null, new DoubleTime(), 0);
+        scheduleUpdate();
     }
 
     @Override
@@ -114,24 +94,20 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
         @Nonnull final Time curTime,
         final long curStep
     ) {
-        if (updater == null) {
-            updater = new Updater();
-            new Thread(updater, TimeStepMonitor.class.getSimpleName() + " updater thread").start();
-        }
         time = curTime;
         step = curStep;
-        needsUpdate = true;
-        updater.update();
+        if (!updateIsScheduled.get()) {
+            scheduleUpdate();
+            updateIsScheduled.set(true);
+        }
     }
 
     private void scheduleUpdate() {
         SwingUtilities.invokeLater(() -> {
-            if (needsUpdate) {
-                needsUpdate = false;
+            if (updateIsScheduled.getAndSet(false)) {
                 t.setText(time + (isFinished ? FINISHED : BLANK));
                 s.setText(step + (isFinished ? FINISHED : BLANK));
             }
         });
     }
-
 }

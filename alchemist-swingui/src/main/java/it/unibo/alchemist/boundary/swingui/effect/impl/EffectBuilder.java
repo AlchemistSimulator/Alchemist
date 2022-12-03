@@ -48,7 +48,7 @@ public final class EffectBuilder extends JFrame implements ActionListener {
     private static final Logger L = LoggerFactory.getLogger(EffectBuilder.class);
     private static final String ALCHEMIST_EFFECT_BUILDER = LocalizedResourceBundle.getString("alchemist_effect_builder");
     private static final String EFFECT = LocalizedResourceBundle.getString("effect");
-    private transient final CountDownLatch barrier = new CountDownLatch(1);
+    private final CountDownLatch barrier = new CountDownLatch(1); // NOPMD: class not meant to be serializable
     private final JComboBox<Class<? extends Effect>> effectBox;
 
     /**

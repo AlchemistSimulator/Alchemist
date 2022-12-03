@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests loading of a custom {@link it.unibo.alchemist.loader.export.Exporter}.
  */
-class PreventRegressions {
+class TestRegressions {
 
     private static Exporter<?, ?> exporterOf(final String simulation) {
         final var exporters = LoadAlchemist

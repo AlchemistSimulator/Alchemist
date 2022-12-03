@@ -34,11 +34,11 @@ public abstract class AbstractNumericLabelMonitor<N, T, P extends Position<? ext
     /**
      * Default serial version UID.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private final N init;
     private volatile boolean mayRender = true;
     private volatile N current;
-    private Optional<String> name;
+    private @Nullable String name;
 
     /**
      * Constructor.
@@ -92,7 +92,7 @@ public abstract class AbstractNumericLabelMonitor<N, T, P extends Position<? ext
      * @return the current name tag
      */
     protected final Optional<String> getName() {
-        return this.name;
+    return Optional.ofNullable(name);
     }
 
     /**
@@ -101,6 +101,6 @@ public abstract class AbstractNumericLabelMonitor<N, T, P extends Position<? ext
      * @param name the name tag
      */
     protected final void setName(final @Nullable String name) {
-        this.name = Optional.ofNullable(name);
+        this.name = name;
     }
 }

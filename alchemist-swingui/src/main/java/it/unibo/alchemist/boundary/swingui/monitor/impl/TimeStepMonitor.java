@@ -109,10 +109,10 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
 
     @Override
     public void stepDone(
-            @Nonnull final Environment<T, P> environment,
-            final Actionable<T> reaction,
-            @Nonnull final Time curTime,
-            final long curStep
+        @Nonnull final Environment<T, P> environment,
+        final Actionable<T> reaction,
+        @Nonnull final Time curTime,
+        final long curStep
     ) {
         if (updater == null) {
             updater = new Updater();

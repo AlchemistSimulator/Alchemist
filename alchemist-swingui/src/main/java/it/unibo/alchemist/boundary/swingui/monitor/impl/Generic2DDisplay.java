@@ -127,7 +127,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private volatile boolean firstTime = true;
     private boolean paintLinks;
     private transient Optional<Node<T>> hooked = Optional.empty();
-    private boolean init;
     private double lastTime;
     private int mouseX, mouseY;
     private Node<T> nearest;
@@ -170,7 +169,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         }
         setStep(step);
         setBackground(Color.WHITE);
-        init = false;
         final MouseManager mgr = new MouseManager();
         addMouseListener(mgr);
         addMouseMotionListener(mgr);
@@ -523,15 +521,6 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
      */
     protected final boolean isCloserNodeMarked() {
         return status == ViewStatus.VIEW_WITH_MARKER;
-    }
-
-    /**
-     * Lets child-classes check if the display is initialized.
-     *
-     * @return a <code>boolean</code> value
-     */
-    protected boolean isInitialized() {
-        return init;
     }
 
     /**

@@ -22,11 +22,8 @@ import java.awt.Dimension;
 @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "This class is not meant to get serialized")
 public final class JTapeMainFeature extends JTapeSection {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -3756166558195051145L;
-    private final SpringLayout springLayout;
+    private final SpringLayout springLayout; // NOPMD: this class is not intended to be serialized
 
     /**
      * 

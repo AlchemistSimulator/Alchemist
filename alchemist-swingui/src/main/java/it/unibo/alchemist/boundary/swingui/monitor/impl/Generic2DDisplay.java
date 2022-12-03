@@ -142,8 +142,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     private boolean isPreviousStateMarking = true;
     private ViewStatus status = ViewStatus.VIEW_WITH_MARKER;
     private boolean isDraggingMouse;
-    private Optional<Point> originPoint = Optional.empty();
-    private Optional<Point> endingPoint = Optional.empty();
+    private @Nullable Point originPoint;
+    private @Nullable Point endingPoint;
     private Set<Node<T>> selectedNodes = new HashSet<>();
 
     /**
@@ -351,14 +351,23 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             g.setColor(Color.GRAY);
             onView.keySet().parallelStream()
                 .map(neighbors::get)
-                .flatMap(neigh -> neigh.getNeighbors().parallelStream()
-                        .map(node -> node.compareTo(neigh.getCenter()) > 0
+                .flatMap(neigh ->
+                    neigh.getNeighbors().parallelStream()
+                        .map(node ->
+                            node.compareTo(neigh.getCenter()) > 0
                                 ? new Pair<>(neigh.getCenter(), node)
-                                : new Pair<>(node, neigh.getCenter())))
+                                : new Pair<>(node, neigh.getCenter())
+                        )
+                )
                 .distinct()
-                .map(pair -> mapPair(pair, node ->
-                        Optional.ofNullable(onView.get(node))
-                                .orElse(wormhole.getViewPoint(positions.get(node)))))
+                .map(pair ->
+                    mapPair(
+                        pair,
+                        node -> Optional
+                            .ofNullable(onView.get(node))
+                            .orElse(wormhole.getViewPoint(positions.get(node)))
+                    )
+                )
                 .forEachOrdered(line -> {
                     final Point p1 = line.getFirst();
                     final Point p2 = line.getSecond();
@@ -366,15 +375,16 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                 });
         }
         releaseData();
-        if (isDraggingMouse
+        if (
+            isDraggingMouse
                 && status == ViewStatus.MOVING_SELECTED_NODES
-                && originPoint.isPresent()
-                && endingPoint.isPresent()
+                && originPoint != null
+                && endingPoint != null
         ) {
             for (final Node<T> n : selectedNodes) {
                 if (onView.containsKey(n)) {
-                    onView.put(n, new Point(onView.get(n).x + (endingPoint.get().x - originPoint.get().x),
-                            onView.get(n).y + (endingPoint.get().y - originPoint.get().y)));
+                    onView.put(n, new Point(onView.get(n).x + (endingPoint.x - originPoint.x),
+                            onView.get(n).y + (endingPoint.y - originPoint.y)));
                 }
             }
         }
@@ -401,12 +411,12 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         } else {
             nearest = null;
         }
-        if (isDraggingMouse && status == ViewStatus.SELECTING_NODES && originPoint.isPresent() && endingPoint.isPresent()) {
+        if (isDraggingMouse && status == ViewStatus.SELECTING_NODES && originPoint != null && endingPoint != null) {
             g.setColor(Color.BLACK);
-            final int x = Math.min(originPoint.get().x, endingPoint.get().x);
-            final int y = Math.min(originPoint.get().y, endingPoint.get().y);
-            final int width = Math.abs(endingPoint.get().x - originPoint.get().x);
-            final int height = Math.abs(endingPoint.get().y - originPoint.get().y);
+            final int x = Math.min(originPoint.x, endingPoint.x);
+            final int y = Math.min(originPoint.y, endingPoint.y);
+            final int width = Math.abs(endingPoint.x - originPoint.x);
+            final int height = Math.abs(endingPoint.y - originPoint.y);
             g.drawRect(x, y, width, height);
             selectedNodes = onView.entrySet().parallelStream()
                     .filter(nodes -> isInsideRectangle(nodes.getValue(), x, y, width, height))
@@ -792,7 +802,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
             }
             if (SwingUtilities.isLeftMouseButton(e)) {
                 if (isDraggingMouse) {
-                    endingPoint = Optional.of(e.getPoint());
+                    endingPoint = e.getPoint();
                 }
                 if (hooked.isEmpty() && isNotInteracting()) {
                     final Point previous = wormhole.getViewPosition();
@@ -832,8 +842,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     && (status == ViewStatus.MOVING_SELECTED_NODES || status == ViewStatus.SELECTING_NODES)
             ) {
                 isDraggingMouse = true;
-                originPoint = Optional.of(e.getPoint());
-                endingPoint = Optional.of(e.getPoint());
+                originPoint = e.getPoint();
+                endingPoint = e.getPoint();
                 repaint();
             }
         }
@@ -841,13 +851,13 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
         @Override
         public void mouseReleased(final MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e) && isDraggingMouse) {
-                endingPoint = Optional.of(e.getPoint());
-                if (status == ViewStatus.MOVING_SELECTED_NODES && originPoint.isPresent()) {
+                endingPoint = e.getPoint();
+                if (status == ViewStatus.MOVING_SELECTED_NODES && originPoint != null) {
                     if (currentEnv.getDimensions() == 2) {
                         final Simulation<T, P> engine = currentEnv.getSimulation();
                         if (engine != null) {
-                            final P envEnding = wormhole.getEnvPoint(endingPoint.get());
-                            final P envOrigin = wormhole.getEnvPoint(originPoint.get());
+                            final P envEnding = wormhole.getEnvPoint(endingPoint);
+                            final P envOrigin = wormhole.getEnvPoint(originPoint);
                             for (final Node<T> n : selectedNodes) {
                                 final P p = currentEnv.getPosition(n);
                                 final P finalPos = p.plus(envEnding.minus(envOrigin.getCoordinates()).getCoordinates());
@@ -867,8 +877,8 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
                     resetStatus();
                 }
                 isDraggingMouse = false;
-                originPoint = Optional.empty();
-                endingPoint = Optional.empty();
+                originPoint = null;
+                endingPoint = null;
                 repaint();
             }
         }

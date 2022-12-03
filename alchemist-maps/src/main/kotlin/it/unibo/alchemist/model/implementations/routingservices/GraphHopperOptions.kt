@@ -13,9 +13,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 import com.graphhopper.config.Profile
 import com.graphhopper.routing.RoutingAlgorithm
-import com.graphhopper.routing.util.EncodingManager
-import com.graphhopper.routing.util.FlagEncoder
-import com.graphhopper.routing.util.FlagEncoderFactory
+import com.graphhopper.routing.util.VehicleEncodedValuesFactory
 import com.graphhopper.routing.weighting.Weighting
 import com.graphhopper.util.Parameters.Algorithms.ALT_ROUTE
 import com.graphhopper.util.Parameters.Algorithms.ASTAR
@@ -31,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.RoutingServiceOptions
  * GraphHopper expects a valid [profile] (including information about vehicle and graph-weighting strategy) and
  * the selction of an [algorithm].
  */
-data class GraphHopperOptions private constructor(
+class GraphHopperOptions private constructor(
     val profile: Profile,
     val algorithm: String,
 ) : RoutingServiceOptions<GraphHopperOptions> {
@@ -66,19 +64,17 @@ data class GraphHopperOptions private constructor(
         )
 
         /**
-         * All the non-abstract subclasses of [FlagEncoder] available in the runtime.
+         * All the non-abstract subclasses of [VehicleEncodedValuesFactory] available in the runtime.
          */
         val graphHopperVehicles: List<String> = listOf(
-            FlagEncoderFactory.BIKE,
-//            FlagEncoderFactory.BIKE2, // Disabled, requires altitude
-            FlagEncoderFactory.CAR,
-            FlagEncoderFactory.CAR4WD,
-            FlagEncoderFactory.FOOT,
-            FlagEncoderFactory.HIKE,
-            FlagEncoderFactory.MOTORCYCLE,
-            FlagEncoderFactory.MOUNTAINBIKE,
-            FlagEncoderFactory.RACINGBIKE,
-            FlagEncoderFactory.WHEELCHAIR,
+            VehicleEncodedValuesFactory.BIKE,
+            VehicleEncodedValuesFactory.CAR,
+            VehicleEncodedValuesFactory.FOOT,
+            VehicleEncodedValuesFactory.HIKE,
+            VehicleEncodedValuesFactory.MOTORCYCLE,
+            VehicleEncodedValuesFactory.MOUNTAINBIKE,
+            VehicleEncodedValuesFactory.RACINGBIKE,
+            VehicleEncodedValuesFactory.WHEELCHAIR,
         )
 
         /**
@@ -99,11 +95,6 @@ data class GraphHopperOptions private constructor(
          * Default [GraphHopperOptions]: foot as vehicle, fastest as weighting, and dijkstrabi as algorithm.
          */
         val defaultOptions: GraphHopperOptions
-
-        /**
-         * Collection of the available [EncodingManager]s in GraphHopper.
-         */
-        val encodingManager: EncodingManager = EncodingManager.create(graphHopperVehicles.joinToString(","))
 
         init {
             fun error(subject: String) = "Unable to find any valid GraphHopper $subject. " +

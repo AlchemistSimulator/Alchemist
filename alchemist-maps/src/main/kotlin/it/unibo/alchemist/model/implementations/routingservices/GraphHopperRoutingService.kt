@@ -14,7 +14,10 @@ import com.github.benmanes.caffeine.cache.LoadingCache
 import com.google.common.hash.Hashing
 import com.graphhopper.GHRequest
 import com.graphhopper.GraphHopper
+import com.graphhopper.routing.ev.VehicleAccess
 import com.graphhopper.routing.util.AccessFilter
+import com.graphhopper.routing.util.DefaultVehicleEncodedValuesFactory
+import com.graphhopper.routing.util.EncodingManager
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
@@ -78,7 +81,11 @@ class GraphHopperRoutingService @JvmOverloads constructor(
             lockfileLock.release()
         }
         accessFilters = Caffeine.newBuilder().build {
-            AccessFilter.allEdges(graphHopper.encodingManager.getEncoder(it.profile.vehicle).accessEnc)
+            AccessFilter.allEdges(
+                EncodingManager
+                    .create(vehicleEncoder, it.profile.vehicle)
+                    .getBooleanEncodedValue(VehicleAccess.key(it.profile.vehicle))
+            )
         }
     }
 
@@ -91,7 +98,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
     }
 
     private fun GeoPosition.coerceToMap(): Pair<Double, Double> {
-        val bounds = graphHopper.graphHopperStorage.bounds
+        val bounds = graphHopper.baseGraph.bounds
         return latitude.coerceIn(bounds.minLat..bounds.maxLat) to longitude.coerceIn(bounds.minLon..bounds.maxLon)
     }
 
@@ -118,6 +125,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
     companion object {
         private val logger = LoggerFactory.getLogger(GraphHopperRoutingService::class.java)
         private val lockfileLock = Semaphore(1)
+        private val vehicleEncoder = DefaultVehicleEncodedValuesFactory()
 
         /**
          * See [GraphHopperOptions.defaultOptions].

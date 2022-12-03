@@ -568,7 +568,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     /**
-     * Updates {@link #setToolTipText(String) tooltip} of this component with nearest node from the mouse position.
+     * Updates {@link #setToolTipText(String) tooltip} of this component with the nearest node from the mouse position.
      *
      * @param x x coordinate of the mouse
      * @param y y coordinate of the mouse

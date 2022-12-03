@@ -207,7 +207,7 @@ public class Generic2DDisplay<T, P extends Position2D<P>> extends JPanel impleme
     }
 
     /**
-     * Reset the the status of the view.
+     * Reset the status of the view.
      */
     private void resetStatus() {
         if (isPreviousStateMarking) {

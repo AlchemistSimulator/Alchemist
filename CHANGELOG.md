@@ -1,3 +1,59 @@
+## [25.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.0.0...25.1.0) (2022-12-03)
+
+
+### Features
+
+* **maps:** update GraphHopper to version 7 ([#1612](https://github.com/AlchemistSimulator/Alchemist/issues/1612)) ([1739059](https://github.com/AlchemistSimulator/Alchemist/commit/1739059016402a44416267e9ef771f6a1f89fcc5))
+
+
+### Bug Fixes
+
+* **fxui:** remove `Optional` field (non-serializable) ([f70dee9](https://github.com/AlchemistSimulator/Alchemist/commit/f70dee9931df7c9f7b9efbde028f3a34197e8f56))
+* **swingui:** drop unused private field and related protected getter `Generic2DDisplay.init` ([d6cac7c](https://github.com/AlchemistSimulator/Alchemist/commit/d6cac7c3aabedeb212a86cb698c7494dec0729d0))
+
+
+### Build and continuous integration
+
+* disable debug inspection job ([#1739](https://github.com/AlchemistSimulator/Alchemist/issues/1739)) ([4f1a346](https://github.com/AlchemistSimulator/Alchemist/commit/4f1a346b45ee1007cea952c75b0e9ebcc490b340))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v3.5.3 ([#1613](https://github.com/AlchemistSimulator/Alchemist/issues/1613)) ([fdc886e](https://github.com/AlchemistSimulator/Alchemist/commit/fdc886e4ef8cfb32596c9e201f6a06aef1d39fa0))
+* **deps:** update plugin java-qa to v0.41.0 ([9e41d08](https://github.com/AlchemistSimulator/Alchemist/commit/9e41d08c7ac1aa90a10980d74ba579b19a968175))
+
+
+### Documentation
+
+* **swingui:** fix typo in `Generic2DDisplay.resetStatus` Javadocs ([4534c72](https://github.com/AlchemistSimulator/Alchemist/commit/4534c72038bb36333311812add46b7de6b2aca81))
+* **swingui:** fix typo in `Generic2DDisplay.setMouseTooltipTo`'s Javadocs ([f07bb66](https://github.com/AlchemistSimulator/Alchemist/commit/f07bb6693089595b53e0c89e3e1fc4803bd3ad24))
+
+
+### Performance improvements
+
+* **swingui:** simplify the concurrency (improving performance) in `TimeStepMonitor` ([b12c96f](https://github.com/AlchemistSimulator/Alchemist/commit/b12c96f7d200cacfb6b55c605fa8c3a2b31a7857))
+
+
+### Style improvements
+
+* **swingui:** better indent paraneters in `TimeStepMonitor` ([60c2c92](https://github.com/AlchemistSimulator/Alchemist/commit/60c2c92e549037650b6a2a99ec367ae6407a3ae2))
+* **swingui:** make field transient in `EffectBuilder` ([005beb5](https://github.com/AlchemistSimulator/Alchemist/commit/005beb5a48e5fe4938ffa510eb3da18e53b3c0ab))
+* **swingui:** remove non-serializable `Optional` fields from `Generic2DDisplay` (replace by nullables) ([1fa5f1e](https://github.com/AlchemistSimulator/Alchemist/commit/1fa5f1e28cda953101481193efbd0d6dd8a08860))
+* **swingui:** suppress PMD warning on class `EffectBuilder`, not meant for seralization ([a9e770d](https://github.com/AlchemistSimulator/Alchemist/commit/a9e770d599c2f9932f0026ff8804166941c59796))
+* **swingui:** suppress PMD warning on class `EffectBuilder`, not meant for serialization ([ec51a32](https://github.com/AlchemistSimulator/Alchemist/commit/ec51a32900f0db627cc77be8b1ef88b2276fa2fe))
+
+
+### Tests
+
+* **loading:** make the file and class name of TestRegressions the same ([5c17f8b](https://github.com/AlchemistSimulator/Alchemist/commit/5c17f8b76920c78d955d478864ac1f11508ed9ad))
+* **loading:** rename `PreventRegressions` to `TestRegressions` ([e3b25fc](https://github.com/AlchemistSimulator/Alchemist/commit/e3b25fc69c2d8d35734aaef6a79fcf48af8b896e))
+* **swingui:** fix broken configuration file (`EuclideanDistance` has been replaced by `ConnectWithinDistance`) ([5f58835](https://github.com/AlchemistSimulator/Alchemist/commit/5f58835f4ecdd88980b835a6b369b54bcb81e6b3))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([4f04a44](https://github.com/AlchemistSimulator/Alchemist/commit/4f04a44ad7a2fa63e1f77af875ec38015b25b8cc))
+
 ## [25.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/24.1.16...25.0.0) (2022-12-03)
 
 

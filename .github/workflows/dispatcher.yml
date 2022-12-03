@@ -19,6 +19,7 @@ on:
 jobs:
   inspect:
     runs-on: ubuntu-latest
+    if: false
     steps:
       - run: |
           echo 'github.event_name = ${{ github.event_name }}'

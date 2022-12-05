@@ -1,3 +1,28 @@
+## [25.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.1.0...25.1.1) (2022-12-05)
+
+
+### Bug Fixes
+
+* **build:** add missing configuration for publish-on-central plugin ([#1750](https://github.com/AlchemistSimulator/Alchemist/issues/1750)) ([f8362a3](https://github.com/AlchemistSimulator/Alchemist/commit/f8362a34e1c6911115e183e70992604cf2b656e2))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.15 ([1eef0f3](https://github.com/AlchemistSimulator/Alchemist/commit/1eef0f3b8fc146aecb8d4066f52f042c3b2192ce))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0a065a6 ([3b8aa40](https://github.com/AlchemistSimulator/Alchemist/commit/3b8aa4069318764fe3a05fbcd044ade808f607b9))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 667d911 ([970b240](https://github.com/AlchemistSimulator/Alchemist/commit/970b2403e632fb6f410c70732eeb5d5cc7f98334))
+* **deps:** update plugin kotlin-qa to v0.29.1 ([7d0d417](https://github.com/AlchemistSimulator/Alchemist/commit/7d0d4170b4e58af91bf2fb1695a8e4ec3f6e6a51))
+* **deps:** update plugin multijvmtesting to v0.4.14 ([60c0c03](https://github.com/AlchemistSimulator/Alchemist/commit/60c0c033533091797b2ec022eff9a6c847fa413e))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.0.25 ([2530809](https://github.com/AlchemistSimulator/Alchemist/commit/2530809b0a55a121172be7f54cb23bf07d6b33ba))
+* **deps:** update plugin publishoncentral to v2.0.11 ([e1e7026](https://github.com/AlchemistSimulator/Alchemist/commit/e1e70269a61ed5c9295943dc178befe8572a169f))
+* **deps:** update site/themes/hugo-theme-relearn digest to 3d60e1d ([375df1e](https://github.com/AlchemistSimulator/Alchemist/commit/375df1e1174eae2e3ebe5665c3371ab2ef7e3dca))
+* **deps:** update site/themes/hugo-theme-relearn digest to 622b35e ([c1a2a14](https://github.com/AlchemistSimulator/Alchemist/commit/c1a2a1460dab75f1d6d2b9f69a0f3918dc8bc9d0))
+* **deps:** update site/themes/hugo-theme-relearn digest to f255f3a ([270083c](https://github.com/AlchemistSimulator/Alchemist/commit/270083c40fa62078e4140c8824569428c1b6f6ec))
+
 ## [25.1.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.0.0...25.1.0) (2022-12-03)
 
 

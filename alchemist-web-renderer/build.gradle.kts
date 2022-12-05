@@ -66,7 +66,6 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(libs.bundles.ktor.client)
-                implementation(project.dependencies.enforcedPlatform(libs.kotlin.wrappers.bom))
                 implementation(libs.bundles.kotlin.react)
                 implementation(npm("react-bootstrap", "2.5.0"))
             }

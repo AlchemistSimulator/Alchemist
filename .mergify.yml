@@ -1,7 +1,13 @@
 pull_request_rules:
   - name: Auto-rebase if appropriately labeled
     conditions:
-      - label=auto-update-rebase
+      - or:
+        - label=auto-update-rebase
+        - and:
+            - label=dependencies
+            - or: &authors_are_bots
+                - author=renovate[bot]
+                - author=dependabot[bot]
       - -draft
       - -conflict
     actions:
@@ -15,9 +21,7 @@ pull_request_rules:
       update:
   - name: rebase-merge working updates
     conditions:
-      - or:
-        - author=renovate[bot]
-        - author=dependabot[bot]
+      - or: *authors_are_bots
       - label=dependencies
       - -draft
       - -conflict

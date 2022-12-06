@@ -1,3 +1,22 @@
+## [25.2.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.1.1...25.2.0) (2022-12-06)
+
+
+### Features
+
+* **web-renderer:** Release on the JS publication on Maven Central ([#1751](https://github.com/AlchemistSimulator/Alchemist/issues/1751)) ([94148c0](https://github.com/AlchemistSimulator/Alchemist/commit/94148c01fd43537efc6785bcf8d2ba6108cb1141))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.16 ([137e7ab](https://github.com/AlchemistSimulator/Alchemist/commit/137e7ab74770dca0d73021ea8b10d9cedc8c1292))
+* **mergify:** auto-merge working dependabot updates ([352a34a](https://github.com/AlchemistSimulator/Alchemist/commit/352a34a2190e6d8516162ba0dcf580e5cdead545))
+* **mergify:** treat renovate and dependabot equally (auto-rebase-update + auto rebase-merge) ([5fabaeb](https://github.com/AlchemistSimulator/Alchemist/commit/5fabaeb1f837d751de1f7d655cf541fbc124d260))
+
+
+### Dependency updates
+
+* **deps:** update react to v18.2.0-pre.455 ([73a8fc9](https://github.com/AlchemistSimulator/Alchemist/commit/73a8fc93286c869e3b8a1cf4def2c30f31fd3ebd))
+
 ## [25.1.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.1.0...25.1.1) (2022-12-05)
 
 

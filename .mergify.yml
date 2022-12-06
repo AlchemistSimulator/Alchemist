@@ -15,7 +15,9 @@ pull_request_rules:
       update:
   - name: rebase-merge working updates
     conditions:
-      - author=renovate[bot]
+      - or:
+        - author=renovate[bot]
+        - author=dependabot[bot]
       - label=dependencies
       - -draft
       - -conflict

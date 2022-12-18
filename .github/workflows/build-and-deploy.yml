@@ -16,7 +16,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.3
+        uses: danysk/action-checkout@0.2.4
       - uses: DanySK/build-check-deploy-gradle-action@2.1.17
         with:
           # check that all tasks used in subsequent phases are there
@@ -52,7 +52,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.3
+        uses: danysk/action-checkout@0.2.4
       - uses: DanySK/build-check-deploy-gradle-action@2.1.17
         with:
           build-command: true
@@ -76,7 +76,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout
-        uses: danysk/action-checkout@0.2.3
+        uses: danysk/action-checkout@0.2.4
       - uses: DanySK/build-check-deploy-gradle-action@2.1.17
         with:
           build-command: |

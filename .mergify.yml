@@ -1,5 +1,5 @@
 pull_request_rules:
-  - name: Auto-rebase if appropriately labeled
+  - name: Auto-rebase if appropriately labeled or if the author is an authorized bot
     conditions:
       - or:
         - label=auto-update-rebase

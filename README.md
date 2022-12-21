@@ -61,3 +61,10 @@ A BibTeX entry for LaTeX users is:
   journal = {Journal of Simulation}
 }
 ```
+
+### Contributors
+
+<a href="https://github.com/AlchemistSimulator/Alchemist/graphs/contributors">
+	<img src="https://contributors-img.web.app/image?repo=AlchemistSimulator/Alchemist" />
+</a>
+

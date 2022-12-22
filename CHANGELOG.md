@@ -1,3 +1,44 @@
+## [25.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.2.1...25.3.0) (2022-12-22)
+
+
+### Features
+
+* **web-renderer:** add EmptyConcentrationSurrogate ([a78ac34](https://github.com/AlchemistSimulator/Alchemist/commit/a78ac34e130fcf361052f91b771be606e35a3841))
+* **web-renderer:** add EnvironmentSurrogate ([8941071](https://github.com/AlchemistSimulator/Alchemist/commit/89410714a993cfd845ac539098cc4044ee26a002))
+* **web-renderer:** add MoleculeSurrogate ([551265f](https://github.com/AlchemistSimulator/Alchemist/commit/551265fda2e2b73d7d32973b4263f5a0e56b7b5f))
+* **web-renderer:** add NodeSurrogate ([fb9d74a](https://github.com/AlchemistSimulator/Alchemist/commit/fb9d74a9d636a8d1154ae378b1f187563eacbe1a))
+* **web-renderer:** add PositionSurrogates ([cc0f805](https://github.com/AlchemistSimulator/Alchemist/commit/cc0f8059a9cbc38cc752abd38726dd39e647b4d7))
+* **web-renderer:** add serialization utility classes ([f4b9b31](https://github.com/AlchemistSimulator/Alchemist/commit/f4b9b316e263440d9a02c03abcde6dcea8143306))
+* **web-renderer:** add StatusSurrogate ([18221e1](https://github.com/AlchemistSimulator/Alchemist/commit/18221e153510638d9abe03be8961911803bb8b6c))
+
+
+### General maintenance
+
+* **readme:** add the contributors ([351b9cb](https://github.com/AlchemistSimulator/Alchemist/commit/351b9cbefc749d6271c86b0f2a9154b911f763ab))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to ab1b5a7 ([8fa60fb](https://github.com/AlchemistSimulator/Alchemist/commit/8fa60fb190a978243d74142c728a863a9f638319))
+* **deps:** update react to v18.2.0-pre.461 ([ce5f149](https://github.com/AlchemistSimulator/Alchemist/commit/ce5f149c65d5a975c9c14e82a457d71e4e8cff45))
+* **deps:** update site/themes/hugo-theme-relearn digest to 838f13d ([1277d47](https://github.com/AlchemistSimulator/Alchemist/commit/1277d47644e89f18c55290c0a6dd5d3404ae103e))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.18 ([75f2683](https://github.com/AlchemistSimulator/Alchemist/commit/75f2683629c6a912f70e1c189f96971ce1934d2b))
+
+
+### Tests
+
+* **web-renderer:** add EmptyConcentrationSurrogate test ([47d2d92](https://github.com/AlchemistSimulator/Alchemist/commit/47d2d92097786db57edb1e342e7f662c43f33209))
+* **web-renderer:** add EnvironmentSurrogate test ([02c74bf](https://github.com/AlchemistSimulator/Alchemist/commit/02c74bf5034da817bff56336c96af2d235bb896a))
+* **web-renderer:** add JsonFormat test ([e46d773](https://github.com/AlchemistSimulator/Alchemist/commit/e46d773c7243869e7addfb2216369cdb876eaf02))
+* **web-renderer:** add MoleculeSurrogate test ([319e30d](https://github.com/AlchemistSimulator/Alchemist/commit/319e30daeda7fa92094cbfd272fbe6fee7162d6b))
+* **web-renderer:** add NodeSurrogate test ([8897d22](https://github.com/AlchemistSimulator/Alchemist/commit/8897d227433a83fdf071aa810fa610a1c00715af))
+* **web-renderer:** add PositionSurrogates test ([2d93c3a](https://github.com/AlchemistSimulator/Alchemist/commit/2d93c3a4df2aff27dc7a646fc96b409ecac89f54))
+* **web-renderer:** add StatusSurrogate test ([3d03f6c](https://github.com/AlchemistSimulator/Alchemist/commit/3d03f6c97959e267af4e6b4b47cb0a7ed645f3a5))
+
 ## [25.2.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.2.0...25.2.1) (2022-12-21)
 
 

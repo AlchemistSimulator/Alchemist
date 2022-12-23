@@ -1,0 +1,22 @@
+#Copyright (C) 2010-2022, Danilo Pianini and contributors
+#listed, for each module, in the respective subproject's build.gradle.kts file.
+#
+#This file is part of Alchemist, and is distributed under the terms of the
+#GNU General Public License, with a linking exception,
+#as described in the file LICENSE in the Alchemist distribution's top directory.
+
+incarnation: sapere
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [0.5]
+
+deployments:
+  type: Grid
+  parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  contents: # A description of what will be included in the node
+    - molecule: hello # Everywhere
+    - in: # Restrict the area to...
+        type: Rectangle # ...a class implementing Shape with this name...
+        parameters: [-1, -1, 2, 2] # ...which can get built with these parameters
+      molecule: token # Molecule to inject

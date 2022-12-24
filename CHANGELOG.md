@@ -1,3 +1,17 @@
+## [25.4.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.3.0...25.4.0) (2022-12-24)
+
+
+### Features
+
+* **web-renderer:** add toSurrogates mapping functions ([#1795](https://github.com/AlchemistSimulator/Alchemist/issues/1795)) ([0119cc8](https://github.com/AlchemistSimulator/Alchemist/commit/0119cc88b09469e78171657a55339645f9f63509))
+
+
+### Dependency updates
+
+* **deps:** update react to v18.2.0-pre.462 ([49c3d4a](https://github.com/AlchemistSimulator/Alchemist/commit/49c3d4a5fd48e988e7d3c7621a8b59ffa7ee9902))
+* **deps:** update site/themes/hugo-theme-relearn digest to 24d8d65 ([0b13227](https://github.com/AlchemistSimulator/Alchemist/commit/0b13227837e6af3ffd354fffab56a075c005082d))
+* **deps:** update site/themes/hugo-theme-relearn digest to 94e91d5 ([5a69c19](https://github.com/AlchemistSimulator/Alchemist/commit/5a69c19cd0ff0801868a0f4bc2c5964fbfaee5e3))
+
 ## [25.3.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.2.1...25.3.0) (2022-12-22)
 
 

@@ -61,6 +61,9 @@ kotlin {
                 implementation(libs.kotest.assertions)
                 implementation(libs.kotest.runner)
                 implementation(libs.ktor.server.test.host)
+                implementation(alchemist("euclidean-geometry"))
+                implementation(alchemist("implementationbase"))
+                implementation(alchemist("test"))
             }
         }
         val jsMain by getting {

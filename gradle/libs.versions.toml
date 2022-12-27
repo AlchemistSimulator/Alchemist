@@ -39,7 +39,7 @@ embedmongo = "de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4"
 graphhopper-core = { module = "com.graphhopper:graphhopper-core", version.ref = "graphhopper" }
 graphstream-algo = { module = "org.graphstream:gs-algo", version.ref = "graphstream" }
 graphstream-core = { module = "org.graphstream:gs-core", version.ref = "graphstream" }
-groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.13"
+groovy-jsr223 = "org.codehaus.groovy:groovy-jsr223:3.0.14"
 gson = "com.google.code.gson:gson:2.10"
 gson-extras = "org.danilopianini:gson-extras:1.1.0"
 guava = "com.google.guava:guava:31.1-jre"

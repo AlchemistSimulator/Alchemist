@@ -82,14 +82,12 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
 
     override fun moving() {
         super.moving()
-        if (state == NavigationState.MOVING_TO_CROSSING_POINT_1) {
-            /*
-             * When moving towards a door the most convenient crossing point may change depending on the node
-             * position. Recomputing the crossing points allows more natural movement (even though it's costly).
-             */
-            if (currentRoom != null) {
-                crossingPoints = computeCrossingPoints(targetDoor.orFail())
-            }
+        /*
+         * When moving towards a door the most convenient crossing point may change depending on the node
+         * position. Recomputing the crossing points allows more natural movement (even though it's costly).
+         */
+        if (state == NavigationState.MOVING_TO_CROSSING_POINT_1 && currentRoom != null) {
+            crossingPoints = computeCrossingPoints(targetDoor.orFail())
         }
     }
 

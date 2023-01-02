@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.4
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.19
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.20
         with:
           # check that all tasks used in subsequent phases are there
           build-command: |
@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.4
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.19
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.20
         with:
           build-command: true
           check-command: true
@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.4
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.19
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.20
         with:
           build-command: |
             ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
@@ -140,7 +140,7 @@ jobs:
         uses: actions/download-artifact@v3.0.1
         with:
           name: website
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.19
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.20
         with:
           java-version: 11
           build-command: |

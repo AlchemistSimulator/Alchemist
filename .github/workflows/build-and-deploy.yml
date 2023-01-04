@@ -37,6 +37,7 @@ jobs:
             ./gradlew clean --parallel || ./gradlew clean --parallel || true
           should-run-codecov: ${{ contains('Linux', runner.os) }}
           should-deploy: false
+          should-validate-wrapper: ${{ contains('Linux', runner.os) }}
   # Performs a dry-deployment if credentials are available
   test-deploy:
     runs-on: ubuntu-latest

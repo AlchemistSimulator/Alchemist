@@ -59,7 +59,7 @@ jobs:
           build-command: true
           check-command: true
           deploy-command: |
-            COMMAND="./gradlew uploadJvm uploadJs uploadKotlinOSSRH uploadKotlinMultiplatform close --parallel"
+            COMMAND="./gradlew uploadJvm uploadJs uploadKotlinOSSRH uploadKotlinMultiplatform close drop --parallel"
             eval "$COMMAND" || eval "$COMMAND" || eval "$COMMAND"
           java-version: 11
           should-run-codecov: false

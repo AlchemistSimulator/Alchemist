@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -60,7 +60,7 @@ class TestKtVariable<T, P : Position<P>> : StringSpec({
         simulation shouldNot beNull()
         val variable = simulation.variables["result"]
         variable shouldNot beNull()
-        val values = variable?.toList() ?: emptyList()
+        val values = variable?.toList().orEmpty()
         values.forEach { it shouldBe "null" }
     }
 })

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -156,9 +156,9 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
                     is String -> value.toDouble()
                     is Time -> value.toDouble()
                     null -> 0.0
-                    else -> throw IllegalStateException(
+                    else -> error(
                         "Expected a numeric value in $molecule at node ${node.id}, " +
-                            "but $value of type ${value.let { it::class.simpleName }} was found"
+                            "but '$value' of type '${value.let { it::class.simpleName }}' was found instead"
                     )
                 }
             }

@@ -1,3 +1,32 @@
+## [25.4.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.4.1...25.4.2) (2023-01-09)
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([0a6e5ce](https://github.com/AlchemistSimulator/Alchemist/commit/0a6e5cec909e7e2ec4d9c261b11c3bc2f5a2bec9))
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v16.4.1 ([0fb0744](https://github.com/AlchemistSimulator/Alchemist/commit/0fb074475883523b9bfa643164900719bc42478d))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.154 ([be7e3ae](https://github.com/AlchemistSimulator/Alchemist/commit/be7e3ae5ea4f96847f1efdf6af3e82e71bcfe9a7))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b92a6c0 ([b33c5cf](https://github.com/AlchemistSimulator/Alchemist/commit/b33c5cf123134a84b535656fa8a9815ca7799cf9))
+* **deps:** update external-resources/learning-scafi-alchemist digest to cede98e ([6883799](https://github.com/AlchemistSimulator/Alchemist/commit/6883799745e96ddef635f5658a605a463a7f8654))
+* **deps:** update ktor to v2.2.2 ([1c07f0f](https://github.com/AlchemistSimulator/Alchemist/commit/1c07f0f0e32160093eefa923e0013467126e1f81))
+* **deps:** update plugin publishoncentral to v3 ([36fe12a](https://github.com/AlchemistSimulator/Alchemist/commit/36fe12a21258c6ebaf8a7fb9f04758ece4bc5cde))
+* **deps:** update react to v18.2.0-pre.468 ([d516b78](https://github.com/AlchemistSimulator/Alchemist/commit/d516b78387a73754816b9dbcf7dd75ddc7cebad1))
+* **deps:** update react to v18.2.0-pre.469 ([6198b49](https://github.com/AlchemistSimulator/Alchemist/commit/6198b4927e4043ce0f4f5e6f0a94ba9d369879d0))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v3.3.0 ([941e8d4](https://github.com/AlchemistSimulator/Alchemist/commit/941e8d4adb3a34d375b92d227986871d662203a2))
+* **deps:** update actions/download-artifact action to v3.0.2 ([4a38703](https://github.com/AlchemistSimulator/Alchemist/commit/4a38703d32e6db4899af666108a3c48e09ae4af9))
+* **deps:** update actions/upload-artifact action to v3.1.2 ([f2770ee](https://github.com/AlchemistSimulator/Alchemist/commit/f2770ee4de07c64d4a05fa9f60fb0af50403c0bf))
+* **deps:** update danysk/action-checkout action to v0.2.5 ([c308102](https://github.com/AlchemistSimulator/Alchemist/commit/c3081026ae50abfccb61fee27fe1dace956ea253))
+* keep OSSRH cleaner by dropping repositories after a successful dry-deploy ([a25154d](https://github.com/AlchemistSimulator/Alchemist/commit/a25154dcd65c2d36558523d669e630b56281df23))
+* use the version of node from `package.json` ([#1843](https://github.com/AlchemistSimulator/Alchemist/issues/1843)) ([8a88019](https://github.com/AlchemistSimulator/Alchemist/commit/8a88019972cfbab35f8ba646ffa8ea3b60d62461))
+
 ## [25.4.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.4.0...25.4.1) (2023-01-04)
 
 

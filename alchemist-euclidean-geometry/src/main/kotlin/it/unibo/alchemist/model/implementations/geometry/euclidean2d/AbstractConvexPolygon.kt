@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -108,7 +108,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
      * Checks if the polygon's boundary is convex. See [isConvex].
      */
     private fun isBoundaryConvex(): Boolean {
-        if (edges().filter { !it.isDegenerate }.size < 3) {
+        if (edges().count { !it.isDegenerate } < 3) {
             return false
         }
         var e1 = getEdge(vertices().size - 1)

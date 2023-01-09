@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,8 +9,9 @@
 
 package it.unibo.alchemist.loader.m2m
 
-import org.danilopianini.jirf.Factory
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
+import org.danilopianini.jirf.Factory
+import java.util.Collections.unmodifiableMap
 
 internal data class Context constructor(
     private val namedLookup: MutableMap<String, Map<*, *>>,
@@ -18,10 +19,10 @@ internal data class Context constructor(
     val factory: Factory = ObjectFactory.makeBaseFactory(),
 ) {
 
-    private var backingConstants: MutableMap<String, Any?> = mutableMapOf()
+    private val backingConstants: MutableMap<String, Any?> = mutableMapOf()
     private val fixedVariables = mutableSetOf<String>()
 
-    val constants: Map<String, Any?> get() = backingConstants
+    val constants: Map<String, Any?> get() = unmodifiableMap(backingConstants)
 
     constructor() : this(namedLookup = mutableMapOf())
 

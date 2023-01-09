@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -35,6 +35,7 @@ import javafx.collections.ObservableList
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.canvas.Canvas
+import javafx.scene.input.DataFormat
 import javafx.scene.layout.Pane
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -221,7 +222,7 @@ abstract class AbstractFXDisplay<T, P : Position2D<P>> :
         /**
          * Position `DataFormat`.
          */
-        protected val POSITION_DATA_FORMAT = DataFormatFactory.getDataFormat(Position::class.java)
+        protected val POSITION_DATA_FORMAT: DataFormat = DataFormatFactory.getDataFormat(Position::class.java)
         /**
          * Default serial version UID.
          */

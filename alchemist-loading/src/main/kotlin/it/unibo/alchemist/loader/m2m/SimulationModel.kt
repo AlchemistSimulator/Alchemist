@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,11 +17,11 @@ import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.extractors.MoleculeReader
 import it.unibo.alchemist.loader.export.extractors.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
+import it.unibo.alchemist.loader.filters.Filter
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.syntax.SyntaxElement
-import it.unibo.alchemist.loader.filters.Filter
 import it.unibo.alchemist.loader.variables.Constant
 import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
@@ -34,7 +34,6 @@ import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Action
 import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Condition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GlobalReaction
@@ -43,18 +42,19 @@ import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.LinkingRule
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.reflect.KClass
-import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
-import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
-import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Layer as LayerSyntax
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.formula as formulaKey
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.language as languageKey
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.timeout as timeoutKey
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Deployment.Program as ProgramSyntax
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Environment.GlobalProgram as GlobalProgramSyntax
+import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Layer as LayerSyntax
 
 /*
  * UTILITY ALIASES
@@ -74,7 +74,7 @@ private fun cantBuildWith(clazz: KClass<*>, root: Any?, syntax: SyntaxElement? =
 
 private fun cantBuildWith(name: String, root: Any?, syntax: SyntaxElement? = null): Nothing {
     val type = root?.let { it::class.simpleName }
-    val guide = syntax?.guide?.let { " A guide follows.\n$it" } ?: ""
+    val guide = syntax?.guide?.let { " A guide follows.\n$it" }.orEmpty()
     throw IllegalArgumentException(
         "Invalid $name specification: $root: $type.$guide"
     )
@@ -307,7 +307,7 @@ internal object SimulationModel {
                     val filters = visitFilter<P>(context, element)
                     val moleculeElement = element[moleculeKey]
                     require(moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
-                        val type = moleculeElement?.let { ": " + it::class.simpleName } ?: ""
+                        val type = moleculeElement?.let { ": " + it::class.simpleName }.orEmpty()
                         "molecule $moleculeElement$type is not a scalar value." +
                             "This might be caused by a missing quotation of a String."
                     }
@@ -732,11 +732,11 @@ internal object SimulationModel {
                     syntax.validateDescriptor(value) -> result()
                         ?.getOrThrow()
                         .whenNull(and = forceSuccess) { cantBuildWith(evidence, value) }
-                        ?: emptyList()
+                        .orEmpty()
                     else -> recurse()
                 }
                 is Iterable<*> -> result()?.getOrNull() ?: recurse()
-                else -> result()?.getOrThrow() ?: emptyList()
+                else -> result()?.getOrThrow().orEmpty()
             }
         }.toMap()
 

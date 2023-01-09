@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,6 +12,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Neighborhood
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.util.BugReporting.reportBug
 import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.Hashes
 import org.danilopianini.util.ImmutableListSet
@@ -103,7 +104,14 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
                     override fun hasNext() = lookahead !== null
                     override fun next() =
                         if (hasNext()) {
-                            val result = lookahead!!
+                            val result = lookahead ?: reportBug(
+                                "Neighborhood iterator failure in ${this::class.qualifiedName}",
+                                mapOf(
+                                    "base" to base,
+                                    "lookahead" to lookahead,
+                                    "hasNext" to hasNext(),
+                                )
+                            )
                             lookahead = updateLookAhead()
                             result
                         } else {

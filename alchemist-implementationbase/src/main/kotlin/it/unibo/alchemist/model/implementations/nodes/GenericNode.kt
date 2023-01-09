@@ -102,7 +102,7 @@ open class GenericNode<T> @JvmOverloads constructor(
     }
 
     final override fun addProperty(nodeProperty: NodeProperty<T>) {
-        if (properties.find { it::class == nodeProperty::class } == null) {
+        if (properties.none { it::class == nodeProperty::class }) {
             properties.add(nodeProperty)
         } else {
             error(

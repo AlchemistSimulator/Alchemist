@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -300,10 +300,10 @@ internal abstract class LoadingSystem(
                 }
             }
             failures.forEach { throw it }
-            require(knownValues.size == constants.size + dependentVariables.size + variables.size) {
+            check(knownValues.size == constants.size + dependentVariables.size + variables.size) {
                 val originalKeys = constants.keys + dependentVariables.keys + variables.keys
                 val groups = listOf(knownValues.keys, originalKeys)
-                val difference = groups.maxByOrNull { it.size }!! - groups.minByOrNull { it.size }
+                val difference = groups.maxByOrNull { it.size }.orEmpty() - groups.minByOrNull { it.size }.orEmpty()
                 "Something very smelly going on (a bug in Alchemist?): there are unknown variables: $difference"
             }
             return knownValues

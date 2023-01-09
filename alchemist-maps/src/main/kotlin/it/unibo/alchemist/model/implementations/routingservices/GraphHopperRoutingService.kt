@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -66,7 +66,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                             "Could not initialize with $mapFile (version conflict?): erasing cache and retrying",
                             ex
                         )
-                        val corruptedContent = workingDirectory.listFiles()?.filterNot { it == mapFile } ?: emptyList()
+                        val corruptedContent = workingDirectory.listFiles()?.filterNot { it == mapFile }.orEmpty()
                         corruptedContent.forEach {
                             require(it.deleteRecursively()) {
                                 "Could not delete $$it. Something nasty is going on with your file system"

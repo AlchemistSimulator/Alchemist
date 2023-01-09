@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,6 +11,7 @@ package it.unibo.alchemist.launch
 import it.unibo.alchemist.AlchemistExecutionOptions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.reflect.jvm.jvmName
 
 /**
  * An entity with a [name] that can take responsibility for performing an Alchemist run, given the current
@@ -107,5 +108,5 @@ sealed class Priority : Comparable<Priority> {
         )
     }
 
-    override fun toString() = this::class.simpleName!!
+    override fun toString() = this::class.simpleName ?: this::class.jvmName
 }

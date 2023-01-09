@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.fxui.util;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
 import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
-import it.unibo.alchemist.boundary.fxui.impl.AbstractFXDisplay;
+import it.unibo.alchemist.boundary.fxui.impl.BaseFXDisplay;
 import it.unibo.alchemist.boundary.fxui.impl.ButtonsBarController;
 import it.unibo.alchemist.boundary.fxui.impl.FX2DDisplay;
 import it.unibo.alchemist.boundary.fxui.impl.LeafletMapDisplay;
@@ -308,11 +308,11 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
     }
 
     /**
-     * Initializes a new {@link AbstractFXDisplay} for the specified {@link Class#getName()}.
+     * Initializes a new {@link BaseFXDisplay} for the specified {@link Class#getName()}.
      *
-     * @param className the name of the {@code AbstractFXDisplay} {@link OutputMonitor} to be inizialized
-     * @throws IllegalArgumentException if the class name is null, empty or not an {@link AbstractFXDisplay},
-     *                                  or the {@link AbstractFXDisplay} does not have a 0 arguments constructor
+     * @param className the name of the {@code BaseFXDisplay} {@link OutputMonitor} to be inizialized
+     * @throws IllegalArgumentException if the class name is null, empty or not an {@link BaseFXDisplay},
+     *                                  or the {@link BaseFXDisplay} does not have a 0 arguments constructor
      * @see Class#forName(String)
      */
     @Contract("null -> fail")
@@ -322,8 +322,8 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
             throw new IllegalArgumentException();
         }
         try {
-            final Class<? extends AbstractFXDisplay<T, P>> clazz;
-            clazz = (Class<? extends AbstractFXDisplay<T, P>>) Class.forName(className);
+            final Class<? extends BaseFXDisplay<T, P>> clazz;
+            clazz = (Class<? extends BaseFXDisplay<T, P>>) Class.forName(className);
             final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
             Constructor<?> constructor = null;
             for (final Constructor<?> c : constructors) {
@@ -336,7 +336,7 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
                 throw new IllegalArgumentException();
             } else {
                 try {
-                    displayMonitor = (AbstractFXDisplay<T, P>) constructor.newInstance();
+                    displayMonitor = (BaseFXDisplay<T, P>) constructor.newInstance();
                 } catch (final IllegalAccessException | IllegalArgumentException | InstantiationException
                         | InvocationTargetException | ExceptionInInitializerError exception) {
                     L.warn("No valid constructor found");

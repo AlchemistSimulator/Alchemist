@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,4 +17,4 @@ import it.unibo.alchemist.model.interfaces.Position2D
  *
  * @param <T> The type which describes the [Concentration] of a molecule
 </T> */
-class FX2DDisplay<T, P : Position2D<P>> : AbstractFXDisplay<T, P>()
+class FX2DDisplay<T, P : Position2D<P>> : BaseFXDisplay<T, P>()

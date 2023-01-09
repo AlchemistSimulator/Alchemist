@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture
  *
  * @param <T> The type which describes the [Concentration] of a molecule
  */
-class LeafletMapDisplay<T> : AbstractFXDisplay<T, GeoPosition>() {
+class LeafletMapDisplay<T> : BaseFXDisplay<T, GeoPosition>() {
     private val map = CustomLeafletMapView()
     private val mapLoading: CompletableFuture<Worker.State>
 

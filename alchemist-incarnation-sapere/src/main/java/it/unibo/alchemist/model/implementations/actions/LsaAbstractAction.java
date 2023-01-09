@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -7,6 +8,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import com.google.common.collect.Sets;
 import it.unibo.alchemist.expressions.implementations.Expression;
 import it.unibo.alchemist.expressions.implementations.ListTreeNode;
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;
@@ -21,13 +23,12 @@ import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import org.danilopianini.lang.HashString;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 /**
  *
@@ -398,6 +399,7 @@ public abstract class LsaAbstractAction extends AbstractAction<List<ILsaMolecule
         return matches;
     }
 
+    @Nonnull
     @Override
     public final ILsaNode getNode() {
         return (ILsaNode) super.getNode();

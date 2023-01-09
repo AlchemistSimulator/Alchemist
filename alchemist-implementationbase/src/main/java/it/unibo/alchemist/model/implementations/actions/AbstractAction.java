@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -11,17 +12,17 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import java.util.Objects;
-import java.util.Optional;
-
-import it.unibo.alchemist.model.interfaces.Dependency;
-import org.danilopianini.util.LinkedListSet;
-import org.danilopianini.util.ListSet;
-
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Dependency;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
+import org.danilopianini.util.LinkedListSet;
+import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
+import java.util.Optional;
 
 
 /**
@@ -33,6 +34,7 @@ public abstract class AbstractAction<T> implements Action<T> {
 
     private static final long serialVersionUID = 1L;
     private final ListSet<Dependency> dependencies = new LinkedListSet<>();
+    @Nonnull
     private final Node<T> node;
 
     /**
@@ -42,7 +44,7 @@ public abstract class AbstractAction<T> implements Action<T> {
      * @param node
      *            the node this action belongs to
      */
-    protected AbstractAction(final Node<T> node) {
+    protected AbstractAction(@Nonnull final Node<T> node) {
         Objects.requireNonNull(node);
         this.node = node;
     }
@@ -84,6 +86,7 @@ public abstract class AbstractAction<T> implements Action<T> {
     /**
      * @return the node this action belongs to
      */
+    @Nonnull
     protected Node<T> getNode() {
         return node;
     }

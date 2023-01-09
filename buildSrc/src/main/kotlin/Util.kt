@@ -11,6 +11,7 @@ import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URL
+import java.util.Locale
 
 /*
  * Copyright (C) 2010-2022, Danilo Pianini and contributors
@@ -75,7 +76,7 @@ object Util {
             .removeSuffix("-all")
             .removePrefix("alchemist-")
             .capitalize()
-            .replace(Regex("-([a-z])")) { it.groupValues[1].toUpperCase() }
+            .replace(Regex("-([a-z])")) { it.groupValues[1].toUpperCase(Locale.US) }
             .replace("-", "")
         }ShadowJarOutput"
     ) {
@@ -118,7 +119,7 @@ object Util {
     /**
      * Directly accesses the plugin id.
      */
-    val Provider<PluginDependency>.id get() = get().pluginId
+    val Provider<PluginDependency>.id: String get() = get().pluginId
 
     /**
      *  Check if the project contains at least one of the multiplatform most common sourceSets,

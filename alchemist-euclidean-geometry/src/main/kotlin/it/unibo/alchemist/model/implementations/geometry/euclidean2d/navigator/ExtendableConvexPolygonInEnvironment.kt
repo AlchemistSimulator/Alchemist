@@ -280,7 +280,7 @@ class ExtendableConvexPolygonInEnvironment(
      */
     private fun isAdvancedCase(obstacle: Shape, index: Int, step: Double) =
         obstacle.vertices().none { containsBoundaryIncluded(it) } &&
-            vertices.filter { obstacle.contains(it.toPoint()) }.size == 1 &&
+            vertices.count { obstacle.contains(it.toPoint()) } == 1 &&
             !firstIntrudedEdge(obstacle, index, step).isParallelTo(getEdge(index))
 
     /*

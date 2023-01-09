@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -34,7 +34,9 @@ class TestGraphStream : FreeSpec({
                                 .map { environment.getDistanceBetweenNodes(node, it) }
                                 .average()
                         }
-                    2 * averageDistances[true]!! shouldBeLessThan averageDistances[false]!!
+                    val min = averageDistances[true] ?: Double.POSITIVE_INFINITY
+                    val max = averageDistances[false] ?: Double.NEGATIVE_INFINITY
+                    2 * min shouldBeLessThan max
                 }
             }
         }

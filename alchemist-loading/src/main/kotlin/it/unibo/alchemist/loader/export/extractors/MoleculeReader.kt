@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -12,8 +12,8 @@ package it.unibo.alchemist.loader.export.extractors
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.StatUtil
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
@@ -58,7 +58,7 @@ class MoleculeReader(
         .toMap()
 
     private val propertyText =
-        if (property == null || property.isEmpty()) {
+        if (property.isNullOrEmpty()) {
             ""
         } else {
             property.replace("[^\\d\\w]*".toRegex(), "")

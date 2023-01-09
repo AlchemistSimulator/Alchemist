@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,12 +10,12 @@ package it.unibo.alchemist.model.interfaces;
 
 import org.danilopianini.util.ListSet;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
  * @param <T>
  *            The type which describes the concentration of a molecule
- * 
  *            The interface of an action. Every action must implement this
  *            interface.
  * 
@@ -48,6 +48,7 @@ public interface Action<T> extends Serializable {
     /**
      * @return The list of the dependencies that this action generates.
      */
+    @Nonnull
     ListSet<? extends Dependency> getOutboundDependencies();
 
 }

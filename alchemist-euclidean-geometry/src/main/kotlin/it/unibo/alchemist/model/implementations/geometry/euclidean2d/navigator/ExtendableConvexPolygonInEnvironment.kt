@@ -61,7 +61,7 @@ class ExtendableConvexPolygonInEnvironment(
      */
     lateinit var polygonalObstacles: List<ConvexPolygon>
 
-    private var canEdgeAdvance: MutableList<Boolean> = MutableList(vertices.size) { true }
+    private val canEdgeAdvance: MutableList<Boolean> = MutableList(vertices.size) { true }
     /**
      * Caches the normal versor to each edge.
      */

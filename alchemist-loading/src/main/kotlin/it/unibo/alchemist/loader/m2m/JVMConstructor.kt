@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.loader.m2m
 
+import it.unibo.alchemist.util.BugReporting
 import it.unibo.alchemist.util.ClassPathScanner
 import org.danilopianini.jirf.CreationResult
 import org.danilopianini.jirf.Factory
@@ -190,7 +191,20 @@ sealed class JVMConstructor(val typeName: String) {
             ) { (outer, _) -> outer?.cause to outer?.cause?.message }
                 .takeWhile { it.first != null }
                 .filter { !it.second.isNullOrBlank() }
-                .map { "${it.first!!::class.simpleName}: ${it.second}" }
+                .map { (first, second) ->
+                    checkNotNull(first) {
+                        BugReporting.reportBug(
+                            "Bug in ${JVMConstructor::class.qualifiedName}",
+                            mapOf(
+                                "first" to first,
+                                "second" to second,
+                                "constructor" to constructor,
+                                "creation result" to this
+                            ),
+                        )
+                    }
+                    "${first::class.simpleName}: $second"
+                }
                 .toList()
             logger(
                 "Constructor {} failed for {} ",

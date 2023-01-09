@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -241,7 +241,7 @@ sealed class JVMConstructor(val typeName: String) {
                             emptyList()
                         }
                         compatibleSubtypes.size > 1 -> {
-                            throw IllegalStateException(
+                            error(
                                 "Ambiguous mapping: $compatibleSubtypes all match the requested type $typeName for " +
                                     "parameter #$mappedIndex:$potentialType of $constructor"
                             )

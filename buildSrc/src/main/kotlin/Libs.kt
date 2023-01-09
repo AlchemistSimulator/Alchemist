@@ -19,10 +19,10 @@ object Libs {
     /**
      * Returns a reference to an alchemist sub-project [module].
      */
-    fun Project.alchemist(module: String) = project(":alchemist-$module")
+    fun Project.alchemist(module: String): Project = project(":alchemist-$module")
 
     /**
      * Returns a reference to an alchemist sub-project incarnation [module].
      */
-    fun Project.incarnation(module: String) = alchemist("incarnation-$module")
+    fun Project.incarnation(module: String): Project = alchemist("incarnation-$module")
 }

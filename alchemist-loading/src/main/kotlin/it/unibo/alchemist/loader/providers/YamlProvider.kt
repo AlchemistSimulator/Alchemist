@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -38,7 +38,7 @@ object YamlProvider : AlchemistModelProvider {
         Yaml(loaderOptions).load<Map<String, Any>>(input.openStream()).checkNotNull(input)
 
     private inline fun <reified T> T?.checkNotNull(input: Any): T {
-        require(this != null) {
+        requireNotNull(this) {
             "The Alchemist YAML parser for $input could not load anything: maybe the YAML resource is an empty file?"
         }
         return this

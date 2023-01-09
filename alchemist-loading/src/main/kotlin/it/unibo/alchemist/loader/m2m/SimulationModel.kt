@@ -459,7 +459,7 @@ internal object SimulationModel {
 
     fun <T, P : Position<P>> visitLayers(incarnation: Incarnation<T, P>, context: Context, root: Any?) =
         visitRecursively(context, root ?: emptyList<Any>(), LayerSyntax) { origin ->
-            (origin as? Map<*, *>)?.let {
+            (origin as? Map<*, *>)?.let { _ ->
                 visitBuilding<Layer<T, P>>(context, origin)
                     ?.map { incarnation.createMolecule(origin[LayerSyntax.molecule]?.toString()) to it }
             }
@@ -627,7 +627,7 @@ internal object SimulationModel {
         (element as? Map<*, *>?)
             ?.takeIfNotAConstant(name, context)
             ?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }
-            ?.let {
+            ?.let { _ ->
                 val variable = when (JavaType.type) {
                     in element -> visitBuilding<Variable<*>>(context, element) // arbitrary type
                         ?.onFailure { logger.debug("Invalid variable: {} from {}: {}", name, element, it.message) }

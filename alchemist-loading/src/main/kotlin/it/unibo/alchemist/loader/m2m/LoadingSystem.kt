@@ -115,11 +115,11 @@ internal abstract class LoadingSystem(
                     displacementsSource,
                     syntax = DocumentRoot.Deployment
                 ) { element ->
-                    (element as? Map<*, *>)?.let {
+                    (element as? Map<*, *>)?.let { _ ->
                         setCurrentRandomGenerator(scenarioRNG)
-                        SimulationModel.visitBuilding<Deployment<P>>(context, element)?.onSuccess {
+                        SimulationModel.visitBuilding<Deployment<P>>(context, element)?.onSuccess { deployment ->
                             setCurrentRandomGenerator(simulationRNG)
-                            populateDeployment(simulationRNG, incarnation, environment, it, element)
+                            populateDeployment(simulationRNG, incarnation, environment, deployment, element)
                         }
                     }
                 }

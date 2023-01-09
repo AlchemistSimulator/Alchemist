@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -28,7 +28,7 @@ class OffsetGraphStreamLinkingRule<T, P : Position<P>>(val offset: Int, val grap
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> {
         val actualId = center.id - offset
         val graphNode = if (graph.nodeCount > actualId) graph.getNode(actualId) else null
-        val neighborsIds = graphNode?.neighborNodes()?.mapToInt { it.index + offset }?.toList() ?: emptyList()
+        val neighborsIds = graphNode?.neighborNodes()?.mapToInt { it.index + offset }?.toList().orEmpty()
         val neighbors = if (neighborsIds.isEmpty()) {
             emptySequence()
         } else {

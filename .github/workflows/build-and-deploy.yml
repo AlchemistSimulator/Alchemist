@@ -141,10 +141,11 @@ jobs:
         uses: actions/download-artifact@v3.0.2
         with:
           name: website
-      - name: Fetch the node version
+      - name: Find the version of Node from package.json
         id: node-version
         run: echo "{version}={$(jq -r .engines.node package.json)}" >> $GITHUB_OUTPUT
-      - uses: actions/setup-node@v3.6.0
+      - name: Install Node
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: ${{ steps.node-version.outputs.version }}
       - uses: DanySK/build-check-deploy-gradle-action@2.1.20

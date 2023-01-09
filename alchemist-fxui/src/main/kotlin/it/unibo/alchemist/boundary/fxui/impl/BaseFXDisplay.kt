@@ -54,7 +54,7 @@ import java.util.stream.Stream
     "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
     "Field is initialized in the initialize function"
 )
-abstract class AbstractFXDisplay<T, P : Position2D<P>> :
+open class BaseFXDisplay<T, P : Position2D<P>> :
     Pane(),
     FXOutputMonitor<T, P> {
 

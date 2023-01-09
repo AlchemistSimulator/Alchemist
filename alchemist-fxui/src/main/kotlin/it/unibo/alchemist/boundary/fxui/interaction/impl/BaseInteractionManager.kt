@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.fxui.interaction.impl
 
 import com.google.common.collect.ImmutableSet
-import it.unibo.alchemist.boundary.fxui.impl.AbstractFXDisplay
+import it.unibo.alchemist.boundary.fxui.impl.BaseFXDisplay
 import it.unibo.alchemist.boundary.fxui.interaction.api.Direction2D
 import it.unibo.alchemist.boundary.fxui.interaction.api.InteractionManager
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.api.KeyboardActionListener
@@ -50,7 +50,7 @@ import kotlin.math.roundToInt
  * @param monitor the monitor.
  */
 class BaseInteractionManager<T, P : Position2D<P>>(
-    private val monitor: AbstractFXDisplay<T, P>
+    private val monitor: BaseFXDisplay<T, P>
 ) : InteractionManager<T, P> {
     /**
      * Describes a certain interaction that has a feedback associated to it.

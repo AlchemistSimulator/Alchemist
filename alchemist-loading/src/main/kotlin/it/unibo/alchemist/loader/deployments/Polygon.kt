@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -11,10 +12,10 @@ package it.unibo.alchemist.loader.deployments
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Position2D
+import org.apache.commons.math3.random.RandomGenerator
 import java.awt.geom.Area
 import java.awt.geom.Path2D
 import java.awt.geom.Rectangle2D
-import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * Alias for using pairs as bidimensional points.
@@ -106,7 +107,7 @@ open class Polygon<P : Position2D<out P>>(
     /**
      * Converts a Point2D to a [P].
      */
-    protected val Point2D.toPosition
+    protected val Point2D.toPosition: Position2D<out P>
         get() = environment.makePosition(first, second)
 
     /**

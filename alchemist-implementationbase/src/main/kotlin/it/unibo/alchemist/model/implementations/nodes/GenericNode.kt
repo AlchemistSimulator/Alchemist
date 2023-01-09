@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -105,8 +105,8 @@ open class GenericNode<T> @JvmOverloads constructor(
         if (properties.find { it::class == nodeProperty::class } == null) {
             properties.add(nodeProperty)
         } else {
-            throw IllegalArgumentException(
-                "This node (${this.id}) already contains a property of type ${nodeProperty::class}, " +
+            error(
+                "Node with id ${this.id} already contains a property of type ${nodeProperty::class}, " +
                     "this may lead to an inconsistent state"
             )
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -561,6 +561,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
             return DEPENDENCY;
         }
 
+        @Nonnull
         @Override
         public ListSet<? extends Dependency> getOutboundDependencies() {
             return DEPENDENCY;

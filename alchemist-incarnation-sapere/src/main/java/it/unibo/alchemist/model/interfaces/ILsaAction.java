@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -11,6 +12,7 @@ import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ListSet;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ public interface ILsaAction extends Action<List<ILsaMolecule>> {
      */
     void setExecutionContext(Map<HashString, ITreeNode<?>> matches, List<ILsaNode> nodes);
 
+    @Nonnull
     @Override
     ListSet<? extends Dependency> getOutboundDependencies();
 

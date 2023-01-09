@@ -75,6 +75,7 @@ public abstract class AbstractAction<T> implements Action<T> {
      * How to override: if you intend your action to influence any reaction with
      * compatible context, return null.
      */
+    @Nonnull
     @Override
     public final ListSet<? extends Dependency> getOutboundDependencies() {
         return ListSets.unmodifiableListSet(dependencies);

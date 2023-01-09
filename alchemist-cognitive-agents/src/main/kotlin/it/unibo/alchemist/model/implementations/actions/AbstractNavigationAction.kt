@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -158,7 +158,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
      * @returns all the doors (= passages/edges) outgoing from the current room.
      */
     override fun doorsInSight(): List<E> =
-        currentRoom?.let { environment.graph.outgoingEdgesOf(it).toList() } ?: emptyList()
+        currentRoom?.let { environment.graph.outgoingEdgesOf(it).toList() }.orEmpty()
 
     /**
      * The target of a directed edge of the environment's graph.

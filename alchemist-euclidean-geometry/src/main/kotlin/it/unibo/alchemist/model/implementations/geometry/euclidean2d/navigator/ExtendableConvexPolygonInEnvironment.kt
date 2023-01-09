@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -62,10 +62,12 @@ class ExtendableConvexPolygonInEnvironment(
     lateinit var polygonalObstacles: List<ConvexPolygon>
 
     private val canEdgeAdvance: MutableList<Boolean> = MutableList(vertices.size) { true }
+
     /**
      * Caches the normal versor to each edge.
      */
-    private var normals: MutableList<Euclidean2DPosition?> = MutableList(vertices.size) { null }
+    private val normals: MutableList<Euclidean2DPosition?> = MutableList(vertices.size) { null }
+
     /**
      * Caches the growth direction (a vector) of both the vertices of each edge, this is useful in
      * the advanced case (see [extend]).

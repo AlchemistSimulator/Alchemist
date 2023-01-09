@@ -143,7 +143,7 @@ jobs:
           name: website
       - name: Find the version of Node from package.json
         id: node-version
-        run: echo "{version}={$(jq -r .engines.node package.json)}" >> $GITHUB_OUTPUT
+        run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
       - name: Install Node
         uses: actions/setup-node@v3.6.0
         with:

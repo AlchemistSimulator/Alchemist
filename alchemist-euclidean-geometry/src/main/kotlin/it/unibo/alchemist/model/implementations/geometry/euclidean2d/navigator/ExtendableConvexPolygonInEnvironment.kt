@@ -72,7 +72,7 @@ class ExtendableConvexPolygonInEnvironment(
      * Caches the growth direction (a vector) of both the vertices of each edge, this is useful in
      * the advanced case (see [extend]).
      */
-    private var growthDirections: MutableList<Pair<Euclidean2DPosition?, Euclidean2DPosition?>?> =
+    private val growthDirections: MutableList<Pair<Euclidean2DPosition?, Euclidean2DPosition?>?> =
         MutableList(vertices.size) { null }
 
     override fun addVertex(index: Int, x: Double, y: Double): Boolean {

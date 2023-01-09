@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -219,7 +219,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      */
     override fun getContext() = Context.LOCAL
 
-    override fun getOutboundDependencies() = ImmutableListSet.of(Dependency.EVERY_MOLECULE)
+    override fun getOutboundDependencies(): ImmutableListSet<Dependency> =
+        ImmutableListSet.of(Dependency.EVERY_MOLECULE)
 
     override fun hashCode() = name.hashCode()
 

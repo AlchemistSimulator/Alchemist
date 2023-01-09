@@ -94,7 +94,7 @@ public final class SAPEREWalker
             node,
             new OnStreets<>(environment, GraphHopperOptions.Companion.getDefaultOptions()),
             new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
-            new FollowTrace(reaction)
+            new FollowTrace<>(reaction)
         );
     }
 

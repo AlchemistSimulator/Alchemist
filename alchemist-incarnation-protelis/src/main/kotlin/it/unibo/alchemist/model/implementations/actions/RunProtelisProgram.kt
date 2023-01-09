@@ -157,8 +157,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         .flatMap { it.actions.asSequence() }
         .filterIsInstance<RunProtelisProgram<*>>()
         .map { it.program.name }
-        .filter { it == program.name }
-        .count()
+        .count { it == program.name }
         .let { otherCopies -> SimpleMolecule(program.name + if (otherCopies == 0) "" else "\$copy$otherCopies") }
 
     private val networkManager = AlchemistNetworkManager(reaction, device, this, retentionTime, packetLossDistance)

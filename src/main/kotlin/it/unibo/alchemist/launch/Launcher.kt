@@ -9,6 +9,7 @@
 package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
+import it.unibo.alchemist.util.BugReporting
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.reflect.jvm.jvmName
@@ -100,12 +101,7 @@ sealed class Priority : Comparable<Priority> {
         this is Fallback -> -1
         other is High -> -1
         other is Fallback -> 1
-        else -> throw IllegalStateException(
-            """
-            Comparison of $this and $other failed.
-            There is a bug in alchemist. Please open an issue with this stacktrace.
-            """.trimIndent()
-        )
+        else -> BugReporting.reportBug("Comparison of $this and $other failed")
     }
 
     override fun toString() = this::class.simpleName ?: this::class.jvmName

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -10,17 +10,17 @@
 package it.unibo.alchemist.model.implementations.actions.navigationstrategies
 
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
+import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.AreaProperty
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.properties.AreaProperty
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import kotlin.math.abs
 import kotlin.math.pow
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 
 /**
  * A [NavigationStrategy] allowing to explore the environment.
@@ -121,8 +121,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
         .getNodesWithinRange(centroid, radius)
         .asSequence()
         .map { environment.getPosition(it) }
-        .filter { contains(it) }
-        .count()
+        .count { contains(it) }
         .let { it * node.area / area }
         .coerceAtMost(1.0)
 

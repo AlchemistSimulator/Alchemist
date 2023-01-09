@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -21,15 +21,9 @@ import org.danilopianini.jirf.Factory
 import org.danilopianini.jirf.FactoryBuilder
 import java.math.BigDecimal
 import java.math.BigInteger
-import kotlin.Array
-import kotlin.CharSequence
 import kotlin.Double
 import kotlin.Long
-import kotlin.Number
-import kotlin.Pair
-import kotlin.String
 import kotlin.Triple
-import kotlin.toBigInteger
 import org.apache.commons.lang3.tuple.Pair as CommonsLangPair
 import org.apache.commons.lang3.tuple.Triple as CommonsLangTriple
 import org.apache.commons.math3.util.Pair as CommonsMathPair
@@ -53,9 +47,9 @@ internal object ObjectFactory {
         factory.registerImplicit(CharSequence::class.java, Incarnation::class.java) {
             val availableIncarnations = SupportedIncarnations.getAvailableIncarnations()
             if (availableIncarnations.isEmpty()) {
-                throw IllegalStateException(
+                error(
                     "No incarnations have been included, " +
-                        "please make sure that your class path includes at least one module named like " +
+                        "please make sure that your classpath includes at least one module named like " +
                         "it.unibo.alchemist:alchemist-*"
                 )
             }

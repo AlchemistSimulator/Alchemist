@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -108,7 +108,7 @@ class SelectionHelper<T, P : Position2D<P>> {
         wormhole: Wormhole2D<P>
     ): Pair<Node<T>, P>? =
         selectionPoint?.let { point ->
-            nodes.minByOrNull { nodes[it.key]!!.distanceTo(wormhole.getEnvPoint(point)) }
+            nodes.minByOrNull { nodes[it.key]?.distanceTo(wormhole.getEnvPoint(point)) ?: Double.POSITIVE_INFINITY }
                 ?.toPair()
         }
 

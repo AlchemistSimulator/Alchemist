@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.util
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import java.awt.geom.Point2D
 
 /**
  * Collection of extensions that apply to [Any] object.
@@ -47,6 +48,12 @@ object AnyExtension {
                 }
             }
             environment.makePosition(*numbers.toTypedArray())
+        }
+        is Point2D -> {
+            check(environment.dimensions == 2) {
+                "Cannot convert the bidimensional Point2D ($x, $y) to a ${environment.dimensions}-D position"
+            }
+            environment.makePosition(x, y)
         }
         else ->
             throw IllegalArgumentException(

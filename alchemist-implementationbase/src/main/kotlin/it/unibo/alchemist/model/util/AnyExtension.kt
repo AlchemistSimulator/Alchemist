@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -39,9 +40,9 @@ object AnyExtension {
                 when (it) {
                     is Number -> it
                     else ->
-                        throw IllegalStateException(
-                            "The Iterable being converted to position must contain Numbers only" +
-                                "but $it has type ${it?.javaClass ?: "null"}"
+                        error(
+                            "The Iterable '$this' being converted to position must contain only Numbers, " +
+                                "but element '$it' has type ${it?.javaClass?.name ?: "null"}"
                         )
                 }
             }

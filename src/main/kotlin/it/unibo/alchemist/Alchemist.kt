@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -234,8 +234,7 @@ object Alchemist {
             headless = hasOption(HEADLESS),
             parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,
-            variables = getOptionValues(VARIABLES)?.toList()
-                ?: emptyList(),
+            variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
             configuration = getOptionValue(YAML)
         )
 

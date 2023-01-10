@@ -77,6 +77,10 @@
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.10",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.10/element-list"
   },
+  "com.google.code.gson/gson/2.10.1": {
+    "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.10.1",
+    "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.10.1/element-list"
+  },
   "com.google.code.gson/gson/2.8.9": {
     "first": "https://javadoc.io/doc/com.google.code.gson/gson/2.8.9",
     "second": "https://javadoc.io/doc/com.google.code.gson/gson/2.8.9/element-list"

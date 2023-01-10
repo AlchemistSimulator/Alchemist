@@ -1,3 +1,32 @@
+## [25.5.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.4.2...25.5.0) (2023-01-10)
+
+
+### Features
+
+* **web-renderer:** add Bitmap32 custom serializer ([419469d](https://github.com/AlchemistSimulator/Alchemist/commit/419469d93007f10809784c35861741ade2422435))
+* **web-renderer:** add BitmapRenderer ([c78f0a1](https://github.com/AlchemistSimulator/Alchemist/commit/c78f0a17d6e55a113f8759708807e9ff4915d2c0))
+* **web-renderer:** add Renderer interface ([40030c3](https://github.com/AlchemistSimulator/Alchemist/commit/40030c3da621198902c9f1e370cc5635f52db6f7))
+* **web-renderer:** add the common state ([9b6c125](https://github.com/AlchemistSimulator/Alchemist/commit/9b6c1254103931d442162b7e3fd6750df2a4fe82))
+
+
+### Dependency updates
+
+* **deps:** add korim dependency ([0cd0a1b](https://github.com/AlchemistSimulator/Alchemist/commit/0cd0a1bc09db9a9037df38a6c2ea15ff90e71f3d))
+* **deps:** update react to v18.2.0-pre.470 ([3174136](https://github.com/AlchemistSimulator/Alchemist/commit/31741369df1690ec81f54b455a7bbd37e55f14b6))
+
+
+### Build and continuous integration
+
+* fix bad output export syntax ([07643bb](https://github.com/AlchemistSimulator/Alchemist/commit/07643bb4ab3eee61fc08580903f192791f5e4252))
+* **web-renderer:** add korim to common dependencies ([d7cb665](https://github.com/AlchemistSimulator/Alchemist/commit/d7cb6651c1d2a1fec6f92eec2c1b100f710956eb))
+
+
+### Tests
+
+* **web-renderer:** add Bitmap32 custom serializer tests ([c6bdf74](https://github.com/AlchemistSimulator/Alchemist/commit/c6bdf742c2c0bde345f821a77072469d0faeb82a))
+* **web-renderer:** add BitmapRenderer test ([fe14c51](https://github.com/AlchemistSimulator/Alchemist/commit/fe14c517089a1c4f04de3be033cbb6e7dd0116cf))
+* **web-renderer:** add common state test ([609894a](https://github.com/AlchemistSimulator/Alchemist/commit/609894a986e087a5747a03d71c9d24c1bc366ef9))
+
 ## [25.4.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.4.1...25.4.2) (2023-01-09)
 
 

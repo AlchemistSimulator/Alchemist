@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.loader.export.extractors
 
-import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.StatUtil
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
@@ -35,7 +34,23 @@ class MeanSquaredError<T> @JvmOverloads constructor(
     statistics: String,
     localValueMolecule: String,
     localValueProperty: String = "",
-) : Extractor<Double> {
+    precision: Int? = null,
+) : AbstractDoubleExporter(precision) {
+
+    constructor(
+        incarnation: Incarnation<T, *>,
+        localCorrectValueMolecule: String,
+        statistics: String,
+        localValueMolecule: String,
+        precision: Int,
+    ) : this(
+        incarnation = incarnation,
+        localCorrectValueMolecule = localCorrectValueMolecule,
+        statistics = statistics,
+        localValueMolecule = localValueMolecule,
+        localValueProperty = "",
+        precision = precision,
+    )
 
     private val statistic: UnivariateStatistic = StatUtil.makeUnivariateStatistic(statistics)
         .orElseThrow { IllegalArgumentException("Could not create univariate statistic $statistics") }

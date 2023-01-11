@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.loader.export.extractors
 
-import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.StatUtil
 import it.unibo.alchemist.model.interfaces.Actionable
@@ -37,13 +36,14 @@ import kotlin.math.min
  *            aggregating data. If an empty list is passed, then the values
  *            will be logged indipendently for each node.
  */
-class MoleculeReader(
+class MoleculeReader @JvmOverloads constructor(
     moleculeName: String,
     private val property: String?,
     private val incarnation: Incarnation<*, *>,
     private val filter: FilteringPolicy,
-    aggregatorNames: List<String>
-) : Extractor<Double> {
+    aggregatorNames: List<String>,
+    precision: Int? = null,
+) : AbstractDoubleExporter(precision) {
 
     companion object {
         private const val SHORT_NAME_MAX_LENGTH = 5

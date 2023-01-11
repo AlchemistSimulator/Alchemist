@@ -12,6 +12,7 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.file.shouldExist
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.regex.shouldMatch
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeEmpty
@@ -27,27 +28,41 @@ class TestCSVExporter<T, P : Position<P>> : FreeSpec({
     "CSV files" - {
         val initialized: InitializedEnvironment<T, P> = loadAlchemist("testCSVExporter.yml")
         initialized.createSimulation().runInCurrentThread()
-        initialized.exporters.size shouldBe 1
-        val exporter = getCSVExporter(initialized)
-        val outputFile = File(exporter.exportPath)
-            .listFiles()
-            ?.find { it.name.startsWith("00-testing_csv_export_") && it.extension == exporter.fileExtension }
+        initialized.exporters.size shouldBe 2
+        suspend fun CSVExporter<T, P>.dataFile(prefix: String): File =
+            File(exportPath)
+                .listFiles()
+                ?.find { it.name.startsWith(prefix) && it.extension == fileExtension }
+                .run { shouldNotBeNull() }
+                .apply { "with prefix $prefix should exist" { shouldExist() } }
+        val outputFile = initialized.csvExporters().first().dataFile("00-testing_csv_export_")
         "should exist when CSV export is enabled" {
             outputFile.shouldNotBeNull()
             outputFile.shouldExist()
         }
         "header should be like \"var1 = val1, var2 = val2\"" {
-            val fileContents = requireNotNull(outputFile).readText()
+            val fileContents = outputFile.readText()
             val match = Regex("([^\\s=,]+)\\s*=\\s*([^,\\s]+)").findAll(fileContents).toList()
             require(match.isNotEmpty()) {
                 "Unmatched header regex in ${outputFile.absolutePath}:\n$fileContents"
+            }
+        }
+        "should have limited-length decimals" {
+            val limitedDecimalsFile = initialized.csvExporters()[1].dataFile("fixed-decimals_")
+            val precision2 = """(0\.0*\d\d|\d\.0*\d|\d\.\d|\d\d)(e(-|\+)\d+)?"""
+            val lineRegex = Regex("""^$precision2(\s($precision2))+$""")
+            limitedDecimalsFile.useLines { lines ->
+                lines.filterNot { it.startsWith("#") }
+                    .forEach {
+                        lineRegex shouldMatch it
+                    }
             }
         }
     }
     "column order should replicate" {
         val initialized: InitializedEnvironment<T, P> = loadAlchemist("testCSVExportColumnAlignment.yml")
         initialized.createSimulation().runInCurrentThread()
-        val exporter = getCSVExporter(initialized)
+        val exporter = initialized.csvExporters().first()
         // Get the first line of the output produce by CSVExporter
         val exporterFirstLine = File(exporter.exportPath).listFiles()
             ?.first { it.name.startsWith("column-alignment") }
@@ -62,12 +77,7 @@ class TestCSVExporter<T, P : Position<P>> : FreeSpec({
 }) {
     /* common utility functions */
     companion object {
-        fun <T, P : Position<P>> getCSVExporter(environment: InitializedEnvironment<T, P>): CSVExporter<T, P> {
-            val exporter = environment.exporters.first()
-            require(exporter is CSVExporter) {
-                "Invalid exporter type '${exporter::class.simpleName}'"
-            }
-            return exporter
-        }
+        fun <T, P : Position<P>> InitializedEnvironment<T, P>.csvExporters(): List<CSVExporter<T, P>> =
+            exporters.filterIsInstance<CSVExporter<T, P>>()
     }
 }

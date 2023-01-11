@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.loader.export.extractors
 
-import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Time
@@ -17,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Time
 /**
  * Exports a column with the current time.
  */
-class Time : Extractor<Double> {
+class Time @JvmOverloads constructor(precision: Int? = null) : AbstractDoubleExporter(precision) {
 
     override val columnNames = listOf(name)
 

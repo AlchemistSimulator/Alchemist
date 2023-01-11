@@ -48,7 +48,9 @@ import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
+import java.lang.IllegalStateException
 import kotlin.reflect.KClass
+import kotlin.reflect.jvm.jvmName
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.formula as formulaKey
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.language as languageKey
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.DependentVariable.timeout as timeoutKey
@@ -66,27 +68,39 @@ private typealias ReactionComponentFunction<T, P, R> =
 /*
  * UTILITY FUNCTIONS
  */
-private inline fun <reified T> cantBuildWith(root: Any?, syntax: SyntaxElement? = null): Nothing =
-    cantBuildWith(T::class, root, syntax)
+private inline fun <reified T> cantBuildWith(
+    root: Any?,
+    syntax: SyntaxElement? = null,
+    error: Throwable? = null,
+): Nothing = cantBuildWith(T::class, root, syntax, error)
 
-private fun cantBuildWith(clazz: KClass<*>, root: Any?, syntax: SyntaxElement? = null): Nothing =
-    cantBuildWith(clazz.simpleName ?: "unknown type", root, syntax)
+private fun cantBuildWith(
+    clazz: KClass<*>,
+    root: Any?,
+    syntax: SyntaxElement? = null,
+    error: Throwable? = null,
+): Nothing = cantBuildWith(clazz.simpleName ?: "unknown type", root, syntax, error)
 
-private fun cantBuildWith(name: String, root: Any?, syntax: SyntaxElement? = null): Nothing {
+private fun cantBuildWith(name: String, root: Any?, syntax: SyntaxElement? = null, error: Throwable? = null): Nothing {
     val type = root?.let { it::class.simpleName }
     val guide = syntax?.guide?.let { " A guide follows.\n$it" }.orEmpty()
-    throw IllegalArgumentException(
-        "Invalid $name specification: $root: $type.$guide"
-    )
+    val message = "Invalid $name specification: $root: $type.$guide"
+    if (error == null) {
+        error(message)
+    }
+    val suppressed = error.suppressed
+        .takeIf { it.isNotEmpty() }
+        ?.joinToString { "  - ${it.message}\n" }
+        ?.let { "\nPreviously encountered non-fatal errors that may have caused this one as a consequence:\n$it" }
+        .orEmpty()
+    throw IllegalStateException("$message\nProximal cause: ${error.message}$suppressed", error)
 }
 
 private fun buildJSR223Variable(name: String, language: String, formula: String, timeout: Any?) = when (timeout) {
     null -> Result.success(JSR223Variable(language, formula))
     is Number -> Result.success(JSR223Variable(language, formula, timeout.toLong()))
     is String -> Result.success(JSR223Variable(language, formula, timeout.toTimeout(name)))
-    else -> throw IllegalArgumentException(
-        "Invalid timeout for $name: $timeout: ${timeout::class.simpleName}"
-    )
+    else -> error("Invalid timeout for $name: $timeout: ${timeout::class.simpleName}")
 }
 
 /*
@@ -129,6 +143,7 @@ private fun String.toTimeout(name: String): Long = runCatching { toLong() }.getO
  * Contains the model-to-model translation between the Alchemist YAML specification and the
  * executable form of a simulation.
  */
+@Suppress("LargeClass")
 internal object SimulationModel {
 
     /**
@@ -395,7 +410,7 @@ internal object SimulationModel {
                 ?: cantBuildWith<Environment<T, P>>(root, JavaType)
         }
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "CyclomaticComplexMethod")
     private fun <E : Any> visitExportData(
         incarnation: Incarnation<*, *>,
         context: Context,
@@ -407,12 +422,34 @@ internal object SimulationModel {
             root is Map<*, *> && DocumentRoot.Export.Data.validateDescriptor(root) -> {
                 val molecule = root[DocumentRoot.Export.Data.molecule]?.toString()
                 if (molecule == null) {
-                    visitBuilding(context, root)
+                    visitBuilding<Extractor<E>>(context, root)
                 } else {
                     val property = root[DocumentRoot.Export.Data.property]?.toString()
                     val filter: FilteringPolicy = root[DocumentRoot.Export.Data.valueFilter]
                         ?.let { CommonFilters.fromString(it.toString()) }
                         ?: CommonFilters.NOFILTER.filteringPolicy
+                    val precision: Int? = when (val digits = root[DocumentRoot.Export.Data.precision]) {
+                        null -> null
+                        is Int -> digits
+                        is Number -> {
+                            if (digits !is Byte || digits !is Short) {
+                                logger.warn(
+                                    "Coercing {} {} to integer, potential precision loss.",
+                                    digits::class.simpleName ?: digits::class.jvmName,
+                                    digits
+                                )
+                            }
+                            digits.toInt()
+                        }
+                        else ->
+                            runCatching { digits.toString().toInt() }.getOrElse { exception ->
+                                throw IllegalArgumentException(
+                                    "Invalid digit precision: '$digits' (type: ${digits::class.simpleName})." +
+                                        "Must be an integer number, or parseable to an integer number.",
+                                    exception,
+                                )
+                            }
+                    }
                     val aggregators: List<String> = visitRecursively(
                         context,
                         root[DocumentRoot.Export.Data.aggregators] ?: emptyList<Any>()
@@ -422,7 +459,7 @@ internal object SimulationModel {
                         }
                         Result.success(it.toString())
                     }
-                    Result.success(MoleculeReader(molecule, property, incarnation, filter, aggregators))
+                    Result.success(MoleculeReader(molecule, property, incarnation, filter, aggregators, precision))
                 }
             }
             else -> null
@@ -650,13 +687,21 @@ internal object SimulationModel {
         root: Any?,
         syntax: SyntaxElement? = null,
         noinline visitSingle: (Any?) -> Result<T>?
-    ): List<T> = visitRecursively(T::class, context, root, syntax, visitSingle)
+    ): List<T> = visitRecursively(
+        evidence = T::class,
+        context = context,
+        root = root,
+        syntax = syntax,
+        visitSingle = visitSingle
+    )
 
+    @Suppress("CyclomaticComplexMethod")
     private fun <T : Any> visitRecursively(
         evidence: KClass<T>,
         context: Context,
         root: Any?,
         syntax: SyntaxElement? = null,
+        error: Throwable? = null,
         /**
          * Meaning:
          *  - Result.success: the target entity has been constructed correctly;
@@ -664,22 +709,57 @@ internal object SimulationModel {
          *  - null: the target entity could not get built, but there was no exception.
          */
         visitSingle: (Any?) -> Result<T>?
-    ): List<T> = when (root) {
-        is Iterable<*> -> root.flatMap { visitRecursively(evidence, context, it, syntax, visitSingle) }
-        is Map<*, *> -> {
-            logger.debug("Trying to build a {} using syntax {} from {}", evidence.simpleName, root, syntax)
-            fun recurse() = visitRecursively(evidence, context, root.values, syntax, visitSingle)
-            fun fail(): Nothing = cantBuildWith(evidence, root, syntax)
-            fun result() = visitSingle(root)?.map { listOf(it) }
-            when (syntax) {
-                null -> result()?.getOrNull() ?: recurse()
-                else -> {
-                    if (syntax.validateDescriptor(root)) result()?.getOrThrow() ?: fail()
-                    else recurse()
-                }
+    ): List<T> {
+        /*
+         * Generates an exception that also carries information about the previous failures encountered while
+         * searching for a buildable definition.
+         */
+        fun Throwable.populate() = apply {
+            if (error != null) {
+                addSuppressed(error)
+                error.suppressed.forEach { addSuppressed(it) }
             }
         }
-        else -> visitSingle(root)?.map { listOf(it) }?.getOrThrow() ?: cantBuildWith(evidence, root, syntax)
+        /*
+         * Tries to build a definition from this point of the tree.
+         */
+        fun tryVisit(): Result<T>? = visitSingle(root)?.onSuccess {
+            logger.debug("Built {}: {} using syntax {} from {}", it, evidence.simpleName, root, syntax)
+        }
+        /*
+         * Forces a definition to be built successfully. If it is not, populates the exception with all previous
+         * errors and throws it.
+         */
+        fun forceVisit(): List<T> = tryVisit()
+            ?.map { listOf(it) }
+            ?.getOrElse { exception -> cantBuildWith(evidence, root, syntax, exception.populate()) }
+            ?: cantBuildWith(evidence, root, syntax, error)
+        /*
+         * Defines the behavior in case of Iterable (recursion), Map (build or recursion), or other type (build as-is).
+         */
+        return when (root) {
+            is Iterable<*> ->
+                root.flatMap { visitRecursively(evidence, context, it, syntax, error, visitSingle) }
+            is Map<*, *> -> {
+                logger.debug("Trying to build a {} from {} (syntax: {})", evidence.simpleName, root, syntax)
+                fun recurse(previousResult: Result<T>?): List<T> = visitRecursively(
+                    evidence,
+                    context,
+                    root.values,
+                    syntax,
+                    previousResult?.exceptionOrNull()?.populate() ?: error,
+                    visitSingle,
+                )
+                when {
+                    syntax == null -> tryVisit().let { result ->
+                        result?.map { listOf(it) }?.getOrNull() ?: recurse(result)
+                    }
+                    syntax.validateDescriptor(root) -> forceVisit()
+                    else -> recurse(null)
+                }
+            }
+            else -> forceVisit()
+        }
     }
 
     private inline fun <reified T : Any> visitNamedRecursively(

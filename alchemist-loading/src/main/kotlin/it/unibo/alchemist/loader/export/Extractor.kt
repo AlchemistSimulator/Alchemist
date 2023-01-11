@@ -53,6 +53,28 @@ interface Extractor<out E : Any> {
     ): Map<String, E>
 
     /**
+     * Same as [extractData], but specifically meant for textual outputs. Captures [E] to [String] conversions.
+     * The default implementation just runs a `toString()` conversion ver [extractData]'s return value's values.
+     *
+     * @param environment
+     *            the {@link Environment}
+     * @param reaction
+     *            the last executed {@link Reaction}
+     * @param time
+     *            the current {@link Time}
+     * @param step
+     *            the simulation step
+     * @param <T> concentration type
+     * @return the extracted properties in textual format with their names.
+     */
+    fun <T> extractDataAsText(
+        environment: Environment<T, *>,
+        reaction: Actionable<T>?,
+        time: Time,
+        step: Long,
+    ): Map<String, String> = extractData(environment, reaction, time, step).mapValues { it.value.toString() }
+
+    /**
      * @return the name of the properties that this [Extractor] can
      * provide
      */

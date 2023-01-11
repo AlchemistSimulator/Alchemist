@@ -9,16 +9,17 @@
 
 package it.unibo.alchemist.loader.export.extractors
 
-import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
  * An extractor which provides informations about the running time of the simulation.
- *
+ * Optionally, a [precision] (significant digits) can be provided.
  */
-class ExecutionTime : Extractor<Double> {
+class ExecutionTime @JvmOverloads constructor(
+    precision: Int? = null
+) : AbstractDoubleExporter(precision) {
 
     companion object {
         private const val NANOS_TO_SEC: Double = 1e9

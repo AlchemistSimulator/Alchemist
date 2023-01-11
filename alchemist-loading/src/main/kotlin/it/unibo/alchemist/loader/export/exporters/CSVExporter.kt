@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.util.BugReporting
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.PrintStream
@@ -85,32 +86,36 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
-        with(outputPrintStream) {
-            dataExtractors.forEach { extractor ->
-                val data = extractor.extractData(environment, reaction, time, step)
-                val names = extractor.columnNames
-                when {
-                    data.size <= 1 -> data.values.forEach { print("$it ") }
-                    // Labels and keys match
-                    data.size == names.size && data.keys.containsAll(names) -> names.forEach {
-                        print(requireNotNull(data[it]) { "Bug in ${this::class.simpleName}" })
-                        print(' ')
+        val line: String = dataExtractors.joinToString(separator = " ") { extractor ->
+            val data = extractor.extractDataAsText(environment, reaction, time, step)
+            val names = extractor.columnNames
+            when {
+                data.size <= 1 -> data.values.joinToString(" ")
+                // Labels and keys match
+                data.size == names.size && data.keys.containsAll(names) -> names.joinToString(" ") {
+                    requireNotNull(data[it]) {
+                        BugReporting.reportBug(
+                            "Bug in ${this::class.simpleName}",
+                            mapOf("key" to it, "data" to data)
+                        )
                     }
-                    // If the labels do not match keys, require predictable iteration order
-                    else -> {
-                        require(data.hasPredictableIteration) {
+                }
+                // If the labels do not match keys, require predictable iteration order
+                else -> {
+                    require(data.hasPredictableIteration) {
+                        BugReporting.reportBug(
                             """
                             Extractor "${extractor::class.simpleName}" is likely bugged:
                             1. the set of labels $names does not match the keys ${data.keys}, but iteration may fail as
                             2. it returned a map with non-predictable iteration order of type ${data::class.simpleName}"
                             """.trimIndent()
-                        }
-                        data.values.forEach { print("$it ") }
+                        )
                     }
+                    data.values.joinToString(" ")
                 }
             }
-            println()
         }
+        outputPrintStream.println(line)
     }
 
     override fun close(environment: Environment<T, P>, time: Time, step: Long) {

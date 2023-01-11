@@ -24,8 +24,20 @@ export:
       - molecule: "default_module:default_program"
         aggregators: [ mean, max, min, variance, median ]
         value-filter: onlyfinite
+  - type: CSVExporter
+    parameters:
+      fileNameRoot: "fixed-decimals"
+    data:
+      - type: Time
+        parameters:
+          precision: 2
+      - molecule: "default_module:default_program"
+        property: "self.nextRandomDouble()"
+        precision: 2
+        aggregators: [ mean, max, min, variance, median ]
+        value-filter: onlyfinite
 environment: { type: ImageEnvironment, parameters: [*image_path, *zoom] }
-network-model: { type: ObstaclesBreakConnection, parameters: [50] }
+network-model: { type: ObstaclesBreakConnection, parameters: [5] }
 deployments:
   type: Rectangle
   parameters: [*people_count, 62, 15, 95, 200]

@@ -105,12 +105,16 @@ internal object DocumentRoot : SyntaxElement {
             val molecule by OwnName()
             val property by OwnName()
             val aggregators by OwnName()
+            val precision by OwnName()
             const val valueFilter = "value-filter"
             override val validDescriptors = JavaType.validDescriptors + setOf(
-                validDescriptor { mandatory(time) },
+                validDescriptor {
+                    mandatory(time)
+                    optional(precision)
+                },
                 validDescriptor {
                     mandatory(molecule)
-                    optional(property, aggregators, valueFilter)
+                    optional(property, aggregators, precision, valueFilter)
                 }
             )
         }

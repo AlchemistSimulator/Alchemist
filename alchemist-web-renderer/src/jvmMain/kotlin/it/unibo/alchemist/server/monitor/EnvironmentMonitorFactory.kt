@@ -10,9 +10,7 @@
 package it.unibo.alchemist.server.monitor
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
-import it.unibo.alchemist.model.SAPEREIncarnation
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.server.surrogates.utility.ToConcentrationSurrogate.toEmptyConcentration
 import it.unibo.alchemist.server.surrogates.utility.ToPositionSurrogate.toSuitablePositionSurrogate
 
@@ -22,27 +20,15 @@ import it.unibo.alchemist.server.surrogates.utility.ToPositionSurrogate.toSuitab
 object EnvironmentMonitorFactory {
 
     /**
-     * Create an EnvironmentMonitor suitable for the given simulation.
+     * Create an EnvironmentMonitor suitable for the given simulation, using a toConcentration function based on the
+     * [it.unibo.alchemist.model.interfaces.Incarnation] and mapping the [it.unibo.alchemist.model.interfaces.Position]
+     * to the correct [it.unibo.alchemist.common.model.surrogate.PositionSurrogate] using the environment dimensions.
      * @param environment the environment of the simulation.
      * @return the [OutputMonitor].
      */
     fun makeEnvironmentMonitor(environment: Environment<*, *>): OutputMonitor<Any, Nothing> =
-        makeEnvironmentMonitor(environment.incarnation, environment.dimensions)
-
-    /**
-     * Create an EnvironmentMonitor suitable for the given simulation, mapping the concentration based on the
-     * [it.unibo.alchemist.model.interfaces.Incarnation] and mapping the [it.unibo.alchemist.model.interfaces.Position]
-     * to the correct [it.unibo.alchemist.common.model.surrogate.PositionSurrogate] using the environment dimensions.
-     * @param incarnation the [it.unibo.alchemist.model.interfaces.Incarnation] of the simulation.
-     * @param dimensions the number of dimensions of the simulation.
-     * @return the [OutputMonitor].
-     */
-    fun makeEnvironmentMonitor(incarnation: Incarnation<*, *>, dimensions: Int = 2): OutputMonitor<Any, Nothing> =
         EnvironmentMonitor(
-            when (incarnation) {
-                is SAPEREIncarnation<*> -> toEmptyConcentration // TODO change to correct implementation
-                else -> toEmptyConcentration
-            },
-            toSuitablePositionSurrogate(dimensions)
+            toEmptyConcentration, // TODO change to correct implementation depending on the incarnation
+            toSuitablePositionSurrogate(environment.dimensions)
         )
 }

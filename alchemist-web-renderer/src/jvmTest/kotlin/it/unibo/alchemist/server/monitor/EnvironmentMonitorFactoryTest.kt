@@ -17,11 +17,7 @@ import it.unibo.alchemist.server.monitor.EnvironmentMonitorFactory.makeEnvironme
 class EnvironmentMonitorFactoryTest : StringSpec({
     "EnvironmentMonitorFactory should create a monitor using different strategy" {
         webRendererTestEnvironments<Any, Nothing>().forEach {
-            listOf(
-                makeEnvironmentMonitor(it.incarnation),
-                makeEnvironmentMonitor(it),
-                makeEnvironmentMonitor(it.incarnation, it.dimensions)
-            ).forEach { monitor ->
+            makeEnvironmentMonitor(it).let { monitor ->
                 monitor::class shouldBe EnvironmentMonitor::class
             }
         }

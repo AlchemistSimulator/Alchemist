@@ -1,3 +1,98 @@
+## [25.6.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.5.0...25.6.0) (2023-01-12)
+
+
+### Features
+
+* **implementationbase:** allow conversion from `Point2D` to `Position` ([8c943ff](https://github.com/AlchemistSimulator/Alchemist/commit/8c943ffcb85559c6c8fdc93fa0b4a372b0fb3161))
+* **loading:** allow precision limiting when exporting data. Fixes [#1164](https://github.com/AlchemistSimulator/Alchemist/issues/1164) ([540d9d8](https://github.com/AlchemistSimulator/Alchemist/commit/540d9d8ddba1e061bddde7850c45c4ac1f91e2bd))
+
+
+### Bug Fixes
+
+* **api:** annotate `Action.getOutboundDependencies()` as non-null ([a6b0094](https://github.com/AlchemistSimulator/Alchemist/commit/a6b0094663e3ab0480c45c4745cb288090a33a68))
+* **euclidean-geometry:** make `Ellipse.euclideanShape` a `val` ([32395b9](https://github.com/AlchemistSimulator/Alchemist/commit/32395b9526418a169b63cfc6f678c5e4fb73871e))
+* **euclidean-geometry:** make `ExtendableConvexPolygonInEnvironment.canEdgeAdvance` a `val` ([bf4431e](https://github.com/AlchemistSimulator/Alchemist/commit/bf4431e9969363973e62a5dcea8419adbab3ad73))
+* **euclidean-geometry:** make `ExtendableConvexPolygonInEnvironment.growthDirections` a `val` ([25727ef](https://github.com/AlchemistSimulator/Alchemist/commit/25727efde5a8d8eaf127a6077dc23bdb0eaae7a4))
+* **euclidean-geometry:** make `ExtendableConvexPolygonInEnvironment.normals` a `val` ([d99ff67](https://github.com/AlchemistSimulator/Alchemist/commit/d99ff67b6cd2e43b105fae72ce1232d63588b009))
+* **fxui:** explicitly annotate platform types ([5529df4](https://github.com/AlchemistSimulator/Alchemist/commit/5529df455b334140a23573b6b584da71c23406ba))
+* **implementationbase:** annotate `AbstractAction.getNode` with `@Nonnull` ([26374fe](https://github.com/AlchemistSimulator/Alchemist/commit/26374fe660aebe4e684bd442bf81adc69de7b6d8))
+* **implementationbase:** avoid the `!!` operator in `JVMConstructor`, use the bug reporting system instead ([492ee86](https://github.com/AlchemistSimulator/Alchemist/commit/492ee86692a5b69fe8815ed565516c1cc4994d55))
+* **implementationbase:** avoid the `!!` operator in `LoadingSystem` ([0b0c70a](https://github.com/AlchemistSimulator/Alchemist/commit/0b0c70ac7af3c72dcda48147d4ffdec3a02bc803))
+* **implementationbase:** avoid the `!!` operator in SimpleNeighborhood, use the bug reporting system instead ([8daf72e](https://github.com/AlchemistSimulator/Alchemist/commit/8daf72e8427cc5b0f8e5392523f70699f3f14020))
+* **incarnation-protelis:** explicitly annotate platform types ([ef1e698](https://github.com/AlchemistSimulator/Alchemist/commit/ef1e6984ddaeab5fa7ff343f87cbfbc7d4cf92b1))
+* **incarnation-sapere:** use diamond operator in place of raw type ([a55fbb2](https://github.com/AlchemistSimulator/Alchemist/commit/a55fbb2098f153d63fc0e308ef2e0c43653b515b))
+* **leading:** avoid returning a platform type (unknown nullability) in `CountDistinct.toString()` ([c9f6467](https://github.com/AlchemistSimulator/Alchemist/commit/c9f6467dc36f49ad2891355a428505d795530f47))
+* **loading:** make `Context.backingConstants` unmodifiable ([78b0cf9](https://github.com/AlchemistSimulator/Alchemist/commit/78b0cf95f3e3d66abe9d7c8bf0c6e319594d8584))
+* use the bug reporter instead of throwing exception ([4c32c76](https://github.com/AlchemistSimulator/Alchemist/commit/4c32c76e41956f505e569ffd91de901ac6c22db2))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([47f2f5a](https://github.com/AlchemistSimulator/Alchemist/commit/47f2f5a929e7827c69b31fe68a18742c2eaaca99))
+
+
+### Build and continuous integration
+
+* automatically publish scans on failures only ([4db8e9f](https://github.com/AlchemistSimulator/Alchemist/commit/4db8e9f55393d37fa30a57aa19800cdee8cbe121))
+* drop kotlin-qa plugin from buildSrc to shorten the task execution times ([107ea8f](https://github.com/AlchemistSimulator/Alchemist/commit/107ea8f159e1582062c3bd804271fd52cc134c84))
+* make the Locale explicit in Util.kt ([9b5a019](https://github.com/AlchemistSimulator/Alchemist/commit/9b5a019b3e4c66aaed6ad7efe4ccd87ea0aa6d2e))
+
+
+### Performance improvements
+
+* **cognitive-agents:** replace `filter { ... }.count`  with `count { ... }` in `Exploring` ([ec27ff9](https://github.com/AlchemistSimulator/Alchemist/commit/ec27ff9f0a203985119c6e695e9afb4ec3ee787e))
+* **euclidean-geometry:** replace `filter { ... }.size` with `count { ... }` in AbstractConvexPolygon ([3dc4183](https://github.com/AlchemistSimulator/Alchemist/commit/3dc418370213a88cc7e46b0431f4ddcc18e79fdb))
+* **euclidean-geometry:** replace `filter { obstacle.contains(it.toPoint()) }.size` with `count { obstacle.contains(it.toPoint()) }` ([f8258a3](https://github.com/AlchemistSimulator/Alchemist/commit/f8258a398ca96b028bb59bf38463d504e94ae01b))
+
+
+### Refactoring
+
+* **fxui:** refactor `AbstractFXDisplay` into a concrete `BaseFXDisplay` ([4e911e1](https://github.com/AlchemistSimulator/Alchemist/commit/4e911e15e2d2a72fd6cceaab3f34964fd54a77a3))
+
+
+### Style improvements
+
+* annotate types in Libs.kt ([dd22be9](https://github.com/AlchemistSimulator/Alchemist/commit/dd22be9c134d81d5a76cdbbbfcfc031abb28fe49))
+* avoid `!!` operator in `Launcher` ([dce8d2f](https://github.com/AlchemistSimulator/Alchemist/commit/dce8d2fea0d2a28cac1120ccf3de8aeb7ec94258))
+* **cognitive-agents:** prefer `orEmpty()` over the Elvis operator ([d172ceb](https://github.com/AlchemistSimulator/Alchemist/commit/d172ceb72ba587c8260ab90d189cea51c885d941))
+* **cognitive-agents:** remove shadowed implicit lambda parameter in tests ([787472a](https://github.com/AlchemistSimulator/Alchemist/commit/787472a6bf0cc0f1dd9c47ea9ebdc151ef368692))
+* **fxui:** annotate platform type in `TemporaryFile` ([f286f6e](https://github.com/AlchemistSimulator/Alchemist/commit/f286f6e1ea55d424ad2dabc16856ebf80d2bb710))
+* **fxui:** remove usage of the `!!` operator ([3fc99a6](https://github.com/AlchemistSimulator/Alchemist/commit/3fc99a6276868b853aa575f036c7ec1525b42242))
+* **implementationbase:** prefer Kotlin's `error` to throwing exceptions ([3c17b53](https://github.com/AlchemistSimulator/Alchemist/commit/3c17b53faf4780778c26a3b1a93b9f30fa394b3e))
+* **implementationbase:** prefer Kotlin's `error` to throwing exceptions in `AnyExtension` ([95938a5](https://github.com/AlchemistSimulator/Alchemist/commit/95938a5f52778b4b0ce66953b01bf82fb496eb43))
+* **implementationbase:** prefer Kotlin's `error` to throwing exceptions in `MoleculeControlledTimeDistribution` ([9b83371](https://github.com/AlchemistSimulator/Alchemist/commit/9b8337185272fe032f1f2e2c9dc4fb665e65fd86))
+* **implementationbase:** remove dangling Javadoc comment in `AbstractAction` ([568cd63](https://github.com/AlchemistSimulator/Alchemist/commit/568cd63e2496561598b4833e83d662dde5ffacc6))
+* **implementationbase:** use `none` instead of `find` in GenericNode.addProperty ([96f8805](https://github.com/AlchemistSimulator/Alchemist/commit/96f8805a9fe910f89b89ad8cdd4e3d1370c53b26))
+* **incarnation-protelis:** remove useless `filter` operation in `RunProtelisProgram` ([e14062a](https://github.com/AlchemistSimulator/Alchemist/commit/e14062ae752c66f2b035bc1e7feffd8b8746a8e0))
+* **loading:** annotate type explicitly in `Polygon` ([19b0377](https://github.com/AlchemistSimulator/Alchemist/commit/19b037730008ec582cd9af6dddd908e978c6b21f))
+* **loading:** prefer `orEmpty()` over `?: ""` and `?: emptyXXX()` `OffsetGraphStreamLinkingRule` ([87457f9](https://github.com/AlchemistSimulator/Alchemist/commit/87457f9c2da7355b8e086808035be3c29f97afeb))
+* **loading:** prefer `orEmpty()` over `?: ""` and `?: emptyXXX()` `SimulationModel` ([abd5435](https://github.com/AlchemistSimulator/Alchemist/commit/abd543580f1acf1de5b6d3f4045a542229806746))
+* **loading:** prefer `orEmpty()` over the Elvis operator in `TestKtVariable` ([3b252cd](https://github.com/AlchemistSimulator/Alchemist/commit/3b252cd931a720d65cb1ddfedbe2d90c72c89819))
+* **loading:** prefer `orEmpty()` over the Elvis operator in `TestUtility.webRendererTestEnvironments` ([01974c8](https://github.com/AlchemistSimulator/Alchemist/commit/01974c8c75433df59246a71f214eced4296917ce))
+* **loading:** remove not-null assertions in `TestGraphStream` ([992ec5a](https://github.com/AlchemistSimulator/Alchemist/commit/992ec5aa2dde64d2a7cc08c9afbd798fa7d8b1c0))
+* **loading:** remove shadowed lambda parameters ([3e46c7d](https://github.com/AlchemistSimulator/Alchemist/commit/3e46c7da1b5a4fbb99299da0800729502bbb795f))
+* **loading:** replace `property == null || property.isEmpty()` with `isNullOrEmpty()` in `MoleculeReader` ([eb40a94](https://github.com/AlchemistSimulator/Alchemist/commit/eb40a9475a9c2ca9a6bb8358ad394c4120ed5068))
+* **loading:** use `error()` instead of throwing an `IllegalStateException` in `JVMConstructor` ([96ad713](https://github.com/AlchemistSimulator/Alchemist/commit/96ad71302ae6297cda0f547735d75c1cd35e31c1))
+* **loading:** use `error()` instead of throwing an `IllegalStateException` in `ObjectFactory` ([20d6667](https://github.com/AlchemistSimulator/Alchemist/commit/20d6667c9257e17c83c873790ad7466d6d9e5391))
+* **loading:** use `requireNotNull()` instead of `require()` for checking not-null in `YamlProvider` ([08e89ef](https://github.com/AlchemistSimulator/Alchemist/commit/08e89efff12c10a39d5fb59ef0fd80fc3683e53f))
+* **maps:** prefer `orEmpty()` over the Elvis operator ([5195dd9](https://github.com/AlchemistSimulator/Alchemist/commit/5195dd950184dd217697d20a2a9bc9747d8843fe))
+* prefer `orEmpty()` over the Elvis operator ([bac11fe](https://github.com/AlchemistSimulator/Alchemist/commit/bac11fe801776cedafe41e9fff6ef9c9af741384))
+
+
+### Documentation
+
+* **web-renderer:** add missing full stop at the end of sentence and fix broken links. ([da4f0da](https://github.com/AlchemistSimulator/Alchemist/commit/da4f0dafffdf00c1ae491d156c1754c5db1e8ae9))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.google.code.gson:gson to v2.10.1 ([1a7a41a](https://github.com/AlchemistSimulator/Alchemist/commit/1a7a41a6eaaad269a9ca3573f60c591eff92d075))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.16 ([669291c](https://github.com/AlchemistSimulator/Alchemist/commit/669291c4690b112cd0ddeb095bf844e303d95646))
+* **deps:** update node.js to 18.13 ([c5d2b5a](https://github.com/AlchemistSimulator/Alchemist/commit/c5d2b5a41de90902b006b35c9efcb54fed3b9c0b))
+* **deps:** update plugin gitsemver to v1 ([b50b6b2](https://github.com/AlchemistSimulator/Alchemist/commit/b50b6b2081492712611de0ca303317b537f0971f))
+* **deps:** update plugin kotlin-qa to v0.31.0 ([954a587](https://github.com/AlchemistSimulator/Alchemist/commit/954a5872b0ad8fa1c4650bf92cd880a815ca266c))
+* **deps:** update react to v18.2.0-pre.471 ([71069f0](https://github.com/AlchemistSimulator/Alchemist/commit/71069f0773c2bf8dbf869390c3db456ca6a89bff))
+
 ## [25.5.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.4.2...25.5.0) (2023-01-10)
 
 

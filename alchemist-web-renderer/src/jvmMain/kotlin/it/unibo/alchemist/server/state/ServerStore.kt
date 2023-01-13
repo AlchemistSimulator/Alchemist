@@ -13,7 +13,10 @@ import org.reduxkotlin.Store
 import org.reduxkotlin.createThreadSafeStore
 
 /**
- * The store of the server. Can be accesed anywhere thanks to the singleton pattern.
+ * The store of the server.
+ * This class uses the core concepts of the original Redux library.
+ * Thanks to the singleton pattern, the [ServerState] can be accessed or edited from anywhere.
+ * @see <a href="https://reduxkotlin.org/">ReduxKotlin Documentation</a>
  */
 object ServerStore {
     /**

@@ -336,6 +336,10 @@
     "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.5",
     "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.5/package-list"
   },
+  "org.danilopianini/thread-inheritable-resource-loader/0.3.6": {
+    "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6",
+    "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6/package-list"
+  },
   "org.graphstream/gs-algo/2.0": {
     "first": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0",
     "second": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0/element-list"

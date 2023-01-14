@@ -1,3 +1,52 @@
+## [25.7.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.6.0...25.7.0) (2023-01-14)
+
+
+### Features
+
+* **web-renderer:** add EnvironmentMonitor class ([f6bcb0b](https://github.com/AlchemistSimulator/Alchemist/commit/f6bcb0bd467f620602008633940cf5078d1de163))
+* **web-renderer:** add EnvironmentMonitorFactory ([637263d](https://github.com/AlchemistSimulator/Alchemist/commit/637263df6934a87a09f3cf94e172d857f4688ea9))
+* **web-renderer:** add ServerState and rootReducer ([16e5409](https://github.com/AlchemistSimulator/Alchemist/commit/16e5409ab9b4e61c1f41191773e899903f381181))
+* **web-renderer:** add ServerStore ([50ccce2](https://github.com/AlchemistSimulator/Alchemist/commit/50ccce26515a48ab3169c69d3a7f781a3c564406))
+* **web-renderer:** add the EnvironmentSurrogate reducer ([a9b00e4](https://github.com/AlchemistSimulator/Alchemist/commit/a9b00e4e5aa1c0350bf5ab43bbb620f4fd6d2294))
+* **web-renderer:** add the SetEnvironmentSurrogate action ([60cfeb9](https://github.com/AlchemistSimulator/Alchemist/commit/60cfeb94d15196785e66ccbb5394c4297023cb5c))
+* **web-renderer:** add the SetSimulation action ([1f4afe2](https://github.com/AlchemistSimulator/Alchemist/commit/1f4afe2d3d8351f387669db29cbece83b58cfb41))
+* **web-renderer:** add the Simulation reducer ([87f9407](https://github.com/AlchemistSimulator/Alchemist/commit/87f9407c9b8b91ca169ff16429cfdb5e01613cfc))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([d2b70bc](https://github.com/AlchemistSimulator/Alchemist/commit/d2b70bcdbb136a81c0f2dbc70ba6a69cdaf17a5d))
+* **build:** update the Javadoc.io cache ([731d97b](https://github.com/AlchemistSimulator/Alchemist/commit/731d97b7280104d04f3cd87086480f2320f13448))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.danilopianini:gson-extras to v1.2.0 ([f35e480](https://github.com/AlchemistSimulator/Alchemist/commit/f35e4802e374049c079e9f2dd2dc86c9a928a1c3))
+* **deps:** update dependency org.danilopianini:thread-inheritable-resource-loader to v0.3.6 ([ac185ed](https://github.com/AlchemistSimulator/Alchemist/commit/ac185ed084a5189d71bb815b966d50ef44415cb7))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 6482913 ([e0804fc](https://github.com/AlchemistSimulator/Alchemist/commit/e0804fce5af782c562ea5b881d6e34d026f88d07))
+* **deps:** update external-resources/learning-scafi-alchemist digest to f86fdba ([1a652c7](https://github.com/AlchemistSimulator/Alchemist/commit/1a652c70d2c8b1ae2ab15447e0414bca95ae215f))
+* **deps:** update junit5 monorepo to v5.9.2 ([1a715f5](https://github.com/AlchemistSimulator/Alchemist/commit/1a715f57055fab9dd26c50ec50114aafdf8631b7))
+* **deps:** update react to v18.2.0-pre.472 ([98c6a06](https://github.com/AlchemistSimulator/Alchemist/commit/98c6a06aacf65be083845b38618001bcfdb20145))
+* **deps:** update react to v18.2.0-pre.473 ([2336666](https://github.com/AlchemistSimulator/Alchemist/commit/233666656b7bcd5838774a820edffb0e50589c1d))
+* **deps:** update site/themes/hugo-theme-relearn digest to fafc04c ([fca6178](https://github.com/AlchemistSimulator/Alchemist/commit/fca61781f9d2181de1c614eb41e7706c463d9888))
+
+
+### Tests
+
+* **web-renderer:** add EnvironmentMonitor test ([9575400](https://github.com/AlchemistSimulator/Alchemist/commit/9575400cb81e06d6f4005dec8ba28ef3b0361905))
+* **web-renderer:** add EnvironmentMonitorFactory test ([e165c84](https://github.com/AlchemistSimulator/Alchemist/commit/e165c84ef1d517acabf942df8d40667cf9fe6250))
+* **web-renderer:** add ServerStore test ([7705b40](https://github.com/AlchemistSimulator/Alchemist/commit/7705b4090cced20c8027aa49734b1e2bfd80c625))
+
+
+### Refactoring
+
+* **web-renderer:** remove useless method in Monitor factory ([366e1cc](https://github.com/AlchemistSimulator/Alchemist/commit/366e1cc566466661ce7b6d017cdad1eec46f2494))
+
+
+### Documentation
+
+* **web-renderer:** improve ServerState and ServerStore documentation ([b98a925](https://github.com/AlchemistSimulator/Alchemist/commit/b98a92521fd3be48fc171e9db1692d5ee2522621))
+
 ## [25.6.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.5.0...25.6.0) (2023-01-12)
 
 

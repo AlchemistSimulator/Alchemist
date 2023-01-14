@@ -8,8 +8,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ windows, macos, ubuntu ]
-    runs-on: ${{ matrix.os }}-latest
+        os: [ windows-2022, macos-12, ubuntu-22.04 ]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 120
     concurrency:
       group: ${{ github.workflow }}-build-${{ matrix.os }}-${{ github.event.number || github.ref }}
@@ -40,7 +40,7 @@ jobs:
           should-validate-wrapper: ${{ contains('Linux', runner.os) }}
   # Performs a dry-deployment if credentials are available
   test-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
       && (
@@ -70,7 +70,7 @@ jobs:
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
   # Builds the website and verifies link sanity
   build-website:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 30
     concurrency:
       group: ${{ github.workflow }}-build-website-${{ github.event.number || github.ref }}
@@ -115,7 +115,7 @@ jobs:
       - build
       - build-website
       - test-deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: >-
       !github.event.repository.fork
       && (
@@ -175,7 +175,7 @@ jobs:
           signing-key: ${{ secrets.SIGNING_KEY }}
           signing-password: ${{ secrets.SIGNING_PASSWORD }}
   success:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs:
       - build
       - build-website

@@ -5,7 +5,8 @@ variables:
     formula: null
   kotlin: &k
     language: kotlin
-    formula: "null.toString() // To be changed into base.toString() when this Kotlin bug has been solved: https://youtrack.jetbrains.com/issue/KT-51213"
+    # Once bugged due to: https://youtrack.jetbrains.com/issue/KT-51213
+    formula: base.toString()
   groovy: &g
     language: groovy
     formula: base.toString()

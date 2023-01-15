@@ -13,7 +13,6 @@ import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import org.slf4j.LoggerFactory
 import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
@@ -93,23 +92,5 @@ data class JSR223Variable @JvmOverloads constructor(
         }
     }
 
-    private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(
-        this.takeUnless { engine::class.qualifiedName?.contains("kotlin", ignoreCase = true) == true }
-            ?: this.filter {
-                if (it.value == null) {
-                    logger.warn(
-                        "Removing variable '${it.key}' as it maps to null and Kotlin JSR223 is bugged, " +
-                            "see: https://youtrack.jetbrains.com/issue/KT-51213." +
-                            "Consider using Scala or Groovy."
-                    )
-                    false
-                } else {
-                    true
-                }
-            }
-    )
-
-    companion object {
-        private val logger by lazy { LoggerFactory.getLogger(JSR223Variable::class.java) }
-    }
+    private fun Map<String, Any?>.asBindings(): Bindings = SimpleBindings(toMutableMap())
 }

@@ -178,7 +178,7 @@ internal object SimulationModel {
                 when {
                     evaluationAsConstant == null -> null
                     evaluationAsConstant.isSuccess -> evaluationAsConstant
-                    else -> null.also {
+                    else -> null.also { _ ->
                         evaluationAsConstant.onFailure {
                             collectedNonFatalFailures[name] = collectedNonFatalFailures[name].orEmpty() + it
                         }

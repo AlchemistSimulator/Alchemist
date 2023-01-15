@@ -1,3 +1,27 @@
+## [25.7.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.7.0...25.7.1) (2023-01-15)
+
+
+### Bug Fixes
+
+* **loading:** drop all kotlin-specific workarounds for JSR-223 variables, as bug [KT-51213](https://youtrack.jetbrains.com/issue/KT-51213) has been resolved ([7cba49d](https://github.com/AlchemistSimulator/Alchemist/commit/7cba49d33fbb47c8e8ea2a53e98acff1898f254b))
+* **loading:** improve error reporting when failing at instancing constants ([7d43a70](https://github.com/AlchemistSimulator/Alchemist/commit/7d43a70ad40e613dcf9fb3f831725c3c3a974a62))
+* **loading:** improve error reporting when script execution fails for unexpected causes ([3010a88](https://github.com/AlchemistSimulator/Alchemist/commit/3010a88375e86a057a0ab7c3da049a66a1bf6c06))
+
+
+### Dependency updates
+
+* **deps:** update react to v18.2.0-pre.474 ([db28125](https://github.com/AlchemistSimulator/Alchemist/commit/db2812503ec94908cdf67552dc07a1092d875980))
+
+
+### Build and continuous integration
+
+* fix the github runner versions ([b960a0a](https://github.com/AlchemistSimulator/Alchemist/commit/b960a0ab662296f39c02c5d6a98560cd36f80c89))
+
+
+### Style improvements
+
+* **loading:** un-shadow an implicit lambda receiver ([184ca1c](https://github.com/AlchemistSimulator/Alchemist/commit/184ca1c82a06f42cea53b89e98b14c87a8546613))
+
 ## [25.7.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.6.0...25.7.0) (2023-01-14)
 
 

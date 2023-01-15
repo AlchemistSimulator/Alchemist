@@ -18,6 +18,7 @@ import javax.script.Bindings
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 import javax.script.SimpleBindings
+import kotlin.reflect.jvm.jvmName
 
 /**
  * This variable loads any [JSR-233](http://archive.fo/PGdk8) language available in the classpath.
@@ -82,7 +83,10 @@ data class JSR223Variable @JvmOverloads constructor(
                     Either make the script run faster, or allow for a longer time by specifiying a different
                     `${DocumentRoot.DependentVariable.timeout}`.
                 """.trimIndent().replace(Regex("\\R"), "")
-                else -> "for a reason unknown to Alchemist (look at the original cause)"
+                else -> """
+                    |for a reason unknown to Alchemist. 
+                    |${cause::class.jvmName}: ${cause.message}"
+                """.trimMargin()
             }
             val inspection = "context: $variables\nscript:\n$formula"
             throw IllegalArgumentException("$whatHappened $whyHappened\n$inspection", cause)

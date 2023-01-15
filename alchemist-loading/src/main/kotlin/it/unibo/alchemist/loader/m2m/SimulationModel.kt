@@ -122,16 +122,24 @@ private fun Any?.removeKeysRecursively(keys: Set<Any>): Any? = when (this) {
 
 private fun Map<*, *>.takeIfNotAConstant(name: String, context: Context) = takeUnless { name in context.constants }
 
-private fun Any.validateVariableConsistencyRecursively(names: List<String> = emptyList()): Unit = when (this) {
+private fun Any.validateVariableConsistencyRecursively(
+    names: List<String> = emptyList(),
+    errors: Map<String, List<Throwable>>
+): Unit = when (this) {
     is Map<*, *> -> forEach { (key, value) ->
-        key?.validateVariableConsistencyRecursively(names)
-        value?.validateVariableConsistencyRecursively(names + key.toString())
+        key?.validateVariableConsistencyRecursively(names, errors)
+        value?.validateVariableConsistencyRecursively(names + key.toString(), errors)
     }
-    is Iterable<*> -> forEach { it?.validateVariableConsistencyRecursively(names) }
-    is SimulationModel.PlaceHolderForVariables -> throw IllegalArgumentException(
-        "Variable '$name' could not be evaluated as a constant, but it is required to the definition of a variable " +
-            "along this path: ${names.joinToString("->")}"
-    )
+    is Iterable<*> -> forEach { it?.validateVariableConsistencyRecursively(names, errors) }
+    is SimulationModel.PlaceHolderForVariables -> {
+        val message = "Variable '$name' could not be evaluated as a constant, " +
+            "but it is required to the definition of a variable along path ${names.joinToString("->")}"
+        val related = errors[name]
+            ?.mapIndexed { index, error -> "$index. ${error.message}" }
+            ?.distinct()
+            ?.joinToString(prefix = "Possibly related causes:\n", separator = "\n")
+        error("$message\n${related.orEmpty()}")
+    }
     else -> Unit
 }
 
@@ -156,6 +164,7 @@ internal object SimulationModel {
         val context = Context()
         var previousSize: Int? = null
         var injectedRoot = root
+        val collectedNonFatalFailures = mutableMapOf<String, List<Throwable>>()
         while (context.constants.size != previousSize) {
             previousSize = context.constants.size
             val stillToTry = injectedRoot[DocumentRoot.variables]?.removeKeysRecursively(context.constants.keys)
@@ -164,7 +173,18 @@ internal object SimulationModel {
                 root = stillToTry ?: emptyMap<String, Any>(),
                 syntax = DocumentRoot.DependentVariable,
                 forceSuccess = false,
-            ) { name, element -> visitConstant(name, context, element) }
+            ) { name, element ->
+                val evaluationAsConstant = visitConstant(name, context, element)
+                when {
+                    evaluationAsConstant == null -> null
+                    evaluationAsConstant.isSuccess -> evaluationAsConstant
+                    else -> null.also {
+                        evaluationAsConstant.onFailure {
+                            collectedNonFatalFailures[name] = collectedNonFatalFailures[name].orEmpty() + it
+                        }
+                    }
+                }
+            }
             injectedRoot = inject(context, injectedRoot)
             logger.debug("{} constants: {}", context.constants.size, context.constants)
         }
@@ -185,7 +205,7 @@ internal object SimulationModel {
         // Real variables
         val variablesLeft = injectedRoot[DocumentRoot.variables]
             .removeKeysRecursively(constantsNames + dependentVariables.keys)
-        variablesLeft?.validateVariableConsistencyRecursively()
+        variablesLeft?.validateVariableConsistencyRecursively(errors = collectedNonFatalFailures)
         val variables: Map<String, Variable<*>> = visitVariables(context, variablesLeft)
         logger.info("Variables: {}", variables)
         injectedRoot = inject(context, injectedRoot)
@@ -267,20 +287,19 @@ internal object SimulationModel {
         }
 
     private fun visitConstant(name: String, context: Context, root: Any?): Result<Constant<*>>? {
-        val constant: Constant<*>? = when (root) {
+        val constant: Result<Constant<*>>? = when (root) {
             is Map<*, *> -> {
                 visitDependentVariable(name, context, root)
                     ?.mapCatching { it.getWith(context.constants) }
                     ?.onFailure { logger.debug("Evaluation failed at {}, context {}:\n{}", root, context, it.message) }
                     ?.onSuccess { context.registerConstant(name, root, it) }
                     ?.map { Constant(it) }
-                    ?.getOrNull()
             }
             else -> null
         }
-        if (constant != null) {
-            logger.debug("Variable {}, evaluated from {} as constant, returned {}", name, root, constant.value)
-            require(!context.constants.containsKey(name) || context.constants[name] == constant.value) {
+        constant?.onSuccess {
+            logger.debug("Variable {}, evaluated from {} as constant, returned {}", name, root, it.value)
+            check(!context.constants.containsKey(name) || context.constants[name] == it.value) {
                 """
                 Inconsistent definition of variables named $name:
                   - previous evaluation: ${context.constants[name]}
@@ -290,7 +309,7 @@ internal object SimulationModel {
                 """.trimIndent()
             }
         }
-        return constant?.let { Result.success(it) }
+        return constant
     }
 
     fun <P : Position<P>> visitFilter(
@@ -430,15 +449,15 @@ internal object SimulationModel {
                         ?: CommonFilters.NOFILTER.filteringPolicy
                     val precision: Int? = when (val digits = root[DocumentRoot.Export.Data.precision]) {
                         null -> null
+                        is Byte -> digits.toInt()
+                        is Short -> digits.toInt()
                         is Int -> digits
                         is Number -> {
-                            if (digits !is Byte || digits !is Short) {
-                                logger.warn(
-                                    "Coercing {} {} to integer, potential precision loss.",
-                                    digits::class.simpleName ?: digits::class.jvmName,
-                                    digits
-                                )
-                            }
+                            logger.warn(
+                                "Coercing {} {} to integer, potential precision loss.",
+                                digits::class.simpleName ?: digits::class.jvmName,
+                                digits
+                            )
                             digits.toInt()
                         }
                         else ->

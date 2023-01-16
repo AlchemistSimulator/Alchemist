@@ -448,10 +448,8 @@ internal object SimulationModel {
                         ?.let { CommonFilters.fromString(it.toString()) }
                         ?: CommonFilters.NOFILTER.filteringPolicy
                     val precision: Int? = when (val digits = root[DocumentRoot.Export.Data.precision]) {
-                        null -> null
-                        is Byte -> digits.toInt()
-                        is Short -> digits.toInt()
-                        is Int -> digits
+                        null, is Int -> digits
+                        is Byte, is Short -> digits.toInt()
                         is Number -> {
                             logger.warn(
                                 "Coercing {} {} to integer, potential precision loss.",

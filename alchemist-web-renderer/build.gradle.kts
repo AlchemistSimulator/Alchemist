@@ -11,7 +11,6 @@ import Libs.alchemist
 import Libs.incarnation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
     application
@@ -94,30 +93,17 @@ tasks.getByName<JavaExec>("run") {
 }
 
 /**
- * Configure a [com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar] task named "jvmShadowJar" for the jvm target
- * that also includes the js artifacts.
+ * Configure the [ShadowJar] task to work exactly like the "jvmJar" task of Kotlin Multiplatform, but also
+ * include the JS artifacts by depending on the "jsBrowserProductionWebpack" task.
  */
-fun registerShadowJar() {
-    kotlin.targets.named<KotlinJvmTarget>("jvm") {
-        compilations.named("main") {
-            val webpackTask = tasks.getByName<KotlinWebpack>("jsBrowserProductionWebpack")
-            val shadowJar = tasks.register<ShadowJar>("jvmShadowJar") {
-                dependsOn(webpackTask)
-                from(File(webpackTask.destinationDirectory, webpackTask.outputFileName))
-                from(output)
-                configurations = listOf(runtimeDependencyFiles)
-                archiveClassifier.set("all")
-            }
-            listOf("jvmJar", "shadowJar").forEach {
-                tasks.named<Jar>(it) {
-                    finalizedBy(shadowJar)
-                }
-            }
-        }
-    }
+tasks.withType<ShadowJar> {
+    val jvmJarTask = tasks.getByName<Jar>("jvmJar")
+    val webpackTask = tasks.getByName<KotlinWebpack>("jsBrowserProductionWebpack")
+    dependsOn(jvmJarTask, webpackTask)
+    from(webpackTask.outputs.files)
+    from(jvmJarTask.archiveFile)
+    archiveClassifier.set("all")
 }
-
-registerShadowJar()
 
 publishing.publications {
     withType<MavenPublication> {

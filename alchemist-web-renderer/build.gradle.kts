@@ -89,7 +89,9 @@ application {
 }
 
 tasks.getByName<JavaExec>("run") {
-    classpath(tasks.getByName<Jar>("shadowJar"))
+    val shadowJarTask = tasks.getByName<Jar>("shadowJar")
+    dependsOn(shadowJarTask)
+    classpath(shadowJarTask)
 }
 
 /**

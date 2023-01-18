@@ -21,7 +21,15 @@ pull_request_rules:
       update:
   - name: rebase-merge working updates
     conditions:
-      - or: *authors_are_bots
+      - and:
+        - or: *authors_are_bots
+        - and:
+          - or:
+            - check-success=ci-cd / success
+            - check-neutral=ci-cd / success
+            - check-skipped=ci-cd / success
+          - "#review-threads-unresolved=0"
+          - "#commits-behind=0"
       - label=dependencies
       - -draft
       - -conflict
@@ -35,6 +43,6 @@ pull_request_rules:
       comment:
         message: |
           Hi @{{author}}! :wave:
-          I could not help but notice that this pull request has conflicts. :confounded:
+          This pull request has conflicts :confounded:
           Could you fix it? :wrench:
           Thank you! :pray:

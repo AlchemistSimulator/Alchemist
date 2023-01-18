@@ -27,7 +27,7 @@ data class Response<C>(
 ) {
     companion object {
         /**
-         * Utility function to dry the response process.
+         * Utility function to dry-run the response process.
          */
         suspend inline fun <reified C : Any> PipelineContext<Unit, ApplicationCall>.respond(response: Response<C>) {
             call.respond(response.code, response.content)

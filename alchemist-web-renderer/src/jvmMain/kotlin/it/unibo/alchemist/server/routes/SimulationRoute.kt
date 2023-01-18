@@ -58,10 +58,9 @@ object SimulationRoute {
      */
     fun Route.simulationActionPlay() {
         post(simulationPlayPath) {
-            respondAction(
-                { simulation -> simulation.play() },
-                additionalCheck = Pair(Status.RUNNING, "The Simulation is already running.")
-            )
+            respondAction(Pair(Status.RUNNING, "The Simulation is already running.")) { simulation ->
+                simulation.play()
+            }
         }
     }
 
@@ -74,22 +73,21 @@ object SimulationRoute {
      */
     fun Route.simulationActionPause() {
         post(simulationPausePath) {
-            respondAction(
-                { simulation -> simulation.pause() },
-                additionalCheck = Pair(Status.PAUSED, "The Simulation is already paused.")
-            )
+            respondAction(Pair(Status.PAUSED, "The Simulation is already paused.")) { simulation ->
+                simulation.pause()
+            }
         }
     }
 
     /**
      * Private function that checks the simulation Status, executes the requested action if possible and responds.
-     * @param action the action to execute on the simulation.
      * @param additionalCheck a [Pair] representing an additional Status check, first is an invalid [Status] and second
      * is the error message.
+     * @param action the action to execute on the simulation.
      */
     private suspend fun PipelineContext<Unit, ApplicationCall>.respondAction(
-        action: (Simulation<Any, Nothing>) -> Unit,
-        additionalCheck: Pair<Status, String>
+        additionalCheck: Pair<Status, String>,
+        action: (Simulation<Any, Nothing>) -> Unit
     ) {
         store.state.simulation?.let { simulation ->
             respond(

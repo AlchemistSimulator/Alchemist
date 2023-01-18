@@ -17,9 +17,9 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.util.pipeline.PipelineContext
-import it.unibo.alchemist.common.utility.Ruotes.simulationPausePath
-import it.unibo.alchemist.common.utility.Ruotes.simulationPlayPath
-import it.unibo.alchemist.common.utility.Ruotes.simulationStatusPath
+import it.unibo.alchemist.common.utility.Routes.simulationPausePath
+import it.unibo.alchemist.common.utility.Routes.simulationPlayPath
+import it.unibo.alchemist.common.utility.Routes.simulationStatusPath
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.server.utility.Response.Companion.respond

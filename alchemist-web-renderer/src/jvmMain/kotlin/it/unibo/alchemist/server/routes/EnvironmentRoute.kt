@@ -14,8 +14,8 @@ import io.ktor.server.routing.get
 import it.unibo.alchemist.common.model.serialization.encodeEnvironmentSurrogate
 import it.unibo.alchemist.common.model.serialization.jsonFormat
 import it.unibo.alchemist.common.renderer.Bitmap32Serializer
-import it.unibo.alchemist.common.utility.Ruotes.environmentClientPath
-import it.unibo.alchemist.common.utility.Ruotes.environmentServerPath
+import it.unibo.alchemist.common.utility.Routes.environmentClientPath
+import it.unibo.alchemist.common.utility.Routes.environmentServerPath
 import it.unibo.alchemist.server.state.ServerStore.store
 import it.unibo.alchemist.server.utility.Response
 import it.unibo.alchemist.server.utility.Response.Companion.respond

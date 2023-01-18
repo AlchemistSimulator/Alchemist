@@ -87,6 +87,11 @@ application {
     mainClass.set("it.unibo.alchemist.Alchemist")
 }
 
+/**
+ * Webpack task that generates the JS artifacts.
+ */
+val webpackTask = tasks.named("jsBrowserProductionWebpack")
+
 tasks.getByName<JavaExec>("run") {
     val shadowJarTask = tasks.named("shadowJar").get()
     dependsOn(shadowJarTask)
@@ -98,11 +103,10 @@ tasks.getByName<JavaExec>("run") {
  * include the JS artifacts by depending on the "jsBrowserProductionWebpack" task.
  */
 tasks.withType<ShadowJar>().configureEach {
-    val jvmJarTask = tasks.named("jvmJar").get()
-    val webpackTask = tasks.named("jsBrowserProductionWebpack").get()
+    val jvmJarTask = tasks.named("jvmJar")
     dependsOn(jvmJarTask, webpackTask)
-    from(webpackTask.outputs.files)
-    from(jvmJarTask.outputs.files)
+    from(webpackTask)
+    from(jvmJarTask)
     archiveClassifier.set("all")
 }
 

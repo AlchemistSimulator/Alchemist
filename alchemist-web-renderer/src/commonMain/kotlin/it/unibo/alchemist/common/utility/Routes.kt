@@ -13,7 +13,7 @@ package it.unibo.alchemist.common.utility
  * Objects that store all the route path. Since this object is part of the common sourceSet, both Client and Serve can
  * refer to the correct Route maintaining consistency and reducing the number of possible errors and bug.
  */
-object Ruotes {
+object Routes {
     /**
      * Base environment path, for all Environment related operations.
      */

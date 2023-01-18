@@ -11,11 +11,11 @@ package it.unibo.alchemist.common.utility
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.common.utility.Ruotes.environmentClientPath
-import it.unibo.alchemist.common.utility.Ruotes.environmentServerPath
-import it.unibo.alchemist.common.utility.Ruotes.simulationPausePath
-import it.unibo.alchemist.common.utility.Ruotes.simulationPlayPath
-import it.unibo.alchemist.common.utility.Ruotes.simulationStatusPath
+import it.unibo.alchemist.common.utility.Routes.environmentClientPath
+import it.unibo.alchemist.common.utility.Routes.environmentServerPath
+import it.unibo.alchemist.common.utility.Routes.simulationPausePath
+import it.unibo.alchemist.common.utility.Routes.simulationPlayPath
+import it.unibo.alchemist.common.utility.Routes.simulationStatusPath
 
 class RoutesTest : StringSpec({
     "All the routes strings should be correct" {

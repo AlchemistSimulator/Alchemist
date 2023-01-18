@@ -25,15 +25,10 @@ import it.unibo.alchemist.server.routes.mainRoute
 fun Application.routingModule() {
     routing {
         mainRoute()
-
         simulationStatus()
-
         simulationActionPlay()
-
         simulationActionPause()
-
         environmentServerMode()
-
         environmentClientMode()
     }
 }

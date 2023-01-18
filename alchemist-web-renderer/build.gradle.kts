@@ -92,10 +92,16 @@ application {
  */
 val webpackTask = tasks.named("jsBrowserProductionWebpack")
 
-tasks.getByName<JavaExec>("run") {
-    val shadowJarTask = tasks.named("shadowJar").get()
-    dependsOn(shadowJarTask)
-    classpath(shadowJarTask)
+tasks.named("run", JavaExec::class) {
+    classpath(
+        tasks.named("compileKotlinJvm"),
+        configurations.named("jvmRuntimeClasspath"),
+        webpackTask.map { task ->
+            task.outputs.files.map { file ->
+                file.parent
+            }
+        }
+    )
 }
 
 /**

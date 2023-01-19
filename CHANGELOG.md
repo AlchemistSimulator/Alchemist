@@ -1,3 +1,32 @@
+## [25.7.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.7.1...25.7.2) (2023-01-19)
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([9742fa5](https://github.com/AlchemistSimulator/Alchemist/commit/9742fa5456729f3910df2260ee3b9786eebc9f8e))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.21 ([a90922b](https://github.com/AlchemistSimulator/Alchemist/commit/a90922b0c77d9baf499964260301fad01b82428c))
+* **Mergify:** configuration update ([59a1909](https://github.com/AlchemistSimulator/Alchemist/commit/59a190940669402b25bcd7746ed34e984c0a9c5c))
+
+
+### Documentation
+
+* **website:** make the landing page nicer and more useful ([a645d8b](https://github.com/AlchemistSimulator/Alchemist/commit/a645d8bc4bc8183b7dabf32ab96aa30e8eda61db))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.mockito:mockito-core to v5 ([ea20a21](https://github.com/AlchemistSimulator/Alchemist/commit/ea20a21d8b4782635283df15b60447aa86e13088))
+* **deps:** update dependency org.mongodb:mongodb-driver-sync to v4.8.2 ([8621c55](https://github.com/AlchemistSimulator/Alchemist/commit/8621c552a349e4700e7303b08240faa9887277d4))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 5721d8d ([be5f963](https://github.com/AlchemistSimulator/Alchemist/commit/be5f963bea4b674dcd5e5de842a86066cd5637a7))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 77daf22 ([5b14082](https://github.com/AlchemistSimulator/Alchemist/commit/5b14082f9211d307bb4df9c669bc8764ed7b1a80))
+* **deps:** update external-resources/learning-scafi-alchemist digest to fd04014 ([f6e75f9](https://github.com/AlchemistSimulator/Alchemist/commit/f6e75f9944c7754219da3c9b0cccb6bfcdd65484))
+* **deps:** update plugin publishoncentral to v3.1.1 ([4cbeecc](https://github.com/AlchemistSimulator/Alchemist/commit/4cbeecc3823b0d6426514569164551dbe27246b6))
+* **deps:** update react to v18.2.0-pre.475 ([0a4784a](https://github.com/AlchemistSimulator/Alchemist/commit/0a4784afc8768948ecd8a50c79e34b15b48ac3ef))
+
 ## [25.7.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.7.0...25.7.1) (2023-01-15)
 
 

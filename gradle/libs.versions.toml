@@ -1,6 +1,6 @@
 [versions]
 antlr4 = "4.11.1"
-arrow = "1.1.3"
+arrow = "1.1.5"
 graphhopper = "7.0-testgithub6"
 graphstream = "2.0"
 ignite = "2.14.0"

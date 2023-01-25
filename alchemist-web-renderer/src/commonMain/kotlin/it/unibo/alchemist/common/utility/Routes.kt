@@ -16,6 +16,7 @@ package it.unibo.alchemist.common.utility
 object Routes {
     /**
      * Base environment path, for all Environment related operations.
+     * Those are operations that acts directly on the original Enviornment interface.
      */
     private const val environmentPath: String = "/environment"
 
@@ -33,6 +34,7 @@ object Routes {
 
     /**
      * Base simulation path, for simulation related operations.
+     * Those are operations that acts directly on the original Simulation interface.
      */
     private const val simulationPath: String = "/simulation"
 

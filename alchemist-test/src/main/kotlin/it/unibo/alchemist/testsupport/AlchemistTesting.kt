@@ -44,14 +44,9 @@ fun <T> createEmptyEnvironment(
  * Prepares an [InitializedEnvironment] given a [simulationFile] and, optionally, the [variables]' bindings.
  */
 fun <T, P : Position<P>> loadAlchemist(
-    simulationFile: String,
+    simulationResource: String,
     variables: Map<String, *> = emptyMap<String, Nothing>(),
-): InitializedEnvironment<T, P> {
-    val file = requireNotNull(ResourceLoader.getResource(simulationFile)) {
-        "$simulationFile could not be found in the classpath"
-    }
-    return LoadAlchemist.from(file).getWith(variables)
-}
+): InitializedEnvironment<T, P> = loadAlchemistFromResource(simulationResource).getWith(variables)
 
 /**
  * Prepares a [Loader] given a [simulationResource].

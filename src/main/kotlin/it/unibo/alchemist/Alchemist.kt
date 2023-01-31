@@ -43,6 +43,7 @@ object Alchemist {
     private const val PARALLELISM = 'p'
     private const val TIME = 't'
     private const val YAML = 'y'
+    private const val WEB = 'w'
     private val logger = LoggerFactory.getLogger(Alchemist::class.java)
     private val launchers: List<Launcher> = ClassPathScanner
         .subTypesOf(Launcher::class.java, "it.unibo.alchemist")
@@ -231,6 +232,7 @@ object Alchemist {
                 ?: AlchemistExecutionOptions.defaultEndTime,
             graphics = getOptionValue(GRAPHICS),
             fxui = hasOption(FXUI),
+            web = hasOption(WEB),
             headless = hasOption(HEADLESS),
             parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,

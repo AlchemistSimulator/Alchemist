@@ -19,6 +19,7 @@ package it.unibo.alchemist
  * @property distributed the path to the file with the load distribution configuration, or null if the run is local
  * @property graphics the path to the effects file, or null if unspecified
  * @property fxui whether the JavaFX UI takes priority over the default Swing UI
+ * @property web true if the web renderer is used. Defaults to false.
  * @property help true if print help function is selected
  * @property server if launched as Alchemist grid node server, the path to the configuration file. Null otherwise.
  * @property parallelism parallel threads used for running locally. Defaults to [defaultParallelism]
@@ -32,6 +33,7 @@ data class AlchemistExecutionOptions(
     val distributed: String? = null,
     val graphics: String? = null,
     val fxui: Boolean = false,
+    val web: Boolean = false,
     val help: Boolean = false,
     val server: String? = null,
     val parallelism: Int = defaultParallelism,

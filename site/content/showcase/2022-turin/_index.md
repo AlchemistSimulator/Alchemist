@@ -1,6 +1,6 @@
 +++
 pre = ""
-title = "Simulation: 2017 Turin's stampede"
+title = "2022: Turin's 2017 stampede in simulation"
 weight = 5
 summary = "Simulation of Piazza San Carlo crowd disaster"
 tags = ["simulation", "crowd", "mass", "disaster"]

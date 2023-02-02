@@ -1,3 +1,10 @@
+## [25.9.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.9.0...25.9.1) (2023-02-02)
+
+
+### Documentation
+
+* **website:** fix page title ([1d8b88a](https://github.com/AlchemistSimulator/Alchemist/commit/1d8b88a301b0ed17fc42968595acba8a995beeef))
+
 ## [25.9.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.8.0...25.9.0) (2023-02-02)
 
 

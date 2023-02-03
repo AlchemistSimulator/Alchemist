@@ -1,3 +1,15 @@
+## [25.10.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.9.3...25.10.0) (2023-02-03)
+
+
+### Features
+
+* **web-render:** switch to the Java Desktop API to open the default browser ([49a1d85](https://github.com/AlchemistSimulator/Alchemist/commit/49a1d85b879d8f786c8549cf7933ea3c77b42e66))
+
+
+### Refactoring
+
+* **web-renderer:** rename UtilityModule to StartBrowserModule ([a08586b](https://github.com/AlchemistSimulator/Alchemist/commit/a08586b68700301cdd492314864b9065616fdbbf))
+
 ## [25.9.3](https://github.com/AlchemistSimulator/Alchemist/compare/25.9.2...25.9.3) (2023-02-03)
 
 

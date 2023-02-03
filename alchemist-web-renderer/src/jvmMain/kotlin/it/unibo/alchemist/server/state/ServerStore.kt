@@ -10,7 +10,7 @@
 package it.unibo.alchemist.server.state
 
 import org.reduxkotlin.Store
-import org.reduxkotlin.createThreadSafeStore
+import org.reduxkotlin.threadsafe.createThreadSafeStore
 
 /**
  * The store of the server.

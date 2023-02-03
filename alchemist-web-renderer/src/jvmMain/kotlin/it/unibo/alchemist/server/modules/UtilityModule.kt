@@ -9,17 +9,17 @@
 
 package it.unibo.alchemist.server.modules
 
-import io.ktor.server.application.Application
-import java.net.InetAddress
+import io.ktor.server.engine.ApplicationEngineEnvironment
+import java.awt.Desktop
+import java.net.URI
 
 /**
  * Start the default browser of the user on the server address.
  */
-fun Application.startBrowserModule() {
-    Runtime.getRuntime().exec("xdg-open ${InetAddress.getLocalHost().hostAddress}:$port")
+fun ApplicationEngineEnvironment.startBrowserModule() {
+    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        connectors.forEach {
+            Desktop.getDesktop().browse(URI("${it.type.name.lowercase()}://${it.host}:${it.port}"))
+        }
+    }
 }
-
-/**
- * Retrieve the port used in the Ktor application.conf file.
- */
-val Application.port get() = environment.config.property("ktor.deployment.port").getString().toInt()

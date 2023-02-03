@@ -1,0 +1,37 @@
+incarnation: protelis
+
+variables:
+  pedestrianNumber: &pedestrianNumber
+    type: LinearVariable
+    parameters: [10, 10, 100, 10]
+  circleRadius: &cicleRadius
+    type: LinearVariable
+    parameters: [5, 5, 15, 5]
+
+deployments:
+  - type: Circle
+    parameters: [*pedestrianNumber, 0, 0, *cicleRadius]
+    properties:
+      - type: Human
+        parameters: ["adult", "male"]
+      - type: Perceptive2D
+      - type: CognitivePedestrian
+      - type: Cognitive2D
+      - type: CircularArea
+    programs:
+      - time-distribution:
+          type: DiracComb
+          parameters: [ 1.0 ]
+        type: BlendedSteering
+
+export:
+  - type: CSVExporter
+    parameters:
+      fileNameRoot: "time_export"
+      interval: 1.5
+    data:
+      - time
+
+terminate:
+  - type: StableForSteps
+    parameters: [30, 25]

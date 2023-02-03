@@ -1,3 +1,18 @@
+## [25.9.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.9.1...25.9.2) (2023-02-03)
+
+
+### Bug Fixes
+
+* **website:** mute the autoplay video, as chrome does not allow autoplay of non-muted videos ([4891fac](https://github.com/AlchemistSimulator/Alchemist/commit/4891faca4e2cb979d4d8a3ad87554aef2e9d0b81))
+
+
+### Dependency updates
+
+* **deps:** update dependency org.mockito:mockito-core to v5.1.1 ([324198a](https://github.com/AlchemistSimulator/Alchemist/commit/324198ad769d9175d5b67c86e2dcd4ee9642a4e2))
+* **deps:** update dependency org.reduxkotlin:redux-kotlin-threadsafe to v0.6.1 ([#1915](https://github.com/AlchemistSimulator/Alchemist/issues/1915)) ([6507de3](https://github.com/AlchemistSimulator/Alchemist/commit/6507de3cc3cab099dff08612bde3c84c383bb22e))
+* **deps:** update react to v18.2.0-pre.490 ([4832b6f](https://github.com/AlchemistSimulator/Alchemist/commit/4832b6f4fb9aabae6cb0fa4f782b17f2f7a014fb))
+* **deps:** update site/themes/hugo-theme-relearn digest to 94e993b ([f5fb0d6](https://github.com/AlchemistSimulator/Alchemist/commit/f5fb0d6c589901d90da38568159b5a9f0d4314a4))
+
 ## [25.9.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.9.0...25.9.1) (2023-02-02)
 
 

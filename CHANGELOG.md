@@ -1,3 +1,15 @@
+## [25.9.3](https://github.com/AlchemistSimulator/Alchemist/compare/25.9.2...25.9.3) (2023-02-03)
+
+
+### Dependency updates
+
+* **deps:** update site/themes/hugo-theme-relearn digest to 00faf15 ([f50de7e](https://github.com/AlchemistSimulator/Alchemist/commit/f50de7e9131afd5336518320d717a113531ce781))
+
+
+### Documentation
+
+* **website:** add explanation on parameter sweeping via simulation batches [#1876](https://github.com/AlchemistSimulator/Alchemist/issues/1876) ([#1925](https://github.com/AlchemistSimulator/Alchemist/issues/1925)) ([7280328](https://github.com/AlchemistSimulator/Alchemist/commit/728032832dd659b38c722fffce6957c55674a9cc))
+
 ## [25.9.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.9.1...25.9.2) (2023-02-03)
 
 

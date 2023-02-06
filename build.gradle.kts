@@ -322,6 +322,7 @@ dependencies {
     implementation(libs.apache.commons.cli)
     implementation(libs.guava)
     implementation(libs.logback)
+    implementation(alchemist("adapter"))
     testRuntimeOnly(incarnation("protelis"))
     testRuntimeOnly(incarnation("sapere"))
     testRuntimeOnly(incarnation("biochemistry"))

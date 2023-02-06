@@ -37,6 +37,8 @@ include(
     "alchemist-swingui",
     "alchemist-fxui",
     "alchemist-web-renderer",
+    "alchemist-adapter",
+    "multivesta"
 )
 rootProject.name = "alchemist"
 

@@ -16,7 +16,7 @@ import react.ComponentClass
 import react.Props
 
 /**
- * React Bootstrap ToggleButtonGroup adapter
+ * React Bootstrap ToggleButtonGroup adapter.
  * @see <a href="https://react-bootstrap.github.io/components/buttons/">
  *     react-bootstrap - buttons</a>
  */

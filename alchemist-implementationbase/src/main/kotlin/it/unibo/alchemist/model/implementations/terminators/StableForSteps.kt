@@ -48,7 +48,7 @@ class StableForSteps<T>(
     private var success: Long = 0
     private var positions: Map<Node<T>, Position<*>> = emptyMap()
     @Transient
-    private var contents = makeTable<T>(0)
+    private lateinit var contents: Table<Node<T>, Molecule, T>
 
     init {
         require(checkInterval > 0 && equalIntervals > 0) {
@@ -57,6 +57,9 @@ class StableForSteps<T>(
     }
 
     override fun test(environment: Environment<T, *>): Boolean {
+        if (!this::contents.isInitialized) {
+            contents = makeTable<T>(0)
+        }
         if (environment.getSimulation().getStep() % checkInterval == 0L) {
             val newPositions = environment.associateBy({ it }, { environment.getPosition(it) })
             val newContents = makeTable<T>(environment.getNodeCount())

@@ -41,6 +41,7 @@ object DistributedExecution : SimulationLauncher() {
         val cluster = ClusterImpl(
             Paths.get(requireNotNull(parameters.distributed) { "No remote configuration file " })
         )
-        cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)
+        val result = cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)
+        result.forEach { it.saveLocally("test_result") }
     }
 }

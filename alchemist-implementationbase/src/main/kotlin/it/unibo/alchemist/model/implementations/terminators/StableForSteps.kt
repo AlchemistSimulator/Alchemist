@@ -47,6 +47,7 @@ class StableForSteps<T>(
 ) : Predicate<Environment<T, *>> {
     private var success: Long = 0
     private var positions: Map<Node<T>, Position<*>> = emptyMap()
+    @Transient
     private var contents = makeTable<T>(0)
 
     init {

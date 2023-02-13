@@ -48,6 +48,8 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
     private final GeneralSimulationConfig generalConfig;
     private final SimulationConfig config;
     private final UUID masterNodeId;
+
+    private final InitializedEnvironment<T, P> initializedEnvironment;
     /**
      * 
      * @param generalConfig General simulation config
@@ -59,9 +61,9 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
         this.generalConfig = Objects.requireNonNull(generalConfig);
         this.config = Objects.requireNonNull(config);
         this.masterNodeId = Objects.requireNonNull(masterNodeId);
+        final Loader loader = generalConfig.getLoader();
+        this.initializedEnvironment = loader.getWith(config.getVariables());
     }
-
-
 
     @Override
     public RemoteResult call() {
@@ -70,19 +72,20 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
             wd.writeFiles(this.generalConfig.getDependencies());
             final Callable<RemoteResultImpl> callable = () -> {
                 ResourceLoader.injectURLs(wd.getDirectoryUrl());
-                final Loader loader = generalConfig.getLoader();
-                final InitializedEnvironment<T, P> initialized = loader.getWith(config.getVariables());
-                final Environment<T, P> environment = initialized.getEnvironment();
+                final Environment<T, P> environment = initializedEnvironment.getEnvironment();
                 final Simulation<T, P> simulation = new Engine<>(
                         environment,
                         generalConfig.getEndStep(),
                         generalConfig.getEndTime()
                 );
                 final String filename = masterNodeId.toString() + "_" + config.toString() + ".txt";
-                simulation.addOutputMonitor(new GlobalExporter<>(initialized.getExporters()));
+                simulation.addOutputMonitor(new GlobalExporter<>(initializedEnvironment.getExporters()));
                 simulation.play();
                 simulation.run();
-                return new RemoteResultImpl(wd.getFileContent(filename),
+                /*
+                 * TODO: wd.getFileContent(...) yields NoSuchFileException
+                 */
+                return new RemoteResultImpl("EMPTY" /* wd.getFileContent(filename) */,
                         Ignition.ignite().cluster().localNode().id(), simulation.getError(), config);
             };
             final FutureTask<RemoteResultImpl> futureTask = new FutureTask<>(callable);

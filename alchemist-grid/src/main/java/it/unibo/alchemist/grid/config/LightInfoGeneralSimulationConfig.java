@@ -9,6 +9,7 @@ package it.unibo.alchemist.grid.config;
 
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.interfaces.Time;
+import kotlin.jvm.Transient;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +26,7 @@ public abstract class LightInfoGeneralSimulationConfig implements GeneralSimulat
     private static final long serialVersionUID = 1L;
     private final long endStep;
     private final Time endTime;
-    private final Loader loader;
+    private transient final Loader loader;
 
     /**
      * @param endStep Simulation's end step

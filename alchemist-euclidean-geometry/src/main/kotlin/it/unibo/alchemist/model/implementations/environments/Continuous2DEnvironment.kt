@@ -49,10 +49,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     private var largestShapeDiameter: Double = 0.0
 
     @Transient
-    private val shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape> =
-        Caffeine.newBuilder().weakKeys().build { node ->
-            node.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional
-        }
+    private lateinit var shapefulNodes: LoadingCache<Node<T>, Euclidean2DShape>
 
     override fun getNodesWithin(shape: Euclidean2DShape): List<Node<T>> = when {
         shape.diameter + largestShapeDiameter <= 0 -> emptyList()
@@ -67,7 +64,16 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
         nodeToHeading[node] = direction
     }
 
-    override fun getShape(node: Node<T>): Euclidean2DShape = shapefulNodes[node].transformed {
+    private fun getShapefulNodes(): LoadingCache<Node<T>, Euclidean2DShape> = if (this::shapefulNodes.isInitialized) {
+        shapefulNodes
+    } else {
+        shapefulNodes = Caffeine.newBuilder().weakKeys().build { n ->
+            n.asPropertyOrNull<T, AreaProperty<T>>()?.shape ?: adimensional
+        }
+        shapefulNodes
+    }
+
+    override fun getShape(node: Node<T>): Euclidean2DShape = getShapefulNodes()[node].transformed {
         origin(getPosition(node))
         rotate(getHeading(node))
     }

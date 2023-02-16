@@ -23,7 +23,7 @@ import it.unibo.alchemist.common.utility.Routes
 object SimulationApi {
 
     /**
-     * Get the simulation status as a [StatusSurrogate]
+     * Get the simulation status as a [StatusSurrogate].
      */
     suspend fun getSimulationStatus(): StatusSurrogate {
         return client.get(endpoint + Routes.simulationStatusPath).body()

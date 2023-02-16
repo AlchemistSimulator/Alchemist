@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.multivesta.adapter.multivesta
 
-import it.unibo.alchemist.multivesta.adapter.AlchemistMultiVesta.launch
+import it.unibo.alchemist.multivesta.adapter.AlchemistMultiVesta.launchSimulation
 import it.unibo.alchemist.multivesta.adapter.SimulationAdapter
 import vesta.mc.NewState
 import vesta.mc.ParametersForState
@@ -39,7 +39,7 @@ class AlchemistSimState(parameters: ParametersForState) : NewState(parameters) {
         //  e.g., reset timers/counters, empty data structures, etc
         // BEWARE: the parameter randomSeed must be used to reset the random number generator of the simulator
         //         If this is not the case, there are no guarantees on the genuinity of the results computed by MultiVeStA
-        alchemistSimulator = launch(randomSeed, arrayOf()) // todo: impostare args
+        alchemistSimulator = launchSimulation(randomSeed)
     }
 
     /**

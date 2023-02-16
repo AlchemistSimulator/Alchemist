@@ -20,7 +20,7 @@ import it.unibo.alchemist.loader.Loader
 /**
  * Launches a single simulation run that can be controlled by MultiVesta.
  */
-object AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
+class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
     override val name = "Alchemist + MultiVesta simulation"
     /**
      * The simulation that was launched.

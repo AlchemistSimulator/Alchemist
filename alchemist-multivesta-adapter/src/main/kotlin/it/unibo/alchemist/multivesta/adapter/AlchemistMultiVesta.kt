@@ -18,6 +18,7 @@ import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.cli.CLIMaker
 import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.multivesta.adapter.launch.AlchemistMultiVestaSimulationLauncher
+import it.unibo.alchemist.multivesta.adapter.multivesta.MultiVestaEntryPoint
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.DefaultParser
@@ -47,6 +48,7 @@ object AlchemistMultiVesta {
     private const val PARALLELISM = 'p'
     private const val TIME = 't'
     private const val YAML = 'y'
+    private const val MULTIVESTA = "mv"
     private val logger = LoggerFactory.getLogger(AlchemistMultiVesta::class.java)
     private val logLevels = mapOf(
         "v" to Level.INFO,
@@ -59,6 +61,7 @@ object AlchemistMultiVesta {
      * Set this to false for testing purposes.
      */
     private var isNormalExecution = true
+    private lateinit var options: AlchemistExecutionOptions
 
     private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? =
         getOptionValue(name)?.let {
@@ -69,11 +72,11 @@ object AlchemistMultiVesta {
             }
         }
 
-    private fun appendSeedsToYmlFile(seed: Int, configurationPath: String) {
+    private fun appendSeedsToYmlFile(seed: Int, configurationPath: String): String? {
         try {
             val originalConfigFile = File(configurationPath)
-            val newConfigFilePath = configurationPath.substring(0, configurationPath.lastIndexOf(".")) +
-                "_" + seed + ".yml"
+            val newConfigFilePath = originalConfigFile.parentFile.absolutePath + "/seeds/" + originalConfigFile.nameWithoutExtension + "_seed_$seed.yml"
+            File(newConfigFilePath).mkdirs()
             val writer = BufferedWriter(FileWriter(newConfigFilePath))
             val data = String(Files.readAllBytes(originalConfigFile.toPath()))
             writer.write(data)
@@ -84,8 +87,10 @@ object AlchemistMultiVesta {
             writer.newLine()
             writer.write("  simulation: $seed")
             writer.close()
+            return newConfigFilePath
         } catch (e: IOException) {
             e.printStackTrace()
+            return null
         }
     }
 
@@ -93,7 +98,8 @@ object AlchemistMultiVesta {
      * @param args
      * the argument for the program
      */
-    fun launch(seed: Int, args: Array<String>): SimulationAdapter {
+    @JvmStatic
+    fun main(args: Array<String>) {
         if (LoggerFactory.getILoggerFactory().javaClass == NOPLoggerFactory::class.java) {
             println("Alchemist could not load the output module (broken SLF4J depedencies?)") // NOPMD
             exitWith(ExitStatus.NO_LOGGER)
@@ -104,7 +110,7 @@ object AlchemistMultiVesta {
         try {
             val cmd: CommandLine = parser.parse(opts, args)
             setVerbosity(cmd)
-            val options = cmd.toAlchemist
+            options = cmd.toAlchemist
             if (options.isEmpty || options.help) {
                 printHelp()
                 exitWith(if (options.help) ExitStatus.OK else ExitStatus.INVALID_CLI)
@@ -121,14 +127,31 @@ object AlchemistMultiVesta {
                 )
                 "There are no incarnations in the classpath, no simulation can get executed"
             }
-            options.configuration?.let { appendSeedsToYmlFile(seed, it) }
-            AlchemistMultiVestaSimulationLauncher.launch(options)
-            return AlchemistSimulationAdapter(AlchemistMultiVestaSimulationLauncher.simulation)
+            MultiVestaEntryPoint.launch(cmd.toMultiVesta)
         } catch (e: ParseException) {
             logger.error("Your command sequence could not be parsed.", e)
             printHelp()
             exitWith(ExitStatus.INVALID_CLI)
+        } catch (e: ClassNotFoundException) {
+            exitBecause("Can't launch MultiVesta since it is not in classpath.", ExitStatus.CLASS_NOT_FOUND, e)
+        } catch (e: Exception) {
+            exitBecause("An unexpected error occurred.", ExitStatus.UNEXPECTED_ERROR, e)
         }
+    }
+
+    /**
+     * Launch a new simulation with the specified seed. This method is thread-safe.
+     */
+    fun launchSimulation(seed: Int): SimulationAdapter {
+        var currentOptions = options
+        options.configuration?.let { configPath ->
+            appendSeedsToYmlFile(seed, configPath)?.let { newConfigPath ->
+                currentOptions = options.copy(configuration = newConfigPath)
+            }
+        }
+        val launcher = AlchemistMultiVestaSimulationLauncher()
+        launcher.launch(currentOptions)
+        return AlchemistSimulationAdapter(launcher.simulation)
     }
 
     private fun setVerbosity(cmd: CommandLine) {
@@ -186,11 +209,14 @@ object AlchemistMultiVesta {
             parallelism = hasNumeric(PARALLELISM, String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,
             variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
-            configuration = getOptionValue(YAML)
+            configuration = getOptionValue(YAML),
         )
 
+    private val CommandLine.toMultiVesta: Array<String>
+        get() = getOptionValue(MULTIVESTA).split(" ").toTypedArray()
+
     private enum class ExitStatus {
-        OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY
+        OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY, CLASS_NOT_FOUND, UNEXPECTED_ERROR
     }
 
     /**

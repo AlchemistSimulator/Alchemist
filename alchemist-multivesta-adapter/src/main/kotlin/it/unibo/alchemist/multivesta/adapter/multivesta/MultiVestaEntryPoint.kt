@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.multivesta.adapter.multivesta
 
-import entrypointmultivesta.UniqueEntryPoint
-
 object MultiVestaEntryPoint {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        UniqueEntryPoint.main(args)
+    fun launch(args: Array<String>) {
+        // entrypointmultivesta.UniqueEntryPoint.main(args)
+        val clazz = Class.forName("entrypointmultivesta.UniqueEntryPoint")
+        val main = clazz.getDeclaredMethod("main", Array<String>::class.java)
+        main.invoke(null, args)
     }
 }

@@ -10,12 +10,11 @@
 package it.unibo.alchemist.multivesta.adapter
 
 import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.multivesta.adapter.exporter.MultiVestaExporter.Companion.getValue
+import java.util.concurrent.TimeUnit
 
 class AlchemistSimulationAdapter(private val simulation: Simulation<*, *>) : SimulationAdapter {
-
-    private val propertyValues: Map<String, Any> = HashMap()
-
     override fun getTime(): Double {
         return simulation.step.toDouble()
     }
@@ -26,6 +25,7 @@ class AlchemistSimulationAdapter(private val simulation: Simulation<*, *>) : Sim
 
     override fun doStep() {
         simulation.goToStep(simulation.step + 1)
+        simulation.waitFor(Status.PAUSED, 1, TimeUnit.SECONDS)
     }
 
     override fun performWholeSimulation() {

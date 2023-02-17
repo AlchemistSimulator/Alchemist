@@ -1,7 +1,6 @@
 import Libs.alchemist
 
 dependencies {
-    implementation(files("libs/multivesta.jar"))
     implementation(rootProject)
     implementation(alchemist("loading"))
     with(libs.apache.commons) {

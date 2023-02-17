@@ -134,8 +134,6 @@ object AlchemistMultiVesta {
             exitWith(ExitStatus.INVALID_CLI)
         } catch (e: ClassNotFoundException) {
             exitBecause("Can't launch MultiVesta since it is not in classpath.", ExitStatus.CLASS_NOT_FOUND, e)
-        } catch (e: Exception) {
-            exitBecause("An unexpected error occurred.", ExitStatus.UNEXPECTED_ERROR, e)
         }
     }
 
@@ -216,7 +214,7 @@ object AlchemistMultiVesta {
         get() = getOptionValue(MULTIVESTA).split(" ").toTypedArray()
 
     private enum class ExitStatus {
-        OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY, CLASS_NOT_FOUND, UNEXPECTED_ERROR
+        OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY, CLASS_NOT_FOUND
     }
 
     /**

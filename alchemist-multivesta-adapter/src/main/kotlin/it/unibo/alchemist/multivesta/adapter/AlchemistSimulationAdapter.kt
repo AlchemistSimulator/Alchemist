@@ -37,7 +37,7 @@ class AlchemistSimulationAdapter(private val simulation: Simulation<*, *>) : Sim
         else -> {
             try {
                 value.toString().toDouble()
-            } catch (e: Exception) {
+            } catch (e: NumberFormatException) {
                 0.0
             }
         }

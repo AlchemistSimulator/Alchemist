@@ -12,7 +12,7 @@ package it.unibo.alchemist.test
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.mongo.transitions.Mongod
-import de.flapdoodle.embed.process.runtime.Network
+import de.flapdoodle.net.Net as Network
 import de.flapdoodle.os.ImmutablePlatform
 import de.flapdoodle.os.OS
 import de.flapdoodle.os.Platform

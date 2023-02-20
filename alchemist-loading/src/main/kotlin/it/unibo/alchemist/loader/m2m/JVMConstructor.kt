@@ -97,17 +97,20 @@ class NamedParametersConstructor(
 
 internal data class TypeSearch<out T>(val typeName: String, val targetType: Class<out T>) {
 
-    private val isQualified = typeName.contains('.')
+    private val packageName: String? = typeName.substringBeforeLast('.', "").takeIf { it.isNotEmpty() }
+    private val isQualified get() = packageName != null
 
     val subTypes: List<Class<out T>> by lazy {
-        val compatibleTypes = when {
-            targetType.packageName.startsWith("it.unibo.alchemist") ->
-                ClassPathScanner.subTypesOf(targetType, "it.unibo.alchemist")
-                    .takeUnless { it.isEmpty() }
-                    ?: ClassPathScanner.subTypesOf(targetType)
-            else -> ClassPathScanner.subTypesOf(targetType)
+        val compatibleTypes = when (packageName) {
+            null ->
+                when {
+                    targetType.packageName.startsWith("it.unibo.alchemist") ->
+                        ClassPathScanner.subTypesOf(targetType, "it.unibo.alchemist")
+                    else -> ClassPathScanner.subTypesOf(targetType)
+                }
+            else -> ClassPathScanner.subTypesOf(targetType, packageName)
         }
-        compatibleTypes + if (Modifier.isAbstract(targetType.modifiers)) emptyList() else listOf(targetType)
+        compatibleTypes + listOf(targetType).takeUnless { Modifier.isAbstract(targetType.modifiers) }.orEmpty()
     }
 
     val perfectMatches: List<Class<out T>> by lazy {

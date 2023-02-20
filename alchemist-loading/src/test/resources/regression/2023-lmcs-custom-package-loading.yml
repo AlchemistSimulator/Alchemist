@@ -1,0 +1,4 @@
+incarnation: protelis
+
+environment:
+  type: another.location.MyTestEnv

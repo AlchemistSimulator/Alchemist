@@ -455,6 +455,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             @Override
             public void initialized(@Nonnull final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
+                    schedule(() -> removeOutputMonitor(this));
                     pause();
                 }
             }

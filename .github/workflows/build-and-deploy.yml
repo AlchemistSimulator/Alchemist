@@ -81,7 +81,12 @@ jobs:
       - uses: DanySK/build-check-deploy-gradle-action@2.1.26
         with:
           build-command: |
-            ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
+            for i in 1 2 3 4 5; do
+              ./gradlew hugoBuild --parallel && break || sleep 120
+              if [ "$i" = 5 ]; then
+                false
+              fi
+            done
           check-command: |
             # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
             # See:
@@ -94,6 +99,9 @@ jobs:
             CHECK_LINKS='docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 429,500,502,503'
             for i in 1 2 3 4 5; do
               $(echo $CHECK_LINKS) && break || sleep 30
+              if [ "$i" = 5 ]; then
+                false
+              fi
             done
           should-run-codecov: false
           should-deploy: false

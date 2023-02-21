@@ -437,7 +437,7 @@ The obtained value is added to the exports.
 **Type**: String or List of Strings
 
 Name of any valid
-[`UnivariateStatistic](https://commons.apache.org/proper/commons-math/javadocs/api-3.6/org/apache/commons/math3/stat/descriptive/UnivariateStatistic.html),
+[`UnivariateStatistic`](https://javadoc.io/static/org.apache.commons/commons-math3/3.6.1/org/apache/commons/math3/stat/descriptive/UnivariateStatistic.html),
 case insensitive.
 All those provided with Apache Commons Math are available by default.
 New statistics can be defined,

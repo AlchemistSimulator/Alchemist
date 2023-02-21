@@ -586,7 +586,7 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 **Type**: SpecMap
 
 Selection of the seed for the
-[`RandomGenerator`](https://commons.apache.org/proper/commons-math/javadocs/api-3.4/org/apache/commons/math3/random/RandomGenerator.html)s.
+[`RandomGenerator`]()s.
 
 **(Multi)Spec**
 
@@ -599,7 +599,7 @@ Selection of the seed for the
 **Type**: Int
 
 Selection of the seed for the
-[`RandomGenerator`](https://commons.apache.org/proper/commons-math/javadocs/api-3.4/org/apache/commons/math3/random/RandomGenerator.html)
+[`RandomGenerator`](https://javadoc.io/static/org.apache.commons/commons-math3/3.6.1/org/apache/commons/math3/random/RandomGenerator.html)
 controlling the position of random displacements.
 
 ### `seeds.simulation`
@@ -607,7 +607,7 @@ controlling the position of random displacements.
 **Type**: Int
 
 Selection of the seed for the
-[`RandomGenerator`](https://commons.apache.org/proper/commons-math/javadocs/api-3.4/org/apache/commons/math3/random/RandomGenerator.html)
+[`RandomGenerator`](https://javadoc.io/static/org.apache.commons/commons-math3/3.6.1/org/apache/commons/math3/random/RandomGenerator.html)
 controlling the evolution of the events of the simulation.
 
 

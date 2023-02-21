@@ -1,3 +1,46 @@
+## [25.14.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.13.1...25.14.0) (2023-02-21)
+
+
+### Features
+
+* **web-render:** add AppContent React component ([c57ab3d](https://github.com/AlchemistSimulator/Alchemist/commit/c57ab3d91a3efb3382bc6e43492295b49faefaa4))
+* **web-render:** add AppNavbar React component ([e1cfa60](https://github.com/AlchemistSimulator/Alchemist/commit/e1cfa601e6df09209bb7a16cdfd0a05655306c73))
+* **web-render:** add Client JS entrypoint ([9e8de2e](https://github.com/AlchemistSimulator/Alchemist/commit/9e8de2edefaaf1691c662f7fbf98df748c10f320))
+* **web-render:** add PlayButton React component ([a5df2fd](https://github.com/AlchemistSimulator/Alchemist/commit/a5df2fd411141578406cc8bb9af12fee768b0216))
+* **web-render:** add RenderModeButtons React component ([604d312](https://github.com/AlchemistSimulator/Alchemist/commit/604d31216b6c97ce0b45f01d245509c7a9271a84))
+* **web-render:** add WarningModal React component ([ebfd6c1](https://github.com/AlchemistSimulator/Alchemist/commit/ebfd6c15fc7ad5d190a433f33c47e61b90b86c76))
+
+
+### Bug Fixes
+
+* **docs:** add integrity check for jquery ([1a0bb11](https://github.com/AlchemistSimulator/Alchemist/commit/1a0bb112fc6f6e5ffd3c0b6dff56fd0f2cc8f1bb))
+
+
+### Dependency updates
+
+* **deps:** update antlr4 to v4.12.0 ([56c5c62](https://github.com/AlchemistSimulator/Alchemist/commit/56c5c6288ed0623868c982210d35a793756c197b))
+* **deps:** update site/themes/hugo-theme-relearn digest to 68e89ca ([1a28ae4](https://github.com/AlchemistSimulator/Alchemist/commit/1a28ae4ccd0554e6892888765c45999f8cee8988))
+
+
+### Revert previous changes
+
+* update antlr4 to v4.12.0 (minor) ([#2016](https://github.com/AlchemistSimulator/Alchemist/issues/2016)) ([0c951c8](https://github.com/AlchemistSimulator/Alchemist/commit/0c951c88fa4f4ce79187e44c35e07f9f7ba9d801))
+
+
+### Documentation
+
+* **website:** fix dangling link ([83d66ea](https://github.com/AlchemistSimulator/Alchemist/commit/83d66ea4157bb2a66230d72f8bf22a6f1551d8f6))
+* **website:** fix dangling link to Apache's RandomGenerator ([96f05d7](https://github.com/AlchemistSimulator/Alchemist/commit/96f05d750d93fbbfc49ae227ccd2da36301dd978))
+* **website:** fix dangling link to paper via DOI ([6a20b87](https://github.com/AlchemistSimulator/Alchemist/commit/6a20b8743d8789ab8f3f64f82becb17689286992))
+* **website:** switch link to https to prevent lookup failures ([1f5517d](https://github.com/AlchemistSimulator/Alchemist/commit/1f5517dad49fec679716956df4fb6c5bbdae84ca))
+* **website:** update broken link to refactored class ([c4a45fa](https://github.com/AlchemistSimulator/Alchemist/commit/c4a45fa4de2c7ce6add2415261f64fb70c394cfa))
+
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.1.26 ([222aa80](https://github.com/AlchemistSimulator/Alchemist/commit/222aa8097a22011f3058ca6fed28b137a268a074))
+* do not force the bytecode version output of Kotlin, rely on the multi-jvm plugin instead ([ec1195f](https://github.com/AlchemistSimulator/Alchemist/commit/ec1195f54bd8a289e3dfd473213d55ca3515d67c))
+
 ## [25.13.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.13.0...25.13.1) (2023-02-21)
 
 

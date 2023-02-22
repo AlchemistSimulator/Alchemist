@@ -8,6 +8,7 @@
  */
 
 import Libs.alchemist
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask
@@ -62,9 +63,10 @@ tasks.generateGrammarSource {
 
 tasks {
     val needGrammarGeneration = listOf(
+        withType<Detekt>(),
+        withType<DokkaTask>(),
         withType<JavaCompile>(),
         withType<KotlinCompile>(),
-        withType<DokkaTask>(),
         withType<KtLintCheckTask>(),
     )
     needGrammarGeneration.forEach {

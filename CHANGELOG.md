@@ -1,3 +1,20 @@
+## [25.14.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.14.0...25.14.1) (2023-02-22)
+
+
+### Build and continuous integration
+
+* apply `org.gradle.toolchains.foojay-resolver-convention` ([ff286e1](https://github.com/AlchemistSimulator/Alchemist/commit/ff286e16bf7554b1c14bed0e86e83d268ca46833))
+
+
+### Dependency updates
+
+* **core-deps:** update protelis to v17 ([cd7df7c](https://github.com/AlchemistSimulator/Alchemist/commit/cd7df7c5fe445f3ba7a8cffb3b767c6263019cd9))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 84c4fbb ([74b5a1a](https://github.com/AlchemistSimulator/Alchemist/commit/74b5a1ad1d6467abde162ba87ec9b349b207715d))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ba348a2 ([81fd20a](https://github.com/AlchemistSimulator/Alchemist/commit/81fd20adeb17a4526834704ff116756d620f91fe))
+* **deps:** update plugin java-qa to v0.43.1 ([bae9635](https://github.com/AlchemistSimulator/Alchemist/commit/bae96353d35a62950e25ec730cf4bd405eaba489))
+* **deps:** update plugin publishoncentral to v3.3.0 ([c7b13af](https://github.com/AlchemistSimulator/Alchemist/commit/c7b13af94e625023de6ab614ad1552d38c8a4301))
+* **deps:** update site/themes/hugo-theme-relearn digest to cbe565d ([3c8fe82](https://github.com/AlchemistSimulator/Alchemist/commit/3c8fe82ba6b3c274e9b4f89e31a440a5f5e8eb21))
+
 ## [25.14.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.13.1...25.14.0) (2023-02-21)
 
 

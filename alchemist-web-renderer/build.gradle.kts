@@ -113,6 +113,7 @@ tasks.withType<ShadowJar>().configureEach {
     from(webpackTask)
     from(jvmJarTask)
     from(tasks.named("jsBrowserDistribution"))
+    mustRunAfter(tasks.distTar, tasks.distZip)
     archiveClassifier.set("all")
 }
 

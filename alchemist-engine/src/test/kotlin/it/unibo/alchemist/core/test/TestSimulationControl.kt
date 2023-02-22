@@ -18,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.test.GlobalTestReaction
 import it.unibo.alchemist.testsupport.createEmptyEnvironment
+import kotlinx.coroutines.delay
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -40,6 +41,7 @@ class TestSimulationControl : FreeSpec(
             }
             "goToTime should work twice" {
                 val environment = createEmptyEnvironment<Nothing>()
+                val awaitForNextJump = 100L
                 environment.tickRate(1.0)
                 val firstJump = DoubleTime(10.0)
                 val nextJump = DoubleTime(20.0)
@@ -51,7 +53,7 @@ class TestSimulationControl : FreeSpec(
                     time shouldBe firstJump
                     goToTime(nextJump)
                     play()
-                    workerPool.submit { run() }
+                    delay(awaitForNextJump) // best solution so far for now, you cannot be sure that the simulation is played again
                     waitFor(Status.PAUSED, 1, TimeUnit.SECONDS)
                     terminate()
                     time shouldBe nextJump

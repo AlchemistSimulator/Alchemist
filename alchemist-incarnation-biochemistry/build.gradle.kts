@@ -61,6 +61,10 @@ tasks.generateGrammarSource {
     tasks.sourcesJar.orNull?.dependsOn(this)
 }
 
+tasks.generateTestGrammarSource {
+    enabled = false
+}
+
 tasks {
     val needGrammarGeneration = listOf(
         withType<Detekt>(),

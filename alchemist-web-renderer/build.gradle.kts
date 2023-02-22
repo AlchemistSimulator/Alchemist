@@ -110,9 +110,9 @@ tasks.named("run", JavaExec::class) {
  */
 tasks.withType<ShadowJar>().configureEach {
     val jvmJarTask = tasks.named("jvmJar")
-    dependsOn(jvmJarTask, webpackTask)
     from(webpackTask)
     from(jvmJarTask)
+    from(tasks.named("jsBrowserDistribution"))
     archiveClassifier.set("all")
 }
 

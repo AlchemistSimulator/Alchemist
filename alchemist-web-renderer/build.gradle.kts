@@ -92,7 +92,7 @@ application {
  */
 val webpackTask = tasks.named("jsBrowserProductionWebpack")
 
-tasks.named("run", JavaExec::class) {
+tasks.named("run", JavaExec::class).configure {
     classpath(
         tasks.named("compileKotlinJvm"),
         configurations.named("jvmRuntimeClasspath"),

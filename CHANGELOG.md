@@ -1,3 +1,17 @@
+## [25.14.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.14.1...25.14.2) (2023-02-22)
+
+
+### Documentation
+
+* **website:** work around false negative in link resolution by linking the journal page directly ([3ec6391](https://github.com/AlchemistSimulator/Alchemist/commit/3ec63912cc1e8e158362dcb23eedf50ee8ed8601))
+
+
+### Build and continuous integration
+
+* fix link check command construction ([cf87126](https://github.com/AlchemistSimulator/Alchemist/commit/cf871264169eb432f7b58fcf345af0bec870ff2a))
+* **website:** add false positive link url to the Gibson/Bruck paper ([4a709f4](https://github.com/AlchemistSimulator/Alchemist/commit/4a709f43347443e5a1c883db37c30b958b8d0875))
+* **website:** retry multiple times to work around network errors when building the website ([5f4fe9c](https://github.com/AlchemistSimulator/Alchemist/commit/5f4fe9cf0dcbec5cec64a7fd067ce287045c5b0d))
+
 ## [25.14.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.14.0...25.14.1) (2023-02-22)
 
 

@@ -53,7 +53,8 @@ class TestSimulationControl : FreeSpec(
                     time shouldBe firstJump
                     goToTime(nextJump)
                     play()
-                    delay(awaitForNextJump) // best solution so far for now, you cannot be sure that the simulation is played again
+                    // best solution so far for now, you cannot be sure that the simulation is played again
+                    delay(awaitForNextJump)
                     waitFor(Status.PAUSED, 1, TimeUnit.SECONDS)
                     terminate()
                     time shouldBe nextJump

@@ -61,7 +61,6 @@ object AlchemistMultiVesta {
      * Set this to false for testing purposes.
      */
     private var isNormalExecution = true
-    private lateinit var options: AlchemistExecutionOptions
 
     private inline fun <reified T : Number> CommandLine.hasNumeric(name: Char, converter: String.() -> T?): T? =
         getOptionValue(name)?.let {
@@ -76,7 +75,7 @@ object AlchemistMultiVesta {
         try {
             val originalConfigFile = File(configurationPath)
             val newConfigFilePath = originalConfigFile.parentFile.absolutePath + "/seeds/" + originalConfigFile.nameWithoutExtension + "_seed_$seed.yml"
-            File(newConfigFilePath).mkdirs()
+            File(newConfigFilePath).parentFile.mkdirs()
             val writer = BufferedWriter(FileWriter(newConfigFilePath))
             val data = String(Files.readAllBytes(originalConfigFile.toPath()))
             writer.write(data)
@@ -94,23 +93,15 @@ object AlchemistMultiVesta {
         }
     }
 
-    /**
-     * @param args
-     * the argument for the program
-     */
-    @JvmStatic
-    fun main(args: Array<String>) {
-        if (LoggerFactory.getILoggerFactory().javaClass == NOPLoggerFactory::class.java) {
-            println("Alchemist could not load the output module (broken SLF4J depedencies?)") // NOPMD
-            exitWith(ExitStatus.NO_LOGGER)
-        }
+    fun parseOptions(args: Array<String>): Pair<AlchemistExecutionOptions, Array<String>> {
         val opts = CLIMaker.getOptions()
+        opts.addOption(MULTIVESTA, true, "The all arguments to pass to MultiVesta, as a single string")
         fun printHelp() = HelpFormatter().printHelp("java -jar alchemist-redist-{version}.jar", opts)
         val parser: CommandLineParser = DefaultParser()
         try {
             val cmd: CommandLine = parser.parse(opts, args)
             setVerbosity(cmd)
-            options = cmd.toAlchemist
+            val options = cmd.toAlchemist
             if (options.isEmpty || options.help) {
                 printHelp()
                 exitWith(if (options.help) ExitStatus.OK else ExitStatus.INVALID_CLI)
@@ -127,11 +118,34 @@ object AlchemistMultiVesta {
                 )
                 "There are no incarnations in the classpath, no simulation can get executed"
             }
-            MultiVestaEntryPoint.launch(cmd.toMultiVesta)
+            return Pair(options, cmd.toMultiVesta)
         } catch (e: ParseException) {
             logger.error("Your command sequence could not be parsed.", e)
             printHelp()
             exitWith(ExitStatus.INVALID_CLI)
+        }
+    }
+
+    private fun saveArgs(args: Array<String>) {
+        val alchemistArgs = args.joinToString(" ").substringBefore("-mv").trim()
+        val alchemistArgsFile = File("alchemist_args.txt")
+        alchemistArgsFile.writeText(alchemistArgs)
+    }
+
+    /**
+     * @param args
+     * the argument for the program
+     */
+    @JvmStatic
+    fun main(args: Array<String>) {
+        saveArgs(args)
+        if (LoggerFactory.getILoggerFactory().javaClass == NOPLoggerFactory::class.java) {
+            println("Alchemist could not load the output module (broken SLF4J depedencies?)") // NOPMD
+            exitWith(ExitStatus.NO_LOGGER)
+        }
+        try {
+            val (_, multivestaOptions) = parseOptions(args)
+            MultiVestaEntryPoint.launch(multivestaOptions)
         } catch (e: ClassNotFoundException) {
             exitBecause("Can't launch MultiVesta since it is not in classpath.", ExitStatus.CLASS_NOT_FOUND, e)
         }
@@ -141,14 +155,16 @@ object AlchemistMultiVesta {
      * Launch a new simulation with the specified seed. This method is thread-safe.
      */
     fun launchSimulation(seed: Int): SimulationAdapter {
-        var currentOptions = options
+        println("Launching simulation with seed $seed")
+        var (options, _) = parseOptions(File("alchemist_args.txt").readText().split(" ").toTypedArray())
         options.configuration?.let { configPath ->
             appendSeedsToYmlFile(seed, configPath)?.let { newConfigPath ->
-                currentOptions = options.copy(configuration = newConfigPath)
+                options = options.copy(configuration = newConfigPath)
             }
         }
         val launcher = AlchemistMultiVestaSimulationLauncher()
-        launcher.launch(currentOptions)
+        launcher.launch(options)
+        println("Launched simulation ${launcher.simulation}")
         return AlchemistSimulationAdapter(launcher.simulation)
     }
 
@@ -211,7 +227,7 @@ object AlchemistMultiVesta {
         )
 
     private val CommandLine.toMultiVesta: Array<String>
-        get() = getOptionValue(MULTIVESTA).split(" ").toTypedArray()
+        get() = getOptionValue(MULTIVESTA)?.split(" ")?.toTypedArray() ?: emptyArray()
 
     private enum class ExitStatus {
         OK, INVALID_CLI, NO_LOGGER, NUMBER_FORMAT_ERROR, MULTIPLE_VERBOSITY, CLASS_NOT_FOUND

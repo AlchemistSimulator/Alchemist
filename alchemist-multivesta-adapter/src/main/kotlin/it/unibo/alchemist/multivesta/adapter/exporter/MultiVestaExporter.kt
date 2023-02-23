@@ -30,6 +30,7 @@ class MultiVestaExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
+        println("Exporting data for time $time")
         values = values + (
             environment.simulation to dataExtractors.flatMap { extractor ->
                 extractor.extractData(environment, reaction, time, step).map { (dataLabel, dataValue) ->
@@ -40,11 +41,12 @@ class MultiVestaExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun close(environment: Environment<T, P>, time: Time, step: Long) {
+        println("Closing exporter")
         values = values - environment.simulation
     }
 
     companion object {
-        private lateinit var values: Map<Simulation<*, *>, Map<String, Any>>
+        private var values: Map<Simulation<*, *>, Map<String, Any>> = ConcurrentHashMap()
 
         /**
          * Get the value of the desired observation, if it exists.

@@ -19,13 +19,19 @@ class AlchemistSimulationAdapter(private val simulation: Simulation<*, *>) : Sim
         return simulation.step.toDouble()
     }
 
-    override fun rval(obs: String): Double = obsValueToDouble(getValue(simulation, obs))
+    override fun rval(obs: String): Double = when (obs) {
+        "time" -> getTime()
+        else -> obsValueToDouble(getValue(simulation, obs))
+    }
 
     override fun rval(obsId: Int): Double = obsValueToDouble(getValue(simulation, obsId))
 
     override fun doStep() {
+        println("Step ${simulation.step}")
         simulation.goToStep(simulation.step + 1)
-        simulation.waitFor(Status.PAUSED, 1, TimeUnit.SECONDS)
+        simulation.play()
+        simulation.waitFor(Status.PAUSED, 10, TimeUnit.SECONDS)
+        println("Step done")
     }
 
     override fun performWholeSimulation() {

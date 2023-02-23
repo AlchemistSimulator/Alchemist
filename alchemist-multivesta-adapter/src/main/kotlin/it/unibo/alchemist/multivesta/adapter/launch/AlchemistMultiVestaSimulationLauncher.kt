@@ -40,7 +40,9 @@ class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
 
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
         simulation = prepareSimulation(loader, parameters, emptyMap<String, Any>())
-        simulation.goToStep(-1) // configure the simulation to pause immediately before the first step
-        simulation.run() // this will pause the simulation without executing any step
+        println("Simulation prepared")
+        simulation.goToStep(0) // configure the simulation to pause immediately before the first step
+        Thread(simulation).start() // this will pause the simulation without executing any step
+        println("Simulation paused at step 0")
     }
 }

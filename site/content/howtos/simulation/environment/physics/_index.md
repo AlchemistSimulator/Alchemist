@@ -25,7 +25,7 @@ It's also possibile to specify an image path for including obstacles in the envi
 
 Nodes added to the {{%api package=model.implementations.environments class=EnvironmentWithDynamics %}} 
 are required to have at least a {{%api package=model.interfaces.properties class=PedestrianProperty %}},
-a {{%api package=model.interfaces.properties class=PhysicalPedestrianProperty %}} and a 
+a {{%api package=model.interfaces.properties class=PhysicalPedestrian %}} and a 
 {{%api package=model.interfaces.properties class=OccupiesSpaceProperty %}}.
 
 Here's an example:

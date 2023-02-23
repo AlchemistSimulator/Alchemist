@@ -8,7 +8,9 @@ summary = "A super-fast way to get an instance of the simulator up and running."
 You need:
 * A terminal, bash compatible preferred
 * [Java 11+](https://adoptium.net/) installed and working
+  * Java can be downloaded from https://adoptium.net/ 
 * [Git](https://git-scm.com/) installed and working
+  * Git can be downloaded from https://git-scm.com
 
 Open the terminal and follow these steps
 1. `git clone https://github.com/AlchemistSimulator/alchemist-primer `

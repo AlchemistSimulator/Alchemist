@@ -19,7 +19,7 @@ import it.unibo.alchemist.server.surrogates.utility.ToConcentrationSurrogate.toE
 import it.unibo.alchemist.server.surrogates.utility.toEnvironmentSurrogate
 
 import org.reduxkotlin.Store
-import org.reduxkotlin.createThreadSafeStore
+import org.reduxkotlin.threadsafe.createThreadSafeStore
 
 class ServerStoreTest : StringSpec({
 

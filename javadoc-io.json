@@ -47,6 +47,10 @@
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.2",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.2/element-list"
   },
+  "com.github.ben-manes.caffeine/caffeine/3.1.4": {
+    "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.4",
+    "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.4/element-list"
+  },
   "com.github.cb372/scalacache-core_2.13/0.28.0": {
     "first": "https://javadoc.io/doc/com.github.cb372/scalacache-core_2.13/0.28.0"
   },
@@ -378,6 +382,9 @@
   "org.jetbrains.kotlin/kotlin-reflect/1.8.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.8.0"
   },
+  "org.jetbrains.kotlin/kotlin-reflect/1.8.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.8.10"
+  },
   "org.jetbrains.kotlin/kotlin-reflect/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
   },
@@ -407,6 +414,9 @@
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.0": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.0"
+  },
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.10": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.10"
   },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"
@@ -475,6 +485,10 @@
   "org.mongodb/mongodb-driver-sync/4.8.2": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.8.2",
     "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.8.2/element-list"
+  },
+  "org.mongodb/mongodb-driver-sync/4.9.0": {
+    "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.9.0",
+    "second": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.9.0/element-list"
   },
   "org.scala-lang/scala-compiler/2.13.10": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.10"

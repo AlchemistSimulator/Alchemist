@@ -11,7 +11,7 @@ This website hosts the documentation of the Alchemist Simulator,
 created towards the end of 2010 as a by-product of the European Project SAPERE,
 and grown ever since into a full-fledged simulation framework.
 
-<video loop autoplay style="max-width: 100%; display: inline-block; ">
+<video loop playsinline autoplay muted style="max-width: 100%; display: inline-block; ">
   <source src="home-animation.mp4" type="video/mp4">
   If your browser supported the video tag, there would be a nice video.
 </video>

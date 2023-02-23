@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.5
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.21
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.26
         with:
           # check that all tasks used in subsequent phases are there
           build-command: |
@@ -54,7 +54,7 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.5
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.21
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.26
         with:
           build-command: true
           check-command: true
@@ -78,10 +78,15 @@ jobs:
     steps:
       - name: Checkout
         uses: danysk/action-checkout@0.2.5
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.21
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.26
         with:
           build-command: |
-            ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel || ./gradlew hugoBuild --parallel
+            for i in 1 2 3 4 5; do
+              ./gradlew hugoBuild --parallel && break || sleep 120
+              if [ "$i" = 5 ]; then
+                false
+              fi
+            done
           check-command: |
             # Temporarily disable checks on kdoc/javadoc: too many bugs in Dokka.
             # See:
@@ -91,9 +96,12 @@ jobs:
             # https://github.com/Kotlin/dokka/issues/2323
             # Once everything gets fixed, lychee could simply run on '/lychee/**/*.html'
             FILES="$(find build/website/ -name '*.html' | grep -v /kdoc/ | grep -v /javadoc/ | sed -e 's#^build##')"
-            CHECK_LINKS='docker run --rm -v "$(pwd)/build/website:/website" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 429,500,502,503'
+            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 429,500,502,503"
             for i in 1 2 3 4 5; do
               $(echo $CHECK_LINKS) && break || sleep 30
+              if [ "$i" = 5 ]; then
+                false
+              fi
             done
           should-run-codecov: false
           should-deploy: false
@@ -148,7 +156,7 @@ jobs:
         uses: actions/setup-node@v3.6.0
         with:
           node-version: ${{ steps.node-version.outputs.version }}
-      - uses: DanySK/build-check-deploy-gradle-action@2.1.21
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.26
         with:
           java-version: 11
           build-command: |

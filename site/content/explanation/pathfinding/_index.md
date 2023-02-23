@@ -42,5 +42,5 @@ Secondly, planted seeds are extended as far as possible
 (i.e. until they are in contact with an obstacle or another seed on each side).
 Finally, crossings are found between the grown seeds.
 NaviGator is derived from the
-[DEACCON algorithm](http://www.aaai.org/Library/AIIDE/2008/aiide08-029.php)
+[DEACCON algorithm](https://doi.org/10.1609/aiide.v4i1.18693)
 for the generation of navigation meshes.

@@ -92,7 +92,7 @@ application {
  */
 val webpackTask = tasks.named("jsBrowserProductionWebpack")
 
-tasks.named("run", JavaExec::class) {
+tasks.named("run", JavaExec::class).configure {
     classpath(
         tasks.named("compileKotlinJvm"),
         configurations.named("jvmRuntimeClasspath"),
@@ -110,9 +110,10 @@ tasks.named("run", JavaExec::class) {
  */
 tasks.withType<ShadowJar>().configureEach {
     val jvmJarTask = tasks.named("jvmJar")
-    dependsOn(jvmJarTask, webpackTask)
     from(webpackTask)
     from(jvmJarTask)
+    from(tasks.named("jsBrowserDistribution"))
+    mustRunAfter(tasks.distTar, tasks.distZip)
     archiveClassifier.set("all")
 }
 

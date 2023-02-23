@@ -26,17 +26,35 @@
   ~ GNU General Public License, with a linking exception,
   ~ as described in the file LICENSE in the Alchemist distribution's top directory.
   -->
-
+<script>
+/** Function that expands the content 
+ * of the code present in <expand-content> by correctly animating chevron. 
+ * At first the chevron is to the right,
+ * when clicked expand goes to the bottom.
+*/
+function onClick(element) {
+    var content = $(element).parent().find(".expand-content");
+    var chevron = $(element).find(".fas");
+    if (content.css("display") === "none") {
+        chevron.removeClass("fa-chevron-right");
+        chevron.addClass("fa-chevron-down");
+        content.slideDown(100);
+    } else {
+        chevron.removeClass("fa-chevron-down");
+        chevron.addClass("fa-chevron-right");
+        content.slideUp(100);
+    }
+}
+</script>
 <div class="expand">
-        <a class="expand-label" onclick="$t=$(this); if($t.parent('.expand-expanded.expand-marked').length){ $t.next().css('display','none') }else if($t.parent('.expand-marked').length){ $t.next().css('display','block') }else{ $t.next('.expand-content').slideToggle(100); } $t.parent().toggleClass('expand-expanded');">
-            <span class="fas fa-chevron-down"></span>
-            <span class="fas fa-chevron-right"></span>
-            <strong>Click to show / hide code</strong>
-        </a>
-        <div class="expand-content" style="display: none;">
-            {{- highlight ($content) ($language) "" -}}
-        </div>
+    <a class="expand-label" onclick="onClick(this)"> 
+        <span class="fas fa-chevron-right"></span>
+        <strong>Click to show / hide code</strong>
+    </a>
+    <div class="expand-content" style="display: none;">
+        {{- highlight ($content) ($language) "" -}}
     </div>
+</div>
 {{- else -}}
 {{- $content -}}
 {{- end -}}

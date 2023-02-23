@@ -1,13 +1,15 @@
 +++
 pre = ""
-title = "2022: Dynamic Decentralization Domains for the Internet of Things "
+title = "2022: Dynamic Decentralization Domains for the Internet of Things"
 weight = 5
 summary = "Simulation of collective distributed sensing and acting using Toronto rain gauge's data."
 tags = ["experiment", "maps", "export", "scafi"]
 hidden = true
 +++
 
-Scientific publication: *TO APPEAR*
+From {{< cite doi="10.1109/MIC.2022.3216753" >}}
+
+{{< cite doi="10.1109/MIC.2022.3216753" bibtex=true >}}
 
 Experiment publicly available at [https://github.com/cric96/experiment-2022-ieee-decentralised-system](https://github.com/cric96/experiment-2022-ieee-decentralised-system)
 

@@ -8,6 +8,10 @@
  */
 
 import Libs.alchemist
+import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask
 
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -57,11 +61,24 @@ tasks.generateGrammarSource {
     tasks.sourcesJar.orNull?.dependsOn(this)
 }
 
-tasks.compileJava { dependsOn(tasks.generateGrammarSource) }
-tasks.compileKotlin { dependsOn(tasks.generateGrammarSource) }
-tasks.compileTestJava { dependsOn(tasks.generateTestGrammarSource) }
-tasks.compileTestKotlin { dependsOn(tasks.generateTestGrammarSource) }
-tasks.runKtlintCheckOverTestSourceSet { dependsOn(tasks.generateTestGrammarSource) }
+tasks.generateTestGrammarSource {
+    enabled = false
+}
+
+tasks {
+    val needGrammarGeneration = listOf(
+        withType<Detekt>(),
+        withType<DokkaTask>(),
+        withType<JavaCompile>(),
+        withType<KotlinCompile>(),
+        withType<KtLintCheckTask>(),
+    )
+    needGrammarGeneration.forEach {
+        it.configureEach {
+            dependsOn(generateGrammarSource)
+        }
+    }
+}
 
 val sourceSetsToCheck = listOf(project.sourceSets.main.get(), project.sourceSets.test.get())
 checkstyle {

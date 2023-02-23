@@ -456,7 +456,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             @Override
             public void initialized(@Nonnull final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
-                    monitors.remove(this); // here it is safe to remove the monitor, since it will always be called when the monitorLock is acquired
+                    /* here it is safe to remove the monitor,
+                       since it will always be called when
+                       the monitorLock is acquired
+                     */
+                    monitors.remove(this);
                     pause();
                 }
             }

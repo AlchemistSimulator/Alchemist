@@ -1,3 +1,47 @@
+## [25.14.3](https://github.com/AlchemistSimulator/Alchemist/compare/25.14.2...25.14.3) (2023-02-24)
+
+
+### Bug Fixes
+
+* **alchemist-engine:** add delay to ensure that the engine is passed again into a running state ([18bbe6f](https://github.com/AlchemistSimulator/Alchemist/commit/18bbe6f6be1e1b9ba183bdf0445155317cab6674))
+* **alchemist-engine:** remove the monitor when the condition is met ([2d525aa](https://github.com/AlchemistSimulator/Alchemist/commit/2d525aaec7a00319740a0c9278d9d032408030a5))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.1.4 ([0c9fd4e](https://github.com/AlchemistSimulator/Alchemist/commit/0c9fd4e0bc39d91fbf3681fb0c6b33a22e94131b))
+* **deps:** update dependency gradle to v8 ([52e961d](https://github.com/AlchemistSimulator/Alchemist/commit/52e961d8602ea5c22375c8d4cb37e203bfec3fe4))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 667574f ([d6776dd](https://github.com/AlchemistSimulator/Alchemist/commit/d6776dda43dfbb49ccd16a9a7c2e5d435bbe1733))
+* **deps:** update plugin gitsemver to v1.1.1 ([378c330](https://github.com/AlchemistSimulator/Alchemist/commit/378c33099e8079ff34321bd339796b611027f9b4))
+* **deps:** update react to v18.2.0-pre.502 ([cd8cd06](https://github.com/AlchemistSimulator/Alchemist/commit/cd8cd064e13f7e086504953c550b9c67561bff29))
+
+
+### Build and continuous integration
+
+* **biochemistry:** disable task generateTestGrammarSource ([069b6fb](https://github.com/AlchemistSimulator/Alchemist/commit/069b6fb550fb10661dac981effb9f9daecf2ee2f))
+* **biochemistry:** make detekt tasks depend on generateGrammarSource ([aa71a09](https://github.com/AlchemistSimulator/Alchemist/commit/aa71a099111aaa2d57b0ae56a74d7c44db4748cd))
+* **biochemistry:** make tasks requiring generateGrammarSource explicitly depend on it ([3c83752](https://github.com/AlchemistSimulator/Alchemist/commit/3c837520af987a9c2155b0ade05282a5f6ab6de8))
+* **web-renderer:** make shadowJar depend on jsBrowserDistribution and simplify the dependency declarations ([5507c02](https://github.com/AlchemistSimulator/Alchemist/commit/5507c0222e2a7214729477bacf55684744b4d45d))
+* **web-renderer:** prefer the configuration avoidance API ([33a3ce3](https://github.com/AlchemistSimulator/Alchemist/commit/33a3ce3301e04cc67ffc767191a825d1756b86bd))
+* **web-renderer:** run shadowJar after distTar and distZip (if they are scheduled) ([d95827d](https://github.com/AlchemistSimulator/Alchemist/commit/d95827d69df2cde1b1ceaf270d5446df8a035d96))
+
+
+### Tests
+
+* **engine:** create a test scenario for goToTime bug ([a54a920](https://github.com/AlchemistSimulator/Alchemist/commit/a54a920a4df20f346a2c8914e372ef3d157d9b21))
+
+
+### Style improvements
+
+* **alchemist-engine:** break the comment in Engine ([f24ff43](https://github.com/AlchemistSimulator/Alchemist/commit/f24ff43011ff9ce2435ada36137d7297c21c6206))
+* **alchemist-engine:** break the comment in TestSimulationControl ([7490da6](https://github.com/AlchemistSimulator/Alchemist/commit/7490da6c8d6af527c0cfddba150a4cb502525943))
+
+
+### General maintenance
+
+* **buildSrc:** remove calls to deprecated methods ([6525422](https://github.com/AlchemistSimulator/Alchemist/commit/65254227ded81c54b9c1974ef5510d896dd03973))
+* **build:** update the Javadoc.io cache ([507d6b4](https://github.com/AlchemistSimulator/Alchemist/commit/507d6b47f38ffc167973627585ed41d02e0d1b5b))
+
 ## [25.14.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.14.1...25.14.2) (2023-02-22)
 
 

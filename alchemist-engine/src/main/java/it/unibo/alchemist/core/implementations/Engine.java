@@ -40,6 +40,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -277,13 +279,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public void goToStep(final long step) {
-        pauseWhen(() -> getStep() >= step);
+    public CompletableFuture<Void> goToStep(final long step) {
+        return pauseWhen(() -> getStep() >= step);
     }
 
     @Override
-    public void goToTime(final Time t) {
-        pauseWhen(() -> getTime().compareTo(t) >= 0);
+    public CompletableFuture<Void> goToTime(final Time t) {
+        return pauseWhen(() -> getTime().compareTo(t) >= 0);
     }
 
     private void idleProcessSingleCommand() throws Throwable {
@@ -311,13 +313,16 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         afterExecutionUpdates.add(new NeigborRemoved(node, n));
     }
 
-    private void newStatus(final Status next) {
+    private CompletableFuture<Void> newStatus(final Status next) {
+        var future = new CompletableFuture<Void>();
         schedule(() -> doOnStatus(() -> {
             if (next.isReachableFrom(status)) {
                 status = next;
                 lockForStatus(next).releaseAll();
             }
+            future.complete(null);
         }));
+        return future;
     }
 
     @Override
@@ -339,13 +344,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public void pause() {
-        newStatus(PAUSED);
+    public CompletableFuture<Void> pause() {
+        return newStatus(PAUSED);
     }
 
     @Override
-    public void play() {
-        newStatus(RUNNING);
+    public CompletableFuture<Void> play() {
+        return newStatus(RUNNING);
     }
 
     @Override
@@ -446,7 +451,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         }
     }
 
-    private void pauseWhen(final BooleanSupplier condition) {
+    private CompletableFuture<Void> pauseWhen(final BooleanSupplier condition) {
+        var future = new CompletableFuture<Void>();
         addOutputMonitor(new OutputMonitor<>() {
             @Override
             public void finished(@Nonnull final Environment<T, P> environment, @Nonnull final Time time, final long step) {
@@ -455,7 +461,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             @Override
             public void initialized(@Nonnull final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
-                    pause();
+                    monitors.remove(this);
+                    pause().thenRun(() -> future.complete(null));
                 }
             }
 
@@ -469,6 +476,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 initialized(environment);
             }
         });
+        return future;
     }
 
     @Override
@@ -486,8 +494,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     @Override
-    public void terminate() {
-        newStatus(TERMINATED);
+    public CompletableFuture<Void> terminate() {
+        return newStatus(TERMINATED);
     }
 
     @Override

@@ -10,6 +10,7 @@
 package it.unibo.alchemist.core.interfaces;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import it.unibo.alchemist.model.interfaces.Actionable;
@@ -92,14 +93,14 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      *
      * @param steps the number of steps to execute
      */
-    void goToStep(long steps);
+    CompletableFuture<Void> goToStep(long steps);
 
     /**
      * Executes the simulation until the target time is reached, then pauses it.
      *
      * @param t the target time
      */
-    void goToTime(Time t);
+    CompletableFuture<Void> goToTime(Time t);
 
     /**
      * This method must get called in case a a communication link connecting two
@@ -165,13 +166,13 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * Sends a pause command to the simulation.
      * There is no guarantee on when this command will be actually processed.
      */
-    void pause();
+    CompletableFuture<Void> pause();
 
     /**
      * Sends a play command to the simulation.
      * There is no guarantee on when this command will be actually processed.
      */
-    void play();
+    CompletableFuture<Void> play();
 
     /**
      * Adds a reaction during the simulation to the scheduler and start to execute it.
@@ -213,7 +214,7 @@ public interface Simulation<T, P extends Position<? extends P>> extends Runnable
      * Sends a terminate command to the simulation.
      * There is no guarantee on when this command will be actually processed.
      */
-    void terminate();
+    CompletableFuture<Void> terminate();
 
     /**
      * Suspends the caller until the simulation reaches the selected {@link Status} or the timeout ends.

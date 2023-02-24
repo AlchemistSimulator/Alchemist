@@ -31,31 +31,31 @@ class TestSimulationControl : FreeSpec(
                 environment.tickRate(1.0)
                 val jump = DoubleTime(10.0)
                 with(environment.simulation) {
-                    goToTime(jump)
+                    val jumpFuture = goToTime(jump)
                     play()
                     workerPool.submit { run() }
-                    waitFor(Status.PAUSED, 1, TimeUnit.SECONDS)
+                    jumpFuture.get(1, TimeUnit.SECONDS)
                     terminate()
                     time shouldBe jump
                 }
             }
             "goToTime should work twice" {
                 val environment = createEmptyEnvironment<Nothing>()
-                val awaitForNextJump = 100L
                 environment.tickRate(1.0)
                 val firstJump = DoubleTime(10.0)
                 val nextJump = DoubleTime(20.0)
                 with(environment.simulation) {
-                    goToTime(firstJump)
+                    val firstJumpFuture = goToTime(firstJump)
                     play()
+                    val secondJump = firstJumpFuture
+                        .thenCompose { goToTime(nextJump) }
+                    // concurrent w.r.t. second jump
+                    firstJumpFuture.thenRun {
+                        play()
+                    }
+                    firstJumpFuture.thenRun { time shouldBe firstJump }
                     workerPool.submit { run() }
-                    waitFor(Status.PAUSED, 1, TimeUnit.SECONDS)
-                    time shouldBe firstJump
-                    goToTime(nextJump)
-                    play()
-                    // best solution so far for now, you cannot be sure that the simulation is played again
-                    delay(awaitForNextJump)
-                    waitFor(Status.PAUSED, 1, TimeUnit.SECONDS)
+                    secondJump.get(1, TimeUnit.SECONDS)
                     terminate()
                     time shouldBe nextJump
                 }

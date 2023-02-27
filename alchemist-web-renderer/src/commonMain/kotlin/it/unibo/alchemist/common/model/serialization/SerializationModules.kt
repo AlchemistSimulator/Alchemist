@@ -10,7 +10,7 @@
 package it.unibo.alchemist.common.model.serialization
 
 import it.unibo.alchemist.common.model.surrogate.EmptyConcentrationSurrogate
-
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
@@ -23,10 +23,11 @@ object SerializationModules {
     /**
      * The [SerializersModule] used to serialize and deserialize all the possible Concentration types.
      */
+    @OptIn(ExperimentalSerializationApi::class)
     val concentrationModule = SerializersModule {
         polymorphic(Any::class) {
             subclass(EmptyConcentrationSurrogate::class)
-            default { EmptyConcentrationSurrogate.serializer() }
+            defaultDeserializer { EmptyConcentrationSurrogate.serializer() }
         }
     }
 }

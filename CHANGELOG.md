@@ -1,3 +1,25 @@
+## [25.14.6](https://github.com/AlchemistSimulator/Alchemist/compare/25.14.5...25.14.6) (2023-03-05)
+
+
+### Dependency updates
+
+* **deps:** update dependency gradle to v8.0.2 ([24f393b](https://github.com/AlchemistSimulator/Alchemist/commit/24f393b03e7da31ad8616456bce6b396e3403e89))
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.156 ([3ca1c3b](https://github.com/AlchemistSimulator/Alchemist/commit/3ca1c3b9998d2680f09fe8f5ac2dc5b3f4a19be7))
+* **deps:** update external-resources/learning-scafi-alchemist digest to e6405ea ([5f1e82a](https://github.com/AlchemistSimulator/Alchemist/commit/5f1e82ac28acec0efd3f0dab6ab8ca64fdf8aed5))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.5 ([220346f](https://github.com/AlchemistSimulator/Alchemist/commit/220346fa74fe5ade750d01be2123d888116b5b1e))
+* **deps:** update plugin publishoncentral to v3.3.3 ([73b108f](https://github.com/AlchemistSimulator/Alchemist/commit/73b108f7a3902feb5ee0a17351e4a00c284f7d69))
+* **deps:** update react to v18.2.0-pre.507 ([644a4db](https://github.com/AlchemistSimulator/Alchemist/commit/644a4db62beb3237537de389b8c5d11ab77fed9e))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([3d6a06e](https://github.com/AlchemistSimulator/Alchemist/commit/3d6a06eebd6838abff78a3eb1f111eeebd0b89ce))
+
+
+### Documentation
+
+* **deps:** update dependency org.jetbrains.dokka to v1.8.10 ([8e7f2ed](https://github.com/AlchemistSimulator/Alchemist/commit/8e7f2ed5ce46499795ff75a41b88b7197b435606))
+
 ## [25.14.5](https://github.com/AlchemistSimulator/Alchemist/compare/25.14.4...25.14.5) (2023-03-04)
 
 

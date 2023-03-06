@@ -51,6 +51,10 @@
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.4",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.4/element-list"
   },
+  "com.github.ben-manes.caffeine/caffeine/3.1.5": {
+    "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.5",
+    "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.5/element-list"
+  },
   "com.github.cb372/scalacache-core_2.13/0.28.0": {
     "first": "https://javadoc.io/doc/com.github.cb372/scalacache-core_2.13/0.28.0"
   },

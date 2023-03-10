@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
+import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.register
 import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
@@ -75,8 +76,8 @@ object Util {
         jarFile.get().asFile.nameWithoutExtension
             .removeSuffix("-all")
             .removePrefix("alchemist-")
-            .capitalize()
-            .replace(Regex("-([a-z])")) { it.groupValues[1].toUpperCase(Locale.US) }
+            .capitalized()
+            .replace(Regex("-([a-z])")) { it.groupValues[1].uppercase() }
             .replace("-", "")
         }ShadowJarOutput"
     ) {

@@ -97,8 +97,8 @@ public final class TimeStepMonitor<T, P extends Position<? extends P>> extends J
         time = curTime;
         step = curStep;
         if (!updateIsScheduled.get()) {
-            scheduleUpdate();
             updateIsScheduled.set(true);
+            scheduleUpdate();
         }
     }
 

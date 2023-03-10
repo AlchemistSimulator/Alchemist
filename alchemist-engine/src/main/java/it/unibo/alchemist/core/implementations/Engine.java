@@ -122,7 +122,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * {@link Scheduler} interfaces, don't use this constructor.
      *
      * @param e
-     *            the environment at the initial time
+     *            t
+     *            he environment at the initial time
      * @param maxSteps
      *            the maximum number of steps to do
      * @param t
@@ -455,6 +456,11 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             @Override
             public void initialized(@Nonnull final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
+                    /* here it is safe to remove the monitor,
+                       since it will always be called when
+                       the monitorLock is acquired
+                     */
+                    monitors.remove(this);
                     pause();
                 }
             }

@@ -51,6 +51,10 @@
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.4",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.4/element-list"
   },
+  "com.github.ben-manes.caffeine/caffeine/3.1.5": {
+    "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.5",
+    "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.1.5/element-list"
+  },
   "com.github.cb372/scalacache-core_2.13/0.28.0": {
     "first": "https://javadoc.io/doc/com.github.cb372/scalacache-core_2.13/0.28.0"
   },
@@ -220,6 +224,13 @@
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.154",
     "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.154/package-list"
   },
+  "io.github.classgraph/classgraph/4.8.155": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.155",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.155/package-list"
+  },
+  "io.github.classgraph/classgraph/4.8.156": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.156"
+  },
   "io.jenetics/jpx/2.3.0": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0/element-list"
@@ -238,6 +249,9 @@
   },
   "it.unimi.dsi/dsiutils/2.7.2": {
     "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.2"
+  },
+  "it.unimi.dsi/dsiutils/2.7.3": {
+    "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.7.3"
   },
   "net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.1.158": {
     "first": "https://javadoc.io/doc/net.anwiba.commons.swing.icons/org.oxygen.oxygen-icons/4.13.0-1.1.158"
@@ -562,5 +576,8 @@
   "org.yaml/snakeyaml/1.33": {
     "first": "https://javadoc.io/doc/org.yaml/snakeyaml/1.33",
     "second": "https://javadoc.io/doc/org.yaml/snakeyaml/1.33/package-list"
+  },
+  "org.yaml/snakeyaml/2.0": {
+    "first": "https://javadoc.io/doc/org.yaml/snakeyaml/2.0"
   }
 }

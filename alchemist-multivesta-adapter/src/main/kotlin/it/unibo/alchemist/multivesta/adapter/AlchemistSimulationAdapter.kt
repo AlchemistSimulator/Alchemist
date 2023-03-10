@@ -44,7 +44,7 @@ class AlchemistSimulationAdapter(private val simulation: Simulation<Any, *>) : S
     }
 
     private fun waitForTime(time: Time) {
-        // TODO: change implementation when simulation.goToTime() will be fixed
+        // to do: change implementation when simulation.goToTime() will be fixed
         while (simulation.time < time) {
             simulation.goToTime(time)
             simulation.play()

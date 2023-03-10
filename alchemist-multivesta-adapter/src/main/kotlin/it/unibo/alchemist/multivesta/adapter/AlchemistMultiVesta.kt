@@ -188,7 +188,7 @@ object AlchemistMultiVesta {
         }
         if (cmd.isSimulationAlreadyExecuted) {
             return ExperimentSimulationAdapter(ExperimentSimulationAdapter.GridType.REGULAR, seed)
-            // TODO: load the specified CSVAlchemistSimulationAdapter by using reflection
+            // to do: load the specified CSVAlchemistSimulationAdapter by using reflection
         }
         val launcher = AlchemistMultiVestaSimulationLauncher()
         launcher.launch(options)

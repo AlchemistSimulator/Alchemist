@@ -15,22 +15,25 @@ import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
+import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Save all available
+ * Save all available information in a static map.
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
  */
 class MultiVestaExporter<T, P : Position<P>> @JvmOverloads constructor(
     val interval: Double = DEFAULT_INTERVAL
 ) : AbstractExporter<T, P>(interval) {
 
+    private val logger = LoggerFactory.getLogger(MultiVestaExporter::class.java)
+
     override fun setup(environment: Environment<T, P>) {
         values = ConcurrentHashMap()
     }
 
     override fun exportData(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
-        println("Exporting data for time $time")
+        logger.info("Exporting data for time $time")
         values = values + (
             environment.simulation to dataExtractors.flatMap { extractor ->
                 extractor.extractData(environment, reaction, time, step).map { (dataLabel, dataValue) ->
@@ -41,7 +44,6 @@ class MultiVestaExporter<T, P : Position<P>> @JvmOverloads constructor(
     }
 
     override fun close(environment: Environment<T, P>, time: Time, step: Long) {
-        println("Closing exporter")
         values = values - environment.simulation
     }
 

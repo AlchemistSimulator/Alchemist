@@ -9,7 +9,13 @@
 
 package it.unibo.alchemist.multivesta.adapter.multivesta
 
+/**
+ * This object is used to launch MultiVesta.
+ */
 object MultiVestaEntryPoint {
+    /**
+     * Launches MultiVesta with the given arguments.
+     */
     fun launch(args: Array<String>) {
         // entrypointmultivesta.UniqueEntryPoint.main(args)
         val clazz = Class.forName("entrypointmultivesta.UniqueEntryPoint")

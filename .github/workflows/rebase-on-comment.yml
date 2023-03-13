@@ -2,9 +2,6 @@ on:
   issue_comment:
     types: [created]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-
 jobs:
   check-for-rebase:
     uses: DanySK/workflows/.github/workflows/rebase-on-comment.yml@master

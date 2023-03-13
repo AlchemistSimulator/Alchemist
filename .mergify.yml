@@ -1,4 +1,6 @@
 pull_request_rules:
+
+# This rule is disabled due to: 
 #   - name: Auto-rebase if appropriately labeled or if the author is an authorized bot
 #     conditions:
 #       - or:
@@ -12,6 +14,24 @@ pull_request_rules:
 #       - -conflict
 #     actions:
 #       rebase:
+
+# This rule (temporarily, hopefully) replaces the former
+  - name: Trigger an auto-rebase workflow
+    conditions:
+      - or:
+        - label=auto-update-rebase
+        - and:
+            - label=dependencies
+            - or: &authors_are_bots
+                - author=renovate[bot]
+                - author=dependabot[bot]
+      - -draft
+      - -conflict
+    actions:
+      comment:
+        message: |
+          /rebase
+
   - name: Auto-update with merge if appropriately labeled
     conditions:
       - label=auto-update-merge
@@ -19,6 +39,7 @@ pull_request_rules:
       - -conflict
     actions:
       update:
+
   - name: rebase-merge working updates
     conditions:
       - and:
@@ -36,6 +57,7 @@ pull_request_rules:
     actions:
       merge:
         method: rebase
+
   - name: ask to resolve conflict
     conditions:
       - conflict

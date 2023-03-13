@@ -1,0 +1,9 @@
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  check-for-rebase:
+    uses: DanySK/workflows/.github/workflows/rebase-on-comment.yml@master
+    secrets:
+      token: ${{ secrets.WORKFLOW_TOKEN }}

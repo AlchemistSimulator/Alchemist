@@ -231,6 +231,10 @@
   "io.github.classgraph/classgraph/4.8.156": {
     "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.156"
   },
+  "io.github.classgraph/classgraph/4.8.157": {
+    "first": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.157",
+    "second": "https://javadoc.io/doc/io.github.classgraph/classgraph/4.8.157/package-list"
+  },
   "io.jenetics/jpx/2.3.0": {
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0/element-list"

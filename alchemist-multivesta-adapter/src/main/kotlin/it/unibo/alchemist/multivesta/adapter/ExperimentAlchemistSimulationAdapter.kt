@@ -25,7 +25,7 @@ import java.io.File
  *             i.e. the seed given from MultiVesta
  * @param rootOutputFiles the root folder where the CSV files are stored
  */
-class ExperimentSimulationAdapter(
+class ExperimentAlchemistSimulationAdapter(
     /**
      * The type of grid used in the experiment.
      */

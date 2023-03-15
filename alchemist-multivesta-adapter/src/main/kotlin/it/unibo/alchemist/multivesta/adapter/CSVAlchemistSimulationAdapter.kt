@@ -13,7 +13,7 @@ import it.unibo.alchemist.multivesta.adapter.utils.SeedsManager
 import java.io.File
 
 /**
- * This is a [SimulationAdapter] that loads an already executed simulation's data from a CSV file.
+ * This is a [AlchemistSimulationAdapter] that loads an already executed simulation's data from a CSV file.
  * The file is chosen by randomly selecting a seed from the currently available seeds list and then
  * by applying the [filenameForSeed] function to the selected seed.
  * The selected seed is then removed from the available seeds list.
@@ -25,18 +25,18 @@ import java.io.File
  *                        (the file must be in the [rootOutputFiles] folder)
  * @throws IllegalStateException if the available seeds list is empty
  */
-abstract class CSVAlchemistSimulationAdapter(
-    seed: Int,
-    rootOutputFiles: File,
+open class CSVAlchemistSimulationAdapter(
+    val seed: Int,
+    val rootOutputFiles: File,
     filenameForSeed: (Int) -> String
-) : SimulationAdapter {
+) : AlchemistSimulationAdapter {
     private val alchemistStateObservations: List<AlchemistStateObservations>
     private var time = 0
     init {
-        val effectiveSeed = SeedsManager.popNextAvailableSeed(seed) ?: throw IllegalStateException(
+        val effectiveSeed = checkNotNull(SeedsManager.popNextAvailableSeed(seed)) {
             "MultiVesta cannot reached the requested confidence level with the given delta. " +
                 "Try to increase the number of simulations or to decrease the delta/confidence."
-        )
+        }
         val filename = filenameForSeed(effectiveSeed)
         val simulationFile = File(rootOutputFiles, filename)
         alchemistStateObservations = AlchemistSimStatesLoader.fromCSV(simulationFile.absolutePath)

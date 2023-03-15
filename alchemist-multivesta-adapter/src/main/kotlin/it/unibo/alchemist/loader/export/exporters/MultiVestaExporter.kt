@@ -7,10 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.multivesta.adapter.exporter
+package it.unibo.alchemist.loader.export.exporters
 
 import it.unibo.alchemist.core.interfaces.Simulation
-import it.unibo.alchemist.loader.export.exporters.AbstractExporter
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position

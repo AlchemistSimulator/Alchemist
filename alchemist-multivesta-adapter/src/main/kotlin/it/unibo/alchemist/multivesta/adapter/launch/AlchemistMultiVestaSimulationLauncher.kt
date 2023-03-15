@@ -32,7 +32,7 @@ class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
     /**
      * The simulation that was launched.
      */
-    lateinit var simulation: Simulation<Any, *>
+    lateinit var simulation: Simulation<Any, Nothing>
         private set
 
     override fun additionalValidation(currentOptions: AlchemistExecutionOptions) = with(currentOptions) {
@@ -45,6 +45,9 @@ class AlchemistMultiVestaSimulationLauncher : SimulationLauncher() {
         }
     }
 
+    /**
+     * Launch the simulation and pause it immediately before step 0.
+     */
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
         simulation = prepareSimulation(loader, parameters, emptyMap<String, Any>())
         logger.info("Simulation prepared")

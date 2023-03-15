@@ -42,9 +42,9 @@ object AlchemistSimStatesLoader {
     private fun parseHeader(reader: BufferedReader, separator: String): List<String> {
         var line: String?
         while (reader.readLine().also { line = it?.trim() } != null && line?.startsWith("#") == true) {
-            if (line!!.contains("meaning")) {
+            if (line?.contains("meaning") == true) {
                 reader.readLine().also { line = it?.replace("#", "")?.trim() }
-                return line!!.split(separator)
+                return line?.split(separator).orEmpty()
             }
         }
         return emptyList()
@@ -55,10 +55,10 @@ object AlchemistSimStatesLoader {
         val simStates = mutableListOf<AlchemistStateObservations>()
         var line: String?
         while (reader.readLine().also { line = it?.trim() } != null) {
-            if (line!!.startsWith("#")) {
+            if (line?.startsWith("#") == true) {
                 continue
             }
-            val values = line!!.split(separator)
+            val values = line?.split(separator).orEmpty()
             val time = values[0].toDouble()
             val simState = AlchemistStateObservations(time)
             for (i in 1 until values.size) {

@@ -10,7 +10,7 @@
 package it.unibo.alchemist.multivesta.adapter.multivesta
 
 import it.unibo.alchemist.multivesta.adapter.AlchemistMultiVesta.launchSimulation
-import it.unibo.alchemist.multivesta.adapter.SimulationAdapter
+import it.unibo.alchemist.multivesta.adapter.AlchemistSimulationAdapter
 import vesta.mc.NewState
 import vesta.mc.ParametersForState
 
@@ -27,7 +27,7 @@ class AlchemistSimState(parameters: ParametersForState) : NewState(parameters) {
     /**
      * An object representing the actual simulator
      */
-    private lateinit var alchemistSimulator: SimulationAdapter
+    private lateinit var alchemistSimulator: AlchemistSimulationAdapter
 
     /**
      * This method is invoked before starting every new simulation.

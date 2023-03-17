@@ -1,0 +1,7 @@
+obsAtStep(what,count) =
+ if ( s.rval(what) == count )
+   then s.rval("step")
+   else # obsAtStep(what,count)
+ fi ;
+eval parametric(E[ obsAtStep("heads",count)], count, 1,1,10);
+

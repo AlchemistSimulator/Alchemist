@@ -135,7 +135,7 @@ testing-runtimeOnly = [ "junit-engine" ]
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gitSemVer = "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin:1.1.4"
-hugo = "io.github.fstaudt.hugo:0.5.1"
+hugo = "io.github.fstaudt.hugo:0.6.0"
 java-qa = "org.danilopianini.gradle-java-qa:1.6.0"
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

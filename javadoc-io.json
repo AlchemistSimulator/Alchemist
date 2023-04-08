@@ -156,6 +156,9 @@
     "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.0",
     "second": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.0/element-list"
   },
+  "com.miglayout/miglayout-swing/11.1": {
+    "first": "https://javadoc.io/doc/com.miglayout/miglayout-swing/11.1"
+  },
   "com.uchuhimo/konf/1.1.2": {
     "first": "https://javadoc.io/doc/com.uchuhimo/konf/1.1.2"
   },

@@ -143,7 +143,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-qa = "org.danilopianini.gradle-kotlin-qa:0.36.1"
 multiJvmTesting = "org.danilopianini.multi-jvm-test-plugin:0.4.19"
-publishOnCentral = "org.danilopianini.publish-on-central:4.1.0"
+publishOnCentral = "org.danilopianini.publish-on-central:4.1.1"
 scalafmt = "cz.alenkacz.gradle.scalafmt:1.16.2"
 scalatest = "com.github.maiflai.scalatest:0.32"
 shadowJar = "com.github.johnrengelman.shadow:8.1.1"

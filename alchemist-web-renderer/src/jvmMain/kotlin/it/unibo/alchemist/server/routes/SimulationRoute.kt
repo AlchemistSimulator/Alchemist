@@ -41,11 +41,9 @@ object SimulationRoute {
      */
     fun Route.simulationStatus() {
         get(simulationStatusPath) {
-            respond(
-                store.state.simulation?.status?.let { status ->
-                    Response(OK, status.toStatusSurrogate())
-                } ?: Response(InternalServerError, "Simulation not loaded.")
-            )
+            store.state.simulation?.status?.toStatusSurrogate()?.let { status ->
+                respond(Response(OK, status))
+            } ?: respond(Response(InternalServerError, "Simulation not loaded."))
         }
     }
 

@@ -16,32 +16,35 @@ import it.unibo.alchemist.client.logic.RESTUpdateStateStrategy
 import it.unibo.alchemist.client.logic.updateState
 import it.unibo.alchemist.client.state.ClientStore.store
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.img
+import react.useEffectOnce
 import react.useState
-import web.timers.setInterval
-import kotlin.time.Duration
 
 private val scope = MainScope()
+private const val UPDATE_STATE_DELAY: Long = 100
 
 /**
  * The application main content section.
  */
 val AppContent: FC<Props> = FC {
 
-    val intervalDuration = "5s"
     var bitmap: Bitmap? by useState(null)
 
     store.subscribe {
         bitmap = store.state.bitmap
     }
 
-    setInterval(Duration.parse(intervalDuration)) {
+    useEffectOnce {
         scope.launch {
-            updateState(store.state.renderMode, RESTUpdateStateStrategy(), HwAutoRenderModeStrategy())
+            while (true) {
+                updateState(store.state.renderMode, RESTUpdateStateStrategy(), HwAutoRenderModeStrategy())
+                delay(UPDATE_STATE_DELAY)
+            }
         }
     }
 

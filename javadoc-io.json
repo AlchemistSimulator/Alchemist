@@ -129,6 +129,10 @@
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/5.3",
     "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/5.3/package-list"
   },
+  "com.graphhopper/graphhopper-core/7.0": {
+    "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/7.0",
+    "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/7.0/package-list"
+  },
   "com.graphhopper/graphhopper-core/7.0-pre1": {
     "first": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/7.0-pre1",
     "second": "https://javadoc.io/doc/com.graphhopper/graphhopper-core/7.0-pre1/package-list"

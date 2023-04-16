@@ -70,10 +70,10 @@ class GraphHopperOptions private constructor(
             VehicleEncodedValuesFactory.BIKE,
             VehicleEncodedValuesFactory.CAR,
             VehicleEncodedValuesFactory.FOOT,
-            VehicleEncodedValuesFactory.HIKE,
             VehicleEncodedValuesFactory.MOTORCYCLE,
             VehicleEncodedValuesFactory.MOUNTAINBIKE,
             VehicleEncodedValuesFactory.RACINGBIKE,
+            VehicleEncodedValuesFactory.ROADS,
             VehicleEncodedValuesFactory.WHEELCHAIR,
         )
 

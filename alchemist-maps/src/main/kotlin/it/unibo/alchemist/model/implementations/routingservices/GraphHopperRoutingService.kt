@@ -18,6 +18,7 @@ import com.graphhopper.routing.ev.VehicleAccess
 import com.graphhopper.routing.util.AccessFilter
 import com.graphhopper.routing.util.DefaultVehicleEncodedValuesFactory
 import com.graphhopper.routing.util.EncodingManager
+import com.graphhopper.util.PMap
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
@@ -82,8 +83,9 @@ class GraphHopperRoutingService @JvmOverloads constructor(
         }
         accessFilters = Caffeine.newBuilder().build {
             AccessFilter.allEdges(
-                EncodingManager
-                    .create(vehicleEncoder, it.profile.vehicle)
+                EncodingManager.start()
+                    .add(vehicleEncoder.createVehicleEncodedValues(it.profile.vehicle, emptyPMap))
+                    .build()
                     .getBooleanEncodedValue(VehicleAccess.key(it.profile.vehicle))
             )
         }
@@ -125,6 +127,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
     companion object {
         private val logger = LoggerFactory.getLogger(GraphHopperRoutingService::class.java)
         private val lockfileLock = Semaphore(1)
+        private val emptyPMap: PMap = PMap()
         private val vehicleEncoder = DefaultVehicleEncodedValuesFactory()
 
         /**

@@ -252,7 +252,7 @@ allprojects {
         licenseName.set("GPL 3.0 with linking exception")
         licenseUrl.set("https://github.com/$repoSlug/blob/develop/LICENSE.md")
         scmConnection.set("git:git@github.com:$repoSlug.git")
-        repository("https://maven.pkg.github.com/${repoSlug.toLowerCase()}") {
+        repository("https://maven.pkg.github.com/${repoSlug.lowercase()}") {
             user.set("DanySK")
             password.set(System.getenv("GITHUB_TOKEN"))
         }

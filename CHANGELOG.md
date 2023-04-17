@@ -1,3 +1,42 @@
+## [25.15.3](https://github.com/AlchemistSimulator/Alchemist/compare/25.15.2...25.15.3) (2023-04-17)
+
+
+### Bug Fixes
+
+* **web-renderer:** solve coroutine bug caused by useEffect ([15bd41e](https://github.com/AlchemistSimulator/Alchemist/commit/15bd41e96e2f453142a5fc4ee43d9ee81f28542f))
+* **web-renderer:** solve serialization problem in StatusSurrogate get API ([d0a5140](https://github.com/AlchemistSimulator/Alchemist/commit/d0a5140e3fd2492f85951ca38ea19e7784f14ffa))
+
+
+### Build and continuous integration
+
+* **deps:** update actions/checkout action to v3.5.2 ([2cfe9cb](https://github.com/AlchemistSimulator/Alchemist/commit/2cfe9cb64475dcb15b0f763fb4831c97a605c61b))
+* **deps:** update danysk/action-checkout action to v0.2.9 ([807391d](https://github.com/AlchemistSimulator/Alchemist/commit/807391d0b9d791a1d0188faade086d5435e8283b))
+
+
+### General maintenance
+
+* **build:** update the Javadoc.io cache ([5346635](https://github.com/AlchemistSimulator/Alchemist/commit/5346635c9d00dd01ff7e5a6e1916e4f3d7c27eb9))
+
+
+### Dependency updates
+
+* **deps:** update dependency com.graphhopper:graphhopper-core to v7.0 ([#2092](https://github.com/AlchemistSimulator/Alchemist/issues/2092)) ([e15da1e](https://github.com/AlchemistSimulator/Alchemist/commit/e15da1ebe3807d58c501c3d326a22ad6ee2aa6f4))
+* **deps:** update dependency gradle to v8.1 ([57fbba1](https://github.com/AlchemistSimulator/Alchemist/commit/57fbba14a090dd67d122ea556e754b28dc6b1dae))
+* **deps:** update dependency org.scalatest:scalatest_2.13 to v3.3.0-snap4 ([d3b4e35](https://github.com/AlchemistSimulator/Alchemist/commit/d3b4e357d425d6fb4054ebb457dcdd35eb9943d5))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.24 ([f72a6f3](https://github.com/AlchemistSimulator/Alchemist/commit/f72a6f3b99d2baee5cd5271844a19db0760b5a1c))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.25 ([188ac6e](https://github.com/AlchemistSimulator/Alchemist/commit/188ac6e3ca57220fc27afe34f0f18b02f6924965))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 14a1eec ([9ce2d8d](https://github.com/AlchemistSimulator/Alchemist/commit/9ce2d8d4e936a0d292c7e3f478cc5dad987d4424))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 1cf7226 ([df9d202](https://github.com/AlchemistSimulator/Alchemist/commit/df9d2023dcb15cd11c77ca9d49495cf14e97df86))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ce93730 ([a457093](https://github.com/AlchemistSimulator/Alchemist/commit/a457093b6376738fdf1ce2d9becbb3f2cbb4b5b1))
+* **deps:** update external-resources/learning-scafi-alchemist digest to e15d5ff ([b75f053](https://github.com/AlchemistSimulator/Alchemist/commit/b75f05390d93857d80c6aa377ca2aff371ab75f5))
+* **deps:** update node.js to 18.16 ([a70ad99](https://github.com/AlchemistSimulator/Alchemist/commit/a70ad99fba972d66d01c4219508b8f34f1333b58))
+* **deps:** update plugin gitsemver to v1.1.7 ([9ede634](https://github.com/AlchemistSimulator/Alchemist/commit/9ede6345b2e3b6ac7b85b7a86334d7bbe1cc8380))
+* **deps:** update plugin publishoncentral to v4.1.0 ([2a3a3fe](https://github.com/AlchemistSimulator/Alchemist/commit/2a3a3fe32a5df002227151f90411cc17ff220c83))
+* **deps:** update plugin publishoncentral to v4.1.1 ([ffbe4bb](https://github.com/AlchemistSimulator/Alchemist/commit/ffbe4bbf05f8c3c759b8927571f6e3f7c5840a24))
+* **deps:** update react to v18.2.0-pre.536 (patch) ([#2152](https://github.com/AlchemistSimulator/Alchemist/issues/2152)) ([c2d7a22](https://github.com/AlchemistSimulator/Alchemist/commit/c2d7a2261901617c8db916a286a756944987092b))
+* **deps:** update react to v18.2.0-pre.537 ([46e5e46](https://github.com/AlchemistSimulator/Alchemist/commit/46e5e46015b7cfcc536bd735013c4205e98236b7))
+* **deps:** update react to v18.2.0-pre.538 ([676d894](https://github.com/AlchemistSimulator/Alchemist/commit/676d8946cedac1e5ea421a12909ea59013dae9e6))
+
 ## [25.15.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.15.1...25.15.2) (2023-04-12)
 
 

@@ -29,17 +29,19 @@ class Nearest<T>(
                 otherActions.pickNearestOrFirst(environment, node),
             )
         }
+    },
+) {
+    companion object {
+        /**
+         * Picks the [SteeringActionWithTarget] whose target is nearest to the [node]'s current position, or the first
+         * action of the list if none of them has a defined target. If the list is empty, null is returned.
+         */
+        private fun <T> List<SteeringAction<T, Euclidean2DPosition>>.pickNearestOrFirst(
+            environment: Environment<T, Euclidean2DPosition>,
+            node: Node<T>,
+        ): SteeringAction<T, Euclidean2DPosition>? =
+            filterIsInstance<SteeringActionWithTarget<T, Euclidean2DPosition>>()
+                .minByOrNull { it.targetDistanceTo(node, environment) }
+                ?: firstOrNull()
     }
-)
-
-/**
- * Picks the [SteeringActionWithTarget] whose target is nearest to the [node]'s current position, or the first
- * action of the list if none of them has a defined target. If the list is empty, null is returned.
- */
-fun <T> List<SteeringAction<T, Euclidean2DPosition>>.pickNearestOrFirst(
-    environment: Environment<T, Euclidean2DPosition>,
-    node: Node<T>,
-): SteeringAction<T, Euclidean2DPosition>? = this
-    .filterIsInstance<SteeringActionWithTarget<T, Euclidean2DPosition>>()
-    .minByOrNull { it.targetDistanceTo(node, environment) }
-    ?: firstOrNull()
+}

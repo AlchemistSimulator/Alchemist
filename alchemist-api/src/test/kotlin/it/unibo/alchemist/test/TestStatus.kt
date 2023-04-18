@@ -33,7 +33,7 @@ class TestStatus : StringSpec({
             row(READY, allStatuses.minusElement(INIT)),
             row(PAUSED, setOf(RUNNING, TERMINATED)),
             row(RUNNING, setOf(PAUSED, TERMINATED)),
-            row(TERMINATED, emptySet())
+            row(TERMINATED, emptySet()),
         ) { initial, states ->
             val reachable = states + initial
             reachable.forEach { it should beReachableFrom(initial) }

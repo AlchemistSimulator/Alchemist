@@ -20,7 +20,7 @@ class DistanceWeighted<T>(
     /**
      * Default weight for steering actions without a defined target.
      */
-    private val defaultWeight: Double = 1.0
+    private val defaultWeight: Double = 1.0,
 ) : Weighted<T>(
     environment,
     node,
@@ -30,5 +30,5 @@ class DistanceWeighted<T>(
         } else {
             defaultWeight
         }
-    }
+    },
 )

@@ -72,7 +72,7 @@ class SinglePrevalent<T, N : ConvexPolygon>(
      * has been found. In other words, the time complexity for computing w is O(1 / delta). This can be
      * reduced to O(1) in the future.
      */
-    private val delta: Double = DEFAULT_DELTA
+    private val delta: Double = DEFAULT_DELTA,
 ) : Weighted<T>(environment, node, { 0.0 }) {
 
     companion object {
@@ -80,15 +80,18 @@ class SinglePrevalent<T, N : ConvexPolygon>(
          * On average, it was observed that this value allows the pedestrian not to get stuck in obstacles.
          */
         const val DEFAULT_TOLERANCE_ANGLE = Math.PI / 4
+
         /**
          * Empirically found to produce a good smoothing while leaving enough freedom of movement to the pedestrian
          * (e.g. to perform sudden changes of direction).
          */
         const val DEFAULT_ALPHA = 0.5
+
         /**
          * Empirically found to produce natural movements.
          */
         const val DEFAULT_MAX_WALK_RATIO = 0.3
+
         /**
          * Good trade-off between efficiency and accuracy.
          */

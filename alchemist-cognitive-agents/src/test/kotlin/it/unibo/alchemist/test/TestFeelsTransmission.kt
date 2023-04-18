@@ -39,9 +39,9 @@ class TestFeelsTransmission<T, P> : StringSpec({
             .also { it.layers shouldNot beEmpty() }
             .dangerIsLoaded()
             .startSimulation()
-        val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>(
-            "feels-transmission-without-layer.yml"
-        ).also { it.layers should beEmpty() }.startSimulation()
+        val aggregateDangerWithoutLayer = loadYamlSimulation<T, P>("feels-transmission-without-layer.yml")
+            .also { it.layers should beEmpty() }
+            .startSimulation()
         println("Without layer aggregate danger: $aggregateDangerWithoutLayer")
         println("With layer aggregate danger: $aggregateDangerWithLayer")
         aggregateDangerWithLayer.perceivedDanger() shouldBeGreaterThan aggregateDangerWithoutLayer.perceivedDanger()
@@ -54,7 +54,7 @@ class TestFeelsTransmission<T, P> : StringSpec({
                 e.nodes.forEach {
                     e.getPosition(it).distanceTo(e.makePosition(-50.0, 0.0)) shouldBeLessThan 13.0
                 }
-            }
+            },
         )
     }
 }) where P : Position<P>, P : Vector<P>

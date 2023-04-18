@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  */
 open class Filtered<T, P>(
     private val steerStrategy: SteeringStrategy<T, P>,
-    private val filter: List<SteeringAction<T, P>>.() -> List<SteeringAction<T, P>>
+    private val filter: List<SteeringAction<T, P>>.() -> List<SteeringAction<T, P>>,
 ) : SteeringStrategy<T, P> by steerStrategy
     where P : Position<P>, P : Vector<P> {
 

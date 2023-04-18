@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 open class Weighted<T>(
     private val environment: Euclidean2DEnvironment<T>,
     private val node: Node<T>,
-    private val weight: SteeringAction<T, Euclidean2DPosition>.() -> Double
+    private val weight: SteeringAction<T, Euclidean2DPosition>.() -> Double,
 ) : SteeringStrategy<T, Euclidean2DPosition> {
 
     /**

@@ -8,8 +8,8 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 import kotlin.math.abs
@@ -33,7 +33,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
                 environment.nodes.forEach {
                     endDistances[it] = environment.getPosition(it).distanceTo(environment.origin)
                 }
-            }
+            },
         ).nodes.forEach { startDistances[it]!! shouldBeGreaterThan endDistances[it]!! }
     }
 
@@ -50,7 +50,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
                 e.nodes.forEach {
                     endDistances[it] = e.getPosition(it).distanceTo(e.origin)
                 }
-            }
+            },
         ).nodes.forEach { startDistances[it]!! shouldBeLessThan endDistances[it]!! }
     }
 
@@ -62,7 +62,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
                     e.nodes.forEach {
                         nodesPositions[it]?.add(e.getPosition(it))
                     }
-                }
+                },
             )
             nodesPositions.values.forEach { list ->
                 val paired = list.asSequence()
@@ -97,7 +97,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
                         }
                     }
             },
-            steps = 20000
+            steps = 20000,
         )
     }
 
@@ -112,7 +112,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
                     }
                 }
             },
-            steps = 30000
+            steps = 30000,
         )
     }
 
@@ -123,7 +123,7 @@ class TestSteeringBehaviors<T, P> : StringSpec({
                     e.getPosition(it).distanceTo(e.makePosition(600.0, 240.0)) shouldBeLessThan 10.0
                 }
             },
-            steps = 26000
+            steps = 26000,
         )
     }
 }) where P : Position2D<P>, P : Vector2D<P>

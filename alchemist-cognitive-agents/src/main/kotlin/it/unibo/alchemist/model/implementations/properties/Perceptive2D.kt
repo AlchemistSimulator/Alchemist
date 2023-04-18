@@ -41,6 +41,7 @@ class Perceptive2D<T> @JvmOverloads constructor(
          * Default aperture of pedestrian's [fieldOfView].
          */
         const val defaultFieldOfViewAperture = Math.PI / 180 * 80
+
         /**
          * Default depth of pedestrian's [fieldOfView].
          */

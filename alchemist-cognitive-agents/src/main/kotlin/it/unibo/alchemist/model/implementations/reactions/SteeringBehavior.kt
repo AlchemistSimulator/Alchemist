@@ -30,7 +30,7 @@ open class SteeringBehavior<T>(
      */
     protected open val pedestrian: PedestrianProperty<T>,
     timeDistribution: TimeDistribution<T>,
-    open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>
+    open val steerStrategy: SteeringStrategy<T, Euclidean2DPosition>,
 ) : AbstractReaction<T>(pedestrian.node, timeDistribution) {
 
     /**
@@ -45,7 +45,7 @@ open class SteeringBehavior<T>(
     override fun updateInternalStatus(
         currentTime: Time?,
         hasBeenExecuted: Boolean,
-        environment: Environment<T, *>?
+        environment: Environment<T, *>?,
     ) = Unit
 
     override fun execute() {

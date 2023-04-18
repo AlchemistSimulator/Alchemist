@@ -47,8 +47,8 @@ open class NavigationPrioritisedSteering<T, N : ConvexPolygon> @JvmOverloads con
         prevalent = { singleNavigationAction() },
         maxWalk = { pedestrian.speed() / timeDistribution.rate },
         toleranceAngle = Math.toRadians(toleranceAngle),
-        alpha = alpha
-    )
+        alpha = alpha,
+    ),
 ) {
 
     companion object {

@@ -119,7 +119,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                     "graph" to graph,
                     "incarnation" to environment.incarnation,
                     "environment" to environment,
-                )
+                ),
             )
         }
         check(reaction.inputContext != Context.GLOBAL || inGlobals.remove(reaction)) {
@@ -216,7 +216,7 @@ class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : De
                     "incarnation" to environment.incarnation,
                     "environment" to environment,
                     "reaction" to reaction,
-                )
+                ),
             )
         }
         return ListSets.emptyListSet()

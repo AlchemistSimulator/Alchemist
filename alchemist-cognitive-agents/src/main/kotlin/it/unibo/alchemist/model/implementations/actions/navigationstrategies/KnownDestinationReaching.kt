@@ -36,7 +36,7 @@ open class KnownDestinationReaching<T, L : Euclidean2DConvexShape, R>(
     /**
      * Known destinations (must not be empty).
      */
-    private val destinations: List<Euclidean2DPosition>
+    private val destinations: List<Euclidean2DPosition>,
     /*
      * An empty list is passed to super method, because route is initialised in this class' init block.
      */

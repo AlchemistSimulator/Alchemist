@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
  */
 open class DynamicPursuing<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
-    override var destination: Euclidean2DPosition
+    override var destination: Euclidean2DPosition,
 ) : Pursuing<T, L, R>(action, destination) {
 
     /**

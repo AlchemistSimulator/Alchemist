@@ -41,7 +41,7 @@ open class Pursuing<T, L : Euclidean2DConvexShape, R>(
     /**
      * The destination to pursue.
      */
-    protected open val destination: Euclidean2DPosition
+    protected open val destination: Euclidean2DPosition,
 ) : Exploring<T, L, R>(action) {
 
     private lateinit var doorsRankings: Map<Euclidean2DPassage, Int>

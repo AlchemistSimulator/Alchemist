@@ -38,7 +38,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     /**
      * Weight assigned to known impasses, see [impasseFactor].
      */
-    private val knownImpasseWeight: Double = DEFAULT_IMPASSE_WEIGHT
+    private val knownImpasseWeight: Double = DEFAULT_IMPASSE_WEIGHT,
 ) : NavigationStrategy2D<T, L, R, ConvexPolygon, Euclidean2DPassage> {
 
     companion object {

@@ -86,4 +86,4 @@ interface NavigationAction<T, P, A, L, R, N, E> : SteeringAction<T, P>
  * A [NavigationAction] in a bidimensional euclidean space.
  */
 typealias NavigationAction2D<T, L, R, N, E> =
-    NavigationAction<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>
+NavigationAction<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>

@@ -13,7 +13,7 @@ package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 class DesireWalkRandomly(
     private val compliance: Double,
     private val dangerBelief: () -> Double,
-    private val fear: () -> Double
+    private val fear: () -> Double,
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() =

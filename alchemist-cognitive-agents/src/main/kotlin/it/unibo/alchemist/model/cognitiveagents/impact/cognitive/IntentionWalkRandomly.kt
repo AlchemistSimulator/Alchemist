@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.logistic
  */
 class IntentionWalkRandomly(
     private val desireWalkRandomly: () -> Double,
-    private val desireEvacuate: () -> Double
+    private val desireEvacuate: () -> Double,
 ) : BodyCognitiveCharacteristic() {
 
     override fun combinationFunction() =
@@ -20,6 +20,6 @@ class IntentionWalkRandomly(
             logisticSigma,
             logisticTau,
             inhibitingIntentionOmega * desireEvacuate(),
-            amplifyingIntentionOmega * desireWalkRandomly()
+            amplifyingIntentionOmega * desireWalkRandomly(),
         )
 }

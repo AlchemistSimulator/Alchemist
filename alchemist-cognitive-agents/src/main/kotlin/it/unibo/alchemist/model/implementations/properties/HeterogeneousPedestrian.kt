@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.HumanProperty
-import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.properties.HumanProperty
+import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * A heterogeneous pedestrian's movement capability.

@@ -37,7 +37,7 @@ class Human<T> @JvmOverloads constructor(
         gender: String,
         speed: Speed = Speed(Age.fromAny(age), Gender.fromString(gender), randomGenerator),
         compliance: Double = Compliance(Age.fromAny(age), Gender.fromString(gender)).level,
-        helpAttitude: HelpAttitude = HelpAttitude(Age.fromAny(age), Gender.fromString(gender))
+        helpAttitude: HelpAttitude = HelpAttitude(Age.fromAny(age), Gender.fromString(gender)),
     ) : this(randomGenerator, node, Age.fromAny(age), Gender.fromString(gender), speed, compliance, helpAttitude)
 
     override fun cloneOnNewNode(node: Node<T>) = Human(

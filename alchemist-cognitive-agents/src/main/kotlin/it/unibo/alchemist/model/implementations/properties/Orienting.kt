@@ -97,7 +97,7 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
          * Only the edges in the spanning tree are maintained.
          */
         fullGraph.removeAllEdges(
-            fullGraph.edgeSet() - PrimMinimumSpanningTree(fullGraphWeighted).spanningTree.edges
+            fullGraph.edgeSet() - PrimMinimumSpanningTree(fullGraphWeighted).spanningTree.edges,
         )
         fullGraph
     }

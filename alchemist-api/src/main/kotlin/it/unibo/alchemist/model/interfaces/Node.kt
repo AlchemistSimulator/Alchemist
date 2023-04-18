@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.interfaces.Node.Companion.takeIfInstance
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf

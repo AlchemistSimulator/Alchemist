@@ -247,19 +247,23 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
     protected enum class NavigationState {
         START,
         NEW_ROOM,
+
         /**
          * Moving towards the first crossing point (see [crossDoor]).
          */
         MOVING_TO_CROSSING_POINT_1,
+
         /**
          * Moving towards the second crossing point (see [crossDoor]).
          */
         MOVING_TO_CROSSING_POINT_2,
+
         /**
          * When the second crossing point [isReached] (see [crossDoor]), the node may still be outside
          * any room. In such case it moves towards [expectedNewRoom] centroid until he/she enters a room.
          */
         CROSSING_DOOR,
+
         /**
          * Moving to the final destination, which is inside [currentRoom] (this means it can be directly
          * approached as no obstacle is placed in between).

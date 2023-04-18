@@ -48,7 +48,7 @@ class TestSensory<T> : StringSpec({
 
     "field of view" {
         val environment = Continuous2DEnvironment<T>(
-            SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow()
+            SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
         )
         val rand = MersenneTwister(1)
         environment.linkingRule = NoLinks()

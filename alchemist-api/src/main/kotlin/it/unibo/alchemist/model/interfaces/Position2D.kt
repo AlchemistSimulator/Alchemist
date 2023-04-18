@@ -17,10 +17,12 @@ interface Position2D<P : Position2D<P>> : Position<P> {
 
     @Deprecated("Access to coordinates in a 2D manifold should be performed using getX / getY")
     override fun getCoordinate(dimension: Int): Double
+
     /**
      * @return horizontal position
      */
     val x: Double
+
     /**
      * @return vertical position
      */

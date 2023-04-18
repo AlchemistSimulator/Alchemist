@@ -1,0 +1,35 @@
+name: Update the ancillary files
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  update-ancillary-files:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: javadoc-io-${{ github.workflow }}-${{ github.event.number || github.ref }}
+    steps:
+      - name: Checkout
+        uses: danysk/action-checkout@0.2.9
+        with:
+          token: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - uses: DanySK/build-check-deploy-gradle-action@2.2.3
+        with:
+          build-command: ./gradlew kotlinUpgradeYarnLock --parallel
+          check-command: |
+            git config user.name 'Danilo Pianini [bot]'
+            git config user.email 'danilo.pianini@gmail.com'
+            if git status | grep -P '^\s+modified:\s+javadoc-io\.json$'; then
+              git add javadoc-io.json
+              git commit -m 'chore(build): update the javadoc.io cache'
+              git push
+            fi
+            if git status | grep -P '^\s+modified:\s+kotlin-js-store\/yarn\.lock$'; then
+              git add kotlin-js-store/yarn.lock
+              git commit -m 'chore(build): actualize the `yarn.lock` file'
+              git push
+            fi
+          should-run-codecov: false
+          should-deploy: false

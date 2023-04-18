@@ -19,6 +19,7 @@ jobs:
         uses: danysk/action-checkout@0.2.9
       - uses: DanySK/build-check-deploy-gradle-action@2.2.3
         with:
+          pre-build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           # check that all tasks used in subsequent phases are there
           build-command: |
             COMMAND="./gradlew \
@@ -56,7 +57,7 @@ jobs:
         uses: danysk/action-checkout@0.2.9
       - uses: DanySK/build-check-deploy-gradle-action@2.2.3
         with:
-          build-command: true
+          build-command: ./gradlew kotlinUpgradeYarnLock --parallel
           check-command: true
           deploy-command: |
             COMMAND="./gradlew uploadJvm uploadJs uploadKotlinOSSRH uploadKotlinMultiplatform close drop --parallel"

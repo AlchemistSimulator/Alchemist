@@ -30,7 +30,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  */
 open class GoalOrientedExploring<T, L : Euclidean2DConvexShape, R>(
     action: NavigationAction2D<T, L, R, ConvexPolygon, Euclidean2DPassage>,
-    private val unknownDestinations: List<Euclidean2DPosition>
+    private val unknownDestinations: List<Euclidean2DPosition>,
 ) : Exploring<T, L, R>(action) {
 
     override fun inNewRoom(newRoom: ConvexPolygon) =

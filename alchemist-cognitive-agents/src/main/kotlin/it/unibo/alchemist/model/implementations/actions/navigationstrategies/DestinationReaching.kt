@@ -38,14 +38,14 @@ open class DestinationReaching<T, L : Euclidean2DConvexShape, R>(
     /**
      * Unknown destinations, defaults to an empty list.
      */
-    private val unknownDestinations: List<Euclidean2DPosition> = emptyList()
+    private val unknownDestinations: List<Euclidean2DPosition> = emptyList(),
 ) : GoalOrientedExploring<T, L, R> (
     action,
     /*
      * This may seem strange, but as stated above if we found a destination along the way (either known
      * or unknown), we want to approach it and leave the route we're following.
      */
-    knownDestinations + unknownDestinations
+    knownDestinations + unknownDestinations,
 ) {
 
     private val knownDestinationReaching: KnownDestinationReaching<T, L, R>? =

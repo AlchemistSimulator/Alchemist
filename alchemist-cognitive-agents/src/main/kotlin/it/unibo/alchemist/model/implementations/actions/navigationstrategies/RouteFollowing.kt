@@ -35,7 +35,7 @@ open class RouteFollowing<T, L : Euclidean2DConvexShape, R> constructor(
     /**
      * The route to follow.
      */
-    protected open val route: List<Euclidean2DPosition>
+    protected open val route: List<Euclidean2DPosition>,
 ) : DynamicPursuing<T, L, R>(action, action.environment.origin.takeIf { route.isEmpty() } ?: route[0]) {
 
     private var indexOfNextWaypoint: Int = 0
@@ -47,7 +47,7 @@ open class RouteFollowing<T, L : Euclidean2DConvexShape, R> constructor(
     override fun inUnexpectedNewRoom(
         previousRoom: ConvexPolygon,
         expectedNewRoom: ConvexPolygon,
-        actualNewRoom: ConvexPolygon
+        actualNewRoom: ConvexPolygon,
     ) = with(action) {
         doorsInSight()
             .filter { it.head == previousRoom }

@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.implementations.properties
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 
 /**
  * The node's [CognitiveModel].

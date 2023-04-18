@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
  */
 class CognitiveBehavior<T, V, A>(
     node: Node<T>,
-    timeDistribution: TimeDistribution<T>
+    timeDistribution: TimeDistribution<T>,
 ) : AbstractReaction<T>(node, timeDistribution)
     where V : Vector<V>, A : GeometricTransformation<V> {
 

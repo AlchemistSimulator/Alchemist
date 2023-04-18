@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.actions.navigationstrategies.KnownDestinationReaching
 import it.unibo.alchemist.model.interfaces.NavigationAction
-import it.unibo.alchemist.model.math.lazyMutable
 import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
@@ -19,6 +18,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.math.lazyMutable
 
 /**
  * A [NavigationAction] using [KnownDestinationReaching] navigation strategy.

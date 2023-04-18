@@ -4,9 +4,9 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
-import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 

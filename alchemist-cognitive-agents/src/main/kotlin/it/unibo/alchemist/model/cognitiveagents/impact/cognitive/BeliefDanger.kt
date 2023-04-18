@@ -17,13 +17,13 @@ import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 class BeliefDanger(
     private val zoneDangerousness: () -> Double,
     private val fear: () -> Double,
-    private val influencialPeople: () -> List<CognitiveModel>
+    private val influencialPeople: () -> List<CognitiveModel>,
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction(): Double = maxOf(
         sensingOmega * zoneDangerousness(),
         persistingOmega * level(),
-        (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) / (affectiveBiasingOmega + 1)
+        (affectiveBiasingOmega * fear() + influencialPeople().aggregateDangerBeliefs()) / (affectiveBiasingOmega + 1),
     )
 
     private fun List<CognitiveModel>.aggregateDangerBeliefs() =

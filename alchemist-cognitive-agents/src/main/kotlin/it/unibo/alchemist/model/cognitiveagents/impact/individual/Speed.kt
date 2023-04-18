@@ -43,6 +43,7 @@ class Speed(age: Age, gender: Gender, randomGenerator: RandomGenerator) : Charac
         private val childFemale = config[SpeedSpec.childFemale]
         private val adultFemale = config[SpeedSpec.adultFemale]
         private val elderlyFemale = config[SpeedSpec.elderlyFemale]
+
         /**
          * Default speed.
          */

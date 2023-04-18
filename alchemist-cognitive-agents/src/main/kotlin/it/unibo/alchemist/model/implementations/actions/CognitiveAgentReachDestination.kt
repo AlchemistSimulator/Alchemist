@@ -11,19 +11,19 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist.model.implementations.actions.navigationstrategies.DestinationReaching
 import it.unibo.alchemist.model.implementations.actions.navigationstrategies.Pursuing
-import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.math.lazyMutable
+import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
-import org.jgrapht.Graphs
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.math.lazyMutable
+import org.jgrapht.Graphs
 
 /**
  * A [NavigationAction] using [DestinationReaching] navigation strategy.

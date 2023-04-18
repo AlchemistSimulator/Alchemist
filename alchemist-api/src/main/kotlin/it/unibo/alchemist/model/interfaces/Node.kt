@@ -214,10 +214,8 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
             }
         }
 
-        @JvmSynthetic @PublishedApi internal fun KClass<*>.distanceFrom(
-            superType: KClass<*>,
-            depth: Int = 0
-        ): Int? = when {
+        @JvmSynthetic @PublishedApi
+        internal fun KClass<*>.distanceFrom(superType: KClass<*>, depth: Int = 0): Int? = when {
             !isSubclassOf(superType) -> null
             superType == this -> depth
             else -> supertypes.asSequence()

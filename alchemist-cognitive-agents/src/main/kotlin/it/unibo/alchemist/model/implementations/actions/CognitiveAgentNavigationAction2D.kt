@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import org.apache.commons.math3.util.FastMath
 
 private typealias AbstractNavigationAction2D<T, L, R, N, E> =
-    AbstractNavigationAction<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>
+AbstractNavigationAction<T, Euclidean2DPosition, Euclidean2DTransformation, L, R, N, E>
 
 /**
  * Implementation of a [NavigationAction2D]. This action accepts an [Euclidean2DEnvironmentWithGraph] whose graph

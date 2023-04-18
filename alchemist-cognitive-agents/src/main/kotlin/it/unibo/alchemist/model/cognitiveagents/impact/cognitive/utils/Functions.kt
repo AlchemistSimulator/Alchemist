@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils
 
+import java.lang.Math.E
 import kotlin.math.pow
 
 /**
@@ -18,7 +19,7 @@ import kotlin.math.pow
  * @param tau Threshold parameter of the logistic function.
  */
 fun logistic(sigma: Double, tau: Double, vararg parameters: Double) =
-    1 / (1 + Math.E.pow(-sigma * (parameters.sum() - tau)))
+    1 / (1 + E.pow(-sigma * (parameters.sum() - tau)))
 
 /**
  *
@@ -26,8 +27,4 @@ fun logistic(sigma: Double, tau: Double, vararg parameters: Double) =
  * @param tau Threshold parameter of the advanced logistic function.
  */
 fun advancedLogistic(sigma: Double, tau: Double, vararg parameters: Double) =
-    logistic(
-        sigma,
-        tau,
-        *parameters
-    ) - 1 / (1 + Math.E.pow(sigma * tau)) * (1 + Math.E.pow(-sigma * tau))
+    logistic(sigma, tau, *parameters) - 1 / (1 + E.pow(sigma * tau)) * (1 + E.pow(-sigma * tau))

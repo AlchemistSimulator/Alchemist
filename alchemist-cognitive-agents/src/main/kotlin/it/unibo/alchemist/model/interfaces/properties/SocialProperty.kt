@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
-import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Group
+import it.unibo.alchemist.model.interfaces.NodeProperty
 
 /**
  * The pedestrian's capability for form groups.

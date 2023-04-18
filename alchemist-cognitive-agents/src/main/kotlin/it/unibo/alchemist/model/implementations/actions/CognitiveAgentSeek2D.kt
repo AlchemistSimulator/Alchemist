@@ -24,7 +24,7 @@ open class CognitiveAgentSeek2D<T, P, A>(
     /**
      * The position the node wants to reach.
      */
-    private val target: P
+    private val target: P,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     SteeringActionWithTarget<T, P>
     where P : Position2D<P>, P : Vector2D<P>,

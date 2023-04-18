@@ -27,7 +27,7 @@ class CognitiveAgentCombineSteering<T, P, A>(
     reaction: Reaction<T>,
     override val pedestrian: PedestrianProperty<T>,
     private val actions: List<SteeringAction<T, P>>,
-    private val steerStrategy: SteeringStrategy<T, P>
+    private val steerStrategy: SteeringStrategy<T, P>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
           A : GeometricTransformation<P> {

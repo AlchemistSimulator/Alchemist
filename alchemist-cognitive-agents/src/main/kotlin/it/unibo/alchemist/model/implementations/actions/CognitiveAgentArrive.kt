@@ -70,6 +70,6 @@ open class CognitiveAgentArrive<T, P, A>(
             node.pedestrianProperty,
             decelerationRadius,
             arrivalTolerance,
-            target
+            target,
         )
 }

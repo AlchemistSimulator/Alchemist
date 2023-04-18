@@ -101,7 +101,7 @@ open class CognitiveAgentNavigationAction2D<T, L : Euclidean2DConvexShape, R>(
             environment,
             reaction,
             node.pedestrianProperty,
-            wallRepulsionFactor
+            wallRepulsionFactor,
         )
         clone.strategy = this.strategy
         return clone

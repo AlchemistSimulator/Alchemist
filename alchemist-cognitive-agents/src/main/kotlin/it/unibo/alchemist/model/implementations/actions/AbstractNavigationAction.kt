@@ -265,6 +265,6 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
          * approached as no obstacle is placed in between).
          */
         MOVING_TO_FINAL,
-        ARRIVED
+        ARRIVED,
     }
 }

@@ -68,7 +68,7 @@ abstract class AbstractSteeringAction<T, P, A>(
      */
     protected inline fun <reified N : Node<*>, S : Action<*>> requireNodeTypeAndProduce(
         node: Node<*>,
-        builder: (N) -> S
+        builder: (N) -> S,
     ): S {
         require(node is N) { "Incompatible node type. Required ${N::class}, found ${node::class}" }
         return builder(node)

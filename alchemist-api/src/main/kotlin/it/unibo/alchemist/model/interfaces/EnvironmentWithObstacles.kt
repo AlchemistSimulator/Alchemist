@@ -19,9 +19,9 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param P the position and vector type for this environment.
  */
 interface EnvironmentWithObstacles<W, T, P> : EuclideanEnvironment<T, P> where
-W : Obstacle<P>,
-P : Position<P>,
-P : Vector<P> {
+      W : Obstacle<P>,
+      P : Position<P>,
+      P : Vector<P> {
 
     /**
      * A list of all the obstacles in this environment.

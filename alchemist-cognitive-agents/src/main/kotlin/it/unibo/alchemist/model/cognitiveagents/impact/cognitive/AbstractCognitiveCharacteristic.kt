@@ -35,62 +35,77 @@ abstract class AbstractCognitiveCharacteristic : CognitiveCharacteristic {
     companion object {
         private val config = Config { addSpec(CognitiveSpec) }
             .from.toml.resource(PARAMETERS_FILE)
+
         /**
          * Capacity of sensing the danger.
          */
         val sensingOmega = config[CognitiveSpec.sensingOmega]
+
         /**
          * Influence of fear on danger belief.
          */
         val affectiveBiasingOmega = config[CognitiveSpec.affectiveBiasingOmega]
+
         /**
          * Persistence of emotions.
          */
         val persistingOmega = config[CognitiveSpec.persistingOmega]
+
         /**
          * Amplifies fear sensation.
          */
         val amplifyingFeelingOmega = config[CognitiveSpec.amplifyingFeelingOmega]
+
         /**
          * Inhibits fear sensation.
          */
         val inhibitingFeelingOmega = config[CognitiveSpec.inhibitingFeelingOmega]
+
         /**
          * Amplifies the desire to evacuate.
          */
         val amplifyingEvacuationOmega = config[CognitiveSpec.amplifyingEvacuationOmega]
+
         /**
          * Inhibits the desire to evacuate.
          */
         val inhibitingWalkRandOmega = config[CognitiveSpec.inhibitingWalkRandOmega]
+
         /**
          * Amplifies the intention to evacuate.
          */
         val amplifyingIntentionOmega = config[CognitiveSpec.amplifyingIntentionOmega]
+
         /**
          * Inhibits the intention to evacuate.
          */
         val inhibitingIntentionOmega = config[CognitiveSpec.inhibitingIntentionOmega]
+
         /**
          * Intensity of human mental response.
          */
         val mentalEta = config[CognitiveSpec.mentalEta]
+
         /**
          * Intensity of human body response.
          */
         val bodyEta = config[CognitiveSpec.bodyEta]
+
         /**
          * Sigma of the [logistic] function used to compute [IntentionEvacuate] and [IntentionWalkRandomly].
          */
         val logisticSigma = config[CognitiveSpec.logisticSigma]
+
         /**
          * Tau of the [logistic] function used to compute [IntentionEvacuate] and [IntentionWalkRandomly].
          */
         val logisticTau = config[CognitiveSpec.logisticTau]
+
         /**
          * Sigma of the [advancedLogistic] function used to compute [Fear].
          */
         val advancedLogisticSigma = config[CognitiveSpec.advancedLogisticSigma]
+
         /**
          * Tau of the [advancedLogistic] function used to compute [Fear].
          */

@@ -17,8 +17,6 @@ import it.unibo.alchemist.model.interfaces.properties.SocialProperty
  *          the environment inside which the node moves.
  * @param reaction
  *          the reaction which executes this action.
- * @param node
- *          the owner of this action.
  */
 class CognitiveAgentCohesion<T, P, A>(
     environment: Environment<T, P>,

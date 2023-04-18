@@ -7,7 +7,8 @@ enum class Age : Characteristic {
 
     CHILD,
     ADULT,
-    ELDERLY;
+    ELDERLY,
+    ;
 
     companion object {
 

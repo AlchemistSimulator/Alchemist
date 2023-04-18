@@ -31,7 +31,7 @@ const val PARAMETERS_FILE = "it/unibo/alchemist/model/cognitiveagents/impact/con
 class ImpactModel(
     compliance: Double,
     influencedBy: () -> List<CognitiveModel>,
-    environmentalFactors: () -> Double
+    environmentalFactors: () -> Double,
 ) : CognitiveModel {
 
     private val cognitiveCharacteristics = linkedMapOf<KClass<out CognitiveCharacteristic>, CognitiveCharacteristic>(
@@ -40,26 +40,26 @@ class ImpactModel(
         Fear::class to Fear(
             { characteristicLevel<DesireWalkRandomly>() },
             { characteristicLevel<DesireEvacuate>() },
-            influencedBy
+            influencedBy,
         ),
         DesireEvacuate::class to DesireEvacuate(
             compliance,
             { characteristicLevel<BeliefDanger>() },
-            { characteristicLevel<Fear>() }
+            { characteristicLevel<Fear>() },
         ),
         DesireWalkRandomly::class to DesireWalkRandomly(
             compliance,
             { characteristicLevel<BeliefDanger>() },
-            { characteristicLevel<Fear>() }
+            { characteristicLevel<Fear>() },
         ),
         IntentionEvacuate::class to IntentionEvacuate(
             { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() }
+            { characteristicLevel<DesireEvacuate>() },
         ),
         IntentionWalkRandomly::class to IntentionWalkRandomly(
             { characteristicLevel<DesireWalkRandomly>() },
-            { characteristicLevel<DesireEvacuate>() }
-        )
+            { characteristicLevel<DesireEvacuate>() },
+        ),
     )
 
     override fun dangerBelief() = characteristicLevel<BeliefDanger>()

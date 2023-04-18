@@ -44,7 +44,7 @@ class HelpAttitude(age: Age, gender: Gender) : Characteristic {
                 Pair(Age.ELDERLY, Gender.MALE) to config[HelpAttitudeSpec.AdultMale.elderlyMale],
                 Pair(Age.CHILD, Gender.FEMALE) to config[HelpAttitudeSpec.AdultMale.childFemale],
                 Pair(Age.ADULT, Gender.FEMALE) to config[HelpAttitudeSpec.AdultMale.adultFemale],
-                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.AdultMale.elderlyFemale]
+                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.AdultMale.elderlyFemale],
             ),
 
             Pair(Age.ADULT, Gender.FEMALE) to mapOf(
@@ -53,7 +53,7 @@ class HelpAttitude(age: Age, gender: Gender) : Characteristic {
                 Pair(Age.ELDERLY, Gender.MALE) to config[HelpAttitudeSpec.AdultFemale.elderlyMale],
                 Pair(Age.CHILD, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.childFemale],
                 Pair(Age.ADULT, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.adultFemale],
-                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.elderlyFemale]
+                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.AdultFemale.elderlyFemale],
             ),
 
             Pair(Age.ELDERLY, Gender.MALE) to mapOf(
@@ -62,7 +62,7 @@ class HelpAttitude(age: Age, gender: Gender) : Characteristic {
                 Pair(Age.ELDERLY, Gender.MALE) to config[HelpAttitudeSpec.ElderlyMale.elderlyMale],
                 Pair(Age.CHILD, Gender.FEMALE) to config[HelpAttitudeSpec.ElderlyMale.childFemale],
                 Pair(Age.ADULT, Gender.FEMALE) to config[HelpAttitudeSpec.ElderlyMale.adultFemale],
-                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.ElderlyMale.elderlyFemale]
+                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.ElderlyMale.elderlyFemale],
             ),
 
             Pair(Age.ELDERLY, Gender.FEMALE) to mapOf(
@@ -71,8 +71,8 @@ class HelpAttitude(age: Age, gender: Gender) : Characteristic {
                 Pair(Age.ELDERLY, Gender.MALE) to config[HelpAttitudeSpec.ElderlyFemale.elderlyMale],
                 Pair(Age.CHILD, Gender.FEMALE) to config[HelpAttitudeSpec.ElderlyFemale.childFemale],
                 Pair(Age.ADULT, Gender.FEMALE) to config[HelpAttitudeSpec.ElderlyFemale.adultFemale],
-                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.ElderlyFemale.elderlyFemale]
-            )
+                Pair(Age.ELDERLY, Gender.FEMALE) to config[HelpAttitudeSpec.ElderlyFemale.elderlyFemale],
+            ),
         )
     }
 }

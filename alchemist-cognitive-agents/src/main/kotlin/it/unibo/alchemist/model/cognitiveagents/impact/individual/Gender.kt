@@ -6,7 +6,8 @@ package it.unibo.alchemist.model.cognitiveagents.impact.individual
 enum class Gender : Characteristic {
 
     MALE,
-    FEMALE;
+    FEMALE,
+    ;
 
     companion object {
         private const val MALE_KEYWORD = "male"

@@ -95,10 +95,7 @@ class SinglePrevalent<T, N : ConvexPolygon>(
         const val DEFAULT_DELTA = 0.05
     }
 
-    private val expSmoothing =
-        ExponentialSmoothing<Euclidean2DPosition>(
-            alpha
-        )
+    private val expSmoothing = ExponentialSmoothing<Euclidean2DPosition>(alpha)
 
     override fun computeNextPosition(actions: SteeringActions<T>): Euclidean2DPosition =
         with(actions.prevalent()) {

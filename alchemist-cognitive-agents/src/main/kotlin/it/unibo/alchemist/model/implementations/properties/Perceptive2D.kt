@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.implementations.properties
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.InfluenceSphere2D
 import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.properties.PerceptiveProperty
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.interfaces.properties.PerceptiveProperty
 
 /**
  * Base implementation of a pedestrian's capability to influence each other in a 2D space.

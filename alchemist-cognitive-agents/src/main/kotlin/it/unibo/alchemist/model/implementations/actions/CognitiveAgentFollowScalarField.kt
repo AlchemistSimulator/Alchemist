@@ -65,15 +65,17 @@ class CognitiveAgentFollowScalarField<T, P, A>(
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentFollowScalarField<T, P, A> =
         CognitiveAgentFollowScalarField(environment, reaction, node.pedestrianProperty, center, valueIn)
 
-    private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> =
-        if (environment is EnvironmentWithObstacles<*, T, P>) map {
-            (environment as EnvironmentWithObstacles<*, T, P>).next(currentPosition, it)
-        } else this
+    private fun Sequence<P>.enforceObstacles(currentPosition: P): Sequence<P> = when (environment) {
+        is EnvironmentWithObstacles<*, T, P> ->
+            map { (environment as EnvironmentWithObstacles<*, T, P>).next(currentPosition, it) }
+        else -> this
+    }
 
-    private fun Sequence<P>.enforceOthers(): Sequence<P> =
-        if (environment is PhysicsEnvironment<T, P, *, *>) map {
-            (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(node, it)
-        } else this
+    private fun Sequence<P>.enforceOthers(): Sequence<P> = when (environment) {
+        is PhysicsEnvironment<T, P, *, *> ->
+            map { (environment as PhysicsEnvironment<T, P, *, *>).farthestPositionReachable(node, it) }
+        else -> this
+    }
 
     private fun Sequence<P>.maxOr(position: P): P =
         maxByOrNull { valueIn(it) }

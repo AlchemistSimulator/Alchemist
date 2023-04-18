@@ -62,5 +62,4 @@ interface HumanProperty<T, S : Vector<S>, A : GeometricTransformation<S>> : Node
 /**
  * A capability representing a pedestrian's individual characteristics in a 2D space.
  */
-typealias Human2DProperty<T> =
-    HumanProperty<T, Euclidean2DPosition, Euclidean2DTransformation>
+typealias Human2DProperty<T> = HumanProperty<T, Euclidean2DPosition, Euclidean2DTransformation>

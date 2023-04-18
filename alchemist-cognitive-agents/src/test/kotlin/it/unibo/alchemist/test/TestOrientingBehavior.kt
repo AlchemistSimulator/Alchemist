@@ -20,14 +20,14 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 import org.apache.commons.collections4.queue.CircularFifoQueue
-import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
 
 /**
  * Contains tests concerning [NavigationAction]s and [NavigationStrategy], such tests are
@@ -61,7 +61,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
         simulation: String,
         tolerance: Double,
         steps: Long,
-        vararg coords: Number
+        vararg coords: Number,
     ) {
         loadYamlSimulation<T, P>(simulation).startSimulation(
             onceInitialized = { it.nodes shouldNot beEmpty() },
@@ -104,7 +104,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
                 }
             },
             whenFinished = { environment, _, _ -> assertPedestriansReached(environment, 1.0, 85, 80) },
-            steps = 190
+            steps = 190,
         )
     }
 
@@ -148,7 +148,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
                 assertPedestriansReached(environment, 1.0, 10, 55)
                 corridorTaken shouldBe true
             },
-            steps = 70
+            steps = 70,
         )
     }
 }) where P : Position<P>, P : Vector<P>

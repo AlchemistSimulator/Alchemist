@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.cognitiveagents.impact.cognitive.utils.advancedL
 class Fear(
     private val desireWalkRandomly: () -> Double,
     private val desireEvacuate: () -> Double,
-    private val influencialPeople: () -> List<CognitiveModel>
+    private val influencialPeople: () -> List<CognitiveModel>,
 ) : MentalCognitiveCharacteristic() {
 
     override fun combinationFunction() = maxOf(
@@ -26,8 +26,8 @@ class Fear(
             advancedLogisticTau,
             influencialPeople().aggregateFears(),
             amplifyingFeelingOmega * desireEvacuate(),
-            inhibitingFeelingOmega * desireWalkRandomly()
-        )
+            inhibitingFeelingOmega * desireWalkRandomly(),
+        ),
     )
 
     private fun List<CognitiveModel>.aggregateFears() =

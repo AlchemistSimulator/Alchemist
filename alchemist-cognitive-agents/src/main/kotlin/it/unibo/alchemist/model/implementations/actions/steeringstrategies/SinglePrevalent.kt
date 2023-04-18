@@ -133,30 +133,30 @@ class SinglePrevalent<T, N : ConvexPolygon>(
      */
     private fun <V : Vector<V>> combine(prevalent: V, others: List<V>, othersWeight: Double): V =
         (others.map { it * othersWeight } + prevalent).reduce { acc, force -> acc + force }
-}
-
-/**
- * Exponential smoothing is a trivial way of smoothing signals.
- * Let s(t) be the smoothed signal at time t, given a discrete signal g:
- * s(t) = alpha * g(t) + (1 - alpha) * s(t-1)
- * s(0) = g(0)
- */
-class ExponentialSmoothing<V : Vector<V>>(
-    private val alpha: Double
-) {
-
-    init {
-        require(alpha in 0.0..1.0) { "alpha should be in [0,1]" }
-    }
-
-    private var previous: V? = null
 
     /**
-     * Applies the smoothing to the given force.
+     * Exponential smoothing is a trivial way of smoothing signals.
+     * Let s(t) be the smoothed signal at time t, given a discrete signal g:
+     * s(t) = alpha * g(t) + (1 - alpha) * s(t-1)
+     * s(0) = g(0)
      */
-    fun apply(current: V): V {
-        val new = previous?.let { current.times(alpha) + it.times(1 - alpha) } ?: current
-        previous = new
-        return new
+    private class ExponentialSmoothing<V : Vector<V>>(
+        private val alpha: Double,
+    ) {
+
+        init {
+            require(alpha in 0.0..1.0) { "alpha should be in [0,1]" }
+        }
+
+        private var previous: V? = null
+
+        /**
+         * Applies the smoothing to the given force.
+         */
+        fun apply(current: V): V {
+            val new = previous?.let { current.times(alpha) + it.times(1 - alpha) } ?: current
+            previous = new
+            return new
+        }
     }
 }

@@ -4,12 +4,12 @@ import it.unibo.alchemist.model.implementations.actions.CognitiveAgentCombineSte
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * Reaction representing the steering behavior of a pedestrian.

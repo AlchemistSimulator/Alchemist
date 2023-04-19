@@ -19,10 +19,12 @@ import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 plugins {
+    distribution
     alias(libs.plugins.dokka)
     alias(libs.plugins.gitSemVer)
     alias(libs.plugins.java.qa)
@@ -53,6 +55,7 @@ allprojects {
         apply(plugin = shadowJar.id)
         apply(plugin = taskTree.id)
     }
+    apply(plugin = "distribution")
 
     multiJvm {
         jvmVersionForCompilation.set(11)
@@ -305,12 +308,25 @@ allprojects {
         isZip64 = true
         mergeServiceFiles()
         destinationDirectory.set(file("${rootProject.buildDir}/shadow"))
+        val deleteOutput = tasks.register<Delete>("deleteOutputOf${name.capitalized()}") {
+            setDelete(this@withType)
+        }
+        if (isInCI && isWindows) {
+            // There is little space on the Windows CI, so we need to delete the output as soon as possible
+            this.finalizedBy(deleteOutput)
+        }
         if ("full" in project.name || "incarnation" in project.name || project == rootProject) {
             // Run the jar and check the output
             val testShadowJar = testShadowJar(archiveFile)
             testShadowJar.get().dependsOn(this)
             this.finalizedBy(testShadowJar)
+            deleteOutput.get().mustRunAfter(testShadowJar)
         }
+    }
+
+    // Disable distribution tasks that just clutter the build
+    listOf(tasks.distZip, tasks.distTar).forEach {
+        it.configure { enabled = false }
     }
 }
 

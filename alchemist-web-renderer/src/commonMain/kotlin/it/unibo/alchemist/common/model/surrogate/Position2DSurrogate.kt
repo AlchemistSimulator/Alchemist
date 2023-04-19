@@ -24,35 +24,8 @@ import kotlinx.serialization.Serializable
 data class Position2DSurrogate(
     val x: Double,
     val y: Double,
-    override val coordinates: DoubleArray = doubleArrayOf(x, y),
-    override val dimensions: Int = 2
 ) : PositionSurrogate {
 
-    /**
-     * Override equals because a [DoubleArray] is present in the properties.
-     */
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as Position2DSurrogate
-
-        if (x != other.x) return false
-        if (y != other.y) return false
-        if (!coordinates.contentEquals(other.coordinates)) return false
-        if (dimensions != other.dimensions) return false
-
-        return true
-    }
-
-    /**
-     * Override hashCode because a [DoubleArray] is present in the properties.
-     */
-    override fun hashCode(): Int {
-        var result = x.hashCode()
-        result = 31 * result + y.hashCode()
-        result = 31 * result + coordinates.contentHashCode()
-        result = 31 * result + dimensions
-        return result
-    }
+    override val coordinates: DoubleArray = doubleArrayOf(x, y)
+    override val dimensions: Int = 2
 }

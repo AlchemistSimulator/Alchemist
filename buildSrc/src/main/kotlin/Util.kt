@@ -1,7 +1,17 @@
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
@@ -12,21 +22,15 @@ import org.gradle.plugin.use.PluginDependency
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URL
-import java.util.Locale
-
-/*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
- * listed, for each module, in the respective subproject's build.gradle.kts file.
- *
- * This file is part of Alchemist, and is distributed under the terms of the
- * GNU General Public License, with a linking exception,
- * as described in the file LICENSE in the Alchemist distribution's top directory.
- */
 
 /**
  * Collector of imperative code.
  */
 object Util {
+
+    val isInCI get() = System.getenv("CI") == true.toString()
+    val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
+    val isMac = Os.isFamily(Os.FAMILY_MAC)
 
     private val javadocIOcacheFile = File("javadoc-io.json")
     private val gson = Gson().newBuilder().setPrettyPrinting().create()

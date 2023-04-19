@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -11,7 +11,10 @@ import Libs.alchemist
 import Libs.incarnation
 import Util.fetchJavadocIOForDependency
 import Util.id
+import Util.isInCI
+import Util.isMac
 import Util.isMultiplatform
+import Util.isWindows
 import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.JavadocJar
@@ -54,6 +57,12 @@ allprojects {
     multiJvm {
         jvmVersionForCompilation.set(11)
         maximumSupportedJvmVersion.set(latestJava)
+        if (isInCI && (isWindows || isMac)) {
+            /*
+             * Reduce time in CI by running on fewer JVMs on slower or more limited instances.
+             */
+            testByDefaultWith(latestJava)
+        }
     }
 
     repositories {
@@ -236,7 +245,7 @@ allprojects {
         enabled = false
     }
 
-    if (System.getenv("CI") == true.toString()) {
+    if (isInCI) {
         signing {
             val signingKey: String? by project
             val signingPassword: String? by project
@@ -271,7 +280,7 @@ allprojects {
     }
 
     // Shadow Jar
-    tasks.withType<ShadowJar> {
+    tasks.withType<ShadowJar>() {
         manifest {
             attributes(
                 mapOf(

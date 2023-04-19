@@ -13,13 +13,13 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
 internal class AwtEuclidean2DShapeFactory(
-    override val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)
+    override val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),
 ) : AbstractShapeFactory<Euclidean2DPosition, Euclidean2DTransformation>(),
     Euclidean2DShapeFactory {
 
     @Suppress("UNCHECKED_CAST")
     override fun requireCompatible(
-        shape: GeometricShape<*, *>
+        shape: GeometricShape<*, *>,
     ): GeometricShape<Euclidean2DPosition, Euclidean2DTransformation> {
         require(shape is AwtEuclidean2DShape || shape is AdimensionalShape) {
             """"
@@ -43,8 +43,8 @@ internal class AwtEuclidean2DShapeFactory(
                 radius * 2,
                 toDegrees(startAngle),
                 toDegrees(angle),
-                Arc2D.PIE
-            )
+                Arc2D.PIE,
+            ),
         )
     }
 

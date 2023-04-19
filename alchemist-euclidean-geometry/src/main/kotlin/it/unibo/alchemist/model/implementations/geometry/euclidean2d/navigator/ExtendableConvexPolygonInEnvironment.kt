@@ -49,7 +49,7 @@ class ExtendableConvexPolygonInEnvironment(
      * Obstacles represented as [java.awt.Shape]s, are assumed to be immutable and must be polygons
      * (i.e. shapes without curved segments).
      */
-    private val awtObstacles: List<Shape>
+    private val awtObstacles: List<Shape>,
 ) : AwtMutableConvexPolygon(vertices), ExtendableConvexPolygon {
 
     /**

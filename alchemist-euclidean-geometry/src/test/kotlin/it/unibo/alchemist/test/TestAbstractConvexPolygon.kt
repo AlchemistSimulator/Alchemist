@@ -81,10 +81,10 @@ class TestAbstractConvexPolygon : StringSpec({
          * Other is not axis-aligned and has a single vertex lying on the polygon's boundary.
          */
         polygon.isAdjacentTo(
-            createPolygon(coords(6.0, 3.0), coords(7.0, 1.0), coords(10.0, 3.0))
+            createPolygon(coords(6.0, 3.0), coords(7.0, 1.0), coords(10.0, 3.0)),
         ) shouldBe true
         polygon.isAdjacentTo(
-            createRectangle(6.0 - Double.MIN_VALUE, 1.0 - Double.MIN_VALUE, 1.0, 5.0)
+            createRectangle(6.0 - Double.MIN_VALUE, 1.0 - Double.MIN_VALUE, 1.0, 5.0),
         ) shouldBe true
         polygon.isAdjacentTo(createRectangle(6.5, 1.0, 1.0, 5.0)) shouldBe false
         /*
@@ -95,7 +95,7 @@ class TestAbstractConvexPolygon : StringSpec({
          * The polygon contains the other, and the latter has a vertex lying on the former's boundary.
          */
         polygon.isAdjacentTo(
-            createPolygon(coords(6.0, 3.0), coords(3.0, 1.0), coords(1.0, 3.0))
+            createPolygon(coords(6.0, 3.0), coords(3.0, 1.0), coords(1.0, 3.0)),
         ) shouldBe false
     }
 

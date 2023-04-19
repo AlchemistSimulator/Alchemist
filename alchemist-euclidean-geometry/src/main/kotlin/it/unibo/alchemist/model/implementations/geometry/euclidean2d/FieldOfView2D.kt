@@ -28,5 +28,5 @@ class FieldOfView2D<T>(
     environment: Physics2DEnvironment<T>,
     owner: Node<T>,
     distance: Double,
-    aperture: Double
+    aperture: Double,
 ) : InfluenceSphere2D<T>(environment, owner, environment.shapeFactory.circleSector(distance, aperture, 0.0))

@@ -30,7 +30,7 @@ open class AwtMutableConvexPolygon(
     /**
      * Vertices must be sorted as indicated in [ConvexPolygon.vertices].
      */
-    private val vertices: MutableList<Euclidean2DPosition>
+    private val vertices: MutableList<Euclidean2DPosition>,
 ) : AbstractConvexPolygon(), MutableConvexPolygon {
 
     init {

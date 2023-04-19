@@ -19,10 +19,10 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * @param <F> factory of shapes compatible with this environment
  */
 interface PhysicsEnvironment<T, P, A, F> : EuclideanEnvironment<T, P>
-where P : Position<P>,
-      P : Vector<P>,
-      A : GeometricTransformation<P>,
-      F : GeometricShapeFactory<P, A> {
+    where P : Position<P>,
+          P : Vector<P>,
+          A : GeometricTransformation<P>,
+          F : GeometricShapeFactory<P, A> {
     /**
      * A factory of shapes compatible with this environment.
      */

@@ -32,7 +32,7 @@ class RandomTarget<T>(
     getCurrentPosition: () -> Euclidean2DPosition,
     private val makePosition: (Double, Double) -> Euclidean2DPosition,
     private val directionRng: RandomGenerator,
-    private val distanceDistribution: RealDistribution
+    private val distanceDistribution: RealDistribution,
 ) : ChangeTargetOnCollision<T, Euclidean2DPosition>(getCurrentPosition) {
 
     /**
@@ -42,7 +42,7 @@ class RandomTarget<T>(
         environment: Environment<T, Euclidean2DPosition>,
         node: Node<T>,
         directionRng: RandomGenerator,
-        distanceDistribution: RealDistribution
+        distanceDistribution: RealDistribution,
     ) : this(
         environment,
         { environment.getPosition(node) },

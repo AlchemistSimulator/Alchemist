@@ -29,7 +29,7 @@ class TestSlopeInterceptLine2D : StringSpec() {
 
     private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
         line1: Line2D<P>,
-        line2: Line2D<P>
+        line2: Line2D<P>,
     ): I {
         val intersection = line1.intersect(line2)
         intersection.shouldBeTypeOf<I>()
@@ -48,7 +48,7 @@ class TestSlopeInterceptLine2D : StringSpec() {
     private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
         line: Line2D<P>,
         center: P,
-        radius: Double
+        radius: Double,
     ): I {
         val intersection = line.intersectCircle(center, radius)
         intersection.shouldBeTypeOf<I>()
@@ -60,7 +60,7 @@ class TestSlopeInterceptLine2D : StringSpec() {
         center: P,
         radius: Double,
         expectedPoint1: P,
-        expectedPoint2: P
+        expectedPoint2: P,
     ) {
         val intersection = intersectionShouldBe<P, Intersection2D.MultiplePoints<P>>(line, center, radius)
         intersection.points shouldContainExactlyInAnyOrder listOf(expectedPoint1, expectedPoint2)
@@ -127,47 +127,47 @@ class TestSlopeInterceptLine2D : StringSpec() {
         "test intersect" {
             shouldCoincide(
                 line(1.0, 1.0, 2.0, 2.0),
-                line(3.0, 3.0, 4.0, 4.0)
+                line(3.0, 3.0, 4.0, 4.0),
             )
             shouldNotIntersect(
                 line(1.0, 1.0, 2.0, 2.0),
-                line(2.0, 1.0, 3.0, 2.0)
+                line(2.0, 1.0, 3.0, 2.0),
             )
             shouldIntersectIn(
                 line(1.0, 1.0, 2.0, 2.0),
                 line(4.0, 1.0, 3.0, 2.0),
-                coords(2.5, 2.5)
+                coords(2.5, 2.5),
             )
             shouldCoincide(
                 line(1.0, 1.0, 2.0, 1.0),
-                line(3.0, 1.0, 4.0, 1.0)
+                line(3.0, 1.0, 4.0, 1.0),
             )
             shouldNotIntersect(
                 line(1.0, 1.0, 2.0, 1.0),
-                line(1.0, 2.0, 4.0, 2.0)
+                line(1.0, 2.0, 4.0, 2.0),
             )
             shouldIntersectIn(
                 line(1.0, 1.0, 2.0, 1.0),
                 line(1.0, 3.0, 2.0, 2.0),
-                coords(3.0, 1.0)
+                coords(3.0, 1.0),
             )
             shouldIntersectIn(
                 line(1.0, 1.0, 2.0, 1.0),
                 line(2.0, 3.0, 2.0, 2.0),
-                coords(2.0, 1.0)
+                coords(2.0, 1.0),
             )
             shouldCoincide(
                 line(2.0, 5.0, 2.0, 6.0),
-                line(2.0, 3.0, 2.0, 2.0)
+                line(2.0, 3.0, 2.0, 2.0),
             )
             shouldNotIntersect(
                 line(1.0, 3.0, 1.0, 2.0),
-                line(2.0, 3.0, 2.0, 2.0)
+                line(2.0, 3.0, 2.0, 2.0),
             )
             shouldIntersectIn(
                 line(1.0, 3.0, 2.0, 2.0),
                 line(2.0, 3.0, 2.0, 2.0),
-                coords(2.0, 2.0)
+                coords(2.0, 2.0),
             )
         }
 
@@ -179,19 +179,19 @@ class TestSlopeInterceptLine2D : StringSpec() {
                 line(1.0, 1.0, 5.0, 1.0),
                 coords(3.0, 3.0),
                 2.0,
-                coords(3.0, 1.0)
+                coords(3.0, 1.0),
             )
             shouldNotIntersect(
                 line(1.0, -1.0, 5.0, -1.0),
                 coords(3.0, 3.0),
-                2.0
+                2.0,
             )
             shouldIntersectIn(
                 line(0.0, 3.0, 6.0, 3.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(1.0, 3.0),
-                coords(5.0, 3.0)
+                coords(5.0, 3.0),
             )
             /*
              * Vertical line.
@@ -200,19 +200,19 @@ class TestSlopeInterceptLine2D : StringSpec() {
                 line(1.0, 1.0, 1.0, 5.0),
                 coords(3.0, 3.0),
                 2.0,
-                coords(1.0, 3.0)
+                coords(1.0, 3.0),
             )
             shouldNotIntersect(
                 line(-1.0, 1.0, -1.0, 5.0),
                 coords(3.0, 3.0),
-                2.0
+                2.0,
             )
             shouldIntersectIn(
                 line(3.0, 1.0, 3.0, 5.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(3.0, 1.0),
-                coords(3.0, 5.0)
+                coords(3.0, 5.0),
             )
             /*
              * Oblique line.
@@ -220,14 +220,14 @@ class TestSlopeInterceptLine2D : StringSpec() {
             shouldNotIntersect(
                 line(0.0, 5.0, 1.0, 6.0),
                 coords(3.0, 3.0),
-                2.0
+                2.0,
             )
             shouldIntersectIn(
                 line(1.0, 3.0, 3.0, 5.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(1.0, 3.0),
-                coords(3.0, 5.0)
+                coords(3.0, 5.0),
             )
         }
     }

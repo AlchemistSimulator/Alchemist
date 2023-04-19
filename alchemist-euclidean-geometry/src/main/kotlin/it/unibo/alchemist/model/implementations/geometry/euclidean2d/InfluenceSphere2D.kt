@@ -18,12 +18,12 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 open class InfluenceSphere2D<T>(
     private val environment: Physics2DEnvironment<T>,
     private val owner: Node<T>,
-    private val shape: Euclidean2DShape
+    private val shape: Euclidean2DShape,
 ) : InfluenceSphere<T> {
     override fun influentialNodes(): List<Node<T>> = environment.getNodesWithin(
         shape.transformed {
             origin(environment.getPosition(owner))
             rotate(environment.getHeading(owner))
-        }
+        },
     ).minusElement(owner)
 }

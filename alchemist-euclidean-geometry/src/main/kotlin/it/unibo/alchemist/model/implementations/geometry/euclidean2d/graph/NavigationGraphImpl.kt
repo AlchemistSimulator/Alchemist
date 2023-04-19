@@ -31,7 +31,7 @@ import java.util.function.Supplier
 open class BaseNavigationGraph<V, A, N, E>(
     vertexSupplier: Supplier<N>?,
     edgeSupplier: Supplier<E>?,
-    graphType: GraphType
+    graphType: GraphType,
 ) : NavigationGraph<V, A, N, E>,
     AbstractBaseGraph<N, E>(vertexSupplier, edgeSupplier, graphType)
     where V : Vector<V>,
@@ -50,7 +50,7 @@ open class BaseNavigationGraph<V, A, N, E>(
                 directed -> it.directed()
                 else -> it.undirected()
             }
-        }.weighted(false).allowMultipleEdges(true).allowSelfLoops(false).build()
+        }.weighted(false).allowMultipleEdges(true).allowSelfLoops(false).build(),
     )
 }
 
@@ -60,7 +60,7 @@ open class BaseNavigationGraph<V, A, N, E>(
  * itself).
  */
 class DirectedNavigationGraph<V, A, N, E>(
-    edgeClass: Class<out E>
+    edgeClass: Class<out E>,
 ) : BaseNavigationGraph<V, A, N, E>(edgeClass, true)
     where V : Vector<V>,
           A : GeometricTransformation<V>,
@@ -72,7 +72,7 @@ class DirectedNavigationGraph<V, A, N, E>(
  * itself).
  */
 class UndirectedNavigationGraph<V, A, N, E>(
-    edgeClass: Class<out E>
+    edgeClass: Class<out E>,
 ) : BaseNavigationGraph<V, A, N, E>(edgeClass, false)
     where V : Vector<V>,
           A : GeometricTransformation<V>,
@@ -82,4 +82,4 @@ class UndirectedNavigationGraph<V, A, N, E>(
  * A directed [Euclidean2DNavigationGraph].
  */
 typealias DirectedEuclidean2DNavigationGraph =
-    DirectedNavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>
+DirectedNavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>

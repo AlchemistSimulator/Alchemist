@@ -54,7 +54,7 @@ class ClientStoreTest : StringSpec({
         }
     }
 
-    "ClientStore can be updated with a SetRenderMode action" {
+    "ClientStore can be updated with a SetStatusSurrogate action" {
         listOf(
             StatusSurrogate.READY,
             StatusSurrogate.PAUSED,

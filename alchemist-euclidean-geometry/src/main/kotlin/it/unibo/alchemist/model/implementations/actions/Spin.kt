@@ -24,7 +24,7 @@ class Spin<T>(
     node: Node<T>,
     private val reaction: Reaction<T>,
     private val environment: Physics2DEnvironment<T>,
-    private val angularSpeedDegrees: Double
+    private val angularSpeedDegrees: Double,
 ) : AbstractAction<T>(node) {
 
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)

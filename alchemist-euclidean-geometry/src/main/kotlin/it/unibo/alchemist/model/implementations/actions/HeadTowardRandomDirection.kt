@@ -28,7 +28,7 @@ import org.apache.commons.math3.random.RandomGenerator
 class HeadTowardRandomDirection<T>(
     node: Node<T>,
     private val environment: Physics2DEnvironment<T>,
-    private val randomGenerator: RandomGenerator
+    private val randomGenerator: RandomGenerator,
 ) : AbstractAction<T>(node) {
 
     /**

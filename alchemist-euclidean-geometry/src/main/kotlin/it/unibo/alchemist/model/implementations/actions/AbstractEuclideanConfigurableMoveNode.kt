@@ -26,7 +26,7 @@ abstract class AbstractEuclideanConfigurableMoveNode<T, P>(
     node: Node<T>,
     routing: RoutingStrategy<T, P>,
     target: TargetSelectionStrategy<T, P>,
-    speed: SpeedSelectionStrategy<T, P>
+    speed: SpeedSelectionStrategy<T, P>,
 ) : AbstractConfigurableMoveNode<T, P>(environment, node, routing, target, speed)
     where P : Position<P>, P : Vector<P> {
 

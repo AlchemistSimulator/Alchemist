@@ -37,14 +37,14 @@ class ConstantDistanceRandomWalk<T>(
     environment: Environment<T, Euclidean2DPosition>,
     randomGenerator: RandomGenerator,
     private val distance: Double,
-    speed: Double
+    speed: Double,
 ) : GenericRandomWalker<T>(
     node,
     reaction,
     environment,
     randomGenerator,
     speed,
-    DiracDeltaDistribution(distance)
+    DiracDeltaDistribution(distance),
 ) {
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
         ConstantDistanceRandomWalk(node, reaction, environment, randomGenerator, distance, speed)

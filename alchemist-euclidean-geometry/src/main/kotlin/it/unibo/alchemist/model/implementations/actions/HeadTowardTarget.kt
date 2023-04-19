@@ -31,7 +31,7 @@ class HeadTowardTarget<T> @JvmOverloads constructor(
     private val environment: Physics2DEnvironment<T>,
     private val reaction: Reaction<T>,
     private val target: Molecule,
-    private val angularSpeedDegrees: Double = 360.0
+    private val angularSpeedDegrees: Double = 360.0,
 ) : AbstractAction<T>(node) {
 
     private val angularSpeedRadians = toRadians(angularSpeedDegrees)

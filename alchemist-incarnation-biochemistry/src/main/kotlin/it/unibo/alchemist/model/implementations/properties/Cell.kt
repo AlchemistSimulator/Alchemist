@@ -33,9 +33,10 @@ class Cell @JvmOverloads constructor(
     override fun addPolarizationVersor(versor: Euclidean2DPosition) {
         val tempCor = (polarizationVersor + versor.coordinates).coordinates
         val module = FastMath.hypot(tempCor[0], tempCor[1])
-        polarizationVersor =
-            if (module == 0.0) Euclidean2DPosition.zero
-            else Euclidean2DPosition(tempCor[0] / module, tempCor[1] / module)
+        polarizationVersor = when (module) {
+            in 0.0.nextDown()..0.0.nextUp() -> Euclidean2DPosition.zero
+            else -> Euclidean2DPosition(tempCor[0] / module, tempCor[1] / module)
+        }
     }
 
     override fun cloneOnNewNode(node: Node<Double>) = Cell(environment, node)

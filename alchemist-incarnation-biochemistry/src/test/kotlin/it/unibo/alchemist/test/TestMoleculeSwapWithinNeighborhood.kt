@@ -60,7 +60,7 @@ class TestMoleculeSwapWithinNeighborhood : StringSpec({
         environment = BioRect2DEnvironment(INCARNATION)
         nodes = Pair(
             INCARNATION.createNode(RANDOM, environment, null),
-            INCARNATION.createNode(RANDOM, environment, null)
+            INCARNATION.createNode(RANDOM, environment, null),
         )
         environment.linkingRule = LINKING_RULE
         environment.addNode(nodes.first, INITIAL_POSITIONS.first)
@@ -84,7 +84,7 @@ private fun testSimulation() =
         finished = {
             nodes.first.getConcentration(BIOMOLECULE) shouldBe 0.0
             nodes.second.getConcentration(BIOMOLECULE) shouldBe 1.0
-        }
+        },
     )
 
 private val Int.conditions: Matcher<Reaction<Double>>
@@ -103,7 +103,7 @@ private fun <T> Int.sizeMatcher(collectionName: String, collection: (Reaction<Do
             return MatcherResult(
                 actualSize == this@sizeMatcher,
                 { "reaction should have ${ this@sizeMatcher } $collectionName but it has $actualSize" },
-                { "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has" }
+                { "reaction should not have ${ this@sizeMatcher } $collectionName conditions but it has" },
             )
         }
     }

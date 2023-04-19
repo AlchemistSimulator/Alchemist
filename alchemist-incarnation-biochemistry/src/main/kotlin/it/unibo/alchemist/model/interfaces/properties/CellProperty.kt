@@ -32,8 +32,11 @@ interface CellProperty<P : Vector<P>> : NodeProperty<Double> {
     fun addJunction(junction: Junction, neighbor: Node<Double>) {
         if (containsJunction(junction)) {
             junctions[junction]?.let {
-                if (it.containsKey(neighbor)) it[neighbor] = it[neighbor]?.plus(1) ?: 1
-                else it[neighbor] = 1
+                if (it.containsKey(neighbor)) {
+                    it[neighbor] = it[neighbor]?.plus(1) ?: 1
+                } else {
+                    it[neighbor] = 1
+                }
                 junctions[junction] = it
             }
         } else {

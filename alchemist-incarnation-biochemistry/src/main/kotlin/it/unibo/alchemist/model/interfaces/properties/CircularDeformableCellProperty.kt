@@ -18,6 +18,7 @@ interface CircularDeformableCellProperty : CircularCellProperty {
      * The max diameter that this cell can have, e.g. the diameter that this cell has if no other cell is around.
      */
     val maximumDiameter: Double
+
     /**
      *
      * The max radius that this cell can have, e.g. the radius that this cell has if no other cell is around.

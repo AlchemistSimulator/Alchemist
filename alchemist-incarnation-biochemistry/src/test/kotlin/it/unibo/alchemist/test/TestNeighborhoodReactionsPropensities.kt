@@ -93,14 +93,14 @@ private fun testSimulation(reactionText: String) {
             for (it in checks) {
                 it shouldHave it.expectedPropensity
             }
-        }
+        },
     )
 }
 
 private data class Container(
     val condition: AbstractNeighborCondition<Double>,
     val node: Node<Double>,
-    val propensity: Double
+    val propensity: Double,
 )
 
 private val Container.expectedPropensity: Matcher<Container>
@@ -116,7 +116,7 @@ private val Container.expectedPropensity: Matcher<Container>
             return MatcherResult(
                 expectedPropensity == propensity,
                 { "node $node expected propensity $expectedPropensity for condition $condition but has $propensity" },
-                { "node $node should not have propensity $expectedPropensity for condition $condition but it has" }
+                { "node $node should not have propensity $expectedPropensity for condition $condition but it has" },
             )
         }
     }

@@ -54,7 +54,7 @@ class GraphHopperRoute(from: GeoPosition, to: GeoPosition, response: GHResponse)
             val exception = IllegalArgumentException(
                 "Failure in the GraphHopper routing system when navigating from $from to $to, " +
                     "received response:\n$response",
-                firstError
+                firstError,
             )
             errors.asSequence().drop(1).forEach { exception.addSuppressed(it) }
             throw exception

@@ -32,7 +32,7 @@ class CloseToGPSTrace<T> @JvmOverloads constructor(
     val to: Time = Time.INFINITY,
     gpsFilePath: String,
     normalizerClass: String,
-    vararg normalizerArguments: Any
+    vararg normalizerArguments: Any,
 ) : AbstractCloseTo<T, GeoPosition>(randomGenerator, environment, nodeCount, variance) {
 
     private val traces = TraceLoader(gpsFilePath, normalizerClass, *normalizerArguments)

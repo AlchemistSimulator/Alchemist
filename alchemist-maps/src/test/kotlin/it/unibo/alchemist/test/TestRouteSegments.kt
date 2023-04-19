@@ -63,5 +63,5 @@ class TestRouteSegments : StringSpec(
                 route.length() shouldBeGreaterThan bertinoro.distanceTo(bulgarno)
             }
         }
-    }
+    },
 )

@@ -22,7 +22,7 @@ class CameraInjectVisibleNodeClosestToDistance(
     private val environment: Physics2DEnvironment<Any>,
     private val distance: Double,
     private val visionMolecule: Molecule,
-    private val targetMolecule: Molecule
+    private val targetMolecule: Molecule,
 ) : AbstractAction<Any>(node) {
     override fun cloneAction(node: Node<Any>, reaction: Reaction<Any>) =
         CameraInjectVisibleNodeClosestToDistance(node, environment, distance, visionMolecule, targetMolecule)
@@ -41,10 +41,11 @@ class CameraInjectVisibleNodeClosestToDistance(
                 require(aNode.position is Euclidean2DPosition) {
                     "The VisibleNode contained in visionMolecule is from a different environment"
                 }
-                @Suppress("UNCHECKED_CAST") val nodes = visibleNodes as List<VisibleNode<*, Euclidean2DPosition>>
+                @Suppress("UNCHECKED_CAST")
+                val nodes = visibleNodes as List<VisibleNode<*, Euclidean2DPosition>>
                 val myPosition = environment.getPosition(node).surroundingPointAt(
                     versor = environment.getHeading(node),
-                    distance = distance
+                    distance = distance,
                 )
                 nodes.map { it.position }
                     .reduce { n1, n2 -> minBy(n1, n2) { it.distanceTo(myPosition) } }

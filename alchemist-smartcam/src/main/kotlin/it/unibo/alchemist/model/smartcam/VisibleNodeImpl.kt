@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.VisibleNode
  */
 class VisibleNodeImpl<T, P : Position<P>>(
     override val node: Node<T>,
-    override val position: P
+    override val position: P,
 ) : VisibleNode<T, P> {
 
     override fun equals(other: Any?) = other is VisibleNodeImpl<*, *> && other.node == node

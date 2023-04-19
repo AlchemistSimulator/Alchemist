@@ -20,7 +20,7 @@ interface SteeringActionWithTarget<T, P> : SteeringAction<T, P> where P : Positi
      * The position the owner of this action moves towards, in absolute coordinates.
      */
     fun target(): P
-    
+
     /**
      * Computes the distance between this action's target and the given [node].
      */

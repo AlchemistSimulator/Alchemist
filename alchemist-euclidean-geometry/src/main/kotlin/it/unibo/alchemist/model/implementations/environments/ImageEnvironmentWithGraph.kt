@@ -40,7 +40,7 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
     dx: Double = 0.0,
     dy: Double = 0.0,
     obstaclesColor: Int = Color.BLACK.rgb,
-    roomsColor: Int = Color.BLUE.rgb
+    roomsColor: Int = Color.BLUE.rgb,
 ) : ImageEnvironment<T>(incarnation, obstaclesColor, path, zoom, dx, dy),
     EuclideanPhysics2DEnvironmentWithGraph<RectObstacle2D<Euclidean2DPosition>, T, ConvexPolygon, Euclidean2DPassage> {
 
@@ -59,12 +59,12 @@ class ImageEnvironmentWithGraph<T> @JvmOverloads constructor(
             width = img.width.toDouble(),
             height = img.height.toDouble(),
             obstacles = obstacles,
-            rooms = rooms
+            rooms = rooms,
         ).map { Euclidean2DPosition(it.x * zoom + dx, (img.height - it.y) * zoom + dy) }
     }
 
     private fun Euclidean2DNavigationGraph.map(
-        mapper: (Euclidean2DPosition) -> Euclidean2DPosition
+        mapper: (Euclidean2DPosition) -> Euclidean2DPosition,
     ): Euclidean2DNavigationGraph {
         val newGraph = DirectedEuclidean2DNavigationGraph(Euclidean2DPassage::class.java)
         vertexSet().forEach { newGraph.addVertex(it.mapPolygon(mapper)) }

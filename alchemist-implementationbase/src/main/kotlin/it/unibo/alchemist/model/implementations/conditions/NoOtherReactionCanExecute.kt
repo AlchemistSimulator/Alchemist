@@ -20,14 +20,14 @@ import it.unibo.alchemist.model.interfaces.Reaction
  */
 class NoOtherReactionCanExecute<T>(
     node: Node<T>,
-    private val myReaction: Reaction<T>
+    private val myReaction: Reaction<T>,
 ) : AbstractNonPropensityContributingCondition<T>(node) {
 
     init {
         require(
             node.reactions.asSequence()
                 .flatMap { it.conditions }
-                .none { it is NoOtherReactionCanExecute<T> }
+                .none { it is NoOtherReactionCanExecute<T> },
         ) {
             val className = this::class.simpleName
             "Violation of the $className contract. Only a single $className per node can get built. " +

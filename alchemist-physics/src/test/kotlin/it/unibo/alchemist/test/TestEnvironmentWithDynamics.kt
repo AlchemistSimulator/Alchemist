@@ -31,9 +31,9 @@ class TestEnvironmentWithDynamics<T, P> : StringSpec({
                 environment.getNodesWithin(
                     environment.shapeFactory.rectangle(120.0, 120.0).transformed {
                         origin(environment.origin)
-                    }
+                    },
                 ).size shouldBe environment.nodeCount
-            }
+            },
         )
     }
     "Environemnt should allow physics update rate customization" {
@@ -55,7 +55,7 @@ class TestEnvironmentWithDynamics<T, P> : StringSpec({
     }
     "PhysicsUpdate can be overriden only once" {
         val environment = EnvironmentWithDynamics(
-            SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow()
+            SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
         )
         environment.addGlobalReaction(PhysicsUpdate(environment as Dynamics2DEnvironment<T>, 2.0))
         shouldThrow<IllegalArgumentException> {

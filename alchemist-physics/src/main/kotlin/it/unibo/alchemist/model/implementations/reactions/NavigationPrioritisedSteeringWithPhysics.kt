@@ -33,7 +33,7 @@ class NavigationPrioritisedSteeringWithPhysics<T, N : ConvexPolygon> @JvmOverloa
     /**
      * Alpha value for exponential smoothing (see [SinglePrevalent]).
      */
-    alpha: Double = SinglePrevalent.DEFAULT_ALPHA
+    alpha: Double = SinglePrevalent.DEFAULT_ALPHA,
 ) : NavigationPrioritisedSteering<T, N>(environment, pedestrian, timeDistribution, toleranceAngle, alpha) {
 
     override val steerStrategy: SteeringStrategy<T, Euclidean2DPosition> =

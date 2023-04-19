@@ -13,7 +13,7 @@ class TestPhysicalPedestrians<T, P> : StringSpec({
             steps = 35000,
             whenFinished = { environment, _, _ ->
                 environment.getPosition(environment.nodes.first()) shouldNotBe environment.makePosition(0, 0)
-            }
+            },
         )
     }
 }) where P : Position<P>, P : Vector<P>

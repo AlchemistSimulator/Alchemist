@@ -39,7 +39,7 @@ class FollowAtDistance<T>(
     private val environment: Environment<T, Euclidean2DPosition>,
     private val target: Molecule,
     private val distance: Double,
-    private val speed: Double
+    private val speed: Double,
 ) : AbstractAction<T>(node) {
 
     private val speedStrategy = GloballyConstantSpeed<T, Euclidean2DPosition>(reaction, speed)
@@ -55,7 +55,7 @@ class FollowAtDistance<T>(
             if (currentPosition != destination) { // avoid "bouncing"
                 val currentSpeed = min(
                     speedStrategy.getNodeMovementLength(destination),
-                    currentPosition.distanceTo(destination)
+                    currentPosition.distanceTo(destination),
                 )
                 val direction = destination - currentPosition
                 val angle = direction.asAngle

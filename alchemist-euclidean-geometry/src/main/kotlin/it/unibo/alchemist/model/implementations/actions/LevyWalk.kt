@@ -28,14 +28,14 @@ class LevyWalk<T> @JvmOverloads constructor(
     randomGenerator: RandomGenerator,
     speed: Double,
     private val scale: Double = 1.0, // default parameters for the Pareto distribution
-    private val shape: Double = 1.0
+    private val shape: Double = 1.0,
 ) : GenericRandomWalker<T>(
     node,
     reaction,
     environment,
     randomGenerator,
     speed,
-    ParetoDistribution(randomGenerator, scale, shape)
+    ParetoDistribution(randomGenerator, scale, shape),
 ) {
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) =
         LevyWalk(node, reaction, environment, randomGenerator, speed, scale, shape)

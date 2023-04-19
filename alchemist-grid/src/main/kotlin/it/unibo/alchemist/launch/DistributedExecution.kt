@@ -38,9 +38,7 @@ object DistributedExecution : SimulationLauncher() {
         val simulationConfig = LocalGeneralSimulationConfig(loader, DoubleTime(parameters.endTime))
         val simConfigs = loader.variables.cartesianProductOf(parameters.variables).map(::SimulationConfigImpl)
         val simulationSet = SimulationSetImpl(simulationConfig, simConfigs)
-        val cluster = ClusterImpl(
-            Paths.get(requireNotNull(parameters.distributed) { "No remote configuration file " })
-        )
+        val cluster = ClusterImpl(Paths.get(requireNotNull(parameters.distributed) { "No remote configuration file" }))
         cluster.getWorkersSet(simulationSet.computeComplexity()).distributeSimulations(simulationSet)
     }
 }

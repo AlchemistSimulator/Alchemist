@@ -1,3 +1,136 @@
+## [25.15.4](https://github.com/AlchemistSimulator/Alchemist/compare/25.15.3...25.15.4) (2023-04-19)
+
+
+### Bug Fixes
+
+* **incarnation-biochemistry:** avoid float equality in `Cell` ([9c3cd4a](https://github.com/AlchemistSimulator/Alchemist/commit/9c3cd4aeab45061518684fcc533a7651fc8cba0d))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 9973943 ([0272e09](https://github.com/AlchemistSimulator/Alchemist/commit/0272e091be2e45092e99a5a6505a27080f5a1c75))
+* **deps:** update kotlin to v1.8.20 ([310a026](https://github.com/AlchemistSimulator/Alchemist/commit/310a02658f3daa363e84384110a0151e25e6ce2b))
+* **deps:** update plugin kotlin-qa to v0.38.1 ([1f34cf3](https://github.com/AlchemistSimulator/Alchemist/commit/1f34cf3d742d78c0ca269c1e957064805d54bb77))
+* **deps:** update plugin multijvmtesting to v0.4.20 ([eb77029](https://github.com/AlchemistSimulator/Alchemist/commit/eb77029a9fba0c0a7e20d5dd9c6a3f768386f8e4))
+* **deps:** update plugin publishoncentral to v5 ([fa76eb1](https://github.com/AlchemistSimulator/Alchemist/commit/fa76eb1d10d6a4ebd364dfb2cd996efbbe0569d6))
+
+
+### Refactoring
+
+* **cognitive-agents:** make `ExponentialSmoothing` private in `SinglePrevalent` ([74eeea8](https://github.com/AlchemistSimulator/Alchemist/commit/74eeea8ee000280129b41a59b81b71e3a697040e))
+* **cognitive-agents:** make `pickNearestOrFirst` private in `Nearest` ([b6077f1](https://github.com/AlchemistSimulator/Alchemist/commit/b6077f11754af4cce88dbf07ece8c0f7d88041dc))
+* **cognitive-agents:** move  `targetDistanceTo` into `SteeringActionWithTarget` ([ce25672](https://github.com/AlchemistSimulator/Alchemist/commit/ce256721b2136acbc6a3ec38ea3b6398bce72f8f))
+
+
+### Documentation
+
+* **cognitive-agents:** remove non-existing documented parameter `node` in `CognitiveAgentCohesion` ([bbcd364](https://github.com/AlchemistSimulator/Alchemist/commit/bbcd364186f19258215b83d87935223140de0ac7))
+
+
+### General maintenance
+
+* **build:** actualize the `yarn.lock` file ([8855bb1](https://github.com/AlchemistSimulator/Alchemist/commit/8855bb170b96fbe5cfda82f4deef6e53aecd724d))
+* **implementationbase:** format according to the latest Ktlint and Detekt rules ([728a32f](https://github.com/AlchemistSimulator/Alchemist/commit/728a32f1bec38a0ef5cdb073dbd026121419c63f))
+* **implementationbase:** move Kotlin files in the appropriate source folder ([fe6aef5](https://github.com/AlchemistSimulator/Alchemist/commit/fe6aef53f02e95444d692f81b244088db99a2552))
+
+
+### Performance improvements
+
+* **web-render:** improve the serialized version of `Position2D` ([454a3e9](https://github.com/AlchemistSimulator/Alchemist/commit/454a3e9c7e5138012a8e3f674e8152008b422509))
+
+
+### Tests
+
+* **loading:** make the `TestGuidedTourLoading` cache private ([93772bc](https://github.com/AlchemistSimulator/Alchemist/commit/93772bca70b5c0b4f230db6c8ae90bbe8365bc74))
+* **web-render:** fix test name in `ClientStoreTest` ([096daf9](https://github.com/AlchemistSimulator/Alchemist/commit/096daf9104856006cc63dc0fc6b5ba82d41d66b4))
+
+
+### Style improvements
+
+* **api:** add missing trailing comma in `DesireEvacuate` ([be11f57](https://github.com/AlchemistSimulator/Alchemist/commit/be11f577d4c7e058c6752bb153545abbaca34e70))
+* **api:** add missing trailing comma in `TestStatus` ([132f363](https://github.com/AlchemistSimulator/Alchemist/commit/132f363badf62f14ecdce022703b90815391694e))
+* **api:** add missing trailing commas in `BeliefDanger` ([e443419](https://github.com/AlchemistSimulator/Alchemist/commit/e443419456362f45c1bea13be4d81e463a93613d))
+* **api:** fix indentation in `EnvironmentWithObstacles` ([a656a79](https://github.com/AlchemistSimulator/Alchemist/commit/a656a79105e6f583b9eb973393dffe4b753ce46d))
+* **api:** fix indentation in `Node` ([0fd85fa](https://github.com/AlchemistSimulator/Alchemist/commit/0fd85fa1f7fa0af6e1c2a6b3a2e36a566113942f))
+* **api:** fix indentation in `TestStatus` ([179b7fa](https://github.com/AlchemistSimulator/Alchemist/commit/179b7fa8f5164ffad44e6a857e7b55f27cfaf5bd))
+* **api:** fix vertical spacing in `AbstractCognitiveCharacteristic` ([fceb5c6](https://github.com/AlchemistSimulator/Alchemist/commit/fceb5c6634f677ac60c3f19874867ab9232e7167))
+* **api:** fix vertical spacing in `Position2D` ([58a7c95](https://github.com/AlchemistSimulator/Alchemist/commit/58a7c95bdb1ab59c91c97e1730ae978895b17540))
+* **api:** remove unused import in `Node` ([c2956cb](https://github.com/AlchemistSimulator/Alchemist/commit/c2956cb38eac3c1f2186969f2330467cccb86c1e))
+* **cognitive-agents:** add missing trailing comma in `DesireWalkRandomly` ([b48947d](https://github.com/AlchemistSimulator/Alchemist/commit/b48947d868d160cbd4b9a7db1c1a18191c328d32))
+* **cognitive-agents:** add missing trailing commas in `Fear` ([3610b81](https://github.com/AlchemistSimulator/Alchemist/commit/3610b81831a8ff0618132c5a12634747067207f1))
+* **cognitive-agents:** add missing trailing commas in `it.unibo.alchemist.model.cognitiveagents.impact` ([29f9698](https://github.com/AlchemistSimulator/Alchemist/commit/29f969802a01c27cdc2e74e51fa0d205f392c253))
+* **cognitive-agents:** add missing trailing commas in `it.unibo.alchemist.model.implementations.actions.navigationstrategies` ([d84f623](https://github.com/AlchemistSimulator/Alchemist/commit/d84f623a60861b780b9a3aec4d5026f57fdc3313))
+* **cognitive-agents:** add missing trailing commas in `it.unibo.alchemist.model.implementations.actions.steeringstrategies` ([038faab](https://github.com/AlchemistSimulator/Alchemist/commit/038faab9171b954e207ebaf6142e60978e489ec9))
+* **cognitive-agents:** add missing trailing commas in `it.unibo.alchemist.model.implementations.actions` ([1725ce5](https://github.com/AlchemistSimulator/Alchemist/commit/1725ce51fba3937a49fd9066293175c92170519b))
+* **cognitive-agents:** add missing trailing commas in `it.unibo.alchemist.model.implementations.properties` ([5e00185](https://github.com/AlchemistSimulator/Alchemist/commit/5e00185b04f8308e1aeb0a5b94bc15ff599e6a2c))
+* **cognitive-agents:** clarify `enforceObstacles` and `enforceOthers` in `CognitiveAgentFollowScalarField` ([0af85a8](https://github.com/AlchemistSimulator/Alchemist/commit/0af85a8b474f451b9c72d11657ff350f82239523))
+* **cognitive-agents:** fix indentation in `AbstractNavigationAction2D` ([6335aa0](https://github.com/AlchemistSimulator/Alchemist/commit/6335aa01ba747d1b7793d588935d854bc6b257b9))
+* **cognitive-agents:** fix style issues in `Alone` ([56bd1a0](https://github.com/AlchemistSimulator/Alchemist/commit/56bd1a0bdfd64dac7354fdcb1b00a96acd1d9213))
+* **cognitive-agents:** fix style issues in `Cognitive` ([f4c5bd3](https://github.com/AlchemistSimulator/Alchemist/commit/f4c5bd3fd356c22525196390fd8144263296b3a4))
+* **cognitive-agents:** fix style issues in `CognitiveProperty` ([3f1b3cc](https://github.com/AlchemistSimulator/Alchemist/commit/3f1b3cc5c7d0a8d49185c8ca68e30e4a5d82cca7))
+* **cognitive-agents:** fix style issues in `Family` ([bfa6e62](https://github.com/AlchemistSimulator/Alchemist/commit/bfa6e62eceb708d2c188962a692e68f08aae13ef))
+* **cognitive-agents:** fix style issues in `HumanProperty` ([89e2070](https://github.com/AlchemistSimulator/Alchemist/commit/89e2070a6550dbdc8aa64a92536cbe5c47f01dff))
+* **cognitive-agents:** fix style issues in `NavigationAction` ([9c95d1d](https://github.com/AlchemistSimulator/Alchemist/commit/9c95d1d4cb81ce51dd521ca22350acbaf6170a89))
+* **cognitive-agents:** fix style issues in `NavigationStrategy` ([488958a](https://github.com/AlchemistSimulator/Alchemist/commit/488958a603e5d905a7cb2ee8e792da3006c2aa36))
+* **cognitive-agents:** fix style issues in `OrientingAgent` ([d92d9d4](https://github.com/AlchemistSimulator/Alchemist/commit/d92d9d42fddfd554ada3d4baf4f99fc1e7c92c4c))
+* **cognitive-agents:** fix style issues in `SocialProperty` ([1758457](https://github.com/AlchemistSimulator/Alchemist/commit/1758457dbd5b9f4a708d6355e9da1a359805ca71))
+* **cognitive-agents:** fix style issues in `TestFeelsTransmission` ([dfb63f9](https://github.com/AlchemistSimulator/Alchemist/commit/dfb63f9641b974e2c7a8fd66a18eef6abb9e26ef))
+* **cognitive-agents:** fix style issues in `TestOrientingBehavior` ([d12f1e3](https://github.com/AlchemistSimulator/Alchemist/commit/d12f1e34bb07726a1aae534bc0add82e0c1df1de))
+* **cognitive-agents:** fix style issues in `TestPedestriansLoading` ([19cc122](https://github.com/AlchemistSimulator/Alchemist/commit/19cc122f5bac9c954ebc7cae12ee717e5666d885))
+* **cognitive-agents:** fix style issues in `TestSensory` ([7cf0500](https://github.com/AlchemistSimulator/Alchemist/commit/7cf0500b1cc19d861c53c7c7eb41ded8ee0d54b0))
+* **cognitive-agents:** fix style issues in `TestSteeringBehaviors` ([d4cd26e](https://github.com/AlchemistSimulator/Alchemist/commit/d4cd26ec37ed1b86f8369a973ac2f843ec1aa5f6))
+* **cognitive-agents:** fix style issues in `WantToEscape` ([c0aecb7](https://github.com/AlchemistSimulator/Alchemist/commit/c0aecb7364dca23702ed43ca363cceb51adff858))
+* **cognitive-agents:** fix trailing commands in `it.unibo.alchemist.model.implementations.reactions` ([b2944fe](https://github.com/AlchemistSimulator/Alchemist/commit/b2944fe962f921d5dad1aa7031553b88a2bb0373))
+* **cognitive-agents:** fix vertical spacing in `AbstractNavigationAction` ([d96112e](https://github.com/AlchemistSimulator/Alchemist/commit/d96112e4e5ba8579fb6586eb4115e125baa62ed5))
+* **cognitive-agents:** fix vertical spacing in `Perceptive2D` ([6953d09](https://github.com/AlchemistSimulator/Alchemist/commit/6953d091668252dbe5898e425a5ed51bb09d3281))
+* **cognitive-agents:** fix vertical spacing in `Speed` ([8f841b7](https://github.com/AlchemistSimulator/Alchemist/commit/8f841b7bc31186ac8efd7c291beba8e0f268b898))
+* **cognitive-agents:** improve formatting in `DynamicPursuing` ([966c6df](https://github.com/AlchemistSimulator/Alchemist/commit/966c6df222f9465213dd3ba52fe6e633b1ccdfb9))
+* **cognitive-agents:** improve formatting in `SinglePrevalent` ([749d90f](https://github.com/AlchemistSimulator/Alchemist/commit/749d90f1a67cfe49cc62df4c2f6588a48ed015bd))
+* **cognitive-agents:** improve formatting in `Weighted` ([7af1587](https://github.com/AlchemistSimulator/Alchemist/commit/7af158754f620118cdebf08bfad48af1cdf0d937))
+* **cognitive-agents:** improve style in `Functions.kt` ([8220721](https://github.com/AlchemistSimulator/Alchemist/commit/8220721d1500c7f3c3fff8b72b30979c55f2fae5))
+* **cognitive-agents:** remove trailing space ([f22e4ec](https://github.com/AlchemistSimulator/Alchemist/commit/f22e4eccedd228fe8b795204a88472b8c6972987))
+* **cognitive-agents:** reorder imports in `AbstractCognitiveCharacteristic` ([b91cd08](https://github.com/AlchemistSimulator/Alchemist/commit/b91cd08aae9bc8b98944a92e88e84cb7e572bef1))
+* **cognitive-agents:** sort imports in `Cognitive2D` ([f77636b](https://github.com/AlchemistSimulator/Alchemist/commit/f77636bb53d3db48784574b526d8cf94d780f129))
+* **cognitive-agents:** sort imports in `CognitiveAgentReachDestination` ([190842c](https://github.com/AlchemistSimulator/Alchemist/commit/190842c1bcddaebc5488605a5055a3b57a75b6d5))
+* **cognitive-agents:** sort imports in `DynamicPursuing` ([7b875e1](https://github.com/AlchemistSimulator/Alchemist/commit/7b875e171f014955dfe1ef1694b91da947900f6b))
+* **cognitive-agents:** sort imports in `it.unibo.alchemist.model.implementations.actions` ([5f5e9ff](https://github.com/AlchemistSimulator/Alchemist/commit/5f5e9ff4ed646ba67b55c30733a2f9eb0f8a0e11))
+* **cognitive-agents:** sort imports in `it.unibo.alchemist.model.implementations.properties` ([ff9a874](https://github.com/AlchemistSimulator/Alchemist/commit/ff9a874ac6d97617f54f26f288edabd07d8ecf07))
+* **cognitive-agents:** sort imports in `it.unibo.alchemist.model.implementations.reactions` ([efbef88](https://github.com/AlchemistSimulator/Alchemist/commit/efbef883bab8e96b75f00c3e5fcaa71236552d11))
+* **editorconfig:** drop invalid rule ([f29cb39](https://github.com/AlchemistSimulator/Alchemist/commit/f29cb397345abb8113ec13dbc63b3cc1946dff5a))
+* **engine:** add missing trailing commas in `TestDependencyGraph`, `TestOutputMonitorFailures`, and `TestSimulationControl` ([ed13e9c](https://github.com/AlchemistSimulator/Alchemist/commit/ed13e9cd1d081bacd8be3dc911e26d2a71d4f04f))
+* **engine:** fix style issues in `JGraphTDependencyGraph` ([b065181](https://github.com/AlchemistSimulator/Alchemist/commit/b065181acd38793e1c7e718778b0a0c4c1efe149))
+* **euclidean-geometry:** add missing trailing commas and cleanup the indentation ([5cbf0b9](https://github.com/AlchemistSimulator/Alchemist/commit/5cbf0b956d2bafe8fd4668eced48dcbc1d65b45d))
+* **euclidean-geometry:** add missing trailing commas in all classes in package `it.unibo.alchemist.model.implementations.actions` ([ca8725d](https://github.com/AlchemistSimulator/Alchemist/commit/ca8725dafaec247752198504c8285818191c8f9e))
+* **euclidean-geometry:** add trailing commas in all classes in package `it.unibo.alchemist.model.implementations.environments` ([120f64a](https://github.com/AlchemistSimulator/Alchemist/commit/120f64aa344a41fa60513202d3abf1ad4b9d9c60))
+* **euclidean-geometry:** sort all imports ([15ba121](https://github.com/AlchemistSimulator/Alchemist/commit/15ba121efb9efe010774e7d0b49a703e35018d68))
+* **euclidean-geometry:** sort imports in  `HeadTowardRandomDirection` and `Spin` ([97a55df](https://github.com/AlchemistSimulator/Alchemist/commit/97a55df5f6a8b3843f7bfdc9a55a7808baaf0bc1))
+* **euclidean-geometry:** sort imports of all classes in package `it.unibo.alchemist.model.implementations.environments` ([6d8d0ff](https://github.com/AlchemistSimulator/Alchemist/commit/6d8d0ff3ec27af7ac6794e014efcaa0b067a5665))
+* **fxui:** format according to the latest Ktlint and Detekt rules ([0bc8c03](https://github.com/AlchemistSimulator/Alchemist/commit/0bc8c03ef540a998d40bdc2ad3fdc90231658062))
+* **grid:** format according to the latest Ktlint and Detekt rules ([36a5d3a](https://github.com/AlchemistSimulator/Alchemist/commit/36a5d3a1dfa2317b0b2a024bcaf816029de2343b))
+* **incarnation-biochemistry:** format according to the latest Ktlint and Detekt rules ([a834567](https://github.com/AlchemistSimulator/Alchemist/commit/a83456782427e006730be0c214bccb3cec9b7624))
+* **incarnation-protelis:** format according to the latest Ktlint and Detekt rules ([d884a1f](https://github.com/AlchemistSimulator/Alchemist/commit/d884a1f359c1197a3b3fc20ac4511a44ce28b15c))
+* **incarnation-sapere:** format according to the latest Ktlint and Detekt rules ([e33f2d6](https://github.com/AlchemistSimulator/Alchemist/commit/e33f2d684fdc08e77ba2693d04875edb6e7bd6e7))
+* **loading:** format according to the latest Ktlint and Detekt rules ([c5a1660](https://github.com/AlchemistSimulator/Alchemist/commit/c5a16603f510505fa75b5edee3b68b8cfc17b1b6))
+* **main:** format according to the latest Ktlint and Detekt rules ([e9768fd](https://github.com/AlchemistSimulator/Alchemist/commit/e9768fd9c74c93ce4af6fe87c17f53e9f78b2378))
+* **maintenance-tooling:** format according to the latest Ktlint and Detekt rules ([7095016](https://github.com/AlchemistSimulator/Alchemist/commit/709501682e3cbae1668aca3ee87b2919cd42adbe))
+* **maps:** format according to the latest Ktlint and Detekt rules ([83acd7f](https://github.com/AlchemistSimulator/Alchemist/commit/83acd7fb28ae3b962676db97161f5c5805732611))
+* **multivesta-adapter:** format according to the latest Ktlint and Detekt rules ([6443e91](https://github.com/AlchemistSimulator/Alchemist/commit/6443e9150e8328023bafb52a5eb8f3707d7d83a9))
+* **physics:** format according to the latest Ktlint and Detekt rules ([084fe81](https://github.com/AlchemistSimulator/Alchemist/commit/084fe817837b257aa317a164b8ac2f04d70e91d7))
+* **smartcam:** format according to the latest Ktlint and Detekt rules ([1f03f7b](https://github.com/AlchemistSimulator/Alchemist/commit/1f03f7bd92fa3f7971fc6e7996135c2098aec862))
+* **swingui:** format according to the latest Ktlint and Detekt rules ([f9c6876](https://github.com/AlchemistSimulator/Alchemist/commit/f9c6876c0062d0b9c83914d87c61267dc81ecb37))
+* **test:** format according to the latest Ktlint and Detekt rules ([b49b3f0](https://github.com/AlchemistSimulator/Alchemist/commit/b49b3f03c20ac056cef8254df1896ed530ed7f09))
+* **web-render:** format according to the latest Ktlint and Detekt rules ([b87b1d2](https://github.com/AlchemistSimulator/Alchemist/commit/b87b1d2a58d2c068b4da8082f9a2b83aed58efa4))
+
+
+### Build and continuous integration
+
+* actualize `yarn.lock` automatically before building in CI ([ef8ef01](https://github.com/AlchemistSimulator/Alchemist/commit/ef8ef010f51caba8c4ae98d15a6f4c364f350df3))
+* actualize `yarn.lock` automatically when needed ([29ba81d](https://github.com/AlchemistSimulator/Alchemist/commit/29ba81d6e7af95a8018711a8f7ff8584e4e39543))
+* disable `distTar`, `distZip`, and immediately delete shadow jars in CI under windows to save space ([abd4f2a](https://github.com/AlchemistSimulator/Alchemist/commit/abd4f2a71de28bf03b4f68c896bfe6e9b701db3e))
+* **incarnation-biochemistry:** fix task dependencies between ANTLR tasks and Ktlint ([bc3552e](https://github.com/AlchemistSimulator/Alchemist/commit/bc3552e21dacba3410981ae11b2c4e2d36b0adec))
+* prefer `lowercase` to `toLowerCase` ([5d29ecb](https://github.com/AlchemistSimulator/Alchemist/commit/5d29ecb23df4ff06ff27a76b4f8cd39fd246c8d1))
+* reduce test times under Win and MacOS by testing only with the latest stable JVM ([de5eb32](https://github.com/AlchemistSimulator/Alchemist/commit/de5eb32f5fb29dd5a3721f633f439ec134fc1170))
+
 ## [25.15.3](https://github.com/AlchemistSimulator/Alchemist/compare/25.15.2...25.15.3) (2023-04-17)
 
 

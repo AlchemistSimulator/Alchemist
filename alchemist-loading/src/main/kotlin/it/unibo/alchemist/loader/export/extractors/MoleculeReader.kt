@@ -77,7 +77,7 @@ class MoleculeReader @JvmOverloads constructor(
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
-        step: Long
+        step: Long,
     ): Map<String, Double> {
         fun Node<T>.extractData() = environment.incarnation.getProperty(this, molecule, property)
         return when {

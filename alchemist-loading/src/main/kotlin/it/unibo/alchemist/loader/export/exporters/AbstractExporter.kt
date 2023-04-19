@@ -13,8 +13,8 @@ import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.exporters.AbstractExporter.Companion.DEFAULT_INTERVAL
 import it.unibo.alchemist.loader.variables.Variable
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 
@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.Time
  * @param samplingInterval the sampling time, defaults to [DEFAULT_INTERVAL].
  */
 abstract class AbstractExporter<T, P : Position<P>> (
-    private val samplingInterval: Double
+    private val samplingInterval: Double,
 ) : Exporter<T, P> {
 
     final override lateinit var dataExtractors: List<Extractor<*>>

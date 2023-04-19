@@ -11,8 +11,8 @@ package it.unibo.alchemist.loader.export.exporters
 
 import com.google.common.base.Charsets
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.util.BugReporting
@@ -43,7 +43,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
     val exportPath: String = createTempDirectory("alchemist-export").absolutePathString()
         .also { logger.warn("No output folder specified but export required. Alchemist will export data in $it") },
     val fileExtension: String = "csv",
-    private val appendTime: Boolean = false
+    private val appendTime: Boolean = false,
 ) : AbstractExporter<T, P>(interval) {
 
     private lateinit var outputPrintStream: PrintStream
@@ -96,7 +96,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
                     requireNotNull(data[it]) {
                         BugReporting.reportBug(
                             "Bug in ${this::class.simpleName}",
-                            mapOf("key" to it, "data" to data)
+                            mapOf("key" to it, "data" to data),
                         )
                     }
                 }
@@ -108,7 +108,7 @@ class CSVExporter<T, P : Position<P>> @JvmOverloads constructor(
                             Extractor "${extractor::class.simpleName}" is likely bugged:
                             1. the set of labels $names does not match the keys ${data.keys}, but iteration may fail as
                             2. it returned a map with non-predictable iteration order of type ${data::class.simpleName}"
-                            """.trimIndent()
+                            """.trimIndent(),
                         )
                     }
                     data.values.joinToString(" ")

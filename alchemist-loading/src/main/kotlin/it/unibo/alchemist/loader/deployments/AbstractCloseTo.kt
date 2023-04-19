@@ -10,11 +10,11 @@ package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
-import java.util.stream.Stream
 import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.apache.commons.math3.util.Pair
+import java.util.stream.Stream
 
 /**
  * A generic [Deployment] that displaces a certain [nodeCount] of nodes in the proximity of a number of [sources].
@@ -25,7 +25,7 @@ abstract class AbstractCloseTo<T, P : Position<P>> constructor(
     protected val randomGenerator: RandomGenerator,
     protected val environment: Environment<T, P>,
     protected val nodeCount: Int,
-    protected val variance: Double
+    protected val variance: Double,
 ) : Deployment<P> {
 
     init {

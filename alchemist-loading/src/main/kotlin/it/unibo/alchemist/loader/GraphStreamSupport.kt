@@ -75,7 +75,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
                 null ->
                     throw IllegalArgumentException(
                         "No suitable graph generator for name $generatorName," +
-                            " try any of ${generators.map { it.simpleName }}"
+                            " try any of ${generators.map { it.simpleName }}",
                     )
             }
         }
@@ -91,7 +91,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
                         filter { it.simpleName.startsWith(generator, ignoreCase = true) }.takeUnless { it.isEmpty() }
                 }
                 match ?: throw IllegalArgumentException(
-                    "None of the candidates in ${map { it.simpleName }} matches requested generator $generator"
+                    "None of the candidates in ${map { it.simpleName }} matches requested generator $generator",
                 )
             }
 
@@ -114,7 +114,7 @@ class GraphStreamSupport<T, P : Position<out P>>(
             uniqueId: Long = 0,
             layoutQuality: Double = 1.0,
             is3D: Boolean = false,
-            vararg parameters: Any
+            vararg parameters: Any,
         ): GraphStreamSupport<T, P> {
             val generator = generateGenerator(generatorName, *parameters)
             val randomGenerator = SplitMix64Random(uniqueId)

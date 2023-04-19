@@ -33,7 +33,7 @@ import java.util.function.Predicate
 
 internal abstract class LoadingSystem(
     private val originalContext: Context,
-    private val originalRoot: Map<String, *>
+    private val originalRoot: Map<String, *>,
 ) : Loader {
 
     override fun <T : Any?, P : Position<P>> getWith(values: MutableMap<String, *>) =
@@ -45,9 +45,7 @@ internal abstract class LoadingSystem(
         private val mutex = Semaphore(1)
         private var consumed = false
 
-        fun <T : Any?, P : Position<P>> environmentWith(
-            values: Map<String, *>
-        ): EnvironmentAndExports<T, P> {
+        fun <T : Any?, P : Position<P>> environmentWith(values: Map<String, *>): EnvironmentAndExports<T, P> {
             try {
                 mutex.acquireUninterruptibly()
                 check(!consumed) {
@@ -113,7 +111,7 @@ internal abstract class LoadingSystem(
                 SimulationModel.visitRecursively(
                     context,
                     displacementsSource,
-                    syntax = DocumentRoot.Deployment
+                    syntax = DocumentRoot.Deployment,
                 ) { element ->
                     (element as? Map<*, *>)?.let { _ ->
                         setCurrentRandomGenerator(scenarioRNG)
@@ -136,7 +134,8 @@ internal abstract class LoadingSystem(
             }
             // EXPORTS
             val exporters = SimulationModel.visitRecursively<Exporter<T, P>>(
-                context, root.getOrEmpty(DocumentRoot.export)
+                context,
+                root.getOrEmpty(DocumentRoot.export),
             ) {
                 SimulationModel.visitSingleExporter(incarnation, context, it)
             }
@@ -318,6 +317,7 @@ internal abstract class LoadingSystem(
          * Use this method to register a singleton that should be suitable for any superclass in its hierarchy.
          */
         private inline fun <reified T> contextualize(target: T) = factory.registerSingleton(T::class.java, target)
+
         /*
          * Contextualize dual operation.
          */

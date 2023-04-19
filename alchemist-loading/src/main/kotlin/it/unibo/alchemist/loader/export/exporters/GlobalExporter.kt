@@ -11,8 +11,8 @@ package it.unibo.alchemist.loader.export.exporters
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.loader.export.Exporter
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 
@@ -22,7 +22,7 @@ import it.unibo.alchemist.model.interfaces.Time
  *  @param exporters The list of [Exporter].
  */
 class GlobalExporter<T, P : Position<P>>(
-    private val exporters: List<Exporter<T, P>>
+    private val exporters: List<Exporter<T, P>>,
 ) : OutputMonitor<T, P> {
 
     @Override

@@ -63,7 +63,7 @@ import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.Layer as LayerSyntax
  */
 private typealias Seeds = Pair<RandomGenerator, RandomGenerator>
 private typealias ReactionComponentFunction<T, P, R> =
-    (RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
+(RandomGenerator, Environment<T, P>, Node<T>?, TimeDistribution<T>, Actionable<T>, String?) -> R
 
 /*
  * UTILITY FUNCTIONS
@@ -124,7 +124,7 @@ private fun Map<*, *>.takeIfNotAConstant(name: String, context: Context) = takeU
 
 private fun Any.validateVariableConsistencyRecursively(
     names: List<String> = emptyList(),
-    errors: Map<String, List<Throwable>>
+    errors: Map<String, List<Throwable>>,
 ): Unit = when (this) {
     is Map<*, *> -> forEach { (key, value) ->
         key?.validateVariableConsistencyRecursively(names, errors)
@@ -227,7 +227,7 @@ internal object SimulationModel {
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
                 "Invalid incarnation descriptor: $root. " +
-                    "Valid incarnations are ${SupportedIncarnations.getAvailableIncarnations()}"
+                    "Valid incarnations are ${SupportedIncarnations.getAvailableIncarnations()}",
             )
         }
 
@@ -280,7 +280,7 @@ internal object SimulationModel {
                     .map { Result.success(it) }
                     .orElseGet {
                         Result.failure(
-                            IllegalArgumentException("Unable to convert $root into a ${T::class.simpleName}")
+                            IllegalArgumentException("Unable to convert $root into a ${T::class.simpleName}"),
                         )
                     }
             }
@@ -327,7 +327,7 @@ internal object SimulationModel {
     fun <T, P : Position<P>> visitContents(
         incarnation: Incarnation<T, P>,
         context: Context,
-        root: Map<*, *>
+        root: Map<*, *>,
     ): List<Triple<List<Filter<P>>, Molecule, () -> T>> {
         logger.debug("Visiting contents: {}", root)
         val allContents = root[DocumentRoot.Deployment.contents] ?: emptyList<Any>()
@@ -385,7 +385,7 @@ internal object SimulationModel {
                     name,
                     root[languageKey]?.toString()?.lowercase() ?: "groovy",
                     formula,
-                    root[timeoutKey]
+                    root[timeoutKey],
                 )
                 is Number -> Result.success(Constant(formula))
                 is List<*> -> Result.success(Constant(formula))
@@ -398,10 +398,10 @@ internal object SimulationModel {
                         [${formula.keys.joinToString { "$it: ..." }}]
                     
                     See: https://bit.ly/groovy-map-literals
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
                 else -> throw IllegalArgumentException(
-                    "Unexpected type ${formula::class.simpleName} for variable $name"
+                    "Unexpected type ${formula::class.simpleName} for variable $name",
                 )
             }
             else -> visitJVMConstructor(context, root)
@@ -419,7 +419,7 @@ internal object SimulationModel {
     fun <T, P : Position<P>> visitEnvironment(
         incarnation: Incarnation<*, *>,
         context: Context,
-        root: Any?
+        root: Any?,
     ): Environment<T, P> =
         if (root == null) {
             logger.warn("No environment specified, defaulting to {}", Continuous2DEnvironment::class.simpleName)
@@ -433,7 +433,7 @@ internal object SimulationModel {
     private fun <E : Any> visitExportData(
         incarnation: Incarnation<*, *>,
         context: Context,
-        root: Any?
+        root: Any?,
     ): Result<Extractor<E>>? =
         when {
             root is String && root.equals(DocumentRoot.Export.Data.time, ignoreCase = true) ->
@@ -456,7 +456,7 @@ internal object SimulationModel {
                             logger.warn(
                                 "Coercing {} {} to integer, potential precision loss.",
                                 digits::class.simpleName ?: digits::class.jvmName,
-                                digits
+                                digits,
                             )
                             digits.toInt()
                         }
@@ -471,7 +471,7 @@ internal object SimulationModel {
                     }
                     val aggregators: List<String> = visitRecursively(
                         context,
-                        root[DocumentRoot.Export.Data.aggregators] ?: emptyList<Any>()
+                        root[DocumentRoot.Export.Data.aggregators] ?: emptyList<Any>(),
                     ) {
                         require(it is CharSequence) {
                             "Invalid aggregator $it:${it?.let { it::class.simpleName }}. Must be a String."
@@ -526,7 +526,7 @@ internal object SimulationModel {
         incarnation: Incarnation<T, P>,
         environment: Environment<T, P>,
         context: Context,
-        root: Any?
+        root: Any?,
     ): Node<T> =
         when (root) {
             is CharSequence? -> incarnation.createNode(randomGenerator, environment, root?.toString())
@@ -564,7 +564,7 @@ internal object SimulationModel {
                 environment,
                 node,
                 context,
-                program[ProgramSyntax.timeDistribution]
+                program[ProgramSyntax.timeDistribution],
             )
             context.factory.registerSingleton(TimeDistribution::class.java, timeDistribution)
             val actionable: Actionable<T> =
@@ -632,7 +632,7 @@ internal object SimulationModel {
                     logger.warn(
                         "No seeds specified, defaulting to 0 for both {} and {}",
                         DocumentRoot.Seeds.scenario,
-                        DocumentRoot.Seeds.simulation
+                        DocumentRoot.Seeds.simulation,
                     )
                 }
             is Map<*, *> -> {
@@ -648,7 +648,7 @@ internal object SimulationModel {
                 fun valueOf(element: String): Any =
                     if (root.containsKey(element)) {
                         root[element] ?: throw IllegalArgumentException(
-                            "Invalid random generator descriptor $root has a null value associated to $element"
+                            "Invalid random generator descriptor $root has a null value associated to $element",
                         )
                     } else {
                         0
@@ -658,7 +658,7 @@ internal object SimulationModel {
             }
             else -> throw IllegalArgumentException(
                 "Not a valid ${DocumentRoot.seeds} section: $root. Expected " +
-                    DocumentRoot.Seeds.validKeys.map { it to "<a number>" }
+                    DocumentRoot.Seeds.validKeys.map { it to "<a number>" },
             )
         }
 
@@ -684,11 +684,11 @@ internal object SimulationModel {
             ?.takeIfNotAConstant(name, context)
             ?.takeIf { DocumentRoot.Variable.validateDescriptor(element) }
             ?.let { _ ->
+                fun Any?.toDouble(): Double = coerceToDouble(context)
                 val variable = when (JavaType.type) {
                     in element -> visitBuilding<Variable<*>>(context, element) // arbitrary type
                         ?.onFailure { logger.debug("Invalid variable: {} from {}: {}", name, element, it.message) }
                     else -> runCatching { // Must be a linear variable, or else fail
-                        fun Any?.toDouble(): Double = coerceToDouble(context)
                         LinearVariable(
                             element[DocumentRoot.Variable.default].toDouble(),
                             element[DocumentRoot.Variable.min].toDouble(),
@@ -705,13 +705,13 @@ internal object SimulationModel {
         context: Context,
         root: Any?,
         syntax: SyntaxElement? = null,
-        noinline visitSingle: (Any?) -> Result<T>?
+        noinline visitSingle: (Any?) -> Result<T>?,
     ): List<T> = visitRecursively(
         evidence = T::class,
         context = context,
         root = root,
         syntax = syntax,
-        visitSingle = visitSingle
+        visitSingle = visitSingle,
     )
 
     @Suppress("CyclomaticComplexMethod")
@@ -727,7 +727,7 @@ internal object SimulationModel {
          *  - Result.failure: the target entity could not get built and an exception was generated;
          *  - null: the target entity could not get built, but there was no exception.
          */
-        visitSingle: (Any?) -> Result<T>?
+        visitSingle: (Any?) -> Result<T>?,
     ): List<T> {
         /*
          * Generates an exception that also carries information about the previous failures encountered while
@@ -739,12 +739,14 @@ internal object SimulationModel {
                 error.suppressed.forEach { addSuppressed(it) }
             }
         }
+
         /*
          * Tries to build a definition from this point of the tree.
          */
         fun tryVisit(): Result<T>? = visitSingle(root)?.onSuccess {
             logger.debug("Built {}: {} using syntax {} from {}", it, evidence.simpleName, root, syntax)
         }
+
         /*
          * Forces a definition to be built successfully. If it is not, populates the exception with all previous
          * errors and throws it.
@@ -786,7 +788,7 @@ internal object SimulationModel {
         root: Any?,
         syntax: SyntaxElement,
         forceSuccess: Boolean = true,
-        noinline visitSingle: (String, Any?) -> Result<T>?
+        noinline visitSingle: (String, Any?) -> Result<T>?,
     ): Map<String, T> = visitNamedRecursively(T::class, context, root, syntax, forceSuccess, visitSingle)
 
     private fun <T : Any> visitNamedRecursively(
@@ -795,7 +797,7 @@ internal object SimulationModel {
         root: Any?,
         syntax: SyntaxElement,
         forceSuccess: Boolean = true,
-        visitSingle: (String, Any?) -> Result<T>?
+        visitSingle: (String, Any?) -> Result<T>?,
     ): Map<String, T> {
         logger.debug("Visiting: {} searching for {}", root, evidence.simpleName)
         return when (root) {
@@ -819,7 +821,7 @@ internal object SimulationModel {
          *  - Result.failure: the target entity could not get built and an exception was generated
          *  - null: the target entity could not get built, but there was no exception
          */
-        visitSingle: (String, Any?) -> Result<T>?
+        visitSingle: (String, Any?) -> Result<T>?,
     ): Map<String, T> =
         root.flatMap { (key, value) ->
             logger.debug("Visiting: {} searching for {}", root, evidence.simpleName)

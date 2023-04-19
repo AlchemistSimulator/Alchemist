@@ -21,8 +21,8 @@ import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -46,7 +46,7 @@ class TestMongoExporter<T, P : Position<P>> : StringSpec({
                     environment: Environment<T, P>,
                     reaction: Actionable<T>?,
                     time: Time,
-                    step: Long
+                    step: Long,
                 ) = checkForErrors()
             })
             simulation.play()

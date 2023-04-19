@@ -73,7 +73,7 @@ class TestPolygon : StringSpec({
                 [ 12.233963, 45.257972 ],
                 [ 12.2504425, 45.2038121 ]]
             """,
-            object : TypeToken<List<List<Double>>>() {}.type
+            object : TypeToken<List<List<Double>>>() {}.type,
         ).map { listOf(it[1], it[0]) }
 
         val pointsPair = points.map { Pair(it[1], it[0]) }

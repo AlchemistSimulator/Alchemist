@@ -50,7 +50,7 @@ internal object ObjectFactory {
                 error(
                     "No incarnations have been included, " +
                         "please make sure that your classpath includes at least one module named like " +
-                        "it.unibo.alchemist:alchemist-*"
+                        "it.unibo.alchemist:alchemist-*",
                 )
             }
             SupportedIncarnations.get<Nothing, Nothing>(it.toString()).orElseThrow {

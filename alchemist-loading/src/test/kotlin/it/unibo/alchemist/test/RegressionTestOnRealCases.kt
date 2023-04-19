@@ -27,5 +27,5 @@ class RegressionTestOnRealCases : FreeSpec(
             loader.variables.keys shouldContain "algorithm"
             loader.variables["algorithm"]!!.stream().count().toInt() shouldBeExactly 4 * 7 + 1
         }
-    }
+    },
 )

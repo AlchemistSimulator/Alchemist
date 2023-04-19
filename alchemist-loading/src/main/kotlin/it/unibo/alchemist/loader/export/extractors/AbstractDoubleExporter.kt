@@ -41,6 +41,6 @@ abstract class AbstractDoubleExporter @JvmOverloads constructor(val precision: I
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
-        step: Long
+        step: Long,
     ): Map<String, String> = extractData(environment, reaction, time, step).mapValues { format(it.value) }
 }

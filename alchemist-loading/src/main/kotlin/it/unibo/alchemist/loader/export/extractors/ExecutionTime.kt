@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.loader.export.extractors
 
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Time
  * Optionally, a [precision] (significant digits) can be provided.
  */
 class ExecutionTime @JvmOverloads constructor(
-    precision: Int? = null
+    precision: Int? = null,
 ) : AbstractDoubleExporter(precision) {
 
     companion object {
@@ -33,7 +33,7 @@ class ExecutionTime @JvmOverloads constructor(
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
-        step: Long
+        step: Long,
     ): Map<String, Double> {
         if (lastStep > step) {
             firstRun = true

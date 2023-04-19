@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.interfaces.Position
  */
 class SpecificPositions(
     environment: Environment<*, *>,
-    vararg positions: Iterable<Number>
+    vararg positions: Iterable<Number>,
 ) : Deployment<Position<*>> {
 
     private val positions: List<Position<*>> = positions.map { environment.makePosition(*it.toList().toTypedArray()) }

@@ -27,7 +27,7 @@ import kotlin.reflect.jvm.jvmErasure
  */
 class OrderedParametersConstructor(
     type: String,
-    private val parameters: List<*> = emptyList<Any?>()
+    private val parameters: List<*> = emptyList<Any?>(),
 ) : JVMConstructor(type) {
 
     override fun <T : Any> parametersFor(target: KClass<T>, factory: Factory): List<*> = parameters
@@ -44,7 +44,7 @@ private typealias OrderedParameters = List<KParameter>
  */
 class NamedParametersConstructor(
     type: String,
-    private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>()
+    private val parametersMap: Map<*, *> = emptyMap<Any?, Any?>(),
 ) : JVMConstructor(type) {
 
     private fun List<OrderedParameters>.description() = joinToString(prefix = "\n- ", separator = "\n- ") {
@@ -161,28 +161,28 @@ sealed class JVMConstructor(val typeName: String) {
                             """
                             |No valid match for type $typeName among subtypes of ${type.simpleName}.
                             |Valid subtypes are: ${typeSearch.subTypes.map { it.simpleName }}
-                            """.trimMargin()
-                        )
+                            """.trimMargin(),
+                        ),
                     )
                     1 -> {
                         logger.warn(
                             "{} has been selected even though it is not a perfect match for {}",
                             subOptimalMatches.first().name,
-                            typeName
+                            typeName,
                         )
                         Result.success(newInstance(subOptimalMatches.first().kotlin, factory))
                     }
                     else -> Result.failure(
                         IllegalStateException(
                             "Multiple matches for $typeName as subtype of ${type.simpleName}: " +
-                                "${perfectMatches.map { it.name }}. Disambiguation is required."
-                        )
+                                "${perfectMatches.map { it.name }}. Disambiguation is required.",
+                        ),
                     )
                 }
             }
             1 -> runCatching { newInstance(perfectMatches.first().kotlin, factory) }
             else -> Result.failure(
-                IllegalStateException("Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}")
+                IllegalStateException("Multiple perfect matches for $typeName: ${perfectMatches.map { it.name }}"),
             )
         }
     }
@@ -190,7 +190,7 @@ sealed class JVMConstructor(val typeName: String) {
     private fun CreationResult<*>.logErrors(logger: (String, Array<Any?>) -> Unit) {
         for ((constructor, exception) in exceptions) {
             val errorMessages = generateSequence<Pair<Throwable?, String?>>(
-                exception to exception.message
+                exception to exception.message,
             ) { (outer, _) -> outer?.cause to outer?.cause?.message }
                 .takeWhile { it.first != null }
                 .filter { !it.second.isNullOrBlank() }
@@ -202,7 +202,7 @@ sealed class JVMConstructor(val typeName: String) {
                                 "first" to first,
                                 "second" to second,
                                 "constructor" to constructor,
-                                "creation result" to this
+                                "creation result" to this,
                             ),
                         )
                     }
@@ -214,7 +214,7 @@ sealed class JVMConstructor(val typeName: String) {
                 arrayOf(
                     constructor.shorterToString(),
                     if (errorMessages.isEmpty()) "unknown reasons" else "the following reasons:",
-                )
+                ),
             )
             errorMessages.reversed().forEach { logger("  - $it", emptyArray()) }
         }
@@ -260,7 +260,7 @@ sealed class JVMConstructor(val typeName: String) {
                         compatibleSubtypes.size > 1 -> {
                             error(
                                 "Ambiguous mapping: $compatibleSubtypes all match the requested type $typeName for " +
-                                    "parameter #$mappedIndex:$potentialType of $constructor"
+                                    "parameter #$mappedIndex:$potentialType of $constructor",
                             )
                         }
                         else -> {

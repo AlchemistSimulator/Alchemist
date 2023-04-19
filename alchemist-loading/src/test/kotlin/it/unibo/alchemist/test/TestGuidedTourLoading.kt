@@ -22,7 +22,7 @@ import java.io.File
 import java.lang.RuntimeException
 import java.net.URL
 
-val cache: LoadingCache<URL, Loader> = Caffeine.newBuilder().build {
+private val cache: LoadingCache<URL, Loader> = Caffeine.newBuilder().build {
     LoadAlchemist.from(it)
 }
 

@@ -33,7 +33,7 @@ object SingleRunSwingUI : SimulationLauncher() {
             variables.isNotEmpty() -> incompatibleWith("variable exploration mode")
             distributed != null -> incompatibleWith("distributed execution")
             GraphicsEnvironment.isHeadless() -> Invalid(
-                "The JVM graphic environment is marked as headless. Cannot show a graphical interface. "
+                "The JVM graphic environment is marked as headless. Cannot show a graphical interface. ",
             )
             graphics != null && !fxui -> OK(Priority.High("Graphical effects requested, priority shifts up"))
             else -> OK()

@@ -35,7 +35,7 @@ class BidimensionalGaussianLayersMapper : LayerToFunctionMapper {
         toDraw: Collection<Layer<T, P>>,
         environment: Environment<T, P>,
         g: Graphics2D,
-        wormhole: Wormhole2D<P>
+        wormhole: Wormhole2D<P>,
     ) {
         if (minAndMaxToBeSet) {
             val maxLayerValue = toDraw.stream()

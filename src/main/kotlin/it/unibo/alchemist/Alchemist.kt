@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.helpers.NOPLoggerFactory
 
 private typealias ValidLauncher = Pair<Validation.OK, Launcher>
+
 /**
  * Starts Alchemist.
  */
@@ -70,8 +71,9 @@ object Alchemist {
         "vv" to Level.DEBUG,
         "vvv" to Level.ALL,
         "q" to Level.ERROR,
-        "qq" to Level.OFF
+        "qq" to Level.OFF,
     )
+
     /**
      * Set this to false for testing purposes.
      */
@@ -116,7 +118,7 @@ object Alchemist {
                     how to include incarnations in your project.
                     If you believe this is a bug, please open a report at:
                     https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
-                    """.trimIndent().trim().replace('\n', ' ')
+                    """.trimIndent().trim().replace('\n', ' '),
                 )
                 "There are no incarnations in the classpath, no simulation can get executed"
             }
@@ -174,6 +176,7 @@ object Alchemist {
         }
         second(options)
     }
+
     /**
      * Call this method to enable testing mode, preventing Alchemist from shutting down the JVM.
      */
@@ -188,7 +191,7 @@ object Alchemist {
             verbosity.size > 1 ->
                 exitBecause(
                     "Conflicting verbosity specification. Only one of ${logLevels.keys} can be specified.",
-                    ExitStatus.MULTIPLE_VERBOSITY
+                    ExitStatus.MULTIPLE_VERBOSITY,
                 )
             verbosity.size == 1 -> setLogbackLoggingLevel(verbosity.first())
             else -> setLogbackLoggingLevel(Level.WARN)
@@ -203,7 +206,7 @@ object Alchemist {
                 encoder = PatternLayoutEncoder().apply {
                     pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
                 }
-            }
+            },
         )
     }
 
@@ -237,7 +240,7 @@ object Alchemist {
             parallelism = hasNumeric(PARALLELISM, kotlin.String::toIntOrNull)
                 ?: AlchemistExecutionOptions.defaultParallelism,
             variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
-            configuration = getOptionValue(YAML)
+            configuration = getOptionValue(YAML),
         )
 
     private enum class ExitStatus {
@@ -249,6 +252,6 @@ object Alchemist {
      * The [exitStatus] returns the exit status the execution would have had.
      */
     data class AlchemistWouldHaveExitedException(
-        val exitStatus: Int
+        val exitStatus: Int,
     ) : RuntimeException("Alchemist would have exited with $exitStatus")
 }

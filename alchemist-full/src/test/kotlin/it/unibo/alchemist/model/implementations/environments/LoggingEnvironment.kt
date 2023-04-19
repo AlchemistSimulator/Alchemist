@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
  */
 
 class LoggingEnvironment(
-    incarnation: Incarnation<Any, Euclidean2DPosition>
+    incarnation: Incarnation<Any, Euclidean2DPosition>,
 ) : Continuous2DEnvironment<Any>(incarnation) {
 
     init {

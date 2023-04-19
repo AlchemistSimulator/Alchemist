@@ -11,8 +11,8 @@ import Libs.alchemist
 import Libs.incarnation
 import Util.fetchJavadocIOForDependency
 import Util.id
-import Util.testShadowJar
 import Util.isMultiplatform
+import Util.testShadowJar
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -212,13 +212,13 @@ allprojects {
                     <property name="message"
                               value="Do not use @author. Changes and authors are tracked by the content manager." />
                 </module>
-                """.trimIndent()
+                """.trimIndent(),
             )
             additionalSuppressions.set(
                 """
                 <suppress files=".*[\\/]expressions[\\/]parser[\\/].*" checks=".*"/>
                 <suppress files=".*[\\/]biochemistrydsl[\\/].*" checks=".*"/>
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }
@@ -278,8 +278,8 @@ allprojects {
                     "Implementation-Title" to "Alchemist",
                     "Implementation-Version" to rootProject.version,
                     "Main-Class" to "it.unibo.alchemist.Alchemist",
-                    "Automatic-Module-Name" to "it.unibo.alchemist"
-                )
+                    "Automatic-Module-Name" to "it.unibo.alchemist",
+                ),
             )
         }
         exclude(

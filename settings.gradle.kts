@@ -27,6 +27,7 @@ include(
     "alchemist-loading",
     "alchemist-maintenance-tooling",
     "alchemist-maps",
+    "alchemist-multivesta-adapter",
     "alchemist-physics",
     "alchemist-sapere-mathexp",
     "alchemist-smartcam",
@@ -38,7 +39,6 @@ include(
     "alchemist-swingui",
     "alchemist-fxui",
     "alchemist-web-renderer",
-    "alchemist-multivesta-adapter"
 )
 rootProject.name = "alchemist"
 

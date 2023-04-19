@@ -22,7 +22,7 @@ object BugReporting {
     @JvmOverloads
     fun reportBug(
         message: String,
-        debugInformation: Map<String, Any?> = mapOf()
+        debugInformation: Map<String, Any?> = mapOf(),
     ): Nothing {
         error(
             message +
@@ -33,7 +33,7 @@ object BugReporting {
                 attaching the following information and the full stacktrace:
                 
                 """.trimIndent() +
-                debugInformation.debugReport()
+                debugInformation.debugReport(),
         )
     }
 

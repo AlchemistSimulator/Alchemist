@@ -37,5 +37,5 @@ class RegressionTest : StringSpec(
                 .error
                 .ifPresent { throw it }
         }
-    }
+    },
 )

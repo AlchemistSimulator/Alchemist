@@ -38,7 +38,8 @@ enum class ActionFromKey(private val description: String) {
     MOVE("Move"),
     EDIT("Edit"),
     PLAY_AND_PAUSE("Play and Pause"),
-    ONE_STEP("Forward one step");
+    ONE_STEP("Forward one step"),
+    ;
 
     override fun toString() = description
 }
@@ -72,6 +73,7 @@ object Keybinds {
         .registerTypeAdapter(typeToken.type, KeybindsSerializer())
         .create()
     private val DEFAULT_CHARSET = Charsets.UTF_8
+
     /**
      * The currently loaded configuration.
      */
@@ -119,7 +121,7 @@ object Keybinds {
         val tryToLoad = runCatching {
             config = gson.fromJson(
                 File("$filesystemPath$filename").readText(),
-                typeToken.type
+                typeToken.type,
             )
         }
         return tryToLoad.map { true }
@@ -133,7 +135,7 @@ object Keybinds {
     private fun loadFromClasspath() {
         config = gson.fromJson(
             ResourceLoader.getResource("$classpathPath$filename").readText(DEFAULT_CHARSET),
-            typeToken.type
+            typeToken.type,
         )
     }
 }

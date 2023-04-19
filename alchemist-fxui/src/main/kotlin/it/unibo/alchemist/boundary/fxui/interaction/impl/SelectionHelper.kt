@@ -105,7 +105,7 @@ class SelectionHelper<T, P : Position2D<P>> {
      */
     fun clickSelection(
         nodes: Map<Node<T>, P>,
-        wormhole: Wormhole2D<P>
+        wormhole: Wormhole2D<P>,
     ): Pair<Node<T>, P>? =
         selectionPoint?.let { point ->
             nodes.minByOrNull { nodes[it.key]?.distanceTo(wormhole.getEnvPoint(point)) ?: Double.POSITIVE_INFINITY }
@@ -117,7 +117,7 @@ class SelectionHelper<T, P : Position2D<P>> {
      */
     fun boxSelection(
         nodes: Map<Node<T>, P>,
-        wormhole: Wormhole2D<P>
+        wormhole: Wormhole2D<P>,
     ): Map<Node<T>, P> =
         when {
             box.closed -> emptyMap()

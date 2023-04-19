@@ -70,7 +70,7 @@ class CustomLeafletMapView : LeafletMapView() {
         (execScript("myMap.containerPointToLatLng([${p.x}, ${p.y}]);") as JSObject).let {
             LatLong(
                 it.getMember("lat").toString().toDouble(),
-                it.getMember("lng").toString().toDouble()
+                it.getMember("lng").toString().toDouble(),
             )
         }
 
@@ -81,7 +81,7 @@ class CustomLeafletMapView : LeafletMapView() {
         (execScript("myMap.latLngToContainerPoint([${latLong.latitude}, ${latLong.longitude}]);") as JSObject).let {
             makePoint(
                 it.getMember("x").toString().toDouble(),
-                it.getMember("y").toString().toDouble()
+                it.getMember("y").toString().toDouble(),
             )
         }
 

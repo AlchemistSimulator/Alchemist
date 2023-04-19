@@ -32,6 +32,7 @@ object PointExtension {
      * @param p the other point.
      */
     operator fun Point.plus(p: Point): Point = Point(x + p.x, y + p.y)
+
     /**
      * Subtracts [this] and the given [Point].
      *
@@ -48,6 +49,6 @@ object PointExtension {
         min(this.x, other.x).toDouble(),
         min(this.y, other.y).toDouble(),
         abs(this.x - other.x).toDouble(),
-        abs(this.y - other.y).toDouble()
+        abs(this.y - other.y).toDouble(),
     )
 }

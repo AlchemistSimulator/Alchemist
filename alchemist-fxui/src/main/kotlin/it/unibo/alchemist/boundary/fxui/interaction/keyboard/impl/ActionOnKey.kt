@@ -17,7 +17,8 @@ import javafx.scene.input.KeyCode
  */
 enum class ActionOnKey {
     PRESSED,
-    RELEASED;
+    RELEASED,
+    ;
 
     /**
      * Returns a [KeyboardTriggerAction] initialized with this [ActionOnKey] and the given [KeyCode].

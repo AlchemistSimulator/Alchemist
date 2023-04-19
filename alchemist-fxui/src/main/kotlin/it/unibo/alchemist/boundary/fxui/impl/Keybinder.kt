@@ -63,6 +63,7 @@ class Keybind(action: ActionFromKey, key: KeyCode) {
      * The action.
      */
     var action: ActionFromKey by property(action)
+
     /**
      * The property of the action.
      */
@@ -72,6 +73,7 @@ class Keybind(action: ActionFromKey, key: KeyCode) {
      * The key.
      */
     var key: KeyCode by property(key)
+
     /**
      * The property of the key.
      */
@@ -86,6 +88,7 @@ class KeybindModel : ItemViewModel<Keybind>() {
      * The property of the action.
      */
     val actionProperty: Property<ActionFromKey> = bind(Keybind::actionProperty)
+
     /**
      * The property of the key.
      */
@@ -103,8 +106,9 @@ class KeybindController : Controller() {
         Keybinds.config.asSequence()
             .map { Keybind(it.key, it.value) }
             .plus(ActionFromKey.values().map { Keybind(it, KeyCode.UNDEFINED) })
-            .distinctBy { it.action }.toList()
+            .distinctBy { it.action }.toList(),
     )
+
     /**
      * The keybind currently selected in the view.
      */
@@ -132,6 +136,7 @@ class ListKeybindsView : View() {
      */
     override val titleProperty: StringProperty
         get() = messages["title_keybinds_list"].toProperty()
+
     /**
      * {@inheritDoc}.
      */
@@ -190,7 +195,7 @@ class EditKeybindView : View() {
     override val root = vbox(SPACING_SMALL) {
         label(
             "${messages["label_key_rebind"]} ${toEdit.actionProperty.value}. " +
-                "${messages["label_key_current"]}: ${toEdit.keyProperty.value}"
+                "${messages["label_key_current"]}: ${toEdit.keyProperty.value}",
         )
         keyboard {
             addEventHandler(KeyEvent.KEY_PRESSED) {

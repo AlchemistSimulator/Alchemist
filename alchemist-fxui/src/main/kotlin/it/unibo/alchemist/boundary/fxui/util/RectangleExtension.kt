@@ -25,7 +25,7 @@ object RectangleExtension {
      */
     fun <T, P : Position2D<P>> Rectangle.intersectingNodes(
         nodes: Map<Node<T>, P>,
-        wormhole: Wormhole2D<P>
+        wormhole: Wormhole2D<P>,
     ): Map<Node<T>, P> = nodes.filterValues { wormhole.getViewPoint(it) in this }
 
     /**

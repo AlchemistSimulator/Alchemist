@@ -28,10 +28,10 @@ import java.awt.Point
 class LeafletMapWormhole(
     environment: Environment<*, GeoPosition>,
     node: Node,
-    private val map: CustomLeafletMapView
+    private val map: CustomLeafletMapView,
 ) : WormholeFX<GeoPosition>(
     environment,
-    node
+    node,
 ) {
     init {
         mode = Wormhole2D.Mode.MAP

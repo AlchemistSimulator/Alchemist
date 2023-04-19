@@ -52,7 +52,7 @@ import java.util.stream.Stream
  */
 @SuppressFBWarnings(
     "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
-    "Field is initialized in the initialize function"
+    "Field is initialized in the initialize function",
 )
 open class BaseFXDisplay<T, P : Position2D<P>> :
     Pane(),
@@ -61,14 +61,17 @@ open class BaseFXDisplay<T, P : Position2D<P>> :
     private val effectStack: ObservableList<EffectGroup<P>> = FXCollections.observableArrayList()
     private val mutex = Semaphore(1)
     private val mayRender = AtomicBoolean(true)
+
     @Volatile private var firstTime: Boolean = false
     private var realTime: Boolean = false
+
     @Volatile private var commandQueue: ConcurrentLinkedQueue<() -> Unit> = ConcurrentLinkedQueue()
     private var viewStatus = DEFAULT_VIEW_STATUS
     private lateinit var wormhole: Wormhole2D<P>
     private lateinit var zoomManager: ZoomManager
     private val interactions: InteractionManager<T, P> by lazy { BaseInteractionManager(this) }
     private val effectsCanvas = Canvas()
+
     /**
      * Group dedicated for painting the background.
      */
@@ -179,7 +182,7 @@ open class BaseFXDisplay<T, P : Position2D<P>> :
     protected open fun createZoomManager(wormhole: Wormhole2D<P>): ZoomManager =
         ExponentialZoomManager(
             wormhole.zoom,
-            ExponentialZoomManager.DEF_BASE
+            ExponentialZoomManager.DEF_BASE,
         )
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
@@ -223,10 +226,12 @@ open class BaseFXDisplay<T, P : Position2D<P>> :
          * Position `DataFormat`.
          */
         protected val POSITION_DATA_FORMAT: DataFormat = DataFormatFactory.getDataFormat(Position::class.java)
+
         /**
          * Default serial version UID.
          */
         private const val serialVersionUID = 1L
+
         /**
          * The default view status.
          */

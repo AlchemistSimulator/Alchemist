@@ -27,7 +27,8 @@ enum class Direction2D(val x: Int, val y: Int) {
     NORTHEAST(1, 1),
     SOUTHEAST(1, -1),
     SOUTHWEST(-1, -1),
-    NORTHWEST(-1, 1);
+    NORTHWEST(-1, 1),
+    ;
 
     private fun flip(xFlip: Boolean = true, yFlip: Boolean = true): Direction2D =
         values().find {

@@ -37,7 +37,7 @@ data class AlchemistExecutionOptions(
     val help: Boolean = false,
     val server: String? = null,
     val parallelism: Int = defaultParallelism,
-    val endTime: Double = defaultEndTime
+    val endTime: Double = defaultEndTime,
 ) {
     /**
      * returns true if all options are set to their default value.
@@ -49,6 +49,7 @@ data class AlchemistExecutionOptions(
          * Defaults to the number of logical cores detected by the JVM.
          */
         val defaultParallelism = Runtime.getRuntime().availableProcessors()
+
         /**
          * Default final time to be used if no final time is specified.
          * Defaults to [Double.POSITIVE_INFINITY].

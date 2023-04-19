@@ -45,19 +45,19 @@ abstract class SimulationLauncher : AbstractLauncher() {
         val loader = LoadAlchemist.from(
             ResourceLoader.getResource(configuration)
                 ?: File(configuration).takeIf { it.exists() && it.isFile }?.toURI()?.toURL()
-                ?: error("No classpath resource or file $configuration was found")
+                ?: error("No classpath resource or file $configuration was found"),
         )
         launch(loader, parameters)
     }
 
     protected fun Map<String, Variable<*>>.cartesianProductOf(
-        variables: Collection<String>
+        variables: Collection<String>,
     ): List<Map<String, Serializable?>> {
         val variableValues = variables.map { variableName ->
             this[variableName]
                 ?.map { variableName to it }
                 ?: throw IllegalArgumentException(
-                    "$variableName does not exist among the variables. Valid values are: $this"
+                    "$variableName does not exist among the variables. Valid values are: $this",
                 )
         }.toList()
         return Lists.cartesianProduct(variableValues).map { it.toMap() }.takeUnless { it.isEmpty() }
@@ -67,7 +67,7 @@ abstract class SimulationLauncher : AbstractLauncher() {
     protected fun <T, P : Position<P>> prepareSimulation(
         loader: Loader,
         parameters: AlchemistExecutionOptions,
-        variables: Map<String, *>
+        variables: Map<String, *>,
     ): Simulation<T, P> {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
         val simulation = Engine(initialized.environment, DoubleTime(parameters.endTime))

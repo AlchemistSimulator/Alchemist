@@ -35,8 +35,8 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
                         Graphical interface required but unavailable.
                         Import an Alchemist module with a graphical launcher, e.g. alchemist-swingui.
                         See: https://alchemistsimulator.github.io/wiki/usage/gui/
-                        """.trimIndent()
-                    )
+                        """.trimIndent(),
+                    ),
                 )
             distributed != null ->
                 Validation.OK(
@@ -45,14 +45,14 @@ object HeadlessSimulationLauncher : SimulationLauncher() {
                         Distributed execution required but unavailable.
                         Import an Alchemist module with a distributed executor, e.g. alchemist-grid.
                         See: https://alchemistsimulator.github.io/wiki/usage/grid/
-                        """.trimIndent()
-                    )
+                        """.trimIndent(),
+                    ),
                 )
             else ->
                 Validation.OK(
                     Priority.Fallback(
-                        "Headless mode not explicitly requested, but no graphic environment found"
-                    )
+                        "Headless mode not explicitly requested, but no graphic environment found",
+                    ),
                 )
         }
     }

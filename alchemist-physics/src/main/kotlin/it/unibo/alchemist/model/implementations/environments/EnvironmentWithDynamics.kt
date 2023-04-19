@@ -32,7 +32,7 @@ import org.dyn4j.world.World
 import java.awt.Color
 
 private typealias PhysicsEnvironmentWithObstacles<T> =
-    EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>
+EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>
 
 /**
  * This Environment uses hooks provided by [Dynamics2DEnvironment] to update

@@ -14,12 +14,12 @@ import it.unibo.alchemist.model.implementations.actions.steeringstrategies.Dista
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 
 /**
  * A reaction for the update of a [Dynamics2DEnvironment].
@@ -35,7 +35,7 @@ class Physical<T>(
     override fun updateInternalStatus(
         currentTime: Time?,
         hasBeenExecuted: Boolean,
-        environment: Environment<T, *>?
+        environment: Environment<T, *>?,
     ) = Unit
 
     /**

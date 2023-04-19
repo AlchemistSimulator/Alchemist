@@ -177,20 +177,24 @@ class PhysicalPedestrian2D<T>(
          * Minimum value for normal state [comfortRay] (in meters).
          */
         private const val minimumSpaceTreshold = 0.5
+
         /**
          * Maximum value for normal state [comfortRay] (in meters).
          */
         private const val maximumSpaceThreshold = 1.0
+
         /**
          * Dimension (in meters) of the rectangle of influence (width, height).
          * This dimensions have been set according to the work of [Pelechano et al](https://bit.ly/3e3C7Tb)
          */
         private val rectangleOfInfluenceDimensions: Pair<Double, Double> = Pair(3.0, 1.0)
+
         /**
          * Direction tangential force weight factor for when two nodes are moving in the same direction.
          * See the work of [Pelechano et al](https://bit.ly/3e3C7Tb).
          */
         private const val directionWeight = 1.2
+
         /**
          * Fallen agent perception radius (in meters).
          * For further information please refer to the work of [Pelechano et al](https://bit.ly/3e3C7Tb).

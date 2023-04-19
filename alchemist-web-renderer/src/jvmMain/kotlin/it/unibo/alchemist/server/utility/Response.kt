@@ -10,11 +10,11 @@
 package it.unibo.alchemist.server.utility
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.util.pipeline.PipelineContext
-import io.ktor.http.HttpStatusCode.Companion.OK
 
 /**
  * Class representing an HTTP response.
@@ -23,7 +23,7 @@ import io.ktor.http.HttpStatusCode.Companion.OK
  */
 data class Response<C>(
     val code: HttpStatusCode = OK,
-    val content: C
+    val content: C,
 ) {
     companion object {
         /**

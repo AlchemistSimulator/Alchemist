@@ -42,5 +42,5 @@ enum class StatusSurrogate {
     /**
      * The simulation is stopped. It is no longer possible to resume it.
      */
-    TERMINATED
+    TERMINATED,
 }

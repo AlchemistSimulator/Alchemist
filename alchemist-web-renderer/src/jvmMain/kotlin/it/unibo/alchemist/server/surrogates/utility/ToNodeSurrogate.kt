@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.server.surrogates.utility
 
+import it.unibo.alchemist.common.model.surrogate.NodeSurrogate
+import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.common.model.surrogate.NodeSurrogate
-import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
 
 /**
  * A function that maps a [it.unibo.alchemist.model.interfaces.Node] to its surrogate class
@@ -31,10 +31,10 @@ import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
 fun <T, P, TS, PS> Node<T>.toNodeSurrogate(
     environment: Environment<T, P>,
     toConcentrationSurrogate: (T) -> TS,
-    toPositionSurrogate: (P) -> PS
+    toPositionSurrogate: (P) -> PS,
 ): NodeSurrogate<TS, PS>
-where TS : Any, P : Position<out P>, PS : PositionSurrogate = NodeSurrogate(
+    where TS : Any, P : Position<out P>, PS : PositionSurrogate = NodeSurrogate(
     id,
     contents.map { it.key.toMoleculeSurrogate() to toConcentrationSurrogate(it.value) }.toMap(),
-    toPositionSurrogate(environment.getPosition(this))
+    toPositionSurrogate(environment.getPosition(this)),
 )

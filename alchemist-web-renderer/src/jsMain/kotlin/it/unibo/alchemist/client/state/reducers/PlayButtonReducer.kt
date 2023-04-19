@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.client.state.reducers
 
-import it.unibo.alchemist.common.utility.Action
 import it.unibo.alchemist.client.state.actions.SetPlayButton
+import it.unibo.alchemist.common.utility.Action
 
 /**
  * Reducer for the simulation play button.

@@ -20,7 +20,7 @@ import it.unibo.alchemist.server.state.actions.SetEnvironmentSurrogate
  */
 fun environmentSurrogateReducer(
     state: EnvironmentSurrogate<Any, PositionSurrogate>,
-    action: Any
+    action: Any,
 ): EnvironmentSurrogate<Any, PositionSurrogate> =
     when (action) {
         is SetEnvironmentSurrogate<*, *> -> action.environmentSurrogate

@@ -27,15 +27,15 @@ class EnvironmentSurrogateTest : StringSpec({
             0,
             mapOf(
                 MoleculeSurrogate("test-0") to EmptyConcentrationSurrogate,
-                MoleculeSurrogate("test-1") to EmptyConcentrationSurrogate
+                MoleculeSurrogate("test-1") to EmptyConcentrationSurrogate,
             ),
-            position
+            position,
         ),
         NodeSurrogate(
             1,
             mapOf(MoleculeSurrogate("test-2") to EmptyConcentrationSurrogate),
-            position
-        )
+            position,
+        ),
     )
 
     val envSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> = EnvironmentSurrogate(2, nodesListSet)
@@ -52,7 +52,7 @@ class EnvironmentSurrogateTest : StringSpec({
     "EnvironmentSurrogate serialization and deserialization should work" {
         EnvironmentSurrogate.serializer(
             Int.serializer(),
-            PositionSurrogate.serializer()
+            PositionSurrogate.serializer(),
         ).descriptor.serialName shouldBe "Environment"
         val serialized = jsonFormat.encodeEnvironmentSurrogate(envSurrogate)
         val deserializedPolymorphic = jsonFormat.decodeEnvironmentSurrogate(serialized)

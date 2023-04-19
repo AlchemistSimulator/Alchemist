@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.client.components
 
-import react.FC
-import react.Props
 import it.unibo.alchemist.client.adapters.reactBootstrap.navbar.Navbar
 import it.unibo.alchemist.client.adapters.reactBootstrap.navbar.NavbarBrand
 import it.unibo.alchemist.client.state.ClientStore.store
 import it.unibo.alchemist.common.model.surrogate.StatusSurrogate
+import react.FC
+import react.Props
 import react.useState
 
 /**

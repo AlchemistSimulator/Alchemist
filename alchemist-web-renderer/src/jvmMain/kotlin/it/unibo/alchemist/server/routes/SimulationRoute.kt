@@ -10,8 +10,8 @@
 package it.unibo.alchemist.server.routes
 
 import io.ktor.http.HttpStatusCode.Companion.Conflict
-import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
+import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -22,10 +22,10 @@ import it.unibo.alchemist.common.utility.Routes.simulationPlayPath
 import it.unibo.alchemist.common.utility.Routes.simulationStatusPath
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.core.interfaces.Status
-import it.unibo.alchemist.server.utility.Response.Companion.respond
 import it.unibo.alchemist.server.state.ServerStore.store
 import it.unibo.alchemist.server.surrogates.utility.toStatusSurrogate
 import it.unibo.alchemist.server.utility.Response
+import it.unibo.alchemist.server.utility.Response.Companion.respond
 
 /**
  * Logic of the Routes in the /simulation path.
@@ -85,7 +85,7 @@ object SimulationRoute {
      */
     private suspend fun PipelineContext<Unit, ApplicationCall>.respondAction(
         additionalCheck: Pair<Status, String>,
-        action: (Simulation<Any, Nothing>) -> Unit
+        action: (Simulation<Any, Nothing>) -> Unit,
     ) {
         store.state.simulation?.let { simulation ->
             respond(
@@ -97,7 +97,7 @@ object SimulationRoute {
                         action(simulation)
                         Response(OK, "Action executed.")
                     }
-                }
+                },
             )
         } ?: respond(Response(InternalServerError, "No Simulation found on the server."))
     }

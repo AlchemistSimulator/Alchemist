@@ -29,7 +29,7 @@ open class ServerTest : StringSpec({
             environment {
                 config = MapApplicationConfig(
                     "ktor.deployment.port" to "80",
-                    "ktor.deployment.sslPort" to "7001"
+                    "ktor.deployment.sslPort" to "7001",
                 )
             }
             mainRouteTest()

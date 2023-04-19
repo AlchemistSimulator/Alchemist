@@ -24,7 +24,7 @@ class ToEnvironmentSurrogateTest<T, P> : StringSpec({
         webRendererTestEnvironments<T, P>().forEach {
             val environmentSurrogate = it.toEnvironmentSurrogate(
                 toEmptyConcentration,
-                toSuitablePositionSurrogate(it.dimensions)
+                toSuitablePositionSurrogate(it.dimensions),
             )
             it.dimensions shouldBe environmentSurrogate.dimensions
             it.nodes.size shouldBe environmentSurrogate.nodes.size

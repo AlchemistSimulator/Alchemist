@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.client.components
 
-import it.unibo.alchemist.common.model.RenderMode
-import react.FC
-import react.Props
 import it.unibo.alchemist.client.adapters.reactBootstrap.buttons.ToggleButton
 import it.unibo.alchemist.client.adapters.reactBootstrap.buttons.ToggleButtonGroup
 import it.unibo.alchemist.client.state.ClientStore.store
 import it.unibo.alchemist.client.state.actions.SetRenderMode
+import it.unibo.alchemist.common.model.RenderMode
+import react.FC
+import react.Props
 
 /**
  * The button group that let the user decide which render mode to use.

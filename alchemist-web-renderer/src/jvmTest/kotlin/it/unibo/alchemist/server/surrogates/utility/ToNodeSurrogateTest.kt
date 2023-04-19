@@ -30,7 +30,7 @@ class ToNodeSurrogateTest<T, P> : StringSpec({
             val nodeSurrogate = node.toNodeSurrogate(
                 it,
                 toEmptyConcentration,
-                toSuitablePositionSurrogate(it.dimensions)
+                toSuitablePositionSurrogate(it.dimensions),
             )
             checkToNodeSurrogate(it, node, nodeSurrogate)
         }
@@ -40,7 +40,7 @@ class ToNodeSurrogateTest<T, P> : StringSpec({
 fun <T, P, TS, PS> checkToNodeSurrogate(
     environment: Environment<T, P>,
     node: Node<T>,
-    nodeSurrogate: NodeSurrogate<TS, PS>
+    nodeSurrogate: NodeSurrogate<TS, PS>,
 ) where T : Any, P : Position<out P>, TS : Any, PS : PositionSurrogate {
     node.id shouldBe nodeSurrogate.id
     node.contents.forAllKeys { molecule ->

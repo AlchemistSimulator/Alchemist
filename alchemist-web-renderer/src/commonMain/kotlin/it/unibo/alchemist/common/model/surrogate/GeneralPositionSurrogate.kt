@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 @SerialName("Position")
 data class GeneralPositionSurrogate(
     override val coordinates: DoubleArray,
-    override val dimensions: Int
+    override val dimensions: Int,
 ) : PositionSurrogate {
     init {
         require(coordinates.size == dimensions) {

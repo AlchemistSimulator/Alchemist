@@ -20,5 +20,5 @@ import it.unibo.alchemist.common.renderer.Renderer
  * @param renderer the [Renderer] that renders an [it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate].
  */
 open class CommonState(
-    val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer()
+    val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer(),
 )

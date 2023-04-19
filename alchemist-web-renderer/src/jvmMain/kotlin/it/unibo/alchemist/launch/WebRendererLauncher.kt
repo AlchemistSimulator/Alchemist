@@ -13,9 +13,9 @@ import io.ktor.server.netty.EngineMain
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.Loader
+import it.unibo.alchemist.server.monitor.EnvironmentMonitorFactory.makeEnvironmentMonitor
 import it.unibo.alchemist.server.state.ServerStore.store
 import it.unibo.alchemist.server.state.actions.SetSimulation
-import it.unibo.alchemist.server.monitor.EnvironmentMonitorFactory.makeEnvironmentMonitor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,7 +61,7 @@ object WebRendererLauncher : SimulationLauncher() {
 
     private fun startServer(
         simulation: Simulation<Any, Nothing>,
-        serverDispatcher: CoroutineDispatcher = Dispatchers.IO
+        serverDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) {
         return runBlocking {
             launch(serverDispatcher) {

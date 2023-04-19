@@ -32,9 +32,9 @@ import it.unibo.alchemist.server.surrogates.utility.toEnvironmentSurrogate
  */
 class EnvironmentMonitor<T, P, TS, PS> (
     private val toConcentrationSurrogate: (T) -> TS,
-    private val toPositionSurrogate: (P) -> PS
+    private val toPositionSurrogate: (P) -> PS,
 ) : OutputMonitor<T, P>
-where TS : Any, P : Position<P>, PS : PositionSurrogate {
+    where TS : Any, P : Position<P>, PS : PositionSurrogate {
 
     /**
      * Every time the [Environment] changes, map it to [EnvironmentSurrogate] class and save it in the [store].

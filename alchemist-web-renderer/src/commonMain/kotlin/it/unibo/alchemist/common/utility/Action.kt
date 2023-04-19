@@ -22,5 +22,5 @@ enum class Action {
     /**
      * The action used to pause the Simulation.
      */
-    PAUSE;
+    PAUSE,
 }

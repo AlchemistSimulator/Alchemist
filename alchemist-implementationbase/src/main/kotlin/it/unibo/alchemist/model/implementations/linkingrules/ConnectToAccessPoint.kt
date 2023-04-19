@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Position
  */
 class ConnectToAccessPoint<T, P : Position<P>>(
     radius: Double,
-    val accessPointId: Molecule
+    val accessPointId: Molecule,
 ) : ConnectWithinDistance<T, P>(radius) {
 
     private val Node<T>.isAccessPoint

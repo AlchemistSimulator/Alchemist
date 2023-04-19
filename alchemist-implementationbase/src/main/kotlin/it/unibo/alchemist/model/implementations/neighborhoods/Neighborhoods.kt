@@ -25,10 +25,11 @@ class Neighborhoods private constructor() {
          *
          * @return The newly created [SimpleNeighborhood].
          */
-        @JvmStatic @JvmOverloads fun <T, P : Position<P>> make(
+        @JvmStatic @JvmOverloads
+        fun <T, P : Position<P>> make(
             environment: Environment<T, P>,
             center: Node<T>,
-            neighbors: Iterable<Node<T>> = emptyList()
+            neighbors: Iterable<Node<T>> = emptyList(),
         ) = SimpleNeighborhood(environment, center, neighbors)
     }
 }

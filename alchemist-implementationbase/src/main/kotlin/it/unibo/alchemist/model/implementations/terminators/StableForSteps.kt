@@ -43,7 +43,7 @@ import java.util.function.Predicate
  */
 class StableForSteps<T>(
     private val checkInterval: Long,
-    private val equalIntervals: Long
+    private val equalIntervals: Long,
 ) : Predicate<Environment<T, *>> {
     private var success: Long = 0
     private var positions: Map<Node<T>, Position<*>> = emptyMap()

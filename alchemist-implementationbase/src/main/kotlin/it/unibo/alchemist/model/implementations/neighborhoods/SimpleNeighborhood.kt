@@ -25,13 +25,13 @@ import org.danilopianini.util.ListSets
 class SimpleNeighborhood<T, P : Position<P>> private constructor(
     private val environment: Environment<T, P>,
     private val center: Node<T>,
-    private val neighbors: ImmutableListSet<out Node<T>>
+    private val neighbors: ImmutableListSet<out Node<T>>,
 ) : Neighborhood<T> {
 
     internal constructor(
         environment: Environment<T, P>,
         center: Node<T>,
-        neighbors: Iterable<Node<T>>
+        neighbors: Iterable<Node<T>>,
     ) : this(environment, center, ImmutableListSet.Builder<Node<T>>().addAll(neighbors).build())
 
     override fun clone() = SimpleNeighborhood(environment, center, ArrayListSet(neighbors))
@@ -76,7 +76,7 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
                     }
                 }
             }
-        }
+        },
     )
 
     override fun remove(node: Node<T>): Neighborhood<T> {
@@ -110,7 +110,7 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
                                     "base" to base,
                                     "lookahead" to lookahead,
                                     "hasNext" to hasNext(),
-                                )
+                                ),
                             )
                             lookahead = updateLookAhead()
                             result
@@ -118,7 +118,7 @@ class SimpleNeighborhood<T, P : Position<P>> private constructor(
                             throw NoSuchElementException("No other elements.")
                         }
                 }
-            }
+            },
         )
     }
 }

@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.model.math
 
-import java.io.Serializable
 import org.apache.commons.math3.analysis.BivariateFunction
 import org.apache.commons.math3.util.FastMath.exp
+import java.io.Serializable
 
 /**
  * A 2D gaussian function.
@@ -19,7 +19,7 @@ class BidimensionalGaussian(
     private val x0: Double,
     private val y0: Double,
     private val sigmaX: Double,
-    private val sigmaY: Double
+    private val sigmaY: Double,
 ) : BivariateFunction, Serializable {
 
     override fun value(x: Double, y: Double): Double {

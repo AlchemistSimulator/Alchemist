@@ -9,7 +9,7 @@ import it.unibo.alchemist.model.interfaces.geometry.Vector
  * It also ignores any transformation.
  */
 class AdimensionalShape<S : Vector<S>, A : GeometricTransformation<S>>(
-    override val centroid: S
+    override val centroid: S,
 ) : GeometricShape<S, A> {
 
     override val diameter: Double = 0.0

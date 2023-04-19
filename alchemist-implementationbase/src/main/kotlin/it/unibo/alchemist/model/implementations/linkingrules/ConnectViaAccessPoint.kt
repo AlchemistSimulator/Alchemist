@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Position
  */
 class ConnectViaAccessPoint<T, P : Position<P>>(
     radius: Double,
-    val accessPointId: Molecule
+    val accessPointId: Molecule,
 ) : ConnectWithinDistance<T, P>(radius) {
 
     private val Node<T>.isAccessPoint
@@ -39,7 +39,7 @@ class ConnectViaAccessPoint<T, P : Position<P>>(
                         center,
                         neighbors.filter {
                             it == closestAP || !it.isAccessPoint && environment.getNeighborhood(it).contains(closestAP)
-                        }
+                        },
                     )
                 } ?: Neighborhoods.make(environment, center, emptyList())
             } else {
@@ -58,7 +58,7 @@ class ConnectViaAccessPoint<T, P : Position<P>>(
                                         contains(center) || none { it.isAccessPoint }
                                     }
                             }
-                            .asIterable()
+                            .asIterable(),
                     )
                 }
             }

@@ -115,7 +115,7 @@ class TestRangeExtension : StringSpec({
         third: Double,
         fourth: Double,
         intersectionFirst: Double,
-        intersectionSecond: Double
+        intersectionSecond: Double,
     ) {
         val intersection = rangeFromUnordered(first, second).intersect(rangeFromUnordered(third, fourth))
         Assertions.assertNotNull(intersection)
@@ -139,7 +139,7 @@ class TestRangeExtension : StringSpec({
         second: Double,
         third: Double,
         fourth: Double,
-        vararg expected: Double
+        vararg expected: Double,
     ) {
         (rangeFromUnordered(first, second) - rangeFromUnordered(third, fourth))
             .flatMap { mutableListOf(it.start, it.endInclusive) }

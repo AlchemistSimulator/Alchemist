@@ -54,6 +54,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         override fun probability(x: Double) = TODO()
         override fun density(x: Double) = TODO()
         override fun cumulativeProbability(x: Double) = TODO()
+
         @Deprecated(message = "Deprecated in Apache Commons")
         override fun cumulativeProbability(x0: Double, x1: Double) = TODO()
         override fun inverseCumulativeProbability(p: Double) = TODO()
@@ -66,8 +67,10 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
          */
         override fun getSupportLowerBound() = 0.0
         override fun getSupportUpperBound() = Double.MAX_VALUE
+
         @Deprecated(message = "Deprecated in Apache Commons")
         override fun isSupportLowerBoundInclusive() = true
+
         @Deprecated(message = "Deprecated in Apache Commons")
         override fun isSupportUpperBoundInclusive() = false
 
@@ -81,7 +84,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         override fun sample(sampleSize: Int): DoubleArray = DoubleArray(sampleSize) { sample() }
 
         val currentValue get() = readCurrentValue(incarnation, node, molecule, property)
-    }
+    },
 ) {
 
     @JvmOverloads constructor(
@@ -99,7 +102,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         molecule,
         property,
         start,
-        RealDistributionUtil.makeRealDistribution(randomGenerator, distributionName, *distributionParametrs)
+        RealDistributionUtil.makeRealDistribution(randomGenerator, distributionName, *distributionParametrs),
     )
 
     constructor(
@@ -118,7 +121,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
         property = null,
         start = start,
         distributionName = distributionName,
-        distributionParametrs = distributionParametrs
+        distributionParametrs = distributionParametrs,
     )
 
     private var previousStep: Double? = null
@@ -146,7 +149,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
             incarnation: Incarnation<T, *>,
             node: Node<T>,
             molecule: Molecule,
-            property: String?
+            property: String?,
         ): Double {
             val currentValue = if (property != null) {
                 incarnation.getProperty(node, molecule, property)
@@ -158,7 +161,7 @@ class MoleculeControlledTimeDistribution<T> @JvmOverloads constructor(
                     null -> 0.0
                     else -> error(
                         "Expected a numeric value in $molecule at node ${node.id}, " +
-                            "but '$value' of type '${value.let { it::class.simpleName }}' was found instead"
+                            "but '$value' of type '${value.let { it::class.simpleName }}' was found instead",
                     )
                 }
             }

@@ -36,11 +36,11 @@ class GraphHopperOptions private constructor(
 
     private constructor(profile: String, algorithm: String) : this(
         allProfiles.find { it.name == profile } ?: throw IllegalArgumentException(
-            "Invalid GraphHopper profile. Valid profiles are: ${allProfiles.map { it.name }}"
+            "Invalid GraphHopper profile. Valid profiles are: ${allProfiles.map { it.name }}",
         ),
         algorithm.takeIf { it in graphHopperAlgorithms } ?: throw IllegalArgumentException(
-            "Invalid GraphHopper algorithm. Valid choices are: $graphHopperAlgorithms"
-        )
+            "Invalid GraphHopper algorithm. Valid choices are: $graphHopperAlgorithms",
+        ),
     )
 
     private constructor(info: Pair<String, String>) : this(info.first, info.second)
@@ -119,11 +119,11 @@ class GraphHopperOptions private constructor(
         @JvmOverloads
         fun optionsFor(profile: String = "foot_fastest", algorithm: String = DIJKSTRA_BI): GraphHopperOptions {
             return profiles.get(profile to algorithm) ?: throw IllegalArgumentException(
-                "The requested profile ($profile, $algorithm) could not be created."
+                "The requested profile ($profile, $algorithm) could not be created.",
             )
         }
 
-        private fun profileFor(vehicle: String, weighting: String,): Profile = Profile("${vehicle}_$weighting")
+        private fun profileFor(vehicle: String, weighting: String): Profile = Profile("${vehicle}_$weighting")
             .setVehicle(vehicle)
             .setWeighting(weighting)
     }

@@ -38,5 +38,5 @@ class TestInSightConnection : StringSpec(
             route.length() shouldBeGreaterThan maxRange
             environment.getNeighborhood(node0).contains(node1).shouldBeFalse()
         }
-    }
+    },
 )

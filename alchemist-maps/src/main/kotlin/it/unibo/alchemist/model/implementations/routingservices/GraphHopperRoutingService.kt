@@ -65,7 +65,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                     .recoverCatching { ex ->
                         logger.warn(
                             "Could not initialize with $mapFile (version conflict?): erasing cache and retrying",
-                            ex
+                            ex,
                         )
                         val corruptedContent = workingDirectory.listFiles()?.filterNot { it == mapFile }.orEmpty()
                         corruptedContent.forEach {
@@ -86,7 +86,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
                 EncodingManager.start()
                     .add(vehicleEncoder.createVehicleEncodedValues(it.profile.vehicle, emptyPMap))
                     .build()
-                    .getBooleanEncodedValue(VehicleAccess.key(it.profile.vehicle))
+                    .getBooleanEncodedValue(VehicleAccess.key(it.profile.vehicle)),
             )
         }
     }
@@ -107,7 +107,7 @@ class GraphHopperRoutingService @JvmOverloads constructor(
     override fun route(
         from: GeoPosition,
         to: GeoPosition,
-        options: GraphHopperOptions
+        options: GraphHopperOptions,
     ): Route<GeoPosition> {
         if (from == to) {
             return PolygonalChain(from)

@@ -23,7 +23,7 @@ class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingSer
     node: Node<T>,
     reaction: Reaction<T>,
     speed: Double,
-    val positionGenerator: Polygon<GeoPosition>
+    val positionGenerator: Polygon<GeoPosition>,
 ) : MoveOnMap<T, O, S>(
     environment,
     node,
@@ -43,6 +43,6 @@ class RandomTargetInPolygonOnMap<T, O : RoutingServiceOptions<O>, S : RoutingSer
         node: Node<T>,
         reaction: Reaction<T>,
         speed: Double,
-        polygonCoordinates: List<List<Number>>
+        polygonCoordinates: List<List<Number>>,
     ) : this (environment, node, reaction, speed, Polygon(environment, randomGenerator, 1, polygonCoordinates))
 }

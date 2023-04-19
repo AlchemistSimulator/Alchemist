@@ -19,14 +19,14 @@ class TestClosestNOnMaps : StringSpec({
     "Use ClosestN on maps" {
         val environment = OSMEnvironment(
             SupportedIncarnations.get<Any, GeoPosition>("protelis").orElseGet { TODO() },
-            "maps/cesena.pbf"
+            "maps/cesena.pbf",
         )
         environment.linkingRule = ClosestN(10)
         environment.addNode(
             object : GenericNode<Any>(environment) {
                 override fun createT() = "Nothing"
             },
-            environment.makePosition(44.139169, 12.237816)
+            environment.makePosition(44.139169, 12.237816),
         )
     }
 })

@@ -36,7 +36,7 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
     onceInitialized: (EuclideanEnvironment<T, P>) -> Unit = { },
     atEachStep: (EuclideanEnvironment<T, P>, Actionable<T>?, Time, Long) -> Unit = { _, _, _, _ -> },
     whenFinished: (EuclideanEnvironment<T, P>, Time, Long) -> Unit = { _, _, _ -> },
-    steps: Long = 10000
+    steps: Long = 10000,
 ) where P : Position<P>, P : Vector<P> =
     Engine(this, steps).apply {
         fun checkForErrors() = error.ifPresent { throw it }
@@ -54,7 +54,7 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
                     checkForErrors()
                     whenFinished(this@startSimulation, t, s)
                 }
-            }
+            },
         )
         play()
         run()
@@ -71,7 +71,7 @@ fun <T, P> EuclideanEnvironment<T, P>.startSimulation(
  */
 fun <T, P> loadYamlSimulation(
     resource: String,
-    vars: Map<String, Double> = emptyMap()
+    vars: Map<String, Double> = emptyMap(),
 ): EuclideanEnvironment<T, P> where P : Position<P>, P : Vector<P> =
     LoadAlchemist.from(ResourceLoader.getResource(resource)).getWith<T, P>(vars).environment
         .let { it as? EuclideanEnvironment } ?: error("Illegal kind of environment")

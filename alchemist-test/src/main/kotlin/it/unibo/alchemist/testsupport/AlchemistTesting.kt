@@ -8,6 +8,7 @@
  */
 
 @file:JvmName("AlchemistTesting")
+
 package it.unibo.alchemist.testsupport
 
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
@@ -29,7 +30,7 @@ import org.kaikikm.threadresloader.ResourceLoader
  * Optionally, some OutputMonitors can be provided.
  */
 fun <T> createEmptyEnvironment(
-    vararg outputMonitors: OutputMonitor<T, Euclidean2DPosition> = emptyArray()
+    vararg outputMonitors: OutputMonitor<T, Euclidean2DPosition> = emptyArray(),
 ): Continuous2DEnvironment<T> {
     val incarnationName = SupportedIncarnations.getAvailableIncarnations().first()
     val incarnation = SupportedIncarnations.get<T, Euclidean2DPosition>(incarnationName).orElseThrow()
@@ -63,7 +64,7 @@ fun loadAlchemistFromResource(simulationResource: String): Loader {
  */
 fun <T, P : Position<P>> InitializedEnvironment<T, P>.createSimulation(
     finalTime: Time = Time.INFINITY,
-    finalStep: Long = Long.MAX_VALUE
+    finalStep: Long = Long.MAX_VALUE,
 ) = Engine(environment, finalStep, finalTime).also {
     it.addOutputMonitor(GlobalExporter(exporters))
 }

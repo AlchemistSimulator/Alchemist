@@ -12,6 +12,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask
+import org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask
 
 /*
  * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project"s alchemist/build.gradle file.
@@ -55,12 +56,13 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.generateGrammarSource {
+tasks.generateGrammarSource.configure {
     val destination = "it.unibo.alchemist.model.internal.biochemistry.dsl"
     arguments = arguments + listOf("-visitor", "-package", destination, "-long-messages")
-    tasks.sourcesJar.orNull?.dependsOn(this)
 }
 
+tasks.sourcesJar.configure { dependsOn(tasks.generateGrammarSource) }
+tasks.withType<KtLintFormatTask>().configureEach { dependsOn(tasks.generateGrammarSource) }
 tasks.generateTestGrammarSource {
     enabled = false
 }

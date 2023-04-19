@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.interfaces.Node
  */
 class ContainsMolecule<T>(
     node: Node<T>,
-    private val molecule: Molecule
+    private val molecule: Molecule,
 ) : AbstractNonPropensityContributingCondition<T>(node) {
 
     override fun getContext() = Context.LOCAL

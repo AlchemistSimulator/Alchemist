@@ -9,9 +9,9 @@ package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position
+import org.apache.commons.math3.random.RandomGenerator
 import java.util.stream.IntStream
 import java.util.stream.Stream
-import org.apache.commons.math3.random.RandomGenerator
 
 /**
  * @param environment
@@ -25,7 +25,7 @@ import org.apache.commons.math3.random.RandomGenerator
 abstract class AbstractRandomDeployment<P : Position<out P>> (
     protected val environment: Environment<*, P>,
     protected val randomGenerator: RandomGenerator,
-    protected val nodeCount: Int
+    protected val nodeCount: Int,
 ) : Deployment<P> {
 
     override fun stream(): Stream<P> = IntStream.range(0, nodeCount).mapToObj { this.indexToPosition(it) }

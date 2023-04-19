@@ -56,7 +56,7 @@ open class Grid @JvmOverloads constructor(
     private val xRand: Double = 0.0,
     private val yRand: Double = 0.0,
     private val xShift: Double = 0.0,
-    private val yShift: Double = 0.0
+    private val yShift: Double = 0.0,
 ) : Deployment<Position<*>> {
 
     override fun stream(): Stream<Position<*>> {

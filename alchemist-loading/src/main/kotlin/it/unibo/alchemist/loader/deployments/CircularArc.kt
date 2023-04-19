@@ -29,9 +29,10 @@ data class CircularArc<P : Position2D<P>> @JvmOverloads constructor(
     val radiusRandomness: Double = 0.0,
     val angleRandomness: Double = 0.0,
     val startAngle: Double = 0.0,
-    val endAngle: Double = 2 * PI
+    val endAngle: Double = 2 * PI,
 ) : Deployment<P> {
     private val step = (endAngle - startAngle) / nodeCount
+
     /**
      * @return a [Stream] over the positions of this [Deployment]
      */
@@ -43,7 +44,7 @@ data class CircularArc<P : Position2D<P>> @JvmOverloads constructor(
             val actualAngle = it.randomized(angleRandomness)
             environment.makePosition(
                 centerX + actualRadius * sin(actualAngle),
-                centerY + actualRadius * cos(actualAngle)
+                centerY + actualRadius * cos(actualAngle),
             )
         }
 }

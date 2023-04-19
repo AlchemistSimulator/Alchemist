@@ -29,7 +29,7 @@ class TestGraphStreamReproducibility : FreeSpec({
         mapOf(
             "Lobster" to listOf(2, 10),
             "RandomEuclidean" to emptyList(),
-            "BarabasiAlbert" to listOf(2)
+            "BarabasiAlbert" to listOf(2),
         ).forEach { (graphType, parameters) ->
             graphType - {
                 val generator = MersenneTwister(1)
@@ -42,13 +42,13 @@ class TestGraphStreamReproducibility : FreeSpec({
                         generatorName = graphType,
                         uniqueId = uniqueId.toLong(),
                         layoutQuality = 0.1,
-                        parameters = parameters.toTypedArray()
+                        parameters = parameters.toTypedArray(),
                     )
                     environment.linkingRule = graphStream.linkingRule
                     graphStream.deployment.forEach {
                         environment.addNode(
                             object : GenericNode<Any>(environment) { override fun createT(): Any = Any() },
-                            it
+                            it,
                         )
                     }
                     environment.nodes.map { node ->

@@ -10,8 +10,8 @@
 package it.unibo.alchemist.loader.export.extractors
 
 import it.unibo.alchemist.loader.export.StatUtil
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Incarnation
 import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Time
@@ -77,12 +77,11 @@ class MeanSquaredError<T> @JvmOverloads constructor(
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
-        step: Long
+        step: Long,
     ): Map<String, Double> {
         val incarnation: Incarnation<T, *> = environment.incarnation
-        val value: Double = statistic.evaluate(
-            environment.nodes.map { incarnation.getProperty(it, mReference, pReference) }.toDoubleArray()
-        )
+        val value: Double = statistic
+            .evaluate(environment.nodes.map { incarnation.getProperty(it, mReference, pReference) }.toDoubleArray())
         val mse: Double = environment.nodes.parallelStream()
             .mapToDouble { incarnation.getProperty(it, mActual, pActual) - value }
             .map { it * it }

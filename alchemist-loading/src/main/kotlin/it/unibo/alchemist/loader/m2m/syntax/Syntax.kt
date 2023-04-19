@@ -19,7 +19,7 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor {
                 mandatory(type)
                 optional(parameters)
-            }
+            },
         )
     }
     object DependentVariable : SyntaxElement {
@@ -31,7 +31,7 @@ internal object DocumentRoot : SyntaxElement {
                 mandatory(formula)
                 optional(language)
                 optional(timeout)
-            }
+            },
         )
     }
     object Deployment : SyntaxElement {
@@ -44,8 +44,9 @@ internal object DocumentRoot : SyntaxElement {
                 mandatory(JavaType.type)
                 optional(JavaType.parameters, contents, properties, nodes, programs)
                 forbidden(Filter.filter)
-            }
+            },
         )
+
         /*
          * in:
          *   - type: FilterType
@@ -57,7 +58,7 @@ internal object DocumentRoot : SyntaxElement {
                 validDescriptor {
                     mandatory(JavaType.type)
                     optional(JavaType.parameters)
-                }
+                },
             )
         }
         object Property : SyntaxElement {
@@ -65,7 +66,7 @@ internal object DocumentRoot : SyntaxElement {
                 validDescriptor {
                     mandatory(JavaType.type)
                     optional(JavaType.parameters, Filter.filter)
-                }
+                },
             )
         }
         object Contents : SyntaxElement {
@@ -75,7 +76,7 @@ internal object DocumentRoot : SyntaxElement {
                 validDescriptor {
                     mandatory(molecule, concentration)
                     optional(Filter.filter)
-                }
+                },
             )
         }
         object Program : SyntaxElement {
@@ -91,7 +92,7 @@ internal object DocumentRoot : SyntaxElement {
                 validDescriptor {
                     mandatory(program)
                     optional(timeDistribution, Filter.filter)
-                }
+                },
             )
         }
     }
@@ -115,7 +116,7 @@ internal object DocumentRoot : SyntaxElement {
                 validDescriptor {
                     mandatory(molecule)
                     optional(property, aggregators, precision, valueFilter)
-                }
+                },
             )
         }
     }
@@ -129,14 +130,14 @@ internal object DocumentRoot : SyntaxElement {
                 validDescriptor {
                     mandatory(JavaType.type)
                     optional(JavaType.parameters, actions, conditions, timeDistribution)
-                }
+                },
             )
             override fun toString(): String = this::class.simpleName ?: this.javaClass.canonicalName
         }
         override val validDescriptors = setOf(
             validDescriptor {
                 optional(JavaType.parameters, globalPrograms)
-            }
+            },
         )
     }
     object Layer : SyntaxElement {
@@ -145,14 +146,14 @@ internal object DocumentRoot : SyntaxElement {
             validDescriptor {
                 mandatory(JavaType.type, molecule)
                 optional(JavaType.parameters)
-            }
+            },
         )
     }
     object Seeds : SyntaxElement {
         val scenario by OwnName()
         val simulation by OwnName()
         override val validDescriptors = setOf(
-            validDescriptor { optional(simulation, scenario) }
+            validDescriptor { optional(simulation, scenario) },
         )
     }
     object Variable : SyntaxElement {
@@ -161,7 +162,7 @@ internal object DocumentRoot : SyntaxElement {
         val default by OwnName()
         val step by OwnName()
         override val validDescriptors = JavaType.validDescriptors + setOf(
-            validDescriptor { mandatory(min, max, default, step) }
+            validDescriptor { mandatory(min, max, default, step) },
         )
     }
     val deployments by OwnName()
@@ -178,7 +179,7 @@ internal object DocumentRoot : SyntaxElement {
         validDescriptor {
             mandatory(incarnation)
             optional(*validKeys.toTypedArray())
-        }
+        },
     )
 }
 

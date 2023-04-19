@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.interfaces.Position
  * If any mandates a link, such link is created (union of all links).
  */
 class CombinedLinkingRule<T, P : Position<P>>(
-    val subRules: List<LinkingRule<T, P>>
+    val subRules: List<LinkingRule<T, P>>,
 ) : LinkingRule<T, P> {
 
     private val isConsistent by lazy { subRules.all { it.isLocallyConsistent } }
@@ -29,7 +29,7 @@ class CombinedLinkingRule<T, P : Position<P>>(
         environment,
         center,
         // Add all neigbours as per subrule
-        subRules.asSequence().flatMap { it.computeNeighborhood(center, environment).neighbors }.asIterable()
+        subRules.asSequence().flatMap { it.computeNeighborhood(center, environment).neighbors }.asIterable(),
     )
 
     override fun isLocallyConsistent() = isConsistent

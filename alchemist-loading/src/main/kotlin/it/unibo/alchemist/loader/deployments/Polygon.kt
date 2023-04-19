@@ -37,7 +37,7 @@ open class Polygon<P : Position2D<out P>>(
     environment: Environment<*, P>,
     randomGenerator: RandomGenerator,
     nodes: Int,
-    pointsInput: List<*>
+    pointsInput: List<*>,
 ) : AbstractRandomDeployment<P>(environment, randomGenerator, nodes) {
 
     private val points: List<Point2D> = pointsInput.map {
@@ -66,13 +66,14 @@ open class Polygon<P : Position2D<out P>>(
                 lineTo(it.toPosition)
             }
             closePath()
-        }
+        },
     )
 
     /**
      * The rectangular bounds of the polygon.
      */
     protected val bounds: Rectangle2D
+
     /**
      * True if this environment works with [GeoPosition].
      */

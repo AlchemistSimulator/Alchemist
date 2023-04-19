@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.loader.export.extractors
 
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Time
 
 /**
@@ -24,7 +24,7 @@ class Time @JvmOverloads constructor(precision: Int? = null) : AbstractDoubleExp
         environment: Environment<T, *>,
         reaction: Actionable<T>?,
         time: Time,
-        step: Long
+        step: Long,
     ): Map<String, Double> = mapOf(name to time.toDouble())
 
     companion object {

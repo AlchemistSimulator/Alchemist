@@ -16,9 +16,7 @@ import it.unibo.alchemist.model.interfaces.Position
  * Negates the [filter]'s test.
  * @param [filter] the filter to be negated.
  */
-class Not<P : Position<P>> (
-    val filter: Filter<P>
-) : Filter<P> {
+class Not<P : Position<P>> (val filter: Filter<P>) : Filter<P> {
     /**
      * Returns true if [filter] is not satisfied.
      */

@@ -49,5 +49,5 @@ class TestEffectLoading : StringSpec(
             effects.shouldNotBeNull()
             effects.size shouldBe 4
         }
-    }
+    },
 )

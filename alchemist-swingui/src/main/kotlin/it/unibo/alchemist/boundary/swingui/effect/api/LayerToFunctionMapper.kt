@@ -31,7 +31,7 @@ interface LayerToFunctionMapper : Serializable {
         toDraw: Collection<Layer<T, P>>,
         environment: Environment<T, P>,
         g: Graphics2D,
-        wormhole: Wormhole2D<P>
+        wormhole: Wormhole2D<P>,
     ) = Unit // defaults to nothing
 
     /**

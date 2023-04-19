@@ -43,7 +43,7 @@ object AnyExtension {
                     else ->
                         error(
                             "The Iterable '$this' being converted to position must contain only Numbers, " +
-                                "but element '$it' has type ${it?.javaClass?.name ?: "null"}"
+                                "but element '$it' has type ${it?.javaClass?.name ?: "null"}",
                         )
                 }
             }
@@ -57,7 +57,7 @@ object AnyExtension {
         }
         else ->
             throw IllegalArgumentException(
-                "$this (type: ${if (this is Any) this.javaClass else null}) can't get converted to a Position"
+                "$this (type: ${if (this is Any) this.javaClass else null}) can't get converted to a Position",
             )
     }
 }

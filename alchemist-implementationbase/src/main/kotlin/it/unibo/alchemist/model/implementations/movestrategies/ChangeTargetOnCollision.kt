@@ -15,7 +15,7 @@ abstract class ChangeTargetOnCollision<T, P : Position<P>>(
     /**
      * Returns the current position of the object to move.
      */
-    protected val getCurrentPosition: () -> P
+    protected val getCurrentPosition: () -> P,
 ) : TargetSelectionStrategy<T, P> {
     private var initialized = false
     private lateinit var lastNodePosition: P

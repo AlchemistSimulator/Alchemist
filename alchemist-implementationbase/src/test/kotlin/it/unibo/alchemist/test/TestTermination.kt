@@ -14,8 +14,8 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Time
 import org.kaikikm.threadresloader.ResourceLoader
 
@@ -33,7 +33,7 @@ class TestTermination : FreeSpec(
                     environment: Environment<Nothing, Nothing>,
                     reaction: Actionable<Nothing>?,
                     time: Time,
-                    step: Long
+                    step: Long,
                 ) {
                     time.toDouble() shouldBeLessThan 2.0
                 }
@@ -42,5 +42,5 @@ class TestTermination : FreeSpec(
             simulation.run()
             simulation.error.ifPresent { throw it }
         }
-    }
+    },
 )

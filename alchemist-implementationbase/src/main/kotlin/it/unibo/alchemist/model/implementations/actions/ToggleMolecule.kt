@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.Reaction
 open class ToggleMolecule<T>(
     node: Node<T>,
     protected val molecule: Molecule,
-    protected val concentration: T
+    protected val concentration: T,
 ) : AbstractAction<T>(node) {
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>) = ToggleMolecule(node, molecule, concentration)
 

@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.model.implementations.layers
 
-import it.unibo.alchemist.model.math.BidimensionalGaussian
 import it.unibo.alchemist.model.interfaces.Layer
 import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.math.BidimensionalGaussian
 
 /**
  * A [Layer] based on a [2D gaussian function][BidimensionalGaussian] and an optional baseline value.
@@ -23,7 +23,7 @@ open class BidimensionalGaussianLayer<P : Position2D<P>> @JvmOverloads construct
     val centerY: Double,
     norm: Double,
     sigmaX: Double,
-    sigmaY: Double = sigmaX
+    sigmaY: Double = sigmaX,
 ) : Layer<Double, P> {
 
     /**

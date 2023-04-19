@@ -31,7 +31,7 @@ open class ToggleMoleculeRandomly<T>(
     private val randomGenerator: RandomGenerator,
     molecule: Molecule,
     concentration: T,
-    private val odds: Double
+    private val odds: Double,
 ) : ToggleMolecule<T>(node, molecule, concentration) {
 
     init {

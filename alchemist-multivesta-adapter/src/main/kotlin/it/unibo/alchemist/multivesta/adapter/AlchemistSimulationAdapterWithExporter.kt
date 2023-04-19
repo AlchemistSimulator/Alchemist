@@ -17,7 +17,7 @@ import it.unibo.alchemist.loader.export.exporters.MultiVestaExporter.Companion.g
  * @param simulation the simulation to be wrapped.
  */
 class AlchemistSimulationAdapterWithExporter(
-    private val simulation: Simulation<Any, Nothing>
+    private val simulation: Simulation<Any, Nothing>,
 ) : AbstractAlchemistSimulationAdapter(simulation) {
 
     override fun getObsValue(obs: String): Double = obsValueToDouble(obs, getValue(simulation, obs))

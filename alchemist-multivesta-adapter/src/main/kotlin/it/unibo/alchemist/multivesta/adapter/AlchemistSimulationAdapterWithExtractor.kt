@@ -25,7 +25,7 @@ class AlchemistSimulationAdapterWithExtractor(
     /**
      * The extractor to be used to extract data from the simulation.
      */
-    val extractor: Extractor<Any>
+    val extractor: Extractor<Any>,
 ) : AbstractAlchemistSimulationAdapter(simulation) {
 
     private var lastReaction: Actionable<Any>? = null
@@ -36,7 +36,7 @@ class AlchemistSimulationAdapterWithExtractor(
                 environment: Environment<Any, Nothing>,
                 reaction: Actionable<Any>?,
                 time: Time,
-                step: Long
+                step: Long,
             ) {
                 lastReaction = reaction
             }

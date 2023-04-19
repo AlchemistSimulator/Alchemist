@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].
  */
 class MultiVestaExporter<T, P : Position<P>> @JvmOverloads constructor(
-    val interval: Double = DEFAULT_INTERVAL
+    val interval: Double = DEFAULT_INTERVAL,
 ) : AbstractExporter<T, P>(interval) {
 
     private val logger = LoggerFactory.getLogger(MultiVestaExporter::class.java)

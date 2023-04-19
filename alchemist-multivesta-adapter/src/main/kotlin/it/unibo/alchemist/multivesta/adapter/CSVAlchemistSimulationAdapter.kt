@@ -28,7 +28,7 @@ import java.io.File
 open class CSVAlchemistSimulationAdapter(
     val seed: Int,
     val rootOutputFiles: File,
-    filenameForSeed: (Int) -> String
+    filenameForSeed: (Int) -> String,
 ) : AlchemistSimulationAdapter {
     private val alchemistStateObservations: List<AlchemistStateObservations>
     private var time = 0

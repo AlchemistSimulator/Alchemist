@@ -20,5 +20,5 @@ enum class ActionOnMouse {
     EXITED,
     MOVED,
     PRESSED,
-    RELEASED
+    RELEASED,
 }

@@ -28,7 +28,7 @@ class DigitalPanManager<P : Position2D<P>>(
     private val speed: Int = 5,
     private val period: Long = 15,
     private val wormhole: Wormhole2D<P>,
-    private val updates: () -> Unit
+    private val updates: () -> Unit,
 ) {
     private var timer: Timer = Timer()
     private var currentDirection: Direction2D = Direction2D.NONE

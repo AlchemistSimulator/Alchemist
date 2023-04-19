@@ -54,6 +54,6 @@ class LeafletMapDisplay<T> : BaseFXDisplay<T, GeoPosition>() {
             CustomLeafletMapView.MAX_ZOOM_VALUE.toDouble(),
             CustomLeafletMapView.ZOOM_RATE.toDouble(),
             CustomLeafletMapView.MIN_ZOOM_VALUE.toDouble(),
-            CustomLeafletMapView.MAX_ZOOM_VALUE.toDouble()
+            CustomLeafletMapView.MAX_ZOOM_VALUE.toDouble(),
         )
 }

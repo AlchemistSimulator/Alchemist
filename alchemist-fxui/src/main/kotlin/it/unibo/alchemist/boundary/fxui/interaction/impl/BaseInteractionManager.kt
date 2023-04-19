@@ -50,7 +50,7 @@ import kotlin.math.roundToInt
  * @param monitor the monitor.
  */
 class BaseInteractionManager<T, P : Position2D<P>>(
-    private val monitor: BaseFXDisplay<T, P>
+    private val monitor: BaseFXDisplay<T, P>,
 ) : InteractionManager<T, P> {
     /**
      * Describes a certain interaction that has a feedback associated to it.
@@ -58,7 +58,7 @@ class BaseInteractionManager<T, P : Position2D<P>>(
     private enum class Interaction {
         HIGHLIGHT_CANDIDATE,
         HIGHLIGHTED,
-        SELECTION_BOX
+        SELECTION_BOX,
     }
 
     override lateinit var environment: Environment<T, P>
@@ -320,7 +320,7 @@ class BaseInteractionManager<T, P : Position2D<P>>(
                     it.x - highlightSize / 2,
                     it.y - highlightSize / 2,
                     highlightSize,
-                    highlightSize
+                    highlightSize,
                 )
             }
         }
@@ -395,6 +395,7 @@ class BaseInteractionManager<T, P : Position2D<P>>(
          * The size (radius) of the highlights.
          */
         const val highlightSize = 10.0
+
         /**
          * Empiric zoom scale value.
          */
@@ -406,10 +407,12 @@ class BaseInteractionManager<T, P : Position2D<P>>(
          * The colour of the highlights for the already selected nodes.
          */
         val alreadySelected = "#1f70f2".toColor()
+
         /**
          * The colour of the highlights for the nodes that are candidates for selection.
          */
         val selecting = "#ff5400".toColor()
+
         /**
          *
          */

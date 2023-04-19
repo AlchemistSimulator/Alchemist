@@ -65,7 +65,7 @@ tasks.register<Exec>("testIncarnationProtelisShadowJarExecution") {
             "$projectDir/src/test/resources/testbase.yml",
             "-t",
             "2",
-            "--batch"
+            "--batch",
         )
     }
     tasks.shadowJar.get().finalizedBy(this)

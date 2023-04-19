@@ -27,5 +27,5 @@ class TestCasesThatShouldJustRun : StringSpec(
                     .error shouldNot bePresent()
             }
         }
-    }
+    },
 )

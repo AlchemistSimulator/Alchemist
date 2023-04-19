@@ -30,9 +30,9 @@ class BitmapRendererTest : StringSpec({
             NodeSurrogate(
                 0,
                 mapOf(MoleculeSurrogate("concentration") to EmptyConcentrationSurrogate),
-                Position2DSurrogate(5.6, 8.42)
-            )
-        )
+                Position2DSurrogate(5.6, 8.42),
+            ),
+        ),
     )
 
     val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer()

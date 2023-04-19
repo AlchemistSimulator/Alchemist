@@ -29,6 +29,6 @@ object EnvironmentMonitorFactory {
     fun makeEnvironmentMonitor(environment: Environment<*, *>): OutputMonitor<Any, Nothing> =
         EnvironmentMonitor(
             toEmptyConcentration, // TODO change to correct implementation depending on the incarnation
-            toSuitablePositionSurrogate(environment.dimensions)
+            toSuitablePositionSurrogate(environment.dimensions),
         )
 }

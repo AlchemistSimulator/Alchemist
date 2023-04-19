@@ -23,7 +23,7 @@ class GeneralPositionSurrogateTest : StringSpec({
 
     val generalPositionSurrogate: PositionSurrogate = GeneralPositionSurrogate(
         doubleArrayOf(5.0, 1.1, 6.0),
-        3
+        3,
     )
 
     "GeneralPositionSurrogate should have the correct number of coordinates" {

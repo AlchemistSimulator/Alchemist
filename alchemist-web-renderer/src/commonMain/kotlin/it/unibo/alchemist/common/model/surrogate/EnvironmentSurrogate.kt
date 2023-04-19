@@ -25,7 +25,7 @@ import kotlinx.serialization.Serializable
 @SerialName("Environment")
 data class EnvironmentSurrogate<out TS : Any, out PS : PositionSurrogate>(
     val dimensions: Int,
-    val nodes: List<NodeSurrogate<TS, PS>>
+    val nodes: List<NodeSurrogate<TS, PS>>,
 ) {
     companion object {
         /**
@@ -42,7 +42,7 @@ data class EnvironmentSurrogate<out TS : Any, out PS : PositionSurrogate>(
          */
         fun polymorphicSerializer(): KSerializer<EnvironmentSurrogate<Any, PositionSurrogate>> = serializer(
             PolymorphicSerializer(Any::class),
-            PositionSurrogate.serializer()
+            PositionSurrogate.serializer(),
         )
     }
 }

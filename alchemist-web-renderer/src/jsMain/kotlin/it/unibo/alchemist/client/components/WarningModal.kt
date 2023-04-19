@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.client.components
 
-import react.FC
 import it.unibo.alchemist.client.adapters.reactBootstrap.modal.Modal
 import it.unibo.alchemist.client.adapters.reactBootstrap.modal.ModalBody
 import it.unibo.alchemist.client.adapters.reactBootstrap.modal.ModalHeader
 import it.unibo.alchemist.client.adapters.reactBootstrap.modal.ModalProps
 import it.unibo.alchemist.client.adapters.reactBootstrap.modal.ModalTitle
+import react.FC
 
 /**
  * Modal used to show information about something that didn't work as expected.

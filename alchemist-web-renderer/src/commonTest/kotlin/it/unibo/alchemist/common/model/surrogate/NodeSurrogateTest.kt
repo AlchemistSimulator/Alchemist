@@ -43,7 +43,7 @@ class NodeSurrogateTest : StringSpec({
     "NodeSurrogate should be serialized correctly" {
         NodeSurrogate.serializer(
             Int.serializer(),
-            PositionSurrogate.serializer()
+            PositionSurrogate.serializer(),
         ).descriptor.serialName shouldBe "Node"
         val serialized = Json.encodeToString(nodeSurrogate)
         val deserialized: NodeSurrogate<Int, Position2DSurrogate> = Json.decodeFromString(serialized)

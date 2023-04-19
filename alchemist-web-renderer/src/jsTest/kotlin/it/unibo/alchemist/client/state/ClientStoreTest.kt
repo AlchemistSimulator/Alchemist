@@ -60,7 +60,7 @@ class ClientStoreTest : StringSpec({
             StatusSurrogate.PAUSED,
             StatusSurrogate.RUNNING,
             StatusSurrogate.TERMINATED,
-            StatusSurrogate.INIT
+            StatusSurrogate.INIT,
         ).forEach {
             clientStore.dispatch(SetStatusSurrogate(it))
             clientStore.state.statusSurrogate shouldBe it

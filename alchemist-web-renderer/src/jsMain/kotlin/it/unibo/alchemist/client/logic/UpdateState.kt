@@ -22,7 +22,7 @@ import it.unibo.alchemist.common.model.surrogate.StatusSurrogate
 suspend fun updateState(
     renderMode: RenderMode,
     updateStateStrategy: UpdateStateStrategy,
-    autoStrategy: AutoRenderModeStrategy
+    autoStrategy: AutoRenderModeStrategy,
 ) {
     updateStateStrategy.retrieveSimulationStatus()
     if (store.state.statusSurrogate == StatusSurrogate.RUNNING || store.state.bitmap == null) {
@@ -39,7 +39,7 @@ suspend fun updateState(
 private suspend fun updateEnvironment(
     renderMode: RenderMode,
     updateStateStrategy: UpdateStateStrategy,
-    autoStrategy: AutoRenderModeStrategy
+    autoStrategy: AutoRenderModeStrategy,
 ): Unit = when (renderMode) {
     RenderMode.CLIENT -> updateStateStrategy.clientComputation()
     RenderMode.SERVER -> updateStateStrategy.serverComputation()
@@ -48,6 +48,6 @@ private suspend fun updateEnvironment(
         updateStateStrategy,
         object : AutoRenderModeStrategy {
             override fun invoke(): RenderMode = error("Auto mode cannot be returned here.")
-        }
+        },
     )
 }

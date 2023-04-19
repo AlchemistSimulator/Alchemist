@@ -12,12 +12,12 @@ package it.unibo.alchemist.client.api
 import com.soywiz.korim.bitmap.Bitmap
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate
-import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
 import it.unibo.alchemist.client.api.utility.JsonClient.client
 import it.unibo.alchemist.client.api.utility.JsonClient.endpoint
 import it.unibo.alchemist.common.model.serialization.decodeEnvironmentSurrogate
 import it.unibo.alchemist.common.model.serialization.jsonFormat
+import it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate
+import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
 import it.unibo.alchemist.common.renderer.Bitmap32Serializer
 import it.unibo.alchemist.common.utility.Routes
 

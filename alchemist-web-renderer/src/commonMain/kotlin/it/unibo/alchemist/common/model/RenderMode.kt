@@ -26,5 +26,5 @@ enum class RenderMode {
     /**
      * The rendering computation is executed on the server.
      */
-    SERVER
+    SERVER,
 }

@@ -10,8 +10,8 @@
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.launch.WebRendererLauncher
 import it.unibo.alchemist.launch.Validation
+import it.unibo.alchemist.launch.WebRendererLauncher
 
 class WebRendererLauncherTest : StringSpec(
     {
@@ -33,48 +33,48 @@ class WebRendererLauncherTest : StringSpec(
         "Web Renderer Launcher is not compatible with distributed execution" {
             checkOptionsAreInvalid(
                 AlchemistExecutionOptions(configuration = "placeholder", distributed = "something"),
-                "$expectedLauncherName is not compatible with distributed execution"
+                "$expectedLauncherName is not compatible with distributed execution",
             )
         }
 
         "Web Renderer Launcher is not compatible with graphics mode" {
             checkOptionsAreInvalid(
                 AlchemistExecutionOptions(configuration = "placeholder", graphics = "something"),
-                "$expectedLauncherName is not compatible with graphics mode"
+                "$expectedLauncherName is not compatible with graphics mode",
             )
             checkOptionsAreInvalid(
                 AlchemistExecutionOptions(configuration = "placeholder", fxui = true),
-                "$expectedLauncherName is not compatible with graphics mode"
+                "$expectedLauncherName is not compatible with graphics mode",
             )
             checkOptionsAreInvalid(
                 AlchemistExecutionOptions(configuration = "placeholder", graphics = "something", fxui = true),
-                "$expectedLauncherName is not compatible with graphics mode"
+                "$expectedLauncherName is not compatible with graphics mode",
             )
         }
 
         "Web Renderer Launcher is not compatible with grid execution" {
             checkOptionsAreInvalid(
                 AlchemistExecutionOptions(configuration = "placeholder", server = "something"),
-                "$expectedLauncherName is not compatible with Alchemist grid computing server mode"
+                "$expectedLauncherName is not compatible with Alchemist grid computing server mode",
             )
         }
 
         "Web Renderer Launcher is not compatible with headless mode" {
             checkOptionsAreInvalid(
                 AlchemistExecutionOptions(configuration = "placeholder", headless = true),
-                "$expectedLauncherName is not compatible with headless mode"
+                "$expectedLauncherName is not compatible with headless mode",
             )
         }
 
         "Web Renderer Launcheris not compatible with variable exploration mode" {
             checkOptionsAreInvalid(
                 AlchemistExecutionOptions(configuration = "placeholder", variables = listOf("something")),
-                "$expectedLauncherName is not compatible with variable exploration mode"
+                "$expectedLauncherName is not compatible with variable exploration mode",
             )
         }
 
         "Web Renderer Launcher can contain only configuration" {
             checkOptionsAreValid(AlchemistExecutionOptions(configuration = "placeholder"))
         }
-    }
+    },
 )

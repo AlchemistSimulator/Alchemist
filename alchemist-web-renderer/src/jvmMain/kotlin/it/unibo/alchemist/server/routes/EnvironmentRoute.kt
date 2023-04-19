@@ -53,14 +53,14 @@ object EnvironmentRoute {
     }
 
     private suspend fun renderedEnvironment(
-        dispatcher: CoroutineDispatcher = Dispatchers.Default
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ): String {
         return withContext(dispatcher) {
             jsonFormat.encodeToString(
                 Bitmap32Serializer,
                 store.state.renderer.render(
-                    store.state.environmentSurrogate
-                ).toBMP32IfRequired()
+                    store.state.environmentSurrogate,
+                ).toBMP32IfRequired(),
             )
         }
     }

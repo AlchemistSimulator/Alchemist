@@ -19,5 +19,5 @@ import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
  * @param environmentSurrogate the new environment surrogate.
  */
 data class SetEnvironmentSurrogate<out TS : Any, out PS : PositionSurrogate>(
-    val environmentSurrogate: EnvironmentSurrogate<TS, PS>
+    val environmentSurrogate: EnvironmentSurrogate<TS, PS>,
 )

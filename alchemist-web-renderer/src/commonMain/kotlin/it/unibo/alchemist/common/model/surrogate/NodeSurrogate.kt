@@ -27,5 +27,5 @@ import kotlinx.serialization.Serializable
 data class NodeSurrogate<out TS : Any, out PS : PositionSurrogate>(
     val id: Int,
     val contents: Map<MoleculeSurrogate, TS>,
-    val position: PS
+    val position: PS,
 )

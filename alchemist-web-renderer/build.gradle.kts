@@ -100,7 +100,7 @@ tasks.named("run", JavaExec::class).configure {
             task.outputs.files.map { file ->
                 file.parent
             }
-        }
+        },
     )
 }
 

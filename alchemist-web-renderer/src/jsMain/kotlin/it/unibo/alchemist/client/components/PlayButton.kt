@@ -11,19 +11,19 @@ package it.unibo.alchemist.client.components
 
 import io.ktor.client.call.body
 import io.ktor.http.HttpStatusCode
-import it.unibo.alchemist.common.utility.Action.PLAY
+import it.unibo.alchemist.client.adapters.reactBootstrap.buttons.Button
+import it.unibo.alchemist.client.api.SimulationApi.pauseSimulation
+import it.unibo.alchemist.client.api.SimulationApi.playSimulation
+import it.unibo.alchemist.client.state.ClientStore.store
+import it.unibo.alchemist.client.state.actions.SetPlayButton
+import it.unibo.alchemist.common.model.surrogate.StatusSurrogate
 import it.unibo.alchemist.common.utility.Action.PAUSE
+import it.unibo.alchemist.common.utility.Action.PLAY
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import react.FC
 import react.Props
-import it.unibo.alchemist.client.adapters.reactBootstrap.buttons.Button
-import it.unibo.alchemist.client.api.SimulationApi.pauseSimulation
-import it.unibo.alchemist.client.api.SimulationApi.playSimulation
 import react.useState
-import it.unibo.alchemist.client.state.ClientStore.store
-import it.unibo.alchemist.client.state.actions.SetPlayButton
-import it.unibo.alchemist.common.model.surrogate.StatusSurrogate
 
 private val scope = MainScope()
 
@@ -65,7 +65,7 @@ val PlayButton: FC<PlayButtonProps> = FC { props ->
                 val response = if (isSimulationRunning(props.status)) pauseSimulation() else playSimulation()
                 if (response.status == HttpStatusCode.OK) {
                     store.dispatch(
-                        SetPlayButton(if (isSimulationRunning(props.status)) PLAY else PAUSE)
+                        SetPlayButton(if (isSimulationRunning(props.status)) PLAY else PAUSE),
                     )
                 } else {
                     warningModalTitle = "Error ${response.status}"

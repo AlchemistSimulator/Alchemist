@@ -22,7 +22,7 @@ class StatusSurrogateTest : StringSpec({
         StatusSurrogate.READY,
         StatusSurrogate.PAUSED,
         StatusSurrogate.RUNNING,
-        StatusSurrogate.TERMINATED
+        StatusSurrogate.TERMINATED,
     )
 
     "StatusSurrogate are just INIT, READY, PAUSED, RUNNING and TERMINATED" {

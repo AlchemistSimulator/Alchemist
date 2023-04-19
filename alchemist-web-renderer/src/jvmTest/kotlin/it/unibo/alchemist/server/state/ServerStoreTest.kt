@@ -17,7 +17,6 @@ import it.unibo.alchemist.server.state.actions.SetEnvironmentSurrogate
 import it.unibo.alchemist.server.state.actions.SetSimulation
 import it.unibo.alchemist.server.surrogates.utility.ToConcentrationSurrogate.toEmptyConcentration
 import it.unibo.alchemist.server.surrogates.utility.toEnvironmentSurrogate
-
 import org.reduxkotlin.Store
 import org.reduxkotlin.threadsafe.createThreadSafeStore
 

@@ -16,8 +16,8 @@ import it.unibo.alchemist.client.state.reducers.renderModeReducer
 import it.unibo.alchemist.client.state.reducers.statusSurrogateReducer
 import it.unibo.alchemist.common.model.RenderMode
 import it.unibo.alchemist.common.model.surrogate.StatusSurrogate
-import it.unibo.alchemist.common.utility.Action
 import it.unibo.alchemist.common.state.CommonState
+import it.unibo.alchemist.common.utility.Action
 
 /**
  * The state of the client.
@@ -37,7 +37,7 @@ data class ClientState(
     val renderMode: RenderMode = RenderMode.AUTO,
     val playButton: Action = Action.PAUSE,
     val bitmap: Bitmap? = null,
-    val statusSurrogate: StatusSurrogate = StatusSurrogate.INIT
+    val statusSurrogate: StatusSurrogate = StatusSurrogate.INIT,
 ) : CommonState()
 
 /**
@@ -50,5 +50,5 @@ fun rootReducer(state: ClientState, action: Any): ClientState = ClientState(
     renderMode = renderModeReducer(state.renderMode, action),
     playButton = playButtonReducer(state.playButton, action),
     bitmap = bitmapReducer(state.bitmap, action),
-    statusSurrogate = statusSurrogateReducer(state.statusSurrogate, action)
+    statusSurrogate = statusSurrogateReducer(state.statusSurrogate, action),
 )

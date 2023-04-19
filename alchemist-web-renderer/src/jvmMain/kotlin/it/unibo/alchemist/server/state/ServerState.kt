@@ -30,7 +30,7 @@ import it.unibo.alchemist.server.state.reducers.simulationReducer
 data class ServerState(
     val simulation: Simulation<Any, Nothing>? = null,
     val environmentSurrogate: EnvironmentSurrogate<Any, PositionSurrogate> =
-        EnvironmentSurrogate.uninitializedEnvironment()
+        EnvironmentSurrogate.uninitializedEnvironment(),
 ) : CommonState()
 
 /**
@@ -40,8 +40,8 @@ data class ServerState(
  */
 fun rootReducer(
     state: ServerState,
-    action: Any
+    action: Any,
 ): ServerState = ServerState(
     simulation = simulationReducer(state.simulation, action),
-    environmentSurrogate = environmentSurrogateReducer(state.environmentSurrogate, action)
+    environmentSurrogate = environmentSurrogateReducer(state.environmentSurrogate, action),
 )

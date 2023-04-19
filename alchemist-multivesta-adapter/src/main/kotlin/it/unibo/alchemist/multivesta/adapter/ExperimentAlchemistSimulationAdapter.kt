@@ -31,7 +31,7 @@ class ExperimentAlchemistSimulationAdapter(
      */
     val gridType: GridType,
     seed: Int,
-    rootOutputFiles: File = File("data")
+    rootOutputFiles: File = File("data"),
 ) : CSVAlchemistSimulationAdapter(seed, rootOutputFiles, { "coord_deployment-${gridType}_seed-$it.0.csv" }) {
 
     /**
@@ -41,24 +41,28 @@ class ExperimentAlchemistSimulationAdapter(
         /**
          * The short name of the grid type, as used in the experiment.
          */
-        private val shortName: String
+        private val shortName: String,
     ) {
         /**
          * The regular grid.
          */
         REGULAR("grid"),
+
         /**
          * The perturbed (or irregular) grid.
          */
         PERTURBED("pgrid"),
+
         /**
          * The random grid.
          */
         UNIFORM("uniform"),
+
         /**
          * The grid uniform on an axis and exponential on the other.
          */
-        EXPONENTIAL("exp");
+        EXPONENTIAL("exp"),
+        ;
 
         override fun toString(): String {
             return shortName

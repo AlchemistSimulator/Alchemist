@@ -64,8 +64,9 @@ object AlchemistMultiVesta {
         "vv" to Level.DEBUG,
         "vvv" to Level.ALL,
         "q" to Level.ERROR,
-        "qq" to Level.OFF
+        "qq" to Level.OFF,
     )
+
     /**
      * Set this to false for testing purposes.
      */
@@ -112,7 +113,7 @@ object AlchemistMultiVesta {
             ALREADY_EXECUTED_SIMULATION,
             false,
             "If the simulation has been already executed, this option allows to use a simulation adapter " +
-                "that loads the simulation from the output files"
+                "that loads the simulation from the output files",
         )
         fun printHelp() = HelpFormatter().printHelp("java -jar alchemist-redist-{version}.jar", opts)
         val parser: CommandLineParser = DefaultParser()
@@ -132,7 +133,7 @@ object AlchemistMultiVesta {
                     how to include incarnations in your project.
                     If you believe this is a bug, please open a report at:
                     https://github.com/AlchemistSimulator/Alchemist/issues/new/choose
-                    """.trimIndent().trim().replace('\n', ' ')
+                    """.trimIndent().trim().replace('\n', ' '),
                 )
                 "There are no incarnations in the classpath, no simulation can get executed"
             }
@@ -209,7 +210,7 @@ object AlchemistMultiVesta {
             verbosity.size > 1 ->
                 exitBecause(
                     "Conflicting verbosity specification. Only one of ${logLevels.keys} can be specified.",
-                    ExitStatus.MULTIPLE_VERBOSITY
+                    ExitStatus.MULTIPLE_VERBOSITY,
                 )
             verbosity.size == 1 -> setLogbackLoggingLevel(verbosity.first())
             else -> setLogbackLoggingLevel(Level.WARN)
@@ -224,7 +225,7 @@ object AlchemistMultiVesta {
                 encoder = PatternLayoutEncoder().apply {
                     pattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
                 }
-            }
+            },
         )
     }
 
@@ -258,7 +259,7 @@ object AlchemistMultiVesta {
                 parallelism = hasNumeric(PARALLELISM, String::toIntOrNull)
                     ?: AlchemistExecutionOptions.defaultParallelism,
                 variables = getOptionValues(VARIABLES)?.toList().orEmpty(),
-                configuration = getOptionValue(YAML)
+                configuration = getOptionValue(YAML),
             )
         }
 
@@ -280,6 +281,6 @@ object AlchemistMultiVesta {
      * The [exitStatus] returns the exit status the execution would have had.
      */
     data class AlchemistWouldHaveExitedException(
-        val exitStatus: Int
+        val exitStatus: Int,
     ) : RuntimeException("Alchemist would have exited with $exitStatus")
 }

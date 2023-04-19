@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
  * @param simulation the simulation to be wrapped.
  */
 abstract class AbstractAlchemistSimulationAdapter(
-    private val simulation: Simulation<Any, Nothing>
+    private val simulation: Simulation<Any, Nothing>,
 ) : AlchemistSimulationAdapter {
 
     private val logger = LoggerFactory.getLogger(AbstractAlchemistSimulationAdapter::class.java)

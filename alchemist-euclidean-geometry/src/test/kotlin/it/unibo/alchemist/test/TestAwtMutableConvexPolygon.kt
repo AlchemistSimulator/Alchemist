@@ -34,8 +34,8 @@ class TestAwtMutableConvexPolygon {
                 Euclidean2DPosition(0.0, 0.0),
                 Euclidean2DPosition(1.0, 0.0),
                 Euclidean2DPosition(1.0, 1.0),
-                Euclidean2DPosition(0.0, 1.0)
-            )
+                Euclidean2DPosition(0.0, 1.0),
+            ),
         )
     }
 
@@ -47,8 +47,8 @@ class TestAwtMutableConvexPolygon {
                     Euclidean2DPosition(0.0, 0.0),
                     Euclidean2DPosition(1.0, 0.0),
                     Euclidean2DPosition(1.0, 1.0),
-                    Euclidean2DPosition(0.0, 1.0)
-                )
+                    Euclidean2DPosition(0.0, 1.0),
+                ),
             )
         }
         shouldThrow<IllegalArgumentException> {
@@ -61,8 +61,8 @@ class TestAwtMutableConvexPolygon {
                     Euclidean2DPosition(-1.0, 3.0),
                     Euclidean2DPosition(-1.0, 8.0),
                     Euclidean2DPosition(6.0, 8.0),
-                    Euclidean2DPosition(6.0, 0.0)
-                )
+                    Euclidean2DPosition(6.0, 0.0),
+                ),
             )
         }
         shouldNotThrow<IllegalArgumentException> {
@@ -72,8 +72,8 @@ class TestAwtMutableConvexPolygon {
                     Euclidean2DPosition(-1.0, 3.0),
                     Euclidean2DPosition(-1.0, 8.0),
                     Euclidean2DPosition(6.0, 8.0),
-                    Euclidean2DPosition(6.0, 0.0)
-                )
+                    Euclidean2DPosition(6.0, 0.0),
+                ),
             )
         }
     }
@@ -86,7 +86,7 @@ class TestAwtMutableConvexPolygon {
                 Euclidean2DPosition(1.0, 0.0),
                 Euclidean2DPosition(1.0, 1.0),
                 Euclidean2DPosition(0.0, 1.0),
-            )
+            ),
         )
         assertTrue(p.addVertex(2, 1.5, 0.5))
         assertTrue(p.removeVertex(2))
@@ -116,22 +116,22 @@ class TestAwtMutableConvexPolygon {
     fun testReplaceEdge() {
         var newEdge = Segment2DImpl(
             Euclidean2DPosition(1.5, -0.5),
-            Euclidean2DPosition(1.5, 1.5)
+            Euclidean2DPosition(1.5, 1.5),
         )
         assertTrue(polygon.replaceEdge(1, newEdge))
         newEdge = Segment2DImpl(
             Euclidean2DPosition(1.5, 1.5),
-            Euclidean2DPosition(1.5, -0.5)
+            Euclidean2DPosition(1.5, -0.5),
         )
         assertFalse(polygon.replaceEdge(1, newEdge))
         newEdge = Segment2DImpl(
             Euclidean2DPosition(0.5, 0.3),
-            Euclidean2DPosition(0.5, 0.6)
+            Euclidean2DPosition(0.5, 0.6),
         )
         assertTrue(polygon.replaceEdge(1, newEdge))
         newEdge = Segment2DImpl(
             Euclidean2DPosition(0.5, 0.3),
-            Euclidean2DPosition(0.5, 0.6)
+            Euclidean2DPosition(0.5, 0.6),
         )
         assertTrue(polygon.replaceEdge(1, newEdge))
         polygon = AwtMutableConvexPolygon(
@@ -141,12 +141,12 @@ class TestAwtMutableConvexPolygon {
                 Euclidean2DPosition(4.0, 1.0),
                 Euclidean2DPosition(4.0, 2.0),
                 Euclidean2DPosition(3.0, 3.0),
-                Euclidean2DPosition(0.0, 3.0)
-            )
+                Euclidean2DPosition(0.0, 3.0),
+            ),
         )
         newEdge = Segment2DImpl(
             Euclidean2DPosition(-0.5, 1.0),
-            Euclidean2DPosition(-0.5, 2.0)
+            Euclidean2DPosition(-0.5, 2.0),
         )
         assertFalse(polygon.replaceEdge(1, newEdge))
     }

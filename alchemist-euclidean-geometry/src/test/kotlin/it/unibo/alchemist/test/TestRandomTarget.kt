@@ -111,7 +111,7 @@ class TestRandomTarget : StringSpec() {
             { currentPosition },
             ::Euclidean2DPosition,
             directionGenerator,
-            distanceDistribution
+            distanceDistribution,
         )
     }
 

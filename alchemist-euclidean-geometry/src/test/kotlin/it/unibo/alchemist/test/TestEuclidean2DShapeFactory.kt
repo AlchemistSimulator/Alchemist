@@ -86,7 +86,7 @@ class TestEuclidean2DShapeFactory : FreeSpec({
             "circle" to circle(size * 2),
             "circleSector" to circleSector(size * 2, Math.PI, 0.0),
             "rectangle" to rectangle(size, size),
-            "adimensional" to adimensional()
+            "adimensional" to adimensional(),
         )
 
         const val DEFAULT_SHAPE_SIZE: Double = 1.0

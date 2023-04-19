@@ -27,7 +27,7 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
     override val slope: Double,
     override val yIntercept: Double,
     override val xIntercept: Double,
-    private val createPoint: (Double, Double) -> P
+    private val createPoint: (Double, Double) -> P,
 ) : Line2D<P> {
 
     /**
@@ -37,7 +37,7 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
         slope,
         yIntercept,
         Double.NaN.takeIf { MathUtils.fuzzyEquals(slope, 0.0) } ?: -yIntercept / slope,
-        createPoint
+        createPoint,
     )
 
     /**
@@ -124,7 +124,7 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
                     isVertical -> other.findPoint(xIntercept)
                     other.isVertical -> findPoint(other.xIntercept)
                     else -> findPoint((other.yIntercept - yIntercept) / (slope - other.slope))
-                }
+                },
             )
     }
 
@@ -145,7 +145,7 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
                 solveQuadraticEquation(
                     1.0,
                     -2 * center.y,
-                    center.y.pow(2) + (xIntercept - center.x).pow(2) - radius.pow(2)
+                    center.y.pow(2) + (xIntercept - center.x).pow(2) - radius.pow(2),
                 ).map { createPoint(xIntercept, it) }
             else ->
                 /*
@@ -154,9 +154,9 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
                 solveQuadraticEquation(
                     1 + slope.pow(2),
                     2 * slope * (yIntercept - center.y) - 2 * center.x,
-                    center.x.pow(2) + (yIntercept - center.y).pow(2) - radius.pow(2)
+                    center.x.pow(2) + (yIntercept - center.y).pow(2) - radius.pow(2),
                 ).map { findPoint(it) }
-        }
+        },
     )
 
     /**

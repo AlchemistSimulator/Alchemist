@@ -31,7 +31,7 @@ class TestRectObstacle2D : StringSpec({
         endx: Double,
         endy: Double,
         nextx: Double,
-        nexty: Double
+        nexty: Double,
     ) {
         val next = obstacle.next(coords(startx, starty), coords(endx, endy))
         fuzzyEquals(next.x, nextx) shouldBe true

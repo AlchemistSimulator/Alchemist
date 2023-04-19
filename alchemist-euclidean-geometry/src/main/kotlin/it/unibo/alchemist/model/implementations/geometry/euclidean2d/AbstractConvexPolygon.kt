@@ -56,7 +56,7 @@ abstract class AbstractConvexPolygon : ConvexPolygon {
 
     override fun closestEdgeTo(segment: Segment2D<Euclidean2DPosition>): Segment2D<Euclidean2DPosition> =
         requireNotNull(
-            edges().minWithOrNull(compareBy({ it.distanceTo(segment) }, { it.minCumulativeDistanceTo(segment) }))
+            edges().minWithOrNull(compareBy({ it.distanceTo(segment) }, { it.minCumulativeDistanceTo(segment) })),
         ) { "no edge found" }
 
     override fun intersects(segment: Segment2D<Euclidean2DPosition>): Boolean {

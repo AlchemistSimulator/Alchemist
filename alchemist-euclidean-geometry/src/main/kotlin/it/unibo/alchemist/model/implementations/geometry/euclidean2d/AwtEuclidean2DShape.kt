@@ -23,7 +23,7 @@ import java.awt.geom.Point2D
  */
 internal class AwtEuclidean2DShape(
     private val shape: Shape,
-    private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)
+    private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),
 ) : Euclidean2DShape, AwtShapeCompatible {
 
     override val diameter: Double by lazy {
@@ -86,7 +86,7 @@ internal class AwtEuclidean2DShape(
             transform.translate(-origin.x, -origin.y)
             return AwtEuclidean2DShape(
                 transform.createTransformedShape(shape),
-                newOrigin
+                newOrigin,
             )
         }
     }

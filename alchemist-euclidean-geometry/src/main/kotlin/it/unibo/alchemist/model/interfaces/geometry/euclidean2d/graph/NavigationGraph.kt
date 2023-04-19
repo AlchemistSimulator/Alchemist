@@ -21,11 +21,10 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  * @param N the type of nodes (or vertices).
  * @param E the type of edges.
  */
-interface NavigationGraph<
-    V : Vector<V>,
-    A : GeometricTransformation<V>,
-    N : ConvexGeometricShape<V, A>,
-    E> : org.jgrapht.Graph<N, E> {
+interface NavigationGraph<V, A, N, E> : org.jgrapht.Graph<N, E> where
+      V : Vector<V>,
+      A : GeometricTransformation<V>,
+      N : ConvexGeometricShape<V, A> {
 
     /**
      * @returns the first node containing the specified [position], or null if no node containing it could be found.
@@ -43,4 +42,4 @@ interface NavigationGraph<
  * two edges so that e1.equal(e2).
  */
 typealias Euclidean2DNavigationGraph =
-    NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>
+NavigationGraph<Euclidean2DPosition, Euclidean2DTransformation, ConvexPolygon, Euclidean2DPassage>

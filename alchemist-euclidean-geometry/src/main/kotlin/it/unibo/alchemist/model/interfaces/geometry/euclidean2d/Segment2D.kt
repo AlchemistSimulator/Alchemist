@@ -110,7 +110,7 @@ interface Segment2D<P : Vector2D<P>> {
             distanceTo(other.first),
             distanceTo(other.second),
             other.distanceTo(first),
-            other.distanceTo(second)
+            other.distanceTo(second),
         ).minOrNull() ?: Double.POSITIVE_INFINITY
     }
 
@@ -161,7 +161,7 @@ interface Segment2D<P : Vector2D<P>> {
                 ?: Intersection2D.InfinitePoints
         else ->
             Intersection2D.create(
-                toLine().intersect(other.toLine()).asList.filter { contains(it) && other.contains(it) }
+                toLine().intersect(other.toLine()).asList.filter { contains(it) && other.contains(it) },
             )
     }
 
@@ -185,7 +185,7 @@ interface Segment2D<P : Vector2D<P>> {
         !in 0.0..0.5 -> throw IllegalArgumentException("$factor not in [0, 0.5]")
         else -> copyWith(
             first = first + (second - first).resized(factor * length),
-            second = second + (first - second).resized(factor * length)
+            second = second + (first - second).resized(factor * length),
         )
     }
 

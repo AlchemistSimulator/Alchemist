@@ -30,7 +30,7 @@ import it.unibo.alchemist.util.BugReporting
 data class Euclidean2DPassage(
     val tail: ConvexPolygon,
     val head: ConvexPolygon,
-    val passageShapeOnTail: Segment2D<Euclidean2DPosition>
+    val passageShapeOnTail: Segment2D<Euclidean2DPosition>,
 ) {
 
     init {

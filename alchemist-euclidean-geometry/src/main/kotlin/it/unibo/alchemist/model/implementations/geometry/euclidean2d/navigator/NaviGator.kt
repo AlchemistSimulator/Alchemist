@@ -74,7 +74,7 @@ fun generateNavigationGraph(
     height: Double,
     obstacles: List<Shape>,
     rooms: Collection<Euclidean2DPosition>,
-    unity: Double = 1.0
+    unity: Double = 1.0,
 ): Euclidean2DNavigationGraph {
     require(width > 0 && height > 0) { "width and height should be positive" }
     val seeds = rooms
@@ -92,7 +92,9 @@ fun generateNavigationGraph(
                  */
                 seed.replaceEdge(index, edge)
                 passages
-            } else emptyList()
+            } else {
+                emptyList()
+            }
         }.flatten()
     }.forEach { graph.addEdge(it.tail, it.head, it) }
 
@@ -101,7 +103,7 @@ fun generateNavigationGraph(
 
 private fun MutableList<ExtendableConvexPolygonInEnvironment>.grow(
     obstacles: List<Shape>,
-    step: Double
+    step: Double,
 ): MutableList<ExtendableConvexPolygonInEnvironment> {
     removeIf { seed -> obstacles.any { seed.intersects(it) } }
     forEach { seed -> seed.polygonalObstacles = this - seed }
@@ -141,7 +143,7 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
      * Portion of the advancing edge not occluded by obstacles yet. Since the edge
      * is axis-aligned, a DoubleInterval is sufficient to represent a portion of it.
      */
-    remaining: ClosedRange<Double> = oldEdge.toRange()
+    remaining: ClosedRange<Double> = oldEdge.toRange(),
 ): Collection<Euclidean2DPassage> = emptyList<Euclidean2DPassage>()
     .takeIf { fuzzyEquals(remaining.start, remaining.endInclusive) }
     ?: let { _ ->
@@ -180,7 +182,7 @@ private fun ExtendableConvexPolygonInEnvironment.findPassages(
             }
         }
         val newRemaining = remaining.subtractAll(
-            intersectedObstacles().map { shapeToInterval(it) }
+            intersectedObstacles().map { shapeToInterval(it) },
         )
         val neighborToIntervals = intersectedSeeds().map { neighbor ->
             /*
@@ -221,19 +223,19 @@ private fun createSeed(
     origin: Euclidean2DPosition,
     width: Double,
     height: Double,
-    obstacles: List<Shape>
+    obstacles: List<Shape>,
 ): ExtendableConvexPolygonInEnvironment =
     ExtendableConvexPolygonInEnvironment(
         mutableListOf(
             Euclidean2DPosition(x, y),
             Euclidean2DPosition(x + side, y),
             Euclidean2DPosition(x + side, y + side),
-            Euclidean2DPosition(x, y + side)
+            Euclidean2DPosition(x, y + side),
         ),
         origin,
         width,
         height,
-        obstacles
+        obstacles,
     )
 
 /**

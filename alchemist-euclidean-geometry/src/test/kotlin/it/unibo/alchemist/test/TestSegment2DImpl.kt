@@ -41,7 +41,7 @@ class TestSegment2DImpl : StringSpec() {
 
     private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
         segment1: Segment2D<P>,
-        segment2: Segment2D<P>
+        segment2: Segment2D<P>,
     ): I {
         val intersection = segment1.intersect(segment2)
         intersection.shouldBeTypeOf<I>()
@@ -51,7 +51,7 @@ class TestSegment2DImpl : StringSpec() {
     private fun <P : Vector2D<P>> shouldIntersectIn(
         segment1: Segment2D<P>,
         segment2: Segment2D<P>,
-        expectedPoint: P
+        expectedPoint: P,
     ) = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment1, segment2).point shouldBe expectedPoint
 
     private fun <P : Vector2D<P>> shouldNotIntersect(segment1: Segment2D<P>, segment2: Segment2D<P>) =
@@ -63,7 +63,7 @@ class TestSegment2DImpl : StringSpec() {
     private inline fun <P : Vector2D<P>, reified I : Intersection2D<P>> intersectionShouldBe(
         segment: Segment2D<P>,
         center: P,
-        radius: Double
+        radius: Double,
     ): I {
         val intersection = segment.intersectCircle(center, radius)
         intersection.shouldBeTypeOf<I>()
@@ -75,7 +75,7 @@ class TestSegment2DImpl : StringSpec() {
         center: P,
         radius: Double,
         expectedPoint1: P,
-        expectedPoint2: P
+        expectedPoint2: P,
     ) {
         val intersection = intersectionShouldBe<P, Intersection2D.MultiplePoints<P>>(segment, center, radius)
         intersection.points shouldContainExactlyInAnyOrder listOf(expectedPoint1, expectedPoint2)
@@ -85,7 +85,7 @@ class TestSegment2DImpl : StringSpec() {
         segment: Segment2D<P>,
         center: P,
         radius: Double,
-        expectedPoint: P
+        expectedPoint: P,
     ) = intersectionShouldBe<P, Intersection2D.SinglePoint<P>>(segment, center, radius).point shouldBe expectedPoint
 
     private fun <P : Vector2D<P>> shouldNotIntersect(segment: Segment2D<P>, center: P, radius: Double) =
@@ -231,7 +231,7 @@ class TestSegment2DImpl : StringSpec() {
             shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(3.0, 1.0, 1.0, 3.0),
-                coords(2.0, 2.0)
+                coords(2.0, 2.0),
             )
             /*
              * Segments share an endpoint.
@@ -239,7 +239,7 @@ class TestSegment2DImpl : StringSpec() {
             shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(5.0, 5.0, 6.0, 1.0),
-                coords(5.0, 5.0)
+                coords(5.0, 5.0),
             )
             /*
              * Segments share an endpoint and are collinear.
@@ -247,63 +247,63 @@ class TestSegment2DImpl : StringSpec() {
             shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 5.0),
                 segment(5.0, 5.0, 6.0, 6.0),
-                coords(5.0, 5.0)
+                coords(5.0, 5.0),
             )
             /*
              * Segments are parallel.
              */
             shouldNotIntersect(
                 segment(1.0, 1.0, 5.0, 5.0),
-                segment(1.0, 2.0, 5.0, 6.0)
+                segment(1.0, 2.0, 5.0, 6.0),
             )
             /*
              * Segments are not parallel but not intersecting as well.
              */
             shouldNotIntersect(
                 segment(1.0, 1.0, 5.0, 5.0),
-                segment(2.0, 3.0, 1.0, 5.0)
+                segment(2.0, 3.0, 1.0, 5.0),
             )
             /*
              * Segments are collinear but disjoint.
              */
             shouldNotIntersect(
                 segment(1.0, 1.0, 5.0, 5.0),
-                segment(6.0, 6.0, 7.0, 7.0)
+                segment(6.0, 6.0, 7.0, 7.0),
             )
             /*
              * Segments are coincident.
              */
             shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
-                segment(1.0, 1.0, 5.0, 5.0)
+                segment(1.0, 1.0, 5.0, 5.0),
             )
             /*
              * Overlapping.
              */
             shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
-                segment(3.0, 3.0, 7.0, 7.0)
+                segment(3.0, 3.0, 7.0, 7.0),
             )
             /*
              * Overlapping with negative coords.
              */
             shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
-                segment(-3.0, -3.0, 4.0, 4.0)
+                segment(-3.0, -3.0, 4.0, 4.0),
             )
             /*
              * One contains the other.
              */
             shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
-                segment(-3.0, -3.0, 7.0, 7.0)
+                segment(-3.0, -3.0, 7.0, 7.0),
             )
             /*
              * Overlapping and share an endpoint.
              */
             shouldOverlap(
                 segment(1.0, 1.0, 5.0, 5.0),
-                segment(3.0, 3.0, 5.0, 5.0)
+                segment(3.0, 3.0, 5.0, 5.0),
             )
             /*
              * Intersections with axis-aligned segments.
@@ -311,31 +311,31 @@ class TestSegment2DImpl : StringSpec() {
             shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 1.0),
                 segment(3.0, -1.0, 3.0, 1.0),
-                coords(3.0, 1.0)
+                coords(3.0, 1.0),
             )
             shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 1.0),
                 segment(3.0, -1.0, 3.0, 5.0),
-                coords(3.0, 1.0)
+                coords(3.0, 1.0),
             )
             shouldIntersectIn(
                 segment(1.0, 1.0, 5.0, 1.0),
                 segment(5.0, 1.0, 6.0, 1.0),
-                coords(5.0, 1.0)
+                coords(5.0, 1.0),
             )
             /*
              * Aligned to the x-axis and overlapping.
              */
             shouldOverlap(
                 segment(1.0, 1.0, 5.0, 1.0),
-                segment(4.9, 1.0, 6.0, 1.0)
+                segment(4.9, 1.0, 6.0, 1.0),
             )
             /*
              * Aligned to the x-axis and collinear but disjoint.
              */
             shouldNotIntersect(
                 segment(1.0, 1.0, 5.0, 1.0),
-                segment(6.0, 1.0, 7.0, 1.0)
+                segment(6.0, 1.0, 7.0, 1.0),
             )
             /*
              * Aligned to the y-axis.
@@ -343,15 +343,15 @@ class TestSegment2DImpl : StringSpec() {
             shouldIntersectIn(
                 segment(1.0, 1.0, 1.0, 6.0),
                 segment(1.0, 1.0, 1.0, -6.0),
-                coords(1.0, 1.0)
+                coords(1.0, 1.0),
             )
             shouldNotIntersect(
                 segment(1.0, 1.0, 1.0, 6.0),
-                segment(1.0, -1.0, 1.0, -6.0)
+                segment(1.0, -1.0, 1.0, -6.0),
             )
             shouldOverlap(
                 segment(1.0, 1.0, 1.0, 6.0),
-                segment(1.0, 2.0, 1.0, -6.0)
+                segment(1.0, 2.0, 1.0, -6.0),
             )
             /*
              * Degenerate segments.
@@ -359,11 +359,11 @@ class TestSegment2DImpl : StringSpec() {
             shouldIntersectIn(
                 segment(1.0, 1.0, 1.0, 1.0),
                 segment(1.0, 1.0, 1.0, 1.0),
-                coords(1.0, 1.0)
+                coords(1.0, 1.0),
             )
             shouldNotIntersect(
                 segment(1.0, 1.0, 1.0, 1.0),
-                segment(1.0, 2.0, 1.0, 2.0)
+                segment(1.0, 2.0, 1.0, 2.0),
             )
         }
 
@@ -372,36 +372,36 @@ class TestSegment2DImpl : StringSpec() {
                 segment(1.0, 1.0, 5.0, 1.0),
                 coords(3.0, 3.0),
                 2.0,
-                coords(3.0, 1.0)
+                coords(3.0, 1.0),
             )
             shouldNotIntersect(
                 segment(1.0, -1.0, 5.0, -1.0),
                 coords(3.0, 3.0),
-                2.0
+                2.0,
             )
             shouldIntersectIn(
                 segment(0.0, 3.0, 6.0, 3.0),
                 coords(3.0, 3.0),
                 2.0,
                 coords(1.0, 3.0),
-                coords(5.0, 3.0)
+                coords(5.0, 3.0),
             )
             shouldIntersectIn(
                 segment(3.0, 3.0, 6.0, 3.0),
                 coords(3.0, 3.0),
                 2.0,
-                coords(5.0, 3.0)
+                coords(5.0, 3.0),
             )
             shouldNotIntersect(
                 segment(10.0, 3.0, 12.0, 3.0),
                 coords(3.0, 3.0),
-                2.0
+                2.0,
             )
             shouldIntersectIn(
                 segment(0.0, 1.0, 1.0, 1.0),
                 coords(1.0, 1.0),
                 1.0,
-                coords(0.0, 1.0)
+                coords(0.0, 1.0),
             )
         }
 

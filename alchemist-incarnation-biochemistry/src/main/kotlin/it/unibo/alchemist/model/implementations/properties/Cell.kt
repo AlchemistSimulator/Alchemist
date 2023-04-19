@@ -15,6 +15,8 @@ import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
 import org.apache.commons.math3.util.FastMath
+import kotlin.math.nextDown
+import kotlin.math.nextUp
 
 /**
  * Base implementation of a [CellProperty].

@@ -18,8 +18,8 @@ import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.Event
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Actionable
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.MersenneTwister
@@ -39,7 +39,7 @@ class TestGetPosition {
         environment,
         node.asProperty(),
         reaction,
-        "self.getCoordinates()"
+        "self.getCoordinates()",
     )
 
     @BeforeEach
@@ -61,16 +61,16 @@ class TestGetPosition {
                     environment: Environment<Any, Euclidean2DPosition>,
                     reaction: Actionable<Any>?,
                     time: Time,
-                    step: Long
+                    step: Long,
                 ) {
                     if (step > 0) {
                         Assertions.assertEquals(
                             DatatypeFactory.createTuple(1.0, 1.0),
-                            node.getConcentration(action.asMolecule())
+                            node.getConcentration(action.asMolecule()),
                         )
                     }
                 }
-            }
+            },
         )
         sim.play()
         sim.run()

@@ -142,7 +142,7 @@ class AlchemistNetworkManager @JvmOverloads constructor(
     private data class MessageInfo(
         val time: Double,
         val source: DeviceUID,
-        val payload: Map<CodePath, Any>
+        val payload: Map<CodePath, Any>,
     ) : Serializable {
         companion object {
             private const val serialVersionUID = 2L

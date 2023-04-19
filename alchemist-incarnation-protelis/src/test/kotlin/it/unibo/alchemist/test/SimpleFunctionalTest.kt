@@ -26,5 +26,5 @@ class SimpleFunctionalTest : StringSpec(
             requireNotNull(valuesOfLastNode)
             valuesOfLastNode shouldContain 3.0
         }
-    }
+    },
 )

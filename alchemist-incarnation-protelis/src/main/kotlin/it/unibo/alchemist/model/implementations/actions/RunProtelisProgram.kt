@@ -72,7 +72,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         originalProgram = program.name,
         program = program,
         retentionTime = retentionTime,
-        packetLossDistance = null
+        packetLossDistance = null,
     )
 
     @JvmOverloads constructor(
@@ -95,8 +95,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         packetLossDistance = RealDistributionUtil.makeRealDistribution(
             randomGenerator,
             packetLossDistributionName,
-            *packetLossDistributionParameters
-        )
+            *packetLossDistributionParameters,
+        ),
     )
 
     @JvmOverloads constructor(
@@ -105,7 +105,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         device: ProtelisDevice<P>,
         reaction: Reaction<Any>,
         program: String,
-        retentionTime: Double = Double.NaN
+        retentionTime: Double = Double.NaN,
     ) : this(
         randomGenerator,
         environment,
@@ -137,8 +137,8 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         packetLossDistance = RealDistributionUtil.makeRealDistribution(
             randomGenerator,
             packetLossDistributionName,
-            *packetLossDistributionParameters
-        )
+            *packetLossDistributionParameters,
+        ),
     )
 
     /**

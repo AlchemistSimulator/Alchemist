@@ -26,7 +26,7 @@ import org.protelis.vm.ExecutionEnvironment
 class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
     val environment: Environment<Any, P>,
     override val node: Node<Any>,
-    networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf()
+    networkManagers: Map<RunProtelisProgram<*>, AlchemistNetworkManager> = mapOf(),
 ) : NodeProperty<Any>, ExecutionEnvironment, DeviceUID {
 
     private val incarnation: ProtelisIncarnation<*> =
@@ -73,7 +73,7 @@ class ProtelisDevice<P : Position<P>> @JvmOverloads constructor(
             node.contains(molecule) -> node.getConcentration(molecule)
             else -> environment.getLayer(molecule).map { it.getValue(environment.getPosition(node)) }.orElseThrow {
                 IllegalArgumentException(
-                    "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists"
+                    "Molecule (variable) \"$id\" not found in $this, nor a layer with the same name exists",
                 )
             }
         }

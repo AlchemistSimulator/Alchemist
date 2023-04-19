@@ -133,7 +133,7 @@ open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPos
     override fun farthestPositionReachable(
         node: Node<T>,
         desiredPosition: Euclidean2DPosition,
-        hitboxRadius: Double
+        hitboxRadius: Double,
     ): Euclidean2DPosition {
         val currentPosition = getPosition(node)
         val desiredMovement = Segment2DImpl(currentPosition, desiredPosition)

@@ -25,7 +25,7 @@ class TestOutputMonitorFailures : FreeSpec(
                     object : OutputMonitor<Nothing, Euclidean2DPosition> {
                         override fun initialized(environment: Environment<Nothing, Euclidean2DPosition>) =
                             error("initialization failure")
-                    }
+                    },
                 )
             }
             "termination" {
@@ -34,13 +34,13 @@ class TestOutputMonitorFailures : FreeSpec(
                         override fun finished(
                             environment: Environment<Nothing, Euclidean2DPosition>,
                             time: Time,
-                            step: Long
+                            step: Long,
                         ) = error("termination failure")
-                    }
+                    },
                 )
             }
         }
-    }
+    },
 ) {
     companion object {
         fun runTest(outputMonitor: OutputMonitor<Nothing, Euclidean2DPosition>) {

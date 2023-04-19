@@ -61,7 +61,7 @@ class TestSimulationControl : FreeSpec(
                 }
             }
         }
-    }
+    },
 ) {
     companion object {
         val workerPool: ExecutorService = Executors.newCachedThreadPool()

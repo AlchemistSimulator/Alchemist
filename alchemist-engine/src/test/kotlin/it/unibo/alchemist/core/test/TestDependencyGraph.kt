@@ -27,7 +27,7 @@ import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 
 private fun <T> Incarnation<T, Euclidean2DPosition>.environment(
-    configuration: Environment<T, Euclidean2DPosition>.() -> Unit
+    configuration: Environment<T, Euclidean2DPosition>.() -> Unit,
 ): Environment<T, Euclidean2DPosition> = Continuous2DEnvironment(this@Incarnation).apply {
     linkingRule = ConnectWithinDistance(1.0)
     configuration()
@@ -49,7 +49,7 @@ private fun <T> Node<T>.reaction(configuration: String): Reaction<T> = createRea
     this@Environment,
     this,
     ExponentialTime(1.0, this@RandomGenerator),
-    configuration
+    configuration,
 ).also { addReaction(it) }
 
 context(Map<Int, Map<String, Reaction<Double>>>)
@@ -101,5 +101,5 @@ class TestDependencyGraph : StringSpec(
                 }
             }
         }
-    }
+    },
 )

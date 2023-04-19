@@ -7,10 +7,10 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import org.apache.commons.math3.util.FastMath.toDegrees
 import java.awt.geom.Arc2D
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
-import org.apache.commons.math3.util.FastMath.toDegrees
 
 internal class AwtEuclidean2DShapeFactory(
     override val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0)

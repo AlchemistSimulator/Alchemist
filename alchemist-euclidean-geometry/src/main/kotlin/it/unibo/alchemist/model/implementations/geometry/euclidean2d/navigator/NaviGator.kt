@@ -9,19 +9,19 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
+import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.DirectedEuclidean2DNavigationGraph
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DNavigationGraph
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigator.ExtendableConvexPolygon
 import it.unibo.alchemist.model.util.RangeExtension.findExtremeCoordsOnX
 import it.unibo.alchemist.model.util.RangeExtension.findExtremeCoordsOnY
 import it.unibo.alchemist.model.util.RangeExtension.intersect
 import it.unibo.alchemist.model.util.RangeExtension.intersectsBoundsExcluded
 import it.unibo.alchemist.model.util.RangeExtension.subtractAll
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigator.ExtendableConvexPolygon
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.DirectedEuclidean2DNavigationGraph
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DNavigationGraph
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.awt.Shape
 

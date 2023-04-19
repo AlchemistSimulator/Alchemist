@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
-import it.unibo.alchemist.model.util.DoubleExtension.fuzzyIn
-import it.unibo.alchemist.model.util.RangeExtension.rangeFromUnordered
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SlopeInterceptLine2D
 import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.util.DoubleExtension.fuzzyIn
+import it.unibo.alchemist.model.util.RangeExtension.rangeFromUnordered
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 import java.lang.UnsupportedOperationException
 

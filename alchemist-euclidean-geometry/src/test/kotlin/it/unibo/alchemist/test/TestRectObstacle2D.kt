@@ -11,8 +11,8 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.apache.commons.math3.util.FastMath
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 

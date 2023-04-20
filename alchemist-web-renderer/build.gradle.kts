@@ -49,10 +49,11 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api(alchemist("api"))
-                implementation(rootProject)
                 implementation(incarnation("sapere"))
+                implementation(rootProject)
                 implementation(libs.bundles.ktor.server)
                 implementation(libs.logback)
+                implementation(libs.resourceloader)
             }
         }
         val jvmTest by getting {

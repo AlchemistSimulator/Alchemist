@@ -12,28 +12,26 @@ package it.unibo.alchemist.server.routes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.server.application.call
-import io.ktor.server.http.content.resources
-import io.ktor.server.http.content.static
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import it.unibo.alchemist.server.utility.Response
 import it.unibo.alchemist.server.utility.Response.Companion.respond
+import org.kaikikm.threadresloader.ResourceLoader.getResource
 
 /**
  * Route of type GET that sends the index page to the client.
  * The HTTP [Response] sent to the client can be of type:
- * 200 (OK) the index.html resource is correctly sent to the client.
- * 404 (Not Found) the index.html resource was not found.
+ * - 200 (OK) the index.html resource is correctly sent to the client;
+ * - 404 (Not Found) the index.html resource was not found.
  */
 fun Route.mainRoute() {
     get("/") {
-        this::class.java.classLoader.getResource("index.html")?.let { resource ->
-            call.respondText(resource.readText(), ContentType.Text.Html)
-        } ?: respond(Response(NotFound, "Main index.html is missing."))
+        getResource("index.html")
+            ?.let { resource -> call.respondText(resource.readText(), ContentType.Text.Html) }
+            ?: respond(Response(NotFound, "Main index.html is missing."))
     }
 
-    static("/") {
-        resources("")
-    }
+    staticResources("/", "")
 }

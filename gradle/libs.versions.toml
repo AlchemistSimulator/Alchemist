@@ -60,7 +60,7 @@ junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref 
 konf = { module = "com.uchuhimo:konf", version.ref = "konf" }
 korim = "com.soywiz.korlibs.korim:korim:3.4.0"
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
-kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
@@ -129,7 +129,12 @@ protelis = [ "protelis-interpreter", "protelis-lang" ]
 scala = [ "scala-compiler", "scala-library" ]
 scalacache = [ "scalacache-core", "scalacache-guava" ]
 scalatest = [ "scalatest", "scalatest-plusjunit" ]
-testing-compile = [ "junit-api", "kotest-assertions", "kotest-runner", "mockito-core" ]
+testing-compile = [
+    "junit-api",
+    "kotest-assertions",
+    "kotest-runner",
+    "mockito-core"
+]
 testing-runtimeOnly = [ "junit-engine" ]
 
 [plugins]

@@ -95,8 +95,8 @@ class TestSegment2DImpl : StringSpec() {
         "test length" {
             horizontalSegment.length shouldBe 4.0
             verticalSegment.length shouldBe 4.0
-            obliqueSegment.length shouldBeFuzzy sqrt(2 * 4.0.pow(2))
-            degenerateSegment.length shouldBeFuzzy 0.0
+            obliqueSegment.length shouldBeAbout sqrt(2 * 4.0.pow(2))
+            degenerateSegment.length shouldBeAbout 0.0
         }
 
         "test isDegenerate" {
@@ -134,19 +134,19 @@ class TestSegment2DImpl : StringSpec() {
 
         "test toLine" {
             horizontalSegment.toLine().let {
-                it.slope shouldBeFuzzy 0.0
-                it.yIntercept shouldBeFuzzy 2.0
+                it.slope shouldBeAbout 0.0
+                it.yIntercept shouldBeAbout 2.0
                 it.xIntercept shouldBe Double.NaN
             }
             verticalSegment.toLine().let {
                 it.slope shouldBe Double.NaN
                 it.yIntercept shouldBe Double.NaN
-                it.xIntercept shouldBeFuzzy 2.0
+                it.xIntercept shouldBeAbout 2.0
             }
             obliqueSegment.toLine().let {
-                it.slope shouldBeFuzzy 1.0
-                it.yIntercept shouldBeFuzzy 0.0
-                it.xIntercept shouldBeFuzzy 0.0
+                it.slope shouldBeAbout 1.0
+                it.yIntercept shouldBeAbout 0.0
+                it.xIntercept shouldBeAbout 0.0
             }
             assertThrows<UnsupportedOperationException> { degenerateSegment.toLine() }
         }
@@ -170,9 +170,9 @@ class TestSegment2DImpl : StringSpec() {
 
         "test closestPointTo and distanceTo point" {
             obliqueSegment.distanceTo(coords(2.0, 0.0)) shouldBe 2.0
-            obliqueSegment.distanceTo(obliqueSegment.first) shouldBeFuzzy 0.0
-            obliqueSegment.distanceTo(coords(4.0, 2.0)) shouldBeFuzzy sqrt(2.0)
-            obliqueSegment.distanceTo(coords(9.0, 9.0)) shouldBeFuzzy 3 * sqrt(2.0)
+            obliqueSegment.distanceTo(obliqueSegment.first) shouldBeAbout 0.0
+            obliqueSegment.distanceTo(coords(4.0, 2.0)) shouldBeAbout sqrt(2.0)
+            obliqueSegment.distanceTo(coords(9.0, 9.0)) shouldBeAbout 3 * sqrt(2.0)
             val segment = segment(1.0, 3.0, 3.0, 1.0)
             segment.closestPointTo(coords(4.0, 2.0)) shouldBe segment.second
             segment.closestPointTo(coords(4.0, 1.0)) shouldBe segment.second
@@ -180,13 +180,13 @@ class TestSegment2DImpl : StringSpec() {
         }
 
         "test distanceTo segment" {
-            horizontalSegment.distanceTo(horizontalSegment) shouldBeFuzzy 0.0
-            horizontalSegment.distanceTo(verticalSegment) shouldBeFuzzy 0.0
-            horizontalSegment.distanceTo(obliqueSegment) shouldBeFuzzy 0.0
-            horizontalSegment.distanceTo(segment(0.0, 2.0, 2.0, 2.0)) shouldBeFuzzy 0.0
-            horizontalSegment.distanceTo(segment(4.0, 0.0, 4.0, 4.0)) shouldBeFuzzy 0.0
-            obliqueSegment.distanceTo(segment(0.0, 0.0, 4.0, 0.0)) shouldBeFuzzy 2.0
-            obliqueSegment.distanceTo(segment(2.0, 0.0, 8.0, 6.0)) shouldBeFuzzy sqrt(2.0)
+            horizontalSegment.distanceTo(horizontalSegment) shouldBeAbout 0.0
+            horizontalSegment.distanceTo(verticalSegment) shouldBeAbout 0.0
+            horizontalSegment.distanceTo(obliqueSegment) shouldBeAbout 0.0
+            horizontalSegment.distanceTo(segment(0.0, 2.0, 2.0, 2.0)) shouldBeAbout 0.0
+            horizontalSegment.distanceTo(segment(4.0, 0.0, 4.0, 4.0)) shouldBeAbout 0.0
+            obliqueSegment.distanceTo(segment(0.0, 0.0, 4.0, 0.0)) shouldBeAbout 2.0
+            obliqueSegment.distanceTo(segment(2.0, 0.0, 8.0, 6.0)) shouldBeAbout sqrt(2.0)
         }
 
         "test isCollinearWith point" {

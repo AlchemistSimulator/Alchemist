@@ -29,7 +29,7 @@ import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.test.TestEuclidean2DShapeFactory.Companion.DEFAULT_SHAPE_SIZE
 import org.danilopianini.lang.MathUtils
 
-internal infix fun Double.shouldBeFuzzy(other: Double): Unit = MathUtils.fuzzyEquals(this, other) shouldBe true
+internal infix fun Double.shouldBeAbout(other: Double) = MathUtils.fuzzyEquals(this, other) shouldBe true
 
 class TestEuclideanPhysics2DEnvironment : StringSpec() {
     private lateinit var environment: Physics2DEnvironment<Any>
@@ -71,7 +71,7 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
             environment.addNode(node2, Euclidean2DPosition(3 * DEFAULT_SHAPE_SIZE, 0.0))
             environment.moveNodeToPosition(node2, environment.getPosition(node1))
             val distance = environment.getPosition(node1).distanceTo(environment.getPosition(node2))
-            distance shouldBeFuzzy getNodeRadius(node1) + getNodeRadius(node2)
+            distance shouldBeAbout getNodeRadius(node1) + getNodeRadius(node2)
         }
 
         "Get nodes within a small shape" {
@@ -94,7 +94,7 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
             environment.addNode(node2, coords(6.0, 2.0))
             val target = coords(8.0, 2.0)
             environment.moveNodeToPosition(node1, target)
-            environment.getPosition(node1).distanceTo(target) shouldBeFuzzy
+            environment.getPosition(node1).distanceTo(target) shouldBeAbout
                 environment.getPosition(node2).distanceTo(target) + getNodeRadius(node1) + getNodeRadius(node2)
         }
 

@@ -14,6 +14,7 @@ import com.soywiz.korim.bitmap.Bitmap32
 import com.soywiz.korim.paint.ColorPaint
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.alchemist.common.model.serialization.jsonFormat
 
 class Bitmap32SerializerTest : StringSpec({
@@ -21,6 +22,11 @@ class Bitmap32SerializerTest : StringSpec({
         val bmp: Bitmap = Bitmap32(1000, 1000, ColorPaint(0))
         val serialized = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
         val deserialized = jsonFormat.decodeFromString(Bitmap32Serializer, serialized)
-        deserialized shouldBe bmp
+        deserialized.shouldBeInstanceOf<Bitmap32>()
+        check(bmp is Bitmap32)
+        deserialized.bounds shouldBe bmp.bounds
+        deserialized.height shouldBe bmp.height
+        deserialized.width shouldBe bmp.width
+        deserialized.ints shouldBe bmp.ints
     }
 })

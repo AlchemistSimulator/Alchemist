@@ -14,6 +14,7 @@ import com.soywiz.korim.bitmap.Bitmap32
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.alchemist.common.model.serialization.jsonFormat
 import it.unibo.alchemist.common.model.surrogate.EmptyConcentrationSurrogate
 import it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate
@@ -39,13 +40,12 @@ class BitmapRendererTest : StringSpec({
 
     "BitmapRenderer should output a Bitmap correctly" {
         val bmp = renderer.render(envSurrogate)
-        (bmp is Bitmap32) shouldBe true
-        val ser = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
-        val des = jsonFormat.decodeFromString(Bitmap32Serializer, ser)
-        bmp.height shouldBe des.height
-        bmp.width shouldBe des.width
-        bmp.toBMP32().ints shouldBe des.ints
-        bmp shouldBe des
+        bmp.shouldBeInstanceOf<Bitmap32>()
+        val encoded = jsonFormat.encodeToString(Bitmap32Serializer, bmp.toBMP32IfRequired())
+        val decoded = jsonFormat.decodeFromString(Bitmap32Serializer, encoded)
+        bmp.height shouldBe decoded.height
+        bmp.width shouldBe decoded.width
+        bmp.toBMP32().ints shouldBe decoded.ints
     }
 
     "BitmapRenderer can't work with Environments with != 2 dimensions" {

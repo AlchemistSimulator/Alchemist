@@ -11,7 +11,7 @@ package it.unibo.alchemist.core.test
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.optional.shouldBePresent
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Time

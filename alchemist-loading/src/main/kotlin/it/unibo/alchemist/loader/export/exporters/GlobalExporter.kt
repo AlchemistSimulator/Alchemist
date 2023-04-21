@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.loader.export.exporters
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Environment

@@ -21,7 +21,7 @@ import it.unibo.alchemist.boundary.ui.impl.ExponentialZoomManager;
 import it.unibo.alchemist.boundary.ui.impl.PointerSpeedImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.WormholeSwing;
-import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Actionable;

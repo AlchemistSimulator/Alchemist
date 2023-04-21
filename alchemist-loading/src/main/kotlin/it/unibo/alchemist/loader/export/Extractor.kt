@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.interfaces.Time
 /**
  * An object that is able to extract numeric informations from an Alchemist
  * {@link Environment}, given the current
- * {@link it.unibo.alchemist.core.interfaces.Simulation} {@link Time}, the last
+ * {@link it.unibo.alchemist.core.Simulation} {@link Time}, the last
  * {@link Reaction} executed and the current simulation step.
  *
  */

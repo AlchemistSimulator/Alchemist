@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.server.monitor
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.server.surrogates.utility.ToConcentrationSurrogate.toEmptyConcentration
 import it.unibo.alchemist.server.surrogates.utility.ToPositionSurrogate.toSuitablePositionSurrogate

@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.Simulation;
 import org.danilopianini.util.ListSet;
 
 import javax.annotation.Nonnull;

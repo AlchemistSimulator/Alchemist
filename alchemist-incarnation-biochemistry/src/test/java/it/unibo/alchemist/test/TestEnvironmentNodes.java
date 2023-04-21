@@ -9,7 +9,7 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;

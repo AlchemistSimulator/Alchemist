@@ -15,7 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.GlobalReaction;

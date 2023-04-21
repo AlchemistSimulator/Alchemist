@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.server.state.reducers
 
-import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.server.state.actions.SetSimulation
 
 /**

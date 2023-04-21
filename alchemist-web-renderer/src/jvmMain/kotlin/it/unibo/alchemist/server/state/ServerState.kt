@@ -12,7 +12,7 @@ package it.unibo.alchemist.server.state
 import it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate
 import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
 import it.unibo.alchemist.common.state.CommonState
-import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.server.state.reducers.environmentSurrogateReducer
 import it.unibo.alchemist.server.state.reducers.simulationReducer
 

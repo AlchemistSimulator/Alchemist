@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 
 /**
  * {@code OutputMonitor} that monitors the current
- * {@link it.unibo.alchemist.core.interfaces.Simulation#getStep() steps} of the {@code Simulation}.
+ * {@link it.unibo.alchemist.core.Simulation#getStep() steps} of the {@code Simulation}.
  *
  * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule
  * @param <P> The position type

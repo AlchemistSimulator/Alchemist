@@ -13,8 +13,8 @@ import com.jfoenix.controls.JFXButton;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.util.SVGImages;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
-import it.unibo.alchemist.core.interfaces.Simulation;
+import it.unibo.alchemist.boundary.OutputMonitor;
+import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.core.interfaces.Status;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Actionable;
@@ -31,6 +31,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
 import jiconfont.javafx.IconNode;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -129,7 +130,7 @@ public class PlayPauseMonitor<T, P extends Position<? extends P>> extends JFXBut
      */
     @Override
     public void stepDone(
-        final Environment<T, P> environment,
+        @NotNull final Environment<T, P> environment,
         final Actionable<T> reaction,
         @Nonnull final Time time,
         final long step

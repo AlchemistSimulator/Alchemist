@@ -1,6 +1,6 @@
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Environment

@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.loader.export.exporters
 
-import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Position

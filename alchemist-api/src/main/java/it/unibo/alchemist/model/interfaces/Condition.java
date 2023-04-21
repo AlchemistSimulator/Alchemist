@@ -67,7 +67,7 @@ public interface Condition<T> extends Serializable {
     boolean isValid();
 
     /**
-     * This method is called by the {@link it.unibo.alchemist.core.interfaces.Simulation} once the {@link Reaction}
+     * This method is called by the {@link Simulation} once the {@link Reaction}
      * whose this {@link Condition} belongs to is the next one to be executed, and
      * all its conditions passed (namely, the next operation will be the reaction
      * execution). It can be used to perform sanity checks, as well as for

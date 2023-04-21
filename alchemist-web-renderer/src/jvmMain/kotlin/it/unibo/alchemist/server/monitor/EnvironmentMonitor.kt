@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.server.monitor
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate
 import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
 import it.unibo.alchemist.model.interfaces.Actionable

@@ -29,7 +29,7 @@ import it.unibo.alchemist.boundary.fxui.util.CanvasExtension.createDrawRectangle
 import it.unibo.alchemist.boundary.fxui.util.PointExtension.makePoint
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.boundary.ui.api.ZoomManager
-import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node

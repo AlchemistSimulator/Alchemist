@@ -49,7 +49,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     private boolean visibility;
 
     /**
-     * No parameters constructor.
+     * 0-ary constructor.
      * <p>
      * Default visibility is {@value DEFAULT_VISIBILITY}.
      */
@@ -78,7 +78,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
     }
 
     /**
-     * Default contructor.
+     * Default constructor.
      *
      * @param name      the name of the effect
      * @param isVisible the visibility of the effect
@@ -172,7 +172,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * The method extrapolates data from environment.
      * <p>
      * It is strongly recommended not to keep any reference to {@link Environment}-
-     * or {@link it.unibo.alchemist.core.interfaces.Simulation}-specific objects.
+     * or {@link it.unibo.alchemist.core.Simulation}-specific objects.
      *
      * @param environment the {@link Environment} to extrapolate data from
      * @param <T>         the {@link it.unibo.alchemist.model.interfaces.Concentration} type
@@ -240,9 +240,9 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * @param stream the input stream
      * @throws java.io.UTFDataFormatException if read bytes do not represent a
      * valid modified UTF-8 encoding of a string
-     * @throws java.io.EOFException   if the end of file is reached
-     * @throws ClassNotFoundException if cannot find the class
-     * @throws IOException            if other I/O error has occurred
+     * @throws java.io.EOFException if the end of file is reached
+     * @throws ClassNotFoundException if the class can't be found
+     * @throws IOException if other I/O error has occurred
      */
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         name = stream.readUTF();

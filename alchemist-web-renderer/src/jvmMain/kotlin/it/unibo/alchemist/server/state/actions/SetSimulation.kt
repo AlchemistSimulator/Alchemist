@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.server.state.actions
 
-import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.Simulation
 
 /**
  * Redux action to set the [it.unibo.alchemist.core.interfaces.Simulation] of the application.

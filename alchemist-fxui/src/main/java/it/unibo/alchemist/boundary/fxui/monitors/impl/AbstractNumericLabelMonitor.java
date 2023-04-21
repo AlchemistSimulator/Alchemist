@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.fxui.monitors.impl;
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Position;
 import javafx.application.Platform;
@@ -23,7 +23,7 @@ import java.util.Optional;
 
 /**
  * {@code OutputMonitor} that monitors the current
- * {@link it.unibo.alchemist.core.interfaces.Simulation#getStep() steps} of the {@code Simulation}.
+ * {@link it.unibo.alchemist.core.Simulation#getStep() steps} of the {@code Simulation}.
  *
  * @param <N> the numeric type
  * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule

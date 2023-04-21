@@ -9,7 +9,7 @@
 package it.unibo.alchemist.boundary.swingui.monitor.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Actionable;
 import it.unibo.alchemist.model.interfaces.Environment;

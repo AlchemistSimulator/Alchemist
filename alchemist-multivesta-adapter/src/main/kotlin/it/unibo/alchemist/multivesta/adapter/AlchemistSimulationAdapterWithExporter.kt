@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.multivesta.adapter
 
-import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.loader.export.exporters.MultiVestaExporter.Companion.getValue
 
 /**

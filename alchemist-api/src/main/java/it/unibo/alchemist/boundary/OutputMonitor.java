@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.boundary.interfaces;
+package it.unibo.alchemist.boundary;
 
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Actionable;
@@ -32,7 +32,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * stopped it. Thread safety note: no specific policy is defined for the control
      * flow which will execute this method. A new thread could have been spawned or
      * the same flow of the simulation may execute this method. This depends on the
-     * specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
+     * specific {@link it.unibo.alchemist.core.Simulation} implementation.
      * 
      * @param environment
      *            The current environment
@@ -52,7 +52,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * phase is completed. Thread safety note: no specific policy is defined for the
      * control flow which will execute this method. A new thread could have been
      * spawned or the same flow of the simulation may execute this method. This
-     * depends on the specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
+     * depends on the specific {@link it.unibo.alchemist.core.Simulation} implementation.
      *
      * @param environment
      *            the environment
@@ -64,7 +64,7 @@ public interface OutputMonitor<T, P extends Position<? extends P>> extends Seria
      * done. Thread safety note: no specific policy is defined for the control flow
      * which will execute this method. A new thread could have been spawned or the
      * same flow of the simulation may execute this method. This depends on the
-     * specific {@link it.unibo.alchemist.core.interfaces.Simulation} implementation.
+     * specific {@link it.unibo.alchemist.core.Simulation} implementation.
      * 
      * @param environment
      *            The current environment

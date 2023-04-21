@@ -11,9 +11,9 @@
 
 package it.unibo.alchemist.testsupport
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.implementations.Engine
-import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader

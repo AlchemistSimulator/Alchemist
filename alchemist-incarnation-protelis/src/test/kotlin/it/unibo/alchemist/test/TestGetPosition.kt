@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.implementations.Engine
-import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment

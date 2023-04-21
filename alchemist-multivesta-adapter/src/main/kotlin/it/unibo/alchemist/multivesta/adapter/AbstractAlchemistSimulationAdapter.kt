@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.multivesta.adapter
 
-import it.unibo.alchemist.core.interfaces.Simulation
+import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.core.interfaces.Status
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Time

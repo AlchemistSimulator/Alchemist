@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.fxui.monitors.api;
 
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.api.KeyboardActionListener;
 import it.unibo.alchemist.model.interfaces.Position2D;
 import javafx.scene.Node;

@@ -8,10 +8,10 @@
 
 package it.unibo.alchemist.model.implementations.nodes;
 
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.Molecule;
 
 import javax.annotation.Nonnull;
 

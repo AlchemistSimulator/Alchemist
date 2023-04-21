@@ -10,7 +10,7 @@
 package it.unibo.alchemist.loader.filters.compounds
 
 import it.unibo.alchemist.loader.filters.Filter
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Position
 
 /**
  * Check if either [filterA] or [filterB] is satisfied.

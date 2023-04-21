@@ -12,17 +12,17 @@ package it.unibo.alchemist.core.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.spec.style.scopes.StringSpecScope
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import it.unibo.alchemist.core.DependencyGraph
 import it.unibo.alchemist.core.implementations.JGraphTDependencyGraph
-import it.unibo.alchemist.core.interfaces.DependencyGraph
 import it.unibo.alchemist.model.BiochemistryIncarnation
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 

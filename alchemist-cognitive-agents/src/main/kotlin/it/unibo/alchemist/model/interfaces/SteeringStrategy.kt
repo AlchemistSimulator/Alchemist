@@ -1,5 +1,7 @@
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.Position
+
 /**
  * Strategy interface describing how the next points of the steering actions
  * are combined to calculate the next position to move on.

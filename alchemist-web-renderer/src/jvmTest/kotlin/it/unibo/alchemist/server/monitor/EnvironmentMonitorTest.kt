@@ -13,7 +13,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.TestUtility.webRendererTestEnvironments
 import it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.server.monitor.EnvironmentMonitorFactory.makeEnvironmentMonitor
 import it.unibo.alchemist.server.state.ServerStore
 import it.unibo.alchemist.server.state.actions.SetEnvironmentSurrogate

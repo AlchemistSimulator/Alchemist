@@ -10,8 +10,8 @@ package it.unibo.alchemist.model.implementations.positions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Time;
 import org.danilopianini.util.Hashes;
 
 import javax.annotation.Nonnull;

@@ -10,13 +10,14 @@ package it.unibo.alchemist.model.implementations.environments;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.routingservices.GraphHopperOptions;
 import it.unibo.alchemist.model.implementations.routingservices.GraphHopperRoutingService;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.interfaces.Route;
 import org.jooq.lambda.Unchecked;
 import org.kaikikm.threadresloader.ResourceLoader;
@@ -98,7 +99,7 @@ public final class OSMEnvironment<T>
      *            the file path where the map data is stored
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link it.unibo.alchemist.model.interfaces.Position}.
+     *            desired {@link Position}.
      */
     public OSMEnvironment(final Incarnation<T, GeoPosition> incarnation, final String file, final boolean onStreets) {
         this(incarnation, file, onStreets, DEFAULT_FORCE_STREETS);
@@ -110,7 +111,7 @@ public final class OSMEnvironment<T>
      *            the file path where the map data is stored
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link it.unibo.alchemist.model.interfaces.Position}.
+     *            desired {@link Position}.
      * @param onlyOnStreets
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original
@@ -158,7 +159,7 @@ public final class OSMEnvironment<T>
      *            the level of precision determined by this value
      * @param onStreets
      *            if true, the nodes will be placed on the street nearest to the
-     *            desired {@link it.unibo.alchemist.model.interfaces.Position}.
+     *            desired {@link Position}.
      * @param onlyOnStreets
      *            if true, the nodes which are too far from a street will be simply
      *            discarded. If false, they will be placed anyway, in the original

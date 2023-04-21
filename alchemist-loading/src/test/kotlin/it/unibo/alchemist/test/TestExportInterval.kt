@@ -13,7 +13,7 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.export.exporters.CSVExporter
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
 

@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.navigator
 
+import it.unibo.alchemist.model.geometry.Vector2D
+import it.unibo.alchemist.model.geometry.Vector2D.Companion.zCross
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtShapeExtension.vertices
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D.Companion.zCross
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D

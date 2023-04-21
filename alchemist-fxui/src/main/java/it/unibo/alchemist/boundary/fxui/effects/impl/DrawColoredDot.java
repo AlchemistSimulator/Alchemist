@@ -14,7 +14,9 @@ import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.fxui.util.ResourceLoader;
 import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory;
 import it.unibo.alchemist.boundary.fxui.properties.internal.RangedIntegerProperty;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -26,7 +28,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
 /**
- * Simple effect that draws a colored dot for each {@link it.unibo.alchemist.model.interfaces.Node}.
+ * Simple effect that draws a colored dot for each {@link Node}.
  * <p>
  * It's possible to set the size and the color of the dots.
  *
@@ -143,8 +145,8 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
     }
 
     /**
-     * The alpha channel of the color of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node}
-     * in the {@link it.unibo.alchemist.model.interfaces.Environment} specified when drawing.
+     * The alpha channel of the color of the dots representing each {@link Node}
+     * in the {@link Environment} specified when drawing.
      *
      * @return the alpha channel property
      */
@@ -171,8 +173,8 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
     }
 
     /**
-     * The blue channel of the color of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node}
-     * in the {@link it.unibo.alchemist.model.interfaces.Environment} specified when drawing.
+     * The blue channel of the color of the dots representing each {@link Node}
+     * in the {@link Environment} specified when drawing.
      *
      * @return the blue channel property
      */
@@ -199,8 +201,8 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
     }
 
     /**
-     * The green channel of the color of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node}
-     * in the {@link it.unibo.alchemist.model.interfaces.Environment} specified when drawing.
+     * The green channel of the color of the dots representing each {@link Node}
+     * in the {@link Environment} specified when drawing.
      *
      * @return the green channel property
      */
@@ -227,8 +229,8 @@ public class DrawColoredDot<P extends Position2D<? extends P>> extends DrawDot<P
     }
 
     /**
-     * The red channel of the color of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node}
-     * in the {@link it.unibo.alchemist.model.interfaces.Environment} specified when drawing.
+     * The red channel of the color of the dots representing each {@link Node}
+     * in the {@link Environment} specified when drawing.
      *
      * @return the red channel property
      */

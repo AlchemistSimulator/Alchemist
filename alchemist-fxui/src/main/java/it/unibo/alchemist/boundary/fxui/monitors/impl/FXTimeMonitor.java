@@ -9,11 +9,12 @@
 
 package it.unibo.alchemist.boundary.fxui.monitors.impl;
 
+import it.unibo.alchemist.model.Concentration;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Actionable;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Time;
 
 import javax.annotation.Nonnull;
 
@@ -21,7 +22,7 @@ import javax.annotation.Nonnull;
  * {@code OutputMonitor} that monitors the current
  * {@link it.unibo.alchemist.core.Simulation#getStep() steps} of the {@code Simulation}.
  *
- * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule
+ * @param <T> The type which describes the {@link Concentration} of a molecule
  * @param <P> The position type
  */
 public class FXTimeMonitor<T, P extends Position<? extends P>> extends AbstractNumericLabelMonitor<Time, T, P> {

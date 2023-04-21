@@ -13,14 +13,14 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Optional;
 
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 
 /**
  * A condition that holds true only if the tracked {@link Molecule} changed its
- * {@link it.unibo.alchemist.model.interfaces.Concentration}.
+ * {@link it.unibo.alchemist.model.Concentration}.
  * 
  * @param <T> concentration type
  */

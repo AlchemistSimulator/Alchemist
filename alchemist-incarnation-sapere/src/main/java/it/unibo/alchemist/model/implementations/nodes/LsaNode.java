@@ -13,10 +13,10 @@ import it.unibo.alchemist.expressions.implementations.Expression;
 import it.unibo.alchemist.expressions.implementations.NumTreeNode;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.Molecule;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

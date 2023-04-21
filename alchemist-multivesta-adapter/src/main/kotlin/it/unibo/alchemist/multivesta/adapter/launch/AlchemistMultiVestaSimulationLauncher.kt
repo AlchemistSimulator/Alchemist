@@ -13,7 +13,7 @@ package it.unibo.alchemist.multivesta.adapter.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.interfaces.Status
+import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.launch.SimulationLauncher
 import it.unibo.alchemist.launch.Validation.OK
 import it.unibo.alchemist.loader.Loader

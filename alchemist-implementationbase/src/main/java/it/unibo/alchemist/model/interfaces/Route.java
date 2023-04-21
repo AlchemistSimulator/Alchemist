@@ -8,6 +8,8 @@
 
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.Position;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Stream;

@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.implementations.conditions
 
-import it.unibo.alchemist.model.interfaces.Context
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.Context
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
 
 /**
  * The condition is valid if the node contains the molecule.

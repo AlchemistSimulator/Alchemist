@@ -9,14 +9,14 @@
 
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 
 private typealias SteeringActions<T> = List<SteeringAction<T, Euclidean2DPosition>>

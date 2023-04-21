@@ -18,7 +18,7 @@ import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.util.SVGImages;
 import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;

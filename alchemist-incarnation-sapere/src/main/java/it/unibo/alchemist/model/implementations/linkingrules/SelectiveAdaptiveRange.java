@@ -8,10 +8,10 @@
 package it.unibo.alchemist.model.implementations.linkingrules;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
 
 /**
  *

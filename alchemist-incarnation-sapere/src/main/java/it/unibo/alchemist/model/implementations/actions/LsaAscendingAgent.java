@@ -8,18 +8,18 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
+import it.unibo.alchemist.model.Reaction;
 
 import java.util.List;
 
 /**
- * @param <P> {@link it.unibo.alchemist.model.interfaces.Position} type
+ * @param <P> {@link it.unibo.alchemist.model.Position} type
  */
 public final class LsaAscendingAgent<P extends Position2D<? extends P>> extends SAPEREMoveNodeAgent<P> {
 

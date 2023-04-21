@@ -8,14 +8,14 @@
  */
 package it.unibo.alchemist.test
 
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
 import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Node
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

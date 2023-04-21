@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import it.unibo.alchemist.model.interfaces.LinkingRule;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.LinkingRule;
+import it.unibo.alchemist.model.Position;
 
 /**
  * @param <T>

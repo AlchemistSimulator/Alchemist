@@ -9,7 +9,7 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.expressions.implementations.ConstTreeNode;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import org.apache.commons.math3.random.RandomGenerator;

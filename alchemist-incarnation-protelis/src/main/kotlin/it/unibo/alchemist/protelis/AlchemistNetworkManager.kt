@@ -9,12 +9,12 @@
 package it.unibo.alchemist.protelis
 
 import com.google.common.collect.ImmutableMap
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.interfaces.Reaction
 import org.apache.commons.math3.distribution.RealDistribution
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.vm.CodePath

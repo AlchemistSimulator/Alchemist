@@ -9,6 +9,11 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.ARRIVED
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.CROSSING_DOOR
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.MOVING_TO_CROSSING_POINT_1
@@ -18,13 +23,8 @@ import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction
 import it.unibo.alchemist.model.implementations.actions.AbstractNavigationAction.NavigationState.START
 import it.unibo.alchemist.model.interfaces.NavigationAction
 import it.unibo.alchemist.model.interfaces.NavigationStrategy
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty

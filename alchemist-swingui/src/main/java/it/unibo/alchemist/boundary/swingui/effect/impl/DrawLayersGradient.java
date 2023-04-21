@@ -12,8 +12,8 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.swingui.effect.api.LayerToFunctionMapper;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 

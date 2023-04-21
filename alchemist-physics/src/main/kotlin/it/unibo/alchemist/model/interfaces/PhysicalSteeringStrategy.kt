@@ -9,9 +9,11 @@
 
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * Defines how physical forces and steering actions (which may be seen as intentional forces) are combined to compute

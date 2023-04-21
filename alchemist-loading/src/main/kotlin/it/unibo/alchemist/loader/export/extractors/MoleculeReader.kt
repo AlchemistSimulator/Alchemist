@@ -11,12 +11,12 @@ package it.unibo.alchemist.loader.export.extractors
 
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.StatUtil
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Time
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic
 import kotlin.math.min
 

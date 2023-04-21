@@ -1,12 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.EuclideanEnvironment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position2D
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**

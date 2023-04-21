@@ -1,7 +1,7 @@
 package it.unibo.alchemist.loader.deployments
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position2D
 import org.apache.commons.math3.random.RandomGenerator
 import java.util.stream.IntStream
 import java.util.stream.Stream

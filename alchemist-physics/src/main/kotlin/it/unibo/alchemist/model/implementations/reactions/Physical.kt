@@ -9,15 +9,15 @@
 
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.implementations.actions.CognitiveAgentCombineSteering
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.DistanceWeighted
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.SteeringAction
-import it.unibo.alchemist.model.interfaces.Time
-import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 

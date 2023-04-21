@@ -15,12 +15,12 @@ import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
-import it.unibo.alchemist.core.interfaces.Status
-import it.unibo.alchemist.core.interfaces.Status.INIT
-import it.unibo.alchemist.core.interfaces.Status.PAUSED
-import it.unibo.alchemist.core.interfaces.Status.READY
-import it.unibo.alchemist.core.interfaces.Status.RUNNING
-import it.unibo.alchemist.core.interfaces.Status.TERMINATED
+import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.core.Status.INIT
+import it.unibo.alchemist.core.Status.PAUSED
+import it.unibo.alchemist.core.Status.READY
+import it.unibo.alchemist.core.Status.RUNNING
+import it.unibo.alchemist.core.Status.TERMINATED
 
 /**
  * Tests that the state machine is coherent.

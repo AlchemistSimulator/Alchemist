@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
+import it.unibo.alchemist.model.Reaction;
 
 /**
  * Moves the node along the x axis up to coordinate {@link #getMaxX()},

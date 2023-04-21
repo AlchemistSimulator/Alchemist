@@ -11,8 +11,8 @@ package it.unibo.alchemist.server.surrogates.utility
 
 import it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate
 import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.server.surrogates.utility.ToPositionSurrogate.toSuitablePositionSurrogate
 
 /**

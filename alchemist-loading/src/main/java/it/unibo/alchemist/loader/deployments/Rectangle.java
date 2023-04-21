@@ -9,8 +9,8 @@ package it.unibo.alchemist.loader.deployments;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
 import javax.annotation.Nonnull;
 
 /**

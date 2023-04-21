@@ -9,6 +9,9 @@
 
 package it.unibo.alchemist.model.interfaces.geometry
 
+import it.unibo.alchemist.model.geometry.GeometricShape
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtEuclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory

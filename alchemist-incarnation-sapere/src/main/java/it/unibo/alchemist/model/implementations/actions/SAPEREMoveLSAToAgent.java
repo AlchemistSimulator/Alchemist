@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 

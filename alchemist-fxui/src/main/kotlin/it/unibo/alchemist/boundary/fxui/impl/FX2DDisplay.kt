@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.boundary.fxui.impl
 
-import it.unibo.alchemist.model.interfaces.Concentration
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.Concentration
+import it.unibo.alchemist.model.Position2D
 
 /**
  * Simple implementation of a monitor that graphically represents a 2D space and simulation.

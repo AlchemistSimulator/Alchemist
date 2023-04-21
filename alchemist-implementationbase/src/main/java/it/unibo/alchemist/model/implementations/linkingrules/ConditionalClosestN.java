@@ -9,9 +9,9 @@ package it.unibo.alchemist.model.implementations.linkingrules;
 
 import java.util.Objects;
 
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
 
 /**
  * A {@link ClosestN} rule that also checks that a {@link Molecule} has a

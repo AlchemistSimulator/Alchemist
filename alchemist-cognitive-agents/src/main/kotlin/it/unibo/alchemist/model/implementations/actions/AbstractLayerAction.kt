@@ -1,12 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.Layer
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Layer
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty

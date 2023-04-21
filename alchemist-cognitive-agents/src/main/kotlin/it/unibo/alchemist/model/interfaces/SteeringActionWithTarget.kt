@@ -9,7 +9,10 @@
 
 package it.unibo.alchemist.model.interfaces
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.Vector
 
 /**
  * A [SteeringAction] with a defined target.

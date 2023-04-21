@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Reaction;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -26,11 +26,11 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.reactions.Event;
-import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.Action;
+import it.unibo.alchemist.model.Condition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.TimeDistribution;
 
 
 /**

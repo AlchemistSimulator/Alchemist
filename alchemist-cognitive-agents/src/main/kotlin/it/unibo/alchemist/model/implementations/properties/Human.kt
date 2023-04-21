@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.implementations.properties
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Compliance
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.properties.Human2DProperty
 import org.apache.commons.math3.random.RandomGenerator
 

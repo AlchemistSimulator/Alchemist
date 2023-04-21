@@ -7,6 +7,9 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Time;
+
 /**
  */
 public interface GPSPoint extends GeoPosition, Comparable<GPSPoint> {

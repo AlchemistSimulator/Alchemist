@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.loader.export
 
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
 
 /**
  * A generic exporter for the simulation.

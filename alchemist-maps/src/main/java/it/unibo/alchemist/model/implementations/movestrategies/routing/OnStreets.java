@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.movestrategies.routing;
 
-import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.interfaces.Route;
 import it.unibo.alchemist.model.interfaces.RoutingService;

@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.loader.deployments;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
 
 import java.util.function.BiFunction;
 import java.util.stream.Stream;

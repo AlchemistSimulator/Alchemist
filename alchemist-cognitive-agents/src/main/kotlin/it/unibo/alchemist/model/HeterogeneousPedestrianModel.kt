@@ -14,8 +14,8 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Compliance
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
 
 /**
  * A pedestrian with individual characteristics.

@@ -9,10 +9,10 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.util.FastMath;
 

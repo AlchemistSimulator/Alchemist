@@ -9,6 +9,10 @@
 package it.unibo.alchemist.model.interfaces;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.Action;
+import it.unibo.alchemist.model.Dependency;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ListSet;
 

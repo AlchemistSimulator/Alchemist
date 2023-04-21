@@ -12,7 +12,7 @@ package it.unibo.alchemist.boundary.fxui.monitors.api;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.api.KeyboardActionListener;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import javafx.scene.Node;
 
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.Collection;
 /**
  * {@code OutputMonitor} that handles the graphical part of the simulation in JavaFX.
  *
- * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
+ * @param <T> the {@link it.unibo.alchemist.model.Concentration} type
  * @param <P> the position type
  */
 public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends OutputMonitor<T, P> {
@@ -38,8 +38,8 @@ public interface FXOutputMonitor<T, P extends Position2D<? extends P>> extends O
     /**
      * Repaints this {@link javafx.scene.canvas.Canvas}' {@link javafx.scene.canvas.GraphicsContext}
      * by drawing all the {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX Effect}s of each
-     * {@link it.unibo.alchemist.model.interfaces.Node} of the specified
-     * {@link it.unibo.alchemist.model.interfaces.Environment}.
+     * {@link it.unibo.alchemist.model.Node} of the specified
+     * {@link it.unibo.alchemist.model.Environment}.
      */
     void repaint();
 

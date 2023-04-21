@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.model.implementations.timedistributions
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.math.RealDistributionUtil
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator

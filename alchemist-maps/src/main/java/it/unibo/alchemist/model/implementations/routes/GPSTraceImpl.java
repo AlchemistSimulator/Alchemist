@@ -15,8 +15,8 @@ import com.google.common.collect.ImmutableList;
 
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.utils.MapUtils;
 
 /**

@@ -9,9 +9,9 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
 
@@ -31,15 +31,15 @@ public final class CellMove extends AbstractMoveNode<Double, Euclidean2DPosition
      * Initialize an Action that move the cell of a given space delta, which can be expressed in percent of the cell's
      * diameter or in absolute.
      * If the cell has diameter 0, the only way to express delta is absolute.
-     * There's no way to decide the direction of the cell by this {@link it.unibo.alchemist.model.interfaces.Action}.
+     * There's no way to decide the direction of the cell by this {@link it.unibo.alchemist.model.Action}.
      * This is inferred by the polarization vector contained in the cell.
      * 
      * @param environment the {@link Environment}
-     * @param node the {@link Node} in which the {@link it.unibo.alchemist.model.interfaces.Action} is contained.
+     * @param node the {@link Node} in which the {@link it.unibo.alchemist.model.Action} is contained.
      *             This can be only a CellNode.
      * @param inPercent a boolean parameter which set the way of expressing delta: if is true the cell movement will be
      *                  (delta * cellDiameter), otherwise will be simply delta. If cellDiameter is zero, this
-     *                  {@link it.unibo.alchemist.model.interfaces.Action} will in both cases behave like
+     *                  {@link it.unibo.alchemist.model.Action} will in both cases behave like
      *                  inPercent == false.
      * @param delta the distance at which the cell will be moved.
      */

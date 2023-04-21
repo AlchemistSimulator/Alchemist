@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.EuclideanEnvironment;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.EuclideanEnvironment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
 
 import java.util.List;
 

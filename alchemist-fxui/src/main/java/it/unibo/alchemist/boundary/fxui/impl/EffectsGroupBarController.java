@@ -18,7 +18,7 @@ import it.unibo.alchemist.boundary.fxui.effects.impl.EffectStack;
 import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

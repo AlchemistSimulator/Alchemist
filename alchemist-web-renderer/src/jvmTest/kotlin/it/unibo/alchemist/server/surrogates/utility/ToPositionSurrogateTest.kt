@@ -15,9 +15,9 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.common.model.surrogate.GeneralPositionSurrogate
 import it.unibo.alchemist.common.model.surrogate.Position2DSurrogate
 import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Position2D
 import it.unibo.alchemist.server.surrogates.utility.ToPositionSurrogate.toSuitablePositionSurrogate
 
 class ToPositionSurrogateTest : StringSpec({

@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.boundary.swingui.api;
 
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Position;
 
 /**
  * An output monitor that supports zooming on bidimensional environments.

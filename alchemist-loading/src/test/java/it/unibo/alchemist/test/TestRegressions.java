@@ -12,7 +12,7 @@ import it.unibo.alchemist.loader.export.exporters.CSVExporter;
 import it.unibo.alchemist.loader.export.Extractor;
 import it.unibo.alchemist.loader.export.Exporter;
 import it.unibo.alchemist.loader.export.extractors.MeanSquaredError;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Environment;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 

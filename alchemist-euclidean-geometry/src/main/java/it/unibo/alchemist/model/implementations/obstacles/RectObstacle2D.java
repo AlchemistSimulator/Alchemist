@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.obstacles;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.interfaces.Obstacle2D;
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
+import it.unibo.alchemist.model.geometry.Vector2D;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathArrays;
 import javax.annotation.Nonnull;

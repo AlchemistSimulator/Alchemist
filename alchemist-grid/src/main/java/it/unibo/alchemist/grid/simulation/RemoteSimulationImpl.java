@@ -29,8 +29,8 @@ import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
 
 /**
  * {@link RemoteSimulation} implementation for Apache Ignite.

@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.molecules;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.Molecule;
 
 import javax.annotation.Nonnull;
 import java.nio.charset.StandardCharsets;

@@ -17,7 +17,7 @@ import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.util.DataFormatFactory;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;

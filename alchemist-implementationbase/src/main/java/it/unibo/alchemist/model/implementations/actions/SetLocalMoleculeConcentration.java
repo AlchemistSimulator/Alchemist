@@ -11,11 +11,11 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Action;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 
 /**
  *

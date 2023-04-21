@@ -13,6 +13,7 @@ import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import java.util.List;
 import java.util.Map;
 
+import it.unibo.alchemist.model.Molecule;
 import org.danilopianini.lang.HashString;
 
 

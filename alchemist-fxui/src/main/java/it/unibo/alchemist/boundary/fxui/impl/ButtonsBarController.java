@@ -17,7 +17,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

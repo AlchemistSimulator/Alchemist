@@ -8,14 +8,14 @@
  */
 package it.unibo.alchemist.scala
 
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.{Position, Time}
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import com.google.common.cache.CacheLoader
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.geometry.Vector
+
 @SuppressFBWarnings
 object PimpMyAlchemist {
   /** Wraps a Position, providing + and - operations. */

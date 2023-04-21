@@ -10,16 +10,16 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTargetOnMap;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.RoutingService;
 import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 
@@ -60,11 +60,11 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            every step, relying on {@link Reaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
-     *            to compute a new target. If it is a {@link it.unibo.alchemist.model.interfaces.GeoPosition},
+     *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
      *            two values (if they are present and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
-     *            {@link it.unibo.alchemist.model.interfaces.GeoPosition}. Otherwise, the {@link Object} bound
+     *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
@@ -114,11 +114,11 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            every step, relying on {@link Reaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
-     *            to compute a new target. If it is a {@link it.unibo.alchemist.model.interfaces.GeoPosition},
+     *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
      *            two values (if they are present and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
-     *            {@link it.unibo.alchemist.model.interfaces.GeoPosition}. Otherwise, the {@link Object} bound
+     *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
@@ -153,11 +153,11 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            every step, relying on {@link Reaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
-     *            to compute a new target. If it is a {@link it.unibo.alchemist.model.interfaces.GeoPosition},
+     *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
      *            two values (if they are present and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
-     *            {@link it.unibo.alchemist.model.interfaces.GeoPosition}. Otherwise, the {@link Object} bound
+     *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
@@ -188,11 +188,11 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            every step, relying on {@link Reaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
-     *            to compute a new target. If it is a {@link it.unibo.alchemist.model.interfaces.GeoPosition},
+     *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
      *            two values (if they are present and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
-     *            {@link it.unibo.alchemist.model.interfaces.GeoPosition}. Otherwise, the {@link Object} bound
+     *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
@@ -242,11 +242,11 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            every step, relying on {@link Reaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
-     *            to compute a new target. If it is a {@link it.unibo.alchemist.model.interfaces.GeoPosition},
+     *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
      *            two values (if they are present and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
-     *            {@link it.unibo.alchemist.model.interfaces.GeoPosition}. Otherwise, the {@link Object} bound
+     *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.
@@ -272,11 +272,11 @@ public class TargetMapWalker<T, O extends RoutingServiceOptions<O>, S extends Ro
      *            every step, relying on {@link Reaction}'s getRate() method.
      * @param trackMolecule
      *            the molecule to track. Its value will be read when it is time
-     *            to compute a new target. If it is a {@link it.unibo.alchemist.model.interfaces.GeoPosition},
+     *            to compute a new target. If it is a {@link GeoPosition},
      *            it will be used as-is. If it is an {@link Iterable}, the first
      *            two values (if they are present and they are numbers, or
      *            Strings parse-able to numbers) will be used to create a new
-     *            {@link it.unibo.alchemist.model.interfaces.GeoPosition}. Otherwise, the {@link Object} bound
+     *            {@link GeoPosition}. Otherwise, the {@link Object} bound
      *            to this {@link Molecule} will be converted to a String, and
      *            the String will be parsed using the float regular expression
      *            matcher in Javalib.

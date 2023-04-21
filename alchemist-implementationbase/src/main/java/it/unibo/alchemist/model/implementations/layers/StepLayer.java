@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.model.implementations.layers;
 
-import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Layer;
+import it.unibo.alchemist.model.Position2D;
 
 /**
  * Implements a {@link Layer} with a discontinue spatial distribution: the plane is divided 

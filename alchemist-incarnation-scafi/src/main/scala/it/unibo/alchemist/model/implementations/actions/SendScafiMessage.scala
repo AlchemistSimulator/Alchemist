@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.ScafiIncarnationUtils
+import it.unibo.alchemist.model.{Node, Position, Reaction, ScafiIncarnationUtils}
 import it.unibo.alchemist.model.ScafiIncarnationUtils._
 import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
-import it.unibo.alchemist.model.interfaces._
+import it.unibo.alchemist.model._
 
 import java.util.stream.Collectors
 import scala.jdk.CollectionConverters._

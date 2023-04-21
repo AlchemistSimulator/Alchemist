@@ -9,8 +9,8 @@ package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 
 import java.util.ArrayList;
 import java.util.Arrays;

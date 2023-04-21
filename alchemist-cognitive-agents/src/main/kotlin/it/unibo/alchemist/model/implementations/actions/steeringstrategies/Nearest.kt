@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GroupSteeringAction
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment

@@ -12,9 +12,9 @@ package it.unibo.alchemist.boundary.fxui.interaction.api
 import it.unibo.alchemist.boundary.fxui.interaction.keyboard.api.KeyboardActionListener
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.boundary.ui.api.ZoomManager
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position2D
 import javafx.scene.Group
 
 /**

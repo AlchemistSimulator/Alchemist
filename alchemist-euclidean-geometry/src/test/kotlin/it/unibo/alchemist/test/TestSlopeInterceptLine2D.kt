@@ -13,9 +13,9 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.SlopeInterceptLine2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Line2D
 import org.junit.jupiter.api.assertThrows

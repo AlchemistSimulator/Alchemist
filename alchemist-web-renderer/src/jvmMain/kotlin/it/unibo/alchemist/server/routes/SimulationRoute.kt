@@ -21,7 +21,7 @@ import it.unibo.alchemist.common.utility.Routes.simulationPausePath
 import it.unibo.alchemist.common.utility.Routes.simulationPlayPath
 import it.unibo.alchemist.common.utility.Routes.simulationStatusPath
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.interfaces.Status
+import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.server.state.ServerStore.store
 import it.unibo.alchemist.server.surrogates.utility.toStatusSurrogate
 import it.unibo.alchemist.server.utility.Response

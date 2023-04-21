@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.util
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.util.RangeExtension.minus
 import org.apache.commons.lang3.ObjectUtils
 

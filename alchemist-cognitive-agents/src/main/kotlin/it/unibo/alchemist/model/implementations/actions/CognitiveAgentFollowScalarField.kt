@@ -9,14 +9,14 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.EnvironmentWithObstacles
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position2D
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**

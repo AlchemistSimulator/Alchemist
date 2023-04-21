@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.concentrations;
 
-import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.Concentration;
 
 /**
  */

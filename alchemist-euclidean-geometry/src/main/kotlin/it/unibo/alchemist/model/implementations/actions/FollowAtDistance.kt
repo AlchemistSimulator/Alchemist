@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.Context
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.movestrategies.speed.GloballyConstantSpeed
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Context
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.util.AnyExtension.toPosition
 import kotlin.math.cos
 import kotlin.math.min

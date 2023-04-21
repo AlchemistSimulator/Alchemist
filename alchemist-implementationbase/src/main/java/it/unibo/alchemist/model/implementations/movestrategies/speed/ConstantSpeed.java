@@ -8,16 +8,16 @@
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
 /**
  * This strategy makes the node move at an average constant speed, which is
- * influenced by the {@link it.unibo.alchemist.model.interfaces.TimeDistribution} of the {@link Reaction} hosting
- * this {@link it.unibo.alchemist.model.interfaces.Action}. This action tries to normalize on the {@link Reaction}
- * rate, but if the {@link it.unibo.alchemist.model.interfaces.TimeDistribution} has a high variance, the movements
+ * influenced by the {@link it.unibo.alchemist.model.TimeDistribution} of the {@link Reaction} hosting
+ * this {@link it.unibo.alchemist.model.Action}. This action tries to normalize on the {@link Reaction}
+ * rate, but if the {@link it.unibo.alchemist.model.TimeDistribution} has a high variance, the movements
  * on the map will inherit this tract.
  *
  * @param <T> Concentration type

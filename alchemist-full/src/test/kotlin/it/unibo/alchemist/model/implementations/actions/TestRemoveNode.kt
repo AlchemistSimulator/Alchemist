@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import io.kotest.core.spec.style.StringSpec
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.testsupport.createSimulation
 import it.unibo.alchemist.testsupport.loadAlchemist
 import it.unibo.alchemist.testsupport.runInCurrentThread

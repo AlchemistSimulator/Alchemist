@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.properties
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.RunningPedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.WalkingPedestrianProperty

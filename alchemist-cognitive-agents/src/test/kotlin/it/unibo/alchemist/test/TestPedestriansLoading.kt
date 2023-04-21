@@ -4,10 +4,10 @@ import io.kotest.assertions.fail
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
-import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation

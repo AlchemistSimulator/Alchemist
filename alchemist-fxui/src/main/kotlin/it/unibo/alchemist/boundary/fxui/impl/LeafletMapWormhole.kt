@@ -16,9 +16,9 @@ import it.unibo.alchemist.boundary.fxui.util.PointExtension.minus
 import it.unibo.alchemist.boundary.fxui.util.PointExtension.plus
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.boundary.ui.impl.PointAdapter
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GeoPosition
 import javafx.scene.Node
 import java.awt.Point
 

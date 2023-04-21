@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.implementations.routes
 import com.google.common.collect.ImmutableList
 import com.graphhopper.GHResponse
 import com.graphhopper.util.shapes.GHPoint3D
+import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
-import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.TimedRoute
 import java.util.concurrent.TimeUnit
 import java.util.stream.Stream

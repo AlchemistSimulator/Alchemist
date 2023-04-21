@@ -8,11 +8,11 @@
 package it.unibo.alchemist.model.implementations.movestrategies.target;
 
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 
 /**
  * This strategy reads the value of a "target" molecule and tries to interpret it as a coordinate.

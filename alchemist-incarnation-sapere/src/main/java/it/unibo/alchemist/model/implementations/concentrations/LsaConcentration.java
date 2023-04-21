@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.concentrations;
 
-import it.unibo.alchemist.model.interfaces.Concentration;
+import it.unibo.alchemist.model.Concentration;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 
 import java.util.Collections;

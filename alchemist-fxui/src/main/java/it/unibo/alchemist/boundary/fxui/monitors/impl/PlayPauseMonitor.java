@@ -15,11 +15,11 @@ import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.util.SVGImages;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Actionable;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.core.Status;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Time;
 import java.lang.ref.WeakReference;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
  * {@code OutputMonitor} that monitors the current {@link Status status} of the {@code Simulation}, acting as a toggle to
  * {@link Simulation#play() play} and {@link Simulation#pause() pause} the {@code Simulation}.
  *
- * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule
+ * @param <T> The type which describes the {@link it.unibo.alchemist.model.Concentration} of a molecule
  * @param <P> The type which describes the {@link Position} positions
  */
 @SuppressFBWarnings(value = "DM_EXIT", justification = "The program needs to exit when the user clicks on the exit button")

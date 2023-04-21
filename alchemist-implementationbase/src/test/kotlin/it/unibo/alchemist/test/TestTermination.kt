@@ -14,9 +14,9 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Time
 import org.kaikikm.threadresloader.ResourceLoader
 
 class TestTermination : FreeSpec(

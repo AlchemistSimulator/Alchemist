@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.geometry.Vector2D
 
 /**
  * Defines a straight line in a cartesian plane.

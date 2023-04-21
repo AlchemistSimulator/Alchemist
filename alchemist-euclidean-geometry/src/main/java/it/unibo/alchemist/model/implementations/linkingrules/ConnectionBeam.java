@@ -10,9 +10,9 @@ package it.unibo.alchemist.model.implementations.linkingrules;
 
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithObstacles;
 
 import java.awt.geom.Area;

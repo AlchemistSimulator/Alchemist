@@ -11,11 +11,11 @@ package it.unibo.alchemist.core.test
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.core.interfaces.Status
+import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.test.GlobalTestReaction
 import it.unibo.alchemist.testsupport.createEmptyEnvironment
 import kotlinx.coroutines.delay

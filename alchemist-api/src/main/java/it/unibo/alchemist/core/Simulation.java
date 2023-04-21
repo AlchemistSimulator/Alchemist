@@ -12,16 +12,15 @@ package it.unibo.alchemist.core;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.interfaces.Actionable;
+import it.unibo.alchemist.model.Actionable;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Time;
 
 /**
  * This interface forces simulations to be independent threads, and make them

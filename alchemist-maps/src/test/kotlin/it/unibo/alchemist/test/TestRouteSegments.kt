@@ -13,10 +13,10 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
-import it.unibo.alchemist.model.interfaces.GeoPosition
 
 class TestRouteSegments : StringSpec(
     {

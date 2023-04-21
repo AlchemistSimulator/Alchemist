@@ -21,10 +21,10 @@ import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader
 

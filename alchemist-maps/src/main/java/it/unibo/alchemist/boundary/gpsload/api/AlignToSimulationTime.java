@@ -10,7 +10,7 @@ package it.unibo.alchemist.boundary.gpsload.api;
 import java.util.List;
 
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 
 /**
  * Aligns all traces at the initial simulation time.

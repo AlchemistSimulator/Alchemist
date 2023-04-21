@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.implementations.actions.steeringstrategies.Nearest
-import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 

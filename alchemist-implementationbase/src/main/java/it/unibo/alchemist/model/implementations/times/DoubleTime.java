@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.implementations.times;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 
 /**
  *         This class is meant to provide a reasonably fast time implementation.

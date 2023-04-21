@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
-import it.unibo.alchemist.model.interfaces.NodeProperty
+import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
 
 /**

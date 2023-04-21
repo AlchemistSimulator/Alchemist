@@ -12,8 +12,8 @@ package it.unibo.alchemist.boundary.ui.impl;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.ui.api.ViewPort;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 
 import javax.annotation.Nonnull;
 import java.awt.Point;

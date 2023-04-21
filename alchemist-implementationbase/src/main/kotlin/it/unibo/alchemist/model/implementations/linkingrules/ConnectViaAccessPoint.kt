@@ -8,12 +8,12 @@
 
 package it.unibo.alchemist.model.implementations.linkingrules
 
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Neighborhood
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Neighborhood
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
 
 /**
  * @param accessPointId the id of the access point.

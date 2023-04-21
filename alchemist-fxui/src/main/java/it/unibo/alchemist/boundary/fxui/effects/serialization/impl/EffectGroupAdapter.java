@@ -19,7 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
 import it.unibo.alchemist.boundary.fxui.effects.impl.EffectStack;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;

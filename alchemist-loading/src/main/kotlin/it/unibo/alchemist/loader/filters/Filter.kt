@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.loader.filters
 
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Position
 import java.util.function.Predicate
 
 /**

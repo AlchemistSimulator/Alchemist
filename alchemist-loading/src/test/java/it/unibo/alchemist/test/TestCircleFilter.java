@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.loader.filters.Circle;
 import it.unibo.alchemist.loader.filters.Filter;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.GeoPosition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

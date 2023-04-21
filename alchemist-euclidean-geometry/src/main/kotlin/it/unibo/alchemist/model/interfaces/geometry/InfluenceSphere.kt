@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.interfaces.geometry
 
-import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.Node
 
 /**
  * Area inside which nodes exert an influence on each other.

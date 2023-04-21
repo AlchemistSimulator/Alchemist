@@ -14,7 +14,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 import org.danilopianini.lang.HashString;
 
 import java.text.DecimalFormat;

@@ -10,10 +10,10 @@ package it.unibo.alchemist.model.implementations.terminators
 import com.google.common.collect.Maps
 import com.google.common.collect.Table
 import com.google.common.collect.Tables
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
 import java.util.function.Predicate
 
 /**

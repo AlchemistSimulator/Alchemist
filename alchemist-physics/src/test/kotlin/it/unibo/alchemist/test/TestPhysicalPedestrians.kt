@@ -2,8 +2,8 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 

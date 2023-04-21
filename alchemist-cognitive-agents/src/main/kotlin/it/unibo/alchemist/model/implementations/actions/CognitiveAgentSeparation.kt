@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty

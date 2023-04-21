@@ -12,7 +12,7 @@ import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

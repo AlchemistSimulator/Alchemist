@@ -16,11 +16,11 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
-import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.EuclideanEnvironment
+import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation

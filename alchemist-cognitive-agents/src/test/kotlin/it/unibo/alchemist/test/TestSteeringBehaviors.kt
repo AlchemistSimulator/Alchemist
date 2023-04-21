@@ -4,11 +4,11 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeSortedWith
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.Position2D
+import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation

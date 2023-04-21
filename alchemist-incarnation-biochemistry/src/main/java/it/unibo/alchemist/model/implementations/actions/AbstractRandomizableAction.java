@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.actions;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.Node;
 
 /**
  * @param <T> concentration type

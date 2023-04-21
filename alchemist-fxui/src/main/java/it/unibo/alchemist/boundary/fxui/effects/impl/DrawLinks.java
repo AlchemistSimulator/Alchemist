@@ -16,8 +16,10 @@ import it.unibo.alchemist.boundary.fxui.impl.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.ColorSerializationAdapter;
 import it.unibo.alchemist.boundary.fxui.util.ResourceLoader;
 import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.paint.Color;
 
@@ -32,7 +34,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} line for each
- * {@link it.unibo.alchemist.model.interfaces.Node} in a {@link it.unibo.alchemist.model.interfaces.Neighborhood}.
+ * {@link Node} in a {@link Neighborhood}.
  * <p>
  * It's possible to set the size of the dots.
  *
@@ -128,7 +130,7 @@ public class DrawLinks<P extends Position2D<? extends P>> extends AbstractEffect
     }
 
     /**
-     * The size of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node} in the
+     * The size of the dots representing each {@link Node} in the
      * {@link Environment} specified when drawing.
      *
      * @return the size property

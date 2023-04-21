@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
-import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 
 /**

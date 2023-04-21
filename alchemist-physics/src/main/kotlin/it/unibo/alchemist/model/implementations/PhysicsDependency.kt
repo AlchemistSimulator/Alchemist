@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations
 
-import it.unibo.alchemist.model.interfaces.Dependency
+import it.unibo.alchemist.model.Dependency
 
 /**
  * A dependency on updates of the physics engine.

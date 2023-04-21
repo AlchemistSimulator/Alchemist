@@ -18,8 +18,8 @@ import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.variables.Variable
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Position
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 import java.io.Serializable

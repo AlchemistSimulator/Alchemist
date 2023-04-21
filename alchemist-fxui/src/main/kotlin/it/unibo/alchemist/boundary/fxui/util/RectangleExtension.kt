@@ -10,8 +10,8 @@
 package it.unibo.alchemist.boundary.fxui.util
 
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position2D
 import javafx.scene.shape.Rectangle
 import java.awt.Point
 

@@ -8,8 +8,8 @@
  */
 package it.unibo.alchemist.model.implementations.positions
 
-import it.unibo.alchemist.model.interfaces.Position2D
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.Position2D
+import it.unibo.alchemist.model.geometry.Vector2D
 import javax.annotation.Nonnull
 
 /**

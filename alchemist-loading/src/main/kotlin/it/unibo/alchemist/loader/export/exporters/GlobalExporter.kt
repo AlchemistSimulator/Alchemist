@@ -11,10 +11,10 @@ package it.unibo.alchemist.loader.export.exporters
 
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.loader.export.Exporter
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
 
 /**
  *  Contains all exporters selected in the configuration file.

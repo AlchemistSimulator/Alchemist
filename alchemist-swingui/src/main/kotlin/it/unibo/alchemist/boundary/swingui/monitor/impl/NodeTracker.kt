@@ -10,12 +10,12 @@ package it.unibo.alchemist.boundary.swingui.monitor.impl
 
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.Time
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -49,9 +49,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(),
         areaScrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     }
 
-    override fun actionPerformed(e: ActionEvent) {
-        // Do Nothing
-    }
+    override fun actionPerformed(e: ActionEvent) = Unit
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         stepDone(environment, null, time, step)

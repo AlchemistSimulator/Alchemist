@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.movestrategies.speed
 
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
 
 /**

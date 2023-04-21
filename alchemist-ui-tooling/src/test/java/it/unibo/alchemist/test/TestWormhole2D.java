@@ -14,8 +14,8 @@ import it.unibo.alchemist.boundary.ui.impl.PointAdapter;
 import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 import org.junit.jupiter.api.Test;
 
 /**

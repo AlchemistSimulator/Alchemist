@@ -11,11 +11,11 @@ import com.google.common.collect.ImmutableList;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTarget;
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
+import it.unibo.alchemist.model.Reaction;
 
 import static org.apache.commons.math3.util.FastMath.atan2;
 import static org.apache.commons.math3.util.FastMath.cos;

@@ -13,12 +13,12 @@ import it.unibo.alchemist.expressions.implementations.NumTreeNode;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.geometry
 
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.geometry.GeometricShape
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
 
 /**
  * A special shape which does not occupy space and does not intersect with any other, not even with itself.

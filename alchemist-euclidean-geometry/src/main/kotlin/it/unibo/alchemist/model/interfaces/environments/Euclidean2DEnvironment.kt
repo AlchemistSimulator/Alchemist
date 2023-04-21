@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.interfaces.environments
 
+import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
 
 /**
  * A bidimensional euclidean space with any concentration type [T].

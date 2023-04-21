@@ -9,6 +9,10 @@
 
 package it.unibo.alchemist.model.interfaces.geometry
 
+import it.unibo.alchemist.model.geometry.GeometricShape
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
+
 /**
  * A convex [GeometricShape].
  *

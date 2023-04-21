@@ -10,8 +10,8 @@ package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.model.api.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Incarnation;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;

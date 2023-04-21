@@ -7,20 +7,20 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
-import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.Node;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.math.RealDistributionUtil;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Time;
 
 /**
  * This class is able to use any distribution provided by Apache Math 3 as a
  * subclass of {@link RealDistribution}, blocking the execution if
- * {@link it.unibo.alchemist.model.interfaces.Condition#getPropensityContribution()}
+ * {@link it.unibo.alchemist.model.Condition#getPropensityContribution()}
  * returns zero for any condition.
  *
  * @param <T>

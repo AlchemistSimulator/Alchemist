@@ -10,8 +10,8 @@
 package it.unibo.alchemist.boundary.fxui.monitors.impl;
 
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -26,7 +26,7 @@ import java.util.Optional;
  * {@link it.unibo.alchemist.core.Simulation#getStep() steps} of the {@code Simulation}.
  *
  * @param <N> the numeric type
- * @param <T> The type which describes the {@link it.unibo.alchemist.model.interfaces.Concentration} of a molecule
+ * @param <T> The type which describes the {@link it.unibo.alchemist.model.Concentration} of a molecule
  * @param <P> The position type
  */
 public abstract class AbstractNumericLabelMonitor<N, T, P extends Position<? extends P>>

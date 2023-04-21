@@ -10,8 +10,8 @@
 package it.unibo.alchemist.loader
 
 import it.unibo.alchemist.loader.export.Exporter
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
 
 /**
  * Pair-like implementation of [InitializedEnvironment].

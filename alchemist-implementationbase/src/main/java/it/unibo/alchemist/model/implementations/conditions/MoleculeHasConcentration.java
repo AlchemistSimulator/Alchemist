@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Condition;
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 
 import java.util.Objects;
 

@@ -10,15 +10,15 @@
 package it.unibo.alchemist.boundary.swingui.effect.api;
 
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Layer;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 
 import java.awt.Graphics2D;
 import java.util.Collection;
 
 /**
- * Basic interface for every effect that draws something related to {@link it.unibo.alchemist.model.interfaces.Layer}s.
+ * Basic interface for every effect that draws something related to {@link Layer}s.
  *
  * This class is a workaround: the {@link Effect} abstraction is meant to add effects
  * to nodes, not to draw layers. At present, is the finest workaround available.

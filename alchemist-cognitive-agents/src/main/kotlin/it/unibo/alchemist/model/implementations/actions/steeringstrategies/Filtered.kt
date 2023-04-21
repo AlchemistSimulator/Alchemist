@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.SteeringAction
 import it.unibo.alchemist.model.interfaces.SteeringStrategy
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * [SteeringStrategy] decorator applying a [filter] to the list of steering actions (see [computeNextPosition]).

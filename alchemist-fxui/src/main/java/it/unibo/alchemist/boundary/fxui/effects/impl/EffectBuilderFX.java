@@ -14,7 +14,7 @@ import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.util.ResourceLoader;
 import it.unibo.alchemist.boundary.fxui.util.SVGImages;
 import it.unibo.alchemist.util.ClassPathScanner;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import javafx.scene.control.ChoiceDialog;
 import javafx.stage.Stage;
 

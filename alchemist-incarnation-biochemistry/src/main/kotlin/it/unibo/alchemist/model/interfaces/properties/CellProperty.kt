@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.molecules.Junction
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.NodeProperty
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * A node's capability to behave as a cell.

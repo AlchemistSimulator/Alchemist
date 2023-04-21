@@ -5,7 +5,7 @@ import it.unibo.alchemist.boundary.fxui.effects.impl.DrawColoredDot;
 import it.unibo.alchemist.boundary.fxui.effects.impl.DrawDot;
 import it.unibo.alchemist.boundary.fxui.effects.impl.EffectStack;
 import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 

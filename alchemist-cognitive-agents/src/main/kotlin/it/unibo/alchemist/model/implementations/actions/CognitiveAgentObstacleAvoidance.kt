@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.SteeringBehavior
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Obstacle2D
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Environment2DWithObstacles
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty

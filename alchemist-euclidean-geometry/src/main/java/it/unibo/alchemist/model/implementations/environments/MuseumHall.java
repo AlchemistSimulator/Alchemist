@@ -12,8 +12,8 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.Node;
 
 /**
  * @param <T> concentration type

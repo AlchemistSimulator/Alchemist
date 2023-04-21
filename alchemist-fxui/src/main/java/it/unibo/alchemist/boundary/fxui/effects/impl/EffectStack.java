@@ -15,8 +15,8 @@ import it.unibo.alchemist.boundary.fxui.impl.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectGroupAdapter;
 import it.unibo.alchemist.boundary.fxui.util.ResourceLoader;
 import it.unibo.alchemist.boundary.fxui.api.DrawCommand;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

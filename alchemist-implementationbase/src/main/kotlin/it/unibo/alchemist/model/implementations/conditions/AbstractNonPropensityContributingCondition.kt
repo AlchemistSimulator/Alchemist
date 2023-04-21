@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.conditions
 
-import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.Node
 
 /**
  * This condition does not influence the reaction propensity,

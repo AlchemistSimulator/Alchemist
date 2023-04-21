@@ -8,13 +8,13 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
 
 /**
  * Represent the action of add a junction between the current node and a neighbor.

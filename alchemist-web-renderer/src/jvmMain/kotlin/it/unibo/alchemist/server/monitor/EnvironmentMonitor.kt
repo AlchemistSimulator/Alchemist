@@ -12,10 +12,10 @@ package it.unibo.alchemist.server.monitor
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.common.model.surrogate.EnvironmentSurrogate
 import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.server.state.ServerStore.store
 import it.unibo.alchemist.server.state.actions.SetEnvironmentSurrogate
 import it.unibo.alchemist.server.surrogates.utility.toEnvironmentSurrogate

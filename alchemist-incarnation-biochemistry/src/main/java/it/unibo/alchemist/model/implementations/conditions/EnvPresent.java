@@ -7,11 +7,11 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 
 /**
  * 

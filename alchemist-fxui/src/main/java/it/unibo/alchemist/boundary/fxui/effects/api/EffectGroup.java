@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.fxui.effects.api;
 
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import java.io.Serializable;
 import java.util.Queue;
 

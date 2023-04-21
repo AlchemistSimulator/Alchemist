@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.TimeDistribution;
 
 /**
  * This class provides, through a template method pattern, an utility that

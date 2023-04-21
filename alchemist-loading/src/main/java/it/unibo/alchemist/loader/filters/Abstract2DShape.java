@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.loader.filters;
 
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 
 /**
  * A bidimensional Alchemist {@link Filter} that relies on AWT {@link java.awt.Shape}.

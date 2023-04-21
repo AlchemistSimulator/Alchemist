@@ -11,9 +11,9 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
-import it.unibo.alchemist.model.interfaces.GeoPosition
-import it.unibo.alchemist.model.interfaces.Position
 
 val ll10: Position<GeoPosition> = LatLongPosition(1, 0)
 val ll01: Position<GeoPosition> = LatLongPosition(0, 1)

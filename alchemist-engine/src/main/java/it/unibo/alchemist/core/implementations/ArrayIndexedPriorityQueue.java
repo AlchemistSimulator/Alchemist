@@ -11,9 +11,9 @@ package it.unibo.alchemist.core.implementations;
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import it.unibo.alchemist.core.interfaces.Scheduler;
-import it.unibo.alchemist.model.interfaces.Actionable;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.core.Scheduler;
+import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Time;
 
 import java.util.ArrayList;
 import java.util.List;

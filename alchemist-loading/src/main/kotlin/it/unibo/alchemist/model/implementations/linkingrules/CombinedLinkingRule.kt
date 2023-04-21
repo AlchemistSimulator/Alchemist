@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.model.implementations.linkingrules
 
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.LinkingRule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.LinkingRule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
 
 /**
  * A meta-rule that combines multiple [subRules].

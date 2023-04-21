@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.model.implementations.environments;
 
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
 import org.apache.commons.math3.util.FastMath;
 import org.danilopianini.util.FlexibleQuadTree;
 

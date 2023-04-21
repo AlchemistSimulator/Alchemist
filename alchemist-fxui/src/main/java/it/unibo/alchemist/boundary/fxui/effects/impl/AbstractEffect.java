@@ -13,8 +13,9 @@ import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.impl.CommandQueueBuilder;
 import it.unibo.alchemist.boundary.fxui.util.ResourceLoader;
 import it.unibo.alchemist.boundary.fxui.api.DrawCommand;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Concentration;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 import javafx.beans.property.Property;
 import org.jetbrains.annotations.Contract;
 
@@ -175,7 +176,7 @@ public abstract class AbstractEffect<P extends Position2D<? extends P>> implemen
      * or {@link it.unibo.alchemist.core.Simulation}-specific objects.
      *
      * @param environment the {@link Environment} to extrapolate data from
-     * @param <T>         the {@link it.unibo.alchemist.model.interfaces.Concentration} type
+     * @param <T>         the {@link Concentration} type
      */
     protected abstract <T> void storeData(Environment<T, P> environment);
 

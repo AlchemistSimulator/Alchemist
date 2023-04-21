@@ -10,10 +10,10 @@ package it.unibo.alchemist.model.implementations.linkingrules;
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
 import org.danilopianini.util.ListSet;
 
 import java.util.stream.Collectors;

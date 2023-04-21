@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.model.implementations.layers;
 
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import org.apache.commons.math3.util.FastMath;
 
-import it.unibo.alchemist.model.interfaces.Layer;
+import it.unibo.alchemist.model.Layer;
 
 /**
  * A {@link Layer} representing a linear distribution in space of a molecule.

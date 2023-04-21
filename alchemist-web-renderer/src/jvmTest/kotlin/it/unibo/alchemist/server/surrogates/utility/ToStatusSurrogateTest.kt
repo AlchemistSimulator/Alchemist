@@ -12,7 +12,7 @@ package it.unibo.alchemist.server.surrogates.utility
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.common.model.surrogate.StatusSurrogate
-import it.unibo.alchemist.core.interfaces.Status
+import it.unibo.alchemist.core.Status
 
 class ToStatusSurrogateTest : StringSpec({
     "ToStatusSurrogate should map a Status to a StatusSurrogate" {

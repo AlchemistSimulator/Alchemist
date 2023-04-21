@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

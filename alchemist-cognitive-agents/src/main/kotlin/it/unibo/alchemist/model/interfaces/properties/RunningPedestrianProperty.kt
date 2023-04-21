@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
-import it.unibo.alchemist.model.interfaces.NodeProperty
+import it.unibo.alchemist.model.NodeProperty
 
 /**
  * A node's capability to run.

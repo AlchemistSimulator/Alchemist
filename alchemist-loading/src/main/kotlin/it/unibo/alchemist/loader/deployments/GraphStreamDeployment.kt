@@ -10,9 +10,9 @@
 package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.loader.GraphStreamSupport
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.LinkingRule
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.LinkingRule
+import it.unibo.alchemist.model.Position
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

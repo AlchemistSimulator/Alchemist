@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
 
 /**
  * Takes the first [percentage] * size elements of the list.

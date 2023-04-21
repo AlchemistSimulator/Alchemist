@@ -8,11 +8,11 @@
  */
 package it.unibo.alchemist.model.implementations.reactions;
 
-import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Time;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.Condition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.TimeDistribution;
 
 import javax.annotation.Nonnull;
 

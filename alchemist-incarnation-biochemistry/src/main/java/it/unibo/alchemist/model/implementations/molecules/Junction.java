@@ -8,7 +8,7 @@
 package it.unibo.alchemist.model.implementations.molecules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Dependency;
+import it.unibo.alchemist.model.Dependency;
 
 import java.util.Collections;
 import java.util.Map;

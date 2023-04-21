@@ -7,9 +7,10 @@
  */
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.{Node, Position, Reaction}
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
-import it.unibo.alchemist.model.interfaces.{Time => AlchemistTime, _}
+import it.unibo.alchemist.model.{Time => AlchemistTime, _}
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ContextImpl, _}
 import it.unibo.alchemist.scala.PimpMyAlchemist._
@@ -98,7 +99,7 @@ sealed class RunScafiProgram[T, P <: Position[P]](
       case 3 => Point3D(point.getCoordinate(0), point.getCoordinate(1), point.getCoordinate(2))
     }
     val position: P = environment.getPosition(node)
-    // NB: We assume it.unibo.alchemist.model.interfaces.Time = DoubleTime
+    // NB: We assume it.unibo.alchemist.model.Time = DoubleTime
     //     and that its "time unit" is seconds, and then we get NANOSECONDS
     val alchemistCurrentTime = Try(environment.getSimulation)
       .map(_.getTime)

@@ -13,7 +13,7 @@ import java.util.Map;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.TimeDistribution;
 import org.danilopianini.lang.HashString;
 
 /**

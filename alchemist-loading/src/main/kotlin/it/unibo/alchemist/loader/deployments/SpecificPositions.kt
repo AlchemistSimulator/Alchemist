@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.loader.deployments
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
 
 /**
  * Given an environment and a list of list of numbers, it creates a list of the right position type for the environment.

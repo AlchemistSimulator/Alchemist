@@ -12,19 +12,19 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.core.interfaces.DependencyGraph;
-import it.unibo.alchemist.core.interfaces.Scheduler;
+import it.unibo.alchemist.core.DependencyGraph;
+import it.unibo.alchemist.core.Scheduler;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.core.interfaces.Status;
-import it.unibo.alchemist.model.interfaces.Actionable;
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Dependency;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.core.Status;
+import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Dependency;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.Time;
 import org.jooq.lambda.fi.lang.CheckedRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +52,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static it.unibo.alchemist.core.interfaces.Status.PAUSED;
-import static it.unibo.alchemist.core.interfaces.Status.RUNNING;
-import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
+import static it.unibo.alchemist.core.Status.PAUSED;
+import static it.unibo.alchemist.core.Status.RUNNING;
+import static it.unibo.alchemist.core.Status.TERMINATED;
 
 /**
  * This class implements a simulation. It offers a wide number of static
@@ -207,7 +207,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                  * This must be taken before execution, because the reaction
                  * might remove itself (or its node) from the environment.
                  */
-                nextEvent.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
+                nextEvent.getConditions().forEach(it.unibo.alchemist.model.Condition::reactionReady);
                 nextEvent.execute();
                 Set<Actionable<T>> toUpdate = dependencyGraph.outboundDependencies(nextEvent);
                 if (!afterExecutionUpdates.isEmpty()) {

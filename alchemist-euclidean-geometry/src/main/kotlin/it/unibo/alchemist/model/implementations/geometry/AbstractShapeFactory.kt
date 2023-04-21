@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.implementations.geometry
 
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 
 /**
  * Base class for [GeometricTransformation] providing a standard implementation for

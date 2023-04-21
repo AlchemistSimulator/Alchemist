@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
-import it.unibo.alchemist.model.interfaces.NodeProperty
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
-import it.unibo.alchemist.model.interfaces.geometry.GeometricTransformation
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 
 /**

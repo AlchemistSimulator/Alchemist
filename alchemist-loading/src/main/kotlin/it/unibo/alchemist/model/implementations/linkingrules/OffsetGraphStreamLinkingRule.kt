@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.model.implementations.linkingrules
 
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.LinkingRule
+import it.unibo.alchemist.model.Neighborhood
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.LinkingRule
-import it.unibo.alchemist.model.interfaces.Neighborhood
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
 import org.graphstream.graph.Graph
 import kotlin.streams.toList
 
@@ -23,7 +23,8 @@ import kotlin.streams.toList
  * An [offset] is used to determine the id of the environment's nodes when compared to the one of the
  * provided [graph].
  */
-class OffsetGraphStreamLinkingRule<T, P : Position<P>>(val offset: Int, val graph: Graph) : LinkingRule<T, P> {
+class OffsetGraphStreamLinkingRule<T, P : Position<P>>(val offset: Int, val graph: Graph) :
+    LinkingRule<T, P> {
 
     override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>): Neighborhood<T> {
         val actualId = center.id - offset

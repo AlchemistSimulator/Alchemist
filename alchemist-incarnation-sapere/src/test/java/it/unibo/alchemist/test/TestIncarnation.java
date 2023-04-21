@@ -15,11 +15,11 @@ import it.unibo.alchemist.model.implementations.environments.Continuous2DEnviron
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPEREExponentialTime;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.TimeDistribution;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;

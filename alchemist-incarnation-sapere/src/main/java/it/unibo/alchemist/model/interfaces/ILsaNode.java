@@ -7,6 +7,9 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+
 import java.util.List;
 
 /**

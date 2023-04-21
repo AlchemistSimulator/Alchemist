@@ -9,10 +9,10 @@
 package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GeoPosition
-import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

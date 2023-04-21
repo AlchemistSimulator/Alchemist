@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 
 /**
  * 

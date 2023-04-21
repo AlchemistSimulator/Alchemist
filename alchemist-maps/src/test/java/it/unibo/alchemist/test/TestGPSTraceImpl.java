@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 import com.google.common.collect.ImmutableList;
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.implementations.routes.GPSTraceImpl;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

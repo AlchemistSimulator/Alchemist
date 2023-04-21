@@ -17,7 +17,7 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import it.unibo.alchemist.util.ClassPathScanner;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
 import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;

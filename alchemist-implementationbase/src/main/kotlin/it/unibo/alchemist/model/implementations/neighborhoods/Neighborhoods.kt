@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.model.implementations.neighborhoods
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
 
 /**
  * Contains utility functions for neighborhoods.

@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
+import it.unibo.alchemist.model.geometry.GeometricShape
 import it.unibo.alchemist.model.implementations.geometry.AbstractShapeFactory
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation

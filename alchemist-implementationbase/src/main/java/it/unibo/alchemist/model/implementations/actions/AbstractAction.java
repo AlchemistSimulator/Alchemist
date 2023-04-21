@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Action;
-import it.unibo.alchemist.model.interfaces.Dependency;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.Action;
+import it.unibo.alchemist.model.Dependency;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;

@@ -9,16 +9,16 @@
 
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Condition
+import it.unibo.alchemist.model.Dependency
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GlobalReaction
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.implementations.PhysicsDependency
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb
-import it.unibo.alchemist.model.interfaces.Action
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Condition
-import it.unibo.alchemist.model.interfaces.Dependency
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GlobalReaction
-import it.unibo.alchemist.model.interfaces.Time
-import it.unibo.alchemist.model.interfaces.TimeDistribution
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListSet

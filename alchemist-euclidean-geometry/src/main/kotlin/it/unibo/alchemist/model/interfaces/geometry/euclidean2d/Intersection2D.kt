@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D
+import it.unibo.alchemist.model.geometry.Vector2D
 
 /**
  * Describes the result an intersection operation in an euclidean 2D space.

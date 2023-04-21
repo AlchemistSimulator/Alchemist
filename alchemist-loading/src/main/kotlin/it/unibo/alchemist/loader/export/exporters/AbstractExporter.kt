@@ -13,10 +13,10 @@ import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.exporters.AbstractExporter.Companion.DEFAULT_INTERVAL
 import it.unibo.alchemist.loader.variables.Variable
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
 
 /**
  * Abstract implementation of a [Exporter].

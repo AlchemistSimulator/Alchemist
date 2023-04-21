@@ -14,9 +14,9 @@ import de.saring.leafletmap.ZoomControlConfig
 import it.unibo.alchemist.boundary.fxui.util.JavaFXThreadUtil
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.boundary.ui.impl.LinearZoomManager
-import it.unibo.alchemist.model.interfaces.Concentration
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GeoPosition
+import it.unibo.alchemist.model.Concentration
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GeoPosition
 import javafx.concurrent.Worker
 import java.util.concurrent.CompletableFuture
 

@@ -11,10 +11,10 @@ package it.unibo.alchemist.loader.m2m
 
 import it.unibo.alchemist.loader.export.FilteringPolicy
 import it.unibo.alchemist.loader.export.filters.CommonFilters
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.api.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Time
 import org.apache.commons.lang3.tuple.ImmutablePair
 import org.apache.commons.lang3.tuple.ImmutableTriple
 import org.danilopianini.jirf.Factory

@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.terminators
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Time
 import java.util.function.Predicate
 
 /**

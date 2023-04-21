@@ -27,8 +27,10 @@ import it.unibo.alchemist.boundary.fxui.monitors.impl.FXTimeMonitor;
 import it.unibo.alchemist.boundary.fxui.monitors.impl.PlayPauseMonitor;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Simulation;
+import it.unibo.alchemist.model.Concentration;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -61,7 +63,7 @@ import static it.unibo.alchemist.boundary.fxui.impl.ButtonsBarController.BUTTONS
 /**
  * The class models a non-reusable GUI for simulation display.
  *
- * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
+ * @param <T> the {@link Concentration} type
  * @param <P> the position type
  */
 @SuppressFBWarnings(
@@ -243,11 +245,11 @@ public class SingleRunApp<T, P extends Position2D<P>> extends Application {
      *
      * @param simulation the simulation to
      *      {@link Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable) schedule} initialization and to take
-     *      {@link it.unibo.alchemist.model.interfaces.Environment} from
+     *      {@link Environment} from
      * @param monitors   the {@code OutputMonitors} to
-     *      {@link OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment) initialize}
+     *      {@link OutputMonitor#initialized(Environment) initialize}
      * @see Simulation#schedule(org.jooq.lambda.fi.lang.CheckedRunnable)
-     * @see OutputMonitor#initialized(it.unibo.alchemist.model.interfaces.Environment)
+     * @see OutputMonitor#initialized(Environment)
      */
     @SafeVarargs
     private void initMonitors(

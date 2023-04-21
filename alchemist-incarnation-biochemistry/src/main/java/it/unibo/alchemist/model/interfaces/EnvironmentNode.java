@@ -8,6 +8,8 @@
 
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.Node;
+
 /**
  */
 public interface EnvironmentNode extends Node<Double> {

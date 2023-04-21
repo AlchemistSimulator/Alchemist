@@ -9,13 +9,13 @@
 package it.unibo.alchemist.model.implementations.nodes
 
 import com.google.common.collect.MapMaker
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Incarnation
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.NodeProperty
-import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.Time
 import java.util.Collections
 import java.util.Spliterator
 import java.util.concurrent.Semaphore

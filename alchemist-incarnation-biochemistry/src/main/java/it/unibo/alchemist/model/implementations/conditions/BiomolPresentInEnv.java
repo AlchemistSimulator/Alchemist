@@ -12,17 +12,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Reaction;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.apache.commons.math3.util.FastMath;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.EnvironmentNode;
-import it.unibo.alchemist.model.interfaces.Layer;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Layer;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
 
 /**
  * @param <P> Position type

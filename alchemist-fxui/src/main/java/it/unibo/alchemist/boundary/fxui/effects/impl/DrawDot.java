@@ -17,8 +17,8 @@ import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory;
 import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty;
 import it.unibo.alchemist.boundary.fxui.util.ResourceLoader;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position2D;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 /**
  * Simple effect that draws a {@link Color#BLACK black} dot for each
- * {@link it.unibo.alchemist.model.interfaces.Node}.
+ * {@link it.unibo.alchemist.model.Node}.
  * <p>
  * It's possible to set the size of the dots.
  *
@@ -110,8 +110,8 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
     }
 
     /**
-     * The method extracts {@link it.unibo.alchemist.model.interfaces.Position}s of each
-     * {@link it.unibo.alchemist.model.interfaces.Node} from the {@code Environment}.
+     * The method extracts {@link it.unibo.alchemist.model.Position}s of each
+     * {@link it.unibo.alchemist.model.Node} from the {@code Environment}.
      *
      * @param environment {@inheritDoc}
      * @param <T>         {@inheritDoc}
@@ -127,7 +127,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
     }
 
     /**
-     * The size of the dots representing each {@link it.unibo.alchemist.model.interfaces.Node} in the
+     * The size of the dots representing each {@link it.unibo.alchemist.model.Node} in the
      * {@link Environment} specified when drawing.
      *
      * @return the size property
@@ -251,7 +251,7 @@ public class DrawDot<P extends Position2D<? extends P>> extends AbstractEffect<P
             return true;
         }
         if (obj != null && this.getClass() == obj.getClass() && checkBasicProperties(this, obj)) {
-            final DrawDot other = (DrawDot) obj;
+            final var other = (DrawDot<?>) obj;
             final Color thisColor = getColor();
             final Color otherColor = other.getColor();
             return checkEqualsProperties(sizeProperty(), other.sizeProperty())

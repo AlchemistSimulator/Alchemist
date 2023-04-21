@@ -11,7 +11,7 @@ import org.apache.commons.math3.distribution.WeibullDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 
 /**
  * Weibull distributed events, with different (Weibull distributed) mean.

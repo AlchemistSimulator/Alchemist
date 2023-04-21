@@ -8,7 +8,7 @@
 package it.unibo.alchemist.grid.config;
 
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 
 import java.util.Map;
 import java.util.Objects;

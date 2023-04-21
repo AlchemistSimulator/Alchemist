@@ -12,12 +12,12 @@ package it.unibo.alchemist.testsupport
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.EuclideanEnvironment
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.EuclideanEnvironment
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.geometry.Vector
 import org.kaikikm.threadresloader.ResourceLoader
 
 /**

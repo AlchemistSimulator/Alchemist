@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.implementations.positions;
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector;
+import it.unibo.alchemist.model.geometry.Vector;
 
 import javax.annotation.Nonnull;
 

@@ -10,13 +10,13 @@ package it.unibo.alchemist.model.implementations.movestrategies.speed;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.RoutingService;
 import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
 
 import java.util.Objects;

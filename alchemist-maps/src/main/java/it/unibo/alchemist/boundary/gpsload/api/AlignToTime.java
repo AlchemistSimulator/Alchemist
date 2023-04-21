@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 
 /**
  * Aligns the traces with the given time in seconds from Epoch. All points

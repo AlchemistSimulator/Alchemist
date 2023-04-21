@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.implementations.properties
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.InfluenceSphere2D
-import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PerceptiveProperty
 

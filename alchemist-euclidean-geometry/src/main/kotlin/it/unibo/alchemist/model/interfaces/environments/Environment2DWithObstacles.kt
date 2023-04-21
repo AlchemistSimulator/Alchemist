@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.interfaces.environments
 
+import it.unibo.alchemist.model.EnvironmentWithObstacles
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles
 import it.unibo.alchemist.model.interfaces.Obstacle2D
 
 /**

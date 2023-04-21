@@ -8,17 +8,17 @@
  */
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Context
+import it.unibo.alchemist.model.Dependency
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
-import it.unibo.alchemist.model.interfaces.Action
-import it.unibo.alchemist.model.interfaces.Context
-import it.unibo.alchemist.model.interfaces.Dependency
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.math.RealDistributionUtil
 import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.protelis.AlchemistNetworkManager

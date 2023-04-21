@@ -7,6 +7,9 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
+
 /**
  * {@link Environment} supporting deformable cells.
  *

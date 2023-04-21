@@ -12,7 +12,7 @@ import com.javadocmd.simplelatlng.LatLngTool;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.GeoPosition;
 
 /**
  */

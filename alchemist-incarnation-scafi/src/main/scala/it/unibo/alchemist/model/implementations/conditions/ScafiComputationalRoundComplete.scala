@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.conditions
 import it.unibo.alchemist.model.ScafiIncarnationUtils
 import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
-import it.unibo.alchemist.model.interfaces.{Condition, Context, Node, Reaction}
+import it.unibo.alchemist.model.{Condition, Context, Node, Reaction}
 
 final class ScafiComputationalRoundComplete[T](val device: ScafiDevice[T], val program: RunScafiProgram[_, _])
     extends AbstractCondition(device.getNode) {

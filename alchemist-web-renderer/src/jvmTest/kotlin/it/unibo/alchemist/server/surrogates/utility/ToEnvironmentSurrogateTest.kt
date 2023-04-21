@@ -12,8 +12,8 @@ package it.unibo.alchemist.server.surrogates.utility
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.TestUtility.webRendererTestEnvironments
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.server.surrogates.utility.ToConcentrationSurrogate.toEmptyConcentration
 import it.unibo.alchemist.server.surrogates.utility.ToPositionSurrogate.toSuitablePositionSurrogate
 import org.junit.jupiter.api.fail

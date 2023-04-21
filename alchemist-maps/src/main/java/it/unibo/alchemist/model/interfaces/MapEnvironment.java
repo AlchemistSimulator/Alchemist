@@ -7,6 +7,10 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.BenchmarkableEnvironment;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Node;
+
 /**
  * @param <T> Concentration type
  * @param <O> {@link RoutingServiceOptions} type
@@ -18,7 +22,7 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     /**
      * This method relies on the map data, and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
-     * {@link Action} calling this method to effectively move nodes along the
+     * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path. It uses the fastest path as metric.
      * 
      * @param node
@@ -33,7 +37,7 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     /**
      * This method relies on the map data, and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
-     * {@link Action} calling this method to effectively move nodes along the
+     * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path.
      * 
      * @param node
@@ -48,7 +52,7 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     /**
      * This method relies on the map data, and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
-     * {@link Action} calling this method to effectively move nodes along the
+     * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path.
      * 
      * @param node
@@ -65,7 +69,7 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     /**
      * This method relies on the map data, and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
-     * {@link Action} calling this method to effectively move nodes along the
+     * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path.
      * 
      * @param p1
@@ -82,7 +86,7 @@ public interface MapEnvironment<T, O extends RoutingServiceOptions<O>, S extends
     /**
      * This method relies on the map data, and computes a route towards some
      * absolute coordinate solving a TSP problem. It's up to the specific
-     * {@link Action} calling this method to effectively move nodes along the
+     * {@link it.unibo.alchemist.model.Action} calling this method to effectively move nodes along the
      * path.
      * 
      * @param from

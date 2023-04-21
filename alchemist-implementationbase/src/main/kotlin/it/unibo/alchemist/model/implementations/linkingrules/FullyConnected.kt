@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.implementations.linkingrules
 
 import com.google.common.collect.Iterators
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.LinkingRule
-import it.unibo.alchemist.model.interfaces.Neighborhood
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.LinkingRule
+import it.unibo.alchemist.model.Neighborhood
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
 import org.danilopianini.util.ListSet
 
 /**
@@ -22,7 +22,8 @@ import org.danilopianini.util.ListSet
  */
 class FullyConnected<T, P : Position<P>> : LinkingRule<T, P> {
     override fun isLocallyConsistent() = true
-    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>) = object : Neighborhood<T> {
+    override fun computeNeighborhood(center: Node<T>, environment: Environment<T, P>) = object :
+        Neighborhood<T> {
 
         override fun contains(node: Node<T>?) = node != center
 

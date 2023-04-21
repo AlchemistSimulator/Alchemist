@@ -9,7 +9,7 @@ package it.unibo.alchemist.loader.deployments;
 
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Position;
 
 import java.io.IOException;
 import java.util.stream.Stream;

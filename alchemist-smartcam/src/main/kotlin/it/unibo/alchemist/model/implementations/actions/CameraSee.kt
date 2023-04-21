@@ -1,11 +1,11 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.Context
+import it.unibo.alchemist.model.Molecule
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.interfaces.Context
-import it.unibo.alchemist.model.interfaces.Molecule
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.smartcam.VisibleNodeImpl
 import java.lang.Math.toRadians

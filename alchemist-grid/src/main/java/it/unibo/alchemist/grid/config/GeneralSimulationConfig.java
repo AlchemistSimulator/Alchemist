@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 /**
  * Simulation's configs valid for more than one simulation.
  */

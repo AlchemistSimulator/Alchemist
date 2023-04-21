@@ -9,7 +9,7 @@ package it.unibo.alchemist.loader;
 
 import it.unibo.alchemist.loader.variables.DependentVariable;
 import it.unibo.alchemist.loader.variables.Variable;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Position;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;

@@ -8,6 +8,9 @@
 package it.unibo.alchemist.model.interfaces;
 
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.Condition;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import org.danilopianini.lang.HashString;
 
 import java.util.List;

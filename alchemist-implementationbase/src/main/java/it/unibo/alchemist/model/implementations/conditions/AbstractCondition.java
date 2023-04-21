@@ -9,10 +9,10 @@
 package it.unibo.alchemist.model.implementations.conditions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Condition;
-import it.unibo.alchemist.model.interfaces.Dependency;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Condition;
+import it.unibo.alchemist.model.Dependency;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import org.danilopianini.util.LinkedListSet;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;

@@ -12,7 +12,7 @@ package it.unibo.alchemist.server.surrogates.utility
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.common.model.surrogate.MoleculeSurrogate
-import it.unibo.alchemist.model.interfaces.Molecule
+import it.unibo.alchemist.model.Molecule
 
 class ToMoleculeSurrogateTest : StringSpec({
 

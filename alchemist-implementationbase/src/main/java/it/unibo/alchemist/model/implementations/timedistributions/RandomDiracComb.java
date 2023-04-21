@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.timedistributions;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 
 /**
  * A {@link DiracComb} whose rate is determined (uniformly) randomly within the provided bounds.

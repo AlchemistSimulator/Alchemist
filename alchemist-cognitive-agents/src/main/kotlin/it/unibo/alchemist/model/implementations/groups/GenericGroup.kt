@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.groups
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.interfaces.Group
-import it.unibo.alchemist.model.interfaces.Node
 
 /**
  * Basic implementation of a group.

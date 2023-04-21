@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.loader.export.extractors
 
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Time
 
 /**
  * Exports a column with the current time.

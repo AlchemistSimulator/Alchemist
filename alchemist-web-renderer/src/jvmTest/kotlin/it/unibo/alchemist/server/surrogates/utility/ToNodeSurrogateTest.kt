@@ -16,10 +16,10 @@ import it.unibo.alchemist.TestUtility.webRendererTestEnvironments
 import it.unibo.alchemist.common.model.surrogate.EmptyConcentrationSurrogate
 import it.unibo.alchemist.common.model.surrogate.NodeSurrogate
 import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.geometry.Vector
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.server.surrogates.utility.ToConcentrationSurrogate.toEmptyConcentration
 import it.unibo.alchemist.server.surrogates.utility.ToPositionSurrogate.toSuitablePositionSurrogate
 

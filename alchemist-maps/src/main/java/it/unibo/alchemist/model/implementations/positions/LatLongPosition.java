@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.javadocmd.simplelatlng.LatLng;
 import com.javadocmd.simplelatlng.util.LengthUnit;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.GeoPosition;
 import org.danilopianini.util.Hashes;
 
 import javax.annotation.Nonnull;

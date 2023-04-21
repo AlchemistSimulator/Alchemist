@@ -11,8 +11,8 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
 
 import javax.annotation.Nonnull;
 

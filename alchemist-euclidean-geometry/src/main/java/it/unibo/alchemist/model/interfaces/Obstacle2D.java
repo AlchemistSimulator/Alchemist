@@ -8,7 +8,8 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import it.unibo.alchemist.model.interfaces.geometry.Vector2D;
+import it.unibo.alchemist.model.Obstacle;
+import it.unibo.alchemist.model.geometry.Vector2D;
 
 import java.awt.Shape;
 

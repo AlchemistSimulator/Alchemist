@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.fxui.impl;
 
 import it.unibo.alchemist.boundary.fxui.api.DrawCommand;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import org.apache.commons.collections4.queue.UnmodifiableQueue;
 
 import java.util.ArrayDeque;

@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions.steeringstrategies
 
-import it.unibo.alchemist.model.interfaces.Node
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.interfaces.SteeringActionWithTarget
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 

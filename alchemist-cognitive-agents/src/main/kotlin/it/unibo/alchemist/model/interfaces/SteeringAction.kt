@@ -1,5 +1,8 @@
 package it.unibo.alchemist.model.interfaces
 
+import it.unibo.alchemist.model.Action
+import it.unibo.alchemist.model.Position
+
 /**
  * Action whose purpose is moving a node inside the environment it is in.
  */

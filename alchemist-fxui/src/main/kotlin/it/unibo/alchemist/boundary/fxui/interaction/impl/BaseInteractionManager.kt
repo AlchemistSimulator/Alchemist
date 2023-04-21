@@ -30,10 +30,10 @@ import it.unibo.alchemist.boundary.fxui.util.PointExtension.makePoint
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.boundary.ui.api.ZoomManager
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.interfaces.Status
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position2D
 import javafx.application.Platform
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas

@@ -7,13 +7,14 @@
  */
 package it.unibo.alchemist.model.scafi
 
+import it.unibo.alchemist.model.Position
 import java.util.Optional
 
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.NodeManager
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.{Environment, Layer, Position}
+import it.unibo.alchemist.model.{Environment, Layer}
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation
 import it.unibo.scafi.lib.StandardLibrary
 import it.unibo.scafi.space.{BasicSpatialAbstraction, Point2D, Point3D}
@@ -61,7 +62,7 @@ object ScafiIncarnationForAlchemist
       if (dt.isNaN) whenNan else dt
     }
 
-    def alchemistTimestamp = sense[it.unibo.alchemist.model.interfaces.Time](LSNS_ALCHEMIST_TIMESTAMP)
+    def alchemistTimestamp = sense[it.unibo.alchemist.model.Time](LSNS_ALCHEMIST_TIMESTAMP)
 
     def alchemistRandomGen = sense[RandomGenerator](LSNS_ALCHEMIST_RANDOM)
     lazy val randomGen: Random = new AlchemistRandomWrapper(alchemistRandomGen)

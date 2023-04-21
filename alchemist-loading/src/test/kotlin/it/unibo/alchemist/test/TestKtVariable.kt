@@ -15,7 +15,7 @@ import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.testsupport.loadAlchemist
 import it.unibo.alchemist.testsupport.loadAlchemistFromResource
 import it.unibo.alchemist.util.ClassPathScanner

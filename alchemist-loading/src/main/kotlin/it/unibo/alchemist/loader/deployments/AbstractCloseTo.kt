@@ -8,8 +8,8 @@
 
 package it.unibo.alchemist.loader.deployments
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
 import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution
 import org.apache.commons.math3.random.RandomGenerator

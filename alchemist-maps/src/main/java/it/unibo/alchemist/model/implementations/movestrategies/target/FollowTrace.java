@@ -10,12 +10,12 @@ package it.unibo.alchemist.model.implementations.movestrategies.target;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.movestrategies.AbstractStrategyWithGPS;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
 import it.unibo.alchemist.model.interfaces.Route;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Time;
 
 /**
  * This strategy follows a {@link Route}.

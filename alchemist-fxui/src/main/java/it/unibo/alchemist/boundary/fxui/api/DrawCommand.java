@@ -10,7 +10,9 @@
 package it.unibo.alchemist.boundary.fxui.api;
 
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Position2D;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.function.BiConsumer;
@@ -31,8 +33,8 @@ public interface DrawCommand<P extends Position2D<? extends P>>
      *
      * @param graphic  the {@link GraphicsContext} of a JavaFX {@link javafx.scene.canvas.Canvas}
      * @param wormhole the {@link Wormhole2D Wormhole} that maps
-     * {@link it.unibo.alchemist.model.interfaces.Environment}
-     * {@link it.unibo.alchemist.model.interfaces.Position positions}
+     * {@link Environment}
+     * {@link Position positions}
      *                 to GUI positions
      */
     @Override

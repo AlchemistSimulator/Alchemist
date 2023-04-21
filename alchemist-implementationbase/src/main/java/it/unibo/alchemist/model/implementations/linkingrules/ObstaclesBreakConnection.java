@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.EnvironmentWithObstacles;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.geometry.Vector;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.EnvironmentWithObstacles;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.geometry.Vector;
 
 /**
  * Similar to {@link ConnectWithinDistance}, but if the environment has obstacles,

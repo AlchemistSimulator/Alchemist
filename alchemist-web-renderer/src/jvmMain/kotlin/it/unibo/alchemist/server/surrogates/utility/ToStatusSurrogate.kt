@@ -10,7 +10,7 @@
 package it.unibo.alchemist.server.surrogates.utility
 
 import it.unibo.alchemist.common.model.surrogate.StatusSurrogate
-import it.unibo.alchemist.core.interfaces.Status
+import it.unibo.alchemist.core.Status
 
 /**
  * Map a [Status] to [StatusSurrogate].

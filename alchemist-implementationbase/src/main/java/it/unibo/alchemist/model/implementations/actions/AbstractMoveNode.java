@@ -8,12 +8,12 @@
 
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.Dependency;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.EuclideanEnvironment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Context;
+import it.unibo.alchemist.model.Dependency;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.EuclideanEnvironment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
 
 /**
  * This action moves a node inside a given environment.
@@ -115,7 +115,7 @@ public abstract class AbstractMoveNode<T, P extends Position<P>> extends Abstrac
     }
 
     /**
-     * @return true if this {@link it.unibo.alchemist.model.interfaces.Action} is using absolute positions
+     * @return true if this {@link Action} is using absolute positions
      */
     protected final boolean isAbsolute() {
         return absolute;

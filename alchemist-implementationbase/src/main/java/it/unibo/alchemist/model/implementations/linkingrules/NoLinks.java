@@ -8,10 +8,10 @@
 package it.unibo.alchemist.model.implementations.linkingrules;
 
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Neighborhood;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Neighborhood;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
 
 /**
  * This rule guarantees that no links are created at all.

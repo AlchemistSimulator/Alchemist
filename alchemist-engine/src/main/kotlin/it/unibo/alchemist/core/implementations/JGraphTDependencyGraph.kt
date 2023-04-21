@@ -8,12 +8,12 @@
  */
 package it.unibo.alchemist.core.implementations
 
-import it.unibo.alchemist.core.interfaces.DependencyGraph
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Context
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Reaction
+import it.unibo.alchemist.core.DependencyGraph
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Context
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.util.BugReporting
 import org.danilopianini.util.ArrayListSet
 import org.danilopianini.util.ListSet
@@ -31,7 +31,8 @@ private typealias Edge<T> = Pair<Actionable<T>, Actionable<T>>
  *
  * @param <T> concentration type
  */
-class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) : DependencyGraph<T> {
+class JGraphTDependencyGraph<T>(private val environment: Environment<T, *>) :
+    DependencyGraph<T> {
     private val inGlobals = ArrayListSet<Actionable<T>>()
     private val outGlobals = ArrayListSet<Actionable<T>>()
     private val graph: DefaultDirectedGraph<Actionable<T>, Edge<T>> = DefaultDirectedGraph(null, null, false)

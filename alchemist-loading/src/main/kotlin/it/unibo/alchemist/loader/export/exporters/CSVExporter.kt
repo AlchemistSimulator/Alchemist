@@ -10,11 +10,11 @@
 package it.unibo.alchemist.loader.export.exporters
 
 import com.google.common.base.Charsets
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.util.BugReporting
 import org.slf4j.LoggerFactory
 import java.io.File

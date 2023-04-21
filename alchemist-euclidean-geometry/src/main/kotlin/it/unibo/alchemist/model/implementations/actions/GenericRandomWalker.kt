@@ -9,13 +9,13 @@
 
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.movestrategies.RandomTarget
 import it.unibo.alchemist.model.implementations.movestrategies.speed.GloballyConstantSpeed
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Reaction
 import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator

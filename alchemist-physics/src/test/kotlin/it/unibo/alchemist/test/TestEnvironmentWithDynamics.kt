@@ -11,14 +11,14 @@ package it.unibo.alchemist.test
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.api.SupportedIncarnations
+import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.environments.EnvironmentWithDynamics
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
-import it.unibo.alchemist.model.interfaces.geometry.Vector
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 

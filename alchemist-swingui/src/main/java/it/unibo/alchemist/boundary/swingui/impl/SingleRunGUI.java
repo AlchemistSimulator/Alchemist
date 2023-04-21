@@ -16,7 +16,7 @@ import it.unibo.alchemist.boundary.swingui.monitor.impl.TimeStepMonitor;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JEffectsTab;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Position2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

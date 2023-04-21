@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.implementations.groups
 
+import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.interfaces.GroupWithLeader
-import it.unibo.alchemist.model.interfaces.Node
 
 /**
  * A [Family] is modeled as a group of pedestrians with a leader.

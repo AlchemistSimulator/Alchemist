@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
+import it.unibo.alchemist.model.Position;
+
 /**
  * 
  * Route with total trip time to cross it.

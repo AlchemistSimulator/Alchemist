@@ -12,9 +12,9 @@ package it.unibo.alchemist.model.interfaces.movestrategies;
 
 import java.io.Serializable;
 
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position;
-import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
 
 /**
  * This interface models a strategy for selecting positions where to move.
@@ -26,7 +26,7 @@ import it.unibo.alchemist.model.interfaces.Reaction;
 public interface TargetSelectionStrategy<T, P extends Position<? extends P>> extends Serializable {
 
     /**
-     * @return the next target where the {@link it.unibo.alchemist.model.interfaces.Node} is directed
+     * @return the next target where the {@link Node} is directed
      */
     P getTarget();
 

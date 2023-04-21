@@ -16,6 +16,9 @@ import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldHave
 import it.unibo.alchemist.model.BiochemistryIncarnation
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor
 import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell
@@ -25,9 +28,6 @@ import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistan
 import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble

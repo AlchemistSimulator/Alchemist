@@ -14,7 +14,7 @@ import it.unibo.alchemist.expressions.implementations.Type;
 import it.unibo.alchemist.expressions.implementations.VarTreeNode;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
-import it.unibo.alchemist.model.interfaces.Dependency;
+import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import org.danilopianini.lang.HashString;
 

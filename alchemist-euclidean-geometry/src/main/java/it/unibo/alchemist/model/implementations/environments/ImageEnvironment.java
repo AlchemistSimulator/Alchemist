@@ -12,7 +12,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.obstacles.RectObstacle2D;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.Incarnation;
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import javax.imageio.ImageIO;

@@ -9,7 +9,6 @@ package it.unibo.alchemist.model.implementations.routes;
 
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.exceptions.UncomparableDistancesException;
 import it.unibo.alchemist.model.interfaces.Position;
 import it.unibo.alchemist.model.interfaces.Route;
 import org.danilopianini.util.Hashes;
@@ -65,12 +64,14 @@ public class PolygonalChain<P extends Position<?>> implements Route<P> {
      */
     @SuppressWarnings("unchecked")
     protected <U extends Position<U>> double computeDistance(final P p1, final P p2) {
-        if (p1.getClass() == p2.getClass() || p1.getClass().isAssignableFrom(p2.getClass())) {
+        final var p1Class = p1.getClass();
+        final var p2Class = p2.getClass();
+        if (p1Class == p2Class || p1Class.isAssignableFrom(p2Class)) {
             return ((U) p1).distanceTo((U) p2);
-        } else if (p2.getClass().isAssignableFrom(p1.getClass())) {
+        } else if (p2Class.isAssignableFrom(p1Class)) {
             return ((U) p2).distanceTo((U) p1);
         }
-        throw new UncomparableDistancesException(p1, p2);
+        throw new IllegalArgumentException(p1 + "(" + p1Class + ") and " + p2 + "(" + p2Class + ") are not comparable");
     }
 
     @Override

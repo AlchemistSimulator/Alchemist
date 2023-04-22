@@ -10,6 +10,7 @@ package it.unibo.alchemist.model.interfaces;
 import it.unibo.alchemist.model.BenchmarkableEnvironment;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Route;
 
 /**
  * @param <T> Concentration type

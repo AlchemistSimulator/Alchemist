@@ -13,8 +13,8 @@ import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
-import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
+import it.unibo.alchemist.model.Route;
 import it.unibo.alchemist.model.Time;
 
 /**

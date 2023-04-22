@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.Route;
 
 import java.util.List;
 

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.interfaces.EnvironmentNode;
+import it.unibo.alchemist.model.EnvironmentNode;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
@@ -29,9 +29,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * 
- */
 @SuppressWarnings("CPD-START")
 class TestChemotaxis {
 

@@ -9,8 +9,8 @@ package it.unibo.alchemist.model.implementations.movestrategies.routing;
 
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
-import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
+import it.unibo.alchemist.model.Route;
 
 /**
  * This strategy ignores any information about the map, and connects the

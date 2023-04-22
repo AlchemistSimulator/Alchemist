@@ -11,19 +11,19 @@ package it.unibo.alchemist.model.implementations.reactions;
 
 import it.unibo.alchemist.exceptions.BiochemistryParseException;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
-import it.unibo.alchemist.model.implementations.actions.AddJunctionInCell;
-import it.unibo.alchemist.model.implementations.actions.AddJunctionInNeighbor;
-import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInCell;
-import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInEnv;
-import it.unibo.alchemist.model.implementations.actions.ChangeBiomolConcentrationInNeighbor;
-import it.unibo.alchemist.model.implementations.actions.RemoveJunctionInCell;
-import it.unibo.alchemist.model.implementations.actions.RemoveJunctionInNeighbor;
-import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInCell;
-import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInEnv;
-import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor;
-import it.unibo.alchemist.model.implementations.conditions.EnvPresent;
-import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell;
-import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent;
+import it.unibo.alchemist.model.actions.AddJunctionInCell;
+import it.unibo.alchemist.model.actions.AddJunctionInNeighbor;
+import it.unibo.alchemist.model.actions.ChangeBiomolConcentrationInCell;
+import it.unibo.alchemist.model.actions.ChangeBiomolConcentrationInEnv;
+import it.unibo.alchemist.model.actions.ChangeBiomolConcentrationInNeighbor;
+import it.unibo.alchemist.model.actions.RemoveJunctionInCell;
+import it.unibo.alchemist.model.actions.RemoveJunctionInNeighbor;
+import it.unibo.alchemist.model.conditions.BiomolPresentInCell;
+import it.unibo.alchemist.model.conditions.BiomolPresentInEnv;
+import it.unibo.alchemist.model.conditions.BiomolPresentInNeighbor;
+import it.unibo.alchemist.model.conditions.EnvPresent;
+import it.unibo.alchemist.model.conditions.JunctionPresentInCell;
+import it.unibo.alchemist.model.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
@@ -159,8 +159,8 @@ public class BiochemicalReactionBuilder<P extends Position<P> & Vector<P>> {
     private static final class BiochemistryDSLVisitor<P extends Position<? extends P>>
             extends BiochemistrydslBaseVisitor<Reaction<Double>> {
 
-        private static final String CONDITIONS_PACKAGE = "it.unibo.alchemist.model.implementations.conditions.";
-        private static final String ACTIONS_PACKAGE = "it.unibo.alchemist.model.implementations.actions.";
+        private static final String CONDITIONS_PACKAGE = "it.unibo.alchemist.model.conditions.";
+        private static final String ACTIONS_PACKAGE = "it.unibo.alchemist.model.actions.";
 
         private final Factory factory;
         private final @Nonnull RandomGenerator rand;

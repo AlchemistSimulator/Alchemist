@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.implementations.movestrategies.speed
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
+import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
 
 /**
  * Similar to [ConstantSpeed] but takes in consideration the time distribution's rate instead of the reaction's rate.

@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.BiochemistryIncarnation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition
+import it.unibo.alchemist.model.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

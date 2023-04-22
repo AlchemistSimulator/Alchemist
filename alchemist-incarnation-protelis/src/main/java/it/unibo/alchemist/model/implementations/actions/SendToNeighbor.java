@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Node;

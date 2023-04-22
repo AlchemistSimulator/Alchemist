@@ -14,7 +14,7 @@ import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.api.SupportedIncarnations
+import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 

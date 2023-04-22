@@ -11,7 +11,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
 /**
  * This strategy makes the node move at an average constant speed, which is

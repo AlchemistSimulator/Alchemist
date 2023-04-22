@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 import it.unibo.alchemist.model.util.IterableExtension.randomElement
 import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
@@ -49,7 +49,11 @@ open class CognitiveAgentWander<T>(
     environment,
     reaction,
     pedestrian,
-    TargetSelectionStrategy { randomGenerator.position(environment) },
+    TargetSelectionStrategy {
+        randomGenerator.position(
+            environment,
+        )
+    },
 ) {
 
     private val heading by lazy {

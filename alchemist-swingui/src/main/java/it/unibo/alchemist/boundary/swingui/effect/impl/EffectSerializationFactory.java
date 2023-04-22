@@ -20,7 +20,7 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.swingui.effect.api.LayerToFunctionMapper;
-import it.unibo.alchemist.model.api.SupportedIncarnations;
+import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.util.ClassPathScanner;
 import org.danilopianini.lang.CollectionWithCurrentElement;
 import org.danilopianini.lang.ImmutableCollectionWithCurrentElement;

@@ -8,7 +8,7 @@
 package it.unibo.alchemist.model.implementations.movestrategies.speed;
 
 import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
 /**
  * This strategy makes the node move every time of a fixed amount of space.

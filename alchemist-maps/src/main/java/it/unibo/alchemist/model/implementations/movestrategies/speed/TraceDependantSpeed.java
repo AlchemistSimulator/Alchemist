@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.RoutingService;
 import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
 import it.unibo.alchemist.model.Time;
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
 import java.util.Objects;
 

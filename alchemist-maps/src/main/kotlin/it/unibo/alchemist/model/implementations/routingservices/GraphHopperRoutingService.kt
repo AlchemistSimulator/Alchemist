@@ -20,10 +20,10 @@ import com.graphhopper.routing.util.DefaultVehicleEncodedValuesFactory
 import com.graphhopper.routing.util.EncodingManager
 import com.graphhopper.util.PMap
 import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Route
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute
 import it.unibo.alchemist.model.implementations.routes.PolygonalChain
-import it.unibo.alchemist.model.interfaces.Route
 import it.unibo.alchemist.model.interfaces.RoutingService
 import net.harawata.appdirs.AppDirsFactory
 import org.apache.commons.codec.binary.Base32

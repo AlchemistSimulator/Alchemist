@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.model.api.SupportedIncarnations;
+import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Incarnation;

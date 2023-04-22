@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
 
 import java.util.Collection;
 import java.util.Collections;

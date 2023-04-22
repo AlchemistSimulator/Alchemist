@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.implementations.conditions
 
 import it.unibo.alchemist.model.ScafiIncarnationUtils
+import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.implementations.actions.RunScafiProgram
 import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
 import it.unibo.alchemist.model.{Condition, Context, Node, Reaction}

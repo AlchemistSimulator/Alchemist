@@ -13,7 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.math.RealDistributionUtil;
+import it.unibo.alchemist.util.RealDistributionUtil;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Time;
 

@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 
 import com.google.common.collect.Lists;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.api.SupportedIncarnations;
+import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.actions.TargetMapWalker;
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment;
 import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;

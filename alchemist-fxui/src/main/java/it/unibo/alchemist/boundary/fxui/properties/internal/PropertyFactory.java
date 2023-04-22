@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.fxui.properties.internal;
 
 import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty;
-import it.unibo.alchemist.model.api.SupportedIncarnations;
+import it.unibo.alchemist.model.SupportedIncarnations;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SetProperty;
 import javafx.beans.property.SimpleListProperty;

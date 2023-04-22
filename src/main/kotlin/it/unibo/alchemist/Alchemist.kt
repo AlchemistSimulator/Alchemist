@@ -17,7 +17,7 @@ import it.unibo.alchemist.cli.CLIMaker
 import it.unibo.alchemist.launch.Launcher
 import it.unibo.alchemist.launch.Priority
 import it.unibo.alchemist.launch.Validation
-import it.unibo.alchemist.model.api.SupportedIncarnations
+import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.util.ClassPathScanner
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser

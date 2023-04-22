@@ -7,6 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist.model.actions.AbstractLocalAction
 import it.unibo.alchemist.model.{Node, Position, Reaction}
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager

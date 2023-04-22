@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.implementations.reactions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.actions.AbstractNeighborAction;
-import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition;
+import it.unibo.alchemist.model.actions.AbstractNeighborAction;
+import it.unibo.alchemist.model.conditions.AbstractNeighborCondition;
 import it.unibo.alchemist.model.Condition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;

@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
+import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 
 import java.util.Iterator;
 import java.util.Optional;

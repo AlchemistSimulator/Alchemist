@@ -12,10 +12,11 @@ package it.unibo.alchemist.model.implementations.actions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.actions.AbstractConfigurableMoveNode
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.movestrategies.RoutingStrategy
+import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy
+import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 
 /**
  * It's an [AbstractConfigurableMoveNode] in the Euclidean world, which provides a default [interpolatePositions]

@@ -3,7 +3,7 @@ package it.unibo.alchemist.model.implementations.movestrategies
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
 
 /**
  * Base class for [TargetSelectionStrategy] offering automatic target change

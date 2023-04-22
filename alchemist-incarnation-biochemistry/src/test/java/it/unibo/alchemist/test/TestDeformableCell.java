@@ -9,13 +9,15 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.model.BiochemistryIncarnation;
+import it.unibo.alchemist.model.actions.CellTensionPolarization;
+import it.unibo.alchemist.model.conditions.TensionPresent;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.properties.CircularDeformableCell;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.interfaces.EnvironmentSupportingDeformableCells;
+import it.unibo.alchemist.model.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellProperty;
@@ -142,7 +144,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing {@link it.unibo.alchemist.model.implementations.conditions.TensionPresent}.
+     * Testing {@link TensionPresent}.
      */
     @Test
     @SuppressWarnings("CPD-START")
@@ -173,7 +175,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing {@link it.unibo.alchemist.model.implementations.conditions.TensionPresent}.
+     * Testing {@link TensionPresent}.
      */
     @Test
     void testTensionPresent2() {
@@ -213,7 +215,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing {@link it.unibo.alchemist.model.implementations.actions.CellTensionPolarization}.
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     void testTensionPolarization1() {
@@ -247,7 +249,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing {@link it.unibo.alchemist.model.implementations.actions.CellTensionPolarization}.
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     void testTensionPolarization2() {
@@ -279,7 +281,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing {@link it.unibo.alchemist.model.implementations.actions.CellTensionPolarization}.
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     void testTensionPolarization3() {
@@ -324,7 +326,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing {@link it.unibo.alchemist.model.implementations.actions.CellTensionPolarization}.
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     void testTensionPolarization4() {
@@ -342,7 +344,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing {@link it.unibo.alchemist.model.implementations.actions.CellTensionPolarization}.
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     void testTensionPolarization5() {
@@ -360,7 +362,7 @@ class TestDeformableCell {
     }
 
     /**
-     * Testing {@link it.unibo.alchemist.model.implementations.actions.CellTensionPolarization}.
+     * Testing {@link CellTensionPolarization}.
      */
     @Test
     void testTensionPolarization6() {

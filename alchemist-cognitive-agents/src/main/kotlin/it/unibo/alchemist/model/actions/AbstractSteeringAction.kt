@@ -18,7 +18,6 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.geometry.GeometricTransformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.implementations.actions.AbstractMoveNode
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**

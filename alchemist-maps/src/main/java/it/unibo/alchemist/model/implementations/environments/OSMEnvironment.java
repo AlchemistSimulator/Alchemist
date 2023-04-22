@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.Route;
 import org.jooq.lambda.Unchecked;
 import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;

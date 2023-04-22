@@ -13,6 +13,7 @@ import it.unibo.alchemist.expressions.implementations.Type;
 import it.unibo.alchemist.expressions.implementations.UIDNode;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.conditions.AbstractCondition;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaCondition;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;

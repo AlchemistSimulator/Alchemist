@@ -12,7 +12,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.api.SupportedIncarnations
+import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.environments.EnvironmentWithDynamics
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

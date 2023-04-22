@@ -11,7 +11,7 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.swingui.impl.ColorChannel;
-import it.unibo.alchemist.model.api.SupportedIncarnations;
+import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;

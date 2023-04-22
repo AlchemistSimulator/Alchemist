@@ -3,6 +3,7 @@ package it.unibo.alchemist.model.implementations.conditions
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.geometry.GeometricTransformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty

@@ -9,14 +9,15 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.actions.AbstractConfigurableMoveNode;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.interfaces.RoutingService;
 import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
-import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
-import it.unibo.alchemist.model.interfaces.movestrategies.SpeedSelectionStrategy;
-import it.unibo.alchemist.model.interfaces.movestrategies.TargetSelectionStrategy;
+import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
+import it.unibo.alchemist.model.movestrategies.SpeedSelectionStrategy;
+import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy;
 import it.unibo.alchemist.utils.MapUtils;
 
 /**

@@ -16,7 +16,7 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.loader.deployments.Polygon
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.api.SupportedIncarnations
+import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import org.apache.commons.math3.random.MersenneTwister

@@ -16,7 +16,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.model.api.SupportedIncarnations;
+import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GlobalReaction;
 import it.unibo.alchemist.model.Incarnation;

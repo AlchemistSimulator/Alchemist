@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.math.RealDistributionUtil
+import it.unibo.alchemist.util.RealDistributionUtil
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 

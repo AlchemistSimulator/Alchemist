@@ -19,10 +19,10 @@ import it.unibo.alchemist.model.BiochemistryIncarnation
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.implementations.conditions.AbstractNeighborCondition
-import it.unibo.alchemist.model.implementations.conditions.BiomolPresentInNeighbor
-import it.unibo.alchemist.model.implementations.conditions.JunctionPresentInCell
-import it.unibo.alchemist.model.implementations.conditions.NeighborhoodPresent
+import it.unibo.alchemist.model.conditions.AbstractNeighborCondition
+import it.unibo.alchemist.model.conditions.BiomolPresentInNeighbor
+import it.unibo.alchemist.model.conditions.JunctionPresentInCell
+import it.unibo.alchemist.model.conditions.NeighborhoodPresent
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.implementations.molecules.Junction

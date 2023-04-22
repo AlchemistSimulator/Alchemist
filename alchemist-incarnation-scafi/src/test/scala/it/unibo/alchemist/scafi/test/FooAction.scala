@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.scafi.test
 
+import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.{Node, Reaction}
-import it.unibo.alchemist.model.implementations.actions.AbstractAction
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.{Action, Context}
 

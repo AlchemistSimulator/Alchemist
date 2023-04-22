@@ -9,10 +9,10 @@ package it.unibo.alchemist.model.implementations.movestrategies.routing;
 
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Route;
+import it.unibo.alchemist.model.Route;
 import it.unibo.alchemist.model.interfaces.RoutingService;
 import it.unibo.alchemist.model.interfaces.RoutingServiceOptions;
-import it.unibo.alchemist.model.interfaces.movestrategies.RoutingStrategy;
+import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 
 /**
  * This strategy computes a route along streets allowed for a selected

@@ -8,6 +8,7 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
+import it.unibo.alchemist.model.conditions.AbstractCondition;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.Context;

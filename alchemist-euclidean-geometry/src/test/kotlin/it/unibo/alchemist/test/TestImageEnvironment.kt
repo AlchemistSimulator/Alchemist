@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.model.api.SupportedIncarnations
+import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.ImageEnvironment
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Assertions

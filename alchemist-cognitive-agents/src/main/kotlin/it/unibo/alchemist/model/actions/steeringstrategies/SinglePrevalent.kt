@@ -11,11 +11,11 @@ package it.unibo.alchemist.model.actions.steeringstrategies
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitiveagents.NavigationAction
+import it.unibo.alchemist.model.cognitiveagents.NavigationAction2D
 import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 

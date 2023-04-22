@@ -11,9 +11,9 @@ package it.unibo.alchemist.model.actions.navigationstrategies
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.cognitiveagents.NavigationAction2D
 import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy
-import it.unibo.alchemist.model.interfaces.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.NavigationStrategy2D
+import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
@@ -131,7 +131,7 @@ open class Exploring<T, L : Euclidean2DConvexShape, R>(
     protected open val ConvexPolygon.area: Double get() = with(asAwtShape().bounds2D) { abs(width * height) }
 
     /**
-     * A rough estimation of the area of a [Pedestrian].
+     * A rough estimation of the area of a [it.unibo.alchemist.model.implementations.properties.Pedestrian].
      */
     protected open val Node<T>.area: Double get() =
         Math.PI * asProperty<T, AreaProperty<T>>().shape.radius.pow(2)

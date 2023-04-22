@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.actions.navigationstrategies
 
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.cognitiveagents.NavigationAction2D
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.NavigationAction2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage

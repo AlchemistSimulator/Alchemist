@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.Time;
 
 /**
- * 
+ *
  */
 public abstract class AbstractGPSTimeAlignment implements GPSTimeAlignment {
 

@@ -20,7 +20,7 @@ import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.utils.MapUtils;
 
 /**
- * 
+ *
  */
 public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPSTrace {
 

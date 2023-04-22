@@ -15,9 +15,6 @@ import java.util.Map;
 import org.danilopianini.lang.HashString;
 
 
-/**
- * 
- */
 public interface IExpression extends Serializable, Cloneable {
 
     /**

@@ -34,9 +34,6 @@ import javax.annotation.Nonnull;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * 
- */
 class TestBiomolLayer {
 
     private static final BiochemistryIncarnation INCARNATION = new BiochemistryIncarnation();

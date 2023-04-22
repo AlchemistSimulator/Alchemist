@@ -30,9 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- * 
- */
 class TestGPSLoader {
 
     private static final String BASE_DIR = "trace/";

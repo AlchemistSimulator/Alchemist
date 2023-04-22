@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.implementations.reactions
 
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.implementations.actions.steeringstrategies.Nearest
+import it.unibo.alchemist.model.actions.steeringstrategies.Nearest
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
  *
  * @param environment
  *          the environment inside which the pedestrian moves.
- * @param node
+ * @param pedestrian
  *          the owner of this reaction.
  * @param timeDistribution
  *          the time distribution according to this the reaction executes.

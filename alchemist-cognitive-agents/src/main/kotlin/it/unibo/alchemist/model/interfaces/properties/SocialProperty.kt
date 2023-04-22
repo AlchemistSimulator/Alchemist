@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.interfaces.properties
 
 import it.unibo.alchemist.model.NodeProperty
-import it.unibo.alchemist.model.interfaces.Group
+import it.unibo.alchemist.model.cognitiveagents.Group
 
 /**
  * The pedestrian's capability for form groups.

@@ -14,7 +14,6 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.GeometricTransformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.implementations.actions.takePercentage
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.pathExists
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
@@ -23,6 +22,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.util.IterableExtension.shuffled
+import it.unibo.alchemist.util.Lists.takeFraction
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
@@ -64,7 +64,7 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
             .filter { it.diameter > node.asProperty<T, OccupiesSpaceProperty<T, P, A>>().shape.diameter * minArea }
             .shuffled(randomGenerator)
             .toList()
-            .takePercentage(knowledgeDegree)
+            .takeFraction(knowledgeDegree)
             .toMutableList()
         /*
          * landmarks[i] will contain the landmark generated in rooms[i].

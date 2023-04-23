@@ -11,6 +11,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.environments.Abstract2DEnvironment;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.routingservices.GraphHopperOptions;
 import it.unibo.alchemist.model.implementations.routingservices.GraphHopperRoutingService;

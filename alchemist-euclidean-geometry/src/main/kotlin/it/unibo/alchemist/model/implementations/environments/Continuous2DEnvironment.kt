@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
+import it.unibo.alchemist.model.environments.Abstract2DEnvironment
 import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition

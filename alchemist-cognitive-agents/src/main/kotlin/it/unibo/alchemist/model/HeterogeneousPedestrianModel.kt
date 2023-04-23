@@ -14,13 +14,13 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Compliance
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
  * A pedestrian with individual characteristics.
  */
-data class HeterogeneousPedestrianModel<T, S : Vector<S>, A : GeometricTransformation<S>>(
+data class HeterogeneousPedestrianModel<T, S : Vector<S>, A : Transformation<S>>(
     /**
      * The age of this pedestrian.
      */

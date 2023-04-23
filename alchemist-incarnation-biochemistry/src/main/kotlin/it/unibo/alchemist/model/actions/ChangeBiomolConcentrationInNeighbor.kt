@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
-import it.unibo.alchemist.model.util.IterableExtension.randomElement
+import it.unibo.alchemist.util.Iterables.randomElement
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

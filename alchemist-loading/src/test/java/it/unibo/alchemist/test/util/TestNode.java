@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.test.util;
 
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.Environment;
 
 /**

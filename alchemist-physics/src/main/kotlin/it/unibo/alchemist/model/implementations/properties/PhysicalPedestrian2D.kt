@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.implementations.properties
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
+import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
@@ -24,7 +24,8 @@ import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
-import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
+import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.commons.math3.random.RandomGenerator
 

@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
-import it.unibo.alchemist.util.advancedLogistic
+import it.unibo.alchemist.util.math.advancedLogistic
 
 /**
  * The fear emotion.

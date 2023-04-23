@@ -15,6 +15,7 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
+import it.unibo.alchemist.model.properties.AbstractNodeProperty
 
 /**
  * The [node] occupies a rectangular width x height area.

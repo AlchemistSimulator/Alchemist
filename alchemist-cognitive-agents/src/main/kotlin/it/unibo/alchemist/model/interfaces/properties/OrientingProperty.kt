@@ -11,10 +11,10 @@ package it.unibo.alchemist.model.interfaces.properties
 
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 
 /**
@@ -23,9 +23,9 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
 interface OrientingProperty<T, P, A, L, N, E> : NodeProperty<T>
     where P : Position<P>,
           P : Vector<P>,
-          A : GeometricTransformation<P>,
-          L : ConvexGeometricShape<P, A>,
-          N : ConvexGeometricShape<P, A> {
+          A : Transformation<P>,
+          L : ConvexShape<P, A>,
+          N : ConvexShape<P, A> {
     /**
      * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the
      * percentage of environment the agent is familiar with prior to the start of the simulation (thus it does not
@@ -47,14 +47,14 @@ interface OrientingProperty<T, P, A, L, N, E> : NodeProperty<T>
     /**
      * The volatile memory of the agent: it models the ability to remember areas of the environment already visited
      * since the start of the simulation. Each area is paired with the number of visits. Areas are assumed to be
-     * represented as [ConvexGeometricShape]s, as in [NavigationGraph]s.
+     * represented as [ConvexShape]s, as in [NavigationGraph]s.
      */
-    val volatileMemory: MutableMap<ConvexGeometricShape<P, A>, Int>
+    val volatileMemory: MutableMap<ConvexShape<P, A>, Int>
 
     /**
      * Registers a visit to the provided [area] in the agent's [volatileMemory].
      */
-    fun <M : ConvexGeometricShape<P, A>> registerVisit(area: M) {
+    fun <M : ConvexShape<P, A>> registerVisit(area: M) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
 

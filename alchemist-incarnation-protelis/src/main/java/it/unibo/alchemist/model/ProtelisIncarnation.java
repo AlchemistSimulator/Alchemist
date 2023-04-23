@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.reactions.Event;

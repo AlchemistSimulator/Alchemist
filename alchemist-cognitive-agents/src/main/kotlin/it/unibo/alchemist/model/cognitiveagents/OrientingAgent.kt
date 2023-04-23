@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.cognitiveagents
 
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 
 /**
@@ -24,8 +24,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
  */
 interface OrientingAgent<V, A, L, R> where
       V : Vector<V>,
-      A : GeometricTransformation<V>,
-      L : ConvexGeometricShape<V, A> {
+      A : Transformation<V>,
+      L : ConvexShape<V, A> {
 
     /**
      * The knowledge degree of the agent concerning the environment. This is a Double value in [0, 1] describing the
@@ -43,14 +43,14 @@ interface OrientingAgent<V, A, L, R> where
     /**
      * The volatile memory of the agent: it models the ability to remember areas of the environment already visited
      * since the start of the simulation. Each area is paired with the number of visits. Areas are assumed to be
-     * represented as [ConvexGeometricShape]s, as in [NavigationGraph]s.
+     * represented as [ConvexShape]s, as in [NavigationGraph]s.
      */
-    val volatileMemory: MutableMap<ConvexGeometricShape<V, A>, Int>
+    val volatileMemory: MutableMap<ConvexShape<V, A>, Int>
 
     /**
      * Registers a visit to the provided [area] in the agent's [volatileMemory].
      */
-    fun <M : ConvexGeometricShape<V, A>> registerVisit(area: M) {
+    fun <M : ConvexShape<V, A>> registerVisit(area: M) {
         volatileMemory[area] = (volatileMemory[area] ?: 0) + 1
     }
 }

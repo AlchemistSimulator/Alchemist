@@ -14,7 +14,7 @@ import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.implementations.layers.BidimensionalGaussianLayer
+import it.unibo.alchemist.model.layers.BidimensionalGaussianLayer
 import java.awt.Graphics2D
 import java.util.function.Function
 import java.util.stream.Collectors

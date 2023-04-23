@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
+import it.unibo.alchemist.model.properties.AbstractNodeProperty
 import org.apache.commons.math3.util.FastMath
 import kotlin.math.nextDown
 import kotlin.math.nextUp

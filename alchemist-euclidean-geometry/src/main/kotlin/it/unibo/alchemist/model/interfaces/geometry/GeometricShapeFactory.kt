@@ -9,18 +9,18 @@
 
 package it.unibo.alchemist.model.interfaces.geometry
 
-import it.unibo.alchemist.model.geometry.GeometricShape
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Shape
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
+import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.AwtEuclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import java.io.Serializable
 
 /**
- * Generic factory for [GeometricShape].
+ * Generic factory for [Shape].
  */
-interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> : Serializable {
+interface GeometricShapeFactory<S : Vector<S>, A : Transformation<S>> : Serializable {
 
     /**
      * A special shape which does not occupy space and does not intersect with any other, not even with itself.
@@ -34,11 +34,11 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> :
      * @param shape the shape to check
      * @return the same shape
      */
-    fun requireCompatible(shape: GeometricShape<*, *>): GeometricShape<S, A>
+    fun requireCompatible(shape: Shape<*, *>): Shape<S, A>
 
     companion object {
         /**
-         * Retrieves a factory of [GeometricShape] compatible with the given vector type.
+         * Retrieves a factory of [Shape] compatible with the given vector type.
          *
          * @param <S> The type of vector used
          * @param <A> The supported geometric transformations
@@ -47,12 +47,12 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> :
          */
         inline fun <S, A, reified F> getInstance(): F
             where S : Vector<S>,
-                  A : GeometricTransformation<S>,
+                  A : Transformation<S>,
                   F : GeometricShapeFactory<S, A> =
             getInstance(F::class.java)
 
         /**
-         * Retrieves a factory of [GeometricShape] compatible with the given space.
+         * Retrieves a factory of [Shape] compatible with the given space.
          * (This method is meant for compatibility with java).
          *
          * @param <S> The type of vector used
@@ -65,7 +65,7 @@ interface GeometricShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> :
         @Suppress("UNCHECKED_CAST")
         fun <S, A, F> getInstance(type: Class<F>): F
             where S : Vector<S>,
-                  A : GeometricTransformation<S>,
+                  A : Transformation<S>,
                   F : GeometricShapeFactory<S, A> =
             when (type) {
                 Euclidean2DShapeFactory::class.java -> AwtEuclidean2DShapeFactory()

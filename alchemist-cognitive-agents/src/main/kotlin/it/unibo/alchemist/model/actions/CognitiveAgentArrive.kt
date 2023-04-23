@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -37,7 +37,7 @@ open class CognitiveAgentArrive<T, P, A>(
 ) : AbstractSteeringActionWithTarget<T, P, A>(environment, reaction, pedestrian, target)
     where P : Position<P>,
           P : Vector<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     constructor(
         environment: Environment<T, P>,

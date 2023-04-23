@@ -15,9 +15,9 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
-import it.unibo.alchemist.model.implementations.movestrategies.speed.GloballyConstantSpeed
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.util.AnyExtension.toPosition
+import it.unibo.alchemist.model.movestrategies.speed.GloballyConstantSpeed
+import it.unibo.alchemist.util.Anys.toPosition
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin

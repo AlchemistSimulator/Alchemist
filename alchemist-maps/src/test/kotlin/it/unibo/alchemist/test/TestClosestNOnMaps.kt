@@ -12,8 +12,8 @@ import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
-import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.linkingrules.ClosestN
+import it.unibo.alchemist.model.nodes.GenericNode
 
 class TestClosestNOnMaps : StringSpec({
     "Use ClosestN on maps" {

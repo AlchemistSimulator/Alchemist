@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
-import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
+import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.graph.DefaultEdge
 import java.awt.geom.Ellipse2D

@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph
 
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DNavigationGraph
@@ -35,8 +35,8 @@ open class BaseNavigationGraph<V, A, N, E>(
 ) : NavigationGraph<V, A, N, E>,
     AbstractBaseGraph<N, E>(vertexSupplier, edgeSupplier, graphType)
     where V : Vector<V>,
-          A : GeometricTransformation<V>,
-          N : ConvexGeometricShape<V, A> {
+          A : Transformation<V>,
+          N : ConvexShape<V, A> {
 
     /*
      * Allows to rapidly create a directed or undirected unweighted graph without
@@ -63,8 +63,8 @@ class DirectedNavigationGraph<V, A, N, E>(
     edgeClass: Class<out E>,
 ) : BaseNavigationGraph<V, A, N, E>(edgeClass, true)
     where V : Vector<V>,
-          A : GeometricTransformation<V>,
-          N : ConvexGeometricShape<V, A>
+          A : Transformation<V>,
+          N : ConvexShape<V, A>
 
 /**
  * An undirected unweighted [NavigationGraph], allowing multiple edges between the
@@ -75,8 +75,8 @@ class UndirectedNavigationGraph<V, A, N, E>(
     edgeClass: Class<out E>,
 ) : BaseNavigationGraph<V, A, N, E>(edgeClass, false)
     where V : Vector<V>,
-          A : GeometricTransformation<V>,
-          N : ConvexGeometricShape<V, A>
+          A : Transformation<V>,
+          N : ConvexShape<V, A>
 
 /**
  * A directed [Euclidean2DNavigationGraph].

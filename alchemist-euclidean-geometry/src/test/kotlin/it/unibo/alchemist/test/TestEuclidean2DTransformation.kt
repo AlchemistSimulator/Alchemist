@@ -3,7 +3,7 @@ package it.unibo.alchemist.test
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
+import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory

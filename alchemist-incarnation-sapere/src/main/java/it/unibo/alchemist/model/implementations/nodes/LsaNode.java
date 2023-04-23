@@ -17,6 +17,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.nodes.GenericNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

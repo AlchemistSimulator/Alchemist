@@ -1,14 +1,14 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph
 
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 
 /**
- * A graph used for navigation purposes. Nodes are [ConvexGeometricShape]s, usually representing portions of an
+ * A graph used for navigation purposes. Nodes are [ConvexShape]s, usually representing portions of an
  * environment which are traversable by agents (the advantage of such representation is that agents can freely
  * walk around within a convex area, as it is guaranteed that no obstacle will be found).
  * Note that implementations of this graph must guarantee predictable ordering for the collections they maintain,
@@ -23,8 +23,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
  */
 interface NavigationGraph<V, A, N, E> : org.jgrapht.Graph<N, E> where
       V : Vector<V>,
-      A : GeometricTransformation<V>,
-      N : ConvexGeometricShape<V, A> {
+      A : Transformation<V>,
+      N : ConvexShape<V, A> {
 
     /**
      * @returns the first node containing the specified [position], or null if no node containing it could be found.

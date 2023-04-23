@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.HumanProperty
 import org.apache.commons.math3.random.RandomGenerator
@@ -26,7 +26,7 @@ open class HeterogeneousPedestrian<T, S, A> (
 ) : Pedestrian<T> (
     randomGenerator,
     node,
-) where S : Vector<S>, A : GeometricTransformation<S> {
+) where S : Vector<S>, A : Transformation<S> {
 
     private val human by lazy { node.asProperty<T, HumanProperty<T, S, A>>() }
 

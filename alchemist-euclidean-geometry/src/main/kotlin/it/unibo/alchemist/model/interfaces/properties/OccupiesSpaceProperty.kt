@@ -10,16 +10,16 @@
 package it.unibo.alchemist.model.interfaces.properties
 
 import it.unibo.alchemist.model.NodeProperty
-import it.unibo.alchemist.model.geometry.GeometricShape
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Shape
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 
 /**
  * A node's ability to have a [Shape].
  */
-interface OccupiesSpaceProperty<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeProperty<T> {
+interface OccupiesSpaceProperty<T, S : Vector<S>, A : Transformation<S>> : NodeProperty<T> {
     /**
      * The node's shape.
      */
-    val shape: GeometricShape<S, A>
+    val shape: Shape<S, A>
 }

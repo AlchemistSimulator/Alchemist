@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 
@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
  */
 interface PhysicalSteeringStrategy<T, P, A, F> : SteeringStrategy<T, P>
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
+          A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
 
     /**

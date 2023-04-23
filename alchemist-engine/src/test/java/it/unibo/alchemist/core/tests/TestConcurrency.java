@@ -17,7 +17,7 @@ import it.unibo.alchemist.core.Status;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.timedistributions.DiracComb;

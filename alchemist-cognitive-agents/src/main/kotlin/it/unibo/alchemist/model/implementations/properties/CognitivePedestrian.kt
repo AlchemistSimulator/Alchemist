@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import org.apache.commons.math3.random.RandomGenerator
@@ -22,7 +22,7 @@ class CognitivePedestrian<T, S, A>(
     randomGenerator: RandomGenerator,
     node: Node<T>,
 ) : HeterogeneousPedestrian<T, S, A>(randomGenerator, node)
-    where S : Vector<S>, A : GeometricTransformation<S> {
+    where S : Vector<S>, A : Transformation<S> {
 
     private val cognitiveModel by lazy { node.asProperty<T, CognitiveProperty<T>>().cognitiveModel }
 

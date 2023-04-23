@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -30,7 +30,7 @@ class CognitiveAgentCombineSteering<T, P, A>(
     private val steerStrategy: SteeringStrategy<T, P>,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     override fun cloneAction(node: Node<T>, reaction: Reaction<T>): CognitiveAgentCombineSteering<T, P, A> =
         CognitiveAgentCombineSteering(environment, reaction, node.pedestrianProperty, actions, steerStrategy)

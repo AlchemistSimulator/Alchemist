@@ -11,9 +11,9 @@ package it.unibo.alchemist.model.interfaces.environments
 
 import it.unibo.alchemist.model.Obstacle
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 
 /**
@@ -24,6 +24,6 @@ interface PhysicsEnvironmentWithGraph<W, T, P, A, N, E, F> :
     PhysicsEnvironment<T, P, A, F>
     where W : Obstacle<P>,
           P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
-          N : ConvexGeometricShape<P, A>,
+          A : Transformation<P>,
+          N : ConvexShape<P, A>,
           F : GeometricShapeFactory<P, A>

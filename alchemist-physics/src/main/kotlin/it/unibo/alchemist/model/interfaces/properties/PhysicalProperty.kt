@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.interfaces.properties
 
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
  */
 interface PhysicalProperty<T, P, A, F> : NodeProperty<T>
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
+          A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
 
     /**

@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
@@ -33,7 +33,7 @@ class CognitiveAgentCohesion<T, P, A>(
     override val pedestrian: PedestrianProperty<T>,
 ) : AbstractGroupSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     private val socialGroup = node.asProperty<T, SocialProperty<T>>().group.members
 

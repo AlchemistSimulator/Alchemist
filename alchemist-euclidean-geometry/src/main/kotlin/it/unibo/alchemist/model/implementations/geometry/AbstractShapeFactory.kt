@@ -9,15 +9,16 @@
 
 package it.unibo.alchemist.model.implementations.geometry
 
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 
 /**
- * Base class for [GeometricTransformation] providing a standard implementation for
+ * Base class for [Transformation] providing a standard implementation for
  * [GeometricShapeFactory.adimensional].
  */
-abstract class AbstractShapeFactory<S : Vector<S>, A : GeometricTransformation<S>> : GeometricShapeFactory<S, A> {
+abstract class AbstractShapeFactory<S : Vector<S>, A : Transformation<S>> : GeometricShapeFactory<S, A> {
     /**
      * The default origin for the shapes.
      */

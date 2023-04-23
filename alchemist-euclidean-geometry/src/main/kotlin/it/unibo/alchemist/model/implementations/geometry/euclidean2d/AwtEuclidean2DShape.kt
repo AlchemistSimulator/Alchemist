@@ -9,12 +9,11 @@
 
 package it.unibo.alchemist.model.implementations.geometry.euclidean2d
 
-import it.unibo.alchemist.model.implementations.geometry.AdimensionalShape
+import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import java.awt.Shape
 import java.awt.geom.AffineTransform
 import java.awt.geom.Point2D
 
@@ -22,7 +21,7 @@ import java.awt.geom.Point2D
  * [it.unibo.alchemist.model.interfaces.geometry.GeometricShape] delegated to java.awt.geom.
  */
 internal class AwtEuclidean2DShape(
-    private val shape: Shape,
+    private val shape: java.awt.Shape,
     private val origin: Euclidean2DPosition = Euclidean2DPosition(0.0, 0.0),
 ) : Euclidean2DShape, AwtShapeCompatible {
 

@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -25,7 +25,7 @@ open class CognitiveAgentSeek<T, P, A>(
     target: P,
 ) : CognitiveAgentArrive<T, P, A>(environment, reaction, pedestrian, 0.0, 0.0, target)
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     constructor(
         environment: Environment<T, P>,

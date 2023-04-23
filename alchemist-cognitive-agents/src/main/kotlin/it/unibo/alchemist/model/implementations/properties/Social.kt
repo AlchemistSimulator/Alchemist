@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.cognitiveagents.Group
 import it.unibo.alchemist.model.implementations.groups.Alone
 import it.unibo.alchemist.model.implementations.groups.GenericGroup
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
+import it.unibo.alchemist.model.properties.AbstractNodeProperty
 
 /**
  * Base implementation of a [SocialProperty].

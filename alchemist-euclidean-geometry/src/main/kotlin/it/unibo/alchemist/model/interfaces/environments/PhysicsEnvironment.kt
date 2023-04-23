@@ -3,8 +3,8 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.GeometricShape
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Shape
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 interface PhysicsEnvironment<T, P, A, F> : EuclideanEnvironment<T, P>
     where P : Position<P>,
           P : Vector<P>,
-          A : GeometricTransformation<P>,
+          A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
     /**
      * A factory of shapes compatible with this environment.
@@ -50,7 +50,7 @@ interface PhysicsEnvironment<T, P, A, F> : EuclideanEnvironment<T, P>
      * @param node The node
      * @return Its shape
      */
-    fun getShape(node: Node<T>): GeometricShape<P, A>
+    fun getShape(node: Node<T>): Shape<P, A>
 
     /**
      * Gets all nodes whose shape.intersect is true for the given shape.
@@ -58,7 +58,7 @@ interface PhysicsEnvironment<T, P, A, F> : EuclideanEnvironment<T, P>
      * @param shape the shape
      * @return the set of nodes colliding with the given shape
      */
-    fun getNodesWithin(shape: GeometricShape<P, A>): List<Node<T>>
+    fun getNodesWithin(shape: Shape<P, A>): List<Node<T>>
 
     /**
      * Computes the farthest position reachable by a [node] towards a [desiredPosition], avoiding node overlapping.

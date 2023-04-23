@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.linkingrules;
 
-import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;

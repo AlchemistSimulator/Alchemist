@@ -12,13 +12,13 @@ package it.unibo.alchemist.model.interfaces.environments
 import it.unibo.alchemist.model.EnvironmentWithObstacles
 import it.unibo.alchemist.model.Obstacle
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 
 /**
- * An [EnvironmentWithObstacles] providing a [NavigationGraph]. This is a graph whose nodes are [ConvexGeometricShape]s
+ * An [EnvironmentWithObstacles] providing a [NavigationGraph]. This is a graph whose nodes are [ConvexShape]s
  * representing areas of the environment traversable by agents (namely, walkable areas), whereas edges represent
  * connections between these areas. For instance, in an indoor environment, nodes should represent rooms and corridors,
  * whereas edges should represent doors and passages. This data structure is also known as
@@ -27,8 +27,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Navigation
 interface EnvironmentWithGraph<W, T, P, A, N, E> : EnvironmentWithObstacles<W, T, P>
     where W : Obstacle<P>,
           P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
-          N : ConvexGeometricShape<P, A> {
+          A : Transformation<P>,
+          N : ConvexShape<P, A> {
 
     /**
      * The navigation graph.

@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.cognitiveagents.impact.cognitive
 
-import it.unibo.alchemist.util.logistic
+import it.unibo.alchemist.util.math.logistic
 
 /**
  * The intention to evacuate of .

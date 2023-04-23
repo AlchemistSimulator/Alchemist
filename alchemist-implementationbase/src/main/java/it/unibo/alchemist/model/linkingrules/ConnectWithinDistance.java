@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.linkingrules;
 
-import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;

@@ -10,9 +10,9 @@
 package it.unibo.alchemist.model.cognitiveagents
 
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 
 /**
  * Defines what a node should do when in a new room (= environment's area), this is designed to be used jointly
@@ -29,9 +29,9 @@ import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
  */
 interface NavigationStrategy<T, P, A, L, R, N, E>
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
-          L : ConvexGeometricShape<P, A>,
-          N : ConvexGeometricShape<P, A> {
+          A : Transformation<P>,
+          L : ConvexShape<P, A>,
+          N : ConvexShape<P, A> {
 
     /**
      * The [NavigationAction] used to navigate the environment.

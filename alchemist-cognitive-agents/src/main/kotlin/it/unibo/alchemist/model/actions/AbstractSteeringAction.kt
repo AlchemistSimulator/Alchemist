@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitiveagents.SteeringAction
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -37,7 +37,7 @@ abstract class AbstractSteeringAction<T, P, A>(
     SteeringAction<T, P>
     where P : Position<P>,
           P : Vector<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     /**
      * The maximum distance the node can walk, this is a length.

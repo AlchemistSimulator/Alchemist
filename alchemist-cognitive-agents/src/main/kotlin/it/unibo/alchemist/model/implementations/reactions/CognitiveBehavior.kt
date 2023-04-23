@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.model.reactions.AbstractReaction
@@ -22,7 +22,7 @@ class CognitiveBehavior<T, V, A>(
     node: Node<T>,
     timeDistribution: TimeDistribution<T>,
 ) : AbstractReaction<T>(node, timeDistribution)
-    where V : Vector<V>, A : GeometricTransformation<V> {
+    where V : Vector<V>, A : Transformation<V> {
 
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
         CognitiveBehavior(node, timeDistribution)

@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.interfaces.properties
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.GeometricShape
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Shape
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 
@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
  */
 interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
+          A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
 
     /**
@@ -51,13 +51,13 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     /**
      * The comfort area of this pedestrian, it's a circle of radius [shape].radius + [comfortRay].
      */
-    val comfortArea: GeometricShape<P, A>
+    val comfortArea: Shape<P, A>
 
     /**
      * Rectangle of influence. When a pedestrian enters this area, the node could experience a tangential
      * avoidance force. See [avoid].
      */
-    val rectangleOfInfluence: GeometricShape<P, A>
+    val rectangleOfInfluence: Shape<P, A>
 
     /**
      * Computes the repulsion force caused by a node that entered the [comfortArea]. This is derived from the work

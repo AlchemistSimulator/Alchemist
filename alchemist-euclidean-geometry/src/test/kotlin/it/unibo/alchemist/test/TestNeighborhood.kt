@@ -13,9 +13,9 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
-import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods
+import it.unibo.alchemist.model.nodes.GenericNode
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

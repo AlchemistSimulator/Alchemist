@@ -19,8 +19,8 @@ import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
-import it.unibo.alchemist.model.util.IterableExtension.randomElement
-import it.unibo.alchemist.model.util.RandomGeneratorExtension.nextDouble
+import it.unibo.alchemist.util.Iterables.randomElement
+import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.EnvironmentWithObstacles
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
@@ -37,7 +37,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
     private val valueIn: (P) -> Double,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position2D<P>, P : Vector2D<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     /**
      * @returns the next relative position reached by the node. The set of reachable positions is discretized

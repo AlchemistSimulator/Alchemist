@@ -12,16 +12,17 @@ package it.unibo.alchemist.model.implementations.properties
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.pathExists
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
-import it.unibo.alchemist.model.util.IterableExtension.shuffled
+import it.unibo.alchemist.model.properties.AbstractNodeProperty
+import it.unibo.alchemist.util.Iterables.shuffled
 import it.unibo.alchemist.util.Lists.takeFraction
 import org.apache.commons.math3.random.RandomGenerator
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
@@ -49,11 +50,11 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
 ) : AbstractNodeProperty<T>(node), OrientingProperty<T, P, A, L, N, DefaultEdge>
     where P : Position<P>,
           P : Vector<P>,
-          A : GeometricTransformation<P>,
-          L : ConvexGeometricShape<P, A>,
-          N : ConvexGeometricShape<P, A> {
+          A : Transformation<P>,
+          L : ConvexShape<P, A>,
+          N : ConvexShape<P, A> {
 
-    override val volatileMemory: MutableMap<ConvexGeometricShape<P, A>, Int> = HashMap()
+    override val volatileMemory: MutableMap<ConvexShape<P, A>, Int> = HashMap()
 
     override val cognitiveMap: NavigationGraph<P, A, L, DefaultEdge> by lazy {
         val environmentGraph = environment.graph

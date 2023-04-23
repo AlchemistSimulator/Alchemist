@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitiveagents.GroupSteeringAction
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -28,7 +28,7 @@ abstract class AbstractGroupSteeringAction<T, P, A>(
     GroupSteeringAction<T, P>
     where P : Position<P>,
           P : Vector<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     /**
      * Computes the centroid of the [group] in absolute coordinates.

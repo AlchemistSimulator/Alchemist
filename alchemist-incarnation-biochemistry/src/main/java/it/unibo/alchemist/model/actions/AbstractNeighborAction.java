@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.util.IterableExtension;
+import it.unibo.alchemist.util.Iterables;
 import org.apache.commons.math3.random.RandomGenerator;
 
 /**
@@ -53,7 +53,7 @@ public abstract class AbstractNeighborAction<T> extends AbstractRandomizableActi
     public void execute() {
         final Neighborhood<T> neighborhood = environment.getNeighborhood(node);
         if (!neighborhood.isEmpty()) {
-            execute(IterableExtension.INSTANCE.randomElement(neighborhood, getRandomGenerator()));
+            execute(Iterables.INSTANCE.randomElement(neighborhood, getRandomGenerator()));
         }
     }
 

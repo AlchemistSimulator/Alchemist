@@ -4,10 +4,10 @@ import it.unibo.alchemist.loader.deployments.Polygon
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.implementations.movestrategies.ChangeTargetOnCollision
 import it.unibo.alchemist.model.interfaces.MapEnvironment
 import it.unibo.alchemist.model.interfaces.RoutingService
 import it.unibo.alchemist.model.interfaces.RoutingServiceOptions
+import it.unibo.alchemist.model.movestrategies.ChangeTargetOnCollision
 import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed
 import it.unibo.alchemist.model.routes.PolygonalChain
 import org.apache.commons.math3.random.RandomGenerator

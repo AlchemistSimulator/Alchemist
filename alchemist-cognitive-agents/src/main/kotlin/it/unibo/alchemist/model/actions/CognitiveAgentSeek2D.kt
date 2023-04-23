@@ -5,7 +5,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitiveagents.SteeringActionWithTarget
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -28,7 +28,7 @@ open class CognitiveAgentSeek2D<T, P, A>(
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     SteeringActionWithTarget<T, P>
     where P : Position2D<P>, P : Vector2D<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     constructor(
         environment: EuclideanEnvironment<T, P>,

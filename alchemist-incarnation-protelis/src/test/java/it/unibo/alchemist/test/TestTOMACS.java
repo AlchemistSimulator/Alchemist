@@ -31,6 +31,7 @@ class TestTOMACS {
      * 
      */
     @Test
+    @SuppressWarnings("unchecked")
     void testCustomRetainTimeLoading() {
         final Loader loader = LoadAlchemist.from(ResourceLoader.getResource("tomacs.yml"));
         Assertions.assertTrue(StreamSupport.stream(loader.getDefault().getEnvironment().spliterator(), false)

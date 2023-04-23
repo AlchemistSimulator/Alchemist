@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
@@ -27,7 +27,7 @@ open class CognitiveAgentFlee<T, P, A>(
     vararg coords: Double,
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian)
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P> {
+          A : Transformation<P> {
 
     private val danger: P = environment.makePosition(*coords.toTypedArray())
 

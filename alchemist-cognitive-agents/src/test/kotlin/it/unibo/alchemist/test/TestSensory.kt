@@ -15,7 +15,6 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
-import it.unibo.alchemist.model.implementations.nodes.GenericNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.properties.CircularArea
 import it.unibo.alchemist.model.implementations.properties.Pedestrian
@@ -23,6 +22,7 @@ import it.unibo.alchemist.model.implementations.properties.Perceptive2D
 import it.unibo.alchemist.model.implementations.properties.Social
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.nodes.GenericNode
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 

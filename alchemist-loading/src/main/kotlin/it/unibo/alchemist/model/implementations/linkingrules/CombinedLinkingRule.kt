@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods
 
 /**
  * A meta-rule that combines multiple [subRules].

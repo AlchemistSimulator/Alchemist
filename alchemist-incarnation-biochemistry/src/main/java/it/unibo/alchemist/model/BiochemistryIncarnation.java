@@ -11,7 +11,7 @@ package it.unibo.alchemist.model;
 
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.properties.CircularCell;
 import it.unibo.alchemist.model.implementations.reactions.BiochemicalReactionBuilder;

@@ -21,10 +21,10 @@ import it.unibo.alchemist.model.actions.AbstractNavigationAction.NavigationState
 import it.unibo.alchemist.model.actions.AbstractNavigationAction.NavigationState.START
 import it.unibo.alchemist.model.cognitiveagents.NavigationAction
 import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.ConvexGeometricShape
+import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
@@ -48,9 +48,9 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
 ) : AbstractSteeringAction<T, P, A>(environment, reaction, pedestrian),
     NavigationAction<T, P, A, L, R, N, E>
     where P : Position<P>, P : Vector<P>,
-          A : GeometricTransformation<P>,
-          L : ConvexGeometricShape<P, A>,
-          N : ConvexGeometricShape<P, A> {
+          A : Transformation<P>,
+          L : ConvexShape<P, A>,
+          N : ConvexShape<P, A> {
 
     override val navigatingNode = node
 
@@ -119,7 +119,7 @@ abstract class AbstractNavigationAction<T, P, A, L, R, N, E>(
 
     /**
      * Updates [pedestrianPosition] and [currentRoom], this can be costly.
-     * Depending on how [ConvexGeometricShape.contains] manage points on the boundary, the node could
+     * Depending on how [ConvexShape.contains] manage points on the boundary, the node could
      * be inside two (adjacent) rooms at once. This can happen in two cases:
      * - when in [NavigationState.MOVING_TO_CROSSING_POINT_1] or [NavigationState.MOVING_TO_FINAL] and the node
      * is moving on [previousRoom]'s boundary. In such case [previousRoom] is used.

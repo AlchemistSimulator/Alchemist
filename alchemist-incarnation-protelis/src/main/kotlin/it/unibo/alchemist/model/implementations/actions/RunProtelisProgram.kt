@@ -21,7 +21,7 @@ import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
-import it.unibo.alchemist.util.RealDistributionUtil
+import it.unibo.alchemist.util.RealDistributions
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.util.ImmutableListSet
@@ -92,7 +92,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         originalProgram = program.name,
         program = program,
         retentionTime = retentionTime,
-        packetLossDistance = RealDistributionUtil.makeRealDistribution(
+        packetLossDistance = RealDistributions.makeRealDistribution(
             randomGenerator,
             packetLossDistributionName,
             *packetLossDistributionParameters,
@@ -134,7 +134,7 @@ class RunProtelisProgram<P : Position<P>> private constructor(
         originalProgram = program,
         retentionTime = retentionTime,
         program = ProtelisLoader.parse(program),
-        packetLossDistance = RealDistributionUtil.makeRealDistribution(
+        packetLossDistance = RealDistributions.makeRealDistribution(
             randomGenerator,
             packetLossDistributionName,
             *packetLossDistributionParameters,

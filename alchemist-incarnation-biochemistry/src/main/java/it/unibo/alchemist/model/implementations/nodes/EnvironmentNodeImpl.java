@@ -12,6 +12,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EnvironmentNode;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.nodes.GenericNode;
 
 import javax.annotation.Nonnull;
 

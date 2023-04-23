@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.linkingrules;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EnvironmentWithObstacles;
 import it.unibo.alchemist.model.Neighborhood;

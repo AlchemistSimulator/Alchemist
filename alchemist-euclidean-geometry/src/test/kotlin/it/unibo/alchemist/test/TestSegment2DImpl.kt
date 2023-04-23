@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.implementations.geometry.euclidean2d.Segment2DIm
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Intersection2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D
-import it.unibo.alchemist.model.util.RangeExtension.coincidesWith
+import it.unibo.alchemist.util.Ranges.coincidesWith
 import org.junit.jupiter.api.assertThrows
 import kotlin.math.pow
 import kotlin.math.sqrt

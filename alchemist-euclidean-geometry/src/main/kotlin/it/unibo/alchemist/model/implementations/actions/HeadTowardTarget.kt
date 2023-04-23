@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.util.AnyExtension.toPosition
+import it.unibo.alchemist.util.Anys.toPosition
 import org.apache.commons.math3.util.FastMath.toRadians
 import kotlin.math.abs
 import kotlin.math.cos

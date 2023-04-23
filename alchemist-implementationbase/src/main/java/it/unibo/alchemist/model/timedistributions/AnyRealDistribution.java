@@ -14,7 +14,7 @@ import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.util.RealDistributionUtil;
+import it.unibo.alchemist.util.RealDistributions;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Time;
 
@@ -68,7 +68,7 @@ public class AnyRealDistribution<T> extends AbstractDistribution<T> {
             final String distribution,
             final double... parameters
     ) {
-        this(start, RealDistributionUtil.makeRealDistribution(rng, distribution, parameters));
+        this(start, RealDistributions.makeRealDistribution(rng, distribution, parameters));
     }
 
     /**

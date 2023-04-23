@@ -1,13 +1,13 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 
 /**
  * Defines the possible transformations for a [it.unibo.alchemist.model.interfaces.geometry.GeometricShape] in a
  * bidimensional euclidean space.
  */
-interface Euclidean2DTransformation : GeometricTransformation<Euclidean2DPosition> {
+interface Euclidean2DTransformation : Transformation<Euclidean2DPosition> {
 
     /**
      * Counter clockwise rotation.

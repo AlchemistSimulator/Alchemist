@@ -15,12 +15,13 @@ import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.cognitiveagents.CognitiveModel
 import it.unibo.alchemist.model.cognitiveagents.impact.ImpactModel
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
 import it.unibo.alchemist.model.interfaces.properties.HumanProperty
+import it.unibo.alchemist.model.properties.AbstractNodeProperty
 
 /**
  * The node's [CognitiveModel].
@@ -32,7 +33,7 @@ data class Cognitive<T, P, A, F> @JvmOverloads constructor(
 ) : AbstractNodeProperty<T>(node), CognitiveProperty<T>
     where P : Position<P>,
           P : Vector<P>,
-          A : GeometricTransformation<P>,
+          A : Transformation<P>,
           F : GeometricShapeFactory<P, A> {
     override val cognitiveModel: CognitiveModel by lazy {
         ImpactModel(

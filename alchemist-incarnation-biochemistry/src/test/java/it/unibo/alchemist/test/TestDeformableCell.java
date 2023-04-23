@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.actions.CellTensionPolarization;
 import it.unibo.alchemist.model.conditions.TensionPresent;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
-import it.unibo.alchemist.model.implementations.nodes.GenericNode;
+import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.properties.CircularDeformableCell;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;

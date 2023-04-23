@@ -11,9 +11,9 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.util.RangeExtension.coincidesWith
-import it.unibo.alchemist.model.util.RangeExtension.findExtremeCoordsOnX
-import it.unibo.alchemist.model.util.RangeExtension.findExtremeCoordsOnY
+import it.unibo.alchemist.util.Ranges.coincidesWith
+import it.unibo.alchemist.util.Ranges.findExtremeCoordsOnX
+import it.unibo.alchemist.util.Ranges.findExtremeCoordsOnY
 
 class TestRangeExtension : StringSpec() {
 

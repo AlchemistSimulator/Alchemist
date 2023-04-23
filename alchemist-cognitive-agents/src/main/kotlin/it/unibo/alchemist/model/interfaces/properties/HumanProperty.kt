@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.cognitiveagents.impact.individual.Age
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Gender
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.HelpAttitude
 import it.unibo.alchemist.model.cognitiveagents.impact.individual.Speed
-import it.unibo.alchemist.model.geometry.GeometricTransformation
+import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTrans
 /**
  * A capability representing a pedestrian's individual characteristics.
  */
-interface HumanProperty<T, S : Vector<S>, A : GeometricTransformation<S>> : NodeProperty<T> {
+interface HumanProperty<T, S : Vector<S>, A : Transformation<S>> : NodeProperty<T> {
 
     /**
      * The age of this pedestrian.

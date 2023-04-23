@@ -17,12 +17,17 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position2D
 import org.danilopianini.lang.RangedInteger
 import org.danilopianini.view.ExportForGUI
-import java.awt.*
+import java.awt.Color
+import java.awt.Graphics2D
+import java.awt.Point
+import java.awt.Polygon
+import java.awt.Shape
 import java.awt.geom.AffineTransform
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
 
+@Suppress("DEPRECATION")
 class DrawDirectedNode : Effect {
     private var positionsMemory: Map<Int, List<Pair<Position2D<*>, Double>>> = emptyMap()
     private var lastDrawMemory: Map<Int, Int> = emptyMap()
@@ -54,7 +59,7 @@ class DrawDirectedNode : Effect {
         g: Graphics2D,
         node: Node<T>,
         environment: Environment<T, P>,
-        wormhole: Wormhole2D<P>
+        wormhole: Wormhole2D<P>,
     ) {
         val nodePosition: P = environment.getPosition(node)
         val viewPoint: Point = wormhole.getViewPoint(nodePosition)
@@ -62,7 +67,14 @@ class DrawDirectedNode : Effect {
         drawDirectedNode(g, node, x, y, environment, wormhole)
     }
 
-    private fun <T : Any, P : Position2D<P>> drawDirectedNode(graphics2D: Graphics2D, node: Node<T>, x: Int, y: Int, environment: Environment<T, P>, wormhole: Wormhole2D<P>) {
+    private fun <T : Any, P : Position2D<P>> drawDirectedNode(
+        graphics2D: Graphics2D,
+        node: Node<T>,
+        x: Int,
+        y: Int,
+        environment: Environment<T, P>,
+        wormhole: Wormhole2D<P>,
+    ) {
         val currentRotation = rotation(node)
         val transform = computeTransform(x, y, nodeSize.`val`.toDouble(), currentRotation)
         val color = computeColorOrBlack(node, environment)
@@ -80,25 +92,30 @@ class DrawDirectedNode : Effect {
             val (position, rotation) = pair
             val colorFaded =
                 Color(colorBase.red, colorBase.green, colorBase.blue, max(1, (alpha * (index + 1)).toInt()))
+
+            @Suppress("UNCHECKED_CAST")
             val transform = computeTransform(wormhole2D.getViewPoint(position as P).x, wormhole2D.getViewPoint(position).y, nodeSize.`val`.toDouble(), rotation)
             val transformedShape = transform.createTransformedShape(shape)
             graphics2D.color = colorFaded
             graphics2D.fill(transformedShape)
         }
     }
-    private fun computeTransform(x: Int, y: Int, size: Double, rotation: Double): AffineTransform = AffineTransform()
-        .also { it.translate(x.toDouble(), y.toDouble()) }
-        .also { it.scale(size, size) }
-        .also { it.rotate(rotation) }
+    private fun computeTransform(x: Int, y: Int, size: Double, rotation: Double): AffineTransform =
+        AffineTransform().apply {
+            translate(x.toDouble(), y.toDouble())
+            scale(size, size)
+            rotate(rotation)
+        }
 
-    private fun computeColorOrBlack(node: Node<*>, environment: Environment<*, *>): Color =
-        node.takeIf { it.contains(SimpleMolecule(colorMolecule)) }?.getConcentration(SimpleMolecule(colorMolecule))
-            ?.let { it as? Number }
-            ?.let { it.toDouble() }
-            ?.let { Color.getHSBColor((it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(), 1f, 1f) }
-            ?: Color.BLACK
+    private fun computeColorOrBlack(node: Node<*>, environment: Environment<*, *>): Color = node
+        .takeIf { it.contains(SimpleMolecule(colorMolecule)) }
+        ?.getConcentration(SimpleMolecule(colorMolecule))
+        ?.let { it as? Number }
+        ?.let { it.toDouble() }
+        ?.let { Color.getHSBColor((it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(), 1f, 1f) }
+        ?: Color.BLACK
 
-    private fun <P : Position2D<P>, T> updateTrajectory(node: Node<T>, environment: Environment<T, P>): Unit {
+    private fun <P : Position2D<P>, T> updateTrajectory(node: Node<T>, environment: Environment<T, P>) {
         val positions = positionsMemory[node.id] ?: emptyList()
         val lastDraw = lastDrawMemory[node.id] ?: 0
         val roundedTime = environment.simulation.time.toDouble().toInt()
@@ -109,11 +126,12 @@ class DrawDirectedNode : Effect {
         }
     }
 
-    private fun <T> rotation(node: Node<T>): Double =
-        node.takeIf { it.contains(SimpleMolecule(velocityMolecule)) }?.getConcentration(SimpleMolecule(velocityMolecule))
-            ?.let { it as? DoubleArray }
-            ?.let { atan2(it[0], it[1]) }
-            ?: 0.0
+    private fun <T> rotation(node: Node<T>): Double = node.takeIf { it.contains(SimpleMolecule(velocityMolecule)) }
+        ?.getConcentration(SimpleMolecule(velocityMolecule))
+        ?.let { it as? DoubleArray }
+        ?.let { atan2(it[0], it[1]) }
+        ?: 0.0
+
     companion object {
         private const val ADJUST_ALPHA_FACTOR: Int = 4
 
@@ -129,5 +147,4 @@ class DrawDirectedNode : Effect {
 
         private const val DRONE_SIZE = 4.0
     }
-
 }

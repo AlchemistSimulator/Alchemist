@@ -13,7 +13,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.hash.Hashing;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
 import it.unibo.alchemist.model.Environment;
@@ -60,6 +60,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      */
     public static final Molecule APPROXIMATE_NBR_RANGE = new SimpleMolecule("APPROXIMATE_NBR_RANGE");
 
+    @SuppressWarnings("unchecked")
     private final LoadingCache<P, Double> cache = CacheBuilder.newBuilder()
         .expireAfterAccess(10, TimeUnit.MINUTES)
         .maximumSize(100)
@@ -84,7 +85,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     private final Node<Object> node;
     private final RandomGenerator randomGenerator;
     private final Reaction<Object> reaction;
-    private final ProtelisDevice protelisDevice;
+    private final ProtelisDevice<P> protelisDevice;
 
     /**
      * @param environment
@@ -99,6 +100,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      *            the {@link AlchemistNetworkManager} to be used
      */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = INTENTIONAL)
+    @SuppressWarnings("unchecked")
     public AlchemistExecutionContext(
             final Environment<Object, P> environment,
             final Node<Object> localNode,
@@ -126,10 +128,11 @@ public final class AlchemistExecutionContext<P extends Position<P>>
     public AlchemistExecutionContext(
             final Environment<Object, P> environment,
             final Node<Object> localNode,
-            final ProtelisDevice protelisDevice,
+            final ProtelisDevice<P> protelisDevice,
             final Reaction<Object> reaction,
             final RandomGenerator random,
-            final AlchemistNetworkManager networkManager) {
+            final AlchemistNetworkManager networkManager
+    ) {
         super(protelisDevice, networkManager);
         this.environment = environment;
         node = localNode;
@@ -152,7 +155,7 @@ public final class AlchemistExecutionContext<P extends Position<P>>
      */
     public double distanceTo(final DeviceUID target) {
         if (target instanceof ProtelisDevice) {
-            return environment.getDistanceBetweenNodes(node, ((ProtelisDevice) target).getNode());
+            return environment.getDistanceBetweenNodes(node, ((ProtelisDevice<?>) target).getNode());
         }
         throw new IllegalArgumentException("Not a valid " + ProtelisDevice.class.getSimpleName() + ": " + target);
     }

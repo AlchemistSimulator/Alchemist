@@ -9,7 +9,7 @@ package it.unibo.alchemist.boundary.gpsload.api;
 
 import java.util.List;
 import java.util.Objects;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.Time;
 

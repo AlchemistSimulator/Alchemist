@@ -14,7 +14,7 @@ import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmentNoOverlap;
-import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
+import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Actionable;

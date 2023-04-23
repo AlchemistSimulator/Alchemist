@@ -19,7 +19,7 @@ import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.model.times.DoubleTime
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File
 import java.io.Serializable
@@ -70,7 +70,10 @@ abstract class SimulationLauncher : AbstractLauncher() {
         variables: Map<String, *>,
     ): Simulation<T, P> {
         val initialized: InitializedEnvironment<T, P> = loader.getWith(variables)
-        val simulation = Engine(initialized.environment, DoubleTime(parameters.endTime))
+        val simulation = Engine(
+            initialized.environment,
+            DoubleTime(parameters.endTime),
+        )
         if (initialized.exporters.isNotEmpty()) {
             simulation.addOutputMonitor(GlobalExporter(initialized.exporters))
         }

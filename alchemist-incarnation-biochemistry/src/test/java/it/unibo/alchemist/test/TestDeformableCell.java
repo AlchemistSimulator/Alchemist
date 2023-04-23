@@ -15,12 +15,13 @@ import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmen
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.properties.CircularDeformableCell;
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.properties.CircularDeformableCellProperty;
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +93,7 @@ class TestDeformableCell {
     @BeforeEach
     public void setUp() {
         environment = new BioRect2DEnvironmentNoOverlap(incarnation, XMIN, XMAX, YMIN, YMAX);
-        environment.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
+        environment.setLinkingRule(new ConnectWithinDistance<>(2));
         cellNode1 = createDeformableCell(1, 1); // max rigidity
         cellNode2 = createDeformableCell(1, 0.5);
         cellNode3 = createDeformableCell(2, 0.5);

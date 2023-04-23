@@ -18,10 +18,10 @@ import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.reactions.Event
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
+import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.reactions.Event
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -33,7 +33,10 @@ class TestGetPosition {
     private val environment: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment(ProtelisIncarnation())
     private val randomGenerator = MersenneTwister(0)
     private val node = ProtelisIncarnation<Euclidean2DPosition>().createNode(randomGenerator, environment, null)
-    private val reaction = Event(node, ExponentialTime(1.0, randomGenerator))
+    private val reaction = Event(
+        node,
+        ExponentialTime(1.0, randomGenerator),
+    )
     private val action = RunProtelisProgram(
         randomGenerator,
         environment,

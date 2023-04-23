@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.environments.EnvironmentWithDynamics
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.testsupport.loadYamlSimulation
 import it.unibo.alchemist.testsupport.startSimulation
 

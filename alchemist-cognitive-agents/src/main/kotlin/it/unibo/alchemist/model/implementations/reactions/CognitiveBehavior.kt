@@ -8,6 +8,7 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.geometry.GeometricTransformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty
+import it.unibo.alchemist.model.reactions.AbstractReaction
 
 /**
  * Reaction representing the cognitive behavior of a pedestrian.
@@ -23,7 +24,6 @@ class CognitiveBehavior<T, V, A>(
 ) : AbstractReaction<T>(node, timeDistribution)
     where V : Vector<V>, A : GeometricTransformation<V> {
 
-    @Suppress("UNCHECKED_CAST")
     override fun cloneOnNewNode(node: Node<T>, currentTime: Time) =
         CognitiveBehavior(node, timeDistribution)
 

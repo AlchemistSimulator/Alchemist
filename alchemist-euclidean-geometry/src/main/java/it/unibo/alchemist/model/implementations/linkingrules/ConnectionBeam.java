@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithObstacles;
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;

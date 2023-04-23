@@ -34,6 +34,7 @@ import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.reactions.AbstractReaction;
 import org.danilopianini.lang.HashString;
 import org.danilopianini.util.ImmutableListSet;
 import org.danilopianini.util.ListSet;

@@ -8,10 +8,10 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
-import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
-import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
+import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed;
+import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTargetOnMap;
 import it.unibo.alchemist.model.interfaces.MapEnvironment;
 import it.unibo.alchemist.model.Molecule;

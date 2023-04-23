@@ -12,8 +12,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.scafi.space.{Point2D, Point3D}
 import it.unibo.scafi.space.Point3D.toPoint2D
 import org.scalatest.funsuite.AnyFunSuite

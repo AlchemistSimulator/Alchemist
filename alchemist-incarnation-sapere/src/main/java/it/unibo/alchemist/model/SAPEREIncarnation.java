@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
 import it.unibo.alchemist.model.implementations.reactions.SAPEREReaction;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPEREExponentialTime;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import org.apache.commons.math3.random.RandomGenerator;

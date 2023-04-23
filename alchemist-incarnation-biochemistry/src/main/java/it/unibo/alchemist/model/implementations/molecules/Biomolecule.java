@@ -8,6 +8,8 @@
 
 package it.unibo.alchemist.model.implementations.molecules;
 
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
+
 /**
  *
  */

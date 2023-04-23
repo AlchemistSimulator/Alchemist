@@ -14,8 +14,8 @@ import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
 import it.unibo.alchemist.loader.providers.YamlProvider;
 import it.unibo.alchemist.model.SupportedIncarnations;
-import it.unibo.alchemist.model.implementations.layers.StepLayer;
-import it.unibo.alchemist.model.implementations.timedistributions.AnyRealDistribution;
+import it.unibo.alchemist.model.layers.StepLayer;
+import it.unibo.alchemist.model.timedistributions.AnyRealDistribution;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Layer;
@@ -72,7 +72,6 @@ class TestYAMLLoader {
     /**
      * Tests the whole laboratory lesson of the UniBo course
      * "Engineering of Adaptive Software Systems".
-     * 
      * Useful as regression test.
      */
     @Test

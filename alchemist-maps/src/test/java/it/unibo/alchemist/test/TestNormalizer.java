@@ -24,7 +24,7 @@ import it.unibo.alchemist.boundary.gpsload.api.AlignToTime;
 import it.unibo.alchemist.boundary.gpsload.api.NoAlignment;
 import it.unibo.alchemist.model.implementations.positions.GPSPointImpl;
 import it.unibo.alchemist.model.implementations.routes.GPSTraceImpl;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.GPSPoint;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
 import it.unibo.alchemist.model.Time;

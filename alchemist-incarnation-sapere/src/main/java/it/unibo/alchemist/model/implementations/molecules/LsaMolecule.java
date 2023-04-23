@@ -16,6 +16,7 @@ import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import org.danilopianini.lang.HashString;
 
 import javax.annotation.Nonnull;
@@ -237,16 +238,6 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
         return args.get(i);
     }
 
-    /**
-     * @return the list of the arguments. Warning: this backs the internal
-     *         representation of the LsaMolecule (which should be stateless), so
-     *         be sure that your subclass does not change the contents. Copying
-     *         it is mandatory before modifying.
-     */
-    protected List<IExpression> getArgList() {
-        return args;
-    }
-
     @Override
     public boolean hasDuplicateVariables() {
         return duplicateVars;
@@ -283,6 +274,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     }
 
     @Override
+    @Nonnull
     public Iterator<IExpression> iterator() {
         return args.iterator();
     }
@@ -290,7 +282,7 @@ public final class LsaMolecule extends SimpleMolecule implements ILsaMolecule {
     @Override
     public boolean matches(final ILsaMolecule mol) {
         if (this == mol // NOPMD: this comparison is intentional
-                || mol instanceof LsaMolecule && ((LsaMolecule) mol).toHashString().equals(toHashString())) {
+                || mol instanceof LsaMolecule && mol.toHashString().equals(toHashString())) {
             return true;
         }
         return mol.matches(args, duplicateVars);

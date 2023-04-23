@@ -18,14 +18,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
-import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
-import it.unibo.alchemist.model.implementations.reactions.Event;
-import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.reactions.ChemicalReaction;
+import it.unibo.alchemist.model.reactions.Event;
+import it.unibo.alchemist.model.timedistributions.DiracComb;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -107,6 +107,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
     private void checkIsProtelisNode(final Node<Object> node, final String exceptionMessage) {
         if (node == null || node.asPropertyOrNull(ProtelisDevice.class) == null) {
             throw new IllegalArgumentException(exceptionMessage);
@@ -124,6 +125,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
     ) {
         if (actionable instanceof Reaction) {
             Objects.requireNonNull(additionalParameters);
+            @SuppressWarnings("unchecked")
             final var device = node.asPropertyOrNull(ProtelisDevice.class);
             if (device == null) {
                 throw new IllegalArgumentException("The node must be a " + ProtelisDevice.class.getSimpleName());
@@ -406,6 +408,7 @@ public final class ProtelisIncarnation<P extends Position<P>> implements Incarna
 
         @Override
         @SuppressFBWarnings("EI_EXPOSE_REP")
+        @SuppressWarnings("unchecked")
         public DeviceUID getDeviceUID() {
             final ProtelisDevice protelisProperty = node.asPropertyOrNull(ProtelisDevice.class);
             return protelisProperty != null ? protelisProperty : NO_NODE_ID;

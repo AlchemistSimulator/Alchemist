@@ -10,6 +10,7 @@ import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.reactions.AbstractReaction
 
 /**
  * Reaction representing the steering behavior of a pedestrian.

@@ -14,7 +14,7 @@ import it.unibo.alchemist.loader.export.filters.CommonFilters
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.model.times.DoubleTime
 import org.apache.commons.lang3.tuple.ImmutablePair
 import org.apache.commons.lang3.tuple.ImmutableTriple
 import org.danilopianini.jirf.Factory
@@ -64,7 +64,11 @@ internal object ObjectFactory {
          * Numbers, times, and collections
          */
         factory.registerImplicit(Number::class.java, CharSequence::class.java) { it.toString() }
-        factory.registerImplicit(Double::class.javaPrimitiveType, Time::class.java) { DoubleTime(it) }
+        factory.registerImplicit(Double::class.javaPrimitiveType, Time::class.java) {
+            DoubleTime(
+                it,
+            )
+        }
         factory.registerImplicit(List::class.java, Array<Number>::class.java) { list ->
             list.map { factory.convertOrFail(Number::class.java, it) }.toTypedArray()
         }

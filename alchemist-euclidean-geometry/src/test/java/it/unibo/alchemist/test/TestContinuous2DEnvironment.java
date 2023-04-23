@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
-import it.unibo.alchemist.model.implementations.linkingrules.NoLinks;
+import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.implementations.nodes.GenericNode;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;

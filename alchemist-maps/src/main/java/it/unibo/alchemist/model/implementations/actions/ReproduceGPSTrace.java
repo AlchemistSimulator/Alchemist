@@ -8,7 +8,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.movestrategies.routing.IgnoreStreets;
-import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
+import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.speed.StraightLineTraceDependantSpeed;
 import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTrace;
 import it.unibo.alchemist.model.GeoPosition;
@@ -58,7 +58,7 @@ public class ReproduceGPSTrace<T, O extends RoutingServiceOptions<O>, S extends 
         super(environment, node,
                 new IgnoreStreets<>(),
                 new StraightLineTraceDependantSpeed<>(environment, node, reaction),
-                new FollowTrace(reaction),
+                new FollowTrace<>(reaction),
                 path, cycle, normalizer, normalizerArgs);
     }
 
@@ -97,7 +97,7 @@ public class ReproduceGPSTrace<T, O extends RoutingServiceOptions<O>, S extends 
             node,
             new IgnoreStreets<>(),
             new ConstantSpeed<>(reaction, speed),
-            new FollowTrace(reaction),
+            new FollowTrace<>(reaction),
             path,
             cycle,
             normalizer,

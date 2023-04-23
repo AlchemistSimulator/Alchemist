@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmen
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EnvironmentNode;
 import it.unibo.alchemist.model.Molecule;
@@ -24,6 +24,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,7 +88,7 @@ final class TestEnvironmentNodes {
         final Molecule a = new Biomolecule("A");
         injectAInEnvReaction(cellNode, 1);
         cellNode.setConcentration(a, 1000.0);
-        environment.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
+        environment.setLinkingRule(new ConnectWithinDistance<>(2));
         environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         environment.addNode(envNode, new Euclidean2DPosition(0, 1));
         final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
@@ -106,7 +107,7 @@ final class TestEnvironmentNodes {
         final Molecule a = new Biomolecule("A");
         injectAInEnvReaction(envNode1, 1);
         envNode1.setConcentration(a, 1000.0);
-        environment.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
+        environment.setLinkingRule(new ConnectWithinDistance<>(2));
         environment.addNode(envNode1, new Euclidean2DPosition(0, 0));
         environment.addNode(envNode2, new Euclidean2DPosition(0, 1));
         final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
@@ -133,7 +134,7 @@ final class TestEnvironmentNodes {
     }
 
     private void testDiffusion(final Node<Double> center) {
-        environment.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
+        environment.setLinkingRule(new ConnectWithinDistance<>(2));
         environment.addNode(center, new Euclidean2DPosition(0, 0));
         final Node<Double>[] nodes = populateSurroundingOrigin();
         final Molecule a = new Biomolecule("A");
@@ -178,7 +179,7 @@ final class TestEnvironmentNodes {
         injectAInEnvReaction(envNode2, 1000);
         final double total = 1000.0;
         cellNode.setConcentration(a, 1000.0);
-        environment.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(1));
+        environment.setLinkingRule(new ConnectWithinDistance<>(1));
         final Euclidean2DPosition pos1 = new Euclidean2DPosition(0, -0.75);
         final Euclidean2DPosition pos2 = new Euclidean2DPosition(0, 0.75);
         final Euclidean2DPosition pos3 = new Euclidean2DPosition(0, 1.5);
@@ -205,7 +206,7 @@ final class TestEnvironmentNodes {
         final Molecule a = new Biomolecule("A");
         injectAInEnvReaction(cellNode, 1);
         cellNode.setConcentration(a, 1000.0);
-        environment.setLinkingRule(new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2));
+        environment.setLinkingRule(new ConnectWithinDistance<>(2));
         environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         final Simulation<?, ?> sim = new Engine<>(environment, 10_000);
         sim.play();

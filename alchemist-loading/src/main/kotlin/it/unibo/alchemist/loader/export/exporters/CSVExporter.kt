@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.util.BugReporting
 import org.slf4j.LoggerFactory
 import java.io.File

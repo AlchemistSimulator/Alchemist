@@ -9,6 +9,7 @@ package it.unibo.alchemist.model.implementations.molecules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Dependency;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 
 import java.util.Collections;
 import java.util.Map;

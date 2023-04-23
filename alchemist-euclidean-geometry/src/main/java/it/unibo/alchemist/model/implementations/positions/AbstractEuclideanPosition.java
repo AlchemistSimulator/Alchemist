@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.implementations.positions;
 
 import it.unibo.alchemist.model.geometry.Vector;
+import it.unibo.alchemist.model.positions.AbstractPosition;
 
 import javax.annotation.Nonnull;
 

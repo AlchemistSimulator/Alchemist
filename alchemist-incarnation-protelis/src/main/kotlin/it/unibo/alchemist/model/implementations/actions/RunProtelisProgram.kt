@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
+import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
 import it.unibo.alchemist.util.RealDistributionUtil

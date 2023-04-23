@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
 import it.unibo.alchemist.model.interfaces.MapEnvironment
+import it.unibo.alchemist.model.linkingrules.AbstractLocallyConsistentLinkingRule
 import kotlin.math.abs
 import kotlin.math.min
 

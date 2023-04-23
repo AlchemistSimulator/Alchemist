@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.fxui.monitors.impl;
 
 import it.unibo.alchemist.model.Concentration;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Position;

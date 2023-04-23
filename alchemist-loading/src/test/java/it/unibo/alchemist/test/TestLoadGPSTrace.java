@@ -13,7 +13,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.Actionable;

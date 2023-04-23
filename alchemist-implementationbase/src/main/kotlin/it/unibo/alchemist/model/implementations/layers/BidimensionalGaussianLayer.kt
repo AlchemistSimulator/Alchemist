@@ -9,7 +9,7 @@ package it.unibo.alchemist.model.implementations.layers
 
 import it.unibo.alchemist.model.Layer
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.math.BidimensionalGaussian
+import it.unibo.alchemist.model.util.math.BidimensionalGaussian
 
 /**
  * A [Layer] based on a [2D gaussian function][BidimensionalGaussian] and an optional baseline value.

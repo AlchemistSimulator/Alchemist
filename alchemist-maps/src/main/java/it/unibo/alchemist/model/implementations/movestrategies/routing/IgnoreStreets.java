@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.movestrategies.routing;
 
-import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
+import it.unibo.alchemist.model.routes.PolygonalChain;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.movestrategies.RoutingStrategy;
 import it.unibo.alchemist.model.Route;

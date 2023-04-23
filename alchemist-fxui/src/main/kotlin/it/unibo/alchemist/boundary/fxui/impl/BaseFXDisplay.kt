@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.model.times.DoubleTime
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
 import javafx.collections.FXCollections

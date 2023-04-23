@@ -15,7 +15,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Molecule;
@@ -118,14 +118,6 @@ class TestNodeCloning<P extends Position<P>> {
                     expectations.forEach((node, expected) -> assertEquals(expected, node.getConcentration(DATAMOL)));
                 }
             }
-            @Override
-            public void initialized(@Nonnull final Environment<Object, P> environment) { }
-            @Override
-            public void finished(
-                @Nonnull final Environment<Object, P> environment,
-                @Nonnull final Time time,
-                final long step
-            ) { }
         });
         simulation.play();
         simulation.run();

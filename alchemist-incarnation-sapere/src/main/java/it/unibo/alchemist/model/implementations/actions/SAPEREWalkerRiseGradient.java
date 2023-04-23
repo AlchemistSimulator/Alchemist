@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
-import it.unibo.alchemist.model.implementations.movestrategies.speed.InteractWithOthers;
+import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
 import it.unibo.alchemist.model.implementations.routingservices.GraphHopperOptions;
 import it.unibo.alchemist.model.implementations.routingservices.GraphHopperRoutingService;
 import it.unibo.alchemist.model.GeoPosition;
@@ -99,7 +99,7 @@ public class SAPEREWalkerRiseGradient extends MoveOnMap<List<ILsaMolecule>, Grap
             node,
             new OnStreets<>(environment, GraphHopperRoutingService.Companion.getDefaultOptions()),
             new InteractWithOthers<>(environment, node, reaction, tag, speed, range, interaction),
-            new NextTargetStrategy(environment, node, templateLSA, neighPos)
+            new NextTargetStrategy<>(environment, node, templateLSA, neighPos)
         );
     }
 

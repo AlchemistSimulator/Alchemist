@@ -24,11 +24,11 @@ import it.unibo.alchemist.model.conditions.BiomolPresentInNeighbor
 import it.unibo.alchemist.model.conditions.JunctionPresentInCell
 import it.unibo.alchemist.model.conditions.NeighborhoodPresent
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
-import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble
 import kotlin.properties.Delegates
@@ -44,7 +44,8 @@ private val BIOMOLECULE_B = INCARNATION.createMolecule("B")
 private val JUNCTION = Junction("A-B", mapOf(Pair(BIOMOLECULE_A, 1.0)), mapOf(Pair(BIOMOLECULE_B, 1.0)))
 private val RANDOM = MersenneTwister()
 private val TIME = ExponentialTime<Double>(1.0, RANDOM)
-private val LINKING_RULE = ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
+private val LINKING_RULE =
+    ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
 private val POSITION = Euclidean2DPosition(0.0, 0.0)
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
 private var centralNode: Node<Double> by Delegates.notNull()

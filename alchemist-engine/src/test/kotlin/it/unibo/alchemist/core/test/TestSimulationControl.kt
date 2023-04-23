@@ -14,8 +14,8 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.core.Status
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.implementations.timedistributions.DiracComb
-import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.model.timedistributions.DiracComb
+import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.test.GlobalTestReaction
 import it.unibo.alchemist.testsupport.createEmptyEnvironment
 import kotlinx.coroutines.delay
@@ -67,7 +67,15 @@ class TestSimulationControl : FreeSpec(
         val workerPool: ExecutorService = Executors.newCachedThreadPool()
         fun Environment<Nothing, *>.tickRate(delta: Double) {
             this.simulation.schedule {
-                this.addGlobalReaction(GlobalTestReaction(DiracComb(Time.ZERO, delta), this))
+                this.addGlobalReaction(
+                    GlobalTestReaction(
+                        DiracComb(
+                            Time.ZERO,
+                            delta,
+                        ),
+                        this,
+                    ),
+                )
             }
         }
     }

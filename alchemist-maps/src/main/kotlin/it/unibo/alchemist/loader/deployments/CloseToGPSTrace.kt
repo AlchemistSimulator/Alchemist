@@ -12,7 +12,7 @@ import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.model.times.DoubleTime
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
@@ -36,6 +36,7 @@ class CloseToGPSTrace<T> @JvmOverloads constructor(
 ) : AbstractCloseTo<T, GeoPosition>(randomGenerator, environment, nodeCount, variance) {
 
     private val traces = TraceLoader(gpsFilePath, normalizerClass, *normalizerArguments)
+
     override val sources = traces.asSequence()
         .flatMap { trace ->
             generateSequence(from) { it + interval }

@@ -13,7 +13,7 @@ import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
 import it.unibo.alchemist.model.implementations.actions.CameraSee;
 import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
@@ -53,6 +53,7 @@ public final class DrawSmartcam implements Effect {
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {
+            @SuppressWarnings("unchecked")
             final Physics2DEnvironment<T> physicsEnvironment = (Physics2DEnvironment<T>) environment;
             drawShape(graphics, node, physicsEnvironment, zoom, x, y);
             drawFieldOfView(graphics, node, physicsEnvironment, zoom, x, y);
@@ -74,6 +75,7 @@ public final class DrawSmartcam implements Effect {
             final int x,
             final int y
     ) {
+        @SuppressWarnings("unchecked")
         final GeometricShape<?, ?> geometricShape = node.asPropertyOrNull(OccupiesSpaceProperty.class) != null
                 ? node.asProperty(OccupiesSpaceProperty.class).getShape()
                 : null;

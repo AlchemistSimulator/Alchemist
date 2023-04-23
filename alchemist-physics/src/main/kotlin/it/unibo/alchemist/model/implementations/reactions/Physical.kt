@@ -20,6 +20,7 @@ import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.reactions.AbstractReaction
 
 /**
  * A reaction for the update of a [Dynamics2DEnvironment].

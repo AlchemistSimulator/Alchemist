@@ -9,9 +9,9 @@
 package it.unibo.alchemist.model.actions;
 
 import com.google.common.collect.ImmutableList;
-import it.unibo.alchemist.model.implementations.movestrategies.speed.ConstantSpeed;
-import it.unibo.alchemist.model.implementations.movestrategies.target.FollowTarget;
-import it.unibo.alchemist.model.implementations.routes.PolygonalChain;
+import it.unibo.alchemist.model.movestrategies.speed.ConstantSpeed;
+import it.unibo.alchemist.model.movestrategies.target.FollowTarget;
+import it.unibo.alchemist.model.routes.PolygonalChain;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;

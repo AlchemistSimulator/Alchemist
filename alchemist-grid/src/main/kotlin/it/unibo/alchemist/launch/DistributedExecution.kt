@@ -14,7 +14,7 @@ import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig
 import it.unibo.alchemist.grid.config.SimulationConfigImpl
 import it.unibo.alchemist.grid.simulation.SimulationSetImpl
 import it.unibo.alchemist.loader.Loader
-import it.unibo.alchemist.model.implementations.times.DoubleTime
+import it.unibo.alchemist.model.times.DoubleTime
 import java.nio.file.Paths
 
 /**
@@ -35,7 +35,10 @@ object DistributedExecution : SimulationLauncher() {
     }
 
     override fun launch(loader: Loader, parameters: AlchemistExecutionOptions) {
-        val simulationConfig = LocalGeneralSimulationConfig(loader, DoubleTime(parameters.endTime))
+        val simulationConfig = LocalGeneralSimulationConfig(
+            loader,
+            DoubleTime(parameters.endTime),
+        )
         val simConfigs = loader.variables.cartesianProductOf(parameters.variables).map(::SimulationConfigImpl)
         val simulationSet = SimulationSetImpl(simulationConfig, simConfigs)
         val cluster = ClusterImpl(Paths.get(requireNotNull(parameters.distributed) { "No remote configuration file" }))

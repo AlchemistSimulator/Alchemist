@@ -10,9 +10,10 @@ package it.unibo.alchemist.model.implementations.timedistributions;
 import it.unibo.alchemist.expressions.implementations.Expression;
 import it.unibo.alchemist.expressions.interfaces.IExpression;
 import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.Time;
 import org.danilopianini.lang.HashString;

@@ -23,7 +23,7 @@ import it.unibo.alchemist.boundary.wormhole.impl.AngleManagerImpl;
 import it.unibo.alchemist.boundary.wormhole.impl.WormholeSwing;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.core.Status;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;

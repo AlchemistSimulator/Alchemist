@@ -25,7 +25,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
-import it.unibo.alchemist.model.implementations.linkingrules.NoLinks
+import it.unibo.alchemist.model.linkingrules.NoLinks
 import org.apache.commons.math3.random.RandomGenerator
 import org.danilopianini.jirf.Factory
 import java.util.concurrent.Semaphore

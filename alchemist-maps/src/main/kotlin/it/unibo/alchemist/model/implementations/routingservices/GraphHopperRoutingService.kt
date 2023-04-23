@@ -23,8 +23,8 @@ import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Route
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition
 import it.unibo.alchemist.model.implementations.routes.GraphHopperRoute
-import it.unibo.alchemist.model.implementations.routes.PolygonalChain
 import it.unibo.alchemist.model.interfaces.RoutingService
+import it.unibo.alchemist.model.routes.PolygonalChain
 import net.harawata.appdirs.AppDirsFactory
 import org.apache.commons.codec.binary.Base32
 import org.slf4j.LoggerFactory

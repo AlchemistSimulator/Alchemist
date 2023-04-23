@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironmen
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.nodes.EnvironmentNodeImpl;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EnvironmentNode;
 import it.unibo.alchemist.model.Molecule;
@@ -21,6 +21,7 @@ import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty;
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
@@ -57,7 +58,7 @@ class TestChemotaxis {
     public void setUp() {
         environment = new BioRect2DEnvironmentNoOverlap(incarnation);
         environment.setLinkingRule(
-                new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2)
+                new ConnectWithinDistance<>(2)
         );
         envNode1 = new EnvironmentNodeImpl(environment);
         envNode2 = new EnvironmentNodeImpl(environment);

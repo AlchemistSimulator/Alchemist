@@ -9,6 +9,7 @@ package it.unibo.alchemist.model.implementations.routes;
 
 import java.util.List;
 
+import it.unibo.alchemist.model.routes.PolygonalChain;
 import org.apache.commons.math3.util.Pair;
 
 import com.google.common.collect.ImmutableList;
@@ -28,12 +29,11 @@ public final class GPSTraceImpl extends PolygonalChain<GPSPoint> implements GPST
 
     /**
      * 
-     * @param tr
+     * @param trace
      *            GPS points
      */
-    @SafeVarargs
-    public GPSTraceImpl(final GPSPoint... tr) {
-       super(tr);
+    public GPSTraceImpl(final GPSPoint... trace) {
+       super(trace);
     }
 
     /**

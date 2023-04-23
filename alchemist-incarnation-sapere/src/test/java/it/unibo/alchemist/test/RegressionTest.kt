@@ -14,8 +14,8 @@ import it.unibo.alchemist.model.SAPEREIncarnation
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.nodes.LsaNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.timedistributions.DiracComb
 import it.unibo.alchemist.model.interfaces.ILsaMolecule
+import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.testsupport.createSimulation
 import it.unibo.alchemist.testsupport.loadAlchemistFromResource
 import it.unibo.alchemist.testsupport.runInCurrentThread
@@ -26,7 +26,13 @@ class RegressionTest : StringSpec(
         "reactions in format a --> *b should generate outgoing dependencies for both a and b" {
             val twoOutGoingDependencies = with(SAPEREIncarnation<Euclidean2DPosition>()) {
                 with(Continuous2DEnvironment<List<ILsaMolecule>>(this)) {
-                    createReaction(MersenneTwister(), this, LsaNode(this), DiracComb(1.0), "{x} --> *{y}")
+                    createReaction(
+                        MersenneTwister(),
+                        this,
+                        LsaNode(this),
+                        DiracComb(1.0),
+                        "{x} --> *{y}",
+                    )
                 }
             }
             twoOutGoingDependencies.outboundDependencies.size shouldBe 2

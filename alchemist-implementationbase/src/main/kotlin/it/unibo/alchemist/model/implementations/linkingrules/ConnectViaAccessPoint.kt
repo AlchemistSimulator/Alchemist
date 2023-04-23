@@ -14,6 +14,7 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
 
 /**
  * @param accessPointId the id of the access point.

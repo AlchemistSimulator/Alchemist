@@ -10,8 +10,8 @@
 package it.unibo.alchemist.scafi.test
 
 import it.unibo.alchemist.model.actions.AbstractAction
+import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.{Node, Reaction}
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.{Action, Context}
 
 class FooAction(val node: Node[Any], moleculeName: String) extends AbstractAction[Any](node) {

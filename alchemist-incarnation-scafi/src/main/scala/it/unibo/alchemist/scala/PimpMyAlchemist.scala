@@ -9,12 +9,12 @@
 package it.unibo.alchemist.scala
 
 import it.unibo.alchemist.model.{Position, Time}
-import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.Molecule
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import com.google.common.cache.CacheLoader
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.times.DoubleTime
 
 @SuppressFBWarnings
 object PimpMyAlchemist {

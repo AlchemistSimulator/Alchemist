@@ -21,9 +21,9 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
-import it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
+import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import org.apache.commons.math3.random.MersenneTwister
 import kotlin.properties.Delegates
 
@@ -33,7 +33,8 @@ private val INCARNATION = BiochemistryIncarnation()
 private val BIOMOLECULE = INCARNATION.createMolecule("token")
 private val RANDOM = MersenneTwister()
 private val TIME = ExponentialTime<Double>(1.0, RANDOM)
-private val LINKING_RULE = ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
+private val LINKING_RULE =
+    ConnectWithinDistance<Double, Euclidean2DPosition>(5.0)
 private val INITIAL_POSITIONS = Pair(Euclidean2DPosition(0.0, 0.0), Euclidean2DPosition(1.0, 0.0))
 private var environment: Environment<Double, Euclidean2DPosition> by Delegates.notNull()
 private var nodes: Pair<Node<Double>, Node<Double>> by Delegates.notNull()

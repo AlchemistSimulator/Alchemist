@@ -13,11 +13,11 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
-import it.unibo.alchemist.model.implementations.layers.StepLayer;
+import it.unibo.alchemist.model.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
-import it.unibo.alchemist.model.implementations.times.DoubleTime;
+import it.unibo.alchemist.model.timedistributions.DiracComb;
+import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Layer;
@@ -25,6 +25,7 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
@@ -60,7 +61,7 @@ class TestBiomolLayer {
         ));
         cellNode.setConcentration(a, 0d);
         environment.setLinkingRule(
-                new it.unibo.alchemist.model.implementations.linkingrules.ConnectWithinDistance<>(2)
+                new ConnectWithinDistance<>(2)
         );
         environment.addNode(cellNode, new Euclidean2DPosition(0, 0));
         environment.addLayer(b, bLayer);
@@ -84,13 +85,6 @@ class TestBiomolLayer {
             public void initialized(@Nonnull final Environment<Double, Euclidean2DPosition> environment) {
                 stepDone(environment, null, DoubleTime.ZERO, 0);
             }
-
-            @Override
-            public void finished(
-                    @Nonnull final Environment<Double, Euclidean2DPosition> environment,
-                    @Nonnull final Time time,
-                    final long step
-            ) { }
         });
         sim.run();
         sim.getError().ifPresent(CheckedConsumer.unchecked(it -> {

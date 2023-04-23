@@ -10,8 +10,8 @@ package it.unibo.alchemist.model.scafi
 import it.unibo.alchemist.model.Position
 import java.util.Optional
 import it.unibo.alchemist.model.implementations.nodes.NodeManager
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.model.{Environment, Layer}
 import it.unibo.scafi.incarnations.BasicAbstractIncarnation

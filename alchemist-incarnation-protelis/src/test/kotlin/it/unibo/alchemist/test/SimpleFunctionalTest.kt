@@ -11,7 +11,7 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContain
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.testsupport.createSimulation
 import it.unibo.alchemist.testsupport.loadAlchemist
 import it.unibo.alchemist.testsupport.runInCurrentThread

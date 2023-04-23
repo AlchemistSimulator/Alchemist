@@ -16,7 +16,7 @@ import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy
 import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy2D
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigationgraph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.properties.AreaProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import kotlin.math.abs

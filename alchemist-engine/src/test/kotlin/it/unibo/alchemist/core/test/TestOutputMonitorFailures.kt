@@ -14,7 +14,7 @@ import io.kotest.matchers.optional.shouldBePresent
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.testsupport.createEmptyEnvironment
 
 class TestOutputMonitorFailures : FreeSpec(

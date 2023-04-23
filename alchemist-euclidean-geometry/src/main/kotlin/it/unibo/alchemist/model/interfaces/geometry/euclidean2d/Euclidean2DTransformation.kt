@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
 import it.unibo.alchemist.model.geometry.Transformation
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * Defines the possible transformations for a [it.unibo.alchemist.model.interfaces.geometry.GeometricShape] in a

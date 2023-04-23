@@ -5,8 +5,8 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitiveagents.GroupSteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringActionWithTarget
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * [Filtered] strategy considering only the group steering action and the non-group steering action whose targets are

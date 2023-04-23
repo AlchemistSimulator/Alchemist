@@ -13,10 +13,10 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.actions.steeringstrategies.SinglePrevalent
 import it.unibo.alchemist.model.cognitiveagents.NavigationAction2D
 import it.unibo.alchemist.model.cognitiveagents.SteeringAction
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A [SteeringBehavior] using [SinglePrevalent] steering strategy and accepting a collection of actions

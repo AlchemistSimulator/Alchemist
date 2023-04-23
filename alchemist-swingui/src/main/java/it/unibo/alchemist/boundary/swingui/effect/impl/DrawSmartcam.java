@@ -11,15 +11,15 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
+import it.unibo.alchemist.model.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.geometry.Shape;
 import it.unibo.alchemist.model.implementations.actions.CameraSee;
-import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment;
+import it.unibo.alchemist.model.environments.Physics2DEnvironment;
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty;
 import org.jooq.lambda.function.Consumer2;
 import org.slf4j.Logger;

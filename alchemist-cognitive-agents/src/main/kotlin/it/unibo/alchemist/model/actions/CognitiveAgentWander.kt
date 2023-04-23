@@ -13,12 +13,12 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.geometry.Vector2D
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.movestrategies.TargetSelectionStrategy
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Iterables.randomElement
 import it.unibo.alchemist.util.RandomGenerators.nextDouble
 import org.apache.commons.math3.random.RandomGenerator

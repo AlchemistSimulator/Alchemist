@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A node's ability to occupy space in a 2D space.

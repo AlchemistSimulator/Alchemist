@@ -5,8 +5,8 @@ import it.unibo.alchemist.model.cognitiveagents.GroupSteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringActionWithTarget
 import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A [SteeringStrategy] performing a weighted sum of steering actions (see [computeNextPosition]).

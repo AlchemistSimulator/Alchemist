@@ -10,8 +10,9 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import it.unibo.alchemist.model.BiochemistryIncarnation;
+import it.unibo.alchemist.model.environments.LimitedContinuos2D;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.interfaces.properties.CellProperty;

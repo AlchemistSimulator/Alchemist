@@ -5,8 +5,8 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.FieldOfView2D
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.geometry.euclidean2d.FieldOfView2D
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.smartcam.VisibleNodeImpl
 import java.lang.Math.toRadians

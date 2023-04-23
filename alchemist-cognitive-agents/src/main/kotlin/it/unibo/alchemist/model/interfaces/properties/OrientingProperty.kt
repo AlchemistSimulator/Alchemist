@@ -11,11 +11,11 @@ package it.unibo.alchemist.model.interfaces.properties
 
 import it.unibo.alchemist.model.NodeProperty
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigationgraph.NavigationGraph
 
 /**
  * A node's capability to orient.

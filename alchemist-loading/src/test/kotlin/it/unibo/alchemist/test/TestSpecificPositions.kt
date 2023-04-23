@@ -15,8 +15,8 @@ import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.deployments.SpecificPositions
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.kaikikm.threadresloader.ResourceLoader
 import java.util.stream.Collectors
 

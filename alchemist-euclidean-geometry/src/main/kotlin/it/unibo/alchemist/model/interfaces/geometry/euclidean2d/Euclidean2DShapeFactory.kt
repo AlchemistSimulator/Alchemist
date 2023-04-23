@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
 
 import it.unibo.alchemist.model.geometry.Shape
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * Defines a factory of [Shape] for a bidimensional euclidean space.

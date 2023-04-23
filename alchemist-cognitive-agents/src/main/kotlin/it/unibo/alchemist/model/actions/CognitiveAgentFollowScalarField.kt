@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.actions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EnvironmentWithObstacles
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.PhysicsEnvironment
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector2D
-import it.unibo.alchemist.model.interfaces.environments.PhysicsEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 
 /**

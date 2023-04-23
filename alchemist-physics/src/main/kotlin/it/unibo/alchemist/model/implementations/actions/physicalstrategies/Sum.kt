@@ -12,12 +12,12 @@ package it.unibo.alchemist.model.implementations.actions.physicalstrategies
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.PhysicalSteeringStrategy
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A [PhysicalSteeringStrategy] performing a simple sum of the overall intentional force and the physical ones.

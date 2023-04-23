@@ -13,10 +13,10 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.navigationstrategies.KnownDestinationReaching
 import it.unibo.alchemist.model.cognitiveagents.NavigationAction
 import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy2D
-import it.unibo.alchemist.model.interfaces.environments.Euclidean2DEnvironmentWithGraph
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigationgraph.Euclidean2DPassage
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.math.lazyMutable
 import it.unibo.alchemist.util.Arrays.toPositions

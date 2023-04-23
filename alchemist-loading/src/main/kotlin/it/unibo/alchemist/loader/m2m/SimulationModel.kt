@@ -42,10 +42,10 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator
 import java.lang.IllegalStateException

@@ -12,13 +12,13 @@ package it.unibo.alchemist.model.implementations.properties
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.UndirectedNavigationGraph
-import it.unibo.alchemist.model.implementations.geometry.euclidean2d.graph.pathExists
-import it.unibo.alchemist.model.interfaces.environments.EnvironmentWithGraph
+import it.unibo.alchemist.model.geometry.euclidean2d.graph.UndirectedNavigationGraph
+import it.unibo.alchemist.model.geometry.euclidean2d.graph.pathExists
 import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph
+import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigationgraph.NavigationGraph
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import it.unibo.alchemist.model.properties.AbstractNodeProperty

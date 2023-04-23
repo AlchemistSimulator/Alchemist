@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.actions.steeringstrategies.SinglePrevalent
 import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
+import it.unibo.alchemist.model.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.implementations.actions.physicalstrategies.Sum
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * [NavigationPrioritisedSteering] strategy for physical pedestrians, taking into account physical forces as well.

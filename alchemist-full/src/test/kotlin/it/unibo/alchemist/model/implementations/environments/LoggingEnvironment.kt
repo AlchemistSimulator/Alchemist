@@ -10,7 +10,8 @@
 package it.unibo.alchemist.model.implementations.environments
 
 import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.slf4j.LoggerFactory
 
 /*

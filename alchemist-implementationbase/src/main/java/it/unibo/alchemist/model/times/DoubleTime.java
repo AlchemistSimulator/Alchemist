@@ -11,6 +11,8 @@ package it.unibo.alchemist.model.times;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Time;
 
+import javax.annotation.Nonnull;
+
 /**
  *         This class is meant to provide a reasonably fast time implementation.
  *         Should be suitable for most usages, but it inherits the problem of
@@ -42,6 +44,7 @@ public final class DoubleTime implements Time {
     }
 
     @Override
+    @Nonnull
     public DoubleTime plus(final Time dt) {
         return new DoubleTime(t + dt.toDouble());
     }
@@ -53,15 +56,6 @@ public final class DoubleTime implements Time {
 
     @Override
     public int compareTo(final Time o) {
-        final boolean inf = isInfinite();
-        final boolean oinf = o.isInfinite();
-        if (inf && oinf) {
-            return 0;
-        } else if (inf) {
-            return 1;
-        } else if (oinf) {
-            return -1;
-        }
         return Double.compare(toDouble(), o.toDouble());
     }
 
@@ -71,11 +65,13 @@ public final class DoubleTime implements Time {
     }
 
     @Override
+    @Nonnull
     public Time times(final double var) {
         return new DoubleTime(t * var);
     }
 
     @Override
+    @Nonnull
     public Time minus(final Time dt) {
         return new DoubleTime(t - dt.toDouble());
     }

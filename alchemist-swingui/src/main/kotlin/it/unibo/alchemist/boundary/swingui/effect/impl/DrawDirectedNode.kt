@@ -87,7 +87,7 @@ class DrawDirectedNode : Effect {
 
     private fun <P : Position2D<P>> drawTrajectory(graphics2D: Graphics2D, node: Node<*>, colorBase: Color, wormhole2D: Wormhole2D<P>, shape: Shape) {
         val positions = positionsMemory[node.id] ?: emptyList()
-        val alpha = MAX_COLOR / ((min(snapshotSize.`val`, positions.size) * ADJUST_ALPHA_FACTOR) + 1)
+        val alpha = MAX_COLOR / (min(snapshotSize.`val`, positions.size) * ADJUST_ALPHA_FACTOR + 1)
         positions.takeLast(snapshotSize.`val`).withIndex().forEach { (index, pair) ->
             val (position, rotation) = pair
             val colorFaded =

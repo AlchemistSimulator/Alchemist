@@ -9,7 +9,6 @@
 
 package it.unibo.alchemist.boundary.swingui.effect.impl
 
-import it.unibo.alchemist.boundary.swingui.effect.api.Effect
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.interfaces.Environment
@@ -28,7 +27,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 @Suppress("DEPRECATION")
-class DrawDirectedNode : Effect {
+class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
     private var positionsMemory: Map<Int, List<Pair<Position2D<*>, Double>>> = emptyMap()
     private var lastDrawMemory: Map<Int, Int> = emptyMap()
 

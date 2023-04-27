@@ -17,14 +17,14 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.model.Environment
-import it.unibo.alchemist.model.NavigationAction
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy
+import it.unibo.alchemist.model.cognitive.NavigationAction
+import it.unibo.alchemist.model.cognitive.NavigationStrategy
+import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
 import org.apache.commons.collections4.queue.CircularFifoQueue
 
 /**

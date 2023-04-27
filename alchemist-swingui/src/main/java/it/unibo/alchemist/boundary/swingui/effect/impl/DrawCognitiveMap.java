@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.model.environments.Environment2DWithObstacles;
-import it.unibo.alchemist.model.interfaces.properties.OrientingProperty;
+import it.unibo.alchemist.model.cognitive.OrientingProperty;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.jgrapht.graph.DefaultEdge;

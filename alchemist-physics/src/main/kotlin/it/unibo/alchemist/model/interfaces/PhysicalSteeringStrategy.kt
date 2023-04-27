@@ -11,8 +11,8 @@ package it.unibo.alchemist.model.interfaces
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.SteeringAction
-import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
+import it.unibo.alchemist.model.cognitive.SteeringAction
+import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory

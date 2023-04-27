@@ -6,9 +6,9 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.cognitive.SocialProperty
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.properties.SocialProperty
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
 

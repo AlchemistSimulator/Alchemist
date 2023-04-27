@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.implementations.actions.physicalstrategies
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
+import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.interfaces.PhysicalSteeringStrategy
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DShapeFactory

@@ -13,12 +13,12 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.cognitive.properties.Pedestrian
+import it.unibo.alchemist.model.cognitive.properties.Perceptive2D
+import it.unibo.alchemist.model.cognitive.properties.Social
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.geometry.euclidean2d.FieldOfView2D
-import it.unibo.alchemist.model.implementations.properties.Pedestrian
-import it.unibo.alchemist.model.implementations.properties.Perceptive2D
-import it.unibo.alchemist.model.implementations.properties.Social
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.positions.Euclidean2DPosition

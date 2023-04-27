@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitive.actions.steeringstrategies
+package it.unibo.alchemist.model.cognitive.steering
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node

@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.cognitive.reactions
 
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
-import it.unibo.alchemist.model.cognitive.actions.steeringstrategies.Nearest
+import it.unibo.alchemist.model.cognitive.steering.Nearest
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 
 /**

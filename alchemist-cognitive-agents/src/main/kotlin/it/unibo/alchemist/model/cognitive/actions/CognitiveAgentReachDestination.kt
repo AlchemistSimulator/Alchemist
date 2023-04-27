@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.NavigationStrategy2D
 import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
-import it.unibo.alchemist.model.cognitive.actions.navigationstrategies.ReachDestination
+import it.unibo.alchemist.model.cognitive.navigation.ReachDestination
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
@@ -42,7 +42,7 @@ class CognitiveAgentReachDestination<T, L : Euclidean2DConvexShape, R>(
 
     /**
      * Infers if a [destination] is known by the [navigatingNode]
-     * (see [it.unibo.alchemist.model.cognitive.actions.navigationstrategies.Pursue]). A destination is considered
+     * (see [it.unibo.alchemist.model.cognitive.navigation.Pursue]). A destination is considered
      * to be known if the node's cognitive map contains at least one landmark located in the same
      * room (= [environment]'s area) of the destination, or in an adjacent room.
      */

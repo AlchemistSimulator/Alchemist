@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
-import it.unibo.alchemist.model.cognitive.actions.steeringstrategies.SinglePrevalent
 import it.unibo.alchemist.model.cognitive.reactions.NavigationPrioritizedSteering
+import it.unibo.alchemist.model.cognitive.steering.SinglePrevalent
 import it.unibo.alchemist.model.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.implementations.actions.physicalstrategies.Sum
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon

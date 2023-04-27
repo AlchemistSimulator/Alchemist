@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitive.actions.navigationstrategies
+package it.unibo.alchemist.model.cognitive.navigation
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty

@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitive.actions.navigationstrategies
+package it.unibo.alchemist.model.cognitive.navigation
 
 import it.unibo.alchemist.model.cognitive.NavigationStrategy
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
@@ -39,7 +39,7 @@ open class ReachDestination<T, L : Euclidean2DConvexShape, R>(
      * Unknown destinations, defaults to an empty list.
      */
     private val unknownDestinations: List<Euclidean2DPosition> = emptyList(),
-) : GoalOrientedExploration<T, L, R> (
+) : GoalOrientedExploration<T, L, R>(
     action,
     /*
      * This may seem strange, but as stated above if we found a destination along the way (either known

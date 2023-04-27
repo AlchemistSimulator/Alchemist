@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.cognitive.actions
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.NavigationStrategy2D
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
-import it.unibo.alchemist.model.cognitive.actions.navigationstrategies.ReachKnownDestination
+import it.unibo.alchemist.model.cognitive.navigation.ReachKnownDestination
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape

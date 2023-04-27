@@ -11,9 +11,9 @@ package it.unibo.alchemist.model.implementations.actions
 
 import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.testsupport.createSimulation
-import it.unibo.alchemist.testsupport.loadAlchemist
-import it.unibo.alchemist.testsupport.runInCurrentThread
+import it.unibo.alchemist.test.createSimulation
+import it.unibo.alchemist.test.loadAlchemist
+import it.unibo.alchemist.test.runInCurrentThread
 
 class TestRemoveNode<T, P : Position<P>> : StringSpec({
     "Nodes can be removed in a continous 2D space" {

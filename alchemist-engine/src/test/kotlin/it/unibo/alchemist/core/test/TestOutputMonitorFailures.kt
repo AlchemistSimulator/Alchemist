@@ -15,7 +15,7 @@ import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import it.unibo.alchemist.testsupport.createEmptyEnvironment
+import it.unibo.alchemist.test.createEmptyEnvironment
 
 class TestOutputMonitorFailures : FreeSpec(
     {

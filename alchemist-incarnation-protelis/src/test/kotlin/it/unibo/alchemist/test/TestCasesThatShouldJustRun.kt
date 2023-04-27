@@ -13,8 +13,6 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.optional.bePresent
 import io.kotest.matchers.shouldNot
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.testsupport.createSimulation
-import it.unibo.alchemist.testsupport.runInCurrentThread
 import it.unibo.alchemist.util.ClassPathScanner
 
 class TestCasesThatShouldJustRun : StringSpec(

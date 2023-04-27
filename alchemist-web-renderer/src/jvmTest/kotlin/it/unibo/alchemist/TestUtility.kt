@@ -16,7 +16,7 @@ import it.unibo.alchemist.TestUtility.webRendererTestEnvironments
 import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.testsupport.loadYamlSimulation
+import it.unibo.alchemist.test.loadYamlSimulation
 import java.io.File
 
 object TestUtility {

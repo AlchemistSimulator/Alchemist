@@ -10,8 +10,6 @@ import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
-import it.unibo.alchemist.testsupport.loadYamlSimulation
-import it.unibo.alchemist.testsupport.startSimulation
 import kotlin.math.abs
 
 private const val EPSILON = 0.001

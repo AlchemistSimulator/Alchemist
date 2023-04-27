@@ -25,8 +25,6 @@ import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.OrientingProperty
-import it.unibo.alchemist.testsupport.loadYamlSimulation
-import it.unibo.alchemist.testsupport.startSimulation
 import org.apache.commons.collections4.queue.CircularFifoQueue
 
 /**

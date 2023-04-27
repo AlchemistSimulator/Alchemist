@@ -9,8 +9,6 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.SocialProperty
-import it.unibo.alchemist.testsupport.loadYamlSimulation
-import it.unibo.alchemist.testsupport.startSimulation
 
 class TestPedestriansLoading<T, P, A> : StringSpec({
 

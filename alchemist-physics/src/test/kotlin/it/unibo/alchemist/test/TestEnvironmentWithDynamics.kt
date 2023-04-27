@@ -19,8 +19,6 @@ import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
-import it.unibo.alchemist.testsupport.loadYamlSimulation
-import it.unibo.alchemist.testsupport.startSimulation
 
 class TestEnvironmentWithDynamics<T, P> : StringSpec({
     "no node should exit the square" {

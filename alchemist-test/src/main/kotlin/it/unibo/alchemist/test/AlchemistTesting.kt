@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -9,7 +9,7 @@
 
 @file:JvmName("AlchemistTesting")
 
-package it.unibo.alchemist.testsupport
+package it.unibo.alchemist.test
 
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Simulation
@@ -42,7 +42,7 @@ fun <T> createEmptyEnvironment(
 }
 
 /**
- * Prepares an [InitializedEnvironment] given a [simulationFile] and, optionally, the [variables]' bindings.
+ * Prepares an [InitializedEnvironment] given a [simulationResource] and, optionally, the [variables]' bindings.
  */
 fun <T, P : Position<P>> loadAlchemist(
     simulationResource: String,
@@ -65,9 +65,7 @@ fun loadAlchemistFromResource(simulationResource: String): Loader {
 fun <T, P : Position<P>> InitializedEnvironment<T, P>.createSimulation(
     finalTime: Time = Time.INFINITY,
     finalStep: Long = Long.MAX_VALUE,
-) = Engine(environment, finalStep, finalTime).also {
-    it.addOutputMonitor(GlobalExporter(exporters))
-}
+) = Engine(environment, finalStep, finalTime).apply { addOutputMonitor(GlobalExporter(exporters)) }
 
 /**
  * Runs an existing [Simulation] in the current thread.

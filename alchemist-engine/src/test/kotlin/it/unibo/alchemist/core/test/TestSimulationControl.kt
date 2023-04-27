@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.test.GlobalTestReaction
-import it.unibo.alchemist.testsupport.createEmptyEnvironment
+import it.unibo.alchemist.test.createEmptyEnvironment
 import kotlinx.coroutines.delay
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

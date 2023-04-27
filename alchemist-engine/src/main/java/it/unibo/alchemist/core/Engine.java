@@ -1,21 +1,17 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.core.implementations;
+package it.unibo.alchemist.core;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.core.DependencyGraph;
-import it.unibo.alchemist.core.Scheduler;
-import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.core.Status;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Dependency;
@@ -449,9 +445,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     private void pauseWhen(final BooleanSupplier condition) {
         addOutputMonitor(new OutputMonitor<>() {
-            @Override
-            public void finished(@Nonnull final Environment<T, P> environment, @Nonnull final Time time, final long step) {
-            }
 
             @Override
             public void initialized(@Nonnull final Environment<T, P> environment) {

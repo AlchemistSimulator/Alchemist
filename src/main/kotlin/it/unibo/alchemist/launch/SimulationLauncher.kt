@@ -11,8 +11,8 @@ package it.unibo.alchemist.launch
 
 import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
+import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.Loader

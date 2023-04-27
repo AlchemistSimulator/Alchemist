@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -10,7 +10,7 @@
 package it.unibo.alchemist.test
 
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.core.implementations.Engine
+import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment

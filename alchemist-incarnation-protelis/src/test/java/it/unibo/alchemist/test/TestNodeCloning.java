@@ -11,7 +11,7 @@ package it.unibo.alchemist.test;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.OutputMonitor;
-import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;

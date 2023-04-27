@@ -1,7 +1,7 @@
 package it.unibo.alchemist.test
 
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.core.implementations.Engine
+import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position

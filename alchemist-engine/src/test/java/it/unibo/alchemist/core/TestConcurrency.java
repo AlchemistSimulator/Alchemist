@@ -1,28 +1,25 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.core.tests;
+package it.unibo.alchemist.core;
 
 
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.core.implementations.Engine;
-import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.core.Status;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Incarnation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

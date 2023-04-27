@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.terminators
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.core.implementations.Engine
+import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment

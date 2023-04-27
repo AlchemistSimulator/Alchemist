@@ -9,7 +9,7 @@
 package it.unibo.alchemist.scafi.test
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import it.unibo.alchemist.core.implementations.Engine
+import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Environment

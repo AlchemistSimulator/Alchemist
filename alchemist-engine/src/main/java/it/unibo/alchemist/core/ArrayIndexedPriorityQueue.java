@@ -1,17 +1,17 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.core.implementations;
+package it.unibo.alchemist.core;
 
 import gnu.trove.impl.Constants;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import it.unibo.alchemist.core.Scheduler;
 import it.unibo.alchemist.model.Actionable;
 import it.unibo.alchemist.model.Time;
 
@@ -24,8 +24,6 @@ import java.util.List;
  * @param <T> concentration type
  */
 public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
-
-    private static final long serialVersionUID = 8064379974084348391L;
 
     private final TObjectIntMap<Actionable<T>> indexes =
             new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);

@@ -9,8 +9,8 @@
 package it.unibo.alchemist.test
 
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.core.implementations.Engine
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node.Companion.asProperty
@@ -55,7 +55,8 @@ class TestGetPosition {
 
     @Test
     fun testGetPosition() {
-        val sim: Simulation<Any, Euclidean2DPosition> = Engine(environment, 100)
+        val sim: Simulation<Any, Euclidean2DPosition> =
+            Engine(environment, 100)
         sim.addOutputMonitor(
             object : OutputMonitor<Any, Euclidean2DPosition> {
                 override fun finished(environment: Environment<Any, Euclidean2DPosition>, time: Time, step: Long) = Unit

@@ -23,7 +23,7 @@ import org.kaikikm.threadresloader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
@@ -78,7 +78,7 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
                         generalConfig.getEndStep(),
                         generalConfig.getEndTime()
                 );
-                final String filename = masterNodeId.toString() + "_" + config.toString() + ".txt";
+                final String filename = masterNodeId + "_" + config + ".txt";
                 simulation.addOutputMonitor(new GlobalExporter<>(initialized.getExporters()));
                 simulation.play();
                 simulation.run();

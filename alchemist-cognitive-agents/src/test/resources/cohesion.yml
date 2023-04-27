@@ -8,7 +8,7 @@ seeds:
   simulation: 1
 
 _create_friends: &create_friends
-  "it.unibo.alchemist.model.implementations.groups.GroupFactory.friends()"
+  "it.unibo.alchemist.model.cognitive.groups.GroupFactory.friends()"
 variables:
   group1: &group1
     formula: *create_friends

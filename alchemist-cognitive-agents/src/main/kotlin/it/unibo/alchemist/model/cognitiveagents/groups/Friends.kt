@@ -7,19 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitiveagents
+package it.unibo.alchemist.model.cognitiveagents.groups
 
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.geometry.Vector
 
 /**
- * A [SteeringAction] related to a group of pedestrians.
+ * A generic, leaderless group of pedestrians.
  */
-interface GroupSteeringAction<T, P> : SteeringAction<T, P> where P : Position<P>, P : Vector<P> {
-
-    /**
-     * The list of pedestrians influencing this action.
-     */
-    fun group(): List<Node<T>>
-}
+class Friends<T> : GenericGroup<T, Node<T>>()

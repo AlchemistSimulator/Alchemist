@@ -1,10 +1,10 @@
 package it.unibo.alchemist.model.actions.steeringstrategies
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GroupSteeringAction
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.cognitiveagents.GroupSteeringAction
-import it.unibo.alchemist.model.cognitiveagents.SteeringAction
-import it.unibo.alchemist.model.cognitiveagents.SteeringActionWithTarget
+import it.unibo.alchemist.model.SteeringAction
+import it.unibo.alchemist.model.SteeringActionWithTarget
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 

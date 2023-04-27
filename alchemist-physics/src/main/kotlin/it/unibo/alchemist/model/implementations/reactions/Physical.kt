@@ -12,11 +12,11 @@ package it.unibo.alchemist.model.implementations.reactions
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.SteeringAction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.actions.CognitiveAgentCombineSteering
 import it.unibo.alchemist.model.actions.steeringstrategies.DistanceWeighted
-import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty
 import it.unibo.alchemist.model.positions.Euclidean2DPosition

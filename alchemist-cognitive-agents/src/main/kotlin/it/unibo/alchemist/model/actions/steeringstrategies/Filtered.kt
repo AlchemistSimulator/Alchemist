@@ -1,7 +1,7 @@
 package it.unibo.alchemist.model.actions.steeringstrategies
 
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.cognitiveagents.SteeringAction
+import it.unibo.alchemist.model.SteeringAction
 import it.unibo.alchemist.model.cognitiveagents.SteeringStrategy
 import it.unibo.alchemist.model.geometry.Vector
 

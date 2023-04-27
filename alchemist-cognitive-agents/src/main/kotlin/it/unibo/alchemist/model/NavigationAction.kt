@@ -7,11 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitiveagents
+package it.unibo.alchemist.model
 
-import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector

@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitiveagents.SteeringActionWithTarget
+import it.unibo.alchemist.model.SteeringActionWithTarget
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty

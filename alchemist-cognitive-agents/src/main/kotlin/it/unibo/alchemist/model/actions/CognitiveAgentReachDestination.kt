@@ -12,7 +12,6 @@ package it.unibo.alchemist.model.actions
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.navigationstrategies.DestinationReaching
-import it.unibo.alchemist.model.cognitiveagents.NavigationAction
 import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy2D
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
@@ -26,7 +25,7 @@ import it.unibo.alchemist.util.Arrays.toPositions
 import org.jgrapht.Graphs
 
 /**
- * A [NavigationAction] using [DestinationReaching] navigation strategy.
+ * A [CognitiveAgentNavigationAction2D] using [DestinationReaching] navigation strategy.
  * Accepts an array of coordinates representing the destinations and uses [inferIsKnown] to partition them into
  * known and unknown ones.
  *

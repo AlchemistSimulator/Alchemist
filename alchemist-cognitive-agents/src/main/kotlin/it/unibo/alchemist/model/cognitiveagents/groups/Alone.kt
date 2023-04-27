@@ -1,4 +1,4 @@
-package it.unibo.alchemist.model.implementations.groups
+package it.unibo.alchemist.model.cognitiveagents.groups
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitiveagents.Group

@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.implementations.reactions
 
+import it.unibo.alchemist.model.SteeringAction
 import it.unibo.alchemist.model.TimeDistribution
+import it.unibo.alchemist.model.actions.NavigationAction2D
 import it.unibo.alchemist.model.actions.steeringstrategies.SinglePrevalent
-import it.unibo.alchemist.model.cognitiveagents.NavigationAction2D
-import it.unibo.alchemist.model.cognitiveagents.SteeringAction
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty

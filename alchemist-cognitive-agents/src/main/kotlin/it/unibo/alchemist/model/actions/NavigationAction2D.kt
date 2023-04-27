@@ -7,8 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitiveagents
+package it.unibo.alchemist.model.actions
 
+import it.unibo.alchemist.model.NavigationAction
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 

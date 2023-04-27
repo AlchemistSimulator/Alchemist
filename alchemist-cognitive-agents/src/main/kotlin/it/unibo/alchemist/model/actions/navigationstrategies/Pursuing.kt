@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.actions.navigationstrategies
 
-import it.unibo.alchemist.model.cognitiveagents.NavigationAction2D
+import it.unibo.alchemist.model.actions.NavigationAction2D
 import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy
 import it.unibo.alchemist.model.geometry.euclidean2d.Segment2DImpl
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon

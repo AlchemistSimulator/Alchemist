@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitiveagents.SteeringAction
+import it.unibo.alchemist.model.SteeringAction
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty

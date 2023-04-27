@@ -11,7 +11,6 @@ package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitiveagents.NavigationAction2D
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape

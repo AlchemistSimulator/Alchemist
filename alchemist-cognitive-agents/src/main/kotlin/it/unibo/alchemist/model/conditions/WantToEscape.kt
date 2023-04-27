@@ -1,9 +1,17 @@
-package it.unibo.alchemist.model.implementations.conditions
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.model.conditions
 
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.conditions.AbstractCondition
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.CognitiveProperty

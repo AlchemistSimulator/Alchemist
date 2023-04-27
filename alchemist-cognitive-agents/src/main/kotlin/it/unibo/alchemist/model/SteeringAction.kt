@@ -7,10 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.cognitiveagents
-
-import it.unibo.alchemist.model.Action
-import it.unibo.alchemist.model.Position
+package it.unibo.alchemist.model
 
 /**
  * Action whose purpose is moving a node inside the environment it is in.

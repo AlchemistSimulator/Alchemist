@@ -10,9 +10,9 @@
 package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GroupSteeringAction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.cognitiveagents.GroupSteeringAction
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.PedestrianProperty

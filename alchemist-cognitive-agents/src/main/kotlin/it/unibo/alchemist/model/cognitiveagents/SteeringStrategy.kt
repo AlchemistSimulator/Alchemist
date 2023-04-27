@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.cognitiveagents
 
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.SteeringAction
 
 /**
  * Strategy interface describing how the next points of the steering actions

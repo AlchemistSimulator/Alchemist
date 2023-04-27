@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.actions
 
+import it.unibo.alchemist.model.NavigationAction
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
@@ -19,7 +20,6 @@ import it.unibo.alchemist.model.actions.AbstractNavigationAction.NavigationState
 import it.unibo.alchemist.model.actions.AbstractNavigationAction.NavigationState.MOVING_TO_FINAL
 import it.unibo.alchemist.model.actions.AbstractNavigationAction.NavigationState.NEW_ROOM
 import it.unibo.alchemist.model.actions.AbstractNavigationAction.NavigationState.START
-import it.unibo.alchemist.model.cognitiveagents.NavigationAction
 import it.unibo.alchemist.model.cognitiveagents.NavigationStrategy
 import it.unibo.alchemist.model.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.geometry.Transformation

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.cognitiveagents
 
+import it.unibo.alchemist.model.NavigationAction
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector

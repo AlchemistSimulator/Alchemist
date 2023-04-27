@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.test
+package it.unibo.alchemist.model.cognitive
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.beEmpty
@@ -20,8 +20,9 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.cognitive.CognitiveProperty
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.test.loadYamlSimulation
+import it.unibo.alchemist.test.startSimulation
 
 class TestFeelsTransmission<T, P> : StringSpec({
 

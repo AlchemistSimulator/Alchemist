@@ -389,8 +389,6 @@ tasks {
         hugoBuild.get().mustRunAfter(copyLogo)
     }
 
-    dokkaHtmlMultimodule
-
     mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlMultiModule)
         .mapValues { it.value.get() }
         .forEach { (folder, task) ->

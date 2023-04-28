@@ -26,6 +26,11 @@ import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * This effect draws a node as a directed arrow.
+ * The direction is given by the node's velocity (that is an array of double).
+ * The color is given by the node's hue molecule (that is a numeric number).
+ */
 @Suppress("DEPRECATION")
 class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
     private var positionsMemory: Map<Int, List<Pair<Position2D<*>, Double>>> = emptyMap()
@@ -35,25 +40,35 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
     private val trackEnabled: Boolean = true
 
     @ExportForGUI(nameToExport = "SnapshotSize")
-    private val snapshotSize: RangedInteger = RangedInteger(10, MAX_LENGTH, LENGTH)
+    private val snapshotSize: RangedInteger = RangedInteger(
+        MIN_SNAPSHOT_LENGTH,
+        MAX_SNAPSHOT_LENGTH,
+        DEFAULT_SNAPSHOT_LENGTH,
+    )
 
     @ExportForGUI(nameToExport = "SnapshotFrequency")
-    private val timespan: RangedInteger = RangedInteger(1, 100, CLOCK)
+    private val timespan: RangedInteger = RangedInteger(1, MAX_TIMESPAN, CLOCK)
 
     @ExportForGUI(nameToExport = "NodeSize")
-    private val nodeSize: RangedInteger = RangedInteger(1, 20, DRONE_SIZE.toInt())
+    private val nodeSize: RangedInteger = RangedInteger(1, MAX_NODE_SIZE, DRONE_SIZE.toInt())
 
     @ExportForGUI(nameToExport = "Hue Molecule Property")
-    private var colorMolecule: String = "hue"
+    private val colorMolecule: String = "hue"
 
     @ExportForGUI(nameToExport = "Velocity Molecule Property")
-    private var velocityMolecule: String = "velocity"
+    private val velocityMolecule: String = "velocity"
 
     @ExportForGUI(nameToExport = "Max Value")
-    private var maxValue: String = ""
+    private val maxValue: String = ""
 
+    /**
+     * @See [Effect.getSummary]
+     */
     override fun getColorSummary(): Color = Color.BLACK
 
+    /**
+     * @See [Effect.apply]
+     */
     override fun <T : Any, P : Position2D<P>> apply(
         g: Graphics2D,
         node: Node<T>,
@@ -84,8 +99,14 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         updateTrajectory(node, environment)
     }
 
-    private fun <P : Position2D<P>> drawTrajectory(graphics2D: Graphics2D, node: Node<*>, colorBase: Color, wormhole2D: Wormhole2D<P>, shape: Shape) {
-        val positions = positionsMemory[node.id] ?: emptyList()
+    private fun <P : Position2D<P>> drawTrajectory(
+        graphics2D: Graphics2D,
+        node: Node<*>,
+        colorBase: Color,
+        wormhole2D: Wormhole2D<P>,
+        shape: Shape,
+    ) {
+        val positions = positionsMemory[node.id].orEmpty()
         val alpha = MAX_COLOR / (min(snapshotSize.`val`, positions.size) * ADJUST_ALPHA_FACTOR + 1)
         positions.takeLast(snapshotSize.`val`).withIndex().forEach { (index, pair) ->
             val (position, rotation) = pair
@@ -93,7 +114,12 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
                 Color(colorBase.red, colorBase.green, colorBase.blue, max(1, (alpha * (index + 1)).toInt()))
 
             @Suppress("UNCHECKED_CAST")
-            val transform = computeTransform(wormhole2D.getViewPoint(position as P).x, wormhole2D.getViewPoint(position).y, nodeSize.`val`.toDouble(), rotation)
+            val transform = computeTransform(
+                wormhole2D.getViewPoint(position as P).x,
+                wormhole2D.getViewPoint(position).y,
+                nodeSize.`val`.toDouble(),
+                rotation,
+            )
             val transformedShape = transform.createTransformedShape(shape)
             graphics2D.color = colorFaded
             graphics2D.fill(transformedShape)
@@ -109,19 +135,26 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
     private fun computeColorOrBlack(node: Node<*>, environment: Environment<*, *>): Color = node
         .takeIf { it.contains(SimpleMolecule(colorMolecule)) }
         ?.getConcentration(SimpleMolecule(colorMolecule))
-        ?.let { it as? Number }
-        ?.let { it.toDouble() }
-        ?.let { Color.getHSBColor((it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(), 1f, 1f) }
+        ?.let { it as? Number }?.toDouble()
+        ?.let {
+            Color.getHSBColor(
+                (it / (maxValue.toDoubleOrNull() ?: environment.nodeCount.toDouble())).toFloat(),
+                1f,
+                1f,
+            )
+        }
         ?: Color.BLACK
 
     private fun <P : Position2D<P>, T> updateTrajectory(node: Node<T>, environment: Environment<T, P>) {
-        val positions = positionsMemory[node.id] ?: emptyList()
+        val positions = positionsMemory[node.id].orEmpty()
         val lastDraw = lastDrawMemory[node.id] ?: 0
         val roundedTime = environment.simulation.time.toDouble().toInt()
         if (roundedTime >= lastDraw) {
             lastDrawMemory = lastDrawMemory + (node.id to lastDraw + timespan.`val`)
+            val updatedPositions = (positions + (environment.getPosition(node) to rotation(node)))
+                .takeLast(MAX_SNAPSHOT_LENGTH)
             positionsMemory = positionsMemory +
-                (node.id to (positions + (environment.getPosition(node) to rotation(node))).takeLast(MAX_LENGTH))
+                (node.id to updatedPositions)
         }
     }
 
@@ -132,13 +165,19 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
         ?: 0.0
 
     companion object {
+        private const val MAX_NODE_SIZE: Int = 20
+
+        private const val MAX_TIMESPAN: Int = 100
+
+        private const val MAX_SNAPSHOT_LENGTH: Int = 1000
+
+        private const val MIN_SNAPSHOT_LENGTH: Int = 10
+
+        private const val DEFAULT_SNAPSHOT_LENGTH: Int = 140
+
         private const val ADJUST_ALPHA_FACTOR: Int = 4
 
         private const val CLOCK: Int = 10
-
-        private const val LENGTH: Int = 140
-
-        private const val MAX_LENGTH: Int = 1000
 
         private const val MAX_COLOR: Double = 255.0
 

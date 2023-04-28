@@ -20,8 +20,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.danilopianini.gradle.mavencentral.JavadocJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
+import org.jetbrains.dokka.gradle.AbstractDokkaParentTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 plugins {
     distribution
@@ -103,13 +104,13 @@ allprojects {
             }
         }
 
-        tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+        tasks.withType<AbstractDokkaLeafTask>().configureEach {
             dokkaSourceSets.configureEach {
                 jdkVersion.set(multiJvm.jvmVersionForCompilation)
                 listOf("kotlin", "java")
-                    .map { "src/main/$it" }
-                    .map { it to File(projectDir, it) }
-                    .toMap()
+                    .flatMap { listOf("main/$it", "commonMain/$it", "jsMain/$it", "jvmMain/$it") }
+                    .map { "src/$it" }
+                    .associateWith { File(projectDir, it) }
                     .filterValues { it.exists() }
                     .forEach { (path, file) ->
                         sourceLink {
@@ -120,16 +121,18 @@ allprojects {
                             remoteLineSuffix.set("#L")
                         }
                     }
-                configurations.implementation.get().dependencies.forEach { dep ->
-                    val javadocIOURLs = fetchJavadocIOForDependency(dep)
-                    if (javadocIOURLs != null) {
-                        val (javadoc, packageList) = javadocIOURLs
-                        externalDocumentationLink {
-                            url.set(javadoc)
-                            packageListUrl.set(packageList)
+                configurations.run { sequenceOf(api, implementation) }
+                    .flatMap { it.get().dependencies }
+                    .forEach { dependency ->
+                        val javadocIOURLs = fetchJavadocIOForDependency(dependency)
+                        if (javadocIOURLs != null) {
+                            val (javadoc, packageList) = javadocIOURLs
+                            externalDocumentationLink {
+                                url.set(javadoc)
+                                packageListUrl.set(packageList)
+                            }
                         }
                     }
-                }
             }
             failOnWarning.set(true)
         }
@@ -362,20 +365,37 @@ hugo {
         .find(file("deps-utils/action.yml").readText())!!.groups[1]!!.value
 }
 
-tasks.hugoBuild {
-    outputDirectory = websiteDir
-}
-
 tasks {
+    hugoBuild {
+        outputDirectory = websiteDir
+    }
+
     dokkaJavadocCollector {
         removeChildTasks(subprojects.filter { it.isMultiplatform })
     }
 
-    mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlCollector)
+    /**
+     * Use the alchemist logo in the documentation.
+     */
+    val alchemistLogo = file("site/static/images/logo.svg")
+    for (docTaskProvider in listOf<Provider<out AbstractDokkaParentTask>>(dokkaHtmlCollector, dokkaHtmlMultiModule)) {
+        val docTask = docTaskProvider.get()
+        val copyLogo = register<Copy>("copyLogoFor${docTask.name.capitalized()}") {
+            from(alchemistLogo)
+            into(docTask.outputDirectory.map { File(it, "images") })
+            rename("logo.svg", "logo-icon.svg")
+        }
+        docTask.finalizedBy(copyLogo)
+        hugoBuild.get().mustRunAfter(copyLogo)
+    }
+
+    dokkaHtmlMultimodule
+
+    mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlMultiModule)
         .mapValues { it.value.get() }
         .forEach { (folder, task) ->
             hugoBuild.get().dependsOn(task)
-            val copyTask = register<Copy>("copy${folder.capitalizeAsciiOnly()}IntoWebsite") {
+            val copyTask = register<Copy>("copy${folder.capitalized()}IntoWebsite") {
                 from(task.outputDirectory)
                 into(File(websiteDir, "reference/$folder"))
             }

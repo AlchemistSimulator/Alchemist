@@ -15,6 +15,7 @@ dependencies {
 
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
+    implementation(alchemist("physics"))
 
     testImplementation(incarnation("protelis"))
     testImplementation(alchemist("loading"))

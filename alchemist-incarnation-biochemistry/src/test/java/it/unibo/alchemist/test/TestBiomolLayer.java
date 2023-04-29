@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.BiochemistryIncarnation;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.layers.StepLayer;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
 import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Environment;

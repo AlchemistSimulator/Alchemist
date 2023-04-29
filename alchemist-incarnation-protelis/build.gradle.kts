@@ -23,8 +23,8 @@ dependencies {
     api(alchemist("implementationbase"))
     api(libs.bundles.protelis)
     // IMPLEMENTATION
-    implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("maps"))
+    implementation(alchemist("physics"))
     implementation(libs.apache.commons.lang3)
     // TESTING
     testImplementation(alchemist("loading"))

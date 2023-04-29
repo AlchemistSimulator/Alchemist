@@ -19,9 +19,9 @@ import Libs.alchemist
 
 dependencies {
     api(alchemist("api"))
-    implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
     implementation(alchemist("maps"))
+    implementation(alchemist("physics"))
     implementation(alchemist("sapere-mathexp"))
     implementation(libs.boilerplate)
     implementation(libs.trove4j)

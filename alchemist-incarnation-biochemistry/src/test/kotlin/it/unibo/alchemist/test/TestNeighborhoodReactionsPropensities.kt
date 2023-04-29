@@ -23,11 +23,11 @@ import it.unibo.alchemist.model.conditions.AbstractNeighborCondition
 import it.unibo.alchemist.model.conditions.BiomolPresentInNeighbor
 import it.unibo.alchemist.model.conditions.JunctionPresentInCell
 import it.unibo.alchemist.model.conditions.NeighborhoodPresent
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment
 import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficientDouble

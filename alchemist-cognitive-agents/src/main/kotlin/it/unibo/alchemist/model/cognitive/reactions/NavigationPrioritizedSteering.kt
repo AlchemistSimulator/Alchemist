@@ -14,9 +14,9 @@ import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringAction
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
 import it.unibo.alchemist.model.cognitive.steering.SinglePrevalent
-import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironmentWithGraph
+import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 
 /**
  * A [SteeringBehavior] using [SinglePrevalent] steering strategy and accepting a collection of actions

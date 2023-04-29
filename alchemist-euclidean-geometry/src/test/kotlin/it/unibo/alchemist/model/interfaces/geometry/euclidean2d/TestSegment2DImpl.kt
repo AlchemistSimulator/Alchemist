@@ -13,11 +13,13 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
-import it.unibo.alchemist.model.environments.shouldBeAbout
+import it.unibo.alchemist.model.euclidean.environments.shouldBeAbout
+import it.unibo.alchemist.model.euclidean.geometry.Intersection2D
+import it.unibo.alchemist.model.euclidean.geometry.Segment2D
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.geometry.euclidean2d.Segments.coords
 import it.unibo.alchemist.model.geometry.euclidean2d.Segments.segment
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Ranges.coincidesWith
 import org.junit.jupiter.api.assertThrows
 import kotlin.math.pow

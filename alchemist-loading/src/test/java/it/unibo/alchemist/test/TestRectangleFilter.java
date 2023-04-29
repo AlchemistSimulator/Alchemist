@@ -9,7 +9,7 @@ package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.loader.filters.Filter;
 import it.unibo.alchemist.loader.filters.Rectangle;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.GeoPosition;
 import org.junit.jupiter.api.Test;

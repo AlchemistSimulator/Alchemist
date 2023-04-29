@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.cognitive.properties
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitive.PerceptiveProperty
-import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
+import it.unibo.alchemist.model.physics.InfluenceSphere
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
 
 /**

@@ -11,12 +11,13 @@ package it.unibo.alchemist.model.cognitive.navigation
 
 import it.unibo.alchemist.model.cognitive.NavigationStrategy
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigationgraph.Euclidean2DPassage
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
+import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DConvexShape
+import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DPassage
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Sequences.cartesianProduct
-import org.jgrapht.Graphs
+import org.jgrapht.Graphs.predecessorListOf
+import org.jgrapht.Graphs.successorListOf
 import org.jgrapht.alg.shortestpath.BFSShortestPath
 
 /**
@@ -128,8 +129,8 @@ open class ReachKnownDestination<T, L : Euclidean2DConvexShape, R>(
         }
         val landmarksInStartRoom = landmarksIn(startRoom)
         val landmarksInEndRoom = landmarksIn(endRoom)
-        val landmarksAdjacentToStartRoom = landmarksInAny(Graphs.successorListOf(environment.graph, startRoom))
-        val landmarksAdjacentToEndRoom = landmarksInAny(Graphs.predecessorListOf(environment.graph, endRoom))
+        val landmarksAdjacentToStartRoom = landmarksInAny(successorListOf(environment.graph, startRoom))
+        val landmarksAdjacentToEndRoom = landmarksInAny(predecessorListOf(environment.graph, endRoom))
         return landmarksInStartRoom.cartesianProduct(landmarksInEndRoom) +
             landmarksInStartRoom.cartesianProduct(landmarksAdjacentToEndRoom) +
             landmarksAdjacentToStartRoom.cartesianProduct(landmarksInEndRoom) +

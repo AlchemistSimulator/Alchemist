@@ -12,10 +12,10 @@ package it.unibo.alchemist.model.cognitive
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.environments.EnvironmentWithGraph
+import it.unibo.alchemist.model.euclidean.environments.EnvironmentWithGraph
+import it.unibo.alchemist.model.euclidean.geometry.ConvexShape
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 
 /**
  * A [SteeringAction] allowing a node to navigate an environment consciously (e.g. without getting stuck in

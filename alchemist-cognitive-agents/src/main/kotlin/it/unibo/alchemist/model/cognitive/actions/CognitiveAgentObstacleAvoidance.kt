@@ -10,13 +10,13 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.Obstacle2D
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.reactions.SteeringBehavior
-import it.unibo.alchemist.model.environments.Environment2DWithObstacles
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DTransformation
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.euclidean.Obstacle2D
+import it.unibo.alchemist.model.euclidean.environments.Environment2DWithObstacles
+import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import kotlin.reflect.jvm.jvmName
 
 /**

@@ -10,7 +10,7 @@
 package another.location
 
 import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
 
 class MyTestEnv<T> (incarnation: Incarnation<T, Euclidean2DPosition>) : Continuous2DEnvironment<T>(incarnation)

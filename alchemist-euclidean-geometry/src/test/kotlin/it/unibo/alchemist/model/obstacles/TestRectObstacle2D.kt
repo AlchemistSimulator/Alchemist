@@ -11,14 +11,21 @@ package it.unibo.alchemist.model.obstacles
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.alchemist.model.euclidean.obstacles.RectObstacle2D
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.geometry.euclidean2d.Segments.coords
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.util.FastMath
 import org.danilopianini.lang.MathUtils.fuzzyEquals
 
 class TestRectObstacle2D : StringSpec({
 
-    val obstacle = RectObstacle2D<Euclidean2DPosition>(2.0, 2.0, 4.0, 4.0)
+    val obstacle =
+        RectObstacle2D<Euclidean2DPosition>(
+            2.0,
+            2.0,
+            4.0,
+            4.0,
+        )
 
     /*
      * Given a vector (startx, starty) -> (endx, endy), this method asserts that the
@@ -107,7 +114,13 @@ class TestRectObstacle2D : StringSpec({
         val maxX = -5.2574
         val minY = -5.3
         val maxY = 5.3074
-        val subject = RectObstacle2D<Euclidean2DPosition>(minX, minY, maxX - minY, maxY - minY)
+        val subject =
+            RectObstacle2D<Euclidean2DPosition>(
+                minX,
+                minY,
+                maxX - minY,
+                maxY - minY,
+            )
         val topRight = Euclidean2DPosition(-5.257399999999999, 5.3073999999999995)
         val desired1 = Euclidean2DPosition(-5.844256289989133, 6.172836637106708)
         subject.next(topRight, desired1) shouldBe desired1

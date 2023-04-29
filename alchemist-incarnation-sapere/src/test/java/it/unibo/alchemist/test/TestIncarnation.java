@@ -8,18 +8,18 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.model.SAPEREIncarnation;
-import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.implementations.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.implementations.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.implementations.conditions.LsaNeighborhoodCondition;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPEREExponentialTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaNode;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.BeforeEach;

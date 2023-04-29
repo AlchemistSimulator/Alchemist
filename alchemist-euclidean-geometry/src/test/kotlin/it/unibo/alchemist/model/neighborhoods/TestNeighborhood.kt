@@ -12,14 +12,14 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 /**
- * Tests pertaining to the [it.unibo.alchemist.model.implementations.neighborhoods] package.
+ * Tests pertaining to the `it.unibo.alchemist.model.implementations.neighborhoods` package.
  */
 class TestNeighborhood {
     private fun createIntNode(
@@ -31,7 +31,7 @@ class TestNeighborhood {
 
     /**
      * Tests whether the clone function of the
-     * [it.unibo.alchemist.model.implementations.neighborhoods.SimpleNeighborhood] class works as expected.
+     * [SimpleNeighborhood] class works as expected.
      */
     @Test
     fun testClone() {

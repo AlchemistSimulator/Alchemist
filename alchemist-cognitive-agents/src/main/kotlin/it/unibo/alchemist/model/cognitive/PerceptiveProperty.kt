@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.cognitive
 
 import it.unibo.alchemist.model.NodeProperty
-import it.unibo.alchemist.model.interfaces.geometry.InfluenceSphere
+import it.unibo.alchemist.model.physics.InfluenceSphere
 
 /**
  * The pedestrian's capability to influence other pedestrians.

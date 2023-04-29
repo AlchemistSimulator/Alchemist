@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.environments;
 
 import com.google.common.base.Optional;
 import it.unibo.alchemist.model.BiochemistryIncarnation;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.EnvironmentSupportingDeformableCells;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;

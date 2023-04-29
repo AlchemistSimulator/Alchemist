@@ -5,9 +5,9 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.actions.AbstractAction
-import it.unibo.alchemist.model.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.VisibleNode
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import kotlin.math.min
 
 /**

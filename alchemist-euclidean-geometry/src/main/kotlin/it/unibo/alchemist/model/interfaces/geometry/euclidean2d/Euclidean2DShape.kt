@@ -1,9 +1,0 @@
-package it.unibo.alchemist.model.interfaces.geometry.euclidean2d
-
-import it.unibo.alchemist.model.geometry.Shape
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
-
-/**
- * Defines an euclidean shape in a bidimensional space.
- */
-typealias Euclidean2DShape = Shape<Euclidean2DPosition, Euclidean2DTransformation>

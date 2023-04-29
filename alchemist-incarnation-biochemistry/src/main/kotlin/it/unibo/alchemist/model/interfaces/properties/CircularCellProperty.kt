@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model.interfaces.properties
 
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 
 /**
  * A node's capability to behave as a cell with a circular area.

@@ -11,10 +11,10 @@ package it.unibo.alchemist.model.interfaces.properties
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.euclidean.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Shape
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShapeFactory
 
 /**
  * A pedestrian's capability to experience physical forces.
@@ -49,7 +49,7 @@ interface PhysicalPedestrian<T, P, A, F> : PhysicalProperty<T, P, A, F>
     val comfortRay: Double
 
     /**
-     * The comfort area of this pedestrian, it's a circle of radius [shape].radius + [comfortRay].
+     * The comfort area of this pedestrian, it's a circle of radius [Shape].radius + [comfortRay].
      */
     val comfortArea: Shape<P, A>
 

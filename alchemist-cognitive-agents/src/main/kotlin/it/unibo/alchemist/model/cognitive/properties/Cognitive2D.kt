@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitive.CognitiveModel
 import it.unibo.alchemist.model.cognitive.CognitiveProperty
-import it.unibo.alchemist.model.environments.Physics2DEnvironment
+import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 
 /**
  * The node's [CognitiveModel].

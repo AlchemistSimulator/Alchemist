@@ -10,9 +10,9 @@
 package it.unibo.alchemist.model.interfaces.environments
 
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
-import it.unibo.alchemist.model.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 
 /**
  * Any implementing Environment should take care of physical dynamics, in particular

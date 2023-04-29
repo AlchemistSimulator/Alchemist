@@ -20,10 +20,11 @@ import Libs.alchemist
 
 dependencies {
     api(alchemist("api"))
-    implementation(alchemist("euclidean-geometry"))
+    api(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
-    implementation(alchemist("cognitive-agents"))
+    implementation(libs.caffeine)
     implementation(libs.jgrapht.core)
+    implementation(libs.rtree)
     testImplementation(alchemist("test"))
     testImplementation(alchemist("incarnation-protelis"))
 }

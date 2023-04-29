@@ -11,7 +11,9 @@ package it.unibo.alchemist.model.geometry.euclidean2d
 
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.euclidean.geometry.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.euclidean.geometry.Segment2DImpl
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

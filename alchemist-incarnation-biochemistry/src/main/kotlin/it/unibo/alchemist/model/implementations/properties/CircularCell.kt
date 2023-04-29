@@ -11,10 +11,10 @@ package it.unibo.alchemist.model.implementations.properties
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.molecules.Junction
 import it.unibo.alchemist.model.interfaces.properties.CellProperty
 import it.unibo.alchemist.model.interfaces.properties.CircularCellProperty
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.properties.AbstractNodeProperty
 
 /**

@@ -10,9 +10,9 @@
 package it.unibo.alchemist.model.cognitive
 
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.euclidean.geometry.ConvexShape
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
 
 /**
  * Defines what a node should do when in a new room (= environment's area), this is designed to be used jointly

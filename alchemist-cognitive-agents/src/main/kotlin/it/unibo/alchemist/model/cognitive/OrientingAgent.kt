@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.model.cognitive
 
+import it.unibo.alchemist.model.euclidean.geometry.ConvexShape
+import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.NavigationGraph
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.geometry.ConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigationgraph.NavigationGraph
 
 /**
  * An agent capable of orienting itself inside an environment.

@@ -11,10 +11,10 @@ package it.unibo.alchemist.model.cognitive.navigation
 
 import it.unibo.alchemist.model.cognitive.NavigationStrategy
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConvexShape
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.navigationgraph.Euclidean2DPassage
-import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
+import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DConvexShape
+import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DPassage
+import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 
 /**
  * A [NavigationStrategy] allowing to follow a given route.
@@ -42,7 +42,7 @@ open class FollowRoute<T, L : Euclidean2DConvexShape, R> constructor(
     private var indexOfNextWaypoint: Int = 0
 
     /**
-     * When in an unexpected room the node gets back to [previousRoom] so as to continue following the
+     * When in an unexpected room the node gets back to [previousRoom] to continue following the
      * route correctly.
      */
     override fun inUnexpectedNewRoom(

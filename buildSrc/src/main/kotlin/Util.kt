@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.Dependency
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.eclipse.jgit.api.Git
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
@@ -31,6 +32,8 @@ object Util {
     val isInCI get() = System.getenv("CI") == true.toString()
     val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
     val isMac = Os.isFamily(Os.FAMILY_MAC)
+    val Project.currentCommitHash get(): String? =
+        kotlin.runCatching { Git.open(rootProject.projectDir).repository.resolve("HEAD")?.name }.getOrNull()
 
     private val javadocIOcacheFile = File("javadoc-io.json")
     private val gson = Gson().newBuilder().setPrettyPrinting().create()

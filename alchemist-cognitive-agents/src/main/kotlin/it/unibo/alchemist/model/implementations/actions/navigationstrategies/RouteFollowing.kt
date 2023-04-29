@@ -17,8 +17,8 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Euclidean2DConve
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage
 
 /**
- * A [NavigationStrategy] allowing to follow a given [route].
- * The [route] consists of a list of positions (= waypoints) that may or may not be in sight of each
+ * A [NavigationStrategy] allowing to follow a given route.
+ * The route consists of a list of positions (= waypoints) that may or may not be in sight of each
  * other (i.e. the path leading from a waypoint to the next one may or may not be representable
  * as a single segment), for this reason [Pursuing] behavior is used to reach each waypoint.
  * In this context, a waypoint is considered reached when it's inside the current room (not when the
@@ -26,6 +26,7 @@ import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2
  * Cuts to the route are allowed (i.e. if the node finds a waypoint which is farther than the
  * expected next one, he/she skips all the waypoints in between).
  *
+ * @param route the route to follow.
  * @param T the concentration type.
  * @param L the type of landmarks of the node's cognitive map.
  * @param R the type of edges of the node's cognitive map, representing the [R]elations between landmarks.

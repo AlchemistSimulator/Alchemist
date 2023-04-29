@@ -31,6 +31,10 @@
     "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.6",
     "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.6/element-list"
   },
+  "ch.qos.logback/logback-classic/1.4.7": {
+    "first": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.7",
+    "second": "https://javadoc.io/doc/ch.qos.logback/logback-classic/1.4.7/element-list"
+  },
   "com.github.ben-manes.caffeine/caffeine/3.0.5": {
     "first": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.0.5",
     "second": "https://javadoc.io/doc/com.github.ben-manes.caffeine/caffeine/3.0.5/element-list"
@@ -254,6 +258,9 @@
     "first": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0",
     "second": "https://javadoc.io/doc/io.jenetics/jpx/2.3.0/element-list"
   },
+  "it.unibo.scafi/scafi-core_2.13/1.1.7": {
+    "first": "https://javadoc.io/doc/it.unibo.scafi/scafi-core_2.13/1.1.7"
+  },
   "it.unimi.dsi/dsiutils/2.6.17": {
     "first": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.6.17",
     "second": "https://javadoc.io/doc/it.unimi.dsi/dsiutils/2.6.17/element-list"
@@ -296,6 +303,14 @@
   "org.apache.commons/commons-lang3/3.12.0": {
     "first": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.12.0",
     "second": "https://javadoc.io/doc/org.apache.commons/commons-lang3/3.12.0/package-list"
+  },
+  "org.apache.commons/commons-math3/3.6.1": {
+    "first": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1",
+    "second": "https://javadoc.io/doc/org.apache.commons/commons-math3/3.6.1/package-list"
+  },
+  "org.apache.ignite/ignite-core/2.14.0": {
+    "first": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.14.0",
+    "second": "https://javadoc.io/doc/org.apache.ignite/ignite-core/2.14.0/package-list"
   },
   "org.apache.ignite/ignite-indexing/2.12.0": {
     "first": "https://javadoc.io/doc/org.apache.ignite/ignite-indexing/2.12.0",
@@ -356,6 +371,10 @@
     "first": "https://javadoc.io/doc/org.danilopianini/gson-extras/1.2.0",
     "second": "https://javadoc.io/doc/org.danilopianini/gson-extras/1.2.0/package-list"
   },
+  "org.danilopianini/java-quadtree/0.2.0": {
+    "first": "https://javadoc.io/doc/org.danilopianini/java-quadtree/0.2.0",
+    "second": "https://javadoc.io/doc/org.danilopianini/java-quadtree/0.2.0/package-list"
+  },
   "org.danilopianini/javalib-java7/0.6.1": {
     "first": "https://javadoc.io/doc/org.danilopianini/javalib-java7/0.6.1",
     "second": "https://javadoc.io/doc/org.danilopianini/javalib-java7/0.6.1/package-list"
@@ -372,6 +391,10 @@
     "first": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.7",
     "second": "https://javadoc.io/doc/org.danilopianini/jirf/0.4.7/element-list"
   },
+  "org.danilopianini/listset/0.3.9": {
+    "first": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9",
+    "second": "https://javadoc.io/doc/org.danilopianini/listset/0.3.9/package-list"
+  },
   "org.danilopianini/thread-inheritable-resource-loader/0.3.5": {
     "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.5",
     "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.5/package-list"
@@ -379,6 +402,10 @@
   "org.danilopianini/thread-inheritable-resource-loader/0.3.6": {
     "first": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6",
     "second": "https://javadoc.io/doc/org.danilopianini/thread-inheritable-resource-loader/0.3.6/package-list"
+  },
+  "org.dyn4j/dyn4j/5.0.1": {
+    "first": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.1",
+    "second": "https://javadoc.io/doc/org.dyn4j/dyn4j/5.0.1/element-list"
   },
   "org.graphstream/gs-algo/2.0": {
     "first": "https://javadoc.io/doc/org.graphstream/gs-algo/2.0",
@@ -418,6 +445,9 @@
   "org.jetbrains.kotlin/kotlin-reflect/1.8.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.8.10"
   },
+  "org.jetbrains.kotlin/kotlin-reflect/1.8.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/1.8.21"
+  },
   "org.jetbrains.kotlin/kotlin-reflect/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-reflect/null"
   },
@@ -451,6 +481,9 @@
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.10": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.10"
   },
+  "org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.21": {
+    "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.8.21"
+  },
   "org.jetbrains.kotlin/kotlin-stdlib-jdk8/null": {
     "first": "https://javadoc.io/doc/org.jetbrains.kotlin/kotlin-stdlib-jdk8/null"
   },
@@ -473,6 +506,10 @@
     "first": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1",
     "second": "https://javadoc.io/doc/org.jgrapht/jgrapht-core/1.5.1/element-list"
   },
+  "org.jooq/jool/0.9.15": {
+    "first": "https://javadoc.io/doc/org.jooq/jool/0.9.15",
+    "second": "https://javadoc.io/doc/org.jooq/jool/0.9.15/element-list"
+  },
   "org.mapsforge/mapsforge-map-awt/0.17.0": {
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.17.0",
     "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.17.0/element-list"
@@ -480,6 +517,10 @@
   "org.mapsforge/mapsforge-map-awt/0.18.0": {
     "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.18.0",
     "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.18.0/element-list"
+  },
+  "org.mapsforge/mapsforge-map-awt/0.19.0": {
+    "first": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.19.0",
+    "second": "https://javadoc.io/doc/org.mapsforge/mapsforge-map-awt/0.19.0/element-list"
   },
   "org.mongodb/mongodb-driver-sync/4.4.1": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.4.1",
@@ -525,6 +566,42 @@
   },
   "org.mongodb/mongodb-driver-sync/4.9.1": {
     "first": "https://javadoc.io/doc/org.mongodb/mongodb-driver-sync/4.9.1"
+  },
+  "org.openjfx/javafx-base/11": {
+    "first": "https://javadoc.io/doc/org.openjfx/javafx-base/11",
+    "second": "https://javadoc.io/doc/org.openjfx/javafx-base/11/element-list"
+  },
+  "org.openjfx/javafx-controls/11": {
+    "first": "https://javadoc.io/doc/org.openjfx/javafx-controls/11",
+    "second": "https://javadoc.io/doc/org.openjfx/javafx-controls/11/element-list"
+  },
+  "org.openjfx/javafx-fxml/11": {
+    "first": "https://javadoc.io/doc/org.openjfx/javafx-fxml/11",
+    "second": "https://javadoc.io/doc/org.openjfx/javafx-fxml/11/element-list"
+  },
+  "org.openjfx/javafx-graphics/11": {
+    "first": "https://javadoc.io/doc/org.openjfx/javafx-graphics/11",
+    "second": "https://javadoc.io/doc/org.openjfx/javafx-graphics/11/element-list"
+  },
+  "org.openjfx/javafx-media/11": {
+    "first": "https://javadoc.io/doc/org.openjfx/javafx-media/11",
+    "second": "https://javadoc.io/doc/org.openjfx/javafx-media/11/element-list"
+  },
+  "org.openjfx/javafx-swing/11": {
+    "first": "https://javadoc.io/doc/org.openjfx/javafx-swing/11",
+    "second": "https://javadoc.io/doc/org.openjfx/javafx-swing/11/element-list"
+  },
+  "org.openjfx/javafx-web/11": {
+    "first": "https://javadoc.io/doc/org.openjfx/javafx-web/11",
+    "second": "https://javadoc.io/doc/org.openjfx/javafx-web/11/element-list"
+  },
+  "org.protelis/protelis-interpreter/17.0.0": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.0.0",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-interpreter/17.0.0/element-list"
+  },
+  "org.protelis/protelis-lang/17.0.0": {
+    "first": "https://javadoc.io/doc/org.protelis/protelis-lang/17.0.0",
+    "second": "https://javadoc.io/doc/org.protelis/protelis-lang/17.0.0/package-list"
   },
   "org.scala-lang/scala-compiler/2.13.10": {
     "first": "https://javadoc.io/doc/org.scala-lang/scala-compiler/2.13.10"

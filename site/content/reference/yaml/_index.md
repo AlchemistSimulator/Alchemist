@@ -1,6 +1,7 @@
 +++
-pre = ""
+pre = "<strong>"
 title = "YAML simulation specification"
+post = "</strong>"
 weight = 1
 summary = "Specification of the YAML-based language simulations are configured with."
 tags = ["yaml", "simulations", "specification", "environment", "extension", "programming"]

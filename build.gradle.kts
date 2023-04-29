@@ -9,6 +9,7 @@
 
 import Libs.alchemist
 import Libs.incarnation
+import Util.currentCommitHash
 import Util.fetchJavadocIOForDependency
 import Util.id
 import Util.isInCI
@@ -116,7 +117,9 @@ allprojects {
                         sourceLink {
                             localDirectory.set(file)
                             val project = if (project == rootProject) "" else project.name
-                            val url = "https://github.com/AlchemistSimulator/Alchemist/blob/master/$project/$path"
+                            val url = "https://github.com/AlchemistSimulator/Alchemist/${
+                                currentCommitHash?.let { "tree/$it" } ?: "blob/master"
+                            }/$project/$path"
                             remoteUrl.set(uri(url).toURL())
                             remoteLineSuffix.set("#L")
                         }
@@ -386,44 +389,52 @@ tasks {
             rename("logo.svg", "logo-icon.svg")
         }
         docTask.finalizedBy(copyLogo)
-        hugoBuild.get().mustRunAfter(copyLogo)
+        hugoBuild.configure { mustRunAfter(copyLogo) }
     }
 
-    mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlMultiModule)
-        .mapValues { it.value.get() }
-        .forEach { (folder, task) ->
-            hugoBuild.get().dependsOn(task)
-            val copyTask = register<Copy>("copy${folder.capitalized()}IntoWebsite") {
-                from(task.outputDirectory)
-                into(File(websiteDir, "reference/$folder"))
-            }
-            hugoBuild.get().finalizedBy(copyTask)
-        }
-    register("injectVersionInWebsite") {
+    val performWebsiteStringReplacements by registering {
         val index = File(websiteDir, "index.html")
+        mustRunAfter(hugoBuild)
         if (!index.exists()) {
             println("${index.absolutePath} does not exist")
-            dependsOn(hugoBuild.get())
+            dependsOn(hugoBuild)
         }
         doLast {
             require(index.exists()) {
-                "file ${index.absolutePath} existed during configuration, but has been deleted."
+                "file ${index.absolutePath} existed during configuration, but it has been deleted."
             }
-            val version = project.version.toString()
+            val websiteReplacements = file("site/replacements").readLines()
+                .map { it.split("->") }
+                .map { it[0] to it[1] }
+            println(websiteReplacements)
+            val replacements: List<Pair<String, String>> =
+                websiteReplacements + ("!development preview!" to project.version.toString())
+            println(replacements)
             index.parentFile.walkTopDown()
                 .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
-                .filterNot { it.path.contains(Regex("${File.separator}(kdoc|javadoc)${File.separator}")) }
                 .forEach { page ->
-                    val text = page.readText()
-                    val devTag = "!development preview!"
-                    if (text.contains(devTag)) {
-                        page.writeText(text.replace(devTag, version))
-                    } else {
-                        if (!text.contains(version)) {
-                            logger.warn("Could not inject version $version into ${page.path}")
-                        }
+                    val initialContents = page.readText()
+                    var text = initialContents
+                    for ((toreplace, replacement) in replacements) {
+                        if (toreplace in text) println("Replaced $toreplace with $replacement in ${page.path}")
+                        text = text.replace(toreplace, replacement)
+                    }
+                    if (initialContents != text) {
+                        page.writeText(text)
                     }
                 }
         }
     }
+
+    mapOf("javadoc" to dokkaJavadocCollector, "kdoc" to dokkaHtmlMultiModule, "plainkdoc" to dokkaHtmlCollector)
+        .mapValues { it.value.get() }
+        .forEach { (folder, task) ->
+            hugoBuild.configure { dependsOn(task) }
+            val copyTask = register<Copy>("copy${folder.capitalized()}IntoWebsite") {
+                from(task.outputDirectory)
+                into(File(websiteDir, "reference/$folder"))
+                finalizedBy(performWebsiteStringReplacements)
+            }
+            hugoBuild.configure { finalizedBy(copyTask) }
+        }
 }

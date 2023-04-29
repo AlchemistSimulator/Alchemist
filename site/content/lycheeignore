@@ -13,4 +13,10 @@ https://www.sciencedirect.com/science/article/abs/pii/S0952197620303389
 
 # Exclude the example link of Hugo:
 ^https?://localhost:1313/?$
- 
+
+# Exclude links to source code to relieve the stress on github
+^https?://github\.com/AlchemistSimulator/Alchemist/.*\.(java|kt)#L\d+$
+
+# Dokka bugs
+reference/kdoc/alchemist-cognitive-agents/it.unibo.alchemist.model/-linking-rule/index.html$
+reference/kdoc/alchemist-cognitive-agents/it.unibo.alchemist.model/-node/index.html

@@ -18,9 +18,9 @@ import java.util.Collections
 object IterableExtension {
 
     /**
-     * [Fisher–Yates shuffle algorithm](https://bit.ly/33Z3xFu)
-     * using Apache random number generator.
-     * More information [on Wikipedia](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
+     * Fisher–Yates shuffle algorithm
+     * using a [RandomGenerator].
+     * More information [on Wikipedia](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle).
      *
      * @param randomGenerator
      *          the simulation {@link RandomGenerator}.

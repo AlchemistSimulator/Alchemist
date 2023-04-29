@@ -11,7 +11,7 @@ var publishCmd = `
 git tag -a -f \${nextRelease.version} \${nextRelease.version} -F CHANGELOG.md
 git push --force origin \${nextRelease.version} || exit 6
 ./gradlew kotlinUpgradeYarnLock || exit 8
-./gradlew injectVersionInWebsite || exit 7
+./gradlew performWebsiteStringReplacements || exit 7
 git -C build/website/ add . || exit 1
 git -C build/website/ commit -m "chore: update website to version \${nextRelease.version}" || exit 2
 git -C build/website/ push || exit 3

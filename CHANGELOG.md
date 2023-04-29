@@ -1,3 +1,10 @@
+## [25.16.1](https://github.com/AlchemistSimulator/Alchemist/compare/25.16.0...25.16.1) (2023-04-29)
+
+
+### Documentation
+
+* **website:** add Dokka Multimodule, use the Alchemist Logo in the reference Kdoc ([#2233](https://github.com/AlchemistSimulator/Alchemist/issues/2233)) ([a6a95ff](https://github.com/AlchemistSimulator/Alchemist/commit/a6a95ffdf4811242bd06ec04eaf700d8c4af742a))
+
 ## [25.16.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.15.5...25.16.0) (2023-04-29)
 
 

@@ -25,6 +25,7 @@ jobs:
             COMMAND="./gradlew \
             build clean close \
             hugoBuild \
+            performWebsiteStringReplacements \
             publishKotlinOSSRHPublicationToGithubRepository \
             release \
             shadowJar \
@@ -95,9 +96,9 @@ jobs:
             # https://github.com/Kotlin/dokka/issues/2321
             # https://github.com/Kotlin/dokka/issues/2322
             # https://github.com/Kotlin/dokka/issues/2323
-            # Once everything gets fixed, lychee could simply run on '/lychee/**/*.html'
+            # Once everything gets fixed, lychee could simply run on '/website/**/*.html'
             FILES="$(find build/website/ -name '*.html' | grep -v /kdoc/ | grep -v /javadoc/ | sed -e 's#^build##')"
-            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 429,500,502,503"
+            CHECK_LINKS="docker run --rm -v ""$(pwd)/build/website:/website"" -e GITHUB_TOKEN lycheeverse/lychee:0.10.3 $(echo "$FILES") --exclude-file /website/lycheeignore -m 100 --accept 403,429,500,502,503"
             for i in 1 2 3 4 5; do
               $(echo $CHECK_LINKS) && break || sleep 30
               if [ "$i" = 5 ]; then

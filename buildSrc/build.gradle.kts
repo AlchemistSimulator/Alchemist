@@ -10,5 +10,6 @@ repositories {
 with(extensions.getByType<VersionCatalogsExtension>().named("libs")) {
     dependencies {
         implementation(findLibrary("gson").get())
+        implementation(findLibrary("jgit").get())
     }
 }

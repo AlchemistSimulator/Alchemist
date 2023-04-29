@@ -22,11 +22,6 @@ network-model:
 ```
 ```yaml
 network-model:
-  type: it.unibo.alchemist.model.implementations.linkingrules.NoLinks
-  parameters: []
-```
-```yaml
-network-model:
   type: NoLinks
   parameters: []
 ```

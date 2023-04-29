@@ -30,8 +30,6 @@ import java.util.stream.Stream;
 /**
  * Implements a limited environment supporting cells with a defined shape, 
  * avoiding any overlapping among them.
- * 
- * 
  */
 public final class BioRect2DEnvironmentNoOverlap
         extends BioRect2DEnvironment
@@ -71,7 +69,7 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     @Override
-    protected boolean nodeShouldBeAdded(final Node<Double> node, final Euclidean2DPosition p) {
+    protected boolean nodeShouldBeAdded(@Nonnull final Node<Double> node, @Nonnull final Euclidean2DPosition p) {
         final boolean isWithinLimits = super.nodeShouldBeAdded(node, p);
         if (isWithinLimits) {
             if (node.asPropertyOrNull(CircularCellProperty.class) != null) {
@@ -94,7 +92,7 @@ public final class BioRect2DEnvironmentNoOverlap
     }
 
     @Override
-    public void moveNodeToPosition(final Node<Double> node, final Euclidean2DPosition newPos) {
+    public void moveNodeToPosition(@Nonnull final Node<Double> node, final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCoordinates();
         final double[] np = newPos.getCoordinates();
         final Euclidean2DPosition nextWithinLimts = super.next(cur[0], cur[1], np[0], np[1]);

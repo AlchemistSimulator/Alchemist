@@ -6,11 +6,14 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.environments;
+package it.unibo.alchemist.model.euclidean2d.environments;
 
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Node;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class represents a 2D continuous environment with spatial limitations.
@@ -35,7 +38,7 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      * {@inheritDoc}
      */
     @Override
-    public void moveNodeToPosition(final Node<T> node, final Euclidean2DPosition newPos) {
+    public void moveNodeToPosition(@Nonnull final Node<T> node, final Euclidean2DPosition newPos) {
         final double[] cur = getPosition(node).getCoordinates();
         final double[] np = newPos.getCoordinates();
         // Calculate the next position allowed
@@ -47,7 +50,7 @@ public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
      * {@inheritDoc}
      */
     @Override
-    protected boolean nodeShouldBeAdded(final Node<T> node, final Euclidean2DPosition p) {
+    protected boolean nodeShouldBeAdded(@Nonnull final Node<T> node, @Nonnull final Euclidean2DPosition p) {
         /*
          * Takes into account both obstacles and other nodes.
          */

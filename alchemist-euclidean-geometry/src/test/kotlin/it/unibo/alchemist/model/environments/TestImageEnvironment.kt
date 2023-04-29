@@ -9,6 +9,7 @@
 package it.unibo.alchemist.model.environments
 
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.euclidean2d.environments.ImageEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

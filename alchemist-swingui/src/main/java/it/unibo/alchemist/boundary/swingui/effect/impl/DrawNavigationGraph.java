@@ -49,6 +49,7 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     /**
      *
      */
+    @SuppressWarnings("deprecation")
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")
@@ -72,7 +73,7 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
      * @param <T>      concentration type
      * @param <P>      position type
      */
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals"})
+    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(

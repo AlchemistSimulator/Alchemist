@@ -396,7 +396,7 @@ tasks {
         val index = File(websiteDir, "index.html")
         mustRunAfter(hugoBuild)
         if (!index.exists()) {
-            println("${index.absolutePath} does not exist")
+            logger.lifecycle("${index.absolutePath} does not exist")
             dependsOn(hugoBuild)
         }
         doLast {
@@ -406,17 +406,14 @@ tasks {
             val websiteReplacements = file("site/replacements").readLines()
                 .map { it.split("->") }
                 .map { it[0] to it[1] }
-            println(websiteReplacements)
             val replacements: List<Pair<String, String>> =
                 websiteReplacements + ("!development preview!" to project.version.toString())
-            println(replacements)
             index.parentFile.walkTopDown()
                 .filter { it.isFile && it.extension.matches(Regex("html?", RegexOption.IGNORE_CASE)) }
                 .forEach { page ->
                     val initialContents = page.readText()
                     var text = initialContents
                     for ((toreplace, replacement) in replacements) {
-                        if (toreplace in text) println("Replaced $toreplace with $replacement in ${page.path}")
                         text = text.replace(toreplace, replacement)
                     }
                     if (initialContents != text) {

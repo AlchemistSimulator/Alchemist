@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.implementations.environments;
 
 import it.unibo.alchemist.model.BiochemistryIncarnation;
-import it.unibo.alchemist.model.environments.LimitedContinuos2D;
+import it.unibo.alchemist.model.euclidean2d.environments.LimitedContinuos2D;
 import it.unibo.alchemist.model.implementations.molecules.Junction;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Neighborhood;
@@ -19,6 +19,7 @@ import it.unibo.alchemist.model.interfaces.properties.CellProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -84,17 +85,13 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
         double x, y;
         if (nx > maxX) {
             x = maxX;
-        } else if (nx < minX) {
-            x = minX;
         } else {
-            x = nx;
+            x = Math.max(nx, minX);
         }
         if (ny > maxY) {
             y = maxY;
-        } else if (ny < minY) {
-            y = minY;
         } else {
-            y = ny;
+            y = Math.max(ny, minY);
         }
         return new Euclidean2DPosition(x, y);
     }
@@ -107,19 +104,18 @@ public class BioRect2DEnvironment extends LimitedContinuos2D<Double> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public final void moveNode(final Node<Double> node, final Euclidean2DPosition direction) {
+    public final void moveNode(final Node<Double> node, @Nonnull final Euclidean2DPosition direction) {
         if (node.asPropertyOrNull(CellProperty.class) != null) {
             super.moveNode(node, direction);
-            final Node<Double> nodeToMove = node;
-            final Neighborhood<Double> neigh = getNeighborhood(nodeToMove);
-            final Map<Junction, Map<Node<Double>, Integer>> jun = nodeToMove
+            final Neighborhood<Double> neigh = getNeighborhood(node);
+            final Map<Junction, Map<Node<Double>, Integer>> jun = node
                     .asProperty(CellProperty.class).getJunctions();
             jun.forEach((key, value) -> value.forEach((key1, value1) -> {
                 if (!neigh.contains(key1)) {
                     // there is a junction that links a node which isn't in the neighborhood after the movement
                     for (int i = 0; i < value1; i++) {
-                        nodeToMove.asProperty(CellProperty.class).removeJunction(key, key1);
-                        key1.asProperty(CellProperty.class).removeJunction(key.reverse(), nodeToMove);
+                        node.asProperty(CellProperty.class).removeJunction(key, key1);
+                        key1.asProperty(CellProperty.class).removeJunction(key.reverse(), node);
                     }
                 }
             }));

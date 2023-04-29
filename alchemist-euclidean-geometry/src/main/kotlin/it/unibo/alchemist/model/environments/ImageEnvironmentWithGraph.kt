@@ -10,6 +10,7 @@
 package it.unibo.alchemist.model.environments
 
 import it.unibo.alchemist.model.Incarnation
+import it.unibo.alchemist.model.euclidean2d.environments.ImageEnvironment
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.geometry.euclidean2d.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.geometry.euclidean2d.graph.DirectedEuclidean2DNavigationGraph

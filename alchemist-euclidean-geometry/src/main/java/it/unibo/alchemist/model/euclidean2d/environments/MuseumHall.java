@@ -7,11 +7,14 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.environments;
+package it.unibo.alchemist.model.euclidean2d.environments;
 
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Node;
+
+import javax.annotation.Nonnull;
 
 /**
  * @param <T> concentration type
@@ -41,7 +44,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
      * @return true if the position is inside an allowed area, false if it's
      *         part of the wall.
      */
-    protected static boolean isAllowed(final double x, final double y) {
+    private static boolean isAllowed(final double x, final double y) {
         if (x <= 0 || x >= SIZE || y <= 0 || y >= SIZE) {
             return false;
         }
@@ -71,7 +74,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
      *            requested y coordinate
      * @return the allowed point nearest to the requested one
      */
-    protected Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
+    private Euclidean2DPosition next(final double ox, final double oy, final double nx, final double ny) {
         return nextAllowed(ox, oy, nx, ny);
     }
 
@@ -89,7 +92,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
      *            requested y coordinate
      * @return the allowed point nearest to the requested one
      */
-    protected Euclidean2DPosition nextAllowed(final double ox, final double oy, final double nx, final double ny) {
+    private Euclidean2DPosition nextAllowed(final double ox, final double oy, final double nx, final double ny) {
         if (isAllowed(nx, ny)) {
             makePosition(nx - ox, ny - oy);
         }
@@ -149,7 +152,7 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
     }
 
     @Override
-    public void moveNode(final Node<T> node, final Euclidean2DPosition direction) {
+    public void moveNode(@Nonnull final Node<T> node, final Euclidean2DPosition direction) {
         final Euclidean2DPosition cur = getPosition(node);
         final double ox = cur.getCoordinates()[0];
         final double oy = cur.getCoordinates()[1];
@@ -169,11 +172,11 @@ public final class MuseumHall<T> extends Continuous2DEnvironment<T> {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder builder = new StringBuilder();
         for (final Node<T> n : getNodes()) {
-            sb.append(getPosition(n) + " " + n + "\n");
+            builder.append(getPosition(n)).append(" ").append(n).append("\n");
         }
-        return sb.toString();
+        return builder.toString();
     }
 
 }

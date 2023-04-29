@@ -9,7 +9,6 @@
 package it.unibo.alchemist.boundary.swingui.monitor.impl
 
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node
@@ -56,7 +55,7 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(),
     }
 
     override fun initialized(environment: Environment<T, P>) {
-        stepDone(environment, null, DoubleTime.ZERO, 0L)
+        stepDone(environment, null, Time.ZERO, 0L)
     }
 
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {

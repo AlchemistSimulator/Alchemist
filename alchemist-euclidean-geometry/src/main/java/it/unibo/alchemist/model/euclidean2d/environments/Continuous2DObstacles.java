@@ -6,7 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.environments;
+package it.unibo.alchemist.model.euclidean2d.environments;
 
 import com.github.davidmoten.rtree.Entry;
 import com.github.davidmoten.rtree.RTree;
@@ -14,6 +14,7 @@ import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
 import com.github.davidmoten.rtree.internal.EntryDefault;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.environments.EuclideanPhysics2DEnvironmentWithObstacles;
 import it.unibo.alchemist.model.obstacles.RectObstacle2D;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Incarnation;
@@ -28,9 +29,8 @@ import java.util.stream.Collectors;
 /**
  * @param <T> concentration type
  */
-public class Continuous2DObstacles<T>
-        extends LimitedContinuos2D<T>
-        implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T> {
+public class Continuous2DObstacles<T> extends LimitedContinuos2D<T>
+    implements EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T> {
 
     private static final double TOLERANCE_MULTIPLIER = 0.01;
     private static final long serialVersionUID = 69931743897405107L;
@@ -56,6 +56,7 @@ public class Continuous2DObstacles<T>
     }
 
     @Override
+    @Nonnull
     public final List<RectObstacle2D<Euclidean2DPosition>> getObstaclesInRange(
             @Nonnull final Euclidean2DPosition center,
             final double range

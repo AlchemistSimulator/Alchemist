@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.obstacles;
 
 import it.unibo.alchemist.model.SupportedIncarnations;
-import it.unibo.alchemist.model.environments.Continuous2DObstacles;
+import it.unibo.alchemist.model.euclidean2d.environments.Continuous2DObstacles;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;

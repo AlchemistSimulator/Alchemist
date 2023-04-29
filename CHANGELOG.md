@@ -1,3 +1,31 @@
+## [25.16.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.15.5...25.16.0) (2023-04-29)
+
+
+### Features
+
+* add draw directed node effect ([#2218](https://github.com/AlchemistSimulator/Alchemist/issues/2218)) ([1828d41](https://github.com/AlchemistSimulator/Alchemist/commit/1828d417ba5afb27acb9e1f45d504eb4c3c8a9fe))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.6.3 ([d5743b5](https://github.com/AlchemistSimulator/Alchemist/commit/d5743b56af825397e559d04cf311da0837a48594))
+* **deps:** update dependency org.mapsforge:mapsforge-map-awt to v0.19.0 ([2169088](https://github.com/AlchemistSimulator/Alchemist/commit/2169088032c96a61a4e18dd8078b7e004e9dc0fe))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 60386a8 ([9adac39](https://github.com/AlchemistSimulator/Alchemist/commit/9adac3932432e65340bf706360b19ead39ad1c7d))
+* **deps:** update external-resources/learning-scafi-alchemist digest to b869c0b ([8bd4820](https://github.com/AlchemistSimulator/Alchemist/commit/8bd48206429197a471bf070a82a734f8571c355d))
+* **deps:** update junit5 monorepo to v5.9.3 ([478f3ad](https://github.com/AlchemistSimulator/Alchemist/commit/478f3adc28efa178c2546e1ce10ba37718fe2b3f))
+* **deps:** update kotlin monorepo to v1.8.21 ([31cf41b](https://github.com/AlchemistSimulator/Alchemist/commit/31cf41ba150396a1a8bda861d49381d0265a607b))
+* **deps:** update npm to v9.6.5 ([6aad784](https://github.com/AlchemistSimulator/Alchemist/commit/6aad7841644679a64fd4b4ee20ef3018dd4b593d))
+* **deps:** update plugin java-qa to v1.8.0 ([6a8ccbc](https://github.com/AlchemistSimulator/Alchemist/commit/6a8ccbc6598c1e974da989a9e3d7f0b83cdfb679))
+* **deps:** update plugin kotlin-qa to v0.39.0 ([73ea292](https://github.com/AlchemistSimulator/Alchemist/commit/73ea2929830216155ccb74fc34580d571a845197))
+* **deps:** update plugin kotlin-qa to v0.40.0 ([b3a645f](https://github.com/AlchemistSimulator/Alchemist/commit/b3a645f270dcbc5549af10b16932ec7dd6d63b9b))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v1.1.7 ([df12c72](https://github.com/AlchemistSimulator/Alchemist/commit/df12c7280e102f7f879342dd6a79c1e3a5220d8a))
+* **deps:** update plugin org.gradle.toolchains.foojay-resolver-convention to v0.5.0 ([919d347](https://github.com/AlchemistSimulator/Alchemist/commit/919d347841f1a8f0d752a0160a2b095605d20ef9))
+* **deps:** update plugin publishoncentral to v5.0.4 ([bc94979](https://github.com/AlchemistSimulator/Alchemist/commit/bc9497964ed9e0f3a87e173aa019bac7afbc994e))
+* **deps:** update plugin publishoncentral to v5.0.5 ([a5406ef](https://github.com/AlchemistSimulator/Alchemist/commit/a5406ef0ce50358a94f520a5bc78e86266cab307))
+* **deps:** update react to v18.2.0-pre.543 ([552b713](https://github.com/AlchemistSimulator/Alchemist/commit/552b713f4362bb27e5761c733cc8c6fe007146a7))
+* **deps:** update react to v18.2.0-pre.544 ([076fd2d](https://github.com/AlchemistSimulator/Alchemist/commit/076fd2db569fc5c575de01f9d250b41cec758f70))
+* **deps:** update react to v18.2.0-pre.545 ([f90fdf6](https://github.com/AlchemistSimulator/Alchemist/commit/f90fdf67ad5f887129a94b34b46ad67f7d69735d))
+
 ## [25.15.5](https://github.com/AlchemistSimulator/Alchemist/compare/25.15.4...25.15.5) (2023-04-22)
 
 

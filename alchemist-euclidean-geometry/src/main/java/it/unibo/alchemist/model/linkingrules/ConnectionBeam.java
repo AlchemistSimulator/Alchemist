@@ -6,16 +6,15 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.physics.linkingrules;
+package it.unibo.alchemist.model.linkingrules;
 
 
-import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithObstacles;
-import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
-import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithObstacles;
+import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;

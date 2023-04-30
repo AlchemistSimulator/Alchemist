@@ -7,13 +7,13 @@
  */
 package it.unibo.alchemist.model.implementations.molecules;
 
-import it.unibo.alchemist.expressions.implementations.Expression;
-import it.unibo.alchemist.expressions.implementations.ExpressionFactory;
-import it.unibo.alchemist.expressions.implementations.ListTreeNode;
-import it.unibo.alchemist.expressions.implementations.Type;
-import it.unibo.alchemist.expressions.implementations.VarTreeNode;
-import it.unibo.alchemist.expressions.interfaces.IExpression;
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
+import it.unibo.alchemist.model.sapere.dsl.impl.ExpressionFactory;
+import it.unibo.alchemist.model.sapere.dsl.impl.ListTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Type;
+import it.unibo.alchemist.model.sapere.dsl.impl.VarTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;

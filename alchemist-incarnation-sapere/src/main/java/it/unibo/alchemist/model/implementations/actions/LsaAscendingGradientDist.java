@@ -7,10 +7,10 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.expressions.implementations.AST;
-import it.unibo.alchemist.expressions.implementations.Expression;
-import it.unibo.alchemist.expressions.implementations.NumTreeNode;
-import it.unibo.alchemist.expressions.interfaces.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.impl.AST;
+import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
 import it.unibo.alchemist.model.Environment;

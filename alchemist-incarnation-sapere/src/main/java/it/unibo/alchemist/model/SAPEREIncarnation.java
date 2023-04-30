@@ -8,8 +8,8 @@
 package it.unibo.alchemist.model;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.expressions.implementations.Type;
-import it.unibo.alchemist.expressions.interfaces.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.impl.Type;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.implementations.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.implementations.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.implementations.actions.LsaStandardAction;

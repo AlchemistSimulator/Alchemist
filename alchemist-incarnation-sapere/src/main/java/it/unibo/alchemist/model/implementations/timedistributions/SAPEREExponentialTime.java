@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.model.implementations.timedistributions;
 
-import it.unibo.alchemist.expressions.implementations.Expression;
-import it.unibo.alchemist.expressions.interfaces.IExpression;
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import org.apache.commons.math3.random.RandomGenerator;
 

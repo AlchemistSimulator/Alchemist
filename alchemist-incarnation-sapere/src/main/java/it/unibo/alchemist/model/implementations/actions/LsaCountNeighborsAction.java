@@ -8,8 +8,8 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.expressions.implementations.NumTreeNode;
-import it.unibo.alchemist.expressions.interfaces.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;

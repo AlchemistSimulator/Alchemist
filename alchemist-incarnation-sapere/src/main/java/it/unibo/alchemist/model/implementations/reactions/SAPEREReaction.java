@@ -9,8 +9,8 @@
 package it.unibo.alchemist.model.implementations.reactions;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.expressions.implementations.NumTreeNode;
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPERETimeDistribution;
 import it.unibo.alchemist.model.Action;

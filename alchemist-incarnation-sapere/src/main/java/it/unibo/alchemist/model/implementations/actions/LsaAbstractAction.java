@@ -9,12 +9,12 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import com.google.common.collect.Sets;
-import it.unibo.alchemist.expressions.implementations.Expression;
-import it.unibo.alchemist.expressions.implementations.ListTreeNode;
-import it.unibo.alchemist.expressions.implementations.NumTreeNode;
-import it.unibo.alchemist.expressions.implementations.Type;
-import it.unibo.alchemist.expressions.interfaces.IExpression;
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Expression;
+import it.unibo.alchemist.model.sapere.dsl.impl.ListTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.NumTreeNode;
+import it.unibo.alchemist.model.sapere.dsl.impl.Type;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.interfaces.ILsaAction;

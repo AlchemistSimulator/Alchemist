@@ -7,7 +7,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.Reaction;
 import org.apache.commons.math3.random.RandomGenerator;
 

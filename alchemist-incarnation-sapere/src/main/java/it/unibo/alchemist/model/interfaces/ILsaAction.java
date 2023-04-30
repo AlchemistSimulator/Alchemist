@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.Action;
 import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Node;

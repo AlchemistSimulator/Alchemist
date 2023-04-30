@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.model.interfaces;
 
-import it.unibo.alchemist.expressions.interfaces.IExpression;
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 
 import java.util.List;
 import java.util.Map;

@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.implementations.molecules.LsaMolecule;
 import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
 import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;

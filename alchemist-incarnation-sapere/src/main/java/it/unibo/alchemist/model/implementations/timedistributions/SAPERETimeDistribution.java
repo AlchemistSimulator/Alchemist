@@ -10,8 +10,8 @@ package it.unibo.alchemist.model.implementations.timedistributions;
 import java.util.List;
 import java.util.Map;
 
-import it.unibo.alchemist.expressions.interfaces.IExpression;
-import it.unibo.alchemist.expressions.interfaces.ITreeNode;
+import it.unibo.alchemist.model.sapere.dsl.IExpression;
+import it.unibo.alchemist.model.sapere.dsl.ITreeNode;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;
 import it.unibo.alchemist.model.TimeDistribution;
 import org.danilopianini.lang.HashString;

@@ -13,8 +13,8 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
-import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram
+import it.unibo.alchemist.protelis.properties.ProtelisDevice
 import org.apache.commons.math3.distribution.RealDistribution
 import org.protelis.lang.datatype.DeviceUID
 import org.protelis.vm.CodePath

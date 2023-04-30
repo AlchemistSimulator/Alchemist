@@ -1,36 +1,35 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.test;
+package it.unibo.alchemist.model.protelis;
+
+import it.unibo.alchemist.model.Action;
+import it.unibo.alchemist.model.Condition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
+import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
+import it.unibo.alchemist.model.reactions.ChemicalReaction;
+import it.unibo.alchemist.model.reactions.Event;
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.jupiter.api.Test;
-
-import it.unibo.alchemist.model.ProtelisIncarnation;
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
-import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.reactions.ChemicalReaction;
-import it.unibo.alchemist.model.reactions.Event;
-import it.unibo.alchemist.model.Action;
-import it.unibo.alchemist.model.Condition;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.TimeDistribution;
 
 /**
  */

@@ -1,17 +1,17 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.test;
+package it.unibo.alchemist.model.protelis;
 
 import it.unibo.alchemist.loader.LoadAlchemist;
 import it.unibo.alchemist.loader.Loader;
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import it.unibo.alchemist.model.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import org.junit.jupiter.api.Assertions;

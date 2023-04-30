@@ -6,7 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.implementations.actions
+package it.unibo.alchemist.protelis.actions
 
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Context
@@ -17,10 +17,10 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
 import it.unibo.alchemist.model.molecules.SimpleMolecule
-import it.unibo.alchemist.protelis.AlchemistExecutionContext
+import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
 import it.unibo.alchemist.protelis.AlchemistNetworkManager
+import it.unibo.alchemist.protelis.properties.ProtelisDevice
 import it.unibo.alchemist.util.RealDistributions
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
@@ -168,7 +168,13 @@ class RunProtelisProgram<P : Position<P>> private constructor(
      * @return the current [AlchemistExecutionContext]
      */
     @Transient
-    var executionContext = AlchemistExecutionContext(environment, node, reaction, randomGenerator, networkManager)
+    var executionContext = AlchemistExecutionContext(
+        environment,
+        node,
+        reaction,
+        randomGenerator,
+        networkManager,
+    )
         private set
 
     @Transient
@@ -233,7 +239,13 @@ class RunProtelisProgram<P : Position<P>> private constructor(
     @Suppress("UnusedPrivateMember")
     private fun readObject(stream: ObjectInputStream) {
         stream.defaultReadObject()
-        executionContext = AlchemistExecutionContext(environment, node, reaction, randomGenerator, networkManager)
+        executionContext = AlchemistExecutionContext(
+            environment,
+            node,
+            reaction,
+            randomGenerator,
+            networkManager,
+        )
         vm = ProtelisVM(program, executionContext)
     }
 

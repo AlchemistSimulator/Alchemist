@@ -1,4 +1,4 @@
-package it.unibo.alchemist.test
+package it.unibo.alchemist.model.protelis
 
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.nodes.GenericNode

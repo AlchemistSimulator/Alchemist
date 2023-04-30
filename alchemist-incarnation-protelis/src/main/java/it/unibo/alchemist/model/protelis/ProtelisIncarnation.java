@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model;
+package it.unibo.alchemist.model.protelis;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -15,12 +15,24 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
-import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
+import it.unibo.alchemist.model.Action;
+import it.unibo.alchemist.model.Actionable;
+import it.unibo.alchemist.model.Condition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.Molecule;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.NodeProperty;
+import it.unibo.alchemist.model.Position;
+import it.unibo.alchemist.model.Reaction;
+import it.unibo.alchemist.model.Time;
+import it.unibo.alchemist.model.TimeDistribution;
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.protelis.actions.SendToNeighbor;
+import it.unibo.alchemist.model.protelis.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.nodes.GenericNode;
-import it.unibo.alchemist.model.implementations.properties.ProtelisDevice;
+import it.unibo.alchemist.protelis.properties.ProtelisDevice;
 import it.unibo.alchemist.model.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.timedistributions.DiracComb;

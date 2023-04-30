@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.test
+package it.unibo.alchemist.model.protelis
 
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Engine
@@ -14,14 +14,13 @@ import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Node.Companion.asProperty
-import it.unibo.alchemist.model.ProtelisIncarnation
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.Event
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
+import it.unibo.alchemist.protelis.actions.RunProtelisProgram
 import org.apache.commons.math3.random.MersenneTwister
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -32,7 +31,8 @@ import java.util.Optional
 class TestGetPosition {
     private val environment: Environment<Any, Euclidean2DPosition> = Continuous2DEnvironment(ProtelisIncarnation())
     private val randomGenerator = MersenneTwister(0)
-    private val node = ProtelisIncarnation<Euclidean2DPosition>().createNode(randomGenerator, environment, null)
+    private val node = ProtelisIncarnation<Euclidean2DPosition>()
+        .createNode(randomGenerator, environment, null)
     private val reaction = Event(
         node,
         ExponentialTime(1.0, randomGenerator),

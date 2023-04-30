@@ -13,10 +13,10 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.euclidean.geometry.AwtMutableConvexPolygon
 import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
 import it.unibo.alchemist.model.euclidean.geometry.Segment2D
-import it.unibo.alchemist.model.euclidean.geometry.graph.DirectedEuclidean2DNavigationGraph
+import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.DirectedEuclidean2DNavigationGraph
 import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DNavigationGraph
 import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DPassage
-import it.unibo.alchemist.model.euclidean.geometry.navigator.generateNavigationGraph
+import it.unibo.alchemist.model.euclidean.geometry.navigator.NaviGator.generateNavigationGraph
 import it.unibo.alchemist.model.euclidean.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.geometry.Vector2D

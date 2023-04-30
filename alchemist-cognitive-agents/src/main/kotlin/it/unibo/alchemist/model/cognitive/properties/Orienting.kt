@@ -15,9 +15,8 @@ import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.euclidean.environments.EnvironmentWithGraph
 import it.unibo.alchemist.model.euclidean.geometry.ConvexShape
-import it.unibo.alchemist.model.euclidean.geometry.graph.UndirectedNavigationGraph
-import it.unibo.alchemist.model.euclidean.geometry.graph.pathExists
 import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.NavigationGraph
+import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.UndirectedNavigationGraph
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
@@ -25,6 +24,7 @@ import it.unibo.alchemist.model.properties.AbstractNodeProperty
 import it.unibo.alchemist.util.Iterables.shuffled
 import it.unibo.alchemist.util.Lists.takeFraction
 import org.apache.commons.math3.random.RandomGenerator
+import org.jgrapht.Graph
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree
 import org.jgrapht.graph.AsWeightedGraph
@@ -110,4 +110,18 @@ abstract class Orienting<T, P, A, N, L> @JvmOverloads constructor(
     abstract override fun createLandmarkIn(area: N): L
 
     override fun toString() = "${super.toString()}[knoledgeDegree=$knowledgeDegree]"
+
+    companion object {
+
+        /**
+         * Checks whether a path exists between [source] and [sink].
+         * [DijkstraShortestPath] is used instead of [org.jgrapht.alg.connectivity.ConnectivityInspector.pathExists],
+         * because, in case of directed graph, the latter checks whether the given vertices lay in the same weakly
+         * connected component, which is not the desired behavior.
+         * As unweighted graphs have a default edge weight of 1.0, shortest path algorithms can always be applied
+         * meaningfully.
+         */
+        fun <V> Graph<V, *>.pathExists(source: V, sink: V): Boolean =
+            DijkstraShortestPath.findPathBetween(this, source, sink) != null
+    }
 }

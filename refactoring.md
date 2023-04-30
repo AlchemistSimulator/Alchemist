@@ -9,4 +9,3 @@ util
 model
 model.actions
 
-unpack NavigationGraphImpl

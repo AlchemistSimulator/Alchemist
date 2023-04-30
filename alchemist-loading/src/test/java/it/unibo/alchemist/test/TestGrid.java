@@ -10,7 +10,7 @@ package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.loader.deployments.Grid;
 import it.unibo.alchemist.model.SupportedIncarnations;
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.Test;

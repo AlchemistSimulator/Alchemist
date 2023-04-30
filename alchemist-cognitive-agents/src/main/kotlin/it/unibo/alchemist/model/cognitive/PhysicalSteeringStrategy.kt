@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.cognitive
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.euclidean.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 

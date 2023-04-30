@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.cognitive
 
-import it.unibo.alchemist.model.euclidean.geometry.Ellipse
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.Ellipse
+import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.jgrapht.graph.DefaultEdge
 
 /**

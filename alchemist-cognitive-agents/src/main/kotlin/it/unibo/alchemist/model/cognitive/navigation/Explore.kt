@@ -15,10 +15,10 @@ import it.unibo.alchemist.model.cognitive.NavigationStrategy
 import it.unibo.alchemist.model.cognitive.NavigationStrategy2D
 import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
-import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DConvexShape
-import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DPassage
-import it.unibo.alchemist.model.interfaces.properties.AreaProperty
+import it.unibo.alchemist.model.geometry.ConvexPolygon
+import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
+import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
+import it.unibo.alchemist.model.physics.properties.AreaProperty
 import kotlin.math.abs
 import kotlin.math.pow
 

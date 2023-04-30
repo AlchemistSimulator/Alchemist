@@ -10,8 +10,8 @@
 package it.unibo.alchemist.model.cognitive.actions
 
 import it.unibo.alchemist.model.cognitive.NavigationAction
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A [NavigationAction] in a bidimensional euclidean space.

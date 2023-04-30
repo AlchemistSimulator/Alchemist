@@ -17,7 +17,7 @@ import it.unibo.alchemist.common.model.surrogate.Position2DSurrogate
 import it.unibo.alchemist.common.model.surrogate.PositionSurrogate
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Position2D
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.server.surrogates.utility.ToPositionSurrogate.toSuitablePositionSurrogate
 
 class ToPositionSurrogateTest : StringSpec({

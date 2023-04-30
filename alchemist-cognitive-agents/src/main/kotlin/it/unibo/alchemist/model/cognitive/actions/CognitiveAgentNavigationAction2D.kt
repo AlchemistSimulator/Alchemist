@@ -12,12 +12,12 @@ package it.unibo.alchemist.model.cognitive.actions
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
-import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DConvexShape
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DPassage
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
+import it.unibo.alchemist.model.geometry.ConvexPolygon
+import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
+import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.util.FastMath
 
 private typealias AbstractNavigationAction2D<T, L, R, N, E> =

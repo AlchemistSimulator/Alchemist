@@ -23,11 +23,11 @@ import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.Navig
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.MOVING_TO_FINAL
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.NEW_ROOM
 import it.unibo.alchemist.model.cognitive.actions.AbstractNavigationAction.NavigationState.START
-import it.unibo.alchemist.model.euclidean.environments.EnvironmentWithGraph
-import it.unibo.alchemist.model.euclidean.geometry.ConvexShape
+import it.unibo.alchemist.model.environments.EnvironmentWithGraph
+import it.unibo.alchemist.model.geometry.ConvexShape
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
-import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty
+import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty
 
 /**
  * An abstract [NavigationAction], taking care of properly moving the node in the

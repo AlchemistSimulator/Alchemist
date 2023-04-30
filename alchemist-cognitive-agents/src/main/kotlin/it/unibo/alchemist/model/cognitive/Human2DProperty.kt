@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.cognitive
 
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A capability representing a pedestrian's individual characteristics in a 2D space.

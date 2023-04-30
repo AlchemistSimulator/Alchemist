@@ -15,11 +15,11 @@ import it.unibo.alchemist.model.cognitive.NavigationStrategy2D
 import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.navigation.ReachDestination
-import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DConvexShape
-import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DPassage
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
+import it.unibo.alchemist.model.geometry.ConvexPolygon
+import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
+import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.util.Arrays.toPositions
 import it.unibo.alchemist.util.lazyMutable
 import org.jgrapht.Graphs

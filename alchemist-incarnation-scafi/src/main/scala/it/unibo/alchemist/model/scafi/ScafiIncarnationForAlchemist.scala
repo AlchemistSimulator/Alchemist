@@ -8,7 +8,7 @@
 package it.unibo.alchemist.model.scafi
 
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import java.util.Optional
 import it.unibo.alchemist.model.implementations.nodes.NodeManager
 import it.unibo.alchemist.model.molecules.SimpleMolecule

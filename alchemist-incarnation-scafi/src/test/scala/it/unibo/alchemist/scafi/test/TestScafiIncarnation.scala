@@ -9,7 +9,7 @@
 package it.unibo.alchemist.scafi.test
 
 import it.unibo.alchemist.model.ScafiIncarnation
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.reactions.Event
 import org.apache.commons.math3.random.MersenneTwister

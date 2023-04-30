@@ -14,10 +14,10 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.cognitive.steering.Sum
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.PhysicsDependency
-import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
-import it.unibo.alchemist.model.interfaces.properties.PhysicalPedestrian2D
+import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.physics.properties.PhysicalPedestrian2D
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * A [BlendedSteering] reaction which also considers physical interactions.

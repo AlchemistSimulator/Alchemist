@@ -12,9 +12,9 @@ package it.unibo.alchemist.model.physics.environments
 import it.unibo.alchemist.model.Obstacle
 import it.unibo.alchemist.model.PhysicsEnvironment
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.euclidean.environments.EnvironmentWithGraph
-import it.unibo.alchemist.model.euclidean.geometry.ConvexShape
-import it.unibo.alchemist.model.euclidean.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.environments.EnvironmentWithGraph
+import it.unibo.alchemist.model.geometry.ConvexShape
+import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 

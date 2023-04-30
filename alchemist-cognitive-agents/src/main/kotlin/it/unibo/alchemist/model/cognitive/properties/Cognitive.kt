@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.cognitive.CognitiveModel
 import it.unibo.alchemist.model.cognitive.CognitiveProperty
 import it.unibo.alchemist.model.cognitive.HumanProperty
 import it.unibo.alchemist.model.cognitive.impact.ImpactModel
-import it.unibo.alchemist.model.euclidean.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.properties.AbstractNodeProperty

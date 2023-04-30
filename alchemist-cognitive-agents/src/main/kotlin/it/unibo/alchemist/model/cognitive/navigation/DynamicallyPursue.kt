@@ -12,10 +12,10 @@ package it.unibo.alchemist.model.cognitive.navigation
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.cognitive.OrientingProperty
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
-import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DConvexShape
-import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DPassage
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.ConvexPolygon
+import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
+import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * [Pursue] strategy allowing to dynamically change [destination].

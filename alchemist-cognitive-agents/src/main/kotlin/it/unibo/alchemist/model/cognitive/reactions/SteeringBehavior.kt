@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringAction
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.cognitive.actions.CognitiveAgentCombineSteering
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.reactions.AbstractReaction
 
 /**

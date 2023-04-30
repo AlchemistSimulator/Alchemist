@@ -21,8 +21,8 @@ import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.Time
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.kaikikm.threadresloader.ResourceLoader
 
 /**

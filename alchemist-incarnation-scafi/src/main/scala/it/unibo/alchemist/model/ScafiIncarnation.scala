@@ -11,7 +11,6 @@ import it.unibo.alchemist.model.ScafiIncarnationUtils._
 import it.unibo.alchemist.model.implementations.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.implementations.conditions.ScafiComputationalRoundComplete
 import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
-import it.unibo.alchemist.model.interfaces._
 import it.unibo.alchemist.model.molecules.SimpleMolecule
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.reactions.{ChemicalReaction, Event}

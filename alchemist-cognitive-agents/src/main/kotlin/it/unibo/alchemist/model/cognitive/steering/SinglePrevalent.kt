@@ -14,10 +14,10 @@ import it.unibo.alchemist.model.cognitive.NavigationAction
 import it.unibo.alchemist.model.cognitive.SteeringAction
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.cognitive.actions.NavigationAction2D
-import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
+import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 private typealias SteeringActions<T> = List<SteeringAction<T, Euclidean2DPosition>>
 

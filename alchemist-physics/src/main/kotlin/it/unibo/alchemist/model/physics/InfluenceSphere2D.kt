@@ -10,7 +10,7 @@
 package it.unibo.alchemist.model.physics
 
 import it.unibo.alchemist.model.Node
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DShape
+import it.unibo.alchemist.model.geometry.Euclidean2DShape
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 
 /**

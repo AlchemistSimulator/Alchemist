@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.implementations.actions.LsaAllNeighborsAction;
 import it.unibo.alchemist.model.implementations.actions.LsaRandomNeighborAction;
 import it.unibo.alchemist.model.implementations.conditions.LsaNeighborhoodCondition;
 import it.unibo.alchemist.model.implementations.nodes.LsaNode;
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.implementations.timedistributions.SAPEREExponentialTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.interfaces.ILsaMolecule;

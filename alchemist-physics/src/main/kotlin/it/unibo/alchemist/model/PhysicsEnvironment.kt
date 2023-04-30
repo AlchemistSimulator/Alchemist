@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.model
 
-import it.unibo.alchemist.model.euclidean.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Shape
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector

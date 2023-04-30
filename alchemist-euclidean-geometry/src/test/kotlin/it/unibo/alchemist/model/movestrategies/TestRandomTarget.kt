@@ -14,9 +14,8 @@ import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.euclidean.movestrategies.RandomTarget
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.distribution.RealDistribution
 import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.abs

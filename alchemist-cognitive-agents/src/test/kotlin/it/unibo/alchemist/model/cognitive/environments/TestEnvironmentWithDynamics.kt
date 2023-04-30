@@ -13,10 +13,10 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.geometry.Vector
 import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
-import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.ExponentialTime
 import it.unibo.alchemist.test.loadYamlSimulation
 import it.unibo.alchemist.test.startSimulation

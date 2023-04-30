@@ -13,9 +13,9 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.loader.GraphStreamSupport
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.MersenneTwister
 
 typealias EnvironmentDisplacement = List<Pair<List<Double>, List<Int>>>

@@ -13,10 +13,9 @@ import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.reactions.SteeringBehavior
-import it.unibo.alchemist.model.euclidean.Obstacle2D
-import it.unibo.alchemist.model.euclidean.environments.Environment2DWithObstacles
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Environment2DWithObstacles
+import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import kotlin.reflect.jvm.jvmName
 
 /**
@@ -31,7 +30,7 @@ import kotlin.reflect.jvm.jvmName
  * @param proximityRange
  *          the distance at which an obstacle is perceived by the node.
  */
-class CognitiveAgentObstacleAvoidance<W : Obstacle2D<Euclidean2DPosition>, T>(
+class CognitiveAgentObstacleAvoidance<W : it.unibo.alchemist.model.Obstacle2D<Euclidean2DPosition>, T>(
     private val environment: Environment2DWithObstacles<W, T>,
     override val reaction: SteeringBehavior<T>,
     override val pedestrian: PedestrianProperty<T>,

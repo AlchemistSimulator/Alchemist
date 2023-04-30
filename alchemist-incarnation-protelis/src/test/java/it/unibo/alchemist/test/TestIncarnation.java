@@ -23,7 +23,7 @@ import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.Action;

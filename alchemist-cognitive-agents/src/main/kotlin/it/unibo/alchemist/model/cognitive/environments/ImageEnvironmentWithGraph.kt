@@ -10,18 +10,18 @@
 package it.unibo.alchemist.model.cognitive.environments
 
 import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.euclidean.geometry.AwtMutableConvexPolygon
-import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
-import it.unibo.alchemist.model.euclidean.geometry.Segment2D
-import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.DirectedEuclidean2DNavigationGraph
-import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DNavigationGraph
-import it.unibo.alchemist.model.euclidean.geometry.navigationgraph.Euclidean2DPassage
-import it.unibo.alchemist.model.euclidean.geometry.navigator.NaviGator.generateNavigationGraph
-import it.unibo.alchemist.model.euclidean.obstacles.RectObstacle2D
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.geometry.ConvexPolygon
+import it.unibo.alchemist.model.geometry.Segment2D
 import it.unibo.alchemist.model.geometry.Vector2D
+import it.unibo.alchemist.model.geometry.navigationgraph.DirectedEuclidean2DNavigationGraph
+import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DNavigationGraph
+import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage
+import it.unibo.alchemist.model.geometry.navigationgraph.NaviGator.generateNavigationGraph
+import it.unibo.alchemist.model.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.physics.environments.EuclideanPhysics2DEnvironmentWithGraph
 import it.unibo.alchemist.model.physics.environments.ImageEnvironment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.kaikikm.threadresloader.ResourceLoader
 import java.awt.Color
 import java.io.File

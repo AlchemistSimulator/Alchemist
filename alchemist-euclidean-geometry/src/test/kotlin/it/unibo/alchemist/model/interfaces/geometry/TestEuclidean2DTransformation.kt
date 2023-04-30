@@ -12,13 +12,13 @@ package it.unibo.alchemist.model.interfaces.geometry
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.euclidean.geometry.GeometricShapeFactory
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.TestEuclidean2DShapeFactory.Companion.DEFAULT_SHAPE_SIZE
 import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.TestEuclidean2DShapeFactory.Companion.oneOfEachWithSize
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 private val factory: Euclidean2DShapeFactory =
     GeometricShapeFactory.getInstance<Euclidean2DPosition, Euclidean2DTransformation, Euclidean2DShapeFactory>()

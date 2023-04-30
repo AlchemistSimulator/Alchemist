@@ -16,16 +16,16 @@ import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
 import it.unibo.alchemist.model.environments.Abstract2DEnvironment
-import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironment
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DShape
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.euclidean.geometry.GeometricShapeFactory
-import it.unibo.alchemist.model.euclidean.geometry.Segment2D
-import it.unibo.alchemist.model.euclidean.geometry.Segment2DImpl
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.geometry.Euclidean2DShape
+import it.unibo.alchemist.model.geometry.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.geometry.GeometricShapeFactory
+import it.unibo.alchemist.model.geometry.Segment2D
+import it.unibo.alchemist.model.geometry.Segment2DImpl
 import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
-import it.unibo.alchemist.model.interfaces.properties.AreaProperty
+import it.unibo.alchemist.model.physics.properties.AreaProperty
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * Implementation of [Physics2DEnvironment].

@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.physics.environments;
 import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.nodes.GenericNode;
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Node;

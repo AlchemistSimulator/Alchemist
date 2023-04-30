@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.actions;
 
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.EnvironmentNode;

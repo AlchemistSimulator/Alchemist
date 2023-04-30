@@ -9,12 +9,11 @@
 
 package it.unibo.alchemist.model.physics.environments
 
-import it.unibo.alchemist.model.euclidean.Obstacle2D
-import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironmentWithGraph
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DConvexShape
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DShapeFactory
-import it.unibo.alchemist.model.euclidean.geometry.Euclidean2DTransformation
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithGraph
+import it.unibo.alchemist.model.geometry.Euclidean2DConvexShape
+import it.unibo.alchemist.model.geometry.Euclidean2DShapeFactory
+import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * An [Euclidean2DEnvironmentWithGraph] supporting physics.
@@ -23,5 +22,5 @@ interface EuclideanPhysics2DEnvironmentWithGraph<W, T, N, E> :
     Euclidean2DEnvironmentWithGraph<W, T, N, E>,
     EuclideanPhysics2DEnvironmentWithObstacles<W, T>,
     PhysicsEnvironmentWithObstacles<W, T, Euclidean2DPosition, Euclidean2DTransformation, N, E, Euclidean2DShapeFactory>
-    where W : Obstacle2D<Euclidean2DPosition>,
+    where W : it.unibo.alchemist.model.Obstacle2D<Euclidean2DPosition>,
           N : Euclidean2DConvexShape

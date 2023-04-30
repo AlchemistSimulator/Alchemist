@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.implementations.PhysicsDependency
-import it.unibo.alchemist.model.interfaces.environments.Dynamics2DEnvironment
+import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import org.danilopianini.util.ImmutableListSet
 import org.danilopianini.util.ListSet

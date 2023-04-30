@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.cognitive.steering
 
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.cognitive.SteeringActionWithTarget
-import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 
 /**
  * [Weighted] strategy where the weight of each steering action is the inverse of the node's distance from the

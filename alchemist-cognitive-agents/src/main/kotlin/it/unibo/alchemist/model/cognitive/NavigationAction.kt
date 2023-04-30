@@ -12,8 +12,8 @@ package it.unibo.alchemist.model.cognitive
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.euclidean.environments.EnvironmentWithGraph
-import it.unibo.alchemist.model.euclidean.geometry.ConvexShape
+import it.unibo.alchemist.model.environments.EnvironmentWithGraph
+import it.unibo.alchemist.model.geometry.ConvexShape
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
 

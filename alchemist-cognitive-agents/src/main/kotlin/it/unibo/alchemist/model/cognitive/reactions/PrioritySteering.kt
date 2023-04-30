@@ -12,7 +12,7 @@ package it.unibo.alchemist.model.cognitive.reactions
 import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.steering.Nearest
-import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironment
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 
 /**
  * Steering behavior using [Nearest] steering strategy (= the only action executed is the one with the nearest target).

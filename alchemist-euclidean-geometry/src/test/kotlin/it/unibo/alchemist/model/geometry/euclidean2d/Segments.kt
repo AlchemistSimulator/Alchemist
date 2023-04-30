@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.geometry.euclidean2d
 
-import it.unibo.alchemist.model.euclidean.geometry.Segment2DImpl
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.Segment2DImpl
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 object Segments {
 

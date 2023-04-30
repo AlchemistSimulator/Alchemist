@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.implementations.environments
 
-import it.unibo.alchemist.model.euclidean.obstacles.RectObstacle2D
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.physics.environments.EuclideanPhysics2DEnvironmentWithObstacles
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 typealias PhysicsEnvironmentWithObstacles<T> =
 EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>

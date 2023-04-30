@@ -24,7 +24,7 @@ import it.unibo.alchemist.model.conditions.JunctionPresentInCell;
 import it.unibo.alchemist.model.conditions.NeighborhoodPresent;
 import it.unibo.alchemist.model.implementations.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.implementations.molecules.Biomolecule;
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Node;

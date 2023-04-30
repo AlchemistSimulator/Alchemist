@@ -8,10 +8,11 @@
  */
 package it.unibo.alchemist.model.physics.linkingrules;
 
-import it.unibo.alchemist.model.euclidean.environments.Euclidean2DEnvironmentWithObstacles;
+
+import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithObstacles;
 import it.unibo.alchemist.model.linkingrules.ConnectWithinDistance;
 import it.unibo.alchemist.model.neighborhoods.Neighborhoods;
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Neighborhood;
 import it.unibo.alchemist.model.Node;

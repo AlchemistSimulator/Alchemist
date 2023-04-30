@@ -11,16 +11,15 @@ package it.unibo.alchemist.model.geometry.euclidean2d
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.model.euclidean.geometry.AwtMutableConvexPolygon
-import it.unibo.alchemist.model.euclidean.geometry.MutableConvexPolygon
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.AwtMutableConvexPolygon
+import it.unibo.alchemist.model.geometry.MutableConvexPolygon
 import it.unibo.alchemist.model.geometry.euclidean2d.Segments.coords
 import it.unibo.alchemist.model.geometry.euclidean2d.Segments.segment
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import java.awt.geom.Rectangle2D
 
 /**
- * Tests all the "utils" methods implemented by [AbstractConvexPolygon] (e.g. [AbstractConvexPolygon.liesOnBoundary],
- * [AbstractConvexPolygon.isAdjacentTo], etc.).
+ * Tests all the "utils" methods implemented by AbstractConvexPolygon.
  */
 class TestAbstractConvexPolygon : StringSpec({
 

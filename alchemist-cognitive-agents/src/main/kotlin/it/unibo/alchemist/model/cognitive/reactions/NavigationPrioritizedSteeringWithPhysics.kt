@@ -14,9 +14,9 @@ import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.cognitive.SteeringStrategy
 import it.unibo.alchemist.model.cognitive.steering.SinglePrevalent
 import it.unibo.alchemist.model.cognitive.steering.Sum
-import it.unibo.alchemist.model.euclidean.geometry.ConvexPolygon
-import it.unibo.alchemist.model.euclidean.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.geometry.ConvexPolygon
 import it.unibo.alchemist.model.physics.environments.EuclideanPhysics2DEnvironmentWithGraph
+import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
  * [NavigationPrioritizedSteering] strategy for physical pedestrians, taking into account physical forces as well.

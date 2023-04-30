@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.actions
+package it.unibo.alchemist.model.actions
 
 import io.kotest.core.spec.style.StringSpec
 import it.unibo.alchemist.model.Position

@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.model.physics.environments
 
+import it.unibo.alchemist.model.Obstacle2D
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironmentWithObstacles
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
@@ -18,4 +19,4 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 interface EuclideanPhysics2DEnvironmentWithObstacles<W, T> :
     Euclidean2DEnvironmentWithObstacles<W, T>,
     Physics2DEnvironment<T>
-    where W : it.unibo.alchemist.model.Obstacle2D<Euclidean2DPosition>
+    where W : Obstacle2D<Euclidean2DPosition>

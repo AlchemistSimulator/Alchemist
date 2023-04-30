@@ -14,8 +14,6 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.environments.PhysicsEnvironmentWithObstacles
-import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.obstacles.RectObstacle2D
 import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
@@ -23,6 +21,7 @@ import it.unibo.alchemist.model.physics.environments.EuclideanPhysics2DEnvironme
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.physics.properties.PhysicalPedestrian2D
+import it.unibo.alchemist.model.physics.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.dyn4j.dynamics.Body
 import org.dyn4j.dynamics.PhysicsBody
@@ -33,6 +32,9 @@ import org.dyn4j.geometry.Transform
 import org.dyn4j.geometry.Vector2
 import org.dyn4j.world.World
 import java.awt.Color
+
+private typealias PhysicsEnvWithObstacles<T> =
+EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>
 
 /**
  * This Environment uses hooks provided by [Dynamics2DEnvironment] to update
@@ -53,7 +55,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
         ImageEnvironmentWithGraph(incarnation, it, zoom, dx, dy, obstaclesColor, roomsColor)
     } ?: ContinuousPhysics2DEnvironment(incarnation),
 ) : Dynamics2DEnvironment<T>,
-    PhysicsEnvironmentWithObstacles<T> by backingEnvironment.asEnvironmentWithObstacles() {
+    PhysicsEnvWithObstacles<T> by backingEnvironment.asEnvironmentWithObstacles() {
 
     private val world: World<PhysicsBody> = World()
 
@@ -181,12 +183,12 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
 
     companion object {
 
-        private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvironmentWithObstacles<T> =
+        private fun <T> Physics2DEnvironment<T>.asEnvironmentWithObstacles(): PhysicsEnvWithObstacles<T> =
             if (this is EuclideanPhysics2DEnvironmentWithObstacles<*, T>) {
                 @Suppress("UNCHECKED_CAST")
-                this as PhysicsEnvironmentWithObstacles<T>
+                this as EuclideanPhysics2DEnvironmentWithObstacles<RectObstacle2D<Euclidean2DPosition>, T>
             } else {
-                object : Physics2DEnvironment<T> by this, PhysicsEnvironmentWithObstacles<T> {
+                object : Physics2DEnvironment<T> by this, PhysicsEnvWithObstacles<T> {
                     override fun getObstaclesInRange(
                         center: Euclidean2DPosition,
                         range: Double,

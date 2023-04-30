@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations.reactions
+package it.unibo.alchemist.model.physics.reactions
 
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Time
 import it.unibo.alchemist.model.TimeDistribution
-import it.unibo.alchemist.model.implementations.PhysicsDependency
+import it.unibo.alchemist.model.physics.PhysicsDependency
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import org.danilopianini.util.ImmutableListSet

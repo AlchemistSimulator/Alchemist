@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.implementations
+package it.unibo.alchemist.model.physics
 
 import it.unibo.alchemist.model.Dependency
 

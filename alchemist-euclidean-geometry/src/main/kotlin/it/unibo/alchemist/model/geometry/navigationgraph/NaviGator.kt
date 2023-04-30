@@ -19,7 +19,7 @@ import it.unibo.alchemist.util.Ranges.findExtremeCoordsOnY
 import it.unibo.alchemist.util.Ranges.intersect
 import it.unibo.alchemist.util.Ranges.intersectsBoundsExcluded
 import it.unibo.alchemist.util.Ranges.subtractAll
-import org.danilopianini.lang.MathUtils.fuzzyEquals
+import it.unibo.alchemist.util.math.fuzzyEquals
 import java.awt.Shape
 
 /**

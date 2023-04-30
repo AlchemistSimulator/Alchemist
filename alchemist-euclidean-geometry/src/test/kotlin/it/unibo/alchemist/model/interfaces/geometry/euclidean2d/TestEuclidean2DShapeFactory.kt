@@ -89,6 +89,6 @@ class TestEuclidean2DShapeFactory : FreeSpec({
             "adimensional" to adimensional(),
         )
 
-        const val DEFAULT_SHAPE_SIZE: Double = 1.0
+        private const val DEFAULT_SHAPE_SIZE: Double = 1.0
     }
 }

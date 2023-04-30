@@ -9,15 +9,15 @@
 
 package it.unibo.alchemist.model.geometry
 
-import org.danilopianini.lang.MathUtils
+import it.unibo.alchemist.util.math.fuzzyEquals
 import java.lang.IllegalArgumentException
 import java.lang.UnsupportedOperationException
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
- * A [Line2D] represented in the slope-intercept form: y = [slope] * x + [yIntercept]. Doubles are only compared with
- * [MathUtils.fuzzyEquals].
+ * A [Line2D] represented in the slope-intercept form: y = [slope] * x + [yIntercept].
+ * Doubles are only compared with [fuzzyEquals].
  */
 class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
     override val slope: Double,
@@ -32,7 +32,7 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
     constructor(slope: Double, yIntercept: Double, createPoint: (Double, Double) -> P) : this(
         slope,
         yIntercept,
-        Double.NaN.takeIf { MathUtils.fuzzyEquals(slope, 0.0) } ?: -yIntercept / slope,
+        Double.NaN.takeIf { fuzzyEquals(slope, 0.0) } ?: (-yIntercept / slope),
         createPoint,
     )
 
@@ -64,19 +64,19 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
             val determinant = b.pow(2) - 4 * a * c
             return when {
                 determinant < 0.0 -> emptyList()
-                MathUtils.fuzzyEquals(determinant, 0.0) -> listOf(-b)
+                fuzzyEquals(determinant, 0.0) -> listOf(-b)
                 else -> listOf(-b + sqrt(determinant), -b - sqrt(determinant))
             }.map { it / (2 * a) }
         }
     }
 
-    override val isHorizontal: Boolean = MathUtils.fuzzyEquals(slope, 0.0)
+    override val isHorizontal: Boolean = fuzzyEquals(slope, 0.0)
 
     override val isVertical: Boolean = slope.isNaN()
 
     override fun contains(point: P): Boolean = when {
-        isVertical -> MathUtils.fuzzyEquals(xIntercept, point.x)
-        else -> MathUtils.fuzzyEquals(findY(point.x), point.y)
+        isVertical -> fuzzyEquals(xIntercept, point.x)
+        else -> fuzzyEquals(findY(point.x), point.y)
     }
 
     /**
@@ -90,7 +90,7 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
     override fun findPoint(x: Double): P = createPoint(x, findY(x))
 
     private fun parallelTo(other: Line2D<*>): Boolean =
-        isVertical && other.isVertical || MathUtils.fuzzyEquals(slope, other.slope)
+        isVertical && other.isVertical || fuzzyEquals(slope, other.slope)
 
     override fun isParallelTo(other: Line2D<P>): Boolean = parallelTo(other)
 
@@ -99,8 +99,8 @@ class SlopeInterceptLine2D<P : Vector2D<P>> private constructor(
      */
     fun coincidesWith(other: Line2D<*>): Boolean = when {
         !parallelTo(other) -> false
-        isVertical -> MathUtils.fuzzyEquals(xIntercept, other.xIntercept)
-        else -> MathUtils.fuzzyEquals(yIntercept, other.yIntercept)
+        isVertical -> fuzzyEquals(xIntercept, other.xIntercept)
+        else -> fuzzyEquals(yIntercept, other.yIntercept)
     }
 
     override fun intersect(other: Line2D<P>): Intersection2D<P> = when {

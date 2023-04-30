@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.model.physics.environments;
 
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Incarnation;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
 /**
  * @param <T> concentration type

@@ -13,17 +13,19 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
-import it.unibo.alchemist.model.environments.shouldBeAbout
 import it.unibo.alchemist.model.geometry.Intersection2D
 import it.unibo.alchemist.model.geometry.Segment2D
 import it.unibo.alchemist.model.geometry.Vector2D
 import it.unibo.alchemist.model.geometry.euclidean2d.Segments.coords
 import it.unibo.alchemist.model.geometry.euclidean2d.Segments.segment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
+import it.unibo.alchemist.util.Doubles.fuzzyEquals
 import it.unibo.alchemist.util.Ranges.coincidesWith
 import org.junit.jupiter.api.assertThrows
 import kotlin.math.pow
 import kotlin.math.sqrt
+
+private infix fun Double.shouldBeAbout(other: Double) = fuzzyEquals(other) shouldBe true
 
 class TestSegment2DImpl : StringSpec() {
     private val horizontalSegment: Segment2D<Euclidean2DPosition> = segment(2.0, 2.0, 6.0, 2.0)

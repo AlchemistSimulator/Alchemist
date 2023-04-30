@@ -17,7 +17,7 @@ import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.linkingrules.NoLinks;
 import it.unibo.alchemist.model.nodes.GenericNode;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import it.unibo.alchemist.model.reactions.Event;
 import it.unibo.alchemist.model.timedistributions.DiracComb;
 import org.junit.jupiter.api.BeforeEach;

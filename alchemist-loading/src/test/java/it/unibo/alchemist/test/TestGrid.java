@@ -11,7 +11,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.loader.deployments.Grid;
 import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TestGrid {
 
     private static Continuous2DEnvironment<?> environment() {
-        return new Continuous2DEnvironment<>(SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").get());
+        return new Continuous2DEnvironment<>(
+            SupportedIncarnations.<Object, Euclidean2DPosition>get("protelis").orElseThrow()
+        );
     }
 
     private static MersenneTwister randomGenerator() {

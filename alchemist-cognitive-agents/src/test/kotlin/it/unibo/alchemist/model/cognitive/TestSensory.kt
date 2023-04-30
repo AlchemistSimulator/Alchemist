@@ -19,7 +19,7 @@ import it.unibo.alchemist.model.cognitive.properties.Social
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
 import it.unibo.alchemist.model.physics.FieldOfView2D
-import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.CircularArea
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
@@ -47,7 +47,7 @@ class TestSensory<T> : StringSpec({
     }
 
     "field of view" {
-        val environment = Continuous2DEnvironment<T>(
+        val environment = ContinuousPhysics2DEnvironment<T>(
             SupportedIncarnations.get<T, Euclidean2DPosition>("protelis").orElseThrow(),
         )
         val rand = MersenneTwister(1)

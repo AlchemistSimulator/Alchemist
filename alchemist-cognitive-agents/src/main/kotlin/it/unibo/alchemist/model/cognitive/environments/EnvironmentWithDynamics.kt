@@ -13,10 +13,11 @@ import it.unibo.alchemist.model.GlobalReaction
 import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.environments.PhysicsEnvironmentWithObstacles
 import it.unibo.alchemist.model.implementations.reactions.PhysicsUpdate
 import it.unibo.alchemist.model.obstacles.RectObstacle2D
-import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
+import it.unibo.alchemist.model.physics.environments.ContinuousPhysics2DEnvironment
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.physics.environments.EuclideanPhysics2DEnvironmentWithObstacles
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
@@ -50,7 +51,7 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
     roomsColor: Int = Color.BLUE.rgb,
     private val backingEnvironment: Physics2DEnvironment<T> = path?.let {
         ImageEnvironmentWithGraph(incarnation, it, zoom, dx, dy, obstaclesColor, roomsColor)
-    } ?: Continuous2DEnvironment(incarnation),
+    } ?: ContinuousPhysics2DEnvironment(incarnation),
 ) : Dynamics2DEnvironment<T>,
     PhysicsEnvironmentWithObstacles<T> by backingEnvironment.asEnvironmentWithObstacles() {
 
@@ -213,6 +214,9 @@ class EnvironmentWithDynamics<T> @JvmOverloads constructor(
                         error("This Environment instance does not support adding obstacles")
 
                     override fun makePosition(vararg coordinates: Double) =
+                        this@asEnvironmentWithObstacles.makePosition(*coordinates)
+
+                    override fun makePosition(vararg coordinates: Number) =
                         this@asEnvironmentWithObstacles.makePosition(*coordinates)
 
                     override val origin

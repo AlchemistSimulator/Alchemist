@@ -8,9 +8,9 @@
  */
 package it.unibo.alchemist.model.physics.environments;
 
-import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 
 import javax.annotation.Nonnull;
 
@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
  * 
  * @param <T> concentration type
  */
-public abstract class LimitedContinuos2D<T> extends Continuous2DEnvironment<T> {
+public abstract class LimitedContinuos2D<T> extends ContinuousPhysics2DEnvironment<T> {
 
     private static final long serialVersionUID = -7838255122589911058L;
 

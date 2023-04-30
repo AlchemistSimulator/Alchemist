@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -15,6 +15,12 @@ import org.danilopianini.lang.MathUtils
  * Extension functions enriching [Double].
  */
 object Doubles {
+
+    /**
+     * Checks if two double values are fuzzy equal.
+     */
+    fun Double.fuzzyEquals(other: Double): Boolean = MathUtils.fuzzyEquals(this, other)
+
     /**
      * Checks if a double value is fuzzy contained in a range.
      * @param range the range

@@ -9,9 +9,10 @@
 
 package it.unibo.alchemist.model.geometry
 
+import it.unibo.alchemist.util.Doubles.fuzzyEquals
 import it.unibo.alchemist.util.Doubles.fuzzyIn
 import it.unibo.alchemist.util.Ranges.rangeFromUnordered
-import org.danilopianini.lang.MathUtils.fuzzyEquals
+import it.unibo.alchemist.util.math.fuzzyEquals
 import java.lang.UnsupportedOperationException
 
 /**
@@ -37,7 +38,7 @@ interface Segment2D<P : Vector2D<P>> {
     /**
      * Indicates if the two endpoints coincide (= segment has zero length).
      */
-    val isDegenerate: Boolean get() = fuzzyEquals(first, second)
+    val isDegenerate: Boolean get() = fuzzyEqualVectors(first, second)
 
     /**
      * Indicates if the segment is aligned to the x-axis, this is true if [isDegenerate].
@@ -220,10 +221,10 @@ interface Segment2D<P : Vector2D<P>> {
      * share more than one point.
      */
     private fun endpointSharedWith(other: Segment2D<P>): P? = when {
-        fuzzyEquals(first, other.first) && !contains(other.second) -> first
-        fuzzyEquals(first, other.second) && !contains(other.first) -> first
-        fuzzyEquals(second, other.first) && !contains(other.second) -> second
-        fuzzyEquals(second, other.second) && !contains(other.first) -> second
+        fuzzyEqualVectors(first, other.first) && !contains(other.second) -> first
+        fuzzyEqualVectors(first, other.second) && !contains(other.first) -> first
+        fuzzyEqualVectors(second, other.first) && !contains(other.second) -> second
+        fuzzyEqualVectors(second, other.second) && !contains(other.first) -> second
         else -> null
     }
 
@@ -231,6 +232,7 @@ interface Segment2D<P : Vector2D<P>> {
         /**
          * Checks if two points are [fuzzyEquals].
          */
-        private fun <P : Vector2D<P>> fuzzyEquals(a: P, b: P): Boolean = fuzzyEquals(a.x, b.x) && fuzzyEquals(a.y, b.y)
+        private fun <P : Vector2D<P>> fuzzyEqualVectors(a: P, b: P): Boolean =
+            a.x.fuzzyEquals(b.x) && a.y.fuzzyEquals(b.y)
     }
 }

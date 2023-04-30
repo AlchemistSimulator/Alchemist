@@ -13,7 +13,7 @@ import it.unibo.alchemist.model.EuclideanEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**
- * A bidimensional euclidean space with any concentration type [T].
+ * A bidimensional Euclidean space with any concentration type [T].
  */
 interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPosition> {
 
@@ -27,10 +27,15 @@ interface Euclidean2DEnvironment<T> : EuclideanEnvironment<T, Euclidean2DPositio
     /**
      * Creates a new [Euclidean2DPosition].
      */
-    override fun makePosition(vararg coordinates: Double): Euclidean2DPosition =
-        require(coordinates.size == 2) {
-            "Illegal coordinates (required 2): ${coordinates.contentToString()}"
-        }.let { makePosition(coordinates[0], coordinates[1]) }
+    override fun makePosition(vararg coordinates: Double): Euclidean2DPosition {
+        require(coordinates.size == 2) { "Illegal coordinates (required 2): ${coordinates.contentToString()}" }
+        return makePosition(coordinates[0], coordinates[1])
+    }
+
+    override fun makePosition(vararg coordinates: Number): Euclidean2DPosition {
+        require(coordinates.size == 2) { "Illegal coordinates (required 2): ${coordinates.contentToString()}" }
+        return makePosition(coordinates[0].toDouble(), coordinates[1].toDouble())
+    }
 
     companion object {
         /**

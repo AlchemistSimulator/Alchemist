@@ -7,10 +7,14 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package another.location
+package it.unibo.alchemist.model.environments
 
 import it.unibo.alchemist.model.Incarnation
-import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
-class MyTestEnv<T> (incarnation: Incarnation<T, Euclidean2DPosition>) : Continuous2DEnvironment<T>(incarnation)
+/**
+ * Implementation of [Euclidean2DEnvironment].
+ */
+open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
+    Euclidean2DEnvironment<T>,
+    Abstract2DEnvironment<T, Euclidean2DPosition>(incarnation)

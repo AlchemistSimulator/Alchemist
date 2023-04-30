@@ -18,12 +18,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.geom.Rectangle2D;
 
+import static it.unibo.alchemist.util.math.Math.closestTo;
+import static it.unibo.alchemist.util.math.Math.fuzzyEquals;
+import static it.unibo.alchemist.util.math.Math.fuzzyGreaterEquals;
 import static java.lang.Math.PI;
 import static org.apache.commons.math3.util.FastMath.max;
 import static org.apache.commons.math3.util.FastMath.min;
-import static org.danilopianini.lang.MathUtils.closestTo;
-import static org.danilopianini.lang.MathUtils.fuzzyEquals;
-import static org.danilopianini.lang.MathUtils.fuzzyGreaterEquals;
 
 /**
  * This class implements a rectangular obstacle, whose sides are parallel to the

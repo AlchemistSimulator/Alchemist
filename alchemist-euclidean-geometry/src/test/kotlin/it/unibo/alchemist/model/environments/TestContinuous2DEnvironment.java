@@ -6,7 +6,7 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.physics.environments;
+package it.unibo.alchemist.model.environments;
 
 import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.linkingrules.NoLinks;

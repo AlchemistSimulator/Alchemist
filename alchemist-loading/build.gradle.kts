@@ -22,7 +22,6 @@ dependencies {
     api(alchemist("api"))
 
     implementation(alchemist("euclidean-geometry"))
-    implementation(alchemist("physics"))
     implementation(libs.apache.commons.lang3)
     implementation(libs.arrow.core)
     implementation(libs.dsiutils)

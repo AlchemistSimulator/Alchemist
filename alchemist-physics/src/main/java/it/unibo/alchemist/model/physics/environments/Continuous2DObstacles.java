@@ -14,9 +14,9 @@ import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
 import com.github.davidmoten.rtree.internal.EntryDefault;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.Incarnation;
 import it.unibo.alchemist.model.obstacles.RectObstacle2D;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.Incarnation;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

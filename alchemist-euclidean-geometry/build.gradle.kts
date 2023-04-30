@@ -23,7 +23,6 @@ dependencies {
     api(alchemist("implementationbase"))
     api(libs.dyn4j)
 
-    implementation(libs.boilerplate)
     implementation(libs.classgraph)
     implementation(libs.jgrapht.core)
     implementation(libs.trove4j)

@@ -15,7 +15,7 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Neighborhood
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.environments.Abstract2DEnvironment
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.environments.Euclidean2DEnvironment
 import it.unibo.alchemist.model.geometry.Euclidean2DShape
 import it.unibo.alchemist.model.geometry.Euclidean2DShapeFactory
@@ -30,9 +30,8 @@ import it.unibo.alchemist.model.positions.Euclidean2DPosition
 /**
  * Implementation of [Physics2DEnvironment].
  */
-open class Continuous2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
-    Euclidean2DEnvironment<T>,
-    Abstract2DEnvironment<T, Euclidean2DPosition>(incarnation),
+open class ContinuousPhysics2DEnvironment<T>(incarnation: Incarnation<T, Euclidean2DPosition>) :
+    Continuous2DEnvironment<T>(incarnation),
     Physics2DEnvironment<T> {
 
     companion object {

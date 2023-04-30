@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import it.unibo.alchemist.model.Reaction;
-import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;

@@ -7,7 +7,7 @@ variables:
     formula: "\"exit2\""
 
 environment:
-  type: Continuous2DEnvironment
+  type: ContinuousPhysics2DEnvironment
 
 seeds:
   scenario: 0

@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model.environments
+package it.unibo.alchemist.model.physics.environments
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
@@ -19,18 +19,14 @@ import it.unibo.alchemist.model.Incarnation
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.geometry.euclidean2d.Segments.coords
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.TestEuclidean2DShapeFactory.Companion.DEFAULT_SHAPE_SIZE
 import it.unibo.alchemist.model.linkingrules.NoLinks
 import it.unibo.alchemist.model.nodes.GenericNode
-import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.AreaProperty
 import it.unibo.alchemist.model.physics.properties.CircularArea
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
-import org.danilopianini.lang.MathUtils
+import it.unibo.alchemist.util.Doubles.fuzzyEquals
 
-internal infix fun Double.shouldBeAbout(other: Double) = MathUtils.fuzzyEquals(this, other) shouldBe true
+private infix fun Double.shouldBeAbout(other: Double) = fuzzyEquals(other) shouldBe true
 
 class TestEuclideanPhysics2DEnvironment : StringSpec() {
     private lateinit var environment: Physics2DEnvironment<Any>
@@ -51,8 +47,8 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
 
     override suspend fun beforeTest(testCase: TestCase) {
         super.beforeTest(testCase)
-        environment = Continuous2DEnvironment(SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").get())
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseThrow()
+        environment = ContinuousPhysics2DEnvironment(incarnation)
         environment.linkingRule = NoLinks()
         node1 = createCircleNode(incarnation, environment, DEFAULT_SHAPE_SIZE / 2)
         node2 = createCircleNode(incarnation, environment, DEFAULT_SHAPE_SIZE / 2)
@@ -91,21 +87,25 @@ class TestEuclideanPhysics2DEnvironment : StringSpec() {
         }
 
         "Node is moved to the farthest position reachable when its path is occupied by others" {
-            environment.addNode(node1, coords(2.0, 2.0))
-            environment.addNode(node2, coords(6.0, 2.0))
-            val target = coords(8.0, 2.0)
+            environment.addNode(node1, Euclidean2DPosition(2.0, 2.0))
+            environment.addNode(node2, Euclidean2DPosition(6.0, 2.0))
+            val target = Euclidean2DPosition(8.0, 2.0)
             environment.moveNodeToPosition(node1, target)
             environment.getPosition(node1).distanceTo(target) shouldBeAbout
                 environment.getPosition(node2).distanceTo(target) + getNodeRadius(node1) + getNodeRadius(node2)
         }
 
         "Node is moved to the farthest position reachable when its path is occupied by others 2" {
-            environment.addNode(node1, coords(2.0, 2.0))
-            environment.addNode(node2, coords(8.0, 1.0))
-            environment.addNode(node3, coords(8.0, 2.5))
-            val target = coords(8.0, 2.0)
+            environment.addNode(node1, Euclidean2DPosition(2.0, 2.0))
+            environment.addNode(node2, Euclidean2DPosition(8.0, 1.0))
+            environment.addNode(node3, Euclidean2DPosition(8.0, 2.5))
+            val target = Euclidean2DPosition(8.0, 2.0)
             environment.moveNodeToPosition(node1, target)
             environment.getPosition(node1).distanceTo(target) shouldBeGreaterThan getNodeRadius(node1)
         }
+    }
+
+    companion object {
+        private const val DEFAULT_SHAPE_SIZE: Double = 1.0
     }
 }

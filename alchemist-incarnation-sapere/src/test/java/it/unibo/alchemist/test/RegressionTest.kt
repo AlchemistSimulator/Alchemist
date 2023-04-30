@@ -11,9 +11,9 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.model.SAPEREIncarnation
+import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.nodes.LsaNode
 import it.unibo.alchemist.model.interfaces.ILsaMolecule
-import it.unibo.alchemist.model.physics.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.timedistributions.DiracComb
 import org.apache.commons.math3.random.MersenneTwister

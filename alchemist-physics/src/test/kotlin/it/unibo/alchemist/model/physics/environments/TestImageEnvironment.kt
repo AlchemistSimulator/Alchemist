@@ -6,10 +6,9 @@
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.model.environments
+package it.unibo.alchemist.model.physics.environments
 
 import it.unibo.alchemist.model.SupportedIncarnations
-import it.unibo.alchemist.model.physics.environments.ImageEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -47,7 +46,9 @@ class TestImageEnvironment {
     fun testLoadingImages() {
         val incarnation = SupportedIncarnations.get<Any, Euclidean2DPosition>("protelis").orElseGet { TODO() }
         images.asSequence()
-            .map { ResourceLoader.getResource(it).path }
+            .map { it to ResourceLoader.getResource("images/$it") }
+            .map { it.second ?: error("Could not lead image ${it.first}") }
+            .map { it.path }
             .flatMap {
                 sequenceOf(
                     ImageEnvironment<Any>(incarnation, it),

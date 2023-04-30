@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary.fxui.impl;
 
-import it.unibo.alchemist.boundary.fxui.api.DrawCommand;
+import it.unibo.alchemist.boundary.fxui.DrawCommand;
 import it.unibo.alchemist.model.Position2D;
 import org.apache.commons.collections4.queue.UnmodifiableQueue;
 
@@ -32,7 +32,7 @@ public final class CommandQueueBuilder<P extends Position2D<? extends P>> {
      * @param supplier the boolean supplier that will check if the command should be executed
      * @return this builder
      */
-    public CommandQueueBuilder wrapAndAdd(final Supplier<Boolean> supplier, final DrawCommand<P> doOnJFXThread) {
+    public CommandQueueBuilder<P> wrapAndAdd(final Supplier<Boolean> supplier, final DrawCommand<P> doOnJFXThread) {
         return addCommand(doOnJFXThread.wrap(supplier));
     }
 
@@ -42,7 +42,7 @@ public final class CommandQueueBuilder<P extends Position2D<? extends P>> {
      * @param doOnJFXThread the action to do
      * @return this builder
      */
-    public CommandQueueBuilder addCommand(final DrawCommand<P> doOnJFXThread) {
+    public CommandQueueBuilder<P> addCommand(final DrawCommand<P> doOnJFXThread) {
         commandQueue.add(doOnJFXThread);
         return this;
     }
@@ -52,7 +52,7 @@ public final class CommandQueueBuilder<P extends Position2D<? extends P>> {
      *
      * @return this builder
      */
-    public CommandQueueBuilder cleanQueue() {
+    public CommandQueueBuilder<P> cleanQueue() {
         commandQueue.clear();
         return this;
     }

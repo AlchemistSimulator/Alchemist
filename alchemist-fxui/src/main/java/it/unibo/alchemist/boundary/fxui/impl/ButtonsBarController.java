@@ -14,9 +14,12 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXSlider;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
+import it.unibo.alchemist.boundary.fxui.EffectFX;
+import it.unibo.alchemist.boundary.fxui.EffectGroup;
+import it.unibo.alchemist.boundary.fxui.keybind.ListKeybindsView;
+import it.unibo.alchemist.boundary.fxui.monitors.PlayPauseMonitor;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
-import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
+import it.unibo.alchemist.boundary.fxui.FXOutputMonitor;
 import it.unibo.alchemist.model.Position2D;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -101,8 +104,8 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * Same as {@link #ButtonsBarController() default constructor}, but lets specify an
-     *      {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to display the effects.
+     * Same as {@link #ButtonsBarController() default constructor}, but it lets specify an
+     *      {@link it.unibo.alchemist.boundary.OutputMonitor} to display the effects.
      * <p>
      * Useful to pass to {@link EffectsGroupBarController}, {@link EffectBarController}
      * and {@link EffectPropertiesController}.
@@ -115,15 +118,15 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * Same as {@link #ButtonsBarController() default constructor}, but lets specify the play/pause
+     * Same as {@link #ButtonsBarController() default constructor}, but it lets specify the play/pause
      * {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
      *
      * @param playPauseButton the play/pause {@code Button}; should probably
-     *                        be a {@link it.unibo.alchemist.boundary.fxui.monitors.impl.PlayPauseMonitor}
+     *                        be a {@link PlayPauseMonitor}
      * @param timeLabel       the {@code Label} for the steps; should probably
-     *                        be a {@link AbstractNumericLabelMonitor}
+     *                        be a {@link it.unibo.alchemist.boundary.fxui.monitors.AbstractNumericLabelMonitor}
      * @param stepLabel       the {@code Label} for the time; should probably
-     *                        be a {@link AbstractNumericLabelMonitor}
+     *                        be a {@link it.unibo.alchemist.boundary.fxui.monitors.AbstractNumericLabelMonitor}
      */
     public ButtonsBarController(final Button playPauseButton, final Label timeLabel, final Label stepLabel) {
         this();
@@ -133,20 +136,20 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * Same as {@link #ButtonsBarController() default constructor}, but lets specify
-     * an {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to display the effects,
+     * Same as {@link #ButtonsBarController() default constructor}, but it lets specify
+     * an {@link it.unibo.alchemist.boundary.OutputMonitor} to display the effects,
      * the play/pause {@link Button}, a {@link Label} for the steps and a {@link Label} for the time.
      * <p>
      * Useful to pass to {@link EffectsGroupBarController}, {@link EffectBarController}
      * and {@link EffectPropertiesController}.
      *
-     * @param displayMonitor  the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
+     * @param displayMonitor  the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}
      * @param playPauseButton the play/pause {@code Button}; should probably
-     *                        be a {@link it.unibo.alchemist.boundary.fxui.monitors.impl.PlayPauseMonitor}
+     *                        be a {@link PlayPauseMonitor}
      * @param timeLabel       the {@code Label} for the steps; should probably
-     *                        be a {@link AbstractNumericLabelMonitor}
+     *                        be a {@link it.unibo.alchemist.boundary.fxui.monitors.AbstractNumericLabelMonitor}
      * @param stepLabel       the {@code Label} for the time; should probably
-     *                        be a {@link AbstractNumericLabelMonitor}
+     *                        be a {@link it.unibo.alchemist.boundary.fxui.monitors.AbstractNumericLabelMonitor}
      */
     public ButtonsBarController(
             final @Nullable FXOutputMonitor<?, ?> displayMonitor,
@@ -159,18 +162,18 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
     }
 
     /**
-     * Getter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Getter method for the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @return the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}, if any
+     * @return the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}, if any
      */
     public final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
     /**
-     * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Setter method for the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}
      *                       to set; if null, it will be {@link Optional#empty() unset}
      */
     public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
@@ -334,7 +337,7 @@ public class ButtonsBarController<P extends Position2D<? extends P>> implements 
 
     /**
      * Getter method for the {@code List} of groups of
-     * {@link it.unibo.alchemist.boundary.fxui.effects.api.EffectFX effects} in the side drawer.
+     * {@link EffectFX effects} in the side drawer.
      *
      * @return an {@code ObservableList} of {@code EffectGroup}
      */

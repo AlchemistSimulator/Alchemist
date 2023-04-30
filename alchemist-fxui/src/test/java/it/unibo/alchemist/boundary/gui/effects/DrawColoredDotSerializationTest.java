@@ -1,8 +1,8 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.fxui.effects.impl.DrawColoredDot;
+import it.unibo.alchemist.boundary.fxui.effects.DrawColoredDot;
 import it.unibo.alchemist.boundary.gui.effects.json.AbstractEffectSerializationTest;
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer;
 import it.unibo.alchemist.test.TemporaryFile;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;

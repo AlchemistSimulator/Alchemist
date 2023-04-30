@@ -10,8 +10,8 @@
 package it.unibo.alchemist.boundary.fxui.util
 
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer
+import it.unibo.alchemist.boundary.fxui.EffectGroup
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer
 import it.unibo.alchemist.launch.Priority
 import it.unibo.alchemist.launch.SimulationLauncher
 import it.unibo.alchemist.launch.Validation.Invalid

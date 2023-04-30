@@ -13,10 +13,10 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXToggleButton;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
+import it.unibo.alchemist.boundary.fxui.EffectFX;
 import it.unibo.alchemist.boundary.fxui.util.DataFormatFactory;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
-import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
+import it.unibo.alchemist.boundary.fxui.FXOutputMonitor;
 import it.unibo.alchemist.model.Position2D;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -106,7 +106,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     /**
      * Constructor.
      *
-     * @param monitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
+     * @param monitor the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}
      * @param stack   the stack where to open the effect properties
      */
     public EffectCell(final @Nullable FXOutputMonitor<?, ?> monitor, final JFXDrawersStack stack) {
@@ -117,7 +117,7 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     /**
      * Constructor.
      *
-     * @param monitor    the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
+     * @param monitor    the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}
      * @param effectName the name of the effect
      * @param stack      the stack where to open the effect properties
      */
@@ -140,9 +140,9 @@ public class EffectCell<P extends Position2D<? extends P>> extends AbstractEffec
     }
 
     /**
-     * Configures the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Configures the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @param monitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
+     * @param monitor the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}
      */
     private void setupDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> monitor) {
         setDisplayMonitor(monitor);

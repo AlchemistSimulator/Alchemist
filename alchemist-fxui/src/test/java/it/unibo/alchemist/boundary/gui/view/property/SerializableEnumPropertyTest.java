@@ -1,6 +1,6 @@
 package it.unibo.alchemist.boundary.gui.view.property;
 
-import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableEnumProperty;
+import it.unibo.alchemist.boundary.fxui.properties.SerializableEnumProperty;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;

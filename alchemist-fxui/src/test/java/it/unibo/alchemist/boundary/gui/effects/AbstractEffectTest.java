@@ -1,18 +1,19 @@
 package it.unibo.alchemist.boundary.gui.effects;
 
-import it.unibo.alchemist.boundary.fxui.effects.impl.DrawColoredDot;
-import it.unibo.alchemist.boundary.fxui.effects.impl.DrawDot;
-import it.unibo.alchemist.boundary.fxui.effects.impl.DrawLinks;
-import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableStringProperty;
+import it.unibo.alchemist.boundary.fxui.effects.AbstractEffect;
+import it.unibo.alchemist.boundary.fxui.effects.DrawColoredDot;
+import it.unibo.alchemist.boundary.fxui.effects.DrawDot;
+import it.unibo.alchemist.boundary.fxui.effects.DrawLinks;
+import it.unibo.alchemist.boundary.fxui.properties.SerializableStringProperty;
 import org.junit.jupiter.api.Test;
 
-import static it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect.checkBasicProperties;
-import static it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect.checkEqualsProperties;
+import static it.unibo.alchemist.boundary.fxui.effects.AbstractEffect.checkBasicProperties;
+import static it.unibo.alchemist.boundary.fxui.effects.AbstractEffect.checkEqualsProperties;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test class for {@link it.unibo.alchemist.boundary.fxui.effects.impl.AbstractEffect} static comparison methods.
+ * Test class for {@link AbstractEffect} static comparison methods.
  */
 class AbstractEffectTest {
     private static final String TEST_NAME = "Test";

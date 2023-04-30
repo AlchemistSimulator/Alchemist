@@ -11,12 +11,12 @@ package it.unibo.alchemist.boundary.gui.view.property
 
 import com.google.common.base.Charsets
 import com.google.gson.reflect.TypeToken
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer
-import it.unibo.alchemist.boundary.fxui.properties.internal.PropertyFactory
-import it.unibo.alchemist.boundary.fxui.properties.internal.RangedIntegerProperty
-import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableBooleanProperty
-import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableEnumProperty
-import it.unibo.alchemist.boundary.fxui.properties.internal.SerializableStringProperty
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer
+import it.unibo.alchemist.boundary.fxui.properties.PropertyFactory
+import it.unibo.alchemist.boundary.fxui.properties.RangedIntegerProperty
+import it.unibo.alchemist.boundary.fxui.properties.SerializableBooleanProperty
+import it.unibo.alchemist.boundary.fxui.properties.SerializableEnumProperty
+import it.unibo.alchemist.boundary.fxui.properties.SerializableStringProperty
 import it.unibo.alchemist.boundary.fxui.util.RangedDoubleProperty
 import it.unibo.alchemist.test.TemporaryFile.create
 import javafx.beans.property.Property

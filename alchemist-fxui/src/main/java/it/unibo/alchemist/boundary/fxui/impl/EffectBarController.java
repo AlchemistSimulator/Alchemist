@@ -13,11 +13,11 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.fxui.effects.impl.EffectBuilderFX;
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectFX;
+import it.unibo.alchemist.boundary.fxui.effects.EffectBuilderFX;
+import it.unibo.alchemist.boundary.fxui.EffectFX;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
 import it.unibo.alchemist.boundary.fxui.util.SVGImages;
-import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
+import it.unibo.alchemist.boundary.fxui.FXOutputMonitor;
 import it.unibo.alchemist.model.Position2D;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
@@ -98,7 +98,7 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
     /**
      * Constructor.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}
      * @param parentCell     the cell that {@link EffectGroupCell} that will open this
      *                       drawer
      * @param stack          the stack where to open the effect properties
@@ -116,18 +116,18 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
     }
 
     /**
-     * Getter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Getter method for the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @return the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}, if any
+     * @return the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}, if any
      */
     public final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
     /**
-     * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Setter method for the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set;
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.OutputMonitor} to set;
      *                       if null, it will be {@link Optional#empty() unset}
      */
     public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {
@@ -194,8 +194,8 @@ public class EffectBarController<P extends Position2D<? extends P>> implements I
 
     /**
      * Add the {@link EffectFX Effect} to the {@link ListView} controlled by this class and to
-     * the {@link EffectGroup} that the GUI
-     * controlled by this claass is representation of.
+     * the {@link it.unibo.alchemist.boundary.fxui.EffectGroup} that the GUI
+     * controlled by this class is representation of.
      *
      * @param effect the effect to add
      */

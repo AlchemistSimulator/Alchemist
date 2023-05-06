@@ -31,7 +31,7 @@ import javax.swing.SwingUtilities
  * @param P position type.
  * @param T concentration type.
  */
-@Deprecated("")
+@Deprecated("This class is deprecated anyway")
 class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(), OutputMonitor<T, P>, ActionListener {
     private val jTextArea = JTextArea(AREA_SIZE / 2, AREA_SIZE)
     private var stringLength = Byte.MAX_VALUE.toInt()
@@ -49,7 +49,9 @@ class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(),
         areaScrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     }
 
-    override fun actionPerformed(e: ActionEvent) { }
+    override fun actionPerformed(e: ActionEvent) {
+        // Do Nothing
+    }
 
     override fun finished(environment: Environment<T, P>, time: Time, step: Long) {
         stepDone(environment, null, time, step)

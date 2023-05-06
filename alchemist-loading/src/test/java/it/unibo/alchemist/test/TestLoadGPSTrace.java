@@ -11,7 +11,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.times.DoubleTime;
 import it.unibo.alchemist.model.Environment;

@@ -9,16 +9,16 @@
 
 package it.unibo.alchemist.loader.filters.compounds
 
-import it.unibo.alchemist.loader.filters.Filter
+import it.unibo.alchemist.loader.filters.PositionBasedFilter
 import it.unibo.alchemist.model.Position
 
 /**
- * Negates the [filter]'s test.
- * @param [filter] the filter to be negated.
+ * Negates the [positionBasedFilter]'s test.
+ * @param [positionBasedFilter] the filter to be negated.
  */
-class Not<P : Position<P>> (val filter: Filter<P>) : Filter<P> {
+class Not<P : Position<P>> (val positionBasedFilter: PositionBasedFilter<P>) : PositionBasedFilter<P> {
     /**
-     * Returns true if [filter] is not satisfied.
+     * Returns true if [positionBasedFilter] is not satisfied.
      */
-    override operator fun contains(position: P) = position !in filter
+    override operator fun contains(position: P) = position !in positionBasedFilter
 }

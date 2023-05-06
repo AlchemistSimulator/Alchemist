@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.biochemistry.nodes;
 
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.model.biochemistry.BiochemistryIncarnation;
 import it.unibo.alchemist.model.biochemistry.environments.BioRect2DEnvironment;
 import it.unibo.alchemist.model.biochemistry.molecules.Biomolecule;

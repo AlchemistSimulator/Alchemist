@@ -7,9 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export.extractors
+package it.unibo.alchemist.boundary.export.extractors
 
-import it.unibo.alchemist.loader.export.Extractor
+import it.unibo.alchemist.boundary.export.Extractor
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time

@@ -9,20 +9,20 @@
 
 package it.unibo.alchemist.loader.filters.compounds
 
-import it.unibo.alchemist.loader.filters.Filter
+import it.unibo.alchemist.loader.filters.PositionBasedFilter
 import it.unibo.alchemist.model.Position
 
 /**
- * Check if both [filterA] and [filterB] are satisfied.
- * @param filterA the first filter.
- * @param filterB the second filter.
+ * Check if both [positionBasedFilterA] and [positionBasedFilterB] are satisfied.
+ * @param positionBasedFilterA the first filter.
+ * @param positionBasedFilterB the second filter.
  */
 data class And<P : Position<P>> (
-    val filterA: Filter<P>,
-    val filterB: Filter<P>,
-) : Filter<P> {
+    val positionBasedFilterA: PositionBasedFilter<P>,
+    val positionBasedFilterB: PositionBasedFilter<P>,
+) : PositionBasedFilter<P> {
     /**
-     * Returns true if both [filterA] and [filterB] are satisfied.
+     * Returns true if both [positionBasedFilterA] and [positionBasedFilterB] are satisfied.
      */
-    override operator fun contains(position: P) = position in filterA && position in filterB
+    override operator fun contains(position: P) = position in positionBasedFilterA && position in positionBasedFilterB
 }

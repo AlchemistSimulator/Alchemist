@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -7,12 +7,12 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export.exporters
+package it.unibo.alchemist.boundary.export.exporters
 
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.loader.export.Exporter
-import it.unibo.alchemist.loader.export.Extractor
-import it.unibo.alchemist.loader.export.exporters.AbstractExporter.Companion.DEFAULT_INTERVAL
+import it.unibo.alchemist.boundary.export.Exporter
+import it.unibo.alchemist.boundary.export.Extractor
+import it.unibo.alchemist.boundary.export.exporters.AbstractExporter.Companion.DEFAULT_INTERVAL
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position

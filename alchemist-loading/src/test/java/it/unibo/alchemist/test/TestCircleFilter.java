@@ -8,7 +8,7 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.loader.filters.Circle;
-import it.unibo.alchemist.loader.filters.Filter;
+import it.unibo.alchemist.loader.filters.PositionBasedFilter;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.GeoPosition;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TestCircleFilter {
 
-    private final Filter<GeoPosition> s = new Circle<>(0, 0, 1);
+    private final PositionBasedFilter<GeoPosition> s = new Circle<>(0, 0, 1);
 
     /**
      * 

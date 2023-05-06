@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.boundary
 
-import it.unibo.alchemist.loader.export.Exporter
+import it.unibo.alchemist.boundary.export.Exporter
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 

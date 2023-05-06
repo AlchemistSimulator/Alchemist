@@ -10,11 +10,11 @@ package it.unibo.alchemist.loader.filters;
 import it.unibo.alchemist.model.Position2D;
 
 /**
- * A bidimensional Alchemist {@link Filter} that relies on AWT {@link java.awt.Shape}.
+ * A bidimensional Alchemist {@link PositionBasedFilter} that relies on AWT {@link java.awt.Shape}.
  *
  * @param <P> position type
  */
-public abstract class Abstract2DShape<P extends Position2D<P>> implements Filter<P> {
+public abstract class Abstract2DShape<P extends Position2D<P>> implements PositionBasedFilter<P> {
 
     private final java.awt.Shape shape;
 

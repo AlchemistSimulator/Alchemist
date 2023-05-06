@@ -1,13 +1,13 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export.exporters
+package it.unibo.alchemist.boundary.export.exporters
 
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
@@ -16,7 +16,8 @@ import it.unibo.alchemist.model.Time
 import org.bson.Document
 
 /**
- * Exports data provided by a list of [it.unibo.alchemist.loader.export.Extractor]s on a MongoDB instance.
+ * Exports data to a MongoDB instance.
+ *
  * @param uri the connection URI of the database instance.
  * @param dbName the name the database to export data to.
  * @param interval the sampling time, defaults to [AbstractExporter.DEFAULT_INTERVAL].

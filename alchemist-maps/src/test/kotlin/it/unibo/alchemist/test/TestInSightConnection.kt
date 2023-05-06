@@ -15,7 +15,7 @@ import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.doubles.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.instanceOf
-import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.ConnectIfInLineOfSigthOnMap

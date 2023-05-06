@@ -13,16 +13,16 @@ import arrow.core.Either
 import it.unibo.alchemist.boundary.DependentVariable
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
+import it.unibo.alchemist.boundary.export.Exporter
+import it.unibo.alchemist.boundary.export.Extractor
+import it.unibo.alchemist.boundary.export.extractors.MoleculeReader
+import it.unibo.alchemist.boundary.export.extractors.Time
 import it.unibo.alchemist.boundary.variables.Constant
 import it.unibo.alchemist.boundary.variables.JSR223Variable
 import it.unibo.alchemist.boundary.variables.LinearVariable
-import it.unibo.alchemist.loader.export.Exporter
-import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy
-import it.unibo.alchemist.loader.export.extractors.MoleculeReader
-import it.unibo.alchemist.loader.export.extractors.Time
 import it.unibo.alchemist.loader.export.filters.CommonFilters
-import it.unibo.alchemist.loader.filters.Filter
+import it.unibo.alchemist.loader.filters.PositionBasedFilter
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.JavaType
@@ -315,20 +315,20 @@ internal object SimulationModel {
     fun <P : Position<P>> visitFilter(
         context: Context,
         element: Map<*, *>,
-    ): List<Filter<P>> {
+    ): List<PositionBasedFilter<P>> {
         val filterKey = DocumentRoot.Deployment.Filter.filter
-        val filters = visitRecursively(context, element[filterKey] ?: emptyList<Any>()) { shape ->
-            visitBuilding<Filter<P>>(context, shape)
+        val positionBasedFilters = visitRecursively(context, element[filterKey] ?: emptyList<Any>()) { shape ->
+            visitBuilding<PositionBasedFilter<P>>(context, shape)
         }
-        logger.debug("Filters: {}", filters)
-        return filters
+        logger.debug("Filters: {}", positionBasedFilters)
+        return positionBasedFilters
     }
 
     fun <T, P : Position<P>> visitContents(
         incarnation: Incarnation<T, P>,
         context: Context,
         root: Map<*, *>,
-    ): List<Triple<List<Filter<P>>, Molecule, () -> T>> {
+    ): List<Triple<List<PositionBasedFilter<P>>, Molecule, () -> T>> {
         logger.debug("Visiting contents: {}", root)
         val allContents = root[DocumentRoot.Deployment.contents] ?: emptyList<Any>()
         return visitRecursively(context, allContents) { element ->
@@ -359,7 +359,7 @@ internal object SimulationModel {
     fun <T, P : Position<P>> visitProperty(
         context: Context,
         root: Map<*, *>,
-    ): List<Pair<List<Filter<P>>, NodeProperty<T>>> {
+    ): List<Pair<List<PositionBasedFilter<P>>, NodeProperty<T>>> {
         logger.debug("Visiting properties: {}", root)
         val capabilitiesKey = DocumentRoot.Deployment.properties
         val allCapabilities = root[capabilitiesKey] ?: emptyList<Any>()
@@ -556,7 +556,7 @@ internal object SimulationModel {
         node: Node<T>?,
         context: Context,
         program: Map<*, *>,
-    ): Result<Pair<List<Filter<P>>, Actionable<T>>>? =
+    ): Result<Pair<List<PositionBasedFilter<P>>, Actionable<T>>>? =
         if (ProgramSyntax.validateDescriptor(program) || GlobalProgramSyntax.validateDescriptor(program)) {
             val timeDistribution: TimeDistribution<T> = visitTimeDistribution(
                 incarnation,

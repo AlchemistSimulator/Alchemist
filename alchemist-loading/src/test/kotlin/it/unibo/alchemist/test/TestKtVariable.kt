@@ -14,7 +14,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNot
-import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.util.ClassPathScanner
 import org.junit.jupiter.api.Assertions.assertEquals

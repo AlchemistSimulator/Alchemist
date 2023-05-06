@@ -13,7 +13,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.Environment;

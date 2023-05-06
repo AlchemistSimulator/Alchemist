@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.protelis;
 import com.google.common.collect.Maps;
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
 import org.apache.commons.io.FileUtils;

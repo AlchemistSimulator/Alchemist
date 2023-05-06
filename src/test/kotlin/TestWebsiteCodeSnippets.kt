@@ -5,8 +5,8 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.beNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldNot
+import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.core.Engine
-import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.util.ClassPathScanner
 
 /*

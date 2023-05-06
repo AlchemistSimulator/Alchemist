@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export.exporters
+package it.unibo.alchemist.boundary.export.exporters
 
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings

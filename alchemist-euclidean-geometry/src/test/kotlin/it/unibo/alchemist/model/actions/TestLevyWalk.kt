@@ -11,7 +11,7 @@ package it.unibo.alchemist.model.actions
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import it.unibo.alchemist.loader.LoadAlchemist
+import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.kaikikm.threadresloader.ResourceLoader
 

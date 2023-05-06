@@ -12,12 +12,12 @@ package it.unibo.alchemist.launch
 import com.google.common.collect.Lists
 import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.InitializedEnvironment
+import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
+import it.unibo.alchemist.boundary.export.exporters.GlobalExporter
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.times.DoubleTime
 import org.kaikikm.threadresloader.ResourceLoader

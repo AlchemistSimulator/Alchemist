@@ -16,11 +16,11 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import it.unibo.alchemist.boundary.InitializedEnvironment
+import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.boundary.export.exporters.GlobalExporter
+import it.unibo.alchemist.boundary.export.exporters.MongoDBExporter
 import it.unibo.alchemist.core.Engine
-import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.loader.export.exporters.GlobalExporter
-import it.unibo.alchemist.loader.export.exporters.MongoDBExporter
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position

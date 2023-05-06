@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.model.protelis;
 
-import it.unibo.alchemist.loader.LoadAlchemist;
+import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.protelis.actions.RunProtelisProgram;
 import it.unibo.alchemist.protelis.properties.ProtelisDevice;

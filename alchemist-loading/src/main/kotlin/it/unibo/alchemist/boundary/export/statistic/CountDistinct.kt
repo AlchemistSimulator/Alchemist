@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.export.statistic
+package it.unibo.alchemist.boundary.export.statistic
 
 import org.apache.commons.math3.stat.descriptive.AbstractUnivariateStatistic
 import kotlin.reflect.jvm.jvmName

@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.loader.deployments.Polygon
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.deployments.Polygon
 import it.unibo.alchemist.model.interfaces.MapEnvironment
 import it.unibo.alchemist.model.interfaces.RoutingService
 import it.unibo.alchemist.model.interfaces.RoutingServiceOptions

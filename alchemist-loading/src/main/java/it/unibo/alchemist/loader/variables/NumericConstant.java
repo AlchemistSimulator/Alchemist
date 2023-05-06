@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.loader.variables;
 
+import it.unibo.alchemist.model.loading.DependentVariable;
+
 import java.util.Map;
 
 /**

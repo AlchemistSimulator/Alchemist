@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.deployments
+package it.unibo.alchemist.model.deployments
 
 import it.unibo.alchemist.loader.GraphStreamSupport
 import it.unibo.alchemist.model.Deployment

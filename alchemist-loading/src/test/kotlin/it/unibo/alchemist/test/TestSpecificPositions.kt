@@ -13,8 +13,8 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.alchemist.loader.LoadAlchemist
-import it.unibo.alchemist.loader.deployments.SpecificPositions
 import it.unibo.alchemist.model.SupportedIncarnations
+import it.unibo.alchemist.model.deployments.SpecificPositions
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.kaikikm.threadresloader.ResourceLoader

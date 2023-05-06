@@ -10,6 +10,7 @@
 package it.unibo.alchemist.loader.variables
 
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
+import it.unibo.alchemist.model.loading.DependentVariable
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout

@@ -9,8 +9,8 @@
 package it.unibo.alchemist.boundary;
 
 import it.unibo.alchemist.loader.InitializedEnvironment;
-import it.unibo.alchemist.loader.variables.DependentVariable;
-import it.unibo.alchemist.loader.variables.Variable;
+import it.unibo.alchemist.model.loading.DependentVariable;
+import it.unibo.alchemist.model.loading.Variable;
 import it.unibo.alchemist.model.Position;
 import java.io.Serializable;
 import java.util.Collections;

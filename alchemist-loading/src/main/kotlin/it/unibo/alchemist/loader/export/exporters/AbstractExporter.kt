@@ -12,11 +12,11 @@ package it.unibo.alchemist.loader.export.exporters
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.exporters.AbstractExporter.Companion.DEFAULT_INTERVAL
-import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.loading.Variable
 
 /**
  * Abstract implementation of a [Exporter].

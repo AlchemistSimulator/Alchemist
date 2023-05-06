@@ -9,6 +9,8 @@
 
 package it.unibo.alchemist.loader.variables
 
+import it.unibo.alchemist.model.loading.DependentVariable
+
 /**
  * A constant [value], expressed as a variable to promote code reuse in Alchemist specifications.
  */

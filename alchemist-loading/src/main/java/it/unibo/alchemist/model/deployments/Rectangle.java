@@ -8,7 +8,6 @@
  */
 package it.unibo.alchemist.model.deployments;
 
-import it.unibo.alchemist.loader.deployments.AbstractRandomDeployment;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import it.unibo.alchemist.model.Environment;

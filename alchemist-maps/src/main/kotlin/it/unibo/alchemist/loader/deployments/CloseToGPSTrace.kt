@@ -12,11 +12,12 @@ import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
 import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.deployments.AbstractCloseTo
 import it.unibo.alchemist.model.times.DoubleTime
 import org.apache.commons.math3.random.RandomGenerator
 
 /**
- * This [Deployment] displaces nodes in the proximity of a GPS trace.
+ * This [it.unibo.alchemist.model.Deployment] displaces nodes in the proximity of a GPS trace.
  * Given a time interval [from] some time [to] another,
  * it creates a [TraceLoader], then uses the points in the interval to generate the sources for a
  * Gaussian bivariate function and uses its probability density to deploy.

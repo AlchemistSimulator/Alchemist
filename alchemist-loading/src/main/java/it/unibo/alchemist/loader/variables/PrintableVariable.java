@@ -7,6 +7,8 @@
  */
 package it.unibo.alchemist.loader.variables;
 
+import it.unibo.alchemist.model.loading.Variable;
+
 import java.io.Serializable;
 import java.util.stream.Collectors;
 

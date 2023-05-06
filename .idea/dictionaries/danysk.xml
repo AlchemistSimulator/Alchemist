@@ -1,33 +1,31 @@
 <component name="ProjectDictionaryState">
   <dictionary name="danysk">
     <words>
+      <w>Casadei</w>
+      <w>Danilo</w>
+      <w>Hristov</w>
+      <w>IEEE</w>
+      <w>Markovian</w>
+      <w>NOPMD</w>
+      <w>Pianini</w>
+      <w>Protelis</w>
+      <w>SAPERE</w>
+      <w>UniBo</w>
+      <w>Weibull</w>
       <w>adimensional</w>
       <w>aggregators</w>
       <w>bidimensional</w>
       <w>biomolecule</w>
-      <w>casadei</w>
-      <w>danilo</w>
+      <w>bivariate</w>
       <w>endx</w>
       <w>endy</w>
-      <w>hristov</w>
-      <w>ieee</w>
       <w>influencers</w>
-      <w>markovian</w>
       <w>nbrdelay</w>
-      <w>nopmd</w>
-      <w>pianini</w>
-      <w>protelis</w>
       <w>redist</w>
-      <w>sapere</w>
-      <w>startx</w>
-      <w>starty</w>
       <w>storeless</w>
-      <w>timeunit</w>
-      <w>unibo</w>
       <w>univariate</w>
       <w>versor</w>
       <w>wakeups</w>
-      <w>weibull</w>
     </words>
   </dictionary>
 </component>

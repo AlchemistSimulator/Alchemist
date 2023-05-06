@@ -8,7 +8,7 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.loader.deployments.Grid;
+import it.unibo.alchemist.model.deployments.Grid;
 import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment;

@@ -23,10 +23,8 @@ import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot.JavaType
 import it.unibo.alchemist.loader.m2m.syntax.SyntaxElement
 import it.unibo.alchemist.loader.variables.Constant
-import it.unibo.alchemist.loader.variables.DependentVariable
 import it.unibo.alchemist.loader.variables.JSR223Variable
 import it.unibo.alchemist.loader.variables.LinearVariable
-import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.Action
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Condition
@@ -45,6 +43,8 @@ import it.unibo.alchemist.model.TimeDistribution
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
 import it.unibo.alchemist.model.implementations.linkingrules.CombinedLinkingRule
 import it.unibo.alchemist.model.linkingrules.NoLinks
+import it.unibo.alchemist.model.loading.DependentVariable
+import it.unibo.alchemist.model.loading.Variable
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 import org.apache.commons.math3.random.MersenneTwister
 import org.apache.commons.math3.random.RandomGenerator

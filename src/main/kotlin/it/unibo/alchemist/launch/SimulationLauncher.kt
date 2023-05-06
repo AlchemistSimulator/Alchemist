@@ -17,8 +17,8 @@ import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
-import it.unibo.alchemist.loader.variables.Variable
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.loading.Variable
 import it.unibo.alchemist.model.times.DoubleTime
 import org.kaikikm.threadresloader.ResourceLoader
 import java.io.File

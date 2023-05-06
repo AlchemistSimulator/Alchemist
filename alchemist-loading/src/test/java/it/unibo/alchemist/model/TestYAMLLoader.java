@@ -1,27 +1,21 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.test;
+package it.unibo.alchemist.model;
 
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.boundary.modelproviders.YamlProvider;
-import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.layers.StepLayer;
 import it.unibo.alchemist.model.timedistributions.AnyRealDistribution;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Incarnation;
-import it.unibo.alchemist.model.Layer;
-import it.unibo.alchemist.model.Molecule;
-import it.unibo.alchemist.model.Position;
-import it.unibo.alchemist.test.util.TestNode;
+import it.unibo.alchemist.model.nodes.TestNode;
 import it.unibo.alchemist.util.ClassPathScanner;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;

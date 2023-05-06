@@ -1,24 +1,19 @@
 /*
- * Copyright (C) 2010-2021, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.test;
+package it.unibo.alchemist.model;
 
+import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.times.DoubleTime;
-import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.GeoPosition;
-import it.unibo.alchemist.model.Actionable;
-import it.unibo.alchemist.model.Node;
-import it.unibo.alchemist.model.Time;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.kaikikm.threadresloader.ResourceLoader;

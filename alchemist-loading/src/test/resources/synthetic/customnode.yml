@@ -4,4 +4,4 @@ deployments:
   type: Circle
   parameters: [100, 0, 0, 5]
   nodes:
-    type: it.unibo.alchemist.test.util.TestNode
+    type: it.unibo.alchemist.model.nodes.TestNode

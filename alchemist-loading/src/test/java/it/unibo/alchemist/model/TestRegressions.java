@@ -1,21 +1,20 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.test;
+package it.unibo.alchemist.model;
 
+import it.unibo.alchemist.boundary.Exporter;
+import it.unibo.alchemist.boundary.Extractor;
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.exporters.CSVExporter;
-import it.unibo.alchemist.boundary.Extractor;
-import it.unibo.alchemist.boundary.Exporter;
 import it.unibo.alchemist.boundary.extractors.MeanSquaredError;
-import it.unibo.alchemist.model.Environment;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
-
 import org.kaikikm.threadresloader.ResourceLoader;
 
 import java.util.List;

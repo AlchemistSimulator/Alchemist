@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.loader.m2m
 
+import it.unibo.alchemist.boundary.EnvironmentAndExports
 import it.unibo.alchemist.boundary.Loader
-import it.unibo.alchemist.loader.EnvironmentAndExports
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.m2m.LoadingSystemLogger.logger
 import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot

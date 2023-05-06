@@ -11,7 +11,7 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
-import it.unibo.alchemist.loader.InitializedEnvironment
+import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.model.Position

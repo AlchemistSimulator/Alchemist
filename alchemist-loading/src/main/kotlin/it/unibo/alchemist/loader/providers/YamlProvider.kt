@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.loader.providers
 
-import it.unibo.alchemist.loader.AlchemistModelProvider
+import it.unibo.alchemist.boundary.AlchemistModelProvider
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.InputStream

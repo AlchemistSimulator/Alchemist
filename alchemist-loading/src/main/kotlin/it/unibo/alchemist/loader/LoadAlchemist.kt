@@ -9,6 +9,7 @@
 
 package it.unibo.alchemist.loader
 
+import it.unibo.alchemist.boundary.AlchemistModelProvider
 import it.unibo.alchemist.loader.m2m.SimulationModel
 import it.unibo.alchemist.util.ClassPathScanner
 import java.io.File

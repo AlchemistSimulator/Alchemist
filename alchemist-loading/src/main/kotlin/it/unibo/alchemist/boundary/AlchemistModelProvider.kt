@@ -7,7 +7,7 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader
+package it.unibo.alchemist.boundary
 
 import java.io.InputStream
 import java.io.Reader

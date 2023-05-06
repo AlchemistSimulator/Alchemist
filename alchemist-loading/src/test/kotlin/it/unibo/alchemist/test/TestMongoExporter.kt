@@ -15,9 +15,9 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.longs.shouldBeGreaterThan
+import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.OutputMonitor
 import it.unibo.alchemist.core.Engine
-import it.unibo.alchemist.loader.InitializedEnvironment
 import it.unibo.alchemist.loader.LoadAlchemist
 import it.unibo.alchemist.loader.export.exporters.GlobalExporter
 import it.unibo.alchemist.loader.export.exporters.MongoDBExporter

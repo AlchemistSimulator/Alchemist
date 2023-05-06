@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2010-2019, Danilo Pianini and contributors listed in the main project's alchemist/build.gradle file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
-package it.unibo.alchemist.loader.variables;
+package it.unibo.alchemist.boundary.variables;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -15,9 +16,9 @@ import java.util.stream.Stream;
 
 /**
  * A variable ranging geometrically (exponentially) in a range. Ideal for log-scale comparisons.
- * 
- * e.g. a {@link GeometricVariable} with minimum = 1, maximum = 100 and samples = 5 will range over [1, ~3.16, 10, ~31.62 100].
- * 
+ * E.g., a {@link GeometricVariable} with minimum = 1,
+ * maximum = 100 and samples = 5 will range over
+ * [1, ~3.16, 10, ~31.62 100].
  * Both min and max must be strictly bigger than 0.
  */
 public final class GeometricVariable extends PrintableVariable<Double> {

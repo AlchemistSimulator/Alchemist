@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010-2020, Danilo Pianini and contributors
- * listed in the main project's alchemist/build.gradle.kts file.
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
  * GNU General Public License, with a linking exception,
@@ -9,11 +9,11 @@
 
 package it.unibo.alchemist.model.deployments
 
-import it.unibo.alchemist.loader.GraphStreamSupport
 import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.util.GraphStreamSupport
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

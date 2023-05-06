@@ -7,9 +7,9 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.loader.variables
+package it.unibo.alchemist.boundary.variables
 
-import it.unibo.alchemist.model.loading.DependentVariable
+import it.unibo.alchemist.boundary.DependentVariable
 
 /**
  * A constant [value], expressed as a variable to promote code reuse in Alchemist specifications.

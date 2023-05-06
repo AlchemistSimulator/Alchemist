@@ -27,14 +27,13 @@ import javax.swing.ScrollPaneConstants
 import javax.swing.SwingUtilities
 
 /**
- * @param node the node to track
- * @param <P> position type
- * @param <T> concentration type
-</T></P> */
+ * @param node the node to track.
+ * @param P position type.
+ * @param T concentration type.
+ */
 @Deprecated("")
-class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonitor<T, P>, ActionListener {
+class NodeTracker<T, P : Position<out P>>(private val node: Node<T>) : JPanel(), OutputMonitor<T, P>, ActionListener {
     private val jTextArea = JTextArea(AREA_SIZE / 2, AREA_SIZE)
-    private val node: Node<T>
     private var stringLength = Byte.MAX_VALUE.toInt()
     private val updateIsScheduled = AtomicBoolean(false)
 
@@ -43,7 +42,6 @@ class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonit
 
     init {
         val areaScrollPane = JScrollPane(jTextArea)
-        this.node = node
         layout = BorderLayout(0, 0)
         jTextArea.isEditable = false
         add(areaScrollPane, BorderLayout.CENTER)

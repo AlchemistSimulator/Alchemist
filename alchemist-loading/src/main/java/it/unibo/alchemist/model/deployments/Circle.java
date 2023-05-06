@@ -25,7 +25,7 @@ import static org.apache.commons.math3.util.FastMath.sqrt;
  */
 public final class Circle<P extends Position<? extends P>> extends AbstractRandomDeployment<P> {
 
-    private final double centerx, centery, radius;
+    private final double centerX, centerY, radius;
 
     /**
      * @param pm
@@ -41,13 +41,17 @@ public final class Circle<P extends Position<? extends P>> extends AbstractRando
      * @param radius
      *            the radius of the circle
      */
-    public Circle(final Environment<?, P> pm,
-            final RandomGenerator rand,
-            final int nodes,
-            final double centerX, final double centerY, final double radius) {
+    public Circle(
+        final Environment<?, P> pm,
+        final RandomGenerator rand,
+        final int nodes,
+        final double centerX,
+        final double centerY,
+        final double radius
+    ) {
         super(pm, rand, nodes);
-        this.centerx = centerX;
-        this.centery = centerY;
+        this.centerX = centerX;
+        this.centerY = centerY;
         this.radius = radius;
     }
 
@@ -56,7 +60,7 @@ public final class Circle<P extends Position<? extends P>> extends AbstractRando
     protected P indexToPosition(final int i) {
         final double angle = randomDouble(0, 2 * PI);
         final double rad = radius * sqrt(randomDouble());
-        return makePosition(centerx + rad * cos(angle), centery + rad * sin(angle));
+        return makePosition(centerX + rad * cos(angle), centerY + rad * sin(angle));
     }
 
 }

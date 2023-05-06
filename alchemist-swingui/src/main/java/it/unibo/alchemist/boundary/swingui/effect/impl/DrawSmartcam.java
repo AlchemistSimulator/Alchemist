@@ -13,7 +13,7 @@ import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
 import it.unibo.alchemist.model.geometry.AwtShapeCompatible;
 import it.unibo.alchemist.model.geometry.Shape;
-import it.unibo.alchemist.model.implementations.actions.CameraSee;
+import it.unibo.alchemist.model.actions.CameraSee;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.positions.Euclidean2DPosition;
 import it.unibo.alchemist.model.Environment;

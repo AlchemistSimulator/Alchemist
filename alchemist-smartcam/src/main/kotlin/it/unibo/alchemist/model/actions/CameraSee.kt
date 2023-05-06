@@ -1,19 +1,27 @@
-package it.unibo.alchemist.model.implementations.actions
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+
+package it.unibo.alchemist.model.actions
 
 import it.unibo.alchemist.model.Context
 import it.unibo.alchemist.model.Molecule
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Reaction
-import it.unibo.alchemist.model.actions.AbstractAction
 import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.nodes.VisibleNodeImpl
 import it.unibo.alchemist.model.physics.FieldOfView2D
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
-import it.unibo.alchemist.model.smartcam.VisibleNodeImpl
 import java.lang.Math.toRadians
 
 /**
  * Checks nodes in the [environment] and writes in [outputMolecule]
- * the list of [it.unibo.alchemist.model.interfaces.VisibleNode],
+ * the list of [it.unibo.alchemist.model.VisibleNode],
  * containing [filterByMolecule].
  * [distance] and [angle] define the field of view.
  */

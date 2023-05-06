@@ -9,17 +9,24 @@
 
 package it.unibo.alchemist.boundary
 
-import it.unibo.alchemist.loader.m2m.SimulationModel
+import it.unibo.alchemist.boundary.loader.SimulationModel
 import it.unibo.alchemist.util.ClassPathScanner
 import java.io.File
 import java.io.InputStream
 import java.io.Reader
 import java.net.URL
+import kotlin.reflect.jvm.jvmName
 
 /**
  * Loads Alchemist simulations from a variety of resources.
  */
 object LoadAlchemist {
+
+    private val packageExtractor = Regex("""((?:\w|\.)+)\.\w+$""")
+    private inline fun <reified T> extractPackageFrom() = packageExtractor
+        .matchEntire(T::class.jvmName)
+        ?.let { it.groupValues[1] }
+        ?: error("Cannot extract package from ${T::class.jvmName}")
 
     /**
      * Load from an [input] [String].
@@ -65,7 +72,7 @@ object LoadAlchemist {
 
     @JvmStatic
     private fun modelForExtension(extension: String) = ClassPathScanner
-        .subTypesOf<AlchemistModelProvider>("it.unibo.alchemist.loader.providers")
+        .subTypesOf<AlchemistModelProvider>(extractPackageFrom<LoadAlchemist>())
         .mapNotNull { it.kotlin.objectInstance }
         .filter { it.fileExtensions.matches(extension) }
         .also { require(it.size == 1) { "None or conflicting loaders for extension $extension: $it" } }

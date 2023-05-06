@@ -14,7 +14,7 @@ import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Position
-import it.unibo.alchemist.model.implementations.linkingrules.OffsetGraphStreamLinkingRule
+import it.unibo.alchemist.model.linkingrules.OffsetGraphStreamLinkingRule
 import it.unibo.alchemist.util.ClassPathScanner
 import it.unimi.dsi.util.SplitMix64Random
 import org.apache.commons.math3.util.MathArrays

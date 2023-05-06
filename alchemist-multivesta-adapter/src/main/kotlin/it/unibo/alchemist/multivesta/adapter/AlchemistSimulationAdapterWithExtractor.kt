@@ -9,8 +9,8 @@
 
 package it.unibo.alchemist.multivesta.adapter
 
+import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.boundary.OutputMonitor
-import it.unibo.alchemist.boundary.export.Extractor
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment

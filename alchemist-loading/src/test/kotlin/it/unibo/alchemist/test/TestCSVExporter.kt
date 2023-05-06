@@ -17,7 +17,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeEmpty
 import it.unibo.alchemist.boundary.InitializedEnvironment
-import it.unibo.alchemist.boundary.export.exporters.CSVExporter
+import it.unibo.alchemist.boundary.exporters.CSVExporter
 import it.unibo.alchemist.model.Position
 import java.io.File
 

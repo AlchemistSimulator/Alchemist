@@ -10,7 +10,7 @@
 package it.unibo.alchemist.boundary.variables
 
 import it.unibo.alchemist.boundary.DependentVariable
-import it.unibo.alchemist.loader.m2m.syntax.DocumentRoot
+import it.unibo.alchemist.boundary.loader.syntax.DocumentRoot
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout

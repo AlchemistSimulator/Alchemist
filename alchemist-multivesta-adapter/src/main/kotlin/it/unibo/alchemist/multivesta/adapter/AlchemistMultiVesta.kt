@@ -15,7 +15,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.boundary.export.Extractor
+import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.cli.CLIMaker
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.multivesta.adapter.launch.AlchemistMultiVestaSimulationLauncher

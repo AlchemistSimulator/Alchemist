@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.loader.export.exporters
 
-import it.unibo.alchemist.boundary.export.exporters.AbstractExporter
+import it.unibo.alchemist.boundary.exporters.AbstractExporter
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment

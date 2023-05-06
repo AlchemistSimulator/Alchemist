@@ -8,10 +8,10 @@
 package it.unibo.alchemist.test;
 
 import it.unibo.alchemist.boundary.LoadAlchemist;
-import it.unibo.alchemist.boundary.export.exporters.CSVExporter;
-import it.unibo.alchemist.boundary.export.Extractor;
-import it.unibo.alchemist.boundary.export.Exporter;
-import it.unibo.alchemist.boundary.export.extractors.MeanSquaredError;
+import it.unibo.alchemist.boundary.exporters.CSVExporter;
+import it.unibo.alchemist.boundary.Extractor;
+import it.unibo.alchemist.boundary.Exporter;
+import it.unibo.alchemist.boundary.extractors.MeanSquaredError;
 import it.unibo.alchemist.model.Environment;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;

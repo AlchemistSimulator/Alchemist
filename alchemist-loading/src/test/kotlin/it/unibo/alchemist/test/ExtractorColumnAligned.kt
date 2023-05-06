@@ -9,7 +9,7 @@
 
 package it.unibo.alchemist.test
 
-import it.unibo.alchemist.boundary.export.Extractor
+import it.unibo.alchemist.boundary.Extractor
 import it.unibo.alchemist.model.Actionable
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Time

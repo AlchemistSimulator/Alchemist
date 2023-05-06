@@ -11,9 +11,9 @@ package it.unibo.alchemist.test
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
+import it.unibo.alchemist.boundary.Exporter
 import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.LoadAlchemist
-import it.unibo.alchemist.boundary.export.Exporter
 import it.unibo.alchemist.model.Position
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.kaikikm.threadresloader.ResourceLoader

@@ -7,8 +7,8 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.loader.filters.Circle;
-import it.unibo.alchemist.loader.filters.PositionBasedFilter;
+import it.unibo.alchemist.model.positionfilters.Circle;
+import it.unibo.alchemist.model.PositionBasedFilter;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
 import it.unibo.alchemist.model.GeoPosition;
 import org.junit.jupiter.api.Test;

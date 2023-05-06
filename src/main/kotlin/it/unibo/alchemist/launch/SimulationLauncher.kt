@@ -15,7 +15,7 @@ import it.unibo.alchemist.boundary.InitializedEnvironment
 import it.unibo.alchemist.boundary.LoadAlchemist
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.Variable
-import it.unibo.alchemist.boundary.export.exporters.GlobalExporter
+import it.unibo.alchemist.boundary.exporters.GlobalExporter
 import it.unibo.alchemist.core.Engine
 import it.unibo.alchemist.core.Simulation
 import it.unibo.alchemist.model.Position

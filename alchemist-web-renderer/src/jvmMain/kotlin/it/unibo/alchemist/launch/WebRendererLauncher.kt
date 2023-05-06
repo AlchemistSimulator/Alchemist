@@ -11,8 +11,8 @@ package it.unibo.alchemist.launch
 
 import io.ktor.server.netty.EngineMain
 import it.unibo.alchemist.AlchemistExecutionOptions
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.core.Simulation
-import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.server.monitor.EnvironmentMonitorFactory.makeEnvironmentMonitor
 import it.unibo.alchemist.server.state.ServerStore.store
 import it.unibo.alchemist.server.state.actions.SetSimulation

@@ -8,8 +8,9 @@
 package it.unibo.alchemist.loader.deployments;
 
 import it.unibo.alchemist.boundary.gpsload.impl.TraceLoader;
+import it.unibo.alchemist.model.Deployment;
+import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.interfaces.GPSTrace;
-import it.unibo.alchemist.model.Position;
 
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -18,7 +19,7 @@ import java.util.stream.StreamSupport;
 /**
  * Distributes nodes in the first positions of {@link it.unibo.alchemist.model.interfaces.GPSTrace}.
  */
-public final class FromGPSTrace implements Deployment {
+public final class FromGPSTrace implements Deployment<GeoPosition> {
 
     private final TraceLoader traces;
     private final int numNode;
@@ -56,7 +57,7 @@ public final class FromGPSTrace implements Deployment {
     }
 
     @Override
-    public Stream<Position> stream() {
+    public Stream<GeoPosition> stream() {
         return StreamSupport.stream(traces.spliterator(), false)
                 .limit(numNode)
                 .map(GPSTrace::getInitialPosition);

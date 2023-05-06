@@ -10,7 +10,7 @@
 package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
-import it.unibo.alchemist.loader.Loader
+import it.unibo.alchemist.boundary.Loader
 import org.slf4j.LoggerFactory
 import java.awt.GraphicsEnvironment
 import java.util.concurrent.ConcurrentLinkedQueue

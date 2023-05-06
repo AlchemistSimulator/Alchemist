@@ -8,6 +8,7 @@
 
 package it.unibo.alchemist.loader.deployments
 
+import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.Position
 import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution
@@ -45,7 +46,7 @@ abstract class AbstractCloseTo<T, P : Position<P>> constructor(
         deployment ?: sources
             .map { MultivariateNormalDistribution(randomGenerator, it, covarianceMatrix(it.size)) }
             .map { Pair(1.0, it) }
-            .let { it.toList() }
+            .toList()
             .let { MixtureMultivariateNormalDistribution(randomGenerator, it) }
             .let { distribution ->
                 (0 until nodeCount).map { environment.makePosition(*distribution.sample().toTypedArray()) }

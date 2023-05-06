@@ -10,7 +10,7 @@
 package it.unibo.alchemist.loader.m2m
 
 import arrow.core.Either
-import it.unibo.alchemist.loader.Loader
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.loader.export.Exporter
 import it.unibo.alchemist.loader.export.Extractor
 import it.unibo.alchemist.loader.export.FilteringPolicy

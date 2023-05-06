@@ -10,6 +10,7 @@
 package it.unibo.alchemist.loader.deployments
 
 import it.unibo.alchemist.loader.GraphStreamSupport
+import it.unibo.alchemist.model.Deployment
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.LinkingRule
 import it.unibo.alchemist.model.Position

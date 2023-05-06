@@ -28,7 +28,7 @@ import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.SimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
-import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Position;
 
@@ -82,8 +82,14 @@ public final class RemoteSimulationImpl<T, P extends Position<P>> implements Rem
                 simulation.addOutputMonitor(new GlobalExporter<>(initialized.getExporters()));
                 simulation.play();
                 simulation.run();
-                return new RemoteResultImpl(wd.getFileContent(filename),
-                        Ignition.ignite().cluster().localNode().id(), simulation.getError(), config);
+                try (var ignite = Ignition.ignite()) {
+                    return new RemoteResultImpl(
+                        wd.getFileContent(filename),
+                        ignite.cluster().localNode().id(),
+                        simulation.getError(),
+                        config
+                    );
+                }
             };
             final FutureTask<RemoteResultImpl> futureTask = new FutureTask<>(callable);
             final Thread t = new Thread(futureTask);

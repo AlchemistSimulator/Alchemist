@@ -11,7 +11,7 @@ package it.unibo.alchemist.test;
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.loader.LoadAlchemist;
-import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.loader.providers.YamlProvider;
 import it.unibo.alchemist.model.SupportedIncarnations;
 import it.unibo.alchemist.model.layers.StepLayer;

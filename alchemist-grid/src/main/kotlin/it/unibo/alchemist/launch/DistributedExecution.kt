@@ -9,11 +9,11 @@
 package it.unibo.alchemist.launch
 
 import it.unibo.alchemist.AlchemistExecutionOptions
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.grid.cluster.ClusterImpl
 import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig
 import it.unibo.alchemist.grid.config.SimulationConfigImpl
 import it.unibo.alchemist.grid.simulation.SimulationSetImpl
-import it.unibo.alchemist.loader.Loader
 import it.unibo.alchemist.model.times.DoubleTime
 import java.nio.file.Paths
 

@@ -12,11 +12,11 @@
 package it.unibo.alchemist.boundary.swingui.impl
 
 import it.unibo.alchemist.AlchemistExecutionOptions
+import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.launch.Priority
 import it.unibo.alchemist.launch.SimulationLauncher
 import it.unibo.alchemist.launch.Validation.Invalid
 import it.unibo.alchemist.launch.Validation.OK
-import it.unibo.alchemist.loader.Loader
 import java.awt.GraphicsEnvironment
 import javax.swing.JFrame
 

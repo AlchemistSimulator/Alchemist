@@ -11,7 +11,7 @@ import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
 import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
 import it.unibo.alchemist.grid.util.WorkingDirectory;
 import it.unibo.alchemist.loader.LoadAlchemist;
-import it.unibo.alchemist.loader.Loader;
+import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.model.Time;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

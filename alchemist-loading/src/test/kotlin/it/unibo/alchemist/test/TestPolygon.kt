@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.Position2D
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.model.deployments.Polygon
 import it.unibo.alchemist.model.environments.Continuous2DEnvironment
-import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
+import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import org.apache.commons.math3.random.MersenneTwister
 
 private const val DEPLOYMENT_SIZE = 10_000

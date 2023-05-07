@@ -18,7 +18,7 @@ import it.unibo.alchemist.model.Context;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Route;
 
@@ -40,8 +40,7 @@ public class LsaRandomNeighborAction extends LsaStandardAction {
     /**
      * Builds a new action in a neighborhood. es: +&lt;id,X,n&gt; This class extend
      * LsaAbstractAction.
-     * 
-     * 
+     *
      * @param environment
      *            The environment to use
      * @param node

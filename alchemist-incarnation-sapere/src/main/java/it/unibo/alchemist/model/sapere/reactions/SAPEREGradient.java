@@ -27,7 +27,7 @@ import it.unibo.alchemist.model.Dependency;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;
@@ -114,6 +114,7 @@ public final class SAPEREGradient<P extends Position<P>> extends AbstractReactio
      * @param timeDistribution
      *            Markovian Rate
      */
+    @SuppressWarnings("unchecked")
     public SAPEREGradient(
             final Environment<List<ILsaMolecule>, P> environment,
             final ILsaNode node,

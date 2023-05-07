@@ -10,7 +10,7 @@ package it.unibo.alchemist.boundary.ui.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Position2D;
 
 import java.awt.Point;

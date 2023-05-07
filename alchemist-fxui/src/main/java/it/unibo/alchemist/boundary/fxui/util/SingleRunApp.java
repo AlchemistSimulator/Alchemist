@@ -29,7 +29,7 @@ import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Simulation;
 import it.unibo.alchemist.model.Concentration;
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Position2D;
 import javafx.application.Application;
 import javafx.application.Platform;

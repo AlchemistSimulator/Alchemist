@@ -9,15 +9,15 @@
 
 package it.unibo.alchemist.model.sapere.actions;
 
-import it.unibo.alchemist.model.implementations.actions.MoveOnMap;
-import it.unibo.alchemist.model.implementations.movestrategies.routing.OnStreets;
+import it.unibo.alchemist.model.maps.actions.MoveOnMap;
+import it.unibo.alchemist.model.maps.movestrategies.routing.OnStreets;
 import it.unibo.alchemist.model.movestrategies.speed.InteractWithOthers;
-import it.unibo.alchemist.model.implementations.routingservices.GraphHopperOptions;
-import it.unibo.alchemist.model.implementations.routingservices.GraphHopperRoutingService;
+import it.unibo.alchemist.model.maps.routingservices.GraphHopperOptions;
+import it.unibo.alchemist.model.maps.routingservices.GraphHopperRoutingService;
 import it.unibo.alchemist.model.GeoPosition;
 import it.unibo.alchemist.model.sapere.ILsaMolecule;
 import it.unibo.alchemist.model.sapere.ILsaNode;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
+import it.unibo.alchemist.model.maps.MapEnvironment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Node;
 import it.unibo.alchemist.model.Position;

@@ -19,7 +19,7 @@ import it.unibo.alchemist.boundary.ui.api.Wormhole2D
 import it.unibo.alchemist.boundary.ui.impl.PointAdapter
 import it.unibo.alchemist.model.Environment
 import it.unibo.alchemist.model.GeoPosition
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition
+import it.unibo.alchemist.model.maps.positions.LatLongPosition
 import javafx.scene.Node
 import java.awt.Point
 
@@ -107,6 +107,7 @@ class LeafletMapWormhole(
         /**
          * Converts [this] [LatLong] to [GeoPosition].
          */
-        private fun LatLong.toGeoPosition(): GeoPosition = LatLongPosition(latitude, longitude)
+        private fun LatLong.toGeoPosition(): GeoPosition =
+            LatLongPosition(latitude, longitude)
     }
 }

@@ -12,7 +12,7 @@ import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.OutputMonitor;
 import it.unibo.alchemist.core.Engine;
 import it.unibo.alchemist.core.Simulation;
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
+import it.unibo.alchemist.model.maps.positions.LatLongPosition;
 import it.unibo.alchemist.model.times.DoubleTime;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;

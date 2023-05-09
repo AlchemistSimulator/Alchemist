@@ -13,10 +13,10 @@ import it.unibo.alchemist.AlchemistExecutionOptions
 import it.unibo.alchemist.boundary.Loader
 import it.unibo.alchemist.boundary.fxui.EffectGroup
 import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer
-import it.unibo.alchemist.launch.Priority
-import it.unibo.alchemist.launch.SimulationLauncher
-import it.unibo.alchemist.launch.Validation.Invalid
-import it.unibo.alchemist.launch.Validation.OK
+import it.unibo.alchemist.boundary.launch.Priority
+import it.unibo.alchemist.boundary.launch.SimulationLauncher
+import it.unibo.alchemist.boundary.launch.Validation.Invalid
+import it.unibo.alchemist.boundary.launch.Validation.OK
 import javafx.embed.swing.JFXPanel
 import javafx.stage.Stage
 import java.awt.GraphicsEnvironment

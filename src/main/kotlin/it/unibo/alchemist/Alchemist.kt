@@ -13,10 +13,10 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.ConsoleAppender
-import it.unibo.alchemist.cli.CLIMaker
-import it.unibo.alchemist.launch.Launcher
-import it.unibo.alchemist.launch.Priority
-import it.unibo.alchemist.launch.Validation
+import it.unibo.alchemist.boundary.cli.CLIMaker
+import it.unibo.alchemist.boundary.launch.Launcher
+import it.unibo.alchemist.boundary.launch.Priority
+import it.unibo.alchemist.boundary.launch.Validation
 import it.unibo.alchemist.model.SupportedIncarnations
 import it.unibo.alchemist.util.ClassPathScanner
 import org.apache.commons.cli.CommandLine

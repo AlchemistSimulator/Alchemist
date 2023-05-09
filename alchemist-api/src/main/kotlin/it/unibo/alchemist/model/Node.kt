@@ -23,11 +23,11 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * Adds a reaction to this node.
      * The reaction is added only in the node,
-     * but not in the [it.unibo.alchemist.core.interfaces.Simulation] scheduler,
+     * but not in the [it.unibo.alchemist.core.Simulation] scheduler,
      * so it will never be executed.
      * To add the reaction also in the scheduler (and start to execute it),
      * you have to call also the method
-     * [it.unibo.alchemist.core.interfaces.Simulation.reactionAdded].
+     * [it.unibo.alchemist.core.Simulation.reactionAdded].
      *
      * @param reactionToAdd the reaction to be added
      */
@@ -105,10 +105,10 @@ interface Node<T> : Serializable, Iterable<Reaction<T>>, Comparable<Node<T>> {
     /**
      * Removes a reaction from this node.
      * The reaction is removed only in the node,
-     * but not in the [it.unibo.alchemist.core.interfaces.Simulation] scheduler,
+     * but not in the [it.unibo.alchemist.core.Simulation] scheduler,
      * so the scheduler will continue to execute the reaction.
      * To remove the reaction also in the scheduler (and stop to execute it),
-     * you have to call also the method [it.unibo.alchemist.core.interfaces.Simulation.reactionRemoved].
+     * you have to call also the method [it.unibo.alchemist.core.Simulation.reactionRemoved].
      *
      * @param reactionToRemove the reaction to be removed
      */

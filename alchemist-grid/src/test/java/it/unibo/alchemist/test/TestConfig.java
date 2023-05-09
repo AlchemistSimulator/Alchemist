@@ -7,9 +7,9 @@
  */
 package it.unibo.alchemist.test;
 
-import it.unibo.alchemist.grid.config.GeneralSimulationConfig;
-import it.unibo.alchemist.grid.config.LocalGeneralSimulationConfig;
-import it.unibo.alchemist.grid.util.WorkingDirectory;
+import it.unibo.alchemist.boundary.grid.config.GeneralSimulationConfig;
+import it.unibo.alchemist.boundary.grid.config.LocalGeneralSimulationConfig;
+import it.unibo.alchemist.boundary.grid.util.WorkingDirectory;
 import it.unibo.alchemist.boundary.LoadAlchemist;
 import it.unibo.alchemist.boundary.Loader;
 import it.unibo.alchemist.model.Time;

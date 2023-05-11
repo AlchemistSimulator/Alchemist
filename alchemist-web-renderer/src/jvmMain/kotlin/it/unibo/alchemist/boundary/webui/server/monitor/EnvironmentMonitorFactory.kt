@@ -21,8 +21,13 @@ object EnvironmentMonitorFactory {
 
     /**
      * Create an EnvironmentMonitor suitable for the given simulation, using a toConcentration function based on the
-     * [it.unibo.alchemist.model.Incarnation] and mapping the [it.unibo.alchemist.model.Position]
-     * to the correct [it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogate] using the environment dimensions.
+     * [it.unibo.alchemist.model.Incarnation]
+     * and mapping the
+     * [it.unibo.alchemist.model.Position]
+     * to the correct
+     * [it.unibo.alchemist.boundary.webui.common.model.surrogate.PositionSurrogate]
+     * using the environment dimensions.
+     *
      * @param environment the environment of the simulation.
      * @return the [OutputMonitor].
      */

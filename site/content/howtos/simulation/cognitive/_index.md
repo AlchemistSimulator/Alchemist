@@ -140,7 +140,7 @@ In the example below a pedestrian reaches a point of interest, avoiding in the m
 Pedestrians can be loaded in any kind of
 {{% api class="Environment" %}}
 but it is recommended to use
-{{% api package="model.physics.environments" class="PhysicsEnvironment" %}}s
+{{% api package="model.physics" class="PhysicsEnvironment" %}}s
 since they
 have properties such as non-overlapping shapes which are advisable to be taken into consideration
 when working with a crowd.

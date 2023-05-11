@@ -10,7 +10,7 @@ GPS traces require a **geospatial environment**. We prepared [a dedicated page](
 {{% /notice  %}}
 
 GPS traces can be used to deploy nodes on a map.
-{{% api package="model.deployments" class="FromGPSTrace" %}}
+{{% api package="model.maps.deployments" class="FromGPSTrace" %}}
 is a {{% api package="model.deployments" class="Deployment" %}}
 that takes care of setting the initial position of the nodes depending the first position of the GPS traces.
 
@@ -37,11 +37,11 @@ or we might want to discard the first hour of data;
 or maybe we want to use them just as they are.
 
 Alignment is performed by the subclasses of
-{{% api package="boundary.gpsload.api" path="GPSTimeAlignment" %}}
+{{% api package="boundary.gps" path="GPSTimeAlignment" %}}
 
 The strategies available to align time of GPS trace are the following:
 
-### {{% api package="boundary.gpsload.api" class="NoAlignment" %}}
+### {{% api package="boundary.gps.alignments" class="NoAlignment" %}}
 
 No alignment is performed, traces are left untouched.
 
@@ -50,7 +50,7 @@ No alignment is performed, traces are left untouched.
 | A     | [2, 5]                | [2, 5]               |
 | B     | [4, 6]                | [4, 6]               |
 
-### {{% api package="boundary.gpsload.api" class="AlignToFirstTrace" %}}:
+### {{% api package="boundary.gps.alignments" class="AlignToFirstTrace" %}}:
 
 All traces get aligned to the start time of the first trace,
 keeping their relative distance.
@@ -60,7 +60,7 @@ keeping their relative distance.
 | A     | [2, 5]                | [0, 3]               |
 | B     | [4, 6]                | [2, 4]               |
 
-### {{% api package="boundary.gpsload.api" class="AlignToSimulationTime" %}}:
+### {{% api package="boundary.gps.alignments" class="AlignToSimulationTime" %}}:
 
 Aligns all traces to the initial simulation time,
 not preserving relative time differences.
@@ -70,7 +70,7 @@ not preserving relative time differences.
 | A     | [2, 5]                | [0, 3]               |
 | B     | [4, 6]                | [0, 2]               |
 
-### {{% api package="boundary.gpsload.api" class="AlignToTime" %}}:
+### {{% api package="boundary.gps.alignments" class="AlignToTime" %}}:
 
 Aligns all traces with the given time in seconds from Epoch.
 Discards all points before the provided epoch,

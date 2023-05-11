@@ -11,7 +11,7 @@ Alchemist supports [Graphstream](https://graphstream-project.org/)-based deploym
 allowing for rich graphs to be used as node deployments.
 
 Deployments of this kind can be instanced through
-{{% api package="loader.deployments" class="GraphStreamDeployment" %}}.
+{{% api package="model.deployments" class="GraphStreamDeployment" %}}.
 
 The most important parameter is the graph name, which must be a valid graph
 [`Generator`](https://www.javadoc.io/doc/org.graphstream/gs-algo/latest/org/graphstream/algorithm/generator/Generator.html)

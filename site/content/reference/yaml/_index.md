@@ -90,7 +90,7 @@ the loading system is aware of the current
 `RandomGenerator`,
 {{% api class="Incarnation" %}},
 {{% api class="Environment" %}},
-{{% api package="loader.deployments" class="Deployment" %}},
+{{% api package="model.deployments" class="Deployment" %}},
 {{% api class="Node" %}}, {{% api class="TimeDistribution" %}}, and
 {{% api class="Reaction" %}},
 as the action requires all of them.
@@ -118,7 +118,7 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 
 #### Examples
 
-* Construction of a {{% api package="loader.deployments" class="Point" %}}
+* Construction of a {{% api package="model.deployments" class="Point" %}}
     {{<code path="src/test/resources/website-snippets/deployment-in-point.yml" >}}
 * Construction of variables with named parameters
     {{<code path="src/test/resources/website-snippets/named-parameters.yml" >}}
@@ -204,7 +204,7 @@ Traversable of [`deployment`](#deployment)
 
 Definition of the positions of a set of nodes.
 Builds a 
-{{% api package="loader.deployments" class="Deployment" %}}
+{{% api package="model.deployments" class="Deployment" %}}
 using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system),
 with additional keys.
 
@@ -223,17 +223,17 @@ with additional keys.
   {{<code path="src/test/resources/website-snippets/deployment-in-three-points.yml" >}}
 * Deployment of three nodes, but nesting the traversable
   {{<code path="src/test/resources/website-snippets/deployment-in-three-points-nested.yml" >}}
-* Deployment of three nodes through {{% api package="loader.deployments" class="SpecificPositions" %}}.
+* Deployment of three nodes through {{% api package="model.deployments" class="SpecificPositions" %}}.
   {{<code path="src/test/resources/website-snippets/deployment-specific-positions.yml" >}}
-* {{% api package="loader.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically.
+* {{% api package="model.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically.
   {{<code path="src/test/resources/website-snippets/deployment-grid.yml" >}}
-* Irregular {{% api package="loader.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically, randomly perturbed of (±`0.1` distance units).
+* Irregular {{% api package="model.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically, randomly perturbed of (±`0.1` distance units).
   {{<code path="src/test/resources/website-snippets/deployment-grid-perturbed.yml" >}}
-* Nodes located randomly inside a {{% api package="loader.deployments" class="Circle" %}}
+* Nodes located randomly inside a {{% api package="model.deployments" class="Circle" %}}
   {{<code path="src/test/resources/website-snippets/deployment-circle.yml" >}}
-* Nodes located randomly inside a {{% api package="loader.deployments" class="Rectangle" %}}
+* Nodes located randomly inside a {{% api package="model.deployments" class="Rectangle" %}}
   {{<code path="src/test/resources/website-snippets/deployment-rectangle.yml" >}}
-* Nodes located randomly inside a {{% api package="loader.deployments" class="Polygon" %}} delimiting the Venice Lagoon
+* Nodes located randomly inside a {{% api package="model.deployments" class="Polygon" %}} delimiting the Venice Lagoon
   {{<code path="src/test/resources/website-snippets/maps-simple.yml" >}}
 
 ---

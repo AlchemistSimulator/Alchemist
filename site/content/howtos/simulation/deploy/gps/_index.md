@@ -10,8 +10,8 @@ GPS traces require a **geospatial environment**. We prepared [a dedicated page](
 {{% /notice  %}}
 
 GPS traces can be used to deploy nodes on a map.
-{{% api package="loader.deployments" class="FromGPSTrace" %}}
-is a {{% api package="loader.deployments" class="Deployment" %}}
+{{% api package="model.deployments" class="FromGPSTrace" %}}
+is a {{% api package="model.deployments" class="Deployment" %}}
 that takes care of setting the initial position of the nodes depending the first position of the GPS traces.
 
 The class supports deploying more nodes than there are available traces by reusing them cyclically.

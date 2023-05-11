@@ -651,12 +651,12 @@ and [dependent](/howtos/simulation/variables/#dependent-variables) variables.
 
 Variables can be created in three ways:
 * Using the [arbitrary class loading system](#arbitrary-class-loading-system)
-  to produce an instance of {{% api package="loader.variables" class="Variable" %}} or
-  {{% api package="loader.variables" class="DependentVariable" %}};
-* specifying the parameters of a {{% api package="loader.variables" class="LinearVariable" %}}
+  to produce an instance of {{% api package="boundary.variables" class="Variable" %}} or
+  {{% api package="boundary.variables" class="DependentVariable" %}};
+* specifying the parameters of a {{% api package="boundary.variables" class="LinearVariable" %}}
   (minimum and maximum values, incrementation step, and default value);
 * writing an expression that can be interpreted by some JSR-223-compatible language whose interpreter is in the
-  classpath, possibly specifying a timeout. Produces a {{% api package="loader.variables" class="DependentVariable" %}}.
+  classpath, possibly specifying a timeout. Produces a {{% api package="boundary.variables" class="DependentVariable" %}}.
 
 ### `variable.type`
 
@@ -670,38 +670,38 @@ Same as [parameters](#parameters)
 
 **Type**: Number
 
-Default value for a {{% api package="loader.variables" class="LinearVariable" %}},
+Default value for a {{% api package="boundary.variables" class="LinearVariable" %}},
 to be selected if the variable is not among those generating the batch.
 
 ### `variable.max`
 
 **Type**: Number
 
-Maximum value for a {{% api package="loader.variables" class="LinearVariable" %}}
+Maximum value for a {{% api package="boundary.variables" class="LinearVariable" %}}
 
 ### `variable.min`
 
 **Type**: Number
 
-Minimum value for a {{% api package="loader.variables" class="LinearVariable" %}}
+Minimum value for a {{% api package="boundary.variables" class="LinearVariable" %}}
 
 ### `variable.step`
 
 **Type**: Number
 
-Size of the incremental step of a {{% api package="loader.variables" class="LinearVariable" %}}
+Size of the incremental step of a {{% api package="boundary.variables" class="LinearVariable" %}}
 
 ### `variable.formula`
 
 **Type**: String
 
-Code that can be interpreted by a {{% api package="loader.variables" class="JSR223Variable" %}}.
+Code that can be interpreted by a {{% api package="boundary.variables" class="JSR223Variable" %}}.
 
 ### `variable.language`
 
 **Type**: String
 
-Language to be used by a {{% api package="loader.variables" class="JSR223Variable" %}}.
+Language to be used by a {{% api package="boundary.variables" class="JSR223Variable" %}}.
 The language must be available in the classpath.
 Groovy (default), Kotlin (`kotlin` or `kts`), and Scala (`scala`) are supported natively.
 
@@ -710,7 +710,7 @@ Groovy (default), Kotlin (`kotlin` or `kts`), and Scala (`scala`) are supported 
 **Type**: Int
 
 Time in milliseconds after which the interpreter of the
-{{% api package="loader.variables" class="JSR223Variable" %}}
+{{% api package="boundary.variables" class="JSR223Variable" %}}
 is considered stuck or in livelock.
 The interpreter gets interrupted and the simulation loading fails to prevent unresponsive simulations.
 Defaults to 1000ms.

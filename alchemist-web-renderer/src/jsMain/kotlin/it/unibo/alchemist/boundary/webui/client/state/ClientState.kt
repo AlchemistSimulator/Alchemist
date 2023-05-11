@@ -22,10 +22,13 @@ import it.unibo.alchemist.boundary.webui.common.utility.Action
 /**
  * The state of the client.
  * The [ClientState] is managed using the
- * <a href="https://reduxkotlin.org/introduction/core-concepts">Core concepts of the ReduxKotlin library</a>.
- * Like in the original Redux library the state is stored in a single class that contains other objects via composition.
+ * [Core concepts of the ReduxKotlin library](https://reduxkotlin.org/introduction/core-concepts).
+ * Like in the original Redux library,
+ * the state is stored in a single class that contains other objects via composition.
  * The state can be changed using actions that must be defined in advance.
- * The unique store that encapsulate the [ClientState] is {@link it.unibo.alchemist.boundary.webui.client.state.ClientStore}.
+ * The unique store that encapsulate the [ClientState] is
+ * [it.unibo.alchemist.boundary.webui.client.state.ClientStore].
+ *
  * @param renderMode the render mode of the client.
  * It can be either client, server or auto. It is set to auto by default.
  * @param playButton the state of the play button.

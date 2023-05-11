@@ -27,7 +27,8 @@ class RESTUpdateStateStrategy : UpdateStateStrategy {
 
     /**
      * Retrieve the Environment in serialized form using the [EnvironmentApi].
-     * The Environment will be rendered and saved in the [it.unibo.alchemist.boundary.webui.client.state.ClientStore].
+     * The Environment will be rendered and saved in the
+     * [it.unibo.alchemist.boundary.webui.client.state.ClientStore].
      */
     override suspend fun clientComputation() {
         val environment: EnvironmentSurrogate<Any, PositionSurrogate> = EnvironmentApi.getEnvironmentClient()
@@ -38,14 +39,17 @@ class RESTUpdateStateStrategy : UpdateStateStrategy {
 
     /**
      * Retrieve the Environment in already rendered form using the [EnvironmentApi].
-     * Decode it and save it in the [it.unibo.alchemist.boundary.webui.client.state.ClientStore].
+     * Decode it and save it in the
+     * [it.unibo.alchemist.boundary.webui.client.state.ClientStore].
      */
     override suspend fun serverComputation() {
         storeBitmap(EnvironmentApi.getEnvironmentServer())
     }
 
     /**
-     * Retrieve the Simulation Status as a [it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate], then save it in
+     * Retrieve the Simulation Status as a
+     * [it.unibo.alchemist.boundary.webui.common.model.surrogate.StatusSurrogate],
+     * then save it in
      * the [it.unibo.alchemist.boundary.webui.client.state.ClientStore].
      */
     override suspend fun retrieveSimulationStatus() {

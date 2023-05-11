@@ -10,16 +10,16 @@ to better understand the contents of this how-to.
 
 Different kinds of pedestrians are obtainable by attaching
 {{% api class=NodeProperty %}}s
-to nodes (e.g {{%api package=model.implementations.nodes class=GenericNode %}}).
+to nodes (e.g {{%api package=model.nodes class=GenericNode %}}).
 Common properties concern abilities such as perceiving other nodes
-({{% api package=model.interfaces.properties class=PerceptiveProperty %}})
+({{% api package=model.cognitive class=PerceptiveProperty %}})
 and occuping space in an environment 
-({{% api package=model.interfaces.properties class=OccupiesSpaceProperty %}}).
+({{% api package=model.physics.properties class=OccupiesSpaceProperty %}}).
 
 ## Homogeneous Pedestrian
 
 As shown in the example below, this kind of pedestrian is obtained by attaching the
-{{% api package=model.implementations.properties class=Pedestrian %}}
+{{% api package=model.cognitive.properties class=Pedestrian %}}
 property.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-pedestrian.yml" >}}
@@ -31,21 +31,21 @@ alternatively, if the exact age is specified,
 they are assigned to one of the aforementioned groups automatically.
 The genders available are: *male* and *female*. 
 This informations is included in the 
-{{%api package=model.implementations.properties class=Human %}}
+{{%api package=model.cognitive.properties class=Human %}}
 property and it is used by the 
-{{%api package=model.implementations.properties class=HeterogeneousPedestrian %}} 
+{{%api package=model.cognitive.properties class=HeterogeneousPedestrian %}} 
 property, along with the age.
 
 {{< code path="src/test/resources/website-snippets/heterogeneous-pedestrian.yml" >}}
 
 ## Cognitive Pedestrian
 Cognitive pedestrians are heterogeneous pedestrians with cognitive capabilities given by a
-{{% api package=model.interfaces.properties class=CognitiveProperty %}}.
+{{% api package=model.cognitive class=CognitiveProperty %}}.
 They have an emotional state and are able to influence and be influenced by others with the same capabilities.
 As an example, cognitive pedestrians can perceive fear via social contagion 
 (e.g. seeing other people fleeing may cause them flee as well despite they haven't directly seen the danger).
 To express how a cognitive pedestrians move, based on their emotional state, attach the
-{{% api package=model.implementations.properties class=CognitivePedestrian %}}
+{{% api package=model.cognitive.properties class=CognitivePedestrian %}}
 property.
 
 {{< code path="src/test/resources/website-snippets/cognitive-pedestrian.yml" >}}
@@ -61,10 +61,10 @@ knowledge degrees of different homogeneous orienting pedestrians may differ,
 and even pedestrians with the same knowledge degree can be different as each one
 can be familiar with different portions of the environment.
 Be also aware that orienting pedestrians can only be placed in an
-{{% api package="model.interfaces.environments" class="EnvironmentWithGraph" %}}
+{{% api package="model.environments" class="EnvironmentWithGraph" %}}
 which is a type of environment providing a navigation graph.
 In order to give a node orienting capabilities enhance a node with an
-{{% api package=model.interfaces.properties class=OrientingProperty %}}.
+{{% api package=model.cognitive class=OrientingProperty %}}.
 
 {{< code path="src/test/resources/website-snippets/homogeneous-orienting-pedestrian.yml" >}}
 
@@ -84,7 +84,7 @@ as a parameter when the
 created are of pedestrian type.
 If you don't specify any group in this phase,
 automatically a new group of type
-{{% api package="model.implementations.groups" class="Alone" %}}
+{{% api package="model.cognitive.groups" class="Alone" %}}
 is assigned.
 
 The following simulation example loads two groups of homogeneous pedestrians
@@ -99,7 +99,7 @@ Steering actions are
 whose purpose is moving a node inside an environment.
 These actions  can be divided into two categories:
 - greedy, i.e. performing only local choices;
-- {{% api package="model.interfaces" class="NavigationAction" %}}s,
+- {{% api package="model.cognitive" class="NavigationAction" %}}s,
   which exploit the spatial information available to orienting pedestrians
   in order to navigate the environment consciously
   (e.g. without getting stuck in U-shaped obstacles).
@@ -107,7 +107,7 @@ These actions  can be divided into two categories:
 For a complete overview of the available actions refer to the api documentation.
 The creation of complex movements can be accomplished by combining different steering actions together.
 The only way currently available to do so is by using some
-{{% api package="model.implementations.reactions" class="SteeringBehavior" %}}
+{{% api package="model.cognitive.reactions" class="SteeringBehavior" %}}
 extending
 {{% api class="Reaction" %}}, which can recognize, across all the actions specified,
 the steering ones to trait them in a separate way.
@@ -122,11 +122,11 @@ In order to decide the logic according to which the different steering actions m
 the concept of steering strategy has been introduced and related to it different reactions are available to be used
 with the aim of computing the desired route for the pedestrians.
 If you want a pedestrian to execute a single steering action at a time,
-{{% api package="model.implementations.reactions" class="PrioritySteering" %}}
+{{% api package="model.cognitive.reactions" class="PrioritySteering" %}}
 is a reaction 
 which gives relevance only to the steering action whose target point is the nearest to the current pedestrian position.
 If you want a pedestrian to execute a movement considering multiple actions at a time,
-{{% api package="model.implementations.reactions" class="BlendedSteering" %}}
+{{% api package="model.cognitive.reactions" class="BlendedSteering" %}}
 weights them considering their target distance to the current pedestrian position.
 There is no limit to the number of steering actions which can be used together but some messy compositions 
 can result in unpredictable behaviors, so pay attention.
@@ -140,7 +140,7 @@ In the example below a pedestrian reaches a point of interest, avoiding in the m
 Pedestrians can be loaded in any kind of
 {{% api class="Environment" %}}
 but it is recommended to use
-{{% api package="model.interfaces.environments" class="PhysicsEnvironment" %}}s
+{{% api package="model.physics.environments" class="PhysicsEnvironment" %}}s
 since they
 have properties such as non-overlapping shapes which are advisable to be taken into consideration
 when working with a crowd.
@@ -165,16 +165,16 @@ Here's a list of all the hardcoded parameters.
 | Name               | Value      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 |--------------------|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | knownImpasseWeight | 10         | Weight assigned to known impasses (= areas with a single door). It's usually a high value, allowing to avoid them.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| toleranceAngle     | 45 degrees | Used by {{% api package="model.implementations.actions.steeringstrategies" class="SinglePrevalent" %}}, that linearly combines multiple steering actions (= multiple forces) assuming one of them is prevalent. Weights for the linear combination are determined so that the resulting force forms with the prevalent one an angle smaller than or equal to the tolerance angle. The prevalent force usually wants to move the pedestrian consciously, whereas other forces are more "greedy". The purpose of the tolerance angle is allowing to steer the pedestrian towards the target defined by the prevalent force, while using a trajectory which takes into account other urges as well. |
-| alpha              | 0.5        | Used by {{% api package="model.implementations.actions.steeringstrategies" class="SinglePrevalent" %}}, an exponential smoothing with this alpha is applied to the resulting force in order to reduce oscillatory movements.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| maxWalkRatio       | 0.3        | Used by {{% api package="model.implementations.actions.steeringstrategies" class="SinglePrevalent" %}}. When the pedestrian is subject to contrasting forces the resulting one may be small in magnitude, hence a lower bound for such quantity is set to (maximum distance walkable by the pedestrian) * (this parameter) so as to avoid extremely slow movements.                                                                                                                                                                                                                                                                                                                              |
-| delta              | 0.05       | Used by {{% api package="model.implementations.actions.steeringstrategies" class="SinglePrevalent" %}}. The weight assigned to disturbing forces is set to 1 and then iteratively decreased by delta until the resulting force satisfies the required conditions (see the api). This is similar to a gradient descent.                                                                                                                                                                                                                                                                                                                                                                           |
+| toleranceAngle     | 45 degrees | Used by {{% api package="model.cognitive.steering" class="SinglePrevalent" %}}, that linearly combines multiple steering actions (= multiple forces) assuming one of them is prevalent. Weights for the linear combination are determined so that the resulting force forms with the prevalent one an angle smaller than or equal to the tolerance angle. The prevalent force usually wants to move the pedestrian consciously, whereas other forces are more "greedy". The purpose of the tolerance angle is allowing to steer the pedestrian towards the target defined by the prevalent force, while using a trajectory which takes into account other urges as well. |
+| alpha              | 0.5        | Used by {{% api package="model.cognitive.steering" class="SinglePrevalent" %}}, an exponential smoothing with this alpha is applied to the resulting force in order to reduce oscillatory movements.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| maxWalkRatio       | 0.3        | Used by {{% api package="model.cognitive.steering" class="SinglePrevalent" %}}. When the pedestrian is subject to contrasting forces the resulting one may be small in magnitude, hence a lower bound for such quantity is set to (maximum distance walkable by the pedestrian) * (this parameter) so as to avoid extremely slow movements.                                                                                                                                                                                                                                                                                                                              |
+| delta              | 0.05       | Used by {{% api package="model.cognitive.steering" class="SinglePrevalent" %}}. The weight assigned to disturbing forces is set to 1 and then iteratively decreased by delta until the resulting force satisfies the required conditions (see the api). This is similar to a gradient descent.                                                                                                                                                                                                                                                                                                                                                                           |
 
 ### Physical pedestrians
 
 Physical pedestrians are capable of pushing and bumping into each other.
 To express those physical interactions use a
-{{% api package=model.interfaces.properties class=PhysicalPedestrian %}}
+{{% api package=model.physics.properties class=PhysicalPedestrian %}}
 property.
 
 ### Physical steering strategies
@@ -185,15 +185,15 @@ Such strategies define how steering actions (which are intentional)
 are combined with physical forces
 (which are mostly unintentional).
 At present, only
-{{% api package="model.implementations.reactions" class="PhysicalBlendedSteering" %}}
+{{% api package="model.cognitive.reactions" class="PhysicalBlendedSteering" %}}
 and
-{{% api package="model.implementations.reactions" class="NavigationPrioritisedSteeringWithPhysics" %}}
+{{% api package="model.cognitive.reactions" class="NavigationPrioritizedSteeringWithPhysics" %}}
 are available.
 
 Here's a simple code for loading a homogeneous pedestrian with physical properties
 with
-{{% api package="model.implementations.actions" class="CognitiveAgentSeek" %}}
+{{% api package="model.cognitive.actions" class="CognitiveAgentSeek" %}}
 and
-{{% api package="model.implementations.actions" class="CognitiveAgentFlee" %}}:
+{{% api package="model.cognitive.actions" class="CognitiveAgentFlee" %}}:
 
 {{< code path="src/test/resources/website-snippets/physical-steering-strategies.yml" >}}

@@ -9,9 +9,9 @@
 
 package it.unibo.alchemist.model.physics.environments
 
-import it.unibo.alchemist.model.PhysicsEnvironment
 import it.unibo.alchemist.model.geometry.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
+import it.unibo.alchemist.model.physics.PhysicsEnvironment
 import it.unibo.alchemist.model.positions.Euclidean2DPosition
 
 /**

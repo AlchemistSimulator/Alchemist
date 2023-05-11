@@ -12,13 +12,13 @@ package it.unibo.alchemist.model.cognitive.properties
 import it.unibo.alchemist.model.Node
 import it.unibo.alchemist.model.Node.Companion.asProperty
 import it.unibo.alchemist.model.Node.Companion.asPropertyOrNull
-import it.unibo.alchemist.model.PhysicsEnvironment
 import it.unibo.alchemist.model.cognitive.CognitiveProperty
 import it.unibo.alchemist.model.cognitive.PedestrianProperty
 import it.unibo.alchemist.model.geometry.Euclidean2DShape
 import it.unibo.alchemist.model.geometry.Euclidean2DShapeFactory
 import it.unibo.alchemist.model.geometry.Euclidean2DTransformation
 import it.unibo.alchemist.model.geometry.shapes.AdimensionalShape
+import it.unibo.alchemist.model.physics.PhysicsEnvironment
 import it.unibo.alchemist.model.physics.environments.Dynamics2DEnvironment
 import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment
 import it.unibo.alchemist.model.physics.properties.AreaProperty

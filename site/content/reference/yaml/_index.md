@@ -77,7 +77,7 @@ Otherwise, it is interpreted as a simple name.
 Provided types **SHOULD NOT** be located in the default package.
 
 For instance, if the expected type is an {{% api class="Action" %}} and the concrete type `FooAction`,
-`FooAction` **SHOULD** be located into package {{% api package="model.implementations.actions" %}}.
+`FooAction` **SHOULD** be located into package {{% api package="model.actions" %}}.
 
 #### `parameters`
 
@@ -126,7 +126,7 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 #### Counter-examples
 
 * The following simulation **fails on loading**, as
-  {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}
+  {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}
   has the *first* and *last* parameters marked as optional:
   in order to provide the latter, the designer must also provide the former.
     {{< code path="alchemist-loading/src/test/resources/guidedTour/optional-named-arguments.yml" >}}
@@ -344,7 +344,7 @@ Builds an {{% api class="Environment" %}}
 using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system).
 
 If left unspecified, defaults to a bidimensional Euclidean manifold:
-{{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}}.
+{{% api package="model.environments" class="Continuous2DEnvironment" %}}.
 
 **Type**: SpecMap
 
@@ -352,11 +352,11 @@ If left unspecified, defaults to a bidimensional Euclidean manifold:
 
 * Default environment, omitted specification
     {{<code path="src/test/resources/website-snippets/minimal-protelis.yml" >}}
-* Explicitly builds a {{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}} solely with the contextual parameters
+* Explicitly builds a {{% api package="model.environments" class="Continuous2DEnvironment" %}} solely with the contextual parameters
   {{<code path="src/test/resources/website-snippets/envtype-protelis.yml" >}}
-* Explicitly builds a {{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}} using the qualified type name using only the contextual parameters
+* Explicitly builds a {{% api package="model.environments" class="Continuous2DEnvironment" %}} using the qualified type name using only the contextual parameters
   {{<code path="src/test/resources/website-snippets/envtype-fullyqualified-protelis.yml" >}}
-* Explicitly builds a {{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}} explicitly specifying that no parameters but the contextual ones should be used
+* Explicitly builds a {{% api package="model.environments" class="Continuous2DEnvironment" %}} explicitly specifying that no parameters but the contextual ones should be used
   {{<code path="src/test/resources/website-snippets/envtype-explicitparameters-protelis.yml" >}}
 
 ---
@@ -483,7 +483,7 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 * Creation of two {{% api class="Layer" %}}s
     {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
-* Creation of two {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}s:
+* Creation of two {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}s:
     {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
 
 ---
@@ -496,7 +496,7 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 * Creation of two {{% api class="Layer" %}}s
     {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
-* Creation of two {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}s:
+* Creation of two {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}s:
     {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
 
 ---
@@ -507,7 +507,7 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 Builds a {{% api class="LinkingRule" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
-If unspecified, defaults to {{% api package="model.implementations.linkingrules" class="NoLinks" %}},
+If unspecified, defaults to {{% api package="model.linkingrules" class="NoLinks" %}},
 and no nodes will have any neighbor.
 
 #### Examples

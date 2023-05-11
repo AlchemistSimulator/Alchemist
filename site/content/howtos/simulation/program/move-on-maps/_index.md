@@ -20,7 +20,7 @@ for instance, if the simulation involves unmanned aerial vehicles.
 There is no need of [importing actual map data](../../environment/maps) when navigating this way.
 
 This kind of navigation can be realized using
-{{% api package="model.implementations.actions" class="MoveToTarget" %}}.
+{{% api package="model.actions" class="MoveToTarget" %}}.
 
 ### Examples
 
@@ -40,7 +40,7 @@ Moves along the available paths, depending on the specific vehicle being used.
 Requires actual geo-spatial information.
 
 This kind of navigation can be realized using
-{{% api package="model.implementations.actions" class="TargetMapWalker" %}}.
+{{% api package="model.maps.actions" class="TargetMapWalker" %}}.
 
 ## Reproduce a GPS Trace
 
@@ -52,7 +52,7 @@ navigating from point to point in "straight lines"
 (on maps, these are actually [orthodromes](https://en.wikipedia.org/wiki/Great-circle_distance)).
 
 This kind of navigation can be realized using
-{{% api package="model.implementations.actions" class="ReproduceGPSTrace" %}}.
+{{% api package="model.maps.actions" class="ReproduceGPSTrace" %}}.
 
 {{% notice tip "Deploying nodes using GPS traces" %}}
 You probably want your nodes to *start* from the position that marks the beggining of a trace.
@@ -78,4 +78,4 @@ Navigates along a GPS trace, but computes the point-to-point distance using the 
 rather than "straight lines" ([orthodromes](https://en.wikipedia.org/wiki/Great-circle_distance)).
 
 This kind of navigation can be realized using
-{{% api package="model.implementations.actions" class="GPSTraceWalker" %}}.
+{{% api package="model.maps.actions" class="GPSTraceWalker" %}}.

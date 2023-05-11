@@ -7,8 +7,11 @@
  * as described in the file LICENSE in the Alchemist distribution's top directory.
  */
 
-package it.unibo.alchemist.model
+package it.unibo.alchemist.model.physics
 
+import it.unibo.alchemist.model.EuclideanEnvironment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Shape
 import it.unibo.alchemist.model.geometry.Transformation

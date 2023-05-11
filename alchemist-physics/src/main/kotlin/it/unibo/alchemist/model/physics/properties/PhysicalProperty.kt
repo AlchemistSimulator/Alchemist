@@ -10,11 +10,11 @@
 package it.unibo.alchemist.model.physics.properties
 
 import it.unibo.alchemist.model.NodeProperty
-import it.unibo.alchemist.model.PhysicsEnvironment
 import it.unibo.alchemist.model.Position
 import it.unibo.alchemist.model.geometry.GeometricShapeFactory
 import it.unibo.alchemist.model.geometry.Transformation
 import it.unibo.alchemist.model.geometry.Vector
+import it.unibo.alchemist.model.physics.PhysicsEnvironment
 
 /**
  * A node's capability to experience physical forces.

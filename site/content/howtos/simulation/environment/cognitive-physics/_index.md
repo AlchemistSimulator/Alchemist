@@ -1,5 +1,5 @@
 +++
-title = "Simulate Physical Interactions"
+title = "Simulate physical interactions among pedestrians"
 weight = 5
 tags = ["physics", "interaction", "pedestrian"]
 summary = "Physical interaction between nodes"
@@ -12,7 +12,7 @@ Before reading the following explanation you may want to look at the
 ## Configuring the physics environment
 
 The simulator is equipped with a special type of {{%api class=Environment %}} 
-named {{%api package=model.implementations.environments class=EnvironmentWithDynamics %}}
+named {{%api package=model.cognitive.environments class=EnvironmentWithDynamics %}}
 which performs collision detection and response between nodes and with obstacles. 
 
 Here's a minimal configuration of a physics simulation:
@@ -23,10 +23,10 @@ It's also possibile to specify an image path for including obstacles in the envi
 
 ## Adding nodes to the environment
 
-Nodes added to the {{%api package=model.implementations.environments class=EnvironmentWithDynamics %}} 
-are required to have at least a {{%api package=model.interfaces.properties class=PedestrianProperty %}},
-a {{%api package=model.interfaces.properties class=PhysicalPedestrian %}} and a 
-{{%api package=model.interfaces.properties class=OccupiesSpaceProperty %}}.
+Nodes added to the {{%api package=model.cognitive.environments class=EnvironmentWithDynamics %}} 
+are required to have at least a {{%api package=model.cognitive class=PedestrianProperty %}},
+a {{%api package=model.physics.properties class=PhysicalPedestrian %}} and a 
+{{%api package=model.physics.properties class=OccupiesSpaceProperty %}}.
 
 Here's an example:
 {{< code path="src/test/resources/website-snippets/minimal-physical-pedestrian.yml" >}}
@@ -36,7 +36,7 @@ Here's an example:
 When using the `EnvironmentWithDynamics`, any suitable {{%api class=Reaction %}} can be used,
 however, in order to take advantage of the physical micro-interactions between nodes such as avoidance, 
 pushing behavior and falls, derived from the work of [Pelechano et al.](https://bit.ly/3e3C7Tb) you need 
-to use the {{%api package=model.implementations.reactions class=PhysicalBlendedSteering %}}.
+to use the {{%api package=model.cognitive.reactions class=PhysicalBlendedSteering %}}.
 
 Here's an example:
 {{< code path="src/test/resources/website-snippets/physical-steering-strategies.yml" >}}
@@ -44,8 +44,8 @@ Here's an example:
 ## Updating the physics engine
 
 The `EnvironmentWithDynamics` internally uses a {{%api class=GlobalReaction %}} called 
-{{%api package=model.implementations.reactions class=PhysicsUpdate %}} to update nodes positions. 
-By deault this reaction uses a {{%api package=model.implementations.timedistributions class=DiracComb %}}
+{{%api package=model.physics.reactions class=PhysicsUpdate %}} to update nodes positions. 
+By deault this reaction uses a {{%api package=model.timedistributions class=DiracComb %}}
 with a default rate. If you want, it's possible to override the reaction with a custom 
 {{%api class=TimeDistribution %}} and update rate.
 

@@ -18,7 +18,7 @@ as in this example:
 {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
 
 The following example shows the syntax for initializing multiple
-{{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}s:
+{{% api package="model.layers" class="BidimensionalGaussianLayer" %}}s:
 
 {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
 

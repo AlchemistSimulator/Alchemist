@@ -10,6 +10,7 @@ package it.unibo.alchemist.boundary.exportfilters;
 
 import it.unibo.alchemist.boundary.ExportFilter;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -25,21 +26,21 @@ public enum CommonFilters {
     /**
      * Remove all {@link Double#NaN} values.
      */
-    FILTERNAN((ExportFilter & java.io.Serializable) d -> Double.isNaN(d) ? emptyList() : List.of(d)),
+    FILTERNAN((ExportFilter & Serializable) d -> Double.isNaN(d) ? emptyList() : List.of(d)),
     /**
      * Remove all values that match {@link Double#isInfinite(double)}  ({@link Double#NaN} don't get filtered).
      */
-    FILTERINFINITY((ExportFilter & java.io.Serializable) d -> Double.isInfinite(d)
+    FILTERINFINITY((ExportFilter & Serializable) d -> Double.isInfinite(d)
             ? emptyList()
             : List.of(d)),
     /**
      * Keeps only finite values ({@link Double#isFinite(double)} returns true).
      */
-    ONLYFINITE((ExportFilter & java.io.Serializable) d -> Double.isFinite(d) ? List.of(d) : emptyList()),
+    ONLYFINITE((ExportFilter & Serializable) d -> Double.isFinite(d) ? List.of(d) : emptyList()),
     /**
      * Keeps all values.
      */
-    NOFILTER((ExportFilter & java.io.Serializable) List::of);
+    NOFILTER((ExportFilter & Serializable) List::of);
 
     private final ExportFilter filter;
 

@@ -17,7 +17,8 @@ import it.unibo.alchemist.boundary.webui.common.renderer.Renderer
 /**
  * The common state of the client and the server.
  * This class includes common components that both systems need to have.
- * @param renderer the [Renderer] that renders an [it.unibo.alchemist.boundary.webui.common.model.surrogate.EnvironmentSurrogate].
+ * @param renderer the [Renderer] that renders an
+ * [it.unibo.alchemist.boundary.webui.common.model.surrogate.EnvironmentSurrogate].
  */
 open class CommonState(
     val renderer: Renderer<Any, PositionSurrogate, Bitmap> = BitmapRenderer(),

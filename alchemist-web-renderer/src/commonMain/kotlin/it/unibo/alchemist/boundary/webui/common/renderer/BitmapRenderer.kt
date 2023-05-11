@@ -36,7 +36,8 @@ class BitmapRenderer<in TS : Any, in PS : PositionSurrogate> : Renderer<TS, PS, 
 
     /**
      * Renders the environment.
-     * @param environmentSurrogate the [it.unibo.alchemist.boundary.webui.common.model.surrogate.EnvironmentSurrogate] to render.
+     * @param environmentSurrogate the
+     * [it.unibo.alchemist.boundary.webui.common.model.surrogate.EnvironmentSurrogate] to render.
      * @return a [com.soywiz.korim.bitmap.Bitmap] representing the environment.
      */
     override fun render(environmentSurrogate: EnvironmentSurrogate<TS, PS>): Bitmap {
@@ -65,7 +66,9 @@ class BitmapRenderer<in TS : Any, in PS : PositionSurrogate> : Renderer<TS, PS, 
     }
 
     /**
-     * Draws a [it.unibo.alchemist.boundary.webui.common.model.surrogate.NodeSurrogate] on the [com.soywiz.korim.vector.Context2d].
+     * Draws a [it.unibo.alchemist.boundary.webui.common.model.surrogate.NodeSurrogate]
+     * on the [com.soywiz.korim.vector.Context2d].
+     *
      * @param node the node surrogate to draw.
      * @param radius the radius of the node.
      */

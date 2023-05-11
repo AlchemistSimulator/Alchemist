@@ -15,7 +15,7 @@ are exported in comma-separated values files, easily importable in a variety of
 data analysis tools.
 
 Data export is realized by
-{{% api package="loader.export" class="Exporter" %}}s.
+{{% api package="boundary" class="Exporter" %}}s.
 Exporters are defined in the [`export`](/reference/yaml#export) section of the configuration,
 by specifying their [`type`](/reference/yaml/#exportertype),
 their constructor [`parameters`](/reference/yaml/#parameters),
@@ -27,7 +27,7 @@ The elements under [`data`](/reference/yaml/#data) must be instanceable implemen
 
 Alchemist can export data to a custom comma-separated-values format.
 This is the classic way data is exported from the simulator, and relies on
-{{% api package="loader.export.exporters" class="CSVExporter" %}}.
+{{% api package="boundary.exporters" class="CSVExporter" %}}.
 
 ### Examples
 
@@ -35,7 +35,7 @@ This is the classic way data is exported from the simulator, and relies on
   {{< code path="alchemist-loading/src/test/resources/testExportInterval.yml" >}}
 * Export data to both a csv file and a MongoDB instance:
   {{< code path="alchemist-loading/src/test/resources/testExporters.yml" >}}
-* Export of the {{% api package="loader.export.extractors" class="MeanSquaredError" %}} of some custom properties:
+* Export of the {{% api package="boundary.extractors" class="MeanSquaredError" %}} of some custom properties:
     {{< code path="alchemist-loading/src/test/resources/testCustomExport.yml" >}}
 * Export of the output of a Protelis program, values generated from nodes get accumulated into mean, max, min, variance, and median:
   {{< code path="alchemist-loading/src/test/resources/testCSVExporter.yml" >}}

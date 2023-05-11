@@ -7,7 +7,7 @@ summary = "Deployment of nodes in (possibly irregular) grids."
 
 One common way to deploy nodes in a bidimensional space is on a grid.
 Grid-like deployments can be easily performed in Alchemist
-leveraging the {{% api package="model.deployments" class="Grid" %}} {{% api package="model.deployments" class="Deployment" %}}.
+leveraging the {{% api package="model.deployments" class="Grid" %}} {{% api package="model" class="Deployment" %}}.
 
 The following example shows a grid centered in `(0, 0)`,
 with nodes distanced of `0.25` both horizontally and vertically.

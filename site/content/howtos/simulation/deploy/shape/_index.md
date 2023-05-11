@@ -8,7 +8,7 @@ summary = "Deployment of nodes randomly inside arbitrary shapes."
 Sometimes it is useful to deploy a bunch of nodes randomly inside some area marked by a shape.
 Circles and polygons are first-class citizens,
 but of course users may create their own deployments by implementing
-{{% api package="model.deployments" class="Deployment" %}}.
+{{% api package="model" class="Deployment" %}}.
 
 This example places 1000 nodes randomly in a
 {{% api package="model.deployments" class="Circle" %}}

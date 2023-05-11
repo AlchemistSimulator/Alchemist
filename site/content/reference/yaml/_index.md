@@ -289,7 +289,7 @@ Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Con
 #### Examples
 * Three molecules injected into all nodes deployed in the scenario
     {{<code path="alchemist-incarnation-protelis/src/test/resources/gradient.yml" >}}
-* Injection of a molecule only in those nodes located inside a {{% api package="loader.filters" class="Rectangle" %}}
+* Injection of a molecule only in those nodes located inside a {{% api package="model.positionfilters" class="Rectangle" %}}
     {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ### `content.molecule`
@@ -577,7 +577,7 @@ Builds a {{% api package="model" class="PositionBasedFilter" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 #### Examples
-* Injection of a molecule only in those nodes located inside a {{% api package="loader.filters" class="Rectangle" %}}
+* Injection of a molecule only in those nodes located inside a {{% api package="model.positionfilters" class="Rectangle" %}}
   {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ---

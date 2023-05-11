@@ -400,7 +400,7 @@ Same as [parameters](#parameters)
 The only supported String is `"time"`.
 Otherwise, a SpecMap **MUST** be provided.
 
-Creates instances of {{% api package="loader.export" class="Extractor" %}}.
+Creates instances of {{% api package="boundary" class="Extractor" %}}.
 
 **(Multi)Spec**
 

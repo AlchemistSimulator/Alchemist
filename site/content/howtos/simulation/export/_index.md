@@ -21,7 +21,7 @@ by specifying their [`type`](/reference/yaml/#exportertype),
 their constructor [`parameters`](/reference/yaml/#parameters),
 and the [`data`](/reference/yaml/#data) they should export.
 The elements under [`data`](/reference/yaml/#data) must be instanceable implementations of
-{{% api package="loader.export" class="Extractor" %}}.
+{{% api package="boundary" class="Extractor" %}}.
 
 ## Export data as CSV
 
@@ -43,7 +43,7 @@ This is the classic way data is exported from the simulator, and relies on
 ## Export data to a MongoDB instance
 
 Alchemist can send data directly to a pre-existing MongoDB instance through its
-{{% api package="loader.export.exporters" class="MongoDBExporter" %}}.
+{{% api package="boundary.exporters" class="MongoDBExporter" %}}.
 
 ### Examples
 

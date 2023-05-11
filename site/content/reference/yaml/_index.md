@@ -138,7 +138,7 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 **Type**: SpecMap
 
 The document contents at the root of the file. Builds an
-{{% api package="loader" class="InitializedEnvironment" %}}.
+{{% api package="boundary" class="InitializedEnvironment" %}}.
 
 **(Multi)Spec**
 
@@ -451,10 +451,10 @@ instead of one value for each node.
 
 **Type**: String or SpecMap
 
-Builds a {{% api package="loader.export" class="FilteringPolicy" %}},
+Builds a {{% api package="boundary" class="ExportFilter" %}},
 to be applied to raw data before being processed by the `aggregators`(#extractoraggregators),
 if present.
-If a String is provided, then it is used to load a policy from {{% api package="loader.export.filters" class="CommonFilters" %}}.
+If a String is provided, then it is used to load a policy from {{% api package="boundary.exportfilters" class="CommonFilters" %}}.
 Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system) **MUST** be used.
 
 
@@ -651,12 +651,12 @@ and [dependent](/howtos/simulation/variables/#dependent-variables) variables.
 
 Variables can be created in three ways:
 * Using the [arbitrary class loading system](#arbitrary-class-loading-system)
-  to produce an instance of {{% api package="boundary.variables" class="Variable" %}} or
-  {{% api package="boundary.variables" class="DependentVariable" %}};
+  to produce an instance of {{% api package="boundary" class="Variable" %}} or
+  {{% api package="boundary" class="DependentVariable" %}};
 * specifying the parameters of a {{% api package="boundary.variables" class="LinearVariable" %}}
   (minimum and maximum values, incrementation step, and default value);
 * writing an expression that can be interpreted by some JSR-223-compatible language whose interpreter is in the
-  classpath, possibly specifying a timeout. Produces a {{% api package="boundary.variables" class="DependentVariable" %}}.
+  classpath, possibly specifying a timeout. Produces a {{% api package="boundary" class="DependentVariable" %}}.
 
 ### `variable.type`
 

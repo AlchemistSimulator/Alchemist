@@ -52,7 +52,7 @@ class CognitiveAgentFollowScalarField<T, P, A>(
             val direction = (center - currentPosition).coerceAtMost(maxWalk)
             listOf(currentPosition + direction, currentPosition - direction)
         }
-        (currentPosition.surrounding(maxWalk) + (centerProjectedPositions.orEmpty()))
+        (currentPosition.surrounding(maxWalk) + centerProjectedPositions.orEmpty())
             .asSequence()
             .enforceObstacles(currentPosition)
             .enforceOthers()

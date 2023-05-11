@@ -573,7 +573,7 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 
 **Type**: SpecMap
 
-Builds a {{% api package="loader.filters" class="Filter" %}}
+Builds a {{% api package="model" class="PositionBasedFilter" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 #### Examples

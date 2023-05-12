@@ -9,10 +9,10 @@
 
 package it.unibo.alchemist.multivesta.adapter
 
-import it.unibo.alchemist.core.interfaces.Simulation
-import it.unibo.alchemist.core.interfaces.Status
-import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.core.Status
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.times.DoubleTime
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 

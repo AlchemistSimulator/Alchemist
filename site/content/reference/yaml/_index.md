@@ -77,7 +77,7 @@ Otherwise, it is interpreted as a simple name.
 Provided types **SHOULD NOT** be located in the default package.
 
 For instance, if the expected type is an {{% api class="Action" %}} and the concrete type `FooAction`,
-`FooAction` **SHOULD** be located into package {{% api package="model.implementations.actions" %}}.
+`FooAction` **SHOULD** be located into package {{% api package="model.actions" %}}.
 
 #### `parameters`
 
@@ -90,7 +90,7 @@ the loading system is aware of the current
 `RandomGenerator`,
 {{% api class="Incarnation" %}},
 {{% api class="Environment" %}},
-{{% api package="loader.deployments" class="Deployment" %}},
+{{% api package="model" class="Deployment" %}},
 {{% api class="Node" %}}, {{% api class="TimeDistribution" %}}, and
 {{% api class="Reaction" %}},
 as the action requires all of them.
@@ -118,7 +118,7 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 
 #### Examples
 
-* Construction of a {{% api package="loader.deployments" class="Point" %}}
+* Construction of a {{% api package="model.deployments" class="Point" %}}
     {{<code path="src/test/resources/website-snippets/deployment-in-point.yml" >}}
 * Construction of variables with named parameters
     {{<code path="src/test/resources/website-snippets/named-parameters.yml" >}}
@@ -126,7 +126,7 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 #### Counter-examples
 
 * The following simulation **fails on loading**, as
-  {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}
+  {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}
   has the *first* and *last* parameters marked as optional:
   in order to provide the latter, the designer must also provide the former.
     {{< code path="alchemist-loading/src/test/resources/guidedTour/optional-named-arguments.yml" >}}
@@ -138,7 +138,7 @@ Instantiation is delegated to the [Java Implicit Reflective Factory](https://git
 **Type**: SpecMap
 
 The document contents at the root of the file. Builds an
-{{% api package="loader" class="InitializedEnvironment" %}}.
+{{% api package="boundary" class="InitializedEnvironment" %}}.
 
 **(Multi)Spec**
 
@@ -204,7 +204,7 @@ Traversable of [`deployment`](#deployment)
 
 Definition of the positions of a set of nodes.
 Builds a 
-{{% api package="loader.deployments" class="Deployment" %}}
+{{% api package="model" class="Deployment" %}}
 using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system),
 with additional keys.
 
@@ -223,17 +223,17 @@ with additional keys.
   {{<code path="src/test/resources/website-snippets/deployment-in-three-points.yml" >}}
 * Deployment of three nodes, but nesting the traversable
   {{<code path="src/test/resources/website-snippets/deployment-in-three-points-nested.yml" >}}
-* Deployment of three nodes through {{% api package="loader.deployments" class="SpecificPositions" %}}.
+* Deployment of three nodes through {{% api package="model.deployments" class="SpecificPositions" %}}.
   {{<code path="src/test/resources/website-snippets/deployment-specific-positions.yml" >}}
-* {{% api package="loader.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically.
+* {{% api package="model.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically.
   {{<code path="src/test/resources/website-snippets/deployment-grid.yml" >}}
-* Irregular {{% api package="loader.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically, randomly perturbed of (±`0.1` distance units).
+* Irregular {{% api package="model.deployments" class="Grid" %}} centered in `(0, 0)`, with nodes distanced of `0.25` both horizontally and vertically, randomly perturbed of (±`0.1` distance units).
   {{<code path="src/test/resources/website-snippets/deployment-grid-perturbed.yml" >}}
-* Nodes located randomly inside a {{% api package="loader.deployments" class="Circle" %}}
+* Nodes located randomly inside a {{% api package="model.deployments" class="Circle" %}}
   {{<code path="src/test/resources/website-snippets/deployment-circle.yml" >}}
-* Nodes located randomly inside a {{% api package="loader.deployments" class="Rectangle" %}}
+* Nodes located randomly inside a {{% api package="model.deployments" class="Rectangle" %}}
   {{<code path="src/test/resources/website-snippets/deployment-rectangle.yml" >}}
-* Nodes located randomly inside a {{% api package="loader.deployments" class="Polygon" %}} delimiting the Venice Lagoon
+* Nodes located randomly inside a {{% api package="model.deployments" class="Polygon" %}} delimiting the Venice Lagoon
   {{<code path="src/test/resources/website-snippets/maps-simple.yml" >}}
 
 ---
@@ -289,7 +289,7 @@ Definition of the contents ({{% api class="Molecule" %}}s and {{% api class="Con
 #### Examples
 * Three molecules injected into all nodes deployed in the scenario
     {{<code path="alchemist-incarnation-protelis/src/test/resources/gradient.yml" >}}
-* Injection of a molecule only in those nodes located inside a {{% api package="loader.filters" class="Rectangle" %}}
+* Injection of a molecule only in those nodes located inside a {{% api package="model.positionfilters" class="Rectangle" %}}
     {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ### `content.molecule`
@@ -344,7 +344,7 @@ Builds an {{% api class="Environment" %}}
 using the same syntax of [arbitrary class loading system](#arbitrary-class-loading-system).
 
 If left unspecified, defaults to a bidimensional Euclidean manifold:
-{{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}}.
+{{% api package="model.environments" class="Continuous2DEnvironment" %}}.
 
 **Type**: SpecMap
 
@@ -352,11 +352,11 @@ If left unspecified, defaults to a bidimensional Euclidean manifold:
 
 * Default environment, omitted specification
     {{<code path="src/test/resources/website-snippets/minimal-protelis.yml" >}}
-* Explicitly builds a {{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}} solely with the contextual parameters
+* Explicitly builds a {{% api package="model.environments" class="Continuous2DEnvironment" %}} solely with the contextual parameters
   {{<code path="src/test/resources/website-snippets/envtype-protelis.yml" >}}
-* Explicitly builds a {{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}} using the qualified type name using only the contextual parameters
+* Explicitly builds a {{% api package="model.environments" class="Continuous2DEnvironment" %}} using the qualified type name using only the contextual parameters
   {{<code path="src/test/resources/website-snippets/envtype-fullyqualified-protelis.yml" >}}
-* Explicitly builds a {{% api package="model.implementations.environments" class="Continuous2DEnvironment" %}} explicitly specifying that no parameters but the contextual ones should be used
+* Explicitly builds a {{% api package="model.environments" class="Continuous2DEnvironment" %}} explicitly specifying that no parameters but the contextual ones should be used
   {{<code path="src/test/resources/website-snippets/envtype-explicitparameters-protelis.yml" >}}
 
 ---
@@ -400,7 +400,7 @@ Same as [parameters](#parameters)
 The only supported String is `"time"`.
 Otherwise, a SpecMap **MUST** be provided.
 
-Creates instances of {{% api package="loader.export" class="Extractor" %}}.
+Creates instances of {{% api package="boundary" class="Extractor" %}}.
 
 **(Multi)Spec**
 
@@ -451,10 +451,10 @@ instead of one value for each node.
 
 **Type**: String or SpecMap
 
-Builds a {{% api package="loader.export" class="FilteringPolicy" %}},
+Builds a {{% api package="boundary" class="ExportFilter" %}},
 to be applied to raw data before being processed by the `aggregators`(#extractoraggregators),
 if present.
-If a String is provided, then it is used to load a policy from {{% api package="loader.export.filters" class="CommonFilters" %}}.
+If a String is provided, then it is used to load a policy from {{% api package="boundary.exportfilters" class="CommonFilters" %}}.
 Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system) **MUST** be used.
 
 
@@ -483,7 +483,7 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 * Creation of two {{% api class="Layer" %}}s
     {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
-* Creation of two {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}s:
+* Creation of two {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}s:
     {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
 
 ---
@@ -496,7 +496,7 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 * Creation of two {{% api class="Layer" %}}s
     {{< code path="alchemist-loading/src/test/resources/synthetic/testlayer.yml" >}}
-* Creation of two {{% api package="model.implementations.layers" class="BidimensionalGaussianLayer" %}}s:
+* Creation of two {{% api package="model.layers" class="BidimensionalGaussianLayer" %}}s:
     {{< code path="alchemist-cognitive-agents/src/test/resources/social-contagion.yml" >}}
 
 ---
@@ -507,7 +507,7 @@ using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 Builds a {{% api class="LinkingRule" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
-If unspecified, defaults to {{% api package="model.implementations.linkingrules" class="NoLinks" %}},
+If unspecified, defaults to {{% api package="model.linkingrules" class="NoLinks" %}},
 and no nodes will have any neighbor.
 
 #### Examples
@@ -573,11 +573,11 @@ Otherwise, the [arbitrary class loading system](#arbitrary-class-loading-system)
 
 **Type**: SpecMap
 
-Builds a {{% api package="loader.filters" class="Filter" %}}
+Builds a {{% api package="model" class="PositionBasedFilter" %}}
 using the [arbitrary class loading system](#arbitrary-class-loading-system).
 
 #### Examples
-* Injection of a molecule only in those nodes located inside a {{% api package="loader.filters" class="Rectangle" %}}
+* Injection of a molecule only in those nodes located inside a {{% api package="model.positionfilters" class="Rectangle" %}}
   {{<code path="src/test/resources/website-snippets/grid-dodgeball.yml" >}}
 
 ---
@@ -651,12 +651,12 @@ and [dependent](/howtos/simulation/variables/#dependent-variables) variables.
 
 Variables can be created in three ways:
 * Using the [arbitrary class loading system](#arbitrary-class-loading-system)
-  to produce an instance of {{% api package="loader.variables" class="Variable" %}} or
-  {{% api package="loader.variables" class="DependentVariable" %}};
-* specifying the parameters of a {{% api package="loader.variables" class="LinearVariable" %}}
+  to produce an instance of {{% api package="boundary" class="Variable" %}} or
+  {{% api package="boundary" class="DependentVariable" %}};
+* specifying the parameters of a {{% api package="boundary.variables" class="LinearVariable" %}}
   (minimum and maximum values, incrementation step, and default value);
 * writing an expression that can be interpreted by some JSR-223-compatible language whose interpreter is in the
-  classpath, possibly specifying a timeout. Produces a {{% api package="loader.variables" class="DependentVariable" %}}.
+  classpath, possibly specifying a timeout. Produces a {{% api package="boundary" class="DependentVariable" %}}.
 
 ### `variable.type`
 
@@ -670,38 +670,38 @@ Same as [parameters](#parameters)
 
 **Type**: Number
 
-Default value for a {{% api package="loader.variables" class="LinearVariable" %}},
+Default value for a {{% api package="boundary.variables" class="LinearVariable" %}},
 to be selected if the variable is not among those generating the batch.
 
 ### `variable.max`
 
 **Type**: Number
 
-Maximum value for a {{% api package="loader.variables" class="LinearVariable" %}}
+Maximum value for a {{% api package="boundary.variables" class="LinearVariable" %}}
 
 ### `variable.min`
 
 **Type**: Number
 
-Minimum value for a {{% api package="loader.variables" class="LinearVariable" %}}
+Minimum value for a {{% api package="boundary.variables" class="LinearVariable" %}}
 
 ### `variable.step`
 
 **Type**: Number
 
-Size of the incremental step of a {{% api package="loader.variables" class="LinearVariable" %}}
+Size of the incremental step of a {{% api package="boundary.variables" class="LinearVariable" %}}
 
 ### `variable.formula`
 
 **Type**: String
 
-Code that can be interpreted by a {{% api package="loader.variables" class="JSR223Variable" %}}.
+Code that can be interpreted by a {{% api package="boundary.variables" class="JSR223Variable" %}}.
 
 ### `variable.language`
 
 **Type**: String
 
-Language to be used by a {{% api package="loader.variables" class="JSR223Variable" %}}.
+Language to be used by a {{% api package="boundary.variables" class="JSR223Variable" %}}.
 The language must be available in the classpath.
 Groovy (default), Kotlin (`kotlin` or `kts`), and Scala (`scala`) are supported natively.
 
@@ -710,7 +710,7 @@ Groovy (default), Kotlin (`kotlin` or `kts`), and Scala (`scala`) are supported 
 **Type**: Int
 
 Time in milliseconds after which the interpreter of the
-{{% api package="loader.variables" class="JSR223Variable" %}}
+{{% api package="boundary.variables" class="JSR223Variable" %}}
 is considered stuck or in livelock.
 The interpreter gets interrupted and the simulation loading fails to prevent unresponsive simulations.
 Defaults to 1000ms.

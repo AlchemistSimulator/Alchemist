@@ -10,12 +10,12 @@ package it.unibo.alchemist.model
 import it.unibo.alchemist.model.ScafiIncarnationUtils._
 import it.unibo.alchemist.model.implementations.actions.{RunScafiProgram, SendScafiMessage}
 import it.unibo.alchemist.model.implementations.conditions.ScafiComputationalRoundComplete
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.nodes.{GenericNode, ScafiDevice}
-import it.unibo.alchemist.model.implementations.reactions.{ChemicalReaction, Event}
-import it.unibo.alchemist.model.implementations.timedistributions.{DiracComb, ExponentialTime}
-import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces._
+import it.unibo.alchemist.model.implementations.nodes.ScafiDevice
+import it.unibo.alchemist.model.molecules.SimpleMolecule
+import it.unibo.alchemist.model.nodes.GenericNode
+import it.unibo.alchemist.model.reactions.{ChemicalReaction, Event}
+import it.unibo.alchemist.model.timedistributions.{DiracComb, ExponentialTime}
+import it.unibo.alchemist.model.times.DoubleTime
 import it.unibo.alchemist.scala.ScalaInterpreter
 import org.apache.commons.math3.random.RandomGenerator
 

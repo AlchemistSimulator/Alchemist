@@ -7,7 +7,7 @@ variables:
     formula: "\"target\""
 
 environment:
-  type: Continuous2DEnvironment
+  type: ContinuousPhysics2DEnvironment
 
 layers:
   - type: BidimensionalGaussianLayer

@@ -10,10 +10,10 @@
 package it.unibo.alchemist.boundary.swingui.effect.impl
 
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position2D
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position2D
+import it.unibo.alchemist.model.molecules.SimpleMolecule
 import org.danilopianini.lang.RangedInteger
 import org.danilopianini.view.ExportForGUI
 import java.awt.Color
@@ -61,14 +61,8 @@ class DrawDirectedNode : it.unibo.alchemist.boundary.swingui.effect.api.Effect {
     @ExportForGUI(nameToExport = "Max Value")
     private val maxValue: String = ""
 
-    /**
-     * @See [Effect.getSummary]
-     */
     override fun getColorSummary(): Color = Color.BLACK
 
-    /**
-     * @See [Effect.apply]
-     */
     override fun <T : Any, P : Position2D<P>> apply(
         g: Graphics2D,
         node: Node<T>,

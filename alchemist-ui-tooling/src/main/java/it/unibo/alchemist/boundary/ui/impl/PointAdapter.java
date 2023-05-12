@@ -9,9 +9,9 @@
 package it.unibo.alchemist.boundary.ui.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.MapEnvironment;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.maps.MapEnvironment;
+import it.unibo.alchemist.model.Position2D;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
@@ -108,7 +108,7 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
     /**
      * @param environment the environment
      *
-     * @return the {@link it.unibo.alchemist.model.interfaces.Position} view of this {@link PointAdapter}
+     * @return the {@link it.unibo.alchemist.model.Position} view of this {@link PointAdapter}
      */
     public P toPosition(final Environment<?, P> environment) {
         if (pos == null) {
@@ -148,7 +148,7 @@ public final class PointAdapter<P extends Position2D<? extends P>> implements Se
      * Builds a {@link PointAdapter}.
      *
      * @param p
-     *            the {@link it.unibo.alchemist.model.interfaces.Position}
+     *            the {@link it.unibo.alchemist.model.Position}
      * @param <P>
      *            Position type
      * 

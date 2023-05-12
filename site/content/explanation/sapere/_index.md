@@ -26,7 +26,7 @@ From the point of view of
 the concept of
 {{% api class="Molecule" %}}
 is mapped to 
-**LSA** ({{% api package="model.implementations.molecules" class="LsaMolecule" %}}).
+**LSA** ({{% api package="model.sapere.molecules" class="LsaMolecule" %}}).
 As a consequence, LSAs can be inserted in nodes.
 
 ## Eco-Laws

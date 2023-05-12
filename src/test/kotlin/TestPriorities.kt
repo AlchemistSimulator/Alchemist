@@ -2,9 +2,9 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.comparables.shouldBeEqualComparingTo
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
-import it.unibo.alchemist.launch.Priority.Fallback
-import it.unibo.alchemist.launch.Priority.High
-import it.unibo.alchemist.launch.Priority.Normal
+import it.unibo.alchemist.boundary.launch.Priority.Fallback
+import it.unibo.alchemist.boundary.launch.Priority.High
+import it.unibo.alchemist.boundary.launch.Priority.Normal
 
 /*
  * Copyright (C) 2010-2020, Danilo Pianini and contributors

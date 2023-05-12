@@ -10,9 +10,9 @@ package it.unibo.alchemist.boundary.wormhole.impl;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.ui.impl.PointAdapter;
-import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
+import it.unibo.alchemist.model.maps.positions.LatLongPosition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.GeoPosition;
 import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.util.MercatorProjection;
 import org.mapsforge.map.model.IMapViewPosition;
@@ -160,16 +160,5 @@ public final class MapWormhole extends WormholeSwing<GeoPosition> {
         final PointAdapter<GeoPosition> newViewCenter = viewPointFromEnv(endPoint);
         final PointAdapter<GeoPosition> delta = PointAdapter.<GeoPosition>from(zoomPoint).diff(newViewCenter);
         setViewPosition(from(getViewPosition()).sum(delta).toPoint());
-    }
-
-    /**
-     * Returns a {@link GeoPosition} with the given coordinates.
-     *
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @return the newly created {@link GeoPosition}
-     */
-    protected GeoPosition makePosition(final double x, final double y) {
-        return new LatLongPosition(y, x);
     }
 }

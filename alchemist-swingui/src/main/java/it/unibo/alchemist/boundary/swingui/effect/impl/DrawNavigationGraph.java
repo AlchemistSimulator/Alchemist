@@ -12,15 +12,15 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.implementations.environments.ImageEnvironmentWithGraph;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.ConvexPolygon;
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.Segment2D;
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.Euclidean2DPassage;
-import it.unibo.alchemist.model.interfaces.geometry.euclidean2d.graph.NavigationGraph;
+import it.unibo.alchemist.model.cognitive.environments.ImageEnvironmentWithGraph;
+import it.unibo.alchemist.model.geometry.ConvexPolygon;
+import it.unibo.alchemist.model.geometry.Segment2D;
+import it.unibo.alchemist.model.geometry.navigationgraph.Euclidean2DPassage;
+import it.unibo.alchemist.model.geometry.navigationgraph.NavigationGraph;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
 import org.danilopianini.lang.RangedInteger;
 import org.danilopianini.view.ExportForGUI;
 import org.slf4j.Logger;
@@ -49,6 +49,7 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
     /**
      *
      */
+    @SuppressWarnings("deprecation")
     protected static final Logger L = LoggerFactory.getLogger(DrawShape.class);
     private static final long serialVersionUID = 1L;
     @ExportForGUI(nameToExport = "A")
@@ -72,7 +73,7 @@ public class DrawNavigationGraph extends AbstractDrawOnce {
      * @param <T>      concentration type
      * @param <P>      position type
      */
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals"})
+    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "unchecked"})
     @SuppressFBWarnings("ES_COMPARING_STRINGS_WITH_EQ")
     @Override
     protected <T, P extends Position2D<P>> void draw(

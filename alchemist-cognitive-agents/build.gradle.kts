@@ -23,6 +23,7 @@ dependencies {
 
     implementation(alchemist("euclidean-geometry"))
     implementation(alchemist("implementationbase"))
+    implementation(alchemist("physics"))
     implementation(libs.jgrapht.core)
     implementation(libs.konf)
 

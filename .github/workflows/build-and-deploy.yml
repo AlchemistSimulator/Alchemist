@@ -10,7 +10,7 @@ jobs:
       matrix:
         os: [ windows-2022, macos-12, ubuntu-22.04 ]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 120
+    timeout-minutes: 180
     concurrency:
       group: ${{ github.workflow }}-build-${{ matrix.os }}-${{ github.event.number || github.ref }}
       cancel-in-progress: true

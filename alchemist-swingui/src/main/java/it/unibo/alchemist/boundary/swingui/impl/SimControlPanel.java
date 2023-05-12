@@ -15,8 +15,8 @@ import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeFeatureStack;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeGroup;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeMainFeature;
 import it.unibo.alchemist.boundary.swingui.tape.impl.JTapeSection;
-import it.unibo.alchemist.core.interfaces.Simulation;
-import it.unibo.alchemist.core.interfaces.Status;
+import it.unibo.alchemist.core.Simulation;
+import it.unibo.alchemist.core.Status;
 
 import java.awt.event.ActionListener;
 import java.util.EnumMap;

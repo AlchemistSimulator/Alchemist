@@ -28,7 +28,7 @@ If the simulation is not executed as batch, then the default value is used.
 ### Linear variables
 
 A variable generating values in a range, starting from a minimum value, and increasing by some step.
-Represented by {{% api package="loader.variables" class="LinearVariable" %}}.
+Represented by {{% api package="boundary.variables" class="LinearVariable" %}}.
 
 #### Examples
 
@@ -46,7 +46,7 @@ Represented by {{% api package="loader.variables" class="LinearVariable" %}}.
 
 A variable generating geometrically-distributed samples across a range.
 Ideal for exploring non-linear phenomena, or for exploring very large ranges of values whose effect is unknown.
-Implemented as {{% api package="loader.variables" class="GeometricVariable" %}}.
+Implemented as {{% api package="boundary.variables" class="GeometricVariable" %}}.
 
 #### Examples
 
@@ -57,7 +57,7 @@ Implemented as {{% api package="loader.variables" class="GeometricVariable" %}}.
 
 ### Arbitrary-valued variables
 
-Generates an {{% api package="loader.variables" class="ArbitraryVariable" %}} spanning on an arbitrary set of values.
+Generates an {{% api package="boundary.variables" class="ArbitraryVariable" %}} spanning on an arbitrary set of values.
 
 #### Examples
 
@@ -76,7 +76,7 @@ We don't need to control both of them: the perimeter can be computed from the ra
 
 To favor reusability and
 apply the DRY principle, the simulator allows defining variables whose values
-possibly depend on values of other variables through {{% api package="loader.variables" class="JSR223Variable" %}}.
+possibly depend on values of other variables through {{% api package="boundary.variables" class="JSR223Variable" %}}.
 Their values can be expressed, by default, in Groovy, but any JSR-223-compatible language can be used, in principle.
 If a compatible JSR-223 implementation of the language is available in the classpath,
 Alchemist will load and use it transparently.

@@ -9,12 +9,12 @@
 
 package it.unibo.alchemist.multivesta.adapter
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
-import it.unibo.alchemist.core.interfaces.Simulation
-import it.unibo.alchemist.loader.export.Extractor
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.boundary.Extractor
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Time
 
 /**
  * This is an adapter that allow MultiVesta to interact with Alchemist.

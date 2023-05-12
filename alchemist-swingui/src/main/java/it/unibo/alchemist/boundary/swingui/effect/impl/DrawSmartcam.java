@@ -11,16 +11,16 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.implementations.actions.CameraSee;
-import it.unibo.alchemist.model.implementations.geometry.AwtShapeCompatible;
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
-import it.unibo.alchemist.model.interfaces.environments.Physics2DEnvironment;
-import it.unibo.alchemist.model.interfaces.geometry.GeometricShape;
-import it.unibo.alchemist.model.interfaces.properties.OccupiesSpaceProperty;
+import it.unibo.alchemist.model.geometry.AwtShapeCompatible;
+import it.unibo.alchemist.model.geometry.Shape;
+import it.unibo.alchemist.model.actions.CameraSee;
+import it.unibo.alchemist.model.molecules.SimpleMolecule;
+import it.unibo.alchemist.model.positions.Euclidean2DPosition;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
+import it.unibo.alchemist.model.physics.properties.OccupiesSpaceProperty;
+import it.unibo.alchemist.model.physics.environments.Physics2DEnvironment;
 import org.jooq.lambda.function.Consumer2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 
@@ -53,6 +52,7 @@ public final class DrawSmartcam implements Effect {
         final int x = viewPoint.x;
         final int y = viewPoint.y;
         if (environment instanceof Physics2DEnvironment) {
+            @SuppressWarnings("unchecked")
             final Physics2DEnvironment<T> physicsEnvironment = (Physics2DEnvironment<T>) environment;
             drawShape(graphics, node, physicsEnvironment, zoom, x, y);
             drawFieldOfView(graphics, node, physicsEnvironment, zoom, x, y);
@@ -74,12 +74,13 @@ public final class DrawSmartcam implements Effect {
             final int x,
             final int y
     ) {
-        final GeometricShape<?, ?> geometricShape = node.asPropertyOrNull(OccupiesSpaceProperty.class) != null
+        @SuppressWarnings("unchecked")
+        final Shape<?, ?> geometricShape = node.asPropertyOrNull(OccupiesSpaceProperty.class) != null
                 ? node.asProperty(OccupiesSpaceProperty.class).getShape()
                 : null;
         if (geometricShape instanceof AwtShapeCompatible) {
             final AffineTransform transform = getTransform(x, y, zoom, getRotation(node, environment));
-            final Shape shape = transform.createTransformedShape(((AwtShapeCompatible) geometricShape).asAwtShape());
+            final java.awt.Shape shape = transform.createTransformedShape(((AwtShapeCompatible) geometricShape).asAwtShape());
             if (node.contains(WANTED)) {
                 graphics.setColor(Color.RED);
             } else {
@@ -110,7 +111,7 @@ public final class DrawSmartcam implements Effect {
                 final double angle = a.getAngle();
                 final double startAngle = -angle / 2;
                 final double d = a.getDistance();
-                final Shape fov = new Arc2D.Double(-d, -d, d * 2, d * 2, startAngle, angle, Arc2D.PIE);
+                final java.awt.Shape fov = new Arc2D.Double(-d, -d, d * 2, d * 2, startAngle, angle, Arc2D.PIE);
                 graphics.draw(transform.createTransformedShape(fov));
             });
     }

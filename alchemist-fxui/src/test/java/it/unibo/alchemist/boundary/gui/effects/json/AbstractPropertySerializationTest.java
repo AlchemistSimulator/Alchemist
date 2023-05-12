@@ -1,7 +1,7 @@
 package it.unibo.alchemist.boundary.gui.effects.json;
 
 import com.google.gson.Gson;
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer;
 import javafx.beans.property.Property;
 
 import java.lang.reflect.Type;

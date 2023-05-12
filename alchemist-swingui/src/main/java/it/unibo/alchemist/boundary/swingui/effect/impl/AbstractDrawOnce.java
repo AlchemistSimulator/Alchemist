@@ -11,9 +11,9 @@ package it.unibo.alchemist.boundary.swingui.effect.impl;
 
 import it.unibo.alchemist.boundary.swingui.effect.api.Effect;
 import it.unibo.alchemist.boundary.ui.api.Wormhole2D;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.Node;
+import it.unibo.alchemist.model.Position2D;
 
 import javax.annotation.Nullable;
 import java.awt.Graphics2D;

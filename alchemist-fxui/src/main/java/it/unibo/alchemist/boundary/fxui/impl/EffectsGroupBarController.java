@@ -13,12 +13,12 @@ import com.google.gson.JsonParseException;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawersStack;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import it.unibo.alchemist.boundary.fxui.effects.api.EffectGroup;
-import it.unibo.alchemist.boundary.fxui.effects.impl.EffectStack;
-import it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer;
+import it.unibo.alchemist.boundary.fxui.EffectGroup;
+import it.unibo.alchemist.boundary.fxui.effects.EffectStack;
+import it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer;
 import it.unibo.alchemist.boundary.fxui.util.FXResourceLoader;
-import it.unibo.alchemist.boundary.fxui.monitors.api.FXOutputMonitor;
-import it.unibo.alchemist.model.interfaces.Position2D;
+import it.unibo.alchemist.boundary.fxui.FXOutputMonitor;
+import it.unibo.alchemist.model.Position2D;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -47,7 +47,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static it.unibo.alchemist.boundary.fxui.effects.serialization.impl.EffectSerializer.DEFAULT_EXTENSION;
+import static it.unibo.alchemist.boundary.fxui.effects.serialization.EffectSerializer.DEFAULT_EXTENSION;
 import static it.unibo.alchemist.boundary.fxui.util.FXResourceLoader.getWhiteIcon;
 import static it.unibo.alchemist.boundary.fxui.util.ResourceLoader.getStringRes;
 import static jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons.ADD;
@@ -99,7 +99,7 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     /**
      * Constructor.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}
      * @param stack          the stack where to open the effects lists
      */
     public EffectsGroupBarController(
@@ -111,18 +111,18 @@ public class EffectsGroupBarController<P extends Position2D<? extends P>> implem
     }
 
     /**
-     * Getter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Getter method for the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @return the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}, if any
+     * @return the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}, if any
      */
     public final Optional<FXOutputMonitor<?, ?>> getDisplayMonitor() {
         return displayMonitor;
     }
 
     /**
-     * Setter method for the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor}.
+     * Setter method for the graphical {@link it.unibo.alchemist.boundary.OutputMonitor}.
      *
-     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.interfaces.OutputMonitor} to set;
+     * @param displayMonitor the graphical {@link it.unibo.alchemist.boundary.OutputMonitor} to set;
      *                       if null, it will be {@link Optional#empty() unset}
      */
     public final void setDisplayMonitor(final @Nullable FXOutputMonitor<?, ?> displayMonitor) {

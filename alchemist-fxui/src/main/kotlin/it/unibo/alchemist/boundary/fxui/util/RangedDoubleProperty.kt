@@ -12,9 +12,9 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
-import it.unibo.alchemist.boundary.fxui.properties.api.PropertyTypeAdapter
-import it.unibo.alchemist.boundary.fxui.properties.api.PropertyTypeAdapter.NAME
-import it.unibo.alchemist.boundary.fxui.properties.api.PropertyTypeAdapter.VALUE
+import it.unibo.alchemist.boundary.fxui.PropertyTypeAdapter
+import it.unibo.alchemist.boundary.fxui.PropertyTypeAdapter.NAME
+import it.unibo.alchemist.boundary.fxui.PropertyTypeAdapter.VALUE
 import javafx.beans.property.DoublePropertyBase
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream

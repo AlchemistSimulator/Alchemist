@@ -11,7 +11,7 @@ environment:
 _ionic: &waterDissociation
     - time-distribution: 10
       program: >
-        [] --> [BrownianMove(10)]
+        [] --> [it.unibo.alchemist.model.actions.BrownianMove(10)]
 
 deployments:
   - type: Circle

@@ -10,7 +10,7 @@ package it.unibo.alchemist.test
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.shouldBeExactly
-import it.unibo.alchemist.loader.export.StatUtil
+import it.unibo.alchemist.util.StatUtil
 
 /**
  * Tests loading and executing CountDistinct.

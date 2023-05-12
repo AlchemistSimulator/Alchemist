@@ -11,9 +11,10 @@ package it.unibo.alchemist.boundary.swingui.monitor.impl;
 import it.unibo.alchemist.boundary.ui.impl.LinearZoomManager;
 import it.unibo.alchemist.boundary.util.InitMapsForge;
 import it.unibo.alchemist.boundary.wormhole.impl.MapWormhole;
-import it.unibo.alchemist.model.interfaces.Environment;
-import it.unibo.alchemist.model.interfaces.GeoPosition;
-import it.unibo.alchemist.model.interfaces.Time;
+import it.unibo.alchemist.model.Concentration;
+import it.unibo.alchemist.model.Environment;
+import it.unibo.alchemist.model.GeoPosition;
+import it.unibo.alchemist.model.Time;
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.map.awt.graphics.AwtGraphicFactory;
 import org.mapsforge.map.awt.view.MapView;
@@ -37,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Graphical 2D display of an environments that uses a map.
  *
- * @param <T> the {@link it.unibo.alchemist.model.interfaces.Concentration} type
+ * @param <T> the {@link Concentration} type
  */
 @Deprecated
 public final class MapDisplay<T> extends Generic2DDisplay<T, GeoPosition> {

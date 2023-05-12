@@ -1,3 +1,24 @@
+## [26.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.16.2...26.0.0) (2023-05-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* rationalize the entire package structure of the project (#2262)
+
+### Dependency updates
+
+* **deps:** update dependency io.github.classgraph:classgraph to v4.8.158 ([2b29ab0](https://github.com/AlchemistSimulator/Alchemist/commit/2b29ab0144b3dffd484cd36adbab9099ce53cb7b))
+* **deps:** update external-resources/learning-scafi-alchemist digest to dc8976e ([bff773d](https://github.com/AlchemistSimulator/Alchemist/commit/bff773d8f2fd9475e86b7e6fc20e882d5f655858))
+* **deps:** update external-resources/learning-scafi-alchemist digest to f6c926d ([ec42e17](https://github.com/AlchemistSimulator/Alchemist/commit/ec42e17cb65dba67b4d72023793ed1b03421104b))
+* **deps:** update npm to v9.6.6 ([889292a](https://github.com/AlchemistSimulator/Alchemist/commit/889292a3cddb771967dcecb6c01ae9c8f2c0fa99))
+* **deps:** update plugin multijvmtesting to v0.5.0 ([fef81f0](https://github.com/AlchemistSimulator/Alchemist/commit/fef81f0e8f3610600a297907ce26d6d57389a628))
+* **deps:** update react to v18.2.0-pre.548 ([68647cc](https://github.com/AlchemistSimulator/Alchemist/commit/68647cc14688f868e04b58c9112d99733c221cb0))
+
+
+### Refactoring
+
+* rationalize the entire package structure of the project ([#2262](https://github.com/AlchemistSimulator/Alchemist/issues/2262)) ([9016c41](https://github.com/AlchemistSimulator/Alchemist/commit/9016c4150eede75d1b90e3827b2c1456d86b85da))
+
 ## [25.16.2](https://github.com/AlchemistSimulator/Alchemist/compare/25.16.1...25.16.2) (2023-05-06)
 
 

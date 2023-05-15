@@ -227,7 +227,7 @@ internal object SimulationModel {
         }
     }
 
-    private fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
+    internal fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
                 "Invalid incarnation descriptor: $root. " +
@@ -235,7 +235,7 @@ internal object SimulationModel {
             )
         }
 
-    private fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
+    internal fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
         val linkingRules = visitRecursively(localContext, root, JavaType) { element ->
             visitBuilding<LinkingRule<T, P>>(localContext, element)
         }
@@ -247,7 +247,7 @@ internal object SimulationModel {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun inject(context: Context, root: Map<String, *>): Map<String, Any> =
+    internal fun inject(context: Context, root: Map<String, *>): Map<String, Any> =
         (replaceKnownRecursively(context, root) as Map<String, Any>).also { logger.debug("New model: {}", it) }
 
     private fun makeDefaultRandomGenerator(seed: Long) = MersenneTwister(seed)
@@ -328,7 +328,7 @@ internal object SimulationModel {
         return positionBasedFilters
     }
 
-    private fun <T, P : Position<P>> visitContents(
+    internal fun <T, P : Position<P>> visitContents(
         incarnation: Incarnation<T, P>,
         context: Context,
         root: Map<*, *>,
@@ -360,7 +360,7 @@ internal object SimulationModel {
         }
     }
 
-    private fun <T, P : Position<P>> visitProperty(
+    internal fun <T, P : Position<P>> visitProperty(
         context: Context,
         root: Map<*, *>,
     ): List<Pair<List<PositionBasedFilter<P>>, NodeProperty<T>>> {

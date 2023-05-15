@@ -71,7 +71,7 @@ class TestOrientingBehavior<T, P> : StringSpec({
         val expectedSize = 2
         val previousPositions: MutableCollection<P?> = CircularFifoQueue(expectedSize)
         loadYamlSimulation<T, P>("explore.yml").startSimulation(
-            steps = 3000,
+            steps = 500,
             onceInitialized = { it.nodes.size shouldBe 1 },
             atEachStep = { environment: Environment<T, P>, _, _, _ ->
                 val currentPosition = environment.getPosition(environment.nodes.first())

@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -36,8 +35,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -64,7 +63,6 @@ import static it.unibo.alchemist.core.Status.TERMINATED;
 public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
-    private static final int ALL_PERMITS = Integer.MAX_VALUE;
     private final Lock statusLock = new ReentrantLock();
     private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
             .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
@@ -74,8 +72,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     private final DependencyGraph<T> dependencyGraph;
     private final Scheduler<T> scheduler;
     private final Time finalTime;
-    private final Semaphore monitorLock = new Semaphore(ALL_PERMITS);
-    private final List<OutputMonitor<T, P>> monitors = new ArrayList<>();
+    private final List<OutputMonitor<T, P>> monitors = new CopyOnWriteArrayList<>();
     private final long finalStep;
     private volatile Status status = Status.INIT;
     private Optional<Throwable> error = Optional.empty();
@@ -105,7 +102,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * @param e
      *            the environment at the initial time
      * @param maxSteps
-     *            the maximum number of steps to do
+     *            the maximum number of steps to take
      */
     public Engine(final Environment<T, P> e, final long maxSteps) {
         this(e, maxSteps, Time.INFINITY);
@@ -118,10 +115,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * {@link Scheduler} interfaces, don't use this constructor.
      *
      * @param e
-     *            t
-     *            he environment at the initial time
+     *            the environment at the initial time
      * @param maxSteps
-     *            the maximum number of steps to do
+     *            the maximum number of steps to take
      * @param t
      *            the maximum time to reach
      */
@@ -156,9 +152,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     @Override
     public void addOutputMonitor(final OutputMonitor<T, P> op) {
-        monitorLock.acquireUninterruptibly(ALL_PERMITS);
         monitors.add(op);
-        monitorLock.release(ALL_PERMITS);
     }
 
     private void checkCaller() {
@@ -215,11 +209,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             }
             nextEvent.update(currentTime, true, environment);
             scheduler.updateReaction(nextEvent);
-            monitorLock.acquireUninterruptibly();
             for (final OutputMonitor<T, P> monitor : monitors) {
                 monitor.stepDone(environment, nextEvent, currentTime, currentStep);
             }
-            monitorLock.release();
         }
         if (environment.isTerminated()) {
             newStatus(TERMINATED);
@@ -387,9 +379,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
     @Override
     public void removeOutputMonitor(final OutputMonitor<T, P> op) {
-        monitorLock.acquireUninterruptibly(ALL_PERMITS);
         monitors.remove(op);
-        monitorLock.release(ALL_PERMITS);
     }
 
     @Override
@@ -401,11 +391,9 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                 status = Status.READY;
                 final long currentThread = Thread.currentThread().getId();
                 LOGGER.trace("Thread {} started running.", currentThread);
-                monitorLock.acquireUninterruptibly();
                 for (final OutputMonitor<T, P> m : monitors) {
                     m.initialized(environment);
                 }
-                monitorLock.release();
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }
@@ -426,7 +414,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             } finally {
                 status = TERMINATED;
                 commands.clear();
-                monitorLock.acquireUninterruptibly();
                 try {
                     for (final OutputMonitor<T, P> m : monitors) {
                         m.finished(environment, currentTime, currentStep);
@@ -436,8 +423,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                         error -> error.addSuppressed(e),
                         () -> error = Optional.of(e)
                     );
-                } finally {
-                    monitorLock.release();
                 }
             }
         }
@@ -449,10 +434,6 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
             @Override
             public void initialized(@Nonnull final Environment<T, P> environment) {
                 if (condition.getAsBoolean()) {
-                    /* here it is safe to remove the monitor,
-                       since it will always be called when
-                       the monitorLock is acquired
-                     */
                     monitors.remove(this);
                     pause();
                 }

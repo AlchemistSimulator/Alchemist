@@ -66,15 +66,7 @@ class TestSimulationControl : FreeSpec(
         val workerPool: ExecutorService = Executors.newCachedThreadPool()
         fun Environment<Nothing, *>.tickRate(delta: Double) {
             this.simulation.schedule {
-                this.addGlobalReaction(
-                    GlobalTestReaction(
-                        DiracComb(
-                            Time.ZERO,
-                            delta,
-                        ),
-                        this,
-                    ),
-                )
+                this.addGlobalReaction(GlobalTestReaction(DiracComb(Time.ZERO, delta), this))
             }
         }
     }

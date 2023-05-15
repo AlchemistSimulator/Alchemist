@@ -227,7 +227,7 @@ internal object SimulationModel {
         }
     }
 
-    fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
+    private fun <P : Position<P>, T : Any?> visitIncarnation(root: Any?): Incarnation<T, P> =
         SupportedIncarnations.get<T, P>(root.toString()).orElseThrow {
             IllegalArgumentException(
                 "Invalid incarnation descriptor: $root. " +
@@ -235,7 +235,7 @@ internal object SimulationModel {
             )
         }
 
-    fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
+    private fun <P : Position<P>, T : Any?> visitLinkingRule(localContext: Context, root: Any?): LinkingRule<T, P> {
         val linkingRules = visitRecursively(localContext, root, JavaType) { element ->
             visitBuilding<LinkingRule<T, P>>(localContext, element)
         }
@@ -247,7 +247,7 @@ internal object SimulationModel {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun inject(context: Context, root: Map<String, *>): Map<String, Any> =
+    private fun inject(context: Context, root: Map<String, *>): Map<String, Any> =
         (replaceKnownRecursively(context, root) as Map<String, Any>).also { logger.debug("New model: {}", it) }
 
     private fun makeDefaultRandomGenerator(seed: Long) = MersenneTwister(seed)
@@ -257,9 +257,9 @@ internal object SimulationModel {
             is PlaceHolderForVariables -> context.lookup(root).also { logger.debug("Set {} = {}", root.name, it) }
             is Map<*, *> -> {
                 when (val lookup = context.lookup(root)) {
-                    null -> root.entries.map {
+                    null -> root.entries.associate {
                         replaceKnownRecursively(context, it.key) to replaceKnownRecursively(context, it.value)
-                    }.toMap()
+                    }
                     else -> lookup
                 }
             }
@@ -274,7 +274,7 @@ internal object SimulationModel {
             else -> root
         }
 
-    inline fun <reified T : Any> visitBuilding(context: Context, root: Any?): Result<T>? =
+    internal inline fun <reified T : Any> visitBuilding(context: Context, root: Any?): Result<T>? =
         when (root) {
             is T -> Result.success(root)
             is Map<*, *> -> visitJVMConstructor(context, root)?.buildAny(context.factory)
@@ -316,7 +316,7 @@ internal object SimulationModel {
         return constant
     }
 
-    fun <P : Position<P>> visitFilter(
+    private fun <P : Position<P>> visitFilter(
         context: Context,
         element: Map<*, *>,
     ): List<PositionBasedFilter<P>> {
@@ -328,7 +328,7 @@ internal object SimulationModel {
         return positionBasedFilters
     }
 
-    fun <T, P : Position<P>> visitContents(
+    private fun <T, P : Position<P>> visitContents(
         incarnation: Incarnation<T, P>,
         context: Context,
         root: Map<*, *>,
@@ -340,8 +340,8 @@ internal object SimulationModel {
             val moleculeKey = DocumentRoot.Deployment.Contents.molecule
             (element as? Map<*, *>)
                 ?.takeIf { element.containsKey(moleculeKey) }
-                ?.let {
-                    logger.debug("Found content descriptor: {}", it)
+                ?.let { contentDescriptor ->
+                    logger.debug("Found content descriptor: {}", contentDescriptor)
                     val filters = visitFilter<P>(context, element)
                     val moleculeElement = element[moleculeKey]
                     require(moleculeElement !is Map<*, *> && moleculeElement !is Iterable<*>) {
@@ -360,7 +360,7 @@ internal object SimulationModel {
         }
     }
 
-    fun <T, P : Position<P>> visitProperty(
+    private fun <T, P : Position<P>> visitProperty(
         context: Context,
         root: Map<*, *>,
     ): List<Pair<List<PositionBasedFilter<P>>, NodeProperty<T>>> {
@@ -538,14 +538,14 @@ internal object SimulationModel {
             else -> null
         } ?: cantBuildWith<Node<T>>(root)
 
-    fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
+    private fun visitParameters(context: Context, root: Any?): Either<List<*>, Map<String, *>> = when (root) {
         null -> Either.Left(emptyList<Any>())
         is Iterable<*> -> Either.Left(root.map { visitParameter(context, it) })
         is Map<*, *> -> Either.Right(root.map { it.key.toString() to visitParameter(context, it.value) }.toMap())
         else -> Either.Left(listOf(visitParameter(context, root)))
     }
 
-    fun visitRandomGenerator(context: Context, root: Any): RandomGenerator =
+    private fun visitRandomGenerator(context: Context, root: Any): RandomGenerator =
         when (root) {
             is Map<*, *> -> visitBuilding<RandomGenerator>(context, root)
             else -> visitBuilding<Long>(context, root) ?.map { makeDefaultRandomGenerator(it) }
@@ -642,7 +642,7 @@ internal object SimulationModel {
             is Map<*, *> -> {
                 val stringKeys = root.keys.filterIsInstance<String>()
                 require(stringKeys.size == root.keys.size) {
-                    "Illegal seeds sub-keys: ${root.keys - stringKeys}. Valid keys are: $stringKeys"
+                    "Illegal seeds sub-keys: ${root.keys - stringKeys.toSet()}. Valid keys are: $stringKeys"
                 }
                 val validKeys = DocumentRoot.Seeds.validKeys
                 val nonPrivateKeys = stringKeys.filterNot { it.startsWith("_") }
@@ -679,7 +679,7 @@ internal object SimulationModel {
         else -> incarnation.createTimeDistribution(simulationRNG, environment, node, root?.toString())
     }
 
-    fun visitVariables(context: Context, root: Any?): Map<String, Variable<*>> = visitNamedRecursively(
+    private fun visitVariables(context: Context, root: Any?): Map<String, Variable<*>> = visitNamedRecursively(
         context,
         root,
         syntax = DocumentRoot.Variable,

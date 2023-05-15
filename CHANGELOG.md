@@ -1,3 +1,44 @@
+## [26.0.1](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.0...26.0.1) (2023-05-15)
+
+
+### Dependency updates
+
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.7.1 ([0ad60c3](https://github.com/AlchemistSimulator/Alchemist/commit/0ad60c3042476fbf0b0ef51f5d3c64e056a7bd27))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.5.1 ([a76d2d8](https://github.com/AlchemistSimulator/Alchemist/commit/a76d2d8e34629b37189e2c8daa5ab36fc72533b3))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 0b6047b ([ae75974](https://github.com/AlchemistSimulator/Alchemist/commit/ae7597473c4d0c1f15ff459969eed7b3220df892))
+* **deps:** update external-resources/learning-scafi-alchemist digest to c93f447 ([159af37](https://github.com/AlchemistSimulator/Alchemist/commit/159af3767d23e65211b17d527874d35cc0099c48))
+* **deps:** update external-resources/learning-scafi-alchemist digest to ca7d05a ([b9db673](https://github.com/AlchemistSimulator/Alchemist/commit/b9db67363e05d34fc6064d53b344358f0d2288c1))
+* **deps:** update plugin com.gradle.enterprise to v3.13.2 ([2fdb29c](https://github.com/AlchemistSimulator/Alchemist/commit/2fdb29cd77f17cbd521693c3addce20c413064ed))
+* **deps:** update plugin java-qa to v1.9.0 ([1c71663](https://github.com/AlchemistSimulator/Alchemist/commit/1c71663193e13a22bb2a9181b85e5af40683e95b))
+* **deps:** update plugin multijvmtesting to v0.5.1 ([799bc82](https://github.com/AlchemistSimulator/Alchemist/commit/799bc82d41247f4b4eb5888bc872ba450d70d0ce))
+
+
+### Build and continuous integration
+
+* run a full check in CI without building the docs (other phases do it already) ([2bc315e](https://github.com/AlchemistSimulator/Alchemist/commit/2bc315ee728259ded927f2ac14ab941cb3d271c5))
+* run tests of the shadow jars as part of the check phase ([4814e49](https://github.com/AlchemistSimulator/Alchemist/commit/4814e493f39f08d4754c55ecaef3ce485ce69160))
+
+
+### Performance improvements
+
+* replace LinkedList with ArrayList in Engine ([a203402](https://github.com/AlchemistSimulator/Alchemist/commit/a203402d5877eb196327faa5a1d1f742b6eaa571))
+* store `Engine`'s monitors into a `CopyOnWriteArrayList` to prevent continuous locking ([7c11bb1](https://github.com/AlchemistSimulator/Alchemist/commit/7c11bb173bab7c7305a86daa47f636e0fe5af30e))
+
+
+### Tests
+
+* **cognitive-agents:** avoid using JSR223 variables when a plain string suffices (should improve build performance) ([19f204e](https://github.com/AlchemistSimulator/Alchemist/commit/19f204e79c3efea9c467b4bd407131b81ea38bb8))
+* **cognitive-agents:** improve variable name in `TestFeelsTransmission` ([4500abf](https://github.com/AlchemistSimulator/Alchemist/commit/4500abf3b64fbc2c0de0234f6678955dcb12d743))
+* **cognitive-agents:** shorten exploring test length ([bd49b84](https://github.com/AlchemistSimulator/Alchemist/commit/bd49b84053f0f07d089e46f452aea0971a835fd4))
+
+
+### Style improvements
+
+* avoid needless line breaks ([1cce059](https://github.com/AlchemistSimulator/Alchemist/commit/1cce0593a848e4839eaa4e918d416f0f8bef179f))
+* **cognitive-agents:** annotate types in `Soeed` ([53fa058](https://github.com/AlchemistSimulator/Alchemist/commit/53fa05886f538a1f17b3af403b43084a26351426))
+* **loading:** fix broken visibility of internal methods in `SimulationModel` ([e94ae70](https://github.com/AlchemistSimulator/Alchemist/commit/e94ae704387380dee35a1bfb711c52de87295f0f))
+* **loading:** restrict visibility of internal methods in `SimulationModel` ([51a97db](https://github.com/AlchemistSimulator/Alchemist/commit/51a97db27ff7b9c8211b4169a8ad9c7331b77b23))
+
 ## [26.0.0](https://github.com/AlchemistSimulator/Alchemist/compare/25.16.2...26.0.0) (2023-05-12)
 
 

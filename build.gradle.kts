@@ -327,6 +327,7 @@ allprojects {
             testShadowJar.get().dependsOn(this)
             this.finalizedBy(testShadowJar)
             deleteOutput.get().mustRunAfter(testShadowJar)
+            tasks.check.configure { dependsOn(testShadowJar) }
         }
     }
 

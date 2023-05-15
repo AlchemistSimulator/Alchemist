@@ -34,7 +34,7 @@ jobs:
             "
             eval $COMMAND || eval $COMMAND
           check-command: |
-            ./gradlew build --parallel || ./gradlew build --parallel
+            ./gradlew check --parallel || ./gradlew check --parallel
           clean-command: |
             ./gradlew clean --parallel || ./gradlew clean --parallel || true
           should-run-codecov: ${{ contains('Linux', runner.os) }}

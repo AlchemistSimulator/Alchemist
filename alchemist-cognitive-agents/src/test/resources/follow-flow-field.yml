@@ -1,8 +1,7 @@
 incarnation: protelis
 
-variables:
-  target: &target
-    formula: "\"target\""
+_target: &target
+  target
 
 environment:
   type: ContinuousPhysics2DEnvironment

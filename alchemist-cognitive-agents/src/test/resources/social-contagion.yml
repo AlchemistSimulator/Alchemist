@@ -1,10 +1,9 @@
 incarnation: protelis
 
-variables:
-  danger: &danger
-    formula: "\"danger\""
-  target: &target
-    formula: "\"target\""
+_danger: &danger
+  danger
+_target: &target
+  targe
 
 environment:
   type: ContinuousPhysics2DEnvironment

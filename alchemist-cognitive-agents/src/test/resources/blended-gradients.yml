@@ -1,10 +1,9 @@
 incarnation: protelis
 
-variables:
-  exit1: &exit1
-    formula: "\"exit1\""
-  exit2: &exit2
-    formula: "\"exit2\""
+_exit1: &exit1
+  exit1
+_exit2: &exit2
+  exit2
 
 environment:
   type: ContinuousPhysics2DEnvironment

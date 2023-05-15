@@ -1,5 +1,8 @@
 incarnation: protelis
 
+_exit: &exit
+  exit
+
 environment:
   type: ContinuousPhysics2DEnvironment
 
@@ -22,8 +25,6 @@ variables:
   group4: &group4
     formula: *create_friends
     language: kotlin
-  exit: &exit
-    formula: "\"exit\""
 
 layers:
   - type: BidimensionalGaussianLayer

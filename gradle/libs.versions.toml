@@ -53,7 +53,7 @@ jgit = "org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r"
 jgrapht-core = "org.jgrapht:jgrapht-core:1.5.2"
 jiconfont-javafx = "com.github.jiconfont:jiconfont-javafx:1.0.0"
 jiconfont-materialDesignIcons = "com.github.jiconfont:jiconfont-google_material_design_icons:2.2.0.2"
-jirf = "org.danilopianini:jirf:0.4.8"
+jirf = "org.danilopianini:jirf:0.4.9"
 jool = "org.jooq:jool:0.9.15"
 jpx = "io.jenetics:jpx:2.3.0"
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }

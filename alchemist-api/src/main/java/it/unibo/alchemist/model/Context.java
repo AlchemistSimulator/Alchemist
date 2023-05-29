@@ -17,7 +17,7 @@ package it.unibo.alchemist.model;
  * restricted the simulation will be invalid, if it's too wide it WILL impact
  * dramatically on performances. Contexts are used internally to better
  * determine dependencies among reactions. See
- * <a href= "http://apice.unibo.it/xwiki/bin/view/Publications/PianiniMASS11" >
+ * <a href= "https://ieeexplore.ieee.org/document/6078316/" >
  * this paper</a> for further information about the usage of contexts.
  * 
  */

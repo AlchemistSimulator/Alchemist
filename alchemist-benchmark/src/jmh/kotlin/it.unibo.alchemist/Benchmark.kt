@@ -9,21 +9,17 @@
 
 package it.unibo.alchemist
 
-import org.slf4j.LoggerFactory
-import java.time.Duration
-import java.time.Instant
+import org.openjdk.jmh.annotations.Benchmark
+import org.openjdk.jmh.annotations.BenchmarkMode
+import org.openjdk.jmh.annotations.Fork
+import org.openjdk.jmh.annotations.Mode
 
-object Benchmark {
+open class Benchmark {
 
-    private val logger = LoggerFactory.getLogger(Benchmark::class.java)
-
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val start = Instant.now()
-        logger.info("Benchmark started")
+    @Benchmark
+    @BenchmarkMode(Mode.All)
+    @Fork(value = 3, warmups = 3)
+    fun test1() {
         Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-t", "50"))
-        val finish = Instant.now()
-        val duration = Duration.between(start, finish).toMillis()
-        logger.info("Execution time: {}ms", duration)
     }
 }

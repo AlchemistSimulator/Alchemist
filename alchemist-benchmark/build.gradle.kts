@@ -1,7 +1,9 @@
 import Libs.alchemist
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     application
+    id("me.champeau.jmh") version "0.7.1"
 }
 
 group = "it.unibo.alchemist"
@@ -11,25 +13,20 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/protelis")
-        }
-    }
-}
-
 dependencies {
-    implementation(alchemist("api"))
-    implementation(alchemist("engine"))
-    implementation(alchemist("loading"))
-    implementation(alchemist("euclidean-geometry"))
-    implementation(alchemist("implementationbase"))
-    implementation(alchemist("incarnation-protelis"))
-    implementation(project(mapOf("path" to ":")))
+    jmhImplementation(alchemist("api"))
+    jmhImplementation(alchemist("engine"))
+    jmhImplementation(alchemist("loading"))
+    jmhImplementation(alchemist("euclidean-geometry"))
+    jmhImplementation(alchemist("implementationbase"))
+    jmhImplementation(alchemist("incarnation-protelis"))
+    jmhImplementation("org.openjdk.jmh:jmh-core:1.36")
+    jmhImplementation("org.openjdk.jmh:jmh-generator-annprocess:1.36")
+    jmhImplementation(project(mapOf("path" to ":")))
+    jmh("org.apache.commons:commons-math3:3.6.1")
     runtimeOnly(rootProject)
 }
 
-application {
-    mainClass.set("it.unibo.alchemist.Alchemist")
+tasks.withType<ShadowJar>().configureEach {
+    isZip64 = true
 }

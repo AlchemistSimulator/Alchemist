@@ -1,3 +1,19 @@
+## [26.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.2...26.0.3) (2023-05-30)
+
+
+### Documentation
+
+* **api:** drop link to unstable website `apice.unibo.it` ([87b78b1](https://github.com/AlchemistSimulator/Alchemist/commit/87b78b1f41bdcbf4852535abea17c4ed99e0df57))
+
+
+### Dependency updates
+
+* **deps:** update external-resources/learning-scafi-alchemist digest to 61dd24c ([1592c19](https://github.com/AlchemistSimulator/Alchemist/commit/1592c19e4028125ba7d15923ca82c2a763576f0a))
+* **deps:** update gohugoio/hugo action to v0.112.5 ([25d4b56](https://github.com/AlchemistSimulator/Alchemist/commit/25d4b561faeba2467f86d17370c6996a4b0923b9))
+* **deps:** update plugin java-qa to v1.10.0 ([bd1f9e1](https://github.com/AlchemistSimulator/Alchemist/commit/bd1f9e157864eecff95356b88652ffc5e459832d))
+* **deps:** update site/themes/hugo-theme-relearn digest to 7833773 ([cf20f03](https://github.com/AlchemistSimulator/Alchemist/commit/cf20f03705c1fafec7dadc9c3388687e1486be1e))
+* **deps:** update site/themes/hugo-theme-relearn digest to 8914477 ([4551e56](https://github.com/AlchemistSimulator/Alchemist/commit/4551e569cc9d5f175a7d9d4713d40353ab477934))
+
 ## [26.0.2](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.1...26.0.2) (2023-05-27)
 
 

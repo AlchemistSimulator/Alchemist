@@ -14,12 +14,20 @@ import org.openjdk.jmh.annotations.BenchmarkMode
 import org.openjdk.jmh.annotations.Fork
 import org.openjdk.jmh.annotations.Mode
 
+/**
+ * Collection of benchmarks to be used with JMH
+ */
+@Suppress("unused")
 open class Benchmarks {
 
+    /**
+     * Simple single-threaded simulation run
+     */
     @Benchmark
-    @BenchmarkMode(Mode.All)
-    @Fork(value = 3, warmups = 3)
+    @BenchmarkMode(Mode.Throughput)
+    @Fork(value = 3)
+    @Suppress("unused")
     fun singleThreadedSimulation() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-t", "50"))
+        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "1", "-t", "50"))
     }
 }

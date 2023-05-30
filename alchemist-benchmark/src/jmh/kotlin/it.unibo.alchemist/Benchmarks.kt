@@ -14,12 +14,12 @@ import org.openjdk.jmh.annotations.BenchmarkMode
 import org.openjdk.jmh.annotations.Fork
 import org.openjdk.jmh.annotations.Mode
 
-open class Benchmark {
+open class Benchmarks {
 
     @Benchmark
     @BenchmarkMode(Mode.All)
     @Fork(value = 3, warmups = 3)
-    fun test1() {
+    fun singleThreadedSimulation() {
         Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-t", "50"))
     }
 }

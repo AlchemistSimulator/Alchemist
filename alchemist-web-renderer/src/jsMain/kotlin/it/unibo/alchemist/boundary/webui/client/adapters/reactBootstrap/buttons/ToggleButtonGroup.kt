@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022, Danilo Pianini and contributors
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
  * listed, for each module, in the respective subproject's build.gradle.kts file.
  *
  * This file is part of Alchemist, and is distributed under the terms of the
@@ -17,7 +17,7 @@ import react.Props
 
 /**
  * React Bootstrap ToggleButtonGroup adapter.
- * @see <a href="https://react-bootstrap.github.io/components/buttons/">
+ * @see <a href="https://react-bootstrap.github.io/docs/components/buttons/">
  *     react-bootstrap - buttons</a>
  */
 

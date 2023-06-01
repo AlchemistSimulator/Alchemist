@@ -1,3 +1,24 @@
+## [26.0.4](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.3...26.0.4) (2023-06-01)
+
+
+### Build and continuous integration
+
+* set `fail-fast: false` on the test matrix ([6189290](https://github.com/AlchemistSimulator/Alchemist/commit/61892900d662e097a14d2875f8f46901af0292d7))
+
+
+### Documentation
+
+* **website:** fix broken links to react-bootstrap.github.io ([f40e4ab](https://github.com/AlchemistSimulator/Alchemist/commit/f40e4ab1038717c8b15c24cf2d1939e40bfc9593))
+
+
+### Dependency updates
+
+* **deps:** update dependency de.flapdoodle.embed:de.flapdoodle.embed.mongo to v4.7.0 ([be9df77](https://github.com/AlchemistSimulator/Alchemist/commit/be9df77aa67f98ae85a9934cd3ed8237194b89aa))
+* **deps:** update external-resources/learning-scafi-alchemist digest to 9614e42 ([9987acd](https://github.com/AlchemistSimulator/Alchemist/commit/9987acd6bdcf4cab7d22a4277ab1d90b903351e9))
+* **deps:** update external-resources/learning-scafi-alchemist digest to c0926ad ([3a957c6](https://github.com/AlchemistSimulator/Alchemist/commit/3a957c6781dfef732e5d7623d703453d8a97fbb2))
+* **deps:** update ktor to v2.3.1 ([8e6f1db](https://github.com/AlchemistSimulator/Alchemist/commit/8e6f1db58e7aefa1067c48c23885f92ce065011b))
+* **deps:** update site/themes/hugo-theme-relearn digest to bbdaafd ([80c0ce9](https://github.com/AlchemistSimulator/Alchemist/commit/80c0ce9603bebc411b5b1b848655c4bc0f37b2fb))
+
 ## [26.0.3](https://github.com/AlchemistSimulator/Alchemist/compare/26.0.2...26.0.3) (2023-05-30)
 
 

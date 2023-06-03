@@ -28,6 +28,6 @@ open class Benchmarks {
     @Fork(value = 3)
     @Suppress("unused")
     fun singleThreadedSimulation() {
-        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "1", "-t", "50"))
+        Alchemist.main(arrayOf("-y", "simulation.yml", "-hl", "-p", "1", "-t", "100"))
     }
 }

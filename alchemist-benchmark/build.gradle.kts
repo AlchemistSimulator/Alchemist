@@ -20,6 +20,7 @@ dependencies {
     jmhImplementation(alchemist("euclidean-geometry"))
     jmhImplementation(alchemist("implementationbase"))
     jmhImplementation(alchemist("incarnation-protelis"))
+    jmhImplementation(alchemist("swingui"))
     jmhImplementation("org.openjdk.jmh:jmh-core:1.36")
     jmhImplementation("org.openjdk.jmh:jmh-generator-annprocess:1.36")
     jmhImplementation(project(mapOf("path" to ":")))

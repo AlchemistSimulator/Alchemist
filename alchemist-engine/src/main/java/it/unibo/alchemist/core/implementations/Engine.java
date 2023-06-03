@@ -60,32 +60,30 @@ import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
  * This class implements a simulation. It offers a wide number of static
  * factories to ease the creation process.
  *
- * @param <T>
- *            concentration type
- * @param <P>
- *            {@link Position} type
+ * @param <T> concentration type
+ * @param <P> {@link Position} type
  */
-public final class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
+public class Engine<T, P extends Position<? extends P>> implements Simulation<T, P> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
-    private static final int ALL_PERMITS = Integer.MAX_VALUE;
-    private final Lock statusLock = new ReentrantLock();
-    private final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
-            .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
-    private final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
-    private final Queue<Update> afterExecutionUpdates = new ArrayDeque<>();
-    private final Environment<T, P> environment;
-    private final DependencyGraph<T> dependencyGraph;
-    private final Scheduler<T> scheduler;
-    private final Time finalTime;
-    private final Semaphore monitorLock = new Semaphore(ALL_PERMITS);
-    private final List<OutputMonitor<T, P>> monitors = new LinkedList<>();
-    private final long finalStep;
-    private volatile Status status = Status.INIT;
-    private Optional<Throwable> error = Optional.empty();
-    private Time currentTime = Time.ZERO;
-    private long currentStep;
-    private Thread simulationThread;
+    protected static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);
+    protected static final int ALL_PERMITS = Integer.MAX_VALUE;
+    protected final Lock statusLock = new ReentrantLock();
+    protected final ImmutableMap<Status, SynchBox> statusLocks = Arrays.stream(Status.values())
+        .collect(ImmutableMap.toImmutableMap(Function.identity(), it -> new SynchBox()));
+    protected final BlockingQueue<CheckedRunnable> commands = new LinkedBlockingQueue<>();
+    protected final Queue<Update> afterExecutionUpdates = new ArrayDeque<>();
+    protected final Environment<T, P> environment;
+    protected final DependencyGraph<T> dependencyGraph;
+    protected final Scheduler<T> scheduler;
+    protected final Time finalTime;
+    protected final Semaphore monitorLock = new Semaphore(ALL_PERMITS);
+    protected final List<OutputMonitor<T, P>> monitors = new LinkedList<>();
+    protected final long finalStep;
+    protected volatile Status status = Status.INIT;
+    protected Optional<Throwable> error = Optional.empty();
+    protected Time currentTime = Time.ZERO;
+    protected long currentStep;
+    protected Thread simulationThread;
 
     /**
      * Builds a simulation for a given environment. By default, it uses a
@@ -93,8 +91,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e
-     *            the environment at the initial time
+     * @param e the environment at the initial time
      */
     public Engine(final Environment<T, P> e) {
         this(e, Time.INFINITY);
@@ -106,10 +103,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e
-     *            the environment at the initial time
-     * @param maxSteps
-     *            the maximum number of steps to do
+     * @param e        the environment at the initial time
+     * @param maxSteps the maximum number of steps to do
      */
     public Engine(final Environment<T, P> e, final long maxSteps) {
         this(e, maxSteps, Time.INFINITY);
@@ -121,16 +116,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e
-     *            t
-     *            he environment at the initial time
-     * @param maxSteps
-     *            the maximum number of steps to do
-     * @param t
-     *            the maximum time to reach
+     * @param e        t
+     *                 he environment at the initial time
+     * @param maxSteps the maximum number of steps to do
+     * @param t        the maximum time to reach
      */
     @SuppressFBWarnings(
-        value = { "EI_EXPOSE_REP", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR" },
+        value = {"EI_EXPOSE_REP", "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"},
         justification = "The environment is stored intentionally, and this class is final"
     )
     public Engine(final Environment<T, P> e, final long maxSteps, final Time t) {
@@ -138,7 +130,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         environment = e;
         environment.setSimulation(this);
         dependencyGraph = new JGraphTDependencyGraph<>(environment);
-        scheduler = new ArrayIndexedPriorityQueue<>();
+        scheduler = createNewScheduler();
         this.finalStep = maxSteps;
         this.finalTime = t;
     }
@@ -149,13 +141,15 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
      * use your own implementations of {@link DependencyGraph} and
      * {@link Scheduler} interfaces, don't use this constructor.
      *
-     * @param e
-     *            the environment at the initial time
-     * @param t
-     *            the maximum time to reach
+     * @param e the environment at the initial time
+     * @param t the maximum time to reach
      */
     public Engine(final Environment<T, P> e, final Time t) {
         this(e, Long.MAX_VALUE, t);
+    }
+
+    protected Scheduler<T> createNewScheduler() {
+        return new ArrayIndexedPriorityQueue<>();
     }
 
     @Override
@@ -187,7 +181,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         });
     }
 
-    private void doStep() {
+    protected void doStep() {
         final Actionable<T> nextEvent = scheduler.getNext();
         if (nextEvent == null) {
             this.newStatus(TERMINATED);
@@ -312,7 +306,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         afterExecutionUpdates.add(new NeigborRemoved(node, n));
     }
 
-    private void newStatus(final Status next) {
+    protected void newStatus(final Status next) {
         schedule(() -> doOnStatus(() -> {
             if (next.isReachableFrom(status)) {
                 status = next;
@@ -410,6 +404,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                     m.initialized(environment);
                 }
                 monitorLock.release();
+                status = RUNNING;//TODO this is only for debug
                 while (status.equals(Status.READY)) {
                     idleProcessSingleCommand();
                 }
@@ -467,10 +462,10 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
 
             @Override
             public void stepDone(
-                    @Nonnull final Environment<T, P> environment,
-                    @Nullable final Actionable<T> reaction,
-                    @Nonnull final Time time,
-                    final long step
+                @Nonnull final Environment<T, P> environment,
+                @Nullable final Actionable<T> reaction,
+                @Nonnull final Time time,
+                final long step
             ) {
                 initialized(environment);
             }
@@ -501,7 +496,7 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         return getClass().getSimpleName() + " t: " + getTime() + ", s: " + getStep();
     }
 
-    private void updateReaction(final Actionable<T> r) {
+    protected void updateReaction(final Actionable<T> r) {
         final Time t = r.getTau();
         r.update(currentTime, false, environment);
         if (!r.getTau().equals(t)) {
@@ -513,8 +508,8 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
         final var statusLock = statusLocks.get(status);
         if (statusLock == null) {
             throw new IllegalStateException(
-                    "Inconsistent state, the Alchemist engine tried to synchronize on a non-existing lock"
-                            + "searching for status: " + status + ", available locks: " + statusLocks
+                "Inconsistent state, the Alchemist engine tried to synchronize on a non-existing lock"
+                    + "searching for status: " + status + ", available locks: " + statusLocks
             );
         }
         return statusLock;
@@ -526,9 +521,10 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
     }
 
     // CHECKSTYLE: FinalClassCheck OFF
-    private class Update {
+    protected class Update {
 
-        public void performChanges() { }
+        public void performChanges() {
+        }
 
         public Stream<? extends Actionable<T>> getReactionsToUpdate() {
             return Stream.empty();
@@ -665,13 +661,13 @@ public final class Engine<T, P extends Position<? extends P>> implements Simulat
                             // source, target, and all their neighbors are candidates.
                             Stream.of(sourceNode, targetNode),
                             Stream.of(environment.getNeighborhood(sourceNode), environment.getNeighborhood(getTargetNode()))
-                                    .flatMap(it -> it.getNeighbors().stream()))
-                            .distinct()
-                            .flatMap(it -> it.getReactions().stream())
-                            .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
+                                .flatMap(it -> it.getNeighbors().stream()))
+                        .distinct()
+                        .flatMap(it -> it.getReactions().stream())
+                        .filter(it -> it.getInputContext() == Context.NEIGHBORHOOD),
                     // Global reactions
                     dependencyGraph.globalInputContextReactions().stream())
-                    .reduce(Stream.empty(), Stream::concat);
+                .reduce(Stream.empty(), Stream::concat);
         }
     }
 

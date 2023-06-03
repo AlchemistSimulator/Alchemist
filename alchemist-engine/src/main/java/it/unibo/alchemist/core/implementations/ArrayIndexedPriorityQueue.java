@@ -20,19 +20,19 @@ import java.util.List;
 
 /**
  * This class implements the indexed priority queue through an Array.
- * 
+ *
  * @param <T> concentration type
  */
-public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
+public class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
 
     private static final long serialVersionUID = 8064379974084348391L;
 
-    private final TObjectIntMap<Actionable<T>> indexes =
+    protected final TObjectIntMap<Actionable<T>> indexes =
             new TObjectIntHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
-    private final List<Time> times = new ArrayList<>();
-    private final List<Actionable<T>> tree = new ArrayList<>();
+    protected final List<Time> times = new ArrayList<>();
+    protected final List<Actionable<T>> tree = new ArrayList<>();
 
-    private static int getParent(final int i) {
+    protected static int getParent(final int i) {
         if (i == 0) {
             return -1;
         }
@@ -48,7 +48,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         updateEffectively(reaction, index);
     }
 
-    private void down(final Actionable<T> reaction, final int reactionIndex) {
+    protected void down(final Actionable<T> reaction, final int reactionIndex) {
         int index = reactionIndex;
         final Time newTime = reaction.getTau();
         while (true) {
@@ -105,7 +105,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    private void swap(final int i1, final Actionable<T> r1, final int i2, final Actionable<T> r2) {
+    protected void swap(final int i1, final Actionable<T> r1, final int i2, final Actionable<T> r2) {
         indexes.put(r1, i2);
         indexes.put(r2, i1);
         tree.set(i1, r2);
@@ -135,7 +135,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         return sb.toString();
     }
 
-    private boolean up(final Actionable<T> reaction, final int reactionIndex) {
+    protected boolean up(final Actionable<T> reaction, final int reactionIndex) {
         int index = reactionIndex;
         int parentIndex = getParent(index);
         final Time newTime = reaction.getTau();
@@ -160,7 +160,7 @@ public final class ArrayIndexedPriorityQueue<T> implements Scheduler<T> {
         }
     }
 
-    private void updateEffectively(final Actionable<T> reaction, final int index) {
+    protected void updateEffectively(final Actionable<T> reaction, final int index) {
         if (!up(reaction, index)) {
             down(reaction, index);
         }

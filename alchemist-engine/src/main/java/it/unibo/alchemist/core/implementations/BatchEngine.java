@@ -1,0 +1,147 @@
+/*
+ * Copyright (C) 2010-2023, Danilo Pianini and contributors
+ * listed, for each module, in the respective subproject's build.gradle.kts file.
+ *
+ * This file is part of Alchemist, and is distributed under the terms of the
+ * GNU General Public License, with a linking exception,
+ * as described in the file LICENSE in the Alchemist distribution's top directory.
+ */
+package it.unibo.alchemist.core.implementations;
+
+import com.google.common.collect.Sets;
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor;
+import it.unibo.alchemist.core.interfaces.BatchedScheduler;
+import it.unibo.alchemist.core.interfaces.Scheduler;
+import it.unibo.alchemist.model.interfaces.Actionable;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Time;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static it.unibo.alchemist.core.interfaces.Status.TERMINATED;
+
+/**
+ * This class implements a simulation. It offers a wide number of static
+ * factories to ease the creation process.
+ *
+ * @param <T> concentration type
+ * @param <P> {@link Position} type
+ */
+public final class BatchEngine<T, P extends Position<? extends P>> extends Engine<T, P> {
+
+    private static final int BATCH_SIZE = 1; //todo parametrize
+
+    private final ExecutorService executorService = Executors.newFixedThreadPool(BATCH_SIZE);
+
+    public BatchEngine(final Environment<T, P> e) {
+        super(e);
+    }
+
+    public BatchEngine(final Environment<T, P> e, final long maxSteps) {
+        super(e, maxSteps);
+    }
+
+    public BatchEngine(final Environment<T, P> e, final long maxSteps, final Time t) {
+        super(e, maxSteps, t);
+    }
+
+    public BatchEngine(final Environment<T, P> e, final Time t) {
+        super(e, t);
+    }
+
+    @Override
+    protected Scheduler<T> createNewScheduler() {
+        return new ArrayIndexedPriorityBatchedQueue<>();
+    }
+
+    @Override
+    protected void doStep() {
+        final BatchedScheduler<T> batchedScheduler = (ArrayIndexedPriorityBatchedQueue<T>) scheduler;
+        // we use optimistic PDES approach, events will be executed in parallel with error/conflict correction.
+        // step 1: take n next events
+        // TODO currently uncapped, needs termination condition and queue would break if last size < batchSize
+        final List<Actionable<T>> nextEvents = batchedScheduler.getNext(BATCH_SIZE);
+        // step 2: submit tasks and get results
+        final Function<Actionable<T>, Callable<TaskResult>> taskMapper = event -> () -> doEvent(event, currentStep);
+        final List<Callable<TaskResult>> tasks = nextEvents.stream().map(taskMapper).collect(Collectors.toList());
+        try {
+            final List<Future<TaskResult>> results = executorService.invokeAll(tasks);
+            currentStep += BATCH_SIZE;
+            for (final Future<TaskResult> result : results) {
+                Time eventTime = result.get().eventTime;
+                if (currentTime.compareTo(eventTime) < 0) {
+                    currentTime = eventTime;
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("{}", e);
+            //TODO do something...
+        }
+    }
+
+    private TaskResult doEvent(Actionable<T> nextEvent, long eventStep) {
+        if (nextEvent == null) {
+            this.newStatus(TERMINATED);
+            LOGGER.info("No more reactions.");
+        }
+        final Time scheduledTime = nextEvent.getTau();
+        if (scheduledTime.compareTo(currentTime) < 0) {
+            throw new IllegalStateException(
+                nextEvent + " is scheduled in the past at time " + scheduledTime
+                    + ", current time is " + currentTime
+                    + ". Problem occurred at step " + currentStep
+            );
+        }
+        final Time currentLocalTime = scheduledTime;
+        if (nextEvent.canExecute()) {
+            /*
+             * This must be taken before execution, because the reaction
+             * might remove itself (or its node) from the environment.
+             */
+            nextEvent.getConditions().forEach(it.unibo.alchemist.model.interfaces.Condition::reactionReady);
+            nextEvent.execute();
+            Set<Actionable<T>> toUpdate = dependencyGraph.outboundDependencies(nextEvent);
+            if (!afterExecutionUpdates.isEmpty()) {
+                afterExecutionUpdates.forEach(Update::performChanges);
+                afterExecutionUpdates.clear();
+                toUpdate = Sets.union(toUpdate, dependencyGraph.outboundDependencies(nextEvent));
+            }
+            toUpdate.forEach(this::updateReaction);
+        }
+        nextEvent.update(currentLocalTime, true, environment);
+        scheduler.updateReaction(nextEvent);
+        monitorLock.acquireUninterruptibly();
+        for (final OutputMonitor<T, P> monitor : monitors) {
+            monitor.stepDone(environment, nextEvent, currentLocalTime, eventStep);
+        }
+        monitorLock.release();
+        if (environment.isTerminated()) {
+            newStatus(TERMINATED);
+            LOGGER.info("Termination condition reached.");
+        }
+        return new TaskResult(nextEvent, currentLocalTime);
+    }
+
+    @Override
+    protected synchronized void updateReaction(final Actionable<T> r) {
+        super.updateReaction(r);
+    }
+
+    private class TaskResult {
+        public final Actionable<T> nextEvent;
+        public final Time eventTime;
+
+        private TaskResult(final Actionable<T> nextEvent, final Time eventTime) {
+            this.nextEvent = nextEvent;
+            this.eventTime = eventTime;
+        }
+    }
+}
